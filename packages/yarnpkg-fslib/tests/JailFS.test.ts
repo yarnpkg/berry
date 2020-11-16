@@ -9,10 +9,7 @@ describe(`JailFS`, () => {
     await xfs.mkdirPromise(jailedFolder);
 
     const jailFs = new JailFS(jailedFolder);
-
-    await expect(
-      () => jailFs.writeFilePromise(`text.txt` as Filename, `Hello World`)
-    ).not.toThrow();
+    await jailFs.writeFilePromise(`text.txt` as Filename, `Hello World`);
   });
 
   it(`should not throw an error when the accessed path is inside the target folder (absolute)`, async () => {
@@ -22,10 +19,7 @@ describe(`JailFS`, () => {
     await xfs.mkdirPromise(jailedFolder);
 
     const jailFs = new JailFS(jailedFolder);
-
-    await expect(
-      () => jailFs.writeFilePromise(ppath.join(PortablePath.root, `text.txt` as Filename), `Hello World`)
-    ).not.toThrow();
+    jailFs.writeFilePromise(ppath.join(PortablePath.root, `text.txt` as Filename), `Hello World`);
   });
 
   it(`should throw an error when the accessed path is not inside the target folder`, async () => {
@@ -36,9 +30,6 @@ describe(`JailFS`, () => {
     await xfs.mkdirpPromise(jailedFolder);
 
     const jailFs = new JailFS(jailedFolder);
-
-    expect(
-      () => jailFs.writeFilePromise(`../text.txt` as Filename, `Hello World`)
-    ).toThrow(`Resolving this path (../text.txt) would escape the jail`);
+    await expect(jailFs.writeFilePromise(`../text.txt` as Filename, `Hello World`)).rejects.toThrow(`Resolving this path (../text.txt) would escape the jail`);
   });
 });

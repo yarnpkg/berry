@@ -30,4 +30,13 @@ describe(`patchedFs`, () => {
       done();
     });
   });
+
+  it(`in case of the parameter of fs.exists is not a string, give false`, done => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    patchedFs.exists(undefined as any, exists => {
+      expect(exists).toBe(false);
+      done();
+    });
+  });
 });
