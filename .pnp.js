@@ -41034,7 +41034,7 @@ function patchFs(patchedFs, fakeFs) {
 
   const setupFn = (target, name, replacement) => {
     const orig = target[name];
-    target[name] = replacement;
+    target[name] = replacement; // Preserve any util.promisify implementations
 
     if (typeof (orig === null || orig === void 0 ? void 0 : orig[external_util_namespaceObject.promisify.custom]) !== `undefined`) {
       replacement[external_util_namespaceObject.promisify.custom] = orig[external_util_namespaceObject.promisify.custom];
@@ -41163,6 +41163,22 @@ function patchFs(patchedFs, fakeFs) {
         return new FileHandle(fd);
       }); // `fs.promises.realpath` doesn't have a `native` property
     }
+  }
+  /** util.promisify implementations */
+
+  {
+    // Override the promisified version of `fs.read` to return an object as per
+    // https://github.com/nodejs/node/blob/dc79f3f37caf6f25b8efee4623bec31e2c20f595/lib/fs.js#L559-L560
+    // and
+    // https://github.com/nodejs/node/blob/ba684805b6c0eded76e5cd89ee00328ac7a59365/lib/internal/util.js#L293
+    // @ts-expect-error
+    patchedFs.read[external_util_namespaceObject.promisify.custom] = async (p, buffer, ...args) => {
+      const res = fakeFs.readPromise(p, buffer, ...args);
+      return {
+        bytesRead: await res,
+        buffer
+      };
+    };
   }
 }
 function extendFs(realFs, fakeFs) {
