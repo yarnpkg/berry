@@ -1455,7 +1455,7 @@ export class Configuration {
             switch (extension.type) {
               case PackageExtensionType.Dependency: {
                 const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
-                if (typeof currentDependency === `undefined` || !structUtils.areDescriptorsEqual(currentDependency, extension.descriptor)) {
+                if (typeof currentDependency === `undefined`) {
                   extension.status = PackageExtensionStatus.Active;
                   pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
@@ -1463,7 +1463,7 @@ export class Configuration {
 
               case PackageExtensionType.PeerDependency: {
                 const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
-                if (typeof currentPeerDependency === `undefined` || !structUtils.areDescriptorsEqual(currentPeerDependency, extension.descriptor)) {
+                if (typeof currentPeerDependency === `undefined`) {
                   extension.status = PackageExtensionStatus.Active;
                   pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }

@@ -153,11 +153,11 @@ const transforms = {
     pretty: (configuration: Configuration, packageExtension: PackageExtension) => {
       switch (packageExtension.type) {
         case PackageExtensionType.Dependency:
-          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} > ${structUtils.prettyIdent(configuration, packageExtension.descriptor)}`;
+          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `dependencies`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, packageExtension.descriptor)}`;
         case PackageExtensionType.PeerDependency:
-          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} >> ${structUtils.prettyIdent(configuration, packageExtension.descriptor)}`;
+          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `peerDependencies`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, packageExtension.descriptor)}`;
         case PackageExtensionType.PeerDependencyMeta:
-          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} >> ${structUtils.prettyIdent(configuration, structUtils.parseIdent(packageExtension.selector))} / ${applyColor(configuration, packageExtension.key, Type.CODE)}`;
+          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `peerDependenciesMeta`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, structUtils.parseIdent(packageExtension.selector))} ➤ ${applyColor(configuration, packageExtension.key, Type.CODE)}`;
         default:
           throw new Error(`Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`);
       }

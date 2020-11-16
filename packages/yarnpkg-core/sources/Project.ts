@@ -609,19 +609,6 @@ export class Project {
     return null;
   }
 
-  async validateEverything(opts: {
-    validationWarnings: Array<{name: MessageName, text: string}>,
-    validationErrors: Array<{name: MessageName, text: string}>,
-    report: Report,
-  }) {
-    for (const warning of opts.validationWarnings)
-      opts.report.reportWarning(warning.name, warning.text);
-
-    for (const error of opts.validationErrors) {
-      opts.report.reportError(error.name, error.text);
-    }
-  }
-
   async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
@@ -1327,48 +1314,45 @@ export class Project {
     const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
-    const validationWarnings: Array<{name: MessageName, text: string}> = [];
-    const validationErrors: Array<{name: MessageName, text: string}> = [];
-
-    await this.configuration.triggerHook(hooks => {
-      return hooks.validateProject;
-    }, this, {
-      reportWarning: (name: MessageName, text: string) => validationWarnings.push({name, text}),
-      reportError: (name: MessageName, text: string) => validationErrors.push({name, text}),
-    });
-
-    const problemCount = validationWarnings.length + validationErrors.length;
-
-    if (problemCount > 0) {
-      await opts.report.startTimerPromise(`Validation step`, async () => {
-        await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
+    await opts.report.startTimerPromise(`Project validation`, {
+      skipIfEmpty: true,
+    }, async () => {
+      await this.configuration.triggerHook(hooks => {
+        return hooks.validateProject;
+      }, this, {
+        reportWarning: opts.report.reportWarning.bind(opts.report),
+        reportError: opts.report.reportError.bind(opts.report),
       });
-    }
+    });
 
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
           extension.status = PackageExtensionStatus.Inactive;
 
-    await opts.report.startTimerPromise(`Resolution step`, async () => {
-      const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
 
-      // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
-      let initialLockfile: string | null = null;
-      if (opts.immutable) {
-        try {
-          initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
-        } catch (error) {
-          if (error.code === `ENOENT`) {
-            throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
-          } else {
-            throw error;
-          }
+    // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
+    let initialLockfile: string | null = null;
+    if (opts.immutable) {
+      try {
+        initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
+      } catch (error) {
+        if (error.code === `ENOENT`) {
+          throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
+        } else {
+          throw error;
         }
       }
+    }
 
+    await opts.report.startTimerPromise(`Resolution step`, async () => {
       await this.resolveEverything(opts);
+    });
 
+    await opts.report.startTimerPromise(`Post-resolution validation`, {
+      skipIfEmpty: true,
+    }, async () => {
       for (const [, extensionsPerRange] of this.configuration.packageExtensions) {
         for (const [, extensions] of extensionsPerRange) {
           for (const extension of extensions) {
@@ -1377,11 +1361,11 @@ export class Project {
 
               switch (extension.status) {
                 case PackageExtensionStatus.Inactive: {
-                  opts.report.reportWarning(MessageName.UNUSED_PACKAGE_EXTENSION, `Unused package extension: ${prettyPackageExtension}`);
+                  opts.report.reportWarning(MessageName.UNUSED_PACKAGE_EXTENSION, `${prettyPackageExtension}: No matching package in the dependency tree; you may not need this rule anymore.`);
                 } break;
 
                 case PackageExtensionStatus.Redundant: {
-                  opts.report.reportWarning(MessageName.UNNEEDED_PACKAGE_EXTENSION, `Unneeded package extension: ${prettyPackageExtension}`);
+                  opts.report.reportWarning(MessageName.UNNEEDED_PACKAGE_EXTENSION, `${prettyPackageExtension}: This rule seems redundous when applied on the original package; the extension may have been applied upstream.`);
                 } break;
               }
             }

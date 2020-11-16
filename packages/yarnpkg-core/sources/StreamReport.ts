@@ -1,11 +1,12 @@
-import sliceAnsi                           from '@arcanis/slice-ansi';
-import {Writable}                          from 'stream';
+import sliceAnsi                                  from '@arcanis/slice-ansi';
 
-import {Configuration}                     from './Configuration';
-import {MessageName, stringifyMessageName} from './MessageName';
-import {ProgressDefinition, Report}        from './Report';
-import * as formatUtils                    from './formatUtils';
-import {Locator}                           from './types';
+import {Writable}                                 from 'stream';
+
+import {Configuration}                            from './Configuration';
+import {MessageName, stringifyMessageName}        from './MessageName';
+import {ProgressDefinition, Report, TimerOptions} from './Report';
+import * as formatUtils                           from './formatUtils';
+import {Locator}                                  from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -148,6 +149,11 @@ export class StreamReport extends Report {
   private json: boolean;
   private stdout: Writable;
 
+  private uncommitted = new Set<{
+    committed: boolean,
+    action: () => void,
+  }>();
+
   private cacheHitCount: number = 0;
   private cacheMissCount: number = 0;
 
@@ -228,54 +234,98 @@ export class StreamReport extends Report {
     }
   }
 
-  startTimerSync<T>(what: string, cb: () => T) {
-    this.reportInfo(null, `┌ ${what}`);
+  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): void;
+  startTimerSync<T>(what: string, cb: () => T): void;
+  startTimerSync<T>(what: string, opts: TimerOptions | (() => T), cb?: () => T) {
+    const realOpts = typeof opts === `function` ? {} : opts;
+    const realCb = typeof opts === `function` ? opts : cb!;
+
+    const mark = {committed: false, action: () => {
+      this.reportInfo(null, `┌ ${what}`);
+      this.indent += 1;
+
+      if (GROUP !== null) {
+        this.stdout.write(GROUP.start(what));
+      }
+    }};
+
+    if (realOpts.skipIfEmpty) {
+      this.uncommitted.add(mark);
+    } else {
+      mark.action();
+      mark.committed = true;
+    }
 
     const before = Date.now();
-    this.indent += 1;
 
     try {
-      return cb();
+      return realCb();
     } catch (error) {
       this.reportExceptionOnce(error);
       throw error;
     } finally {
       const after = Date.now();
-      this.indent -= 1;
 
-      if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
-      } else {
-        this.reportInfo(null, `└ Completed`);
+      this.uncommitted.delete(mark);
+      if (mark.committed) {
+        this.indent -= 1;
+
+        if (GROUP !== null)
+          this.stdout.write(GROUP.end(what));
+
+        if (this.configuration.get(`enableTimers`) && after - before > 200) {
+          this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        } else {
+          this.reportInfo(null, `└ Completed`);
+        }
       }
     }
   }
 
-  async startTimerPromise<T>(what: string, cb: () => Promise<T>) {
-    this.reportInfo(null, `┌ ${what}`);
+  async startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<void>;
+  async startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<void>;
+  async startTimerPromise<T>(what: string, opts: TimerOptions | (() => Promise<T>), cb?: () => Promise<T>) {
+    const realOpts = typeof opts === `function` ? {} : opts;
+    const realCb = typeof opts === `function` ? opts : cb!;
 
-    if (GROUP !== null)
-      this.stdout.write(GROUP.start(what));
+    const mark = {committed: false, action: () => {
+      this.reportInfo(null, `┌ ${what}`);
+      this.indent += 1;
+
+      if (GROUP !== null) {
+        this.stdout.write(GROUP.start(what));
+      }
+    }};
+
+    if (realOpts.skipIfEmpty) {
+      this.uncommitted.add(mark);
+    } else {
+      mark.action();
+      mark.committed = true;
+    }
 
     const before = Date.now();
-    this.indent += 1;
 
     try {
-      return await cb();
+      return await realCb();
     } catch (error) {
       this.reportExceptionOnce(error);
       throw error;
     } finally {
       const after = Date.now();
-      this.indent -= 1;
 
-      if (GROUP !== null)
-        this.stdout.write(GROUP.end(what));
+      this.uncommitted.delete(mark);
+      if (mark.committed) {
+        this.indent -= 1;
 
-      if (this.configuration.get(`enableTimers`) && after - before > 200) {
-        this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
-      } else {
-        this.reportInfo(null, `└ Completed`);
+        if (GROUP !== null)
+          this.stdout.write(GROUP.end(what));
+
+        if (this.configuration.get(`enableTimers`) && after - before > 200) {
+          this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        } else {
+          this.reportInfo(null, `└ Completed`);
+        }
       }
     }
   }
@@ -309,6 +359,8 @@ export class StreamReport extends Report {
     if (!this.includeInfos)
       return;
 
+    this.commit();
+
     const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
 
     if (!this.json) {
@@ -336,6 +388,8 @@ export class StreamReport extends Report {
     if (!this.includeWarnings)
       return;
 
+    this.commit();
+
     if (!this.json) {
       this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
     } else {
@@ -345,6 +399,8 @@ export class StreamReport extends Report {
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
+
+    this.commit();
 
     if (!this.json) {
       this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
@@ -480,6 +536,16 @@ export class StreamReport extends Report {
     }
 
     this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
+  }
+
+  private commit() {
+    const marks = this.uncommitted;
+    this.uncommitted = new Set();
+
+    for (const mark of marks) {
+      mark.committed = true;
+      mark.action();
+    }
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
