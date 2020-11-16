@@ -162,4 +162,10 @@ export const packageExtensions: Array<[string, any]> = [
       'react-dom': `>= 16.3.0`,
     },
   }],
+  // https://github.com/jaydenseric/apollo-upload-client/commit/336691cec6698661ab404649e4e8435750255803
+  [`apollo-upload-client@<14`, {
+    peerDependencies: {
+      graphql: `14 - 15`,
+    },
+  }],
 ];
