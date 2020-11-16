@@ -149,16 +149,11 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       const callback = hasCallback ? args.pop() : () => {};
 
       process.nextTick(() => {
-        if (typeof p !== `string`) {
+        fakeFs.existsPromise(p).then(exists => {
+          callback(exists);
+        }, () => {
           callback(false);
-        }
-        else {
-          fakeFs.existsPromise(p).then(exists => {
-            callback(exists);
-          }, () => {
-            callback(false);
-          });
-        }
+        });
       });
     });
 
