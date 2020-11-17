@@ -7,6 +7,8 @@
 ### Installs
 
 - Progress bars are rendered less often, which makes all installs faster
+- Warnings are now reported when the `packageExtensions` field lists rules that are either unused or redundant with the original package definition.
+- Potentially breaking, but it was intended this way from the start: the `packageExtensions` field cannot be used to *replace* dependencies anymore (only to add missing ones). Prefer using the `resolutions` field to replace existing ones.
 
 ### CLI
 

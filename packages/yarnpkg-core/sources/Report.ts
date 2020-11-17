@@ -23,6 +23,10 @@ export type ProgressDefinition = {
   title?: string,
 };
 
+export type TimerOptions = {
+  skipIfEmpty?: boolean;
+};
+
 export abstract class Report {
   private reportedInfos: Set<any> = new Set();
   private reportedWarnings: Set<any> = new Set();
@@ -31,7 +35,10 @@ export abstract class Report {
   abstract reportCacheHit(locator: Locator): void;
   abstract reportCacheMiss(locator: Locator, message?: string): void;
 
+  abstract startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<T>;
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
+
+  abstract startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
   abstract startCacheReport<T>(cb: () => Promise<T>): Promise<T>;

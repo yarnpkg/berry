@@ -312,3 +312,10 @@ A package requests a peer dependency, but its parent in the dependency tree prov
 
 A package is marked as deprecated by the publisher. Avoid using it, use the alternative provided in the deprecation message instead.
 
+## YN0068 - `UNUSED_PACKAGE_EXTENSION`
+
+A packageExtension is detected by Yarn as being unused, which means that the selector doesn't match any of the installed packages.
+
+## YN0069 - `REDUNDANT_PACKAGE_EXTENSION`
+
+A packageExtension is detected by Yarn as being unneeded, which means that the selected packages have the same behavior with and without the extension.

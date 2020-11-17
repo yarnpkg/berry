@@ -1,13 +1,12 @@
-import {npath}                             from '@yarnpkg/fslib';
+import {npath}                                                              from '@yarnpkg/fslib';
+import chalk                                                                from 'chalk';
 
-import chalk                               from 'chalk';
-
-import {Configuration}                     from './Configuration';
-import {MessageName, stringifyMessageName} from './MessageName';
-import {Report}                            from './Report';
-import * as miscUtils                      from './miscUtils';
-import * as structUtils                    from './structUtils';
-import {Descriptor, Locator, Ident}        from './types';
+import {Configuration}                                                      from './Configuration';
+import {MessageName, stringifyMessageName}                                  from './MessageName';
+import {Report}                                                             from './Report';
+import * as miscUtils                                                       from './miscUtils';
+import * as structUtils                                                     from './structUtils';
+import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
 
 export enum Type {
   NO_HINT = `NO_HINT`,
@@ -34,6 +33,7 @@ export enum Type {
   LOCATOR = `LOCATOR`,
   RESOLUTION = `RESOLUTION`,
   DEPENDENT = `DEPENDENT`,
+  PACKAGE_EXTENSION = `PACKAGE_EXTENSION`,
 }
 
 export enum Style {
@@ -146,6 +146,33 @@ const transforms = {
         locator: structUtils.stringifyLocator(locator),
         descriptor: structUtils.stringifyDescriptor(descriptor),
       };
+    },
+  }),
+
+  [Type.PACKAGE_EXTENSION]: validateTransform({
+    pretty: (configuration: Configuration, packageExtension: PackageExtension) => {
+      switch (packageExtension.type) {
+        case PackageExtensionType.Dependency:
+          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `dependencies`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, packageExtension.descriptor)}`;
+        case PackageExtensionType.PeerDependency:
+          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `peerDependencies`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, packageExtension.descriptor)}`;
+        case PackageExtensionType.PeerDependencyMeta:
+          return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `peerDependenciesMeta`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, structUtils.parseIdent(packageExtension.selector))} ➤ ${applyColor(configuration, packageExtension.key, Type.CODE)}`;
+        default:
+          throw new Error(`Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`);
+      }
+    },
+    json: (packageExtension: PackageExtension) => {
+      switch (packageExtension.type) {
+        case PackageExtensionType.Dependency:
+          return `${structUtils.stringifyIdent(packageExtension.parentDescriptor)} > ${structUtils.stringifyIdent(packageExtension.descriptor)}`;
+        case PackageExtensionType.PeerDependency:
+          return `${structUtils.stringifyIdent(packageExtension.parentDescriptor)} >> ${structUtils.stringifyIdent(packageExtension.descriptor)}`;
+        case PackageExtensionType.PeerDependencyMeta:
+          return `${structUtils.stringifyIdent(packageExtension.parentDescriptor)} >> ${packageExtension.selector} / ${packageExtension.key}`;
+        default:
+          throw new Error(`Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`);
+      }
     },
   }),
 

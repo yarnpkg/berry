@@ -1,14 +1,13 @@
-import {Plugin, SettingsType}  from '@yarnpkg/core';
-import {MapConfigurationValue} from '@yarnpkg/core';
+import {Plugin, SettingsType, miscUtils} from '@yarnpkg/core';
 
-import {NpmHttpFetcher}        from './NpmHttpFetcher';
-import {NpmRemapResolver}      from './NpmRemapResolver';
-import {NpmSemverFetcher}      from './NpmSemverFetcher';
-import {NpmSemverResolver}     from './NpmSemverResolver';
-import {NpmTagResolver}        from './NpmTagResolver';
-import * as npmConfigUtils     from './npmConfigUtils';
-import * as npmHttpUtils       from './npmHttpUtils';
-import * as npmPublishUtils    from './npmPublishUtils';
+import {NpmHttpFetcher}                  from './NpmHttpFetcher';
+import {NpmRemapResolver}                from './NpmRemapResolver';
+import {NpmSemverFetcher}                from './NpmSemverFetcher';
+import {NpmSemverResolver}               from './NpmSemverResolver';
+import {NpmTagResolver}                  from './NpmTagResolver';
+import * as npmConfigUtils               from './npmConfigUtils';
+import * as npmHttpUtils                 from './npmHttpUtils';
+import * as npmPublishUtils              from './npmPublishUtils';
 
 export {npmConfigUtils};
 export {npmHttpUtils};
@@ -48,24 +47,24 @@ const registrySettings = {
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     npmAlwaysAuth: boolean;
-    npmAuthIdent: string|null;
-    npmAuthToken: string|null;
+    npmAuthIdent: string | null;
+    npmAuthToken: string | null;
 
     npmPublishRegistry: string | null;
     npmRegistryServer: string;
 
-    npmScopes:  Map<string, MapConfigurationValue<{
+    npmScopes:  Map<string, miscUtils.ToMapValue<{
       npmAlwaysAuth: boolean;
-      npmAuthIdent: string|null;
-      npmAuthToken: string|null;
+      npmAuthIdent: string | null;
+      npmAuthToken: string | null;
 
       npmPublishRegistry: string | null;
       npmRegistryServer: string;
     }>>;
-    npmRegistries: Map<string, MapConfigurationValue<{
+    npmRegistries: Map<string, miscUtils.ToMapValue<{
       npmAlwaysAuth: boolean;
-      npmAuthIdent: string|null;
-      npmAuthToken: string|null;
+      npmAuthIdent: string | null;
+      npmAuthToken: string | null;
     }>>;
   }
 }

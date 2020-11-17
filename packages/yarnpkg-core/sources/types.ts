@@ -45,3 +45,29 @@ export interface Package extends Locator {
   // called at every keystroke)
   bin: Map<string, PortablePath>,
 }
+
+export enum PackageExtensionType {
+  Dependency = `Dependency`,
+  PeerDependency = `PeerDependency`,
+  PeerDependencyMeta = `PeerDependencyMeta`,
+}
+
+export enum PackageExtensionStatus {
+  Inactive = `inactive`,
+  Redundant = `redundant`,
+  Active = `active`,
+}
+
+export type PackageExtension = (
+  | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
+  | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
+  | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
+) & {
+  status: PackageExtensionStatus,
+  userProvided: boolean,
+  parentDescriptor: Descriptor,
+  /**
+   * @deprecated Use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead
+   */
+  description: string,
+};

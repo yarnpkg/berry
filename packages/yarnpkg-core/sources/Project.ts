@@ -1,40 +1,40 @@
-import {PortablePath, ppath, xfs, normalizeLineEndings, Filename} from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                 from '@yarnpkg/parsers';
-import {UsageError}                                               from 'clipanion';
-import {createHash}                                               from 'crypto';
-import {structuredPatch}                                          from 'diff';
-import pick                                                       from 'lodash/pick';
-import pLimit                                                     from 'p-limit';
-import semver                                                     from 'semver';
-import {promisify}                                                from 'util';
-import v8                                                         from 'v8';
-import zlib                                                       from 'zlib';
+import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}       from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                       from '@yarnpkg/parsers';
+import {UsageError}                                                     from 'clipanion';
+import {createHash}                                                     from 'crypto';
+import {structuredPatch}                                                from 'diff';
+import pick                                                             from 'lodash/pick';
+import pLimit                                                           from 'p-limit';
+import semver                                                           from 'semver';
+import {promisify}                                                      from 'util';
+import v8                                                               from 'v8';
+import zlib                                                             from 'zlib';
 
-import {Cache}                                                    from './Cache';
-import {Configuration}                                            from './Configuration';
-import {Fetcher}                                                  from './Fetcher';
-import {Installer, BuildDirective, BuildType}                     from './Installer';
-import {LegacyMigrationResolver}                                  from './LegacyMigrationResolver';
-import {Linker}                                                   from './Linker';
-import {LockfileResolver}                                         from './LockfileResolver';
-import {DependencyMeta, Manifest}                                 from './Manifest';
-import {MessageName}                                              from './MessageName';
-import {MultiResolver}                                            from './MultiResolver';
-import {Report, ReportError}                                      from './Report';
-import {ResolveOptions, Resolver}                                 from './Resolver';
-import {RunInstallPleaseResolver}                                 from './RunInstallPleaseResolver';
-import {ThrowReport}                                              from './ThrowReport';
-import {Workspace}                                                from './Workspace';
-import {isFolderInside}                                           from './folderUtils';
-import * as formatUtils                                           from './formatUtils';
-import * as hashUtils                                             from './hashUtils';
-import * as miscUtils                                             from './miscUtils';
-import * as scriptUtils                                           from './scriptUtils';
-import * as semverUtils                                           from './semverUtils';
-import * as structUtils                                           from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}                   from './types';
-import {Descriptor, Ident, Locator, Package}                      from './types';
-import {LinkType}                                                 from './types';
+import {Cache}                                                          from './Cache';
+import {Configuration}                                                  from './Configuration';
+import {Fetcher}                                                        from './Fetcher';
+import {Installer, BuildDirective, BuildType}                           from './Installer';
+import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
+import {Linker}                                                         from './Linker';
+import {LockfileResolver}                                               from './LockfileResolver';
+import {DependencyMeta, Manifest}                                       from './Manifest';
+import {MessageName}                                                    from './MessageName';
+import {MultiResolver}                                                  from './MultiResolver';
+import {Report, ReportError}                                            from './Report';
+import {ResolveOptions, Resolver}                                       from './Resolver';
+import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
+import {ThrowReport}                                                    from './ThrowReport';
+import {Workspace}                                                      from './Workspace';
+import {isFolderInside}                                                 from './folderUtils';
+import * as formatUtils                                                 from './formatUtils';
+import * as hashUtils                                                   from './hashUtils';
+import * as miscUtils                                                   from './miscUtils';
+import * as scriptUtils                                                 from './scriptUtils';
+import * as semverUtils                                                 from './semverUtils';
+import * as structUtils                                                 from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './types';
+import {Descriptor, Ident, Locator, Package}                            from './types';
+import {LinkType}                                                       from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -273,7 +273,7 @@ export class Project {
           const locator = structUtils.parseLocator(data.resolution, true);
 
           const manifest = new Manifest();
-          manifest.load(data);
+          manifest.load(data, {yamlCompatibilityMode: true});
 
           const version = manifest.version;
 
@@ -607,19 +607,6 @@ export class Project {
     }
 
     return null;
-  }
-
-  async validateEverything(opts: {
-    validationWarnings: Array<{name: MessageName, text: string}>,
-    validationErrors: Array<{name: MessageName, text: string}>,
-    report: Report,
-  }) {
-    for (const warning of opts.validationWarnings)
-      opts.report.reportWarning(warning.name, warning.text);
-
-    for (const error of opts.validationErrors) {
-      opts.report.reportError(error.name, error.text);
-    }
   }
 
   async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
@@ -1334,47 +1321,64 @@ export class Project {
     const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
-    const validationWarnings: Array<{name: MessageName, text: string}> = [];
-    const validationErrors: Array<{name: MessageName, text: string}> = [];
-
-    await this.configuration.triggerHook(hooks => {
-      return hooks.validateProject;
-    }, this, {
-      reportWarning: (name: MessageName, text: string) => validationWarnings.push({name, text}),
-      reportError: (name: MessageName, text: string) => validationErrors.push({name, text}),
-    });
-
-    const problemCount = validationWarnings.length + validationErrors.length;
-
-    if (problemCount > 0) {
-      await opts.report.startTimerPromise(`Validation step`, async () => {
-        await this.validateEverything({validationWarnings, validationErrors, report: opts.report});
+    await opts.report.startTimerPromise(`Project validation`, {
+      skipIfEmpty: true,
+    }, async () => {
+      await this.configuration.triggerHook(hooks => {
+        return hooks.validateProject;
+      }, this, {
+        reportWarning: opts.report.reportWarning.bind(opts.report),
+        reportError: opts.report.reportError.bind(opts.report),
       });
-    }
+    });
 
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
-          extension.active = false;
+          extension.status = PackageExtensionStatus.Inactive;
+
+    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+
+    // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
+    let initialLockfile: string | null = null;
+    if (opts.immutable) {
+      try {
+        initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
+      } catch (error) {
+        if (error.code === `ENOENT`) {
+          throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
+        } else {
+          throw error;
+        }
+      }
+    }
 
     await opts.report.startTimerPromise(`Resolution step`, async () => {
-      const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+      await this.resolveEverything(opts);
+    });
 
-      // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
-      let initialLockfile: string | null = null;
-      if (opts.immutable) {
-        try {
-          initialLockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
-        } catch (error) {
-          if (error.code === `ENOENT`) {
-            throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been created by this install, which is explicitly forbidden.`);
-          } else {
-            throw error;
+    await opts.report.startTimerPromise(`Post-resolution validation`, {
+      skipIfEmpty: true,
+    }, async () => {
+      for (const [, extensionsPerRange] of this.configuration.packageExtensions) {
+        for (const [, extensions] of extensionsPerRange) {
+          for (const extension of extensions) {
+            if (extension.userProvided) {
+              const prettyPackageExtension = formatUtils.pretty(this.configuration, extension, formatUtils.Type.PACKAGE_EXTENSION);
+
+              switch (extension.status) {
+                case PackageExtensionStatus.Inactive: {
+                  opts.report.reportWarning(MessageName.UNUSED_PACKAGE_EXTENSION, `${prettyPackageExtension}: No matching package in the dependency tree; you may not need this rule anymore.`);
+                } break;
+
+                case PackageExtensionStatus.Redundant: {
+                  opts.report.reportWarning(MessageName.REDUNDANT_PACKAGE_EXTENSION, `${prettyPackageExtension}: This rule seems redundant when applied on the original package; the extension may have been applied upstream.`);
+                } break;
+              }
+            }
           }
         }
       }
-
-      await this.resolveEverything(opts);
 
       if (initialLockfile !== null) {
         const newLockfile = normalizeLineEndings(initialLockfile, this.generateLockfile());
@@ -1407,8 +1411,8 @@ export class Project {
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
-          if (extension.active)
-            Configuration.telemetry?.reportPackageExtension(extension.description);
+          if (extension.userProvided && extension.status === PackageExtensionStatus.Active)
+            Configuration.telemetry?.reportPackageExtension(formatUtils.json(extension, formatUtils.Type.PACKAGE_EXTENSION));
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);

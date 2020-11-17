@@ -177,7 +177,7 @@ export class Manifest {
     this.indent = getIndent(content);
   }
 
-  load(data: any) {
+  load(data: any, {yamlCompatibilityMode = false}: {yamlCompatibilityMode?: boolean} = {}) {
     if (typeof data !== `object` || data === null)
       throw new Error(`Utterly invalid manifest data (${data})`);
 
@@ -362,7 +362,7 @@ export class Manifest {
     }
 
     if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
-      for (const [pattern, meta] of Object.entries(data.dependenciesMeta)) {
+      for (const [pattern, meta] of Object.entries(data.dependenciesMeta) as Array<[string, any]>) {
         if (typeof meta !== `object` || meta === null) {
           errors.push(new Error(`Invalid meta field for '${pattern}`));
           continue;
@@ -371,21 +371,45 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const dependencyMeta = this.ensureDependencyMeta(descriptor);
 
-        Object.assign(dependencyMeta, meta);
+        const built = tryParseOptionalBoolean(meta.built, {yamlCompatibilityMode});
+        if (built === null) {
+          errors.push(new Error(`Invalid built meta field for '${pattern}'`));
+          continue;
+        }
+
+        const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
+        if (optional === null) {
+          errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
+          continue;
+        }
+
+        const unplugged = tryParseOptionalBoolean(meta.unplugged, {yamlCompatibilityMode});
+        if (unplugged === null) {
+          errors.push(new Error(`Invalid unplugged meta field for '${pattern}'`));
+          continue;
+        }
+
+        Object.assign(dependencyMeta, {built, optional, unplugged});
       }
     }
 
     if (typeof data.peerDependenciesMeta === `object` && data.peerDependenciesMeta !== null) {
-      for (const [pattern, meta] of Object.entries(data.peerDependenciesMeta)) {
+      for (const [pattern, meta] of Object.entries(data.peerDependenciesMeta) as Array<[string, any]>) {
         if (typeof meta !== `object` || meta === null) {
-          errors.push(new Error(`Invalid meta field for '${pattern}`));
+          errors.push(new Error(`Invalid meta field for '${pattern}'`));
           continue;
         }
 
         const descriptor = structUtils.parseDescriptor(pattern);
         const peerDependencyMeta = this.ensurePeerDependencyMeta(descriptor);
 
-        Object.assign(peerDependencyMeta, meta);
+        const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
+        if (optional === null) {
+          errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
+          continue;
+        }
+
+        Object.assign(peerDependencyMeta, {optional});
       }
     }
 
@@ -876,4 +900,14 @@ function stripBOM(content: string) {
 
 function normalizeSlashes(str: string) {
   return str.replace(/\\/g, `/`) as PortablePath;
+}
+
+function tryParseOptionalBoolean(value: unknown, {yamlCompatibilityMode}: {yamlCompatibilityMode: boolean}) {
+  if (yamlCompatibilityMode)
+    return miscUtils.tryParseOptionalBoolean(value);
+
+  if (typeof value === `undefined` || typeof value === `boolean`)
+    return value;
+
+  return null;
 }

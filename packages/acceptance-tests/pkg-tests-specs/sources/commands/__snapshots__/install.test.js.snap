@@ -4,7 +4,7 @@ exports[`Commands install displays validation issues of nested workspaces 1`] = 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Validation step
+  "stdout": "➤ YN0000: ┌ Project validation
 ➤ YN0057: │ package-a-ddd35d: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
@@ -53,7 +53,7 @@ exports[`Commands install reports warning if published binary field is a path bu
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Validation step
+  "stdout": "➤ YN0000: ┌ Project validation
 ➤ YN0057: │ root-workspace-0b6124: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step

@@ -69,7 +69,9 @@ export enum MessageName {
   FROZEN_ARTIFACT_EXCEPTION = 64,
   TELEMETRY_NOTICE = 65,
   PATCH_HUNK_FAILED = 66,
-  INVALID_CONFIGURATION_VALUE = 67
+  INVALID_CONFIGURATION_VALUE = 67,
+  UNUSED_PACKAGE_EXTENSION = 68,
+  REDUNDANT_PACKAGE_EXTENSION = 69,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

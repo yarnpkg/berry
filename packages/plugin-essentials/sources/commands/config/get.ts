@@ -1,8 +1,8 @@
-import {BaseCommand}                 from '@yarnpkg/cli';
-import {Configuration, StreamReport} from '@yarnpkg/core';
-import {Command, Usage, UsageError}  from 'clipanion';
-import getPath                       from 'lodash/get';
-import {inspect}                     from 'util';
+import {BaseCommand}                            from '@yarnpkg/cli';
+import {Configuration, StreamReport, miscUtils} from '@yarnpkg/core';
+import {Command, Usage, UsageError}             from 'clipanion';
+import getPath                                  from 'lodash/get';
+import {inspect}                                from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
@@ -56,7 +56,7 @@ export default class ConfigSetCommand extends BaseCommand {
       getNativePaths: true,
     });
 
-    const asObject = convertMapsToObjects(displayedValue);
+    const asObject = miscUtils.convertMapsToIndexableObjects(displayedValue);
     const requestedObject = path
       ? getPath(asObject, path)
       : asObject;
@@ -88,23 +88,4 @@ export default class ConfigSetCommand extends BaseCommand {
 
     return report.exitCode();
   }
-}
-
-/**
- * Converts `Maps` to `Objects` recursively.
- */
-export function convertMapsToObjects(arg: unknown): unknown {
-  if (arg instanceof Map)
-    arg = Object.fromEntries(arg);
-
-  if (typeof arg === `object` && arg !== null) {
-    for (const key of Object.keys(arg)) {
-      const value = arg[key as keyof object] as unknown;
-      if (typeof value === `object` && value !== null) {
-        (arg[key as keyof object] as unknown) = convertMapsToObjects(value);
-      }
-    }
-  }
-
-  return arg;
 }
