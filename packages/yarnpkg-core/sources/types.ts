@@ -3,117 +3,118 @@ import {PortablePath}                       from '@yarnpkg/fslib';
 import {DependencyMeta, PeerDependencyMeta} from './Manifest';
 
 /**
- * Unique hash of a package scope and name.
- *
- * Used as an identifier.
- *
- * This is a `string`, but the type exists to provide type safety.
- *
- * Example: hash of `types/lodash`
+ * Unique hash of a package descriptor. Used as key in various places so that
+ * two descriptors can be quickly compared.
  */
 export type IdentHash = string & { __identHash: string };
 
 /**
- * An ident is a combination of a scope and name.
+ * Combination of a scope and name, bound with a hash suitable for comparisons.
  *
- * For example, `@types/node` would result in an Ident with a scope of `types` and a name of `node`.
+ * Use `parseIdent` to turn ident strings (`@types/node`) into the ident
+ * structure ({scope: `types`, name: `node`}), `makeIdent` to create a new one
+ * from known parameters, or `stringifyIdent` to retrieve the string as you'd
+ * see it in the `dependencies` field.
  */
 export interface Ident {
   /**
-   * Unique hash of a package scope and name, acts as an identifier.
+   * Unique hash of a package scope and name. Used as key in various places,
+   * so that two idents can be quickly compared.
    */
   identHash: IdentHash,
+
   /**
-   * Scope of the package without `@` prefix (eg. `types`), if it exists.
+   * Scope of the package, without the `@` prefix (eg. `types`).
    */
   scope: string | null,
+
   /**
-   * Name of the package (eg. `node`)
+   * Name of the package (eg. `node`).
    */
   name: string,
 }
 
 /**
- * Unique hash of a package scope, name, and version range.
- *
- * Used as an identifier.
- *
- * This is a `string`, but the type exists to provide type safety.
- *
- * Example: hash of `lodash@^1.0.0`
+ * Unique hash of a package descriptor. Used as key in various places so that
+ * two descriptors can be quickly compared.
  */
 export type DescriptorHash = string & { __descriptorHash: string };
 
 /**
- * A descriptor is a combination of a package name (for example `lodash`) and a package range (for example `^1.0.0`).
+ * Descriptors are just like idents (including their `identHash`), except that
+ * they also contain a range and an additional comparator hash.
  *
- * Descriptors are used to identify a set of packages rather than one unique package.
+ * Use `parseRange` to turn a descriptor string into this data structure,
+ * `makeDescriptor` to create a new one from an ident and a range, or
+ * `stringifyDescriptor` to generate a string representation of it.
  */
 export interface Descriptor extends Ident {
   /**
-   * Unique hash of a package scope, name and version range.
-   *
-   * Used as an identifier.
-   *
-   * Example: hash of `lodash@^1.0.0`
+   * Unique hash of a package descriptor. Used as key in various places, so
+   * that two descriptors can be quickly compared.
    */
   descriptorHash: DescriptorHash,
+
   /**
-   * The range associated with this descriptor. (eg `^1.0.0`)
+   * The range associated with this descriptor. (eg. `^1.0.0`)
    */
   range: string,
 }
 
 /**
- * Unique hash of package name (for example `lodash`) and a package reference (for example `1.2.3`).
- *
- * Used as an identifier.
- *
- * This is a `string`, but the type exists to provide type safety.
- *
- * Example: hash of `lodash@1.2.3`
+ * Unique hash of a package locator. Used as key in various places so that
+ * two locators can be quickly compared.
  */
 export type LocatorHash = string & { __locatorHash: string };
 
 /**
- * A locator is a combination of a package name (for example `lodash`) and a package reference (for example `1.2.3`).
+ * Locator are just like idents (including their `identHash`), except that
+ * they also contain a reference and an additional comparator hash. They are
+ * in this regard very similar to descriptors except that each descriptor may
+ * reference multiple valid candidate packages whereas each locators can only
+ * reference a single package.
  *
- * Locators are used to identify a single unique package.
- *
- * @remarks interestingly, all valid locators also are valid descriptors
+ * This interesting property means that each locator can be safely turned into
+ * a descriptor (using `convertLocatorToDescriptor`), but not the other way
+ * around (except in very specific cases).
  */
 export interface Locator extends Ident {
   /**
-   * Unique hash of package name (for example `lodash`) and a package reference (for example `1.2.3`).
-   *
-   * Used as an identifier.
-   *
-   * Example: hash of `lodash@1.2.3`
+   * Unique hash of a package locator. Used as key in various places so that
+   * two locators can be quickly compared.
    */
   locatorHash: LocatorHash,
 
   /**
-   * A package reference uniquely identifies a package (for example: `1.2.3`)
+   * A package reference uniquely identifies a package (eg. `1.2.3`).
    */
   reference: string,
 }
 
 /**
- * Describes the type of the file system link for a package.
+ * Describes in which capacity the linkers can manipulate the package sources.
  */
 export enum LinkType {
   /**
-   * The package manager owns the location (things within the cache)
+   * The package manager owns the location (typically things within the cache)
+   * and can transform it at will (for instance the PnP linker may decide to
+   * unplug those packages).
    */
   HARD = `HARD`,
+
   /**
-   * The package manager doesn't own the location (symlinks, workspaces, etc)
+   * The package manager doesn't own the location (symlinks, workspaces, etc),
+   * so the linkers aren't allowed to do anything with them except use them as
+   * they are.
    */
   SOFT = `SOFT`
 }
 
 /**
- * Contains information about a package, such as its version, dependencies, etc.
+ * This data structure is a valid locator (so a reference to a unique package)
+ * that went through the resolution pipeline in order to extract all the extra
+ * metadata stored on the registry. It's typically what you can find stored
+ * inside the lockfile.
  */
 export interface Package extends Locator {
   /**
@@ -122,7 +123,8 @@ export interface Package extends Locator {
   version: string | null,
 
   /**
-   * The language of the package (eg. `node`)
+   * The "language" of the package (eg. `node`), for use with multi-linkers.
+   * Currently experimental; will probably be renamed before stable release.
    */
   languageName: string,
 
@@ -132,9 +134,12 @@ export interface Package extends Locator {
   linkType: LinkType,
 
   /**
-   * A map of the package's dependencies.
+   * A map of the package's dependencies. There's no distinction between prod
+   * dependencies and dev dependencies, because those have already been merged
+   * together during the resolution process.
    */
   dependencies: Map<IdentHash, Descriptor>,
+
   /**
    * A map of the package's peer dependencies.
    */
@@ -153,7 +158,7 @@ export interface Package extends Locator {
   peerDependenciesMeta: Map<string, PeerDependencyMeta>,
 
   /**
-   * `bin` scripts defined by the package
+   * All `bin` entries  defined by the package
    *
    * While we don't need the binaries during the resolution, keeping them
    * within the lockfile is critical to make `yarn run` fast (otherwise we
