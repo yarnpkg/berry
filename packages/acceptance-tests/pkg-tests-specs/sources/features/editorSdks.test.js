@@ -147,6 +147,11 @@ describe(`Features`, () => {
             .replace(/\\/g, `/`)
             .replace(/^\/?/, `/`);
 
+          // Same thing, but this file has virtual instances.
+          const yarnpkgCli = npath.normalize(npath.join(__dirname, `../../../../yarnpkg-cli/sources/index.ts`))
+            .replace(/\\/g, `/`)
+            .replace(/^\/?/, `/`);
+
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);
 
@@ -159,6 +164,13 @@ describe(`Features`, () => {
 
           await runAndWait(`zip:${lodashTypeDir}`, {
             seq: 1,
+            type: `request`,
+            command: `typeDefinition`,
+            arguments: {file: ourUtilityFile, line: 7, offset: 9},
+          });
+
+          await runAndWait(yarnpkgCli, {
+            seq: 2,
             type: `request`,
             command: `typeDefinition`,
             arguments: {file: ourUtilityFile, line: 6, offset: 9},

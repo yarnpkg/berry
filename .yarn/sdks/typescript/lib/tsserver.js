@@ -17,20 +17,21 @@ const moduleWrapper = tsserver => {
   // doesn't understand. This layer makes sure to remove the protocol
   // before forwarding it to TS, and to add it back on all returned paths.
 
-  // We also take the opportunity to turn virtual paths into physical ones;
-  // this makes is much easier to work with workspaces that list peer
-  // dependencies, since otherwise Ctrl+Click would bring us to the virtual
-  // file instances instead of the real ones.
-
   function toVSCodePath(str) {
     // We add the `zip:` prefix to both `.zip/` paths and virtual paths
     if (isAbsolute(str) && !str.match(/^\^zip:/) && (str.match(/\.zip\//) || str.match(/\$\$virtual\//))) {
+      // We also take the opportunity to turn virtual paths into physical ones;
+      // this makes is much easier to work with workspaces that list peer
+      // dependencies, since otherwise Ctrl+Click would bring us to the virtual
+      // file instances instead of the real ones.
+      const physicalFilePath = resolveVirtual(str) || str;
+
       // Absolute VSCode `Uri.fsPath`s need to start with a slash.
       // VSCode only adds it automatically for supported schemes,
       // so we have to do it manually for the `zip` scheme.
       // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
       // https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-      return `${isVSCode ? '^' : ''}zip:${resolveVirtual(str).replace(/^\/?/, `/`)}`;
+      return `${isVSCode ? '^' : ''}zip:${physicalFilePath.replace(/^\/?/, `/`)}`;
     } else {
       return str;
     }
