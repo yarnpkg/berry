@@ -345,8 +345,11 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
 
     const env = await makeScriptEnv({project, binFolder, lifecycleScript});
 
-    for (const [binaryName, [, binaryPath]] of await getPackageAccessibleBinaries(locator, {project}))
-      await makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]);
+    await Promise.all(
+      Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
+        makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath])
+      )
+    );
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
@@ -526,8 +529,11 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
     const [, binaryPath] = binary;
     const env = await makeScriptEnv({project, binFolder});
 
-    for (const [binaryName, [, binaryPath]] of packageAccessibleBinaries)
-      await makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]);
+    await Promise.all(
+      Array.from(packageAccessibleBinaries, ([binaryName, [, binaryPath]]) =>
+        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath])
+      )
+    );
 
     let result;
     try {
