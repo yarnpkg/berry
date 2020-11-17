@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "version": "3.9.5-pnpify",
+  "version": "4.1.0-beta-pnpify",
   "main": "./lib/typescript.js",
   "type": "commonjs"
 }

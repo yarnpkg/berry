@@ -37,13 +37,19 @@ export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = 
 export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const tsServerMonkeyPatch = `
     tsserver => {
-      const {dirname, join} = require(\`path\`);
+      const {isAbsolute} = require(\`path\`);
+      const {resolveVirtual} = require(\`pnpapi\`);
 
       // VSCode sends the zip paths to TS using the "zip://" prefix, that TS
       // doesn't understand. This layer makes sure to remove the protocol
       // before forwarding it to TS, and to add it back on all returned paths.
 
-      function addZipPrefix(str) {
+      // We also take the opportunity to turn virtual paths into physical ones;
+      // this makes is much easier to work with workspaces that list peer
+      // dependencies, since otherwise Ctrl+Click would bring us to the virtual
+      // file instances instead of the real ones.
+
+      function toVSCodePath(str) {
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
         if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\$\\$virtual\\//))) {
           // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
@@ -51,46 +57,16 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // so we have to do it manually for the \`zip\` scheme.
           // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
           // https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-          return \`\${isVSCode ? '^' : ''}zip:\${str.replace(/^\\/?/, \`/\`)}\`;
+          return \`\${isVSCode ? '^' : ''}zip:\${resolveVirtual(str).replace(/^\\/?/, \`/\`)}\`;
         } else {
           return str;
         }
       }
 
-      function removeZipPrefix(str) {
+      function fromVSCodePath(str) {
         return process.platform === \`win32\`
           ? str.replace(/^\\^?zip:\\//, \`\`)
           : str.replace(/^\\^?zip:/, \`\`);
-      }
-
-      // We also downgrade virtual paths into regular ones before returning
-      // them so that ctrl+click sends us to the expected locations rather
-      // than virtual images (which would mess with file watching etc).
-      //
-      // Implementation copied from VirtualFS.ts; try to make sure they are
-      // kept in sync!
-
-      const NUMBER_REGEXP = /^[0-9]+$/;
-      const VIRTUAL_REGEXP = /^(\\/(?:[^/]+\\/)*?\\$\\$virtual)((?:\\/((?:[^/]+-)?[a-f0-9]+)(?:\\/([^/]+))?)?((?:\\/.*)?))$/;
-
-      function resolveVirtual(p: PortablePath): PortablePath {
-        const match = p.match(VIRTUAL_REGEXP);
-        if (!match || (!match[3] && match[5]))
-          return p;
-
-        const target = dirname(match[1]);
-        if (!match[3] || !match[4])
-          return target;
-
-        const isnum = NUMBER_REGEXP.test(match[4]);
-        if (!isnum)
-          return p;
-
-        const depth = Number(match[4]);
-        const backstep = \`../\`.repeat(depth);
-        const subpath = (match[5] || \`.\`);
-
-        return VirtualFS.resolveVirtual(join(target, backstep, subpath));
       }
 
       // And here is the point where we hijack the VSCode <-> TS communications
@@ -115,13 +91,13 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           }
 
           return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
-            return typeof value === \`string\` ? removeZipPrefix(value) : value;
+            return typeof value === \`string\` ? fromVSCodePath(value) : value;
           }));
         },
 
         send(/** @type {any} */ msg) {
           return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
-            return typeof value === \`string\` ? addZipPrefix(value) : value;
+            return typeof value === \`string\` ? toVSCodePath(value) : value;
           })));
         }
       });
