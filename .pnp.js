@@ -41651,13 +41651,27 @@ function hydrateRuntimeState(data, {
   const portablePath = npath.toPortablePath(basePath);
   const absolutePortablePath = ppath.resolve(portablePath);
   const ignorePattern = data.ignorePatternData !== null ? new RegExp(data.ignorePatternData) : null;
+  const packageLocatorsByLocations = new Map();
+  const packageLocationLengths = new Set();
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
+      if (packageName === null !== (packageReference === null)) throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
+
+      if (!packageInformationData.discardFromLookup) {
+        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
+        const packageLocator = {
+          name: packageName,
+          reference: packageReference
+        };
+        packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
+        packageLocationLengths.add(packageInformationData.packageLocation.length);
+      }
+
       return [packageReference, {
         // We use ppath.join instead of ppath.resolve because:
         // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
         // 2) ppath.join preserves trailing slashes
-        packageLocation: ppath.join(absolutePortablePath, packageInformationData.packageLocation),
+        packageLocation: `${absolutePortablePath}/${packageInformationData.packageLocation.slice(2)}`,
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -41665,22 +41679,6 @@ function hydrateRuntimeState(data, {
       }];
     }))];
   }));
-  const packageLocatorsByLocations = new Map();
-  const packageLocationLengths = new Set();
-
-  for (const [packageName, storeData] of data.packageRegistryData) {
-    for (const [packageReference, packageInformationData] of storeData) {
-      if (packageName === null !== (packageReference === null)) throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
-      if (packageInformationData.discardFromLookup) continue; // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-
-      const packageLocator = {
-        name: packageName,
-        reference: packageReference
-      };
-      packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
-      packageLocationLengths.add(packageInformationData.packageLocation.length);
-    }
-  }
 
   for (const location of data.locationBlacklistData) packageLocatorsByLocations.set(location, null);
 
