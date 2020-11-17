@@ -5728,6 +5728,8 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^2.3.3"
     babel-jest: ^26.0.1
     clipanion: ^2.6.2
+    esbuild: ^0.8.9
+    esbuild-plugin-pnp: ^0.3.0
     eslint: ^6.8.0
     eslint-plugin-arca: ^0.9.0
     eslint-plugin-react: ^7.20.0
@@ -11226,6 +11228,24 @@ __metadata:
     d: ^1.0.1
     ext: ^1.1.2
   checksum: 0915d72de8760b56b69ca4360276123a4f61de5a3172fe340ce9288271cf48bcebe3ee46ca8ee0f2fd73206bbbefa7c4a40a6673d278a87c97d3a155de778931
+  languageName: node
+  linkType: hard
+
+"esbuild-plugin-pnp@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "esbuild-plugin-pnp@npm:0.3.0"
+  peerDependencies:
+    esbuild: ^0.8.1
+  checksum: b80ab17bea35ab6eaf9a9adc14c52667c0a5e2c7c8c8e97194c57feb7d14b7247228745a3ad34f69447d6c5241081f38b9786948b879bf0051a479ce74450edc
+  languageName: node
+  linkType: hard
+
+"esbuild@npm:^0.8.9":
+  version: 0.8.9
+  resolution: "esbuild@npm:0.8.9"
+  bin:
+    esbuild: bin/esbuild
+  checksum: aa8b5f92b63d2bbe220dc2aad87c6cc609276789d10b012a723977ca5920f9c2641e7de5e558f3483f35f221f816da3d0b6c0d581d517e9ddbe58e638f4d5adf
   languageName: node
   linkType: hard
 

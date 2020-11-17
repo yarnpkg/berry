@@ -14,7 +14,7 @@
     "declaration": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "exclude": [
     "packages/*/lib",

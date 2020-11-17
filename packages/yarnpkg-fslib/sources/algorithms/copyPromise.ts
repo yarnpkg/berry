@@ -137,7 +137,7 @@ async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations,
     }
   }
 
-  const op = destinationFs as any === sourceFs as any
+  const op = (destinationFs as any === sourceFs as any)
     ? async () => destinationFs.copyFilePromise(source as any as P1, destination, fs.constants.COPYFILE_FICLONE)
     : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
 
