@@ -77,6 +77,7 @@ build({
   bundle: true,
   outfile: `out.js`,
   plugins: [valLoader, pnpPlugin],
+  minify: true,
 }).catch(err => {
   console.log(err);
   process.exit(1);

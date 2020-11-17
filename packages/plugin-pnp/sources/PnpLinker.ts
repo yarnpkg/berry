@@ -1,13 +1,13 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                        from '@yarnpkg/core';
-import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
+import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                        from '@yarnpkg/core';
 import {CwdFS, PortablePath, npath, ppath, xfs, Filename}                                                    from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpSettings}                            from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
-import {getPnpPath}                                                                                          from './index';
 import * as jsInstallUtils                                                                                   from './jsInstallUtils';
 import * as pnpUtils                                                                                         from './pnpUtils';
+import {getPnpPath}                                                                                          from './tools';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
