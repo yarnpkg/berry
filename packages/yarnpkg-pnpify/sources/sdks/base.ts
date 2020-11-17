@@ -37,40 +37,11 @@ export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = 
 export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const tsServerMonkeyPatch = `
     tsserver => {
+      const {dirname, join} = require(\`path\`);
+
       // VSCode sends the zip paths to TS using the "zip://" prefix, that TS
       // doesn't understand. This layer makes sure to remove the protocol
       // before forwarding it to TS, and to add it back on all returned paths.
-
-      const {isAbsolute} = require(\`path\`);
-
-      const Session = tsserver.server.Session;
-      const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
-      let isVSCode = false;
-
-      return Object.assign(Session.prototype, {
-        onMessage(/** @type {string} */ message) {
-          const parsedMessage = JSON.parse(message)
-
-          if (
-            parsedMessage != null &&
-            typeof parsedMessage === 'object' &&
-            parsedMessage.arguments &&
-            parsedMessage.arguments.hostInfo === 'vscode'
-          ) {
-            isVSCode = true;
-          }
-
-          return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
-            return typeof value === 'string' ? removeZipPrefix(value) : value;
-          }));
-        },
-
-        send(/** @type {any} */ msg) {
-          return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
-            return typeof value === 'string' ? addZipPrefix(value) : value;
-          })));
-        }
-      });
 
       function addZipPrefix(str) {
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
@@ -87,10 +58,73 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       }
 
       function removeZipPrefix(str) {
-        return process.platform === 'win32'
+        return process.platform === \`win32\`
           ? str.replace(/^\\^?zip:\\//, \`\`)
           : str.replace(/^\\^?zip:/, \`\`);
       }
+
+      // We also downgrade virtual paths into regular ones before returning
+      // them so that ctrl+click sends us to the expected locations rather
+      // than virtual images (which would mess with file watching etc).
+      //
+      // Implementation copied from VirtualFS.ts; try to make sure they are
+      // kept in sync!
+
+      const NUMBER_REGEXP = /^[0-9]+$/;
+      const VIRTUAL_REGEXP = /^(\\/(?:[^/]+\\/)*?\\$\\$virtual)((?:\\/((?:[^/]+-)?[a-f0-9]+)(?:\\/([^/]+))?)?((?:\\/.*)?))$/;
+
+      function resolveVirtual(p: PortablePath): PortablePath {
+        const match = p.match(VIRTUAL_REGEXP);
+        if (!match || (!match[3] && match[5]))
+          return p;
+
+        const target = dirname(match[1]);
+        if (!match[3] || !match[4])
+          return target;
+
+        const isnum = NUMBER_REGEXP.test(match[4]);
+        if (!isnum)
+          return p;
+
+        const depth = Number(match[4]);
+        const backstep = \`../\`.repeat(depth);
+        const subpath = (match[5] || \`.\`);
+
+        return VirtualFS.resolveVirtual(join(target, backstep, subpath));
+      }
+
+      // And here is the point where we hijack the VSCode <-> TS communications
+      // by adding ourselves in the middle. We locate everything that looks
+      // like an absolute path of ours and normalize it.
+
+      const Session = tsserver.server.Session;
+      const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
+      let isVSCode = false;
+
+      return Object.assign(Session.prototype, {
+        onMessage(/** @type {string} */ message) {
+          const parsedMessage = JSON.parse(message)
+
+          if (
+            parsedMessage != null &&
+            typeof parsedMessage === \`object\` &&
+            parsedMessage.arguments &&
+            parsedMessage.arguments.hostInfo === \`vscode\`
+          ) {
+            isVSCode = true;
+          }
+
+          return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
+            return typeof value === \`string\` ? removeZipPrefix(value) : value;
+          }));
+        },
+
+        send(/** @type {any} */ msg) {
+          return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
+            return typeof value === \`string\` ? addZipPrefix(value) : value;
+          })));
+        }
+      });
     };
   `;
 
