@@ -137,6 +137,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     const orig = target[name];
     target[name] = replacement;
 
+    // Preserve any util.promisify implementations
     if (typeof orig?.[promisify.custom] !== `undefined`) {
       replacement[promisify.custom] = orig[promisify.custom];
     }
@@ -283,6 +284,19 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
       // `fs.promises.realpath` doesn't have a `native` property
     }
+  }
+
+  /** util.promisify implementations */
+  {
+    // Override the promisified version of `fs.read` to return an object as per
+    // https://github.com/nodejs/node/blob/dc79f3f37caf6f25b8efee4623bec31e2c20f595/lib/fs.js#L559-L560
+    // and
+    // https://github.com/nodejs/node/blob/ba684805b6c0eded76e5cd89ee00328ac7a59365/lib/internal/util.js#L293
+    // @ts-expect-error
+    patchedFs.read[promisify.custom] = async (p: number, buffer: Buffer, ...args: Array<any>) => {
+      const res = fakeFs.readPromise(p, buffer, ...args);
+      return {bytesRead: await res, buffer};
+    };
   }
 }
 
