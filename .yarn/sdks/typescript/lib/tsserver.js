@@ -25,7 +25,7 @@ const moduleWrapper = tsserver => {
       // dependencies, since otherwise Ctrl+Click would bring us to the virtual
       // file instances instead of the real ones.
       const physicalFilePath = (resolveVirtual(str) || str)
-        .replace(/\//g, `/`)
+        .replace(/\\/g, `/`)
         .replace(/^\/?/, `/`);
 
       // Absolute VSCode `Uri.fsPath`s need to start with a slash.
