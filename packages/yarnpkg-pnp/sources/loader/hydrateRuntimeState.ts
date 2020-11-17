@@ -31,9 +31,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       }
 
       return [packageReference, {
-        // The packageLocation is relative and starts with `./`
-        // inlined because this is more performant than `ppath.join`
-        packageLocation: `${absolutePortablePath}/${packageInformationData.packageLocation.slice(2)}`,
+        packageLocation: fastPathJoin(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -65,4 +63,13 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     packageLocatorsByLocations,
     packageRegistry,
   };
+}
+
+function fastPathJoin(base: PortablePath, relative: PortablePath) {
+  // short circuit the call if we can just concat the paths
+  if (relative.startsWith(`./`) && relative.indexOf(`..`) === -1) {
+    return `${base}/${relative.slice(2)}`;
+  } else {
+    return ppath.join(base, relative);
+  }
 }

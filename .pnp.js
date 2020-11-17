@@ -41668,10 +41668,7 @@ function hydrateRuntimeState(data, {
       }
 
       return [packageReference, {
-        // We use ppath.join instead of ppath.resolve because:
-        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
-        // 2) ppath.join preserves trailing slashes
-        packageLocation: `${absolutePortablePath}/${packageInformationData.packageLocation.slice(2)}`,
+        packageLocation: fastPathJoin(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -41699,6 +41696,14 @@ function hydrateRuntimeState(data, {
     packageLocatorsByLocations,
     packageRegistry
   };
+}
+
+function fastPathJoin(base, relative) {
+  if (relative.startsWith("./") && relative.indexOf("..") === -1) {
+    return `${base}/${relative.slice(2)}`;
+  } else {
+    return ppath.join(base, relative);
+  }
 }
 // CONCATENATED MODULE: ./sources/loader/makeApi.ts
 
