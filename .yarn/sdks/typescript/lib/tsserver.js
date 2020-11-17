@@ -17,7 +17,7 @@ const moduleWrapper = tsserver => {
   // doesn't understand. This layer makes sure to remove the protocol
   // before forwarding it to TS, and to add it back on all returned paths.
 
-  function toVSCodePath(str) {
+  function toEditorPath(str) {
     // We add the `zip:` prefix to both `.zip/` paths and virtual paths
     if (isAbsolute(str) && !str.match(/^\^zip:/) && (str.match(/\.zip\//) || str.match(/\$\$virtual\//))) {
       // We also take the opportunity to turn virtual paths into physical ones;
@@ -37,7 +37,7 @@ const moduleWrapper = tsserver => {
     }
   }
 
-  function fromVSCodePath(str) {
+  function fromEditorPath(str) {
     return process.platform === `win32`
       ? str.replace(/^\^?zip:\//, ``)
       : str.replace(/^\^?zip:/, ``);
@@ -65,13 +65,13 @@ const moduleWrapper = tsserver => {
       }
 
       return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
-        return typeof value === `string` ? fromVSCodePath(value) : value;
+        return typeof value === `string` ? fromEditorPath(value) : value;
       }));
     },
 
     send(/** @type {any} */ msg) {
       return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
-        return typeof value === `string` ? toVSCodePath(value) : value;
+        return typeof value === `string` ? toEditorPath(value) : value;
       })));
     }
   });
