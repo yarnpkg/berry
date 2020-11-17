@@ -23,7 +23,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
 
       if (!packageInformationData.discardFromLookup) {
-      // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
+        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
         const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
         packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
 
@@ -31,9 +31,8 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       }
 
       return [packageReference, {
-        // We use ppath.join instead of ppath.resolve because:
-        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
-        // 2) ppath.join preserves trailing slashes
+        // The packageLocation is relative and starts with `./`
+        // inlined because this is more performant than `ppath.join`
         packageLocation: `${absolutePortablePath}/${packageInformationData.packageLocation.slice(2)}`,
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
