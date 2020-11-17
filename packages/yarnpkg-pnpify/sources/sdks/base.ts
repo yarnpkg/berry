@@ -51,14 +51,16 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // this makes is much easier to work with workspaces that list peer
           // dependencies, since otherwise Ctrl+Click would bring us to the virtual
           // file instances instead of the real ones.
-          const physicalFilePath = resolveVirtual(str) || str;
+          const physicalFilePath = (resolveVirtual(str) || str)
+            .replace(/\\/g, \`/\`)
+            .replace(/^\\/?/, \`/\`);
 
           // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
           // VSCode only adds it automatically for supported schemes,
           // so we have to do it manually for the \`zip\` scheme.
           // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
           // https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-          return \`\${isVSCode ? '^' : ''}zip:\${physicalFilePath.replace(/^\\/?/, \`/\`)}\`;
+          return \`\${isVSCode ? '^' : ''}zip:\${physicalFilePath}\`;
         } else {
           return str;
         }
