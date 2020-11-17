@@ -94,6 +94,39 @@ Object {
 }
 `;
 
+exports[`Commands workspace foreach should run colon scripts from other workspaces 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A Colon
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach should run colon scripts from other workspaces with correct INIT CWD 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: ➤ YN0000: /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a /private/var/folders/2g/yhlpschd00n71jykx6bgbp1w0000gn/T/xfs-eb77d93b/packages/workspace-a/
+➤ YN0000: ➤ YN0000: Done
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
 Object {
   "code": 0,

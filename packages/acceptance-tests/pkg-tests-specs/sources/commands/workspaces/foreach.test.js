@@ -16,6 +16,9 @@ async function setupWorkspaces(path) {
       print: `echo Test Workspace A`,
       start: `node server.js`,
       testExit: `exit 0`,
+      "test:colon": `echo Test Workspace A Colon`,
+      "test:foo": `yarn workspaces foreach run test:bar`,
+      "test:bar": `echo $INIT_CWD $PWD $(env PWD)`,
     },
   });
 
@@ -410,6 +413,58 @@ describe(`Commands`, () => {
           }
 
           expect(code).toBe(1);
+        }
+      )
+    );
+
+    test(
+      `should run colon scripts from other workspaces`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`, {cwd: `${path}/packages/workspace-b`}));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should run colon scripts from other workspaces with correct INIT CWD`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `test:foo`, {cwd: `${path}`}));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
         }
       )
     );
