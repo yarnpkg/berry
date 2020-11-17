@@ -20912,6 +20912,7 @@ fsevents@^1.2.7:
   dependencies:
     "@types/lodash": ^4.14.136
     "@types/tar": ^4.0.0
+    "@yarnpkg/cli": "workspace:^2.3.3"
     "@yarnpkg/core": "workspace:^2.3.1"
     "@yarnpkg/fslib": "workspace:^2.3.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"

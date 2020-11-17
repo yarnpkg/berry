@@ -27465,6 +27465,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pkg-tests-specs", "workspace:packages/acceptance-tests/pkg-tests-specs"],
             ["@types/lodash", "npm:4.14.136"],
             ["@types/tar", "npm:4.0.0"],
+            ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/monorepo", "workspace:."],
