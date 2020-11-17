@@ -1,4 +1,5 @@
 import fs                       from 'fs';
+import {promisify}              from 'util';
 
 import {NodeFS}                 from '../sources/NodeFS';
 import {PosixFS}                from '../sources/PosixFS';
@@ -38,5 +39,21 @@ describe(`patchedFs`, () => {
       expect(exists).toBe(false);
       done();
     });
+  });
+
+  it(`matches the util.promisify return shape of node: fs.read`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+    const patchedFsReadAsync = promisify(patchedFs.read);
+
+    const file = ppath.join(npath.toPortablePath(__dirname), `patchedFs.test.ts` as Filename);
+
+    const fd = fs.openSync(file, `r`);
+
+    const bufferFs = Buffer.alloc(16);
+
+    const result = await patchedFsReadAsync(fd, bufferFs, 0, 16, 0);
+
+    expect(typeof result.bytesRead).toBe(`number`);
+    expect(Buffer.isBuffer(result.buffer)).toBeTruthy();
   });
 });
