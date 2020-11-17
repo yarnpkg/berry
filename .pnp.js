@@ -41699,7 +41699,8 @@ function hydrateRuntimeState(data, {
 }
 
 function fastPathJoin(base, relative) {
-  if (relative.startsWith("./") && relative.indexOf("..") === -1) {
+  // short circuit the call if we can just concat the paths
+  if (relative.startsWith(`./`) && relative.indexOf(`..`) === -1) {
     return `${base}/${relative.slice(2)}`;
   } else {
     return ppath.join(base, relative);
