@@ -323,7 +323,7 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
 }
 
 export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
-  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?-?(?<fallback>[^}]+)?}/g;
+  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
 
   return value.replace(regex, (...args) => {
     const {variableName, colon, fallback} = args[args.length - 1];
@@ -333,11 +333,9 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
 
     if (variableValue)
       return variableValue;
-    if (variableExist && !variableValue && colon)
-      return fallback;
-    if (variableExist)
+    if (variableExist && !colon)
       return variableValue;
-    if (fallback)
+    if (fallback != null)
       return fallback;
 
     throw new UsageError(`Environment variable not found (${variableName})`);
