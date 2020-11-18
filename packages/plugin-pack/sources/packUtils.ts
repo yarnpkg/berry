@@ -117,6 +117,8 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         pack.entry({...opts, mode, type: `file`}, content, cb);
       } else if (stat.isSymbolicLink()) {
         pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+      } else {
+        cb(null);
       }
 
       await awaitTarget;
