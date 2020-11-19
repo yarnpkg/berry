@@ -1,5 +1,3 @@
-import {npath} from '@yarnpkg/fslib';
-
 const {
   fs: {writeJson, writeFile},
 } = require(`pkg-tests-core`);
