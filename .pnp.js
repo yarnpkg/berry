@@ -41680,10 +41680,7 @@ function hydrateRuntimeState(data, {
           // We use ppath.join instead of ppath.resolve because:
           // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
           // 2) ppath.join preserves trailing slashes
-          if (this._packageLocation === undefined) {
-            this._packageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation);
-          }
-
+          if (this._packageLocation === undefined) this._packageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation);
           return this._packageLocation;
         }
 

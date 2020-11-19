@@ -1,6 +1,6 @@
-import {PortablePath, npath, ppath}                                                              from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                          from '@yarnpkg/fslib';
 
-import {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
+import {PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
 
 export type HydrateRuntimeStateOptions = {
   basePath: string,
@@ -24,7 +24,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
 
       if (!packageInformationData.discardFromLookup) {
         // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-        const packageLocator: PhysicalPackageLocator = { name: packageName, reference: packageReference };
+        const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
         packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
 
         packageLocationLengths.add(packageInformationData.packageLocation.length);
@@ -43,11 +43,11 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
           // We use ppath.join instead of ppath.resolve because:
           // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
           // 2) ppath.join preserves trailing slashes
-          if (this._packageLocation === undefined) {
+          if (this._packageLocation === undefined)
             this._packageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation);
-          }
-          return this._packageLocation
-        }
+
+          return this._packageLocation;
+        },
       };
 
       return [packageReference, packageInformation];
