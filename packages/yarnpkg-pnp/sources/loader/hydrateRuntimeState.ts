@@ -24,24 +24,33 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
 
       if (!packageInformationData.discardFromLookup) {
         // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-        const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
+        const packageLocator: PhysicalPackageLocator = { name: packageName, reference: packageReference };
         packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
 
         packageLocationLengths.add(packageInformationData.packageLocation.length);
       }
 
-      return [packageReference, {
-        // We use ppath.join instead of ppath.resolve because:
-        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
-        // 2) ppath.join preserves trailing slashes
-        // Future optimization note: `ppath.join()` is an expensive call, bypassing it
-        // can reduce pnp hook boot-speed by a few milliseconds (10-50ms)
-        packageLocation: ppath.join(absolutePortablePath, packageInformationData.packageLocation),
+      const packageInformation = {
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
         discardFromLookup: packageInformationData.discardFromLookup || false,
-      }] as [string | null, PackageInformation<PortablePath>];
+        _packageLocation: undefined as PortablePath | undefined,
+
+        // we only need this computed for packages that are used by the running script
+        // this is a lazy getter because `ppath.join` has some overhead
+        get packageLocation() {
+          // We use ppath.join instead of ppath.resolve because:
+          // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+          // 2) ppath.join preserves trailing slashes
+          if (this._packageLocation === undefined) {
+            this._packageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation);
+          }
+          return this._packageLocation
+        }
+      };
+
+      return [packageReference, packageInformation] as [string | null, PackageInformation<PortablePath>];
     }))] as [string | null, PackageStore];
   }));
 
