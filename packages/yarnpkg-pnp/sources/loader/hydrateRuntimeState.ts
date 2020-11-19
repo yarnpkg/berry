@@ -37,7 +37,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         discardFromLookup: packageInformationData.discardFromLookup || false,
         _packageLocation: undefined as PortablePath | undefined,
 
-        // we only need this computed for packages that are used by the running script
+        // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {
           // We use ppath.join instead of ppath.resolve because:
