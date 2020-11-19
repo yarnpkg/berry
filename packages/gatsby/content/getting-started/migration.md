@@ -7,54 +7,47 @@ description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) t
 
 Yarn v2 is a very different software from the v1. While one of our goals is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
 
-**Important note:** This isn't a step-by-step guide. The best way to migrate is just to upgrade Yarn and see whether everything works. If it doesn't, go back to this guide and look for more context on the error you got. Most steps here aren't needed for most projects - we just tried to document all the tips that you could find handy if something breaks!
-
 ```toc
 # This code block gets replaced with the Table of Contents
 ```
 
+## Why should you migrate?
+
+We answer this question in details [here](https://yarnpkg.com/getting-started/qa#why-should-you-upgrade-to-yarn-modern).
+
+Put simply, there are very few reasons not to upgrade. Even if you don't use Plug'n'Play nor plan to use it, your project will still benefit from more stable `node_modules` layouts, improved performances, improved user experience, active development, and many other boons.
+
 ## Step by step
 
-In general, an upgrade can take from five minutes to a couple of hours, depending on the complexity of the project.
+The following guide assumes that your project **doesn't** use [Plug'n'Play](/features/pnp) yet. If you do it's mostly the same process, except that you don't need to configure the linker. Congrats!
 
 1. Run `npm install -g yarn` to update the global yarn version to latest v1
-2. Go to project directory and perform the below steps
+2. Go into your project directory
 3. Run `yarn set version berry` to enable v2 (cf [Install](/getting-started/install) for more details)
-4. Decide whether you want [Zero-Installs](/features/zero-installs) or not, and [configure the gitignore](/getting-started/qa#which-files-should-be-gitignored) accordingly
-5. If you relied on any settings from `.npmrc` or `.yarnrc`, you'll need to replicate those into the [new format](/configuration/yarnrc)
-6. Commit the changes so far (`berry.js`, `.yarnrc.yml`, ...)
+4. If you used `.npmrc` or `.yarnrc`, you'll need to turn them into the [new format](/configuration/yarnrc) (see also [1](/getting-started/migration#update-your-configuration-to-the-new-settings), [2](https://yarnpkg.com/getting-started/migration#dont-use-npmrc-files))
+5. Add [`nodeLinker: node-modules`](/configuration/yarnrc#nodeLinker) in your `.yarnrc.yml` file
+6. Commit the changes so far (`yarn-X.Y.Z.js`, `.yarnrc.yml`, ...)
 7. Run `yarn install` to migrate the lockfile
-8. Commit the new changes (including the cache if you chose to use Zero-Installs)
+8. Take a look at [this article](/getting-started/qa#which-files-should-be-gitignored) to see what should be gitignored
+9. Commit everything remaining
 
-If you're using VSCode (or some other IDE with Intellisense-like feature):
+Some optional features are available via external plugins (you can build your own too!):
 
-8. Run `yarn dlx @yarnpkg/pnpify --sdk vscode` to add TypeScript support (cf [Editor SDKs](/getting-started/editor-sdks) for more details)
-9. Commit the changes if you want to avoid asking your contributors to run this step, or gitignore them otherwise
-10. Don't forget to switch the TypeScript version to "workspace" in VSCode
-
-Bonus ring:
-
-11. Run `yarn plugin import interactive-tools` if you want the [`upgrade-interactive`](/cli/upgrade-interactive) command
-12. Run `yarn plugin list` to see what other official plugins exist and might be useful
+11. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
+12. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
 13. Commit the yarn plugins
 
-Now you have a working yarn v2 setup, but your repository might still need some extra care. Some things you'll need to change:
+Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts)), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
 
-- There is no `node_modules` folder and no `.bin` folder. If you relied on these, [call `yarn run` instead](##call-binaries-using-yarn-run-rather-than-node_modulesbin).
-- Replace any calls to `node` that are not inside a Yarn script with `yarn node`
-- Custom pre-hooks (e.g. prestart) need to be called manually now
+## Switching to Plug'n'Play
 
-All of this and more is documented in the following sections. In general, we advise you at this point to try to run your application and see what breaks, then check here to find out tips on how to correct your install.
+This step is completely optional - while we recommend to use Plug'n'Play for most new projects, it may sometimes require an average time investment to enable it on existing projects. For this reason, we prefer to list it here as a separate step that you can look into if you're curious or simply want the absolute best of what Yarn has to offer.
 
-## General Advices
+### Before we start
 
-### Upgrade to Node 10+
+Plug'n'Play enforces strict dependency rules. In particular, you'll hit problems if you (or your dependencies) rely on unlisted dependencies (the reasons for that are detailed in our [Rulebook](/advanced/rulebook)), but the gist is that it was the cause of many "project doesn't work on my computer" issues, both in Yarn and other package managers).
 
-Yarn doesn't support Node 8 anymore, as it's reached its end of life in December and won't receive any further update.
-
-### Run the doctor
-
-Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to quickly get an overview of potential issues found in your codebase. For example here's what `webpack-dev-server` would reveal:
+To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could result in a subpar experience. For example here's what `webpack-dev-server` would reveal:
 
 ```
 ➤ YN0000: Found 1 package(s) to process
@@ -69,7 +62,50 @@ Run `npx @yarnpkg/doctor .` (or `yarn dlx @yarnpkg/doctor .`) in your project to
 ➤ YN0000: Failed with errors in 5.12s
 ```
 
-Note that the doctor is intended to report any potential issue - it's then up to you to decide whether they are a false positive or not (for example it won't traverse Git repositories). For this reason we don't recommend using it as a CI tool.
+In this case, the doctor noticed that:
+
+- `testSequencer.js` depends on a package without listing it as a proper dependency - which would be reported as an error at runtime under Plug'n'Play.
+
+- `webpack.config.js` references a loader without passing its name to `require.resolve` - which is unsafe, as it means the loader won't be loaded from `webpack-dev-server`'s dependencies.
+
+- `contentBase-option.test.js` checks the content of the `node_modules` folder - which wouldn't exist anymore under Plug'n'Play.
+
+### Enabling it
+
+1. Look into your `.yarnrc.yml` file for the [`nodeLinker`](/configuration/yarnrc#nodeLinker) setting
+2. If you don't find it, or if it's set to `pnp`, then it's all good: you're already using Plug'n'Play!
+3. Otherwise, remove it from your configuration file
+4. Run `yarn install`
+5. Various files may have appeared; check [this article](/getting-started/qa#which-files-should-be-gitignored) to see what to put in your gitignore
+6. Commit the changes
+
+### Editor support
+
+We have a [dedicated documentation](/getting-started/editor-sdks), but if you're using VSCode (or some other IDE with Intellisense-like feature) the gist is:
+
+1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode extension
+2. Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the *top level* of the project (rather than in a random workspace)
+3. Run `yarn dlx @yarnpkg/pnpify --sdk vscode`
+4. Commit the changes - this way contributors won't have to follow the same procedure
+5. For TypeScript, don't forget to select [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript) in VSCode
+
+### Final notes
+
+Now you should have a working Yarn Plug'n'Play setup, but your repository might still need some extra care. Some things to keep in mind:
+
+- There is no `node_modules` folder and no `.bin` folder. If you relied on these, [call `yarn run` instead](##call-binaries-using-yarn-run-rather-than-node_modulesbin).
+- Replace any calls to `node` that are not inside a Yarn script with `yarn node`
+- Custom pre-hooks (e.g. prestart) need to be called manually now
+
+All of this and more is documented in the following sections. In general, we advise you at this point to try to run your application and see what breaks, then check here to find out tips on how to correct your install.
+
+## General Advices
+
+### Upgrade to Node 10.19 or newer
+
+Node 8 reached its official End of Life in December 2019 and won't receive any further update. Yarn consequently doesn't support it anymore.
+
+Note that Node 10 itself will reach its own End of Life on May 2021, so support for it will likely be removed from Yarn 3. As a result we recommend upgrading to Node 12 or 14 whenever you can.
 
 ### Fix dependencies with `packageExtensions`
 
