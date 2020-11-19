@@ -37,7 +37,7 @@ Some optional features are available via external plugins (you can build your ow
 12. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
 13. Commit the yarn plugins
 
-Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts)), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](http://localhost:8000/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
+Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts)), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
 
 ## Switching to Plug'n'Play
 
@@ -47,7 +47,7 @@ This step is completely optional - while we recommend to use Plug'n'Play for mos
 
 Plug'n'Play enforces strict dependency rules. In particular, you'll hit problems if you (or your dependencies) rely on unlisted dependencies (the reasons for that are detailed in our [Rulebook](/advanced/rulebook)), but the gist is that it was the cause of many "project doesn't work on my computer" issues, both in Yarn and other package managers).
 
-To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could lead in a subpar experience. For example here's what `webpack-dev-server` would reveal:
+To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could result in a subpar experience. For example here's what `webpack-dev-server` would reveal:
 
 ```
 ➤ YN0000: Found 1 package(s) to process
@@ -103,7 +103,7 @@ All of this and more is documented in the following sections. In general, we adv
 
 ### Upgrade to Node 10.19 or newer
 
-Node 8 reached its official End of Life in December and won't receive any further update. Yarn consequently doesn't support it anymore.
+Node 8 reached its official End of Life in December 2019 and won't receive any further update. Yarn consequently doesn't support it anymore.
 
 Note that Node 10 itself will reach its own End of Life on May 2021, so support for it will likely be removed from Yarn 3. As a result we recommend upgrading to Node 12 or 14 whenever you can.
 
