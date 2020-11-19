@@ -1,11 +1,11 @@
-import {Report, Workspace, scriptUtils}                     from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                from '@yarnpkg/plugin-stage';
-import mm                                                   from 'micromatch';
-import tar                                                  from 'tar-stream';
-import {createGzip}                                         from 'zlib';
+import {Report, Workspace, scriptUtils}                            from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                       from '@yarnpkg/plugin-stage';
+import mm                                                          from 'micromatch';
+import tar                                                         from 'tar-stream';
+import {createGzip}                                                from 'zlib';
 
-import {Hooks}                                              from './';
+import {Hooks}                                                     from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -118,7 +118,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       } else if (stat.isSymbolicLink()) {
         pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
       } else {
-        cb(null);
+        cb(new Error(`Unsupported file type ${stat.mode} for ${npath.fromPortablePath(file)}`));
       }
 
       await awaitTarget;
@@ -281,7 +281,7 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
       for (const entry of entries) {
         cwdList.push([ppath.resolve(cwd, entry), nextIgnoreLists]);
       }
-    } else {
+    } else if (stat.isFile() || stat.isSymbolicLink()) {
       list.push(ppath.relative(PortablePath.root, cwd));
     }
   }
