@@ -47,7 +47,7 @@ This step is completely optional - while we recommend to use Plug'n'Play for mos
 
 Plug'n'Play enforces strict dependency rules. In particular, you'll hit problems if you (or your dependencies) rely on unlisted dependencies (the reasons for that are detailed in our [Rulebook](/advanced/rulebook)), but the gist is that it was the cause of many "project doesn't work on my computer" issues, both in Yarn and other package managers).
 
-To quickly detect which places may rely on unsafe patterns, run `npx @yarnpkg/doctor` (or `yarn dlx @yarnpkg/doctor`) in your project - it'll statically analyze your sources to try to locate all the most common issues that could lead in a subpar experience. For example here's what `webpack-dev-server` would reveal:
+To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could lead in a subpar experience. For example here's what `webpack-dev-server` would reveal:
 
 ```
 ➤ YN0000: Found 1 package(s) to process
@@ -62,7 +62,13 @@ To quickly detect which places may rely on unsafe patterns, run `npx @yarnpkg/do
 ➤ YN0000: Failed with errors in 5.12s
 ```
 
-In this case, the doctor noticed that `testSequencer.js` depends on a package without listing it as a proper dependency, that `webpack.config.js` was using a loader name without passing to `require.resolve` (which is unsafe, as it means the loader won't actually be loaded from `webpack-dev-server`'s dependencies), and that a test checks the content of the `node_modules` folder (which doesn't exist anymore).
+In this case, the doctor noticed that:
+
+- `testSequencer.js` depends on a package without listing it as a proper dependency - which would be reported as an error at runtime under Plug'n'Play.
+
+- `webpack.config.js` references a loader without passing its name to `require.resolve` - which is unsafe, as it means the loader won't be loaded from `webpack-dev-server`'s dependencies.
+
+- `contentBase-option.test.js` checks the content of the `node_modules` folder - which wouldn't exist anymore under Plug'n'Play.
 
 ### Enabling it
 
@@ -80,7 +86,7 @@ We have a [dedicated documentation](/getting-started/editor-sdks), but if you're
 1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode extension
 2. Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the *top level* of the project (rather than in a random workspace)
 3. Run `yarn dlx @yarnpkg/pnpify --sdk vscode`
-4. Optionally commit the changes to avoid your contributors having to follow the same procedure
+4. Commit the changes - this way contributors won't have to follow the same procedure
 5. For TypeScript, don't forget to select [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript) in VSCode
 
 ### Final notes
@@ -95,9 +101,11 @@ All of this and more is documented in the following sections. In general, we adv
 
 ## General Advices
 
-### Upgrade to Node 10+
+### Upgrade to Node 10.19 or newer
 
-Yarn doesn't support Node 8 anymore, as it's reached its end of life in December and won't receive any further update.
+Node 8 reached its official End of Life in December and won't receive any further update. Yarn consequently doesn't support it anymore.
+
+Note that Node 10 itself will reach its own End of Life on May 2021, so support for it will likely be removed from Yarn 3. As a result we recommend upgrading to Node 12 or 14 whenever you can.
 
 ### Fix dependencies with `packageExtensions`
 
