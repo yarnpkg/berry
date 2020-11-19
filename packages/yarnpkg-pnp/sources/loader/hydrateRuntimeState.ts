@@ -50,7 +50,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         }
       };
 
-      return [packageReference, packageInformation] as [string | null, PackageInformation<PortablePath>];
+      return [packageReference, packageInformation];
     }))] as [string | null, PackageStore];
   }));
 
