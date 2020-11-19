@@ -415,6 +415,65 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should run execute global scripts even on workspaces that don't declare them`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+          scripts: {
+            [`test:colon`]: `echo One execution`,
+          },
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should run set INIT_CWD to each individual workspace cwd even with global scripts`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+          scripts: {
+            [`test:foo`]: `yarn workspaces foreach run test:bar`,
+            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1]).replace(/\\\\\\\\/g, "/")' "$INIT_CWD"`,
+          },
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`test:foo`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
       `should include dependencies if using --recursive`,
       makeTemporaryEnv(
         {

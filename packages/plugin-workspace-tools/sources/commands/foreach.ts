@@ -170,7 +170,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const workspaces: Array<Workspace> = [];
 
     for (const workspace of candidates) {
-      if (scriptName && !workspace.manifest.scripts.has(scriptName))
+      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !scriptName.includes(`:`))
         continue;
 
       // Prevents infinite loop in the case of configuring a script as such:
