@@ -6,17 +6,67 @@
 
 ### Installs
 
-- Progress bars are rendered less often, which makes all installs faster
-- Warnings are now reported when the `packageExtensions` field lists rules that are either unused or redundant with the original package definition.
+- The resolution pipeline got reimplemented. We previously used a multi-pass approach where we performed SAT optimization between each pass, but after investigating it turned out the SAT optims had little impact and added performance bottlenecks. We now run the resolution using a much simpler and more efficient algorithm.
+
+- Linkers can now define custom data to cache between Yarn invocations. The builtin linkers new use those new capabilities to cache package information that can't change between runs. In practice, this translates into much faster recurrent installs (when running an install that adds few new packages, if any).
+
+- Warnings are now reported when `packageExtensions` rules are either unused or redundant with the original package definition.
+
 - Potentially breaking, but it was intended this way from the start: the `packageExtensions` field cannot be used to *replace* dependencies anymore (only to add missing ones). Prefer using the `resolutions` field to replace existing ones.
+
+- Progress bars are rendered less often, which should help performances on some terminals.
 
 ### CLI
 
-- Explicitly disable administrator rights for the native binary jumper on Windows. When a filename contains "install", "setup", "update", or "patch" Windows thinks it's an installer and requires administrator rights to start the binary
+- The `upgrade-interactive` command will now only show upgrade suggestions for packages that have available upgrades (rather than all of them). 
+
+- The `upgrade-interactive` command has received UI improvements that should make it easier to look at.
+
+- The `yarn workspaces focus` command will now only run the `postinstall` scripts for the focused workspaces.
+
+- A new `yarn npm audit` command lets you query audit information from the npm registry.
+
+- The `yarn workspaces foreach` command has a new flag, `-R,--recursive`, which will run a command on the current workspace and all others it depends on.
+
+- A new `--skip-builds` option on `yarn install` will let you skip the build scripts without impacting the generated Yarn artifacts (contrary to `enableScripts`, which would also stop unplugging the packages that would otherwise be unplugged due to containing build scripts).
+
+### Binaries
+
+- It's now possible to run dependency binaries when using the node-modules linker even if one of your other dependencies is reported as incompatible with your system.
+
+- By default Windows automatically requests for administrator rights before spawning any binary whose filename contains "install", "setup", "update", or "patch" (it thinks they are installers). We now explicitly opt-out of this behavior in the binary jumpers we use on Windows.
+
+- By default, arguments passed to MinGW-compiled programs are automatically expanded by a basic glob pattern engine. We now explicitly opt-out of this behavior in the binary jumpers we use on Windows.
+
+- The Windows binary jumpers will now report the right exit code.
+
+### Settings
+
+- Using empty fallbacks in Yarnrc environment variables (`${VAR:-}`) will now work.
+
+- You can now use the new `logFilters` setting to turn warnings into either errors or info, or to hide them entirely. Note that we plan to significantly improve the peer dependency warnings in the next release, so perhaps don't silence them just now even if you have a bunch of them.
 
 ### Shell
 
 - Some shell errors (`No matches found`, `Bad file descriptor`, `Unbound variable`, `Unbound argument`) will now be recoverable errors that make the shell continue on to the next command in the chain instead of hard crashes. Fixes cases such as `rm -rf ./inexistentFolder/* || true`.
+
+### VSCode ZipFS Extension
+
+- The extension will now activate even if the workspace doesn't contain zip files (usually because you excluded them).
+
+### Compatibility
+
+- Some patches went missing for TypeScript <4. This is now fixed.
+
+- Calling `fs.exists(undefined)` won't crash anymore.
+
+- TypeScript import suggestions should now be correct even when the imported module is deep within a workspace.
+
+- TypeScript in watch mode (both using `-w` and within VSCode) will now detect new dependencies as you add them.
+
+- Some particular multi-dependency-trees setups will be better supported on Plug'n'Play installs.
+
+- Using `ctrl+click` on imports in VSCode won't take you to virtual packages anymore (require an SDK update).
 
 ## 2.3.1
 
