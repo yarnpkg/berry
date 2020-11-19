@@ -46,3 +46,5 @@ th:last-child {
 .header-code {
   font-size: 1em;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=PT+Mono&display=swap');

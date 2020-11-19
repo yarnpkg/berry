@@ -35,7 +35,6 @@
     "gatsby-plugin-favicon": "^3.1.6",
     "gatsby-plugin-manifest": "^2.4.11",
     "gatsby-plugin-offline": "^3.2.9",
-    "gatsby-plugin-prefetch-google-fonts": "^1.4.3",
     "gatsby-plugin-react-helmet": "^3.3.4",
     "gatsby-plugin-remove-trailing-slashes": "^2.3.5",
     "gatsby-plugin-sharp": "^2.6.11",
