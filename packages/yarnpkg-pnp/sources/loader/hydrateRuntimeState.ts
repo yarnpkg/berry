@@ -31,7 +31,12 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       }
 
       return [packageReference, {
-        packageLocation: fastPathJoin(absolutePortablePath, packageInformationData.packageLocation),
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+        // 2) ppath.join preserves trailing slashes
+        // Future optimization note: `ppath.join()` is an expensive call, bypassing it
+        // can reduce pnp hook boot-speed by a few milliseconds (10-50ms)
+        packageLocation: ppath.join(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
@@ -63,13 +68,4 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     packageLocatorsByLocations,
     packageRegistry,
   };
-}
-
-function fastPathJoin(base: PortablePath, relative: PortablePath) {
-  // short circuit the call if we can just concat the paths
-  if (relative.startsWith(`./`) && relative.indexOf(`..`) === -1) {
-    return `${base}/${relative.slice(2)}`;
-  } else {
-    return ppath.join(base, relative);
-  }
 }
