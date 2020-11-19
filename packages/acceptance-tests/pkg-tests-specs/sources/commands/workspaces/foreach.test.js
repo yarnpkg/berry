@@ -1,3 +1,5 @@
+import {npath} from '@yarnpkg/fslib';
+
 const {
   fs: {writeJson, writeFile},
 } = require(`pkg-tests-core`);
@@ -16,9 +18,6 @@ async function setupWorkspaces(path) {
       print: `echo Test Workspace A`,
       start: `node server.js`,
       testExit: `exit 0`,
-      "test:colon": `echo Test Workspace A Colon`,
-      "test:foo": `yarn workspaces foreach run test:bar`,
-      "test:bar": `echo $INIT_CWD $PWD $(env PWD)`,
     },
   });
 
@@ -418,11 +417,14 @@ describe(`Commands`, () => {
     );
 
     test(
-      `should run colon scripts from other workspaces`,
+      `should run execute global scripts even on workspaces that don't declare them`,
       makeTemporaryEnv(
         {
           private: true,
           workspaces: [`packages/*`],
+          scripts: {
+            [`test:colon`]: `echo One execution`,
+          },
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
@@ -433,7 +435,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`, {cwd: `${path}/packages/workspace-b`}));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
@@ -444,11 +446,15 @@ describe(`Commands`, () => {
     );
 
     test(
-      `should run colon scripts from other workspaces with correct INIT CWD`,
+      `should run set INIT_CWD to each individual workspace cwd even with global scripts`,
       makeTemporaryEnv(
         {
           private: true,
           workspaces: [`packages/*`],
+          scripts: {
+            [`test:foo`]: `yarn workspaces foreach run test:bar`,
+            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1])' "$INIT_CWD"`,
+          },
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
@@ -459,7 +465,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `test:foo`, {cwd: `${path}`}));
+            ({code, stdout, stderr} = await run(`test:foo`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
