@@ -1,12 +1,15 @@
-import {PortablePath, xfs}       from '@yarnpkg/fslib';
-import {ExtendOptions, Response} from 'got';
-import {Agent as HttpsAgent}     from 'https';
-import {Agent as HttpAgent}      from 'http';
-import micromatch                from 'micromatch';
-import tunnel, {ProxyOptions}    from 'tunnel';
-import {URL}                     from 'url';
+import {ConfigurationValueMap}           from '@yarnpkg/core';
+import {PortablePath, xfs}               from '@yarnpkg/fslib';
+import {ExtendOptions, Response}         from 'got';
+import {Agent as HttpsAgent}             from 'https';
+import {Agent as HttpAgent}              from 'http';
+import micromatch                        from 'micromatch';
+import tunnel, {ProxyOptions}            from 'tunnel';
 
-import {Configuration}           from './Configuration';
+import {URL}                             from 'url';
+
+import {Configuration}                   from './Configuration';
+import {MapValue, MapValueToObjectValue} from './miscUtils';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
@@ -47,32 +50,38 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
     return keyB.length - keyA.length;
   });
 
-  const mergedNetworkSettings: {
-    enableNetwork?: boolean,
-    caFilePath?: PortablePath | null,
-  } = {};
+  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap['networkSettings']>>
+  type UndefinableSettings = { [P in keyof NetworkSettingsType]: NetworkSettingsType[P] | undefined; };
+
+  const mergedNetworkSettings: UndefinableSettings = {
+    enableNetwork: undefined,
+    caFilePath: undefined ,
+    httpProxy: undefined,
+    httpsProxy: undefined,
+  };
+
+  const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
 
   const url = new URL(target);
   for (const [glob, config] of networkSettings) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      const enableNetwork = config.get(`enableNetwork`);
-      if (enableNetwork !== null && typeof mergedNetworkSettings.enableNetwork === `undefined`)
-        mergedNetworkSettings.enableNetwork = enableNetwork;
-
-      const caFilePath = config.get(`caFilePath`);
-      if (caFilePath !== null && typeof mergedNetworkSettings.caFilePath === `undefined`) {
-        mergedNetworkSettings.caFilePath = caFilePath;
+      for (const key of mergableKeys) {
+        const setting = config.get(key);
+        if (setting !== null && typeof mergedNetworkSettings[key] === `undefined`) {
+          mergedNetworkSettings[key] = setting as any;
+        }
       }
     }
   }
 
-  if (typeof mergedNetworkSettings.caFilePath === `undefined`)
-    mergedNetworkSettings.caFilePath = opts.configuration.get(`caFilePath`);
+  // Apply defaults
+  for (const key of mergableKeys) {
+    if (typeof mergedNetworkSettings[key] === `undefined`) {
+      mergedNetworkSettings[key] = opts.configuration.get(key) as any;
+    }
+  }
 
-  if (typeof mergedNetworkSettings.enableNetwork === `undefined`)
-    mergedNetworkSettings.enableNetwork = opts.configuration.get(`enableNetwork`);
-
-  return mergedNetworkSettings as Required<typeof mergedNetworkSettings>;
+  return mergedNetworkSettings as NetworkSettingsType;
 }
 
 export type Body = (
@@ -108,14 +117,12 @@ export async function request(target: string, body: Body, {configuration, header
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
-  const httpProxy = configuration.get(`httpProxy`);
-  const httpsProxy = configuration.get(`httpsProxy`);
   const agent = {
-    http: httpProxy
-      ? tunnel.httpOverHttp(parseProxy(httpProxy))
+    http: networkConfig.httpProxy
+      ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
       : globalHttpAgent,
-    https: httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(httpsProxy)) as HttpsAgent
+    https: networkConfig.httpsProxy
+      ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
       : globalHttpsAgent,
   };
 

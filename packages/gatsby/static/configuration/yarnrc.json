@@ -347,6 +347,12 @@
             },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
+            },
+            "httpProxy": {
+              "$ref": "#/properties/httpProxy"
+            },
+            "httpsProxy": {
+              "$ref": "#/properties/httpsProxy"
             }
           },
           "_exampleKeys": ["caFilePath"]

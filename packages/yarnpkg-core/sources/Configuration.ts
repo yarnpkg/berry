@@ -345,6 +345,16 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.BOOLEAN,
           default: null,
         },
+        httpProxy: {
+          description: `URL of the http proxy that must be used for outgoing http requests`,
+          type: SettingsType.STRING,
+          default: null,
+        },
+        httpsProxy: {
+          description: `URL of the http proxy that must be used for outgoing https requests`,
+          type: SettingsType.STRING,
+          default: null,
+        },
       },
     },
   },
@@ -504,13 +514,18 @@ export interface ConfigurationValueMap {
 
   enableMirror: boolean;
   enableNetwork: boolean;
-  httpProxy: string;
-  httpsProxy: string;
+  httpProxy: string | null;
+  httpsProxy: string | null;
   unsafeHttpWhitelist: Array<string>;
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, miscUtils.ToMapValue<{caFilePath: PortablePath | null, enableNetwork: boolean | null}>>;
+  networkSettings: Map<string, miscUtils.ToMapValue<{
+    caFilePath: PortablePath | null;
+    enableNetwork: boolean | null;
+    httpProxy: string | null;
+    httpsProxy: string | null;
+  }>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
