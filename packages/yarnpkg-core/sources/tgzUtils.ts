@@ -1,8 +1,9 @@
 import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath} from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                 from '@yarnpkg/libzip';
-import tar                                                                                from 'tar-stream';
-import {promisify}                                                                        from 'util';
-import zlib                                                                               from 'zlib';
+import {PassThrough, Readable}                                                            from 'stream';
+import tar                                                                                from 'tar';
+
+import * as miscUtils                                                                     from './miscUtils';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
@@ -10,8 +11,6 @@ interface MakeArchiveFromDirectoryOptions {
   compressionLevel?: ZipCompression,
   inMemory?: boolean,
 }
-
-const gunzip = promisify(zlib.gunzip);
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const libzip = await getLibzipPromise();
@@ -46,18 +45,43 @@ export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   return await extractArchiveTo(tgz, new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel}), bufferOpts);
 }
 
+async function * parseTar(tgz: Buffer) {
+  // @ts-expect-error - Types are wrong about what this function returns
+  const parser: tar.ParseStream = new tar.Parse();
+
+  const passthrough = new PassThrough({objectMode: true, autoDestroy: true, emitClose: true});
+
+  parser.on(`entry`, (entry: tar.ReadEntry) => {
+    passthrough.write(entry);
+  });
+
+  parser.on(`error`, error => {
+    passthrough.destroy(error);
+  });
+
+  parser.on(`close`, () => {
+    passthrough.destroy();
+  });
+
+  parser.end(tgz);
+
+  for await (const entry of passthrough) {
+    const it = entry as tar.ReadEntry;
+    yield it;
+    it.resume();
+  }
+}
+
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
   // 1980-01-01, like Fedora
   const defaultTime = 315532800;
 
-  const parser = tar.extract() as tar.Extract;
-
-  function ignore(entry: tar.Headers) {
+  function ignore(entry: tar.ReadEntry) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
-    if (entry.name[0] === `/`)
+    if (entry.path[0] === `/`)
       return true;
 
-    const parts = entry.name.split(/\//g);
+    const parts = entry.path.split(/\//g);
 
     // We also ignore paths that could lead to escaping outside the archive
     if (parts.some((part: string) => part === `..`))
@@ -69,18 +93,13 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     return false;
   }
 
-  parser.on(`entry`, (header, stream, next) => {
-    if (ignore(header)) {
-      next();
-      return;
-    }
+  for await (const entry of parseTar(tgz)) {
+    if (ignore(entry))
+      continue;
 
-    const parts = ppath.normalize(npath.toPortablePath(header.name)).replace(/\/$/, ``).split(/\//g);
-    if (parts.length <= stripComponents) {
-      stream.resume();
-      next();
-      return;
-    }
+    const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
+    if (parts.length <= stripComponents)
+      continue;
 
     const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
     const mappedPath = ppath.join(prefixPath, slicePath);
@@ -88,59 +107,35 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     let mode = 0o644;
 
     // If a single executable bit is set, normalize so that all are
-    if (header.type === `directory` || ((header.mode ?? 0) & 0o111) !== 0)
+    if (entry.type === `Directory` || ((entry.mode ?? 0) & 0o111) !== 0)
       mode |= 0o111;
 
-    switch (header.type) {
-      case `directory`: {
+    switch (entry.type) {
+      case `Directory`: {
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
         targetFs.mkdirSync(mappedPath);
         targetFs.chmodSync(mappedPath, mode);
         targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
-        next();
       } break;
 
-      case `file`: {
+      case `OldFile`:
+      case `File`: {
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-        const chunks: Array<Buffer> = [];
-
-        stream.on(`data`, (chunk: Buffer) => chunks.push(chunk));
-        stream.on(`end`, () => {
-          targetFs.writeFileSync(mappedPath, Buffer.concat(chunks));
-          targetFs.chmodSync(mappedPath, mode);
-          targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
-          next();
-        });
+        targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable));
+        targetFs.chmodSync(mappedPath, mode);
+        targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
       } break;
 
-      case `symlink`: {
+      case `SymbolicLink`: {
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
 
-        targetFs.symlinkSync(header.linkname as PortablePath, mappedPath);
+        targetFs.symlinkSync((entry as any).linkpath, mappedPath);
         targetFs.lutimesSync?.(mappedPath, defaultTime, defaultTime);
-        next();
       } break;
-
-      default: {
-        stream.resume();
-        next();
-      }
     }
-  });
+  }
 
-  const gunzipped = await gunzip(tgz);
-
-  return await new Promise<T>((resolve, reject) =>  {
-    parser.on(`error`, (error: Error) => {
-      reject(error);
-    });
-
-    parser.on(`finish`, () => {
-      resolve(targetFs);
-    });
-
-    parser.end(gunzipped);
-  });
+  return targetFs;
 }
