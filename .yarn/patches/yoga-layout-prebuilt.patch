@@ -1,0 +1,17 @@
+diff --git a/yoga-layout/build/Release/nbind.js b/yoga-layout/build/Release/nbind.js
+index 0853309f9e0bd49d3e585db266442210d9538d1e..bb05775fdea908cb6dea485e3c7b18f8b259b219 100644
+--- a/yoga-layout/build/Release/nbind.js
++++ b/yoga-layout/build/Release/nbind.js
+@@ -48,11 +48,7 @@
+       }
+     }Module["arguments"] = process["argv"].slice(2);if (typeof module !== "undefined") {
+       module["exports"] = Module;
+-    }process["on"]("uncaughtException", function (ex) {
+-      if (!(ex instanceof ExitStatus)) {
+-        throw ex;
+-      }
+-    });Module["inspect"] = function () {
++    }Module["inspect"] = function () {
+       return "[Emscripten Module object]";
+     };
+   } else if (ENVIRONMENT_IS_SHELL) {
