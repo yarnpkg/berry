@@ -19,7 +19,7 @@ Put simply, there are very few reasons not to upgrade. Even if you don't use Plu
 
 ## Step by step
 
-The following guide assumes that your project **doesn't** use [Plug'n'Play](/features/pnp) yet. If you do it's mostly the same process, except that you don't need to configure the linker. Congrats!
+**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**, and only in a later optional section we will cover how to enable PnP support (which is recommended, but not mandatory). Baby steps! 😉
 
 1. Run `npm install -g yarn` to update the global yarn version to latest v1
 2. Go into your project directory
@@ -31,7 +31,7 @@ The following guide assumes that your project **doesn't** use [Plug'n'Play](/fea
 8. Take a look at [this article](/getting-started/qa#which-files-should-be-gitignored) to see what should be gitignored
 9. Commit everything remaining
 
-Some optional features are available via external plugins (you can build your own too!):
+Some optional features are available via external plugins:
 
 11. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
 12. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
