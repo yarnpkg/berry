@@ -11,7 +11,7 @@ description: A list of answers to commonly asked questions.
 
 ## Why should you upgrade to Yarn Modern?
 
-While the Yarn Classic line (1.x) remains a pilar of the JavaScript ecosystem, we recommend upgrading if possible. Why that?
+While the Yarn Classic line (1.x) remains a pilar of the JavaScript ecosystem, we recommend upgrading if possible. Why's that?
 
 1. New features: On top of the classic features you're already used to, on top of the new ones you'll discover ([`yarn dlx`](/cli/dlx), [builtin `patch:` protocol](https://github.com/yarnpkg/berry/tree/master/packages/plugin-patch), ...), Modern offers plugins extending Yarn's featureset with [changesets](/features/release-workflow), [constraints](/features/constraints), [workspaces](/cli/workspaces/foreach), ...
 
