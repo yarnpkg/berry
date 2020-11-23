@@ -193,4 +193,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'utf-8-validate': optionalPeerDep,
     },
   }],
+  // https://github.com/tajo/react-portal/pull/233
+  [`react-portal@*`, {
+    peerDependencies: {
+      'react-dom': `^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0`,
+    },
+  }],
 ];
