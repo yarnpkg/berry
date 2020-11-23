@@ -416,27 +416,29 @@ describe(`ZipFS`, () => {
     // The watcher shouldn't keep the process running after the file is unwatched
   });
 
-  it(`closes the fd created in createReadStream when the stream is closed early`, () => {
+  it(`closes the fd created in createReadStream when the stream is closed early`, async () => {
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
-    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`.repeat(10000));
 
     expect(zipFs.hasOpenFileHandles()).toBe(false);
     const stream = zipFs.createReadStream(`/foo.txt` as Filename);
+
     expect(zipFs.hasOpenFileHandles()).toBe(true);
-    stream.close();
-    expect(zipFs.hasOpenFileHandles()).toBe(false);
 
-    zipFs.discardAndClose();
-  });
+    await new Promise<void>((resolve, reject) => {
+      stream.on(`data`, () => {
+        reject(new Error(`Should not be called`));
+      });
+      stream.on(`close`, () => {
+        resolve();
+      });
+      stream.on(`error`, error => {
+        reject(error);
+      });
 
-  it(`should not crash when a createReadStream is destroyed`, () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
-    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+      stream.close();
+    });
 
-    expect(zipFs.hasOpenFileHandles()).toBe(false);
-    const stream = zipFs.createReadStream(`/foo.txt` as Filename);
-    expect(zipFs.hasOpenFileHandles()).toBe(true);
-    stream.destroy();
     expect(zipFs.hasOpenFileHandles()).toBe(false);
 
     zipFs.discardAndClose();
