@@ -182,4 +182,15 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'react-fast-compare': `^3.0.0`,
     },
   }],
+  // https://github.com/websockets/ws/pull/1626
+  [`ws@<7.2.1`, {
+    peerDependencies: {
+      bufferutil: `^4.0.1`,
+      'utf-8-validate': `^5.0.2`,
+    },
+    peerDependenciesMeta: {
+      bufferutil: optionalPeerDep,
+      'utf-8-validate': optionalPeerDep,
+    },
+  }],
 ];
