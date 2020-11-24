@@ -429,7 +429,7 @@ export class Manifest {
       }
     }
 
-    if (Array.isArray(data.files) && data.files.length !== 0) {
+    if (Array.isArray(data.files)) {
       this.files = new Set();
 
       for (const filename of data.files) {
