@@ -593,5 +593,22 @@ describe(`Commands`, () => {
         expect(xfs.existsSync(`${tmpDir}/test.tgz`)).toEqual(true);
       }),
     );
+
+    test(
+      `it should not include any extra files when the "files" field is empty`,
+      makeTemporaryEnv({
+        main: `lib/a.js`,
+        files: [],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/src/a.ts`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toMatch(/lib\/a\.js/);
+        expect(stdout).not.toMatch(/src\/a\.ts/);
+      }),
+    );
   });
 });
