@@ -1,5 +1,6 @@
 import {StreamReport, Configuration}                                                                       from '@yarnpkg/core';
 import {NativePath, npath, ppath, xfs, Filename}                                                           from '@yarnpkg/fslib';
+import type {PnpApi}                                                                                       from '@yarnpkg/pnp';
 import {Command, UsageError}                                                                               from 'clipanion';
 
 import {dynamicRequire}                                                                                    from '../dynamicRequire';
@@ -73,7 +74,10 @@ export default class SdkCommand extends Command {
 
     const configuration = Configuration.create(currProjectRoot);
     const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
-    const pnpApi = dynamicRequire(pnpPath);
+    const pnpApi = dynamicRequire(npath.fromPortablePath(pnpPath)) as PnpApi;
+
+    // Need to setup the fs patch so we can read from the archives
+    (pnpApi as unknown as {setup: Function})?.setup();
 
     const onlyBase = this.integrations.length === 1 && this.integrations[0] === `base`;
 
