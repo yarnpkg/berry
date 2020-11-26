@@ -23,7 +23,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
   // The GitHub package registry uses a different style of URLs
   [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)$/, version => `npm:${version}`],
   // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
-  [/^https:\/\/npm\.fontawesome\.com\/(?:@[^\/]+)\/([^\/]+)\/-\/([^\/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
+  [/^https:\/\/npm\.fontawesome\.com\/(?:@[^/]+)\/([^/]+)\/-\/([^/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
 
   // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
