@@ -2083,7 +2083,7 @@ function applyVirtualResolutionMutations({
           if (satisfiesSingleRange) {
             report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
           } else if (satisfiesEveryRange) {
-            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, pkg)} and its descendants request (run "yarn explain [...]" for details)`);
+            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, pkg)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain [...]`, formatUtils.Type.CODE)} for details)`);
           }
         };
 
