@@ -73,7 +73,7 @@ export default class SdkCommand extends Command {
 
     const configuration = Configuration.create(currProjectRoot);
     const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
-    const pnpApi = dynamicRequire(pnpPath);
+    const pnpApi = dynamicRequire(npath.fromPortablePath(pnpPath));
 
     const onlyBase = this.integrations.length === 1 && this.integrations[0] === `base`;
 
