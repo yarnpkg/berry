@@ -19,7 +19,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
 
   // These ones come from the npm registry
   // Note: /download/ is used by custom registries like Taobao
-  [/^(?:https?:\/\/)?[^/]+\/(?:[^/]+\/)*(?:@[^/]+\/)?([^/]+)\/(?:-|download)\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@[^/]+\/)?([^/]+)\/(?:-|download)\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
   // The GitHub package registry uses a different style of URLs
   [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)$/, version => `npm:${version}`],
   // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
