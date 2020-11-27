@@ -46,3 +46,5 @@ describe(`Features`, () => {
     );
   });
 });
+
+export {};
