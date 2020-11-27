@@ -10,7 +10,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   hash?: string;
 
   static schema = yup.object().shape({
-    hash: yup.string().matches(/^[0-9a-f]+$/),
+    hash: yup.string().matches(/^[0-9a-f]{5}$/),
   });
 
   @Command.Path(`explain`, `peer-requirements`)
@@ -18,11 +18,11 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    // mismatchedPeerRequirementSets aren't stored inside the install state
+    // peerRequirementSets aren't stored inside the install state
     await project.applyLightResolution();
 
     if (typeof this.hash !== `undefined`) {
-      return await explainMismatchedPeerRequirements(this.hash, project, {
+      return await explainPeerRequirements(this.hash, project, {
         stdout: this.context.stdout,
       });
     }
@@ -40,7 +40,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
         descendantCount: number,
       }> = [];
 
-      for (const [hash, {parentLocator, topLevelLocator, peerRequirements}] of project.mismatchedPeerRequirementSets) {
+      for (const [hash, {parentLocator, topLevelLocator, peerRequirements}] of project.peerRequirementSets) {
         const parentPackage = project.storedPackages.get(parentLocator);
         if (typeof parentPackage === `undefined`)
           throw new Error(`Assertion failed: Expected the parent package to have been registered`);
@@ -70,12 +70,12 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   }
 }
 
-export async function explainMismatchedPeerRequirements(mismatchedPeerRequirementsHash: string, project: Project, opts: {stdout: Writable}) {
+export async function explainPeerRequirements(peerRequirementsHash: string, project: Project, opts: {stdout: Writable}) {
   const {configuration} = project;
 
-  const data = project.mismatchedPeerRequirementSets.get(mismatchedPeerRequirementsHash);
+  const data = project.peerRequirementSets.get(peerRequirementsHash);
   if (typeof data === `undefined`)
-    throw new Error(`No mismatched peerDependency requirements found for hash: "${mismatchedPeerRequirementsHash}"`);
+    throw new Error(`No peerDependency requirements found for hash: "${peerRequirementsHash}"`);
 
   const {peerRequirements, parentLocator, topLevelLocator} = data;
 
@@ -93,9 +93,12 @@ export async function explainMismatchedPeerRequirements(mismatchedPeerRequiremen
       throw new Error(`Assertion failed: Expected the top level package to have been registered`);
     const prettyTopLevelLocator = structUtils.prettyLocator(configuration, topLevelPackage);
 
+    const ranges = [...peerRequirements.peerRequests.values()];
+    const satisfiesAllRanges = ranges.every(range => semverUtils.satisfiesWithPrereleases(peerRequirements.providedPackage.version, range));
+
     const descendantCount = peerRequirements.peerRequests.size - 1;
     const plural = descendantCount !== 1;
-    const maybeDescendants = descendantCount > 0 ? ` and${plural ? ` some of` : ``} its ${descendantCount} descendant${plural ? `s` : ``}` : ``;
+    const maybeDescendants = descendantCount > 0 ? ` and${plural ? ` ${satisfiesAllRanges ? `all of` : `some of`}` : ``} its ${descendantCount} descendant${plural ? `s` : ``}` : ``;
 
     report.reportInfo(MessageName.UNNAMED, `${
       structUtils.prettyLocator(configuration, parentPackage)
@@ -103,7 +106,7 @@ export async function explainMismatchedPeerRequirements(mismatchedPeerRequiremen
       structUtils.prettyLocator(configuration, peerRequirements.providedPackage)
     } with version ${
       structUtils.prettyReference(configuration, peerRequirements.providedPackage.version ?? `<missing>`)
-    } which doesn't satisfy the requirements of ${prettyTopLevelLocator}${maybeDescendants}:`);
+    } which ${satisfiesAllRanges ? `satisfies` : `doesn't satisfy`} the requirements of ${prettyTopLevelLocator}${maybeDescendants}:`);
 
     report.reportSeparator();
 
