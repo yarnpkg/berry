@@ -1,6 +1,5 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
 import {npath}                                                              from '@yarnpkg/fslib';
-import chalk                                                                from 'chalk';
 import {Command, Usage, UsageError}                                         from 'clipanion';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
