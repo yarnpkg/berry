@@ -305,6 +305,14 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
   return value;
 }
 
+export function mark(configuration: Configuration) {
+  return {
+    Check: applyColor(configuration, `✓`, `green`),
+    Cross: applyColor(configuration, `✘`, `red`),
+    Question: applyColor(configuration, `?`, `cyan`),
+  };
+}
+
 export enum LogLevel {
   Error = `error`,
   Warning = `warning`,

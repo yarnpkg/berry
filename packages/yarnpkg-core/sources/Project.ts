@@ -123,7 +123,6 @@ const INSTALL_STATE_FIELDS = {
     `storedResolutions`,
     `storedPackages`,
     `lockFileChecksum`,
-    `mismatchedPeerChains`,
   ] as const,
 };
 
@@ -168,6 +167,11 @@ export class Project {
   public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+
+  /**
+   * Populated by the `resolveEverything` method.
+   * *Not* stored inside the install state.
+   */
   public mismatchedPeerChains: Map<string, {
     parentLocator: LocatorHash,
     topLevelLocator: LocatorHash,
@@ -2094,11 +2098,9 @@ function applyVirtualResolutionMutations({
         if (ranges.every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range)))
           continue;
 
-        const mismatchedParentHash = hashUtils.makeHash(locatorHash, dependencyHash).slice(0, 5);
-
         const doesntSatisfyFirstRangeOnly = !semverUtils.satisfiesWithPrereleases(providedPackage.version, ranges[0]) && ranges.slice(1).every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
 
-        const setMismatchedPeerChain = (parentLocator: Locator) => {
+        const setMismatchedPeerChain = (parentLocator: Locator, mismatchedParentHash: string) => {
           mismatchedPeerChains.set(mismatchedParentHash, {
             parentLocator: parentLocator.locatorHash,
             topLevelLocator,
@@ -2108,13 +2110,13 @@ function applyVirtualResolutionMutations({
 
         // When the parent provides the peer dependency request it must be checked to ensure
         // it is a compatible version.
-        const emitWarningForParentLocator = (parentLocator: Locator) => {
+        const emitWarningForParentLocator = (parentLocator: Locator, mismatchedParentHash: string) => {
           if (doesntSatisfyFirstRangeOnly)
-            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, topLevelPackage)}`);
+            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, topLevelPackage)}`);
           else
-            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-chain ${mismatchedParentHash}`, formatUtils.Type.CODE)} for details)`);
+            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-chain ${mismatchedParentHash}`, formatUtils.Type.CODE)} for details)`);
 
-          setMismatchedPeerChain(parentLocator);
+          setMismatchedPeerChain(parentLocator, mismatchedParentHash);
         };
 
         for (const parentLocatorHash of parentLocators) {
@@ -2122,7 +2124,16 @@ function applyVirtualResolutionMutations({
           if (typeof parentLocator === `undefined`)
             throw new Error(`Assertion failed: Expected parentLocator to have been resolved`);
 
-          emitWarningForParentLocator(parentLocator);
+          const mismatchedParentHash = hashUtils.makeHash(
+            // Peer chains of different parentLocators should have different hashes
+            parentLocator.locatorHash,
+            // Different peer chains of the same parentLocator should have different hashes
+            providedPackage.identHash,
+            // Peer chains descending from different packages should have different hashes
+            topLevelPackage.locatorHash,
+          ).slice(0, 5);
+
+          emitWarningForParentLocator(parentLocator, mismatchedParentHash);
         }
       }
     }

@@ -18,7 +18,8 @@ export default class ExplainPeerChainCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    await project.restoreInstallState();
+    // mismatchedPeerChains aren't stored inside the install state
+    await project.applyLightResolution();
 
     return await explainMismatchedPeerChain(this.hash, project, {
       stdout: this.context.stdout,
@@ -52,18 +53,18 @@ export async function explainMismatchedPeerChain(mismatchedPeerChainHash: string
 
     report.reportSeparator();
 
+    const Mark = formatUtils.mark(configuration);
+
     const requirements: Array<{
       stringifiedLocator: string,
       prettyLocator: string,
       prettyRange: string,
-      marker: string
+      mark: string
     }> = [];
 
     for (const [locatorHash, range] of peerChain.peerRequests) {
       const isSatisfied = semverUtils.satisfiesWithPrereleases(peerChain.providedPackage.version, range);
-      const marker = isSatisfied
-        ? formatUtils.pretty(configuration, `✓`, `green`)
-        : formatUtils.pretty(configuration, `✘`, `red`);
+      const mark = isSatisfied ? Mark.Check : Mark.Cross;
 
       const pkg = project.storedPackages.get(locatorHash);
       if (typeof pkg === `undefined`)
@@ -73,20 +74,20 @@ export async function explainMismatchedPeerChain(mismatchedPeerChainHash: string
         stringifiedLocator: structUtils.stringifyLocator(pkg),
         prettyLocator: structUtils.prettyLocator(configuration, pkg),
         prettyRange: structUtils.prettyRange(configuration, range),
-        marker,
+        mark,
       });
     }
 
     const maxStringifiedLocatorLength = Math.max(...requirements.map(({stringifiedLocator}) => stringifiedLocator.length));
     const maxPrettyRangeLength = Math.max(...requirements.map(({prettyRange}) => prettyRange.length));
 
-    for (const {stringifiedLocator, prettyLocator, prettyRange, marker} of miscUtils.sortMap(requirements, ({stringifiedLocator}) => stringifiedLocator)) {
+    for (const {stringifiedLocator, prettyLocator, prettyRange, mark} of miscUtils.sortMap(requirements, ({stringifiedLocator}) => stringifiedLocator)) {
       report.reportInfo(null, `${
         // We have to do this because prettyLocators can contain multiple colors
         prettyLocator.padEnd(maxStringifiedLocatorLength + (prettyLocator.length - stringifiedLocator.length), ` `)
       } → ${
         prettyRange.padEnd(maxPrettyRangeLength, ` `)
-      } ${marker}`);
+      } ${mark}`);
     }
   });
 

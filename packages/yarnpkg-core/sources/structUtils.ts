@@ -774,7 +774,7 @@ export function prettyResolution(configuration: Configuration, descriptor: Descr
     : descriptor;
 
   if (locator === null) {
-    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${formatUtils.pretty(configuration, `✘`, `red`)}`;
+    return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${formatUtils.mark(configuration).Cross}`;
   } else if (devirtualizedDescriptor.identHash === locator.identHash) {
     return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${prettyReference(configuration, locator.reference)}`;
   } else {
