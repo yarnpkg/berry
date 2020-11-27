@@ -5,7 +5,7 @@ import {Writable}                                                               
 import * as yup                                                                                              from 'yup';
 
 // eslint-disable-next-line arca/no-default-export
-export default class ExplainPeerChainCommand extends BaseCommand {
+export default class ExplainPeerRequirementsCommand extends BaseCommand {
   @Command.String()
   hash!: string;
 
@@ -13,28 +13,28 @@ export default class ExplainPeerChainCommand extends BaseCommand {
     hash: yup.string().matches(/^[0-9a-f]+$/),
   });
 
-  @Command.Path(`explain`, `peer-chain`)
+  @Command.Path(`explain`, `peer-requirements`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    // mismatchedPeerChains aren't stored inside the install state
+    // mismatchedPeerRequirementSets aren't stored inside the install state
     await project.applyLightResolution();
 
-    return await explainMismatchedPeerChain(this.hash, project, {
+    return await explainMismatchedPeerRequirements(this.hash, project, {
       stdout: this.context.stdout,
     });
   }
 }
 
-export async function explainMismatchedPeerChain(mismatchedPeerChainHash: string, project: Project, opts: {stdout: Writable}) {
+export async function explainMismatchedPeerRequirements(mismatchedPeerRequirementsHash: string, project: Project, opts: {stdout: Writable}) {
   const {configuration} = project;
 
-  const data = project.mismatchedPeerChains.get(mismatchedPeerChainHash);
+  const data = project.mismatchedPeerRequirementSets.get(mismatchedPeerRequirementsHash);
   if (typeof data === `undefined`)
-    throw new Error(`No mismatched peerDependency chain found for hash: "${mismatchedPeerChainHash}"`);
+    throw new Error(`No mismatched peerDependency requirements found for hash: "${mismatchedPeerRequirementsHash}"`);
 
-  const {peerChain, parentLocator} = data;
+  const {peerRequirements, parentLocator} = data;
 
   const report = await StreamReport.start({
     configuration,
@@ -45,11 +45,17 @@ export async function explainMismatchedPeerChain(mismatchedPeerChainHash: string
     if (typeof parentPackage === `undefined`)
       throw new Error(`Assertion failed: Expected the parentPackage to have been registered`);
 
+    const firstLocatorHash = [...peerRequirements.peerRequests.keys()][0];
+    const firstPackage = project.storedPackages.get(firstLocatorHash);
+    if (typeof firstPackage === `undefined`)
+      throw new Error(`Assertion failed: Expected the first package to have been registered`);
+    const prettyFirstLocator = structUtils.prettyLocator(configuration, firstPackage);
+
     report.reportInfo(MessageName.UNNAMED, `${
       structUtils.prettyLocator(configuration, parentPackage)
     } provides ${
-      structUtils.prettyLocator(configuration, peerChain.providedPackage)
-    } which doesn't satisfy the requirements of all descendants in the chain:`);
+      structUtils.prettyLocator(configuration, peerRequirements.providedPackage)
+    } which doesn't satisfy the requirements of ${prettyFirstLocator} and all of its descendants:`);
 
     report.reportSeparator();
 
@@ -62,8 +68,8 @@ export async function explainMismatchedPeerChain(mismatchedPeerChainHash: string
       mark: string
     }> = [];
 
-    for (const [locatorHash, range] of peerChain.peerRequests) {
-      const isSatisfied = semverUtils.satisfiesWithPrereleases(peerChain.providedPackage.version, range);
+    for (const [locatorHash, range] of peerRequirements.peerRequests) {
+      const isSatisfied = semverUtils.satisfiesWithPrereleases(peerRequirements.providedPackage.version, range);
       const mark = isSatisfied ? Mark.Check : Mark.Cross;
 
       const pkg = project.storedPackages.get(locatorHash);

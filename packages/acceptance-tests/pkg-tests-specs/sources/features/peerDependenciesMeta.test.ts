@@ -29,7 +29,7 @@ describe(`Features`, () => {
     );
 
     test(
-      `it should report collapsed mismatched peer dependency warnings when a chain is detected`,
+      `it should report collapsed mismatched peer dependency warnings when a set of mismatched peerDependency requirements is detected`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -40,7 +40,7 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           const {stdout} = await run(`install`);
 
-          expect(stdout).toMatch(/\(([0-9a-f]{5})\) provides no-deps with version 1.1.0 which doesn't satisfy what mismatched-peer-deps-lvl0@npm:1.0.0 and its descendants request \(run yarn explain peer-chain \1 for details\)/);
+          expect(stdout).toMatch(/\(([0-9a-f]{5})\) provides no-deps with version 1.1.0 which doesn't satisfy what mismatched-peer-deps-lvl0@npm:1.0.0 and its descendants request \(run yarn explain peer-requirements \1 for details\)/);
         },
       ),
     );

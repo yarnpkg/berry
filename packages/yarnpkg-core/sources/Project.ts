@@ -133,7 +133,7 @@ type RestoreInstallStateOpts = {
 // Just a type that's the union of all the fields declared in `INSTALL_STATE_FIELDS`
 type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
-export interface PeerChain {
+export interface PeerRequirements {
   providedPackage: Package,
   peerRequests: Map<LocatorHash, string>,
 }
@@ -171,11 +171,13 @@ export class Project {
   /**
    * Populated by the `resolveEverything` method.
    * *Not* stored inside the install state.
+   *
+   * The map keys are 5 character unique hex hashes.
    */
-  public mismatchedPeerChains: Map<string, {
+  public mismatchedPeerRequirementSets: Map<string, {
     parentLocator: LocatorHash,
     topLevelLocator: LocatorHash,
-    peerChain: PeerChain,
+    peerRequirements: PeerRequirements,
   }> = new Map();
 
   public installersCustomData: Map<string, unknown> = new Map();
@@ -787,7 +789,7 @@ export class Project {
     const volatileDescriptors = new Set(this.resolutionAliases.values());
     const optionalBuilds = new Set(allPackages.keys());
     const accessibleLocators = new Set<LocatorHash>();
-    const mismatchedPeerChains = new Map();
+    const mismatchedPeerRequirementSets = new Map();
 
     applyVirtualResolutionMutations({
       project: this,
@@ -796,7 +798,7 @@ export class Project {
       accessibleLocators,
       volatileDescriptors,
       optionalBuilds,
-      mismatchedPeerChains,
+      mismatchedPeerRequirementSets,
 
       allDescriptors,
       allResolutions,
@@ -821,7 +823,7 @@ export class Project {
     this.accessibleLocators = accessibleLocators;
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
-    this.mismatchedPeerChains = mismatchedPeerChains;
+    this.mismatchedPeerRequirementSets = mismatchedPeerRequirementSets;
 
     // Now that the internal resolutions have been updated, we can refresh the
     // dependencies of each resolved workspace's `Workspace` instance.
@@ -1688,7 +1690,7 @@ function applyVirtualResolutionMutations({
   accessibleLocators = new Set(),
   optionalBuilds = new Set(),
   volatileDescriptors = new Set(),
-  mismatchedPeerChains = new Map(),
+  mismatchedPeerRequirementSets = new Map(),
 
   report,
 
@@ -1703,7 +1705,7 @@ function applyVirtualResolutionMutations({
   accessibleLocators?: Set<LocatorHash>,
   optionalBuilds?: Set<LocatorHash>,
   volatileDescriptors?: Set<DescriptorHash>,
-  mismatchedPeerChains?: Project['mismatchedPeerChains'],
+  mismatchedPeerRequirementSets?: Project['mismatchedPeerRequirementSets'],
 
   report: Report | null,
 
@@ -1717,10 +1719,10 @@ function applyVirtualResolutionMutations({
   const allVirtualInstances = new Map<LocatorHash, Map<string, Descriptor>>();
   const allVirtualDependents = new Map<DescriptorHash, Set<LocatorHash>>();
 
-  const peerChainsByVirtualInstances = new Map<LocatorHash, Map<string, {
+  const peerRequirementSetsByVirtualInstances = new Map<LocatorHash, Map<string, {
     parentLocators: Array<LocatorHash>,
     topLevelLocator: LocatorHash,
-    peerChains: Array<PeerChain>,
+    peerRequirements: Array<PeerRequirements>,
   }>>();
 
   // We must keep a copy of the workspaces original dependencies, because they
@@ -1767,18 +1769,18 @@ function applyVirtualResolutionMutations({
     return pkg;
   };
 
-  const resolvePeerDependencies = (parentLocator: Locator, peerChains: Map<IdentHash, PeerChain>, {first, optional}: {first: boolean, optional: boolean}) => {
+  const resolvePeerDependencies = (parentLocator: Locator, peerRequirementSets: Map<IdentHash, PeerRequirements>, {first, optional}: {first: boolean, optional: boolean}) => {
     if (resolutionStack.length > 1000)
       reportStackOverflow();
 
     resolutionStack.push(parentLocator);
-    const result = resolvePeerDependenciesImpl(parentLocator, peerChains, {first, optional});
+    const result = resolvePeerDependenciesImpl(parentLocator, peerRequirementSets, {first, optional});
     resolutionStack.pop();
 
     return result;
   };
 
-  const resolvePeerDependenciesImpl = (parentLocator: Locator, peerChains: Map<IdentHash, PeerChain>, {first, optional}: {first: boolean, optional: boolean}) => {
+  const resolvePeerDependenciesImpl = (parentLocator: Locator, peerRequirementSets: Map<IdentHash, PeerRequirements>, {first, optional}: {first: boolean, optional: boolean}) => {
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
 
@@ -1809,7 +1811,7 @@ function applyVirtualResolutionMutations({
     // have peer dependencies themselves.
 
     for (const descriptor of Array.from(parentPackage.dependencies.values())) {
-      const descriptorPeerChains = new Map(peerChains);
+      const descriptorPeerRequirementSets = new Map(peerRequirementSets);
 
       // We shouldn't virtualize the package if it was obtained through a peer
       // dependency (which can't be the case for workspaces when resolved
@@ -1889,7 +1891,7 @@ function applyVirtualResolutionMutations({
         newVirtualInstances.push([pkg, virtualizedDescriptor, virtualizedPackage]);
       });
 
-      const ownedPeerChains = new Set<IdentHash>();
+      const ownedPeerRequirementSets = new Set<IdentHash>();
 
       secondPass.push(() => {
         for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
@@ -1935,8 +1937,8 @@ function applyVirtualResolutionMutations({
           } else if (report !== null) {
             const peerPackage = getPackageFromDescriptor(peerDescriptor);
 
-            miscUtils.getFactoryWithDefault(descriptorPeerChains, peerRequest.identHash, () => {
-              ownedPeerChains.add(peerRequest.identHash);
+            miscUtils.getFactoryWithDefault(descriptorPeerRequirementSets, peerRequest.identHash, () => {
+              ownedPeerRequirementSets.add(peerRequest.identHash);
               return {providedPackage: peerPackage, peerRequests: new Map()};
             }).peerRequests.set(pkg.locatorHash, peerRequest.range);
           }
@@ -1954,7 +1956,7 @@ function applyVirtualResolutionMutations({
 
         const current = virtualStack.get(pkg.locatorHash);
         const next = typeof current !== `undefined` ? current + 1 : 1;
-        const nextPeerChains = new Map(miscUtils.mapAndFilter(descriptorPeerChains, ([identHash, data]) => {
+        const nextPeerRequirementSets = new Map(miscUtils.mapAndFilter(descriptorPeerRequirementSets, ([identHash, data]) => {
           if (!virtualizedPackage.peerDependencies.has(identHash))
             return miscUtils.mapAndFilter.skip;
 
@@ -1963,10 +1965,10 @@ function applyVirtualResolutionMutations({
 
 
         virtualStack.set(pkg.locatorHash, next);
-        resolvePeerDependencies(virtualizedPackage, nextPeerChains, {first: false, optional: isOptional});
+        resolvePeerDependencies(virtualizedPackage, nextPeerRequirementSets, {first: false, optional: isOptional});
         virtualStack.set(pkg.locatorHash, next - 1);
 
-        if (ownedPeerChains.size === 0)
+        if (ownedPeerRequirementSets.size === 0)
           return;
 
         const dependencyHash = [...allVirtualInstances.get(pkg.locatorHash) ?? []].find(
@@ -1975,19 +1977,19 @@ function applyVirtualResolutionMutations({
         if (typeof dependencyHash === `undefined`)
           throw new Error(`Assertion failed: Expected the virtual instance to have been registered`);
 
-        const peerChainsByDependencyHash = miscUtils.getMapWithDefault(peerChainsByVirtualInstances, pkg.locatorHash);
-        if (peerChainsByDependencyHash.has(dependencyHash))
+        const peerRequirementSetsByDependencyHash = miscUtils.getMapWithDefault(peerRequirementSetsByVirtualInstances, pkg.locatorHash);
+        if (peerRequirementSetsByDependencyHash.has(dependencyHash))
           throw new Error(`Assertion failed: Expected dependency hash not to have been registered`);
 
-        peerChainsByDependencyHash.set(dependencyHash, {
+        peerRequirementSetsByDependencyHash.set(dependencyHash, {
           parentLocators: [parentLocator.locatorHash],
           topLevelLocator: pkg.locatorHash,
-          peerChains: Array.from(ownedPeerChains, identHash => {
-            const chain = descriptorPeerChains.get(identHash);
-            if (typeof chain === `undefined`)
-              throw new Error(`Assertion failed: Expected descriptorPeerChains to contain ${identHash}`);
+          peerRequirements: Array.from(ownedPeerRequirementSets, identHash => {
+            const peerRequirements = descriptorPeerRequirementSets.get(identHash);
+            if (typeof peerRequirements === `undefined`)
+              throw new Error(`Assertion failed: Expected descriptorPeerRequirementSets to contain ${identHash}`);
 
-            return chain;
+            return peerRequirements;
           }),
         });
       });
@@ -2051,7 +2053,7 @@ function applyVirtualResolutionMutations({
 
         stable = false;
 
-        peerChainsByVirtualInstances
+        peerRequirementSetsByVirtualInstances
           .get(physicalLocator.locatorHash)
           ?.get(dependencyHash)
           ?.parentLocators
@@ -2086,13 +2088,13 @@ function applyVirtualResolutionMutations({
     resolvePeerDependencies(workspace.anchoredLocator, new Map(), {first: true, optional: false});
   }
 
-  for (const [locatorHash, peerChainsByDependencyHash] of peerChainsByVirtualInstances) {
-    for (const [dependencyHash, {parentLocators, peerChains, topLevelLocator}] of peerChainsByDependencyHash) {
+  for (const peerRequirementsByDependencyHash of peerRequirementSetsByVirtualInstances.values()) {
+    for (const {parentLocators, peerRequirements, topLevelLocator} of peerRequirementsByDependencyHash.values()) {
       const topLevelPackage = allPackages.get(topLevelLocator);
       if (typeof topLevelPackage === `undefined`)
         throw new Error(`Assertion failed: Expected topLevelPackage to have been resolved`);
 
-      for (const {peerRequests, providedPackage} of peerChains) {
+      for (const {peerRequests, providedPackage} of peerRequirements) {
         const ranges = [...peerRequests.values()];
 
         if (ranges.every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range)))
@@ -2100,11 +2102,11 @@ function applyVirtualResolutionMutations({
 
         const doesntSatisfyFirstRangeOnly = !semverUtils.satisfiesWithPrereleases(providedPackage.version, ranges[0]) && ranges.slice(1).every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
 
-        const setMismatchedPeerChain = (parentLocator: Locator, mismatchedParentHash: string) => {
-          mismatchedPeerChains.set(mismatchedParentHash, {
+        const setMismatchedPeerRequirements = (parentLocator: Locator, mismatchedParentHash: string) => {
+          mismatchedPeerRequirementSets.set(mismatchedParentHash, {
             parentLocator: parentLocator.locatorHash,
             topLevelLocator,
-            peerChain: {peerRequests, providedPackage},
+            peerRequirements: {peerRequests, providedPackage},
           });
         };
 
@@ -2114,9 +2116,9 @@ function applyVirtualResolutionMutations({
           if (doesntSatisfyFirstRangeOnly)
             report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, topLevelPackage)}`);
           else
-            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-chain ${mismatchedParentHash}`, formatUtils.Type.CODE)} for details)`);
+            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements ${mismatchedParentHash}`, formatUtils.Type.CODE)} for details)`);
 
-          setMismatchedPeerChain(parentLocator, mismatchedParentHash);
+          setMismatchedPeerRequirements(parentLocator, mismatchedParentHash);
         };
 
         for (const parentLocatorHash of parentLocators) {
@@ -2125,11 +2127,11 @@ function applyVirtualResolutionMutations({
             throw new Error(`Assertion failed: Expected parentLocator to have been resolved`);
 
           const mismatchedParentHash = hashUtils.makeHash(
-            // Peer chains of different parentLocators should have different hashes
+            // Peer requirement sets of different parentLocators should have different hashes
             parentLocator.locatorHash,
-            // Different peer chains of the same parentLocator should have different hashes
+            // Different peer requirement sets of the same parentLocator should have different hashes
             providedPackage.identHash,
-            // Peer chains descending from different packages should have different hashes
+            // peer requirement sets descending from different packages should have different hashes
             topLevelPackage.locatorHash,
           ).slice(0, 5);
 

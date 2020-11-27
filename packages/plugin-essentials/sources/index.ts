@@ -13,7 +13,7 @@ import helpEntry                                                from './commands
 import runEntry                                                 from './commands/entries/run';
 import versionEntry                                             from './commands/entries/version';
 import exec                                                     from './commands/exec';
-import explainPeerChain                                         from './commands/explain/peerChain';
+import explainPeerRequirements                                  from './commands/explain/peerRequirements';
 import info                                                     from './commands/info';
 import install                                                  from './commands/install';
 import link                                                     from './commands/link';
@@ -112,7 +112,7 @@ const plugin: Plugin = {
     config,
     dedupe,
     exec,
-    explainPeerChain,
+    explainPeerRequirements,
     info,
     install,
     link,
