@@ -439,42 +439,34 @@ export class ZipFS extends BasePortableFakeFS {
     if (p === null)
       throw new Error(`Unimplemented`);
 
-    let fd = this.openSync(p, `r`);
+    const fd = this.openSync(p, `r`);
 
-    const closeStream = () => {
-      if (fd === -1)
-        return;
-      this.closeSync(fd);
-      fd = -1;
-    };
+    const stream = Object.assign(
+      new PassThrough({
+        emitClose: true,
+        autoDestroy: true,
+        destroy: (error, callback) => {
+          clearImmediate(immediate);
+          this.closeSync(fd);
+          callback(error);
+        },
+      }),
+      {
+        close() {
+          stream.destroy();
+        },
+        bytesRead: 0,
+        path: p,
+      }
+    );
 
-    const stream = Object.assign(new PassThrough(), {
-      bytesRead: 0,
-      path: p,
-      close: () => {
-        clearImmediate(immediate);
-        closeStream();
-      },
-      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
-        clearImmediate(immediate);
-        closeStream();
-        callback(error);
-      },
-    });
-
-    const immediate = setImmediate(() => {
+    const immediate = setImmediate(async () => {
       try {
-        const data = this.readFileSync(p, encoding);
-
+        const data = await this.readFilePromise(p, encoding);
         stream.bytesRead = data.length;
         stream.end(data);
-        stream.destroy();
       } catch (error) {
-        stream.emit(`error`, error);
-        stream.end();
-        stream.destroy();
-      } finally {
-        closeStream();
+        stream.destroy(error);
       }
     });
 
@@ -490,41 +482,40 @@ export class ZipFS extends BasePortableFakeFS {
 
     const chunks: Array<Buffer> = [];
 
-    let fd = this.openSync(p, `w`);
+    const fd = this.openSync(p, `w`);
 
-    const closeStream = () => {
-      if (fd === -1)
-        return;
-
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-        fd = -1;
+    const stream = Object.assign(
+      new PassThrough({
+        autoDestroy: true,
+        emitClose: true,
+        destroy: (error, callback) => {
+          try {
+            if (error) {
+              callback(error);
+            } else {
+              this.writeFileSync(p, Buffer.concat(chunks), encoding);
+              callback(null);
+            }
+          } catch (err) {
+            callback(err);
+          } finally {
+            this.closeSync(fd);
+          }
+        },
+      }),
+      {
+        bytesWritten: 0,
+        path: p,
+        close() {
+          stream.destroy();
+        },
       }
-    };
-
-    const stream = Object.assign(new PassThrough(), {
-      bytesWritten: 0,
-      path: p,
-      close: () => {
-        stream.end();
-        closeStream();
-      },
-      _destroy: (error: Error | undefined, callback: (error?: Error) => void) => {
-        closeStream();
-        callback(error);
-      },
-    });
+    );
 
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
       stream.bytesWritten += chunkBuffer.length;
       chunks.push(chunkBuffer);
-    });
-
-    stream.on(`end`, () => {
-      closeStream();
     });
 
     return stream;

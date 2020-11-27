@@ -38822,39 +38822,30 @@ class ZipFS extends BasePortableFakeFS {
     encoding
   } = {}) {
     if (p === null) throw new Error(`Unimplemented`);
-    let fd = this.openSync(p, `r`);
-
-    const closeStream = () => {
-      if (fd === -1) return;
-      this.closeSync(fd);
-      fd = -1;
-    };
-
-    const stream = Object.assign(new external_stream_namespaceObject.PassThrough(), {
-      bytesRead: 0,
-      path: p,
-      close: () => {
+    const fd = this.openSync(p, `r`);
+    const stream = Object.assign(new external_stream_namespaceObject.PassThrough({
+      emitClose: true,
+      autoDestroy: true,
+      destroy: (error, callback) => {
         clearImmediate(immediate);
-        closeStream();
-      },
-      _destroy: (error, callback) => {
-        clearImmediate(immediate);
-        closeStream();
+        this.closeSync(fd);
         callback(error);
       }
+    }), {
+      close() {
+        stream.destroy();
+      },
+
+      bytesRead: 0,
+      path: p
     });
-    const immediate = setImmediate(() => {
+    const immediate = setImmediate(async () => {
       try {
-        const data = this.readFileSync(p, encoding);
+        const data = await this.readFilePromise(p, encoding);
         stream.bytesRead = data.length;
         stream.end(data);
-        stream.destroy();
       } catch (error) {
-        stream.emit(`error`, error);
-        stream.end();
-        stream.destroy();
-      } finally {
-        closeStream();
+        stream.destroy(error);
       }
     });
     return stream;
@@ -38866,38 +38857,37 @@ class ZipFS extends BasePortableFakeFS {
     if (this.readOnly) throw EROFS(`open '${p}'`);
     if (p === null) throw new Error(`Unimplemented`);
     const chunks = [];
-    let fd = this.openSync(p, `w`);
-
-    const closeStream = () => {
-      if (fd === -1) return;
-
-      try {
-        this.writeFileSync(p, Buffer.concat(chunks), encoding);
-      } finally {
-        this.closeSync(fd);
-        fd = -1;
+    const fd = this.openSync(p, `w`);
+    const stream = Object.assign(new external_stream_namespaceObject.PassThrough({
+      autoDestroy: true,
+      emitClose: true,
+      destroy: (error, callback) => {
+        try {
+          if (error) {
+            callback(error);
+          } else {
+            this.writeFileSync(p, Buffer.concat(chunks), encoding);
+            callback(null);
+          }
+        } catch (err) {
+          callback(err);
+        } finally {
+          this.closeSync(fd);
+        }
       }
-    };
-
-    const stream = Object.assign(new external_stream_namespaceObject.PassThrough(), {
+    }), {
       bytesWritten: 0,
       path: p,
-      close: () => {
-        stream.end();
-        closeStream();
-      },
-      _destroy: (error, callback) => {
-        closeStream();
-        callback(error);
+
+      close() {
+        stream.destroy();
       }
+
     });
     stream.on(`data`, chunk => {
       const chunkBuffer = Buffer.from(chunk);
       stream.bytesWritten += chunkBuffer.length;
       chunks.push(chunkBuffer);
-    });
-    stream.on(`end`, () => {
-      closeStream();
     });
     return stream;
   }
@@ -41507,8 +41497,13 @@ function applyPatch(pnpapi, opts) {
   const originalFindPath = external_module_.Module._findPath;
 
   external_module_.Module._findPath = function (request, paths, isMain) {
-    if (request === `pnpapi`) return false;
-    if (isMain && npath.isAbsolute(request) || !enableNativeHooks) return originalFindPath.call(external_module_.Module, request, paths, isMain);
+    if (request === `pnpapi`) return false; // Node sometimes call this function with an absolute path and a `null` set
+    // of paths. This would cause the resolution to fail. To avoid that, we
+    // fallback on the regular resolution. We only do this when `isMain` is
+    // true because the Node default resolution doesn't handle well in-zip
+    // paths, even absolute, so we try to use it as little as possible.
+
+    if (!enableNativeHooks || isMain && npath.isAbsolute(request)) return originalFindPath.call(external_module_.Module, request, paths, isMain);
 
     for (const path of paths || []) {
       let resolution;
