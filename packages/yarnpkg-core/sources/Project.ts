@@ -2097,10 +2097,8 @@ function applyVirtualResolutionMutations({
       for (const {peerRequests, providedPackage} of peerRequirements) {
         const ranges = [...peerRequests.values()];
 
-        if (ranges.every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range)))
-          continue;
-
-        const doesntSatisfyFirstRangeOnly = !semverUtils.satisfiesWithPrereleases(providedPackage.version, ranges[0]) && ranges.slice(1).every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
+        const satisfiesAllRanges = ranges.every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
+        const doesntSatisfyFirstRangeOnly = !satisfiesAllRanges && !semverUtils.satisfiesWithPrereleases(providedPackage.version, ranges[0]) && ranges.slice(1).every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
 
         const setMismatchedPeerRequirements = (parentLocator: Locator, mismatchedParentHash: string) => {
           mismatchedPeerRequirementSets.set(mismatchedParentHash, {
@@ -2113,10 +2111,13 @@ function applyVirtualResolutionMutations({
         // When the parent provides the peer dependency request it must be checked to ensure
         // it is a compatible version.
         const emitWarningForParentLocator = (parentLocator: Locator, mismatchedParentHash: string) => {
-          if (doesntSatisfyFirstRangeOnly)
-            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, topLevelPackage)}`);
-          else
-            report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements ${mismatchedParentHash}`, formatUtils.Type.CODE)} for details)`);
+          if (!satisfiesAllRanges) {
+            if (doesntSatisfyFirstRangeOnly) {
+              report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, topLevelPackage)}`);
+            } else {
+              report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, mismatchedParentHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements ${mismatchedParentHash}`, formatUtils.Type.CODE)} for details)`);
+            }
+          }
 
           setMismatchedPeerRequirements(parentLocator, mismatchedParentHash);
         };

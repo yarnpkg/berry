@@ -6,8 +6,8 @@ import * as yup                                                                 
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
-  @Command.String()
-  hash!: string;
+  @Command.String({required: false})
+  hash?: string;
 
   static schema = yup.object().shape({
     hash: yup.string().matches(/^[0-9a-f]+$/),
@@ -21,9 +21,52 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     // mismatchedPeerRequirementSets aren't stored inside the install state
     await project.applyLightResolution();
 
-    return await explainMismatchedPeerRequirements(this.hash, project, {
+    if (typeof this.hash !== `undefined`) {
+      return await explainMismatchedPeerRequirements(this.hash, project, {
+        stdout: this.context.stdout,
+      });
+    }
+
+    const report = await StreamReport.start({
+      configuration,
       stdout: this.context.stdout,
+      includeFooter: false,
+    }, async report => {
+      const requirementSets: Array<{
+        prettyHash: string,
+        prettyParentLocator: string,
+        prettyPeerRequest: string,
+        prettyTopLevelLocator: string,
+        descendantCount: number,
+      }> = [];
+
+      for (const [hash, {parentLocator, topLevelLocator, peerRequirements}] of project.mismatchedPeerRequirementSets) {
+        const parentPackage = project.storedPackages.get(parentLocator);
+        if (typeof parentPackage === `undefined`)
+          throw new Error(`Assertion failed: Expected the parent package to have been registered`);
+
+        const topLevelPackage = project.storedPackages.get(topLevelLocator);
+        if (typeof topLevelPackage === `undefined`)
+          throw new Error(`Assertion failed: Expected the top level package to have been registered`);
+
+        requirementSets.push({
+          prettyHash: formatUtils.pretty(configuration, hash, formatUtils.Type.CODE),
+          prettyParentLocator: structUtils.prettyLocator(configuration, parentPackage),
+          prettyPeerRequest: structUtils.prettyIdent(configuration, peerRequirements.providedPackage),
+          prettyTopLevelLocator: structUtils.prettyLocator(configuration, topLevelPackage),
+          descendantCount: peerRequirements.peerRequests.size - 1,
+        });
+      }
+
+      for (const {prettyHash, prettyParentLocator, prettyPeerRequest, prettyTopLevelLocator, descendantCount} of miscUtils.sortMap(requirementSets, ({prettyParentLocator}) => prettyParentLocator)) {
+        const pluralized = `descendant${descendantCount === 1 ? `` : `s`}`;
+        const maybeDescendants = descendantCount > 0 ? ` and ${descendantCount} ${pluralized}` : ``;
+
+        report.reportInfo(null, `${prettyHash} → ${prettyParentLocator} provides ${prettyPeerRequest} to ${prettyTopLevelLocator}${maybeDescendants}`);
+      }
     });
+
+    return report.exitCode();
   }
 }
 
@@ -34,7 +77,7 @@ export async function explainMismatchedPeerRequirements(mismatchedPeerRequiremen
   if (typeof data === `undefined`)
     throw new Error(`No mismatched peerDependency requirements found for hash: "${mismatchedPeerRequirementsHash}"`);
 
-  const {peerRequirements, parentLocator} = data;
+  const {peerRequirements, parentLocator, topLevelLocator} = data;
 
   const report = await StreamReport.start({
     configuration,
@@ -45,17 +88,22 @@ export async function explainMismatchedPeerRequirements(mismatchedPeerRequiremen
     if (typeof parentPackage === `undefined`)
       throw new Error(`Assertion failed: Expected the parentPackage to have been registered`);
 
-    const firstLocatorHash = [...peerRequirements.peerRequests.keys()][0];
-    const firstPackage = project.storedPackages.get(firstLocatorHash);
-    if (typeof firstPackage === `undefined`)
-      throw new Error(`Assertion failed: Expected the first package to have been registered`);
-    const prettyFirstLocator = structUtils.prettyLocator(configuration, firstPackage);
+    const topLevelPackage = project.storedPackages.get(topLevelLocator);
+    if (typeof topLevelPackage === `undefined`)
+      throw new Error(`Assertion failed: Expected the top level package to have been registered`);
+    const prettyTopLevelLocator = structUtils.prettyLocator(configuration, topLevelPackage);
+
+    const descendantCount = peerRequirements.peerRequests.size - 1;
+    const plural = descendantCount !== 1;
+    const maybeDescendants = descendantCount > 0 ? ` and${plural ? ` some of` : ``} its ${descendantCount} descendant${plural ? `s` : ``}` : ``;
 
     report.reportInfo(MessageName.UNNAMED, `${
       structUtils.prettyLocator(configuration, parentPackage)
     } provides ${
       structUtils.prettyLocator(configuration, peerRequirements.providedPackage)
-    } which doesn't satisfy the requirements of ${prettyFirstLocator} and all of its descendants:`);
+    } with version ${
+      structUtils.prettyReference(configuration, peerRequirements.providedPackage.version ?? `<missing>`)
+    } which doesn't satisfy the requirements of ${prettyTopLevelLocator}${maybeDescendants}:`);
 
     report.reportSeparator();
 
