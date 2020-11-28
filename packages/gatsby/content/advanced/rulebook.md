@@ -87,7 +87,7 @@ Note that while `createRequire` is Node 12+, a polyfill exists under the name [`
 
 **Why?** The `.bin` folder is an implementation detail, and may not exist at all depending on the install strategy.
 
-**Solution:** If you're writing a [script](http://localhost:8000/configuration/manifest#scripts), you can just refer to the binary by its name! So instead of `node_modules/.bin/jest -w`, prefer just writing `jest -w` which will work just fine. If for some reason `jest` isn't available, check that the current package properly [defines it as a dependency](#a-package-should-only-require-what-it-lists-in-its-dependencies).
+**Solution:** If you're writing a [script](/configuration/manifest#scripts), you can just refer to the binary by its name! So instead of `node_modules/.bin/jest -w`, prefer just writing `jest -w` which will work just fine. If for some reason `jest` isn't available, check that the current package properly [defines it as a dependency](#a-package-should-only-require-what-it-lists-in-its-dependencies).
 
 Sometimes you may find yourself having slightly more complex needs, for example if you wish to spawn a script with specific Node flags. Depending on the context we recommend passing options via the [`NODE_OPTIONS` environment variable](https://nodejs.org/api/cli.html#cli_node_options_options) rather than the CLI, but if that's not an option you can use `yarn bin <name>` to get the specified binary path:
 
