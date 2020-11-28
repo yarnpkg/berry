@@ -133,10 +133,12 @@ type RestoreInstallStateOpts = {
 // Just a type that's the union of all the fields declared in `INSTALL_STATE_FIELDS`
 type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
-export interface PeerRequirements {
-  providedPackage: Package,
-  peerRequests: Map<LocatorHash, string>,
-}
+export type PeerRequirement = {
+  subject: LocatorHash,
+  requested: Ident,
+  rootRequester: LocatorHash,
+  allRequesters: Array<LocatorHash>,
+};
 
 export class Project {
   public readonly configuration: Configuration;
@@ -174,11 +176,7 @@ export class Project {
    *
    * The map keys are 5 character unique hex hashes.
    */
-  public peerRequirementSets: Map<string, {
-    parentLocator: LocatorHash,
-    topLevelLocator: LocatorHash,
-    peerRequirements: PeerRequirements,
-  }> = new Map();
+  public peerRequirements: Map<string, PeerRequirement> = new Map();
 
   public installersCustomData: Map<string, unknown> = new Map();
 
@@ -789,7 +787,7 @@ export class Project {
     const volatileDescriptors = new Set(this.resolutionAliases.values());
     const optionalBuilds = new Set(allPackages.keys());
     const accessibleLocators = new Set<LocatorHash>();
-    const peerRequirementSets: Project['peerRequirementSets'] = [];
+    const peerRequirements: Project['peerRequirements'] = new Map();
 
     applyVirtualResolutionMutations({
       project: this,
@@ -798,7 +796,7 @@ export class Project {
       accessibleLocators,
       volatileDescriptors,
       optionalBuilds,
-      peerRequirementSets,
+      peerRequirements,
 
       allDescriptors,
       allResolutions,
@@ -823,7 +821,7 @@ export class Project {
     this.accessibleLocators = accessibleLocators;
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
-    this.peerRequirementSets = peerRequirementSets;
+    this.peerRequirements = peerRequirements;
 
     // Now that the internal resolutions have been updated, we can refresh the
     // dependencies of each resolved workspace's `Workspace` instance.
@@ -1690,7 +1688,7 @@ function applyVirtualResolutionMutations({
   accessibleLocators = new Set(),
   optionalBuilds = new Set(),
   volatileDescriptors = new Set(),
-  peerRequirementSets = new Map(),
+  peerRequirements = new Map(),
 
   report,
 
@@ -1705,7 +1703,7 @@ function applyVirtualResolutionMutations({
   accessibleLocators?: Set<LocatorHash>,
   optionalBuilds?: Set<LocatorHash>,
   volatileDescriptors?: Set<DescriptorHash>,
-  peerRequirementSets?: Project['peerRequirementSets'],
+  peerRequirements?: Project['peerRequirements'],
 
   report: Report | null,
 
@@ -1955,11 +1953,24 @@ function applyVirtualResolutionMutations({
       });
 
       fourthPass.push(() => {
+        // Regardless of whether the initial virtualized package got deduped
+        // or not, we now register that *this* package is now a dependent on
+        // whatever its peer dependencies have been resolved to. We'll later
+        // use this information to generate warnings.
+        if (!structUtils.isVirtualLocator(parentLocator)) {
+          const finalDescriptor = parentPackage.dependencies.get(descriptor.identHash);
+          if (typeof finalDescriptor === `undefined`)
+            throw new Error(`Assertion failed: Expected the peer dependency to have been turned into a dependency`);
+
+          const finalResolution = allResolutions.get(finalDescriptor.descriptorHash)!;
+          if (typeof finalResolution === `undefined`)
+            throw new Error(`Assertion failed: Expected the descriptor to be registered`);
+
+          miscUtils.getSetWithDefault(peerDependencyDependents, finalResolution).add(parentLocator.locatorHash);
+        }
+
         if (!allPackages.has(virtualizedPackage.locatorHash))
           return;
-
-        if (!structUtils.isVirtualLocator(parentLocator))
-          miscUtils.getSetWithDefault(peerDependencyDependents, virtualizedPackage.locatorHash).add(parentLocator.locatorHash);
 
         for (const descriptor of virtualizedPackage.peerDependencies.values()) {
           const root = nextPeerSlots.get(descriptor.identHash);
@@ -2065,12 +2076,14 @@ function applyVirtualResolutionMutations({
     subject: Locator,
     requested: Ident,
     requester: Ident,
+    hash: string,
   } | {
     type: WarningType.NotCompatible,
     subject: Locator,
     requested: Ident,
     requester: Ident,
     version: string,
+    hash: string,
   };
 
   const warnings: Array<Warning> = [];
@@ -2107,9 +2120,14 @@ function applyVirtualResolutionMutations({
       for (const [identStr, linkHashes] of rootLinks) {
         const ident = structUtils.parseIdent(identStr);
 
-        /**
-         * TODO: Probably here that we should inject things in `peerRequirementSets`
-         */
+        const hash = `p${hashUtils.makeHash(dependentHash, identStr, rootHash).slice(0, 5)}`;
+
+        peerRequirements.set(hash, {
+          subject: dependentHash,
+          requested: ident,
+          rootRequester: rootHash,
+          allRequesters: linkHashes,
+        });
 
         // Note: this can be undefined when the peer dependency isn't provided at all
         const resolvedDescriptor = root.dependencies.get(ident.identHash);
@@ -2142,6 +2160,7 @@ function applyVirtualResolutionMutations({
               requested: ident,
               requester: root,
               version: peerVersion,
+              hash,
             });
           }
         } else {
@@ -2153,6 +2172,7 @@ function applyVirtualResolutionMutations({
               subject: dependent,
               requested: ident,
               requester: root,
+              hash,
             });
           }
         }
@@ -2167,17 +2187,19 @@ function applyVirtualResolutionMutations({
   ];
 
   for (const warning of miscUtils.sortMap(warnings, warningSortCriterias)) {
-    const peerRequirementsHash = ``;
-
     switch (warning.type) {
       case WarningType.NotProvided: {
-        report?.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, warning.subject)} doesn't provide ${structUtils.prettyIdent(project.configuration, warning.requested)} (${formatUtils.pretty(project.configuration, peerRequirementsHash, formatUtils.Type.CODE)}) requested by ${structUtils.prettyIdent(project.configuration, warning.requester)}`);
+        report?.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, warning.subject)} doesn't provide ${structUtils.prettyIdent(project.configuration, warning.requested)} (${formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)}), requested by ${structUtils.prettyIdent(project.configuration, warning.requester)}`);
       } break;
 
       case WarningType.NotCompatible: {
-        report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, warning.subject)} provides ${structUtils.prettyIdent(project.configuration, warning.requested)} (${formatUtils.pretty(project.configuration, peerRequirementsHash, formatUtils.Type.CODE)}) with version ${structUtils.prettyReference(project.configuration, warning.version)}, which doesn't satisfy what ${structUtils.prettyIdent(project.configuration, warning.requester)} requests (run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements ${peerRequirementsHash}`, formatUtils.Type.CODE)} for details)`);
+        report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, warning.subject)} provides ${structUtils.prettyIdent(project.configuration, warning.requested)} (${formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)}) with version ${structUtils.prettyReference(project.configuration, warning.version)}, which doesn't satisfy what ${structUtils.prettyIdent(project.configuration, warning.requester)} requests`);
       } break;
     }
+  }
+
+  if (warnings.length > 0) {
+    report?.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letters p-prefixed code`);
   }
 
   /*
@@ -2193,7 +2215,7 @@ function applyVirtualResolutionMutations({
         const doesntSatisfyFirstRangeOnly = !satisfiesAllRanges && !semverUtils.satisfiesWithPrereleases(providedPackage.version, ranges[0]) && ranges.slice(1).every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
 
         const setPeerRequirements = (parentLocator: Locator, peerRequirementsHash: string) => {
-          peerRequirementSets.set(peerRequirementsHash, {
+          peerRequirements.set(peerRequirementsHash, {
             parentLocator: parentLocator.locatorHash,
             topLevelLocator,
             peerRequirements: {peerRequests, providedPackage},
