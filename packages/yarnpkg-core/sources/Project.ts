@@ -1858,7 +1858,7 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       if (pkg.peerDependencies.size === 0) {
-        resolvePeerDependencies(pkg, peerSlots, {first: false, optional: isOptional});
+        resolvePeerDependencies(pkg, new Map([[pkg.identHash, pkg.locatorHash]]), {first: false, optional: isOptional});
         continue;
       }
 
@@ -1891,14 +1891,11 @@ function applyVirtualResolutionMutations({
 
         // Keep track of all new virtual packages since we'll want to dedupe them
         newVirtualInstances.push([pkg, virtualizedDescriptor, virtualizedPackage]);
-
-        nextPeerSlots = new Map<IdentHash, LocatorHash>();
-        for (const identHash of pkg.peerDependencies.keys()) {
-          nextPeerSlots.set(identHash, peerSlots.get(identHash) ?? virtualizedPackage.locatorHash);
-        }
       });
 
       secondPass.push(() => {
+        nextPeerSlots = new Map<IdentHash, LocatorHash>();
+
         for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
           let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
@@ -1929,8 +1926,11 @@ function applyVirtualResolutionMutations({
           }
 
           allIdents.set(peerDescriptor.identHash, peerDescriptor);
-          if (peerDescriptor.range === `missing:`) {
+          if (peerDescriptor.range === `missing:`)
             missingPeerDependencies.add(peerDescriptor.identHash);
+
+          for (const identHash of pkg.peerDependencies.keys()) {
+            nextPeerSlots.set(identHash, peerSlots.get(identHash) ?? virtualizedPackage.locatorHash);
           }
         }
 
@@ -1957,17 +1957,15 @@ function applyVirtualResolutionMutations({
         // or not, we now register that *this* package is now a dependent on
         // whatever its peer dependencies have been resolved to. We'll later
         // use this information to generate warnings.
-        if (!structUtils.isVirtualLocator(parentLocator)) {
-          const finalDescriptor = parentPackage.dependencies.get(descriptor.identHash);
-          if (typeof finalDescriptor === `undefined`)
-            throw new Error(`Assertion failed: Expected the peer dependency to have been turned into a dependency`);
+        const finalDescriptor = parentPackage.dependencies.get(descriptor.identHash);
+        if (typeof finalDescriptor === `undefined`)
+          throw new Error(`Assertion failed: Expected the peer dependency to have been turned into a dependency`);
 
-          const finalResolution = allResolutions.get(finalDescriptor.descriptorHash)!;
-          if (typeof finalResolution === `undefined`)
-            throw new Error(`Assertion failed: Expected the descriptor to be registered`);
+        const finalResolution = allResolutions.get(finalDescriptor.descriptorHash)!;
+        if (typeof finalResolution === `undefined`)
+          throw new Error(`Assertion failed: Expected the descriptor to be registered`);
 
-          miscUtils.getSetWithDefault(peerDependencyDependents, finalResolution).add(parentLocator.locatorHash);
-        }
+        miscUtils.getSetWithDefault(peerDependencyDependents, finalResolution).add(parentLocator.locatorHash);
 
         if (!allPackages.has(virtualizedPackage.locatorHash))
           return;
@@ -2063,7 +2061,7 @@ function applyVirtualResolutionMutations({
 
   for (const workspace of project.workspaces) {
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
-    resolvePeerDependencies(workspace.anchoredLocator, new Map(), {first: true, optional: false});
+    resolvePeerDependencies(workspace.anchoredLocator, new Map([[workspace.locator.identHash, workspace.anchoredLocator.locatorHash]]), {first: true, optional: false});
   }
 
   enum WarningType {
