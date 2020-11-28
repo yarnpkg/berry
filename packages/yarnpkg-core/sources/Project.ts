@@ -2091,11 +2091,6 @@ function applyVirtualResolutionMutations({
     if (typeof root === `undefined`)
       throw new Error(`Assertion failed: Expected the root to be registered`);
 
-    const devirtualizedRootLocator = structUtils.devirtualizeLocator(root);
-    const devirtualizedRoot = allPackages.get(devirtualizedRootLocator.locatorHash);
-    if (typeof devirtualizedRoot === `undefined`)
-      throw new Error(`Assertion failed: Expected the devirtualized root to be registered`);
-
     // We retrieve the set of packages that provide complementary peer
     // dependencies to the one already offered by our root package, and to
     // whom other package.
