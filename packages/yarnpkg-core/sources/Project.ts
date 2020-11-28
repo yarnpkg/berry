@@ -1858,7 +1858,7 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       if (pkg.peerDependencies.size === 0) {
-        resolvePeerDependencies(pkg, new Map([[pkg.identHash, pkg.locatorHash]]), {first: false, optional: isOptional});
+        resolvePeerDependencies(pkg, new Map(), {first: false, optional: isOptional});
         continue;
       }
 
@@ -1929,9 +1929,7 @@ function applyVirtualResolutionMutations({
           if (peerDescriptor.range === `missing:`)
             missingPeerDependencies.add(peerDescriptor.identHash);
 
-          for (const identHash of pkg.peerDependencies.keys()) {
-            nextPeerSlots.set(identHash, peerSlots.get(identHash) ?? virtualizedPackage.locatorHash);
-          }
+          nextPeerSlots.set(peerRequest.identHash, peerSlots.get(peerRequest.identHash) ?? virtualizedPackage.locatorHash);
         }
 
         // Since we've had to add new dependencies we need to sort them all over again
@@ -2061,7 +2059,7 @@ function applyVirtualResolutionMutations({
 
   for (const workspace of project.workspaces) {
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
-    resolvePeerDependencies(workspace.anchoredLocator, new Map([[workspace.locator.identHash, workspace.anchoredLocator.locatorHash]]), {first: true, optional: false});
+    resolvePeerDependencies(workspace.anchoredLocator, new Map(), {first: true, optional: false});
   }
 
   enum WarningType {
