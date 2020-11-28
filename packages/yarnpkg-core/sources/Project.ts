@@ -2108,13 +2108,19 @@ function applyVirtualResolutionMutations({
       continue;
 
     for (const dependentHash of dependents) {
-      // The package may have been pruned during a deduplication
       const dependent = allPackages.get(dependentHash);
+
+      // The package may have been pruned during a deduplication
       if (typeof dependent === `undefined`)
         continue;
 
       for (const [identStr, linkHashes] of rootLinks) {
         const ident = structUtils.parseIdent(identStr);
+
+        // This dependent may have a peer dep itself, in which case it's not
+        // the true root, and we can ignore it
+        if (dependent.peerDependencies.has(ident.identHash))
+          continue;
 
         const hash = `p${hashUtils.makeHash(dependentHash, identStr, rootHash).slice(0, 5)}`;
 
@@ -2177,7 +2183,7 @@ function applyVirtualResolutionMutations({
   }
 
   const warningSortCriterias: Array<((warning: Warning) => string)> = [
-    warning => structUtils.stringifyLocator(warning.subject),
+    warning => structUtils.prettyLocatorNoColors(warning.subject),
     warning => structUtils.stringifyIdent(warning.requested),
     warning => `${warning.type}`,
   ];
