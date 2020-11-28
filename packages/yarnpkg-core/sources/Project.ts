@@ -174,7 +174,7 @@ export class Project {
    * Populated by the `resolveEverything` method.
    * *Not* stored inside the install state.
    *
-   * The map keys are 5 character unique hex hashes.
+   * The map keys are 6 hexadecimal characters except the first one, always `p`.
    */
   public peerRequirements: Map<string, PeerRequirement> = new Map();
 
@@ -1719,12 +1719,13 @@ function applyVirtualResolutionMutations({
   const allVirtualInstances = new Map<LocatorHash, Map<string, Descriptor>>();
   const allVirtualDependents = new Map<DescriptorHash, Set<LocatorHash>>();
 
-  // First key is the first package that provides the peer dependency. Second
+  // First key is the first package that requests the peer dependency. Second
   // key is the name of the package in the peer dependency. Value is the list
   // of all packages that extend the original peer requirement.
   const peerDependencyLinks: Map<LocatorHash, Map<string, Array<LocatorHash>>> = new Map();
 
-  //
+  // We keep track on which package depend on which other package with peer
+  // dependencies; this way we can emit warnings for them later on.
   const peerDependencyDependents = new Map<LocatorHash, Set<LocatorHash>>();
 
   // We must keep a copy of the workspaces original dependencies, because they
@@ -2080,6 +2081,7 @@ function applyVirtualResolutionMutations({
     requester: Ident,
     version: string,
     hash: string,
+    requirementCount: number,
   };
 
   const warnings: Array<Warning> = [];
@@ -2163,6 +2165,7 @@ function applyVirtualResolutionMutations({
               requester: root,
               version: peerVersion,
               hash,
+              requirementCount: linkHashes.length,
             });
           }
         } else {
@@ -2191,70 +2194,38 @@ function applyVirtualResolutionMutations({
   for (const warning of miscUtils.sortMap(warnings, warningSortCriterias)) {
     switch (warning.type) {
       case WarningType.NotProvided: {
-        report?.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, warning.subject)} doesn't provide ${structUtils.prettyIdent(project.configuration, warning.requested)} (${formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)}), requested by ${structUtils.prettyIdent(project.configuration, warning.requester)}`);
+        report?.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
+          structUtils.prettyLocator(project.configuration, warning.subject)
+        } doesn't provide ${
+          structUtils.prettyIdent(project.configuration, warning.requested)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }), requested by ${
+          structUtils.prettyIdent(project.configuration, warning.requester)
+        }`);
       } break;
 
       case WarningType.NotCompatible: {
-        report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, warning.subject)} provides ${structUtils.prettyIdent(project.configuration, warning.requested)} (${formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)}) with version ${structUtils.prettyReference(project.configuration, warning.version)}, which doesn't satisfy what ${structUtils.prettyIdent(project.configuration, warning.requester)} requests`);
+        const andDescendants = warning.requirementCount > 1
+          ? `and some of its descendants request`
+          : `requests`;
+
+        report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
+          structUtils.prettyLocator(project.configuration, warning.subject)
+        } provides ${
+          structUtils.prettyIdent(project.configuration, warning.requested)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }) with version ${
+          structUtils.prettyReference(project.configuration, warning.version)
+        }, which doesn't satisfy what ${
+          structUtils.prettyIdent(project.configuration, warning.requester)
+        } ${andDescendants}`);
       } break;
     }
   }
 
   if (warnings.length > 0) {
-    report?.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letters p-prefixed code`);
+    report?.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code`);
   }
-
-  /*
-    for (const {parentLocators, peerRequirements, topLevelLocator} of peerRequirementsByDependencyHash.values()) {
-      const topLevelPackage = allPackages.get(topLevelLocator);
-      if (typeof topLevelPackage === `undefined`)
-        throw new Error(`Assertion failed: Expected topLevelPackage to have been resolved`);
-
-      for (const {peerRequests, providedPackage} of peerRequirements) {
-        const ranges = [...peerRequests.values()];
-
-        const satisfiesAllRanges = ranges.every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
-        const doesntSatisfyFirstRangeOnly = !satisfiesAllRanges && !semverUtils.satisfiesWithPrereleases(providedPackage.version, ranges[0]) && ranges.slice(1).every(range => semverUtils.satisfiesWithPrereleases(providedPackage.version, range));
-
-        const setPeerRequirements = (parentLocator: Locator, peerRequirementsHash: string) => {
-          peerRequirements.set(peerRequirementsHash, {
-            parentLocator: parentLocator.locatorHash,
-            topLevelLocator,
-            peerRequirements: {peerRequests, providedPackage},
-          });
-        };
-
-        // When the parent provides the peer dependency request it must be checked to ensure
-        // it is a compatible version.
-        const emitWarningForParentLocator = (parentLocator: Locator, peerRequirementsHash: string) => {
-          if (!satisfiesAllRanges) {
-            if (doesntSatisfyFirstRangeOnly) {
-              report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, peerRequirementsHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy ${structUtils.prettyRange(project.configuration, ranges[0])} requested by ${structUtils.prettyLocator(project.configuration, topLevelPackage)}`);
-            } else {
-              report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} (${formatUtils.pretty(project.configuration, peerRequirementsHash, formatUtils.Type.CODE)}) provides ${structUtils.prettyIdent(project.configuration, providedPackage)} with version ${structUtils.prettyReference(project.configuration, providedPackage.version ?? `<missing>`)} which doesn't satisfy what ${structUtils.prettyLocator(project.configuration, topLevelPackage)} and its descendants request (run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements ${peerRequirementsHash}`, formatUtils.Type.CODE)} for details)`);
-            }
-          }
-
-          setPeerRequirements(parentLocator, peerRequirementsHash);
-        };
-
-        for (const parentLocatorHash of parentLocators) {
-          const parentLocator = allPackages.get(parentLocatorHash);
-          if (typeof parentLocator === `undefined`)
-            throw new Error(`Assertion failed: Expected parentLocator to have been resolved`);
-
-          const peerRequirementsHash = hashUtils.makeHash(
-            // Peer requirement sets of different parentLocators should have different hashes
-            parentLocator.locatorHash,
-            // Different peer requirement sets of the same parentLocator should have different hashes
-            providedPackage.identHash,
-            // Peer requirement sets descending from different packages should have different hashes
-            topLevelPackage.locatorHash,
-          ).slice(0, 5);
-
-          emitWarningForParentLocator(parentLocator, peerRequirementsHash);
-        }
-      }
-    }
-    */
 }
