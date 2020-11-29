@@ -22,8 +22,6 @@ const moduleWrapper = tsserver => {
   // before forwarding it to TS, and to add it back on all returned paths.
 
   function toEditorPath(str) {
-    const orig = str;
-
     // We add the `zip:` prefix to both `.zip/` paths and virtual paths
     if (isAbsolute(str) && !str.match(/^\^zip:/) && (str.match(/\.zip\//) || str.match(/\$\$virtual\//))) {
       // We also take the opportunity to turn virtual paths into physical ones;
@@ -57,8 +55,6 @@ const moduleWrapper = tsserver => {
       if (str.match(/\.zip\//)) {
         str = `${isVSCode ? '^' : ''}zip:${str}`;
       }
-
-      require(`fs`).appendFileSync(`/tmp/lololol`, `${orig} -> ${str}\n`);
     }
 
     return str;

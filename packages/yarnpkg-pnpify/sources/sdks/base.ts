@@ -79,10 +79,12 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           //
           // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
           //
-          return \`\${isVSCode ? '^' : ''}zip:\${str}\`;
-        } else {
-          return str;
+          if (str.match(/\\.zip\\//)) {
+            str = \`\${isVSCode ? \`^\` : \`\`}zip:\${str}\`;
+          }
         }
+
+        return str;
       }
 
       function fromEditorPath(str) {
