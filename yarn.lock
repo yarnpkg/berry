@@ -28671,19 +28671,21 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"yoga-layout-prebuilt@npm:^1.9.3":
-  version: 1.9.3
-  resolution: "yoga-layout-prebuilt@npm:1.9.3"
-  checksum: 9dd6aa9aae7b7c147549d7d873d1cffccb84f9dea0cf39fbfa33efb75846c8e3838b40aa6c47652af0d7477bec8cc1813b77fd94837d1ea39ba984461d455d0b
-  languageName: node
-  linkType: hard
-
-"yoga-layout-prebuilt@npm:^1.9.6":
+yoga-layout-prebuilt@1.10.0:
   version: 1.10.0
   resolution: "yoga-layout-prebuilt@npm:1.10.0"
   dependencies:
     "@types/yoga-layout": 1.9.2
   checksum: e8db26850d5ea55d0538522245c2343d555e82d3528837cfb371040b4a877a7a4860aeb325e15fa5061bcca0a2dac6abd5af2051f584048009f2c5b4bb8afdf7
+  languageName: node
+  linkType: hard
+
+"yoga-layout-prebuilt@patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
+  version: 1.10.0
+  resolution: "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
+  dependencies:
+    "@types/yoga-layout": 1.9.2
+  checksum: 5aebe6c637ab4f63e08a87f11820d487dfed1850f658607891e04bac50f756c8b7fb2ec8606fd561dc96f63123ce99f5a97bd229c61a35910c0541f48b936216
   languageName: node
   linkType: hard
 

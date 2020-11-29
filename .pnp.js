@@ -23194,7 +23194,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["widest-line", "npm:3.1.0"],
             ["wrap-ansi", "npm:6.2.0"],
             ["ws", "virtual:4ac7945935c7b9baa1c648c30910b97cc4b5310bd9c6e7f82899f24717f03acba3019fca67c456aeaef29db72c35d787ebde17b426ca35ee56f8bb84bc683d77#npm:7.3.1"],
-            ["yoga-layout-prebuilt", "npm:1.10.0"]
+            ["yoga-layout-prebuilt", "patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."]
           ],
           "packagePeers": [
             "@types/react",
@@ -23227,7 +23227,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["string-length", "npm:3.1.0"],
             ["widest-line", "npm:3.1.0"],
             ["wrap-ansi", "npm:6.2.0"],
-            ["yoga-layout-prebuilt", "npm:1.9.3"]
+            ["yoga-layout-prebuilt", "patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."]
           ],
           "packagePeers": [
             "@types/react",
@@ -23260,7 +23260,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["string-length", "npm:3.1.0"],
             ["widest-line", "npm:3.1.0"],
             ["wrap-ansi", "npm:6.2.0"],
-            ["yoga-layout-prebuilt", "npm:1.9.3"]
+            ["yoga-layout-prebuilt", "patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."]
           ],
           "packagePeers": [
             "@types/react",
@@ -38776,18 +38776,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["yoga-layout-prebuilt", [
-        ["npm:1.10.0", {
-          "packageLocation": "./.yarn/cache/yoga-layout-prebuilt-npm-1.10.0-855b15449f-e8db26850d.zip/node_modules/yoga-layout-prebuilt/",
+        ["patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A.", {
+          "packageLocation": "./.yarn/cache/yoga-layout-prebuilt-patch-9ccf399fa4-5aebe6c637.zip/node_modules/yoga-layout-prebuilt/",
           "packageDependencies": [
-            ["yoga-layout-prebuilt", "npm:1.10.0"],
+            ["yoga-layout-prebuilt", "patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],
             ["@types/yoga-layout", "npm:1.9.2"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:1.9.3", {
-          "packageLocation": "./.yarn/cache/yoga-layout-prebuilt-npm-1.9.3-b527507fd5-9dd6aa9aae.zip/node_modules/yoga-layout-prebuilt/",
-          "packageDependencies": [
-            ["yoga-layout-prebuilt", "npm:1.9.3"]
           ],
           "linkType": "HARD",
         }]

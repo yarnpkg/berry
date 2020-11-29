@@ -1,0 +1,4 @@
+releases:
+  "@yarnpkg/plugin-workspace-tools": patch
+  "@yarnpkg/plugin-version": patch
+  "@yarnpkg/plugin-interactive-tools": patch
