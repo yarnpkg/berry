@@ -289,7 +289,7 @@ export const ScalarProperty = ({theme, name, anchor = name, placeholder, descrip
   </Describe>
 </>;
 
-export function themed<T extends ThemeProps>(BaseComponent: React.ComponentType<T> | StyledComponent<any, ThemeProps, any>, theme: Theme) {
+export function themed<T extends ThemeProps>(BaseComponent: React.ComponentType<T> | StyledComponent<any, T, any>, theme: Theme) {
   const ThemedComponent = (props: T) => <BaseComponent {...props} theme={theme} />;
 
   ThemedComponent.BaseComponent = BaseComponent;
