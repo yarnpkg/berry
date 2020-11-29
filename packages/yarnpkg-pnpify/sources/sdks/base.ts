@@ -38,7 +38,11 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
   const tsServerMonkeyPatch = `
     tsserver => {
       const {isAbsolute} = require(\`path\`);
-      const {resolveVirtual} = require(\`pnpapi\`);
+      const pnpApi = require(\`pnpapi\`);
+
+      const dependencyTreeRoots = new Set(pnpApi.getDependencyTreeRoots().map(locator => {
+        return \`\${locator.name}@\${locator.reference}\`;
+      }));
 
       // VSCode sends the zip paths to TS using the "zip://" prefix, that TS
       // doesn't understand. This layer makes sure to remove the protocol
@@ -51,19 +55,36 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // this makes is much easier to work with workspaces that list peer
           // dependencies, since otherwise Ctrl+Click would bring us to the virtual
           // file instances instead of the real ones.
-          const physicalFilePath = (resolveVirtual(str) || str)
-            .replace(/\\\\/g, \`/\`)
-            .replace(/^\\/?/, \`/\`);
+          //
+          // We only do this to modules owned by the the dependency tree roots.
+          // This avoids breaking the resolution when jumping inside a vendor
+          // with peer dep (otherwise jumping into react-dom would show resolution
+          // errors on react).
+          //
+          const resolved = pnpApi.resolveVirtual(str);
+          if (resolved) {
+            const locator = pnpApi.findPackageLocator(resolved);
+            if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`)) {
+             str = resolved;
+            }
+          }
+
+          str = str.replace(/\\\\/g, \`/\`)
+          str = str.replace(/^\\/?/, \`/\`);
 
           // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
           // VSCode only adds it automatically for supported schemes,
           // so we have to do it manually for the \`zip\` scheme.
           // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
-          // https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-          return \`\${isVSCode ? '^' : ''}zip:\${physicalFilePath}\`;
-        } else {
-          return str;
+          //
+          // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
+          //
+          if (str.match(/\\.zip\\//)) {
+            str = \`\${isVSCode ? \`^\` : \`\`}zip:\${str}\`;
+          }
         }
+
+        return str;
       }
 
       function fromEditorPath(str) {

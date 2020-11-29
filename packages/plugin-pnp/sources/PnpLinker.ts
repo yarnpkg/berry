@@ -1,7 +1,7 @@
 import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                        from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
-import {CwdFS, PortablePath, npath, ppath, xfs, Filename}                                                    from '@yarnpkg/fslib';
+import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                         from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpSettings}                            from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
@@ -73,7 +73,11 @@ export class PnpInstaller implements Installer {
   protected mode = `strict`;
 
   private readonly packageRegistry: PackageRegistry = new Map();
-  private readonly blacklistedPaths: Set<PortablePath> = new Set();
+
+  private readonly virtualTemplates: Map<LocatorHash, {
+    locator: Locator,
+    location: PortablePath,
+  }> = new Map();
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
@@ -157,6 +161,14 @@ export class PnpInstaller implements Installer {
         packageDependencies.set(structUtils.requirableIdent(descriptor), null);
         packagePeers.add(structUtils.stringifyIdent(descriptor));
       }
+
+      if (!this.opts.project.tryWorkspaceByLocator(pkg)) {
+        const devirtualized = structUtils.devirtualizeLocator(pkg);
+        this.virtualTemplates.set(devirtualized.locatorHash, {
+          location: normalizeDirectoryPath(this.opts.project.cwd, VirtualFS.resolveVirtual(packageRawLocation)),
+          locator: devirtualized,
+        });
+      }
     }
 
     miscUtils.getMapWithDefault(this.packageRegistry, key1).set(key2, {
@@ -166,9 +178,6 @@ export class PnpInstaller implements Installer {
       linkType: pkg.linkType,
       discardFromLookup: fetchResult.discardFromLookup || false,
     });
-
-    if (hasVirtualInstances && !isWorkspace)
-      this.blacklistedPaths.add(packageLocation);
 
     return {
       packageLocation: packageRawLocation,
@@ -198,7 +207,17 @@ export class PnpInstaller implements Installer {
 
 
   async finalizeInstall() {
-    this.trimBlacklistedPackages();
+    const blacklistedPaths = new Set<PortablePath>();
+
+    for (const {locator, location} of this.virtualTemplates.values()) {
+      miscUtils.getMapWithDefault(this.packageRegistry, structUtils.stringifyIdent(locator)).set(locator.reference, {
+        packageLocation: location,
+        packageDependencies: new Map(),
+        packagePeers: new Set(),
+        linkType: LinkType.SOFT,
+        discardFromLookup: false,
+      });
+    }
 
     this.packageRegistry.set(null, new Map([
       [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
@@ -206,7 +225,7 @@ export class PnpInstaller implements Installer {
 
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
-    const blacklistedLocations = this.blacklistedPaths;
+    const blacklistedLocations = blacklistedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -388,16 +407,6 @@ export class PnpInstaller implements Installer {
       linkType: LinkType.SOFT,
       discardFromLookup: false,
     }));
-  }
-
-  private trimBlacklistedPackages() {
-    for (const packageStore of this.packageRegistry.values()) {
-      for (const [key2, packageInformation] of packageStore) {
-        if (packageInformation.packageLocation && this.blacklistedPaths.has(packageInformation.packageLocation)) {
-          packageStore.delete(key2);
-        }
-      }
-    }
   }
 }
 
