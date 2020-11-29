@@ -10,6 +10,12 @@ export interface Hooks {
     locator: Locator,
     opts: FetchOptions,
   ) => Promise<FetchResult | null>,
+  /**
+   * Hook to be able to exclude patterns from being picked up by this plugin.
+   *
+   * @param addGitHostedRepository call this function to add a pattern to be excluded
+   */
+  addHandledHostedRepository?: (addHandledHostedRepository: (regExp: RegExp) => void) => Promise<void>,
 }
 
 declare module '@yarnpkg/core' {

@@ -9508,16 +9508,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-github", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-github"],
             ["@types/yarnpkg__core", null],
             ["@types/yarnpkg__plugin-git", null],
+            ["@types/yarnpkg__plugin-http", null],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/plugin-git", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-git"],
+            ["@yarnpkg/plugin-http", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-http"],
             ["tslib", "npm:1.13.0"]
           ],
           "packagePeers": [
             "@types/yarnpkg__core",
             "@types/yarnpkg__plugin-git",
+            "@types/yarnpkg__plugin-http",
             "@yarnpkg/core",
-            "@yarnpkg/plugin-git"
+            "@yarnpkg/plugin-git",
+            "@yarnpkg/plugin-http"
           ],
           "linkType": "SOFT",
         }],
