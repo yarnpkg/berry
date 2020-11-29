@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {
   Container,
   Main,
@@ -12,10 +10,13 @@ import {
   Scalar,
 
   Theme,
-  ComponentPropsWithoutTheme,
+
+  themed,
 } from './syntax';
 
 const theme: Theme = {
+  name: `Json`,
+
   colors: {
     background: `#242424`,
     documentation: `#ddddcc`,
@@ -52,30 +53,16 @@ const theme: Theme = {
   },
 };
 
-export const JsonContainer = (props: ComponentPropsWithoutTheme<typeof Container>) => {
-  return <Container {...props} theme={theme} />;
-};
+export const JsonContainer = themed(Container, theme);
 
-export const JsonMain = (props: ComponentPropsWithoutTheme<typeof Main>) => {
-  return <Main {...props} theme={theme} />;
-};
+export const JsonMain = themed(Main, theme);
 
-export const JsonArrayProperty = (props: ComponentPropsWithoutTheme<typeof ArrayProperty>) => {
-  return <ArrayProperty {...props} theme={theme} />;
-};
+export const JsonArrayProperty = themed(ArrayProperty, theme);
 
-export const JsonObjectProperty = (props: ComponentPropsWithoutTheme<typeof DictionaryProperty>) => {
-  return <DictionaryProperty {...props} theme={theme} />;
-};
+export const JsonObjectProperty = themed(DictionaryProperty, theme);
 
-export const JsonScalarProperty = (props: ComponentPropsWithoutTheme<typeof ScalarProperty>) => {
-  return <ScalarProperty {...props} theme={theme} />;
-};
+export const JsonScalarProperty = themed(ScalarProperty, theme);
 
-export const JsonDictionary = (props: ComponentPropsWithoutTheme<typeof Dictionary>) => {
-  return <Dictionary {...props} theme={theme}/>;
-};
+export const JsonDictionary = themed(Dictionary, theme);
 
-export const JsonScalar = (props: ComponentPropsWithoutTheme<typeof Scalar>) => {
-  return <Scalar {...props} theme={theme} />;
-};
+export const JsonScalar = themed(Scalar, theme);
