@@ -16,9 +16,9 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   static usage = Command.Usage({
     description: `explain a set of peer requirements`,
     details: `
-      A set of peer requirements represents all peer requirements that a dependent must satisfy when providing a given peer request to a requester and its descendants and whether they're satisfied or not.
+      A set of peer requirements represents all peer requirements that a dependent must satisfy when providing a given peer request to a requester and its descendants.
 
-      When the hash argument is specified, this command prints a detailed explanation of all requirements of the set corresponding to the hash.
+      When the hash argument is specified, this command prints a detailed explanation of all requirements of the set corresponding to the hash and whether they're satisfied or not.
 
       When used without arguments, this command lists all sets of peer requirements and the corresponding hash that can be used to get detailed information about a given set.
 
