@@ -66,17 +66,20 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
         if (typeof rootRequester === `undefined`)
           throw new Error(`Assertion failed: Expected the root package to have been registered`);
 
+        const providedDescriptor = subject.dependencies.get(requirement.requested.identHash) ?? null;
+
         const prettyHash = formatUtils.pretty(configuration, hash, formatUtils.Type.CODE);
         const prettySubject = structUtils.prettyLocator(configuration, subject);
         const prettyIdent = structUtils.prettyIdent(configuration, requirement.requested);
-        const prettyRoot = structUtils.prettyLocator(configuration, rootRequester);
+        const prettyRoot = structUtils.prettyIdent(configuration, rootRequester);
 
         const descendantCount = requirement.allRequesters.length - 1;
 
         const pluralized = `descendant${descendantCount === 1 ? `` : `s`}`;
         const maybeDescendants = descendantCount > 0 ? ` and ${descendantCount} ${pluralized}` : ``;
+        const provides = providedDescriptor !== null ? `provides` : `doesn't provide`;
 
-        report.reportInfo(null, `${prettyHash} → ${prettySubject} provides ${prettyIdent} to ${prettyRoot}${maybeDescendants}`);
+        report.reportInfo(null, `${prettyHash} → ${prettySubject} ${provides} ${prettyIdent} to ${prettyRoot}${maybeDescendants}`);
       }
     });
 
