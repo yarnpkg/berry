@@ -13,6 +13,26 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     hash: yup.string().matches(/^p[0-9a-f]{5}$/),
   });
 
+  static usage = Command.Usage({
+    description: `explain a set of peer requirements`,
+    details: `
+      A set of peer requirements represents all peer requirements that a dependent must satisfy when providing a given peer request to a requester and its descendants.
+
+      When the hash argument is specified, this command prints a detailed explanation of all requirements of the set corresponding to the hash and whether they're satisfied or not.
+
+      When used without arguments, this command lists all sets of peer requirements and the corresponding hash that can be used to get detailed information about a given set.
+
+      **Note:** A hash is a six-letter p-prefixed code that can be obtained from peer dependency warnings or from the list of all peer requirements (\`yarn explain peer-requirements\`).
+    `,
+    examples: [[
+      `Explain the corresponding set of peer requirements for a hash`,
+      `$0 explain peer-requirements p1a4ed`,
+    ], [
+      `List all sets of peer requirements`,
+      `$0 explain peer-requirements`,
+    ]],
+  });
+
   @Command.Path(`explain`, `peer-requirements`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
