@@ -38337,6 +38337,41 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ws", [
+        ["npm:5.2.2", {
+          "packageLocation": "./.yarn/cache/ws-npm-5.2.2-173bcd57b2-c8217b5482.zip/node_modules/ws/",
+          "packageDependencies": [
+            ["ws", "npm:5.2.2"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["npm:6.1.4", {
+          "packageLocation": "./.yarn/cache/ws-npm-6.1.4-7bee7fd05f-74c2245736.zip/node_modules/ws/",
+          "packageDependencies": [
+            ["ws", "npm:6.1.4"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["npm:6.2.1", {
+          "packageLocation": "./.yarn/cache/ws-npm-6.2.1-bbe0ef9859-35d32b09e2.zip/node_modules/ws/",
+          "packageDependencies": [
+            ["ws", "npm:6.2.1"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["npm:7.3.0", {
+          "packageLocation": "./.yarn/cache/ws-npm-7.3.0-2881a35eae-c1f386013b.zip/node_modules/ws/",
+          "packageDependencies": [
+            ["ws", "npm:7.3.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["npm:7.3.1", {
+          "packageLocation": "./.yarn/cache/ws-npm-7.3.1-0fa30fe373-9302f1f665.zip/node_modules/ws/",
+          "packageDependencies": [
+            ["ws", "npm:7.3.1"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["virtual:3b5e69efaa2372701eeacd25836edffb24542c8451116315f985d26186b219fb4485f91e0a94a6978db5d292a078b1c57ceaae51a63ec1c16cb40561723db94c#npm:6.1.4", {
           "packageLocation": "./.yarn/$$virtual/ws-virtual-f68ec3df6c/0/cache/ws-npm-6.1.4-7bee7fd05f-74c2245736.zip/node_modules/ws/",
           "packageDependencies": [
@@ -38372,20 +38407,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "utf-8-validate"
           ],
           "linkType": "HARD",
-        }],
-        ["npm:7.3.0", {
-          "packageLocation": "./.yarn/cache/ws-npm-7.3.0-2881a35eae-c1f386013b.zip/node_modules/ws/",
-          "packageDependencies": [
-            ["ws", "npm:7.3.0"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["npm:7.3.1", {
-          "packageLocation": "./.yarn/cache/ws-npm-7.3.1-0fa30fe373-9302f1f665.zip/node_modules/ws/",
-          "packageDependencies": [
-            ["ws", "npm:7.3.1"]
-          ],
-          "linkType": "SOFT",
         }],
         ["virtual:4ac7945935c7b9baa1c648c30910b97cc4b5310bd9c6e7f82899f24717f03acba3019fca67c456aeaef29db72c35d787ebde17b426ca35ee56f8bb84bc683d77#npm:7.3.1", {
           "packageLocation": "./.yarn/$$virtual/ws-virtual-f730b7fbe3/0/cache/ws-npm-7.3.1-0fa30fe373-9302f1f665.zip/node_modules/ws/",
