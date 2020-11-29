@@ -10,7 +10,7 @@ const optionalPeerDep = {
 
 export const packageExtensions: Array<[string, PackageExtensionData]> = [
   // https://github.com/SamVerschueren/stream-to-observable/pull/5
-  [`@samverschueren/stream-to-observable@*`, {
+  [`@samverschueren/stream-to-observable@<0.3.1`, {
     peerDependenciesMeta: {
       [`rxjs`]: optionalPeerDep,
       [`zenObservable`]: optionalPeerDep,
@@ -30,7 +30,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/visionmedia/debug/pull/727
-  [`debug@*`, {
+  [`debug@<4.2.0`, {
     peerDependenciesMeta: {
       [`supports-color`]: optionalPeerDep,
     },
@@ -78,7 +78,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vadimdemedes/ink-select-input/pull/26
-  [`ink-select-input@*`, {
+  [`ink-select-input@<4.1.0`, {
     peerDependencies: {
       react: `^16.8.2`,
     },
@@ -168,6 +168,35 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`apollo-upload-client@<14`, {
     peerDependencies: {
       graphql: `14 - 15`,
+    },
+  }],
+  // https://github.com/algolia/react-instantsearch/pull/2975
+  [`react-instantsearch-core@<=6.7.0`, {
+    peerDependencies: {
+      algoliasearch: `>= 3.1 < 5`,
+    },
+  }],
+  // https://github.com/algolia/react-instantsearch/pull/2975
+  [`react-instantsearch-dom@<=6.7.0`, {
+    dependencies: {
+      'react-fast-compare': `^3.0.0`,
+    },
+  }],
+  // https://github.com/websockets/ws/pull/1626
+  [`ws@<7.2.1`, {
+    peerDependencies: {
+      bufferutil: `^4.0.1`,
+      'utf-8-validate': `^5.0.2`,
+    },
+    peerDependenciesMeta: {
+      bufferutil: optionalPeerDep,
+      'utf-8-validate': optionalPeerDep,
+    },
+  }],
+  // https://github.com/tajo/react-portal/pull/233
+  [`react-portal@*`, {
+    peerDependencies: {
+      'react-dom': `^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0`,
     },
   }],
 ];
