@@ -133,6 +133,13 @@ type RestoreInstallStateOpts = {
 // Just a type that's the union of all the fields declared in `INSTALL_STATE_FIELDS`
 type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
+export type PeerRequirement = {
+  subject: LocatorHash,
+  requested: Ident,
+  rootRequester: LocatorHash,
+  allRequesters: Array<LocatorHash>,
+};
+
 export class Project {
   public readonly configuration: Configuration;
   public readonly cwd: PortablePath;
@@ -162,6 +169,14 @@ export class Project {
   public accessibleLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+
+  /**
+   * Populated by the `resolveEverything` method.
+   * *Not* stored inside the install state.
+   *
+   * The map keys are 6 hexadecimal characters except the first one, always `p`.
+   */
+  public peerRequirements: Map<string, PeerRequirement> = new Map();
 
   public installersCustomData: Map<string, unknown> = new Map();
 
@@ -772,6 +787,7 @@ export class Project {
     const volatileDescriptors = new Set(this.resolutionAliases.values());
     const optionalBuilds = new Set(allPackages.keys());
     const accessibleLocators = new Set<LocatorHash>();
+    const peerRequirements: Project['peerRequirements'] = new Map();
 
     applyVirtualResolutionMutations({
       project: this,
@@ -780,6 +796,7 @@ export class Project {
       accessibleLocators,
       volatileDescriptors,
       optionalBuilds,
+      peerRequirements,
 
       allDescriptors,
       allResolutions,
@@ -804,6 +821,7 @@ export class Project {
     this.accessibleLocators = accessibleLocators;
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
+    this.peerRequirements = peerRequirements;
 
     // Now that the internal resolutions have been updated, we can refresh the
     // dependencies of each resolved workspace's `Workspace` instance.
@@ -1670,6 +1688,7 @@ function applyVirtualResolutionMutations({
   accessibleLocators = new Set(),
   optionalBuilds = new Set(),
   volatileDescriptors = new Set(),
+  peerRequirements = new Map(),
 
   report,
 
@@ -1684,6 +1703,7 @@ function applyVirtualResolutionMutations({
   accessibleLocators?: Set<LocatorHash>,
   optionalBuilds?: Set<LocatorHash>,
   volatileDescriptors?: Set<DescriptorHash>,
+  peerRequirements?: Project['peerRequirements'],
 
   report: Report | null,
 
@@ -1692,10 +1712,21 @@ function applyVirtualResolutionMutations({
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
 
+  const allIdents = new Map<IdentHash, Ident>();
+
   // We'll be keeping track of all virtual descriptors; once they have all
   // been generated we'll check whether they can be consolidated into one.
   const allVirtualInstances = new Map<LocatorHash, Map<string, Descriptor>>();
   const allVirtualDependents = new Map<DescriptorHash, Set<LocatorHash>>();
+
+  // First key is the first package that requests the peer dependency. Second
+  // key is the name of the package in the peer dependency. Value is the list
+  // of all packages that extend the original peer requirement.
+  const peerDependencyLinks: Map<LocatorHash, Map<string, Array<LocatorHash>>> = new Map();
+
+  // We keep track on which package depend on which other package with peer
+  // dependencies; this way we can emit warnings for them later on.
+  const peerDependencyDependents = new Map<LocatorHash, Set<LocatorHash>>();
 
   // We must keep a copy of the workspaces original dependencies, because they
   // may be overriden during the virtual package resolution - cf Dragon Test #5
@@ -1741,18 +1772,18 @@ function applyVirtualResolutionMutations({
     return pkg;
   };
 
-  const resolvePeerDependencies = (parentLocator: Locator, first: boolean, optional: boolean) => {
+  const resolvePeerDependencies = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {first, optional}: {first: boolean, optional: boolean}) => {
     if (resolutionStack.length > 1000)
       reportStackOverflow();
 
     resolutionStack.push(parentLocator);
-    const result = resolvePeerDependenciesImpl(parentLocator, first, optional);
+    const result = resolvePeerDependenciesImpl(parentLocator, peerSlots, {first, optional});
     resolutionStack.pop();
 
     return result;
   };
 
-  const resolvePeerDependenciesImpl = (parentLocator: Locator, first: boolean, optional: boolean) => {
+  const resolvePeerDependenciesImpl = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {first, optional}: {first: boolean, optional: boolean}) => {
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
 
@@ -1828,7 +1859,7 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       if (pkg.peerDependencies.size === 0) {
-        resolvePeerDependencies(pkg, false, isOptional);
+        resolvePeerDependencies(pkg, new Map(), {first: false, optional: isOptional});
         continue;
       }
 
@@ -1844,6 +1875,8 @@ function applyVirtualResolutionMutations({
       let virtualizedPackage: Package;
 
       const missingPeerDependencies = new Set<IdentHash>();
+
+      let nextPeerSlots: Map<IdentHash, LocatorHash>;
 
       firstPass.push(() => {
         virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
@@ -1862,6 +1895,8 @@ function applyVirtualResolutionMutations({
       });
 
       secondPass.push(() => {
+        nextPeerSlots = new Map<IdentHash, LocatorHash>();
+
         for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
           let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
@@ -1879,17 +1914,8 @@ function applyVirtualResolutionMutations({
             continue;
           }
 
-          if (!peerDescriptor) {
-            if (!parentPackage.peerDependencies.has(peerRequest.identHash)) {
-              const peerDependencyMeta = virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerRequest));
-
-              if (report !== null && (!peerDependencyMeta || !peerDependencyMeta.optional)) {
-                report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} doesn't provide ${structUtils.prettyDescriptor(project.configuration, peerRequest)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
-              }
-            }
-
+          if (!peerDescriptor)
             peerDescriptor = structUtils.makeDescriptor(peerRequest, `missing:`);
-          }
 
           virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerDescriptor);
 
@@ -1900,16 +1926,11 @@ function applyVirtualResolutionMutations({
             dependents.add(virtualizedPackage.locatorHash);
           }
 
-          if (peerDescriptor.range === `missing:`) {
+          allIdents.set(peerDescriptor.identHash, peerDescriptor);
+          if (peerDescriptor.range === `missing:`)
             missingPeerDependencies.add(peerDescriptor.identHash);
-          } else if (report !== null) {
-            // When the parent provides the peer dependency request it must be checked to ensure
-            // it is a compatible version.
-            const peerPackage = getPackageFromDescriptor(peerDescriptor);
-            if (!semverUtils.satisfiesWithPrereleases(peerPackage.version, peerRequest.range)) {
-              report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${structUtils.prettyLocator(project.configuration, parentLocator)} provides ${structUtils.prettyLocator(project.configuration, peerPackage)} with version ${peerPackage.version} which doesn't satisfy ${structUtils.prettyRange(project.configuration, peerRequest.range)} requested by ${structUtils.prettyLocator(project.configuration, pkg)}`);
-            }
-          }
+
+          nextPeerSlots.set(peerRequest.identHash, peerSlots.get(peerRequest.identHash) ?? virtualizedPackage.locatorHash);
         }
 
         // Since we've had to add new dependencies we need to sort them all over again
@@ -1926,13 +1947,35 @@ function applyVirtualResolutionMutations({
         const next = typeof current !== `undefined` ? current + 1 : 1;
 
         virtualStack.set(pkg.locatorHash, next);
-        resolvePeerDependencies(virtualizedPackage, false, isOptional);
+        resolvePeerDependencies(virtualizedPackage, nextPeerSlots, {first: false, optional: isOptional});
         virtualStack.set(pkg.locatorHash, next - 1);
       });
 
       fourthPass.push(() => {
+        // Regardless of whether the initial virtualized package got deduped
+        // or not, we now register that *this* package is now a dependent on
+        // whatever its peer dependencies have been resolved to. We'll later
+        // use this information to generate warnings.
+        const finalDescriptor = parentPackage.dependencies.get(descriptor.identHash);
+        if (typeof finalDescriptor === `undefined`)
+          throw new Error(`Assertion failed: Expected the peer dependency to have been turned into a dependency`);
+
+        const finalResolution = allResolutions.get(finalDescriptor.descriptorHash)!;
+        if (typeof finalResolution === `undefined`)
+          throw new Error(`Assertion failed: Expected the descriptor to be registered`);
+
+        miscUtils.getSetWithDefault(peerDependencyDependents, finalResolution).add(parentLocator.locatorHash);
+
         if (!allPackages.has(virtualizedPackage.locatorHash))
           return;
+
+        for (const descriptor of virtualizedPackage.peerDependencies.values()) {
+          const root = nextPeerSlots.get(descriptor.identHash);
+          if (typeof root === `undefined`)
+            throw new Error(`Assertion failed: Expected the peer dependency ident to be registered`);
+
+          miscUtils.getArrayWithDefault(miscUtils.getMapWithDefault(peerDependencyLinks, root), structUtils.stringifyIdent(descriptor)).push(virtualizedPackage.locatorHash);
+        }
 
         for (const missingPeerDependency of missingPeerDependencies) {
           virtualizedPackage.dependencies.delete(missingPeerDependency);
@@ -1998,6 +2041,8 @@ function applyVirtualResolutionMutations({
         const dependents = allVirtualDependents.get(virtualDescriptor.descriptorHash) || [];
         const allDependents = [parentPackage.locatorHash, ...dependents];
 
+        allVirtualDependents.delete(virtualDescriptor.descriptorHash);
+
         for (const dependent of allDependents) {
           const pkg = allPackages.get(dependent);
           if (typeof pkg === `undefined`)
@@ -2015,6 +2060,167 @@ function applyVirtualResolutionMutations({
 
   for (const workspace of project.workspaces) {
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
-    resolvePeerDependencies(workspace.anchoredLocator, true, false);
+    resolvePeerDependencies(workspace.anchoredLocator, new Map(), {first: true, optional: false});
+  }
+
+  enum WarningType {
+    NotProvided,
+    NotCompatible,
+  }
+
+  type Warning = {
+    type: WarningType.NotProvided,
+    subject: Locator,
+    requested: Ident,
+    requester: Ident,
+    hash: string,
+  } | {
+    type: WarningType.NotCompatible,
+    subject: Locator,
+    requested: Ident,
+    requester: Ident,
+    version: string,
+    hash: string,
+    requirementCount: number,
+  };
+
+  const warnings: Array<Warning> = [];
+
+  for (const [rootHash, dependents] of peerDependencyDependents) {
+    const root = allPackages.get(rootHash);
+    if (typeof root === `undefined`)
+      throw new Error(`Assertion failed: Expected the root to be registered`);
+
+    // We retrieve the set of packages that provide complementary peer
+    // dependencies to the one already offered by our root package, and to
+    // whom other package.
+    //
+    // We simply skip if the record doesn't exist because a package may not
+    // have any records if it didn't contribute any new peer (it only exists
+    // if the package has at least one peer that isn't listed by its parent
+    // packages).
+    //
+    const rootLinks = peerDependencyLinks.get(rootHash);
+    if (typeof rootLinks === `undefined`)
+      continue;
+
+    for (const dependentHash of dependents) {
+      const dependent = allPackages.get(dependentHash);
+
+      // The package may have been pruned during a deduplication
+      if (typeof dependent === `undefined`)
+        continue;
+
+      for (const [identStr, linkHashes] of rootLinks) {
+        const ident = structUtils.parseIdent(identStr);
+
+        // This dependent may have a peer dep itself, in which case it's not
+        // the true root, and we can ignore it
+        if (dependent.peerDependencies.has(ident.identHash))
+          continue;
+
+        const hash = `p${hashUtils.makeHash(dependentHash, identStr, rootHash).slice(0, 5)}`;
+
+        peerRequirements.set(hash, {
+          subject: dependentHash,
+          requested: ident,
+          rootRequester: rootHash,
+          allRequesters: linkHashes,
+        });
+
+        // Note: this can be undefined when the peer dependency isn't provided at all
+        const resolvedDescriptor = root.dependencies.get(ident.identHash);
+
+        if (typeof resolvedDescriptor !== `undefined`) {
+          const peerResolution = getPackageFromDescriptor(resolvedDescriptor);
+          const peerVersion = peerResolution.version ?? `0.0.0`;
+
+          const ranges = new Set<string>();
+          for (const linkHash of linkHashes) {
+            const link = allPackages.get(linkHash);
+            if (typeof link === `undefined`)
+              throw new Error(`Assertion failed: Expected the link to be registered`);
+
+            const peerDependency = link.peerDependencies.get(ident.identHash);
+            if (typeof peerDependency === `undefined`)
+              throw new Error(`Assertion failed: Expected the ident to be registered`);
+
+            ranges.add(peerDependency.range);
+          }
+
+          const satisfiesAll = [...ranges].every(range => {
+            return semverUtils.satisfiesWithPrereleases(peerVersion, range);
+          });
+
+          if (!satisfiesAll) {
+            warnings.push({
+              type: WarningType.NotCompatible,
+              subject: dependent,
+              requested: ident,
+              requester: root,
+              version: peerVersion,
+              hash,
+              requirementCount: linkHashes.length,
+            });
+          }
+        } else {
+          const peerDependencyMeta = root.peerDependenciesMeta.get(identStr);
+
+          if (!peerDependencyMeta?.optional) {
+            warnings.push({
+              type: WarningType.NotProvided,
+              subject: dependent,
+              requested: ident,
+              requester: root,
+              hash,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  const warningSortCriterias: Array<((warning: Warning) => string)> = [
+    warning => structUtils.prettyLocatorNoColors(warning.subject),
+    warning => structUtils.stringifyIdent(warning.requested),
+    warning => `${warning.type}`,
+  ];
+
+  for (const warning of miscUtils.sortMap(warnings, warningSortCriterias)) {
+    switch (warning.type) {
+      case WarningType.NotProvided: {
+        report?.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
+          structUtils.prettyLocator(project.configuration, warning.subject)
+        } doesn't provide ${
+          structUtils.prettyIdent(project.configuration, warning.requested)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }), requested by ${
+          structUtils.prettyIdent(project.configuration, warning.requester)
+        }`);
+      } break;
+
+      case WarningType.NotCompatible: {
+        const andDescendants = warning.requirementCount > 1
+          ? `and some of its descendants request`
+          : `requests`;
+
+        report?.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
+          structUtils.prettyLocator(project.configuration, warning.subject)
+        } provides ${
+          structUtils.prettyIdent(project.configuration, warning.requested)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }) with version ${
+          structUtils.prettyReference(project.configuration, warning.version)
+        }, which doesn't satisfy what ${
+          structUtils.prettyIdent(project.configuration, warning.requester)
+        } ${andDescendants}`);
+      } break;
+    }
+  }
+
+  if (warnings.length > 0) {
+    report?.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code`);
   }
 }

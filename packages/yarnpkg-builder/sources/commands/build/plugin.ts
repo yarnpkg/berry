@@ -1,6 +1,5 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
 import {npath}                                                              from '@yarnpkg/fslib';
-import chalk                                                                from 'chalk';
 import {Command, Usage, UsageError}                                         from 'clipanion';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
@@ -157,13 +156,15 @@ export default class BuildPluginCommand extends Command {
 
     report.reportSeparator();
 
+    const Mark = formatUtils.mark(configuration);
+
     if (buildErrors !== null) {
-      report.reportError(MessageName.EXCEPTION, `${chalk.red(`✗`)} Failed to build ${prettyName}:`);
+      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build ${prettyName}:`);
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
-      report.reportInfo(null, `${chalk.green(`✓`)} Done building ${prettyName}!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
+      report.reportInfo(null, `${Mark.Check} Done building ${prettyName}!`);
+      report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
+      report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
     }
 
     return report.exitCode();
