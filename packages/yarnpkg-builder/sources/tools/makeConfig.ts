@@ -1,7 +1,7 @@
 import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
 import tsLoader                      from 'ts-loader';
-import merge                         from 'webpack-merge';
+import {merge}                       from 'webpack-merge';
 import webpack                       from 'webpack';
 
 export type WebpackPlugin =
@@ -36,7 +36,6 @@ function getBuildPlugin() {
   if (!process.env.BUILD_MONITORING_ENABLED)
     return [];
 
-
   const BuildPlugin = require(`@datadog/build-plugin/dist/webpack`).BuildPlugin;
   return [new BuildPlugin({
     context: npath.join(process.cwd(), `../..`),
@@ -54,7 +53,6 @@ function getBuildPlugin() {
   })];
 }
 
-// @ts-expect-error: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
 export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
   devtool: false,

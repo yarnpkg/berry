@@ -4915,15 +4915,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack-merge@npm:^4.1.5":
-  version: 4.1.5
-  resolution: "@types/webpack-merge@npm:4.1.5"
-  dependencies:
-    "@types/webpack": "*"
-  checksum: 2988bb97d79c48cb490832caf8b7cd94be33189aab247761ca669c3ac08741488cd5a93bef8a6e0164b1271b301999fb52b3623af05c1e6021f2cf470059d419
-  languageName: node
-  linkType: hard
-
 "@types/webpack@npm:*":
   version: 4.32.1
   resolution: "@types/webpack@npm:4.32.1"
@@ -5401,7 +5392,6 @@ __metadata:
     "@types/filesize": 4.1.0
     "@types/semver": ^7.1.0
     "@types/terser-webpack-plugin": ^3.0.0
-    "@types/webpack-merge": ^4.1.5
     "@yarnpkg/cli": "workspace:^2.3.3"
     "@yarnpkg/core": "workspace:^2.3.1"
     "@yarnpkg/fslib": "workspace:^2.3.0"
@@ -5419,7 +5409,7 @@ __metadata:
     typescript: 4.1.0-beta
     val-loader: ^2.1.1
     webpack: ^5.1.1
-    webpack-merge: ^4.2.2
+    webpack-merge: ^5.3.0
   peerDependencies:
     typescript: "*"
   bin:
@@ -8841,6 +8831,17 @@ __metadata:
   version: 1.0.0
   resolution: "clone-buffer@npm:1.0.0"
   checksum: 70d92e1482af3cfc4e1f1f620ac2a34c0a441da4760f46a250a5f75df7b5f054f27c4358467ba3915832b2a9674b469fa93b7f9e3bc97ade3227e20952ea3404
+  languageName: node
+  linkType: hard
+
+"clone-deep@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "clone-deep@npm:4.0.1"
+  dependencies:
+    is-plain-object: ^2.0.4
+    kind-of: ^6.0.2
+    shallow-clone: ^3.0.0
+  checksum: b0146d66cabc7e609d23d10155dcc88e2f74b03539b3b65f8a05f889500e2a78b6c6265a744445d009d512a1afa16836f62aa5737d462027142984c2d41130c8
   languageName: node
   linkType: hard
 
@@ -24067,6 +24068,15 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
+"shallow-clone@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "shallow-clone@npm:3.0.1"
+  dependencies:
+    kind-of: ^6.0.2
+  checksum: e329e054c286f0681fd8a9e5c353999519332f12510a99e189ea9cfa0337adb6f1414639d44493418ef6790a693b78c354525269f5db25a9feddd8b4d7891a62
+  languageName: node
+  linkType: hard
+
 "shallow-compare@npm:^1.2.2":
   version: 1.2.2
   resolution: "shallow-compare@npm:1.2.2"
@@ -27741,6 +27751,16 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
+"webpack-merge@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "webpack-merge@npm:5.3.0"
+  dependencies:
+    clone-deep: ^4.0.1
+    wildcard: ^2.0.0
+  checksum: 7486c5a45ad48f775bc75b3e80938ec3196960cece7af9239863a87d842b21340ff51f95aeaa9434604b04b1471b6d6197c6447a1efd747456451e884d107008
+  languageName: node
+  linkType: hard
+
 "webpack-sources@npm:^1.1.0, webpack-sources@npm:^1.4.0, webpack-sources@npm:^1.4.1, webpack-sources@npm:^1.4.3":
   version: 1.4.3
   resolution: "webpack-sources@npm:1.4.3"
@@ -27987,6 +28007,13 @@ typescript@4.1.0-beta:
   dependencies:
     string-width: ^4.0.0
   checksum: 729c30582e49bdcb1372216eedfd71d1640a1344a4b4e970bc9f33d575b56b130f530b383fbab2cf2bcffb76ea4357e6a66939778d8de91ca66037651d94e01a
+  languageName: node
+  linkType: hard
+
+"wildcard@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "wildcard@npm:2.0.0"
+  checksum: 207baede4d6d41fc1aefcc4727c95ca6f29eaaf4d66478665fe0ac17232709637426ae96fd79deb3b68da3564e7bde7f2be63e5c3665ac8f63ee92364c0a2dd3
   languageName: node
   linkType: hard
 
