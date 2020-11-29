@@ -61,9 +61,13 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // with peer dep (otherwise jumping into react-dom would show resolution
           // errors on react).
           //
-          const locator = pnpApi.findPackageLocator(str);
-          if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`))
-            str = pnpApi.resolveVirtual(str) || str;
+          const resolved = pnpApi.resolveVirtual(str);
+          if (resolved) {
+            const locator = pnpApi.findPackageLocator(resolved);
+            if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`)) {
+             str = resolved;
+            }
+          }
 
           str = str.replace(/\\\\/g, \`/\`)
           str = str.replace(/^\\/?/, \`/\`);

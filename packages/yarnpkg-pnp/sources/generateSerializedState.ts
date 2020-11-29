@@ -1,3 +1,5 @@
+import {PortablePath, ppath}                            from '@yarnpkg/fslib';
+
 import {LocationBlacklistData, PackageRegistryData}     from './types';
 import {PackageStoreData, PnpSettings, SerializedState} from './types';
 
