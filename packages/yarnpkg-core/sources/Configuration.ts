@@ -1420,12 +1420,13 @@ export class Configuration {
       }
     };
 
-    for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
-      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
-
     await this.triggerHook(hooks => {
       return hooks.registerPackageExtensions;
     }, this, registerPackageExtension);
+
+    for (const [descriptorString, extensionData] of this.get(`packageExtensions`)) {
+      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
+    }
   }
 
   normalizePackage(original: Package) {
