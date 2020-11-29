@@ -128,7 +128,7 @@ export async function explainPeerRequirements(peerRequirementsHash: string, proj
         structUtils.prettyLocator(configuration, provided)
       } with version ${
         structUtils.prettyReference(configuration, provided.version ?? `<missing>`)
-      } which ${satisfiesAllRanges ? `satisfies` : `doesn't satisfy`} the following requirements:`);
+      }, which ${satisfiesAllRanges ? `satisfies` : `doesn't satisfy`} the following requirements:`);
     } else {
       report.reportInfo(MessageName.UNNAMED, `${
         structUtils.prettyLocator(configuration, subject)
@@ -173,6 +173,14 @@ export async function explainPeerRequirements(peerRequirementsHash: string, proj
       } → ${
         prettyRange.padEnd(maxPrettyRangeLength, ` `)
       } ${mark}`);
+    }
+
+    if (requirements.length > 1) {
+      report.reportSeparator();
+
+      report.reportInfo(MessageName.UNNAMED, `Note: these requirements start with ${
+        structUtils.prettyLocator(project.configuration, rootRequester)
+      }`);
     }
   });
 
