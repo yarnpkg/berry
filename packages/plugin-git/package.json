@@ -1,20 +1,20 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.3.0",
+    "@yarnpkg/fslib": "workspace:^2.4.0",
     "git-url-parse": "11.1.2",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.3.1"
+    "@yarnpkg/core": "^2.4.0"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.3.1"
+    "@yarnpkg/core": "workspace:^2.4.0"
   },
   "repository": {
     "type": "git",

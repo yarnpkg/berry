@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -8,12 +8,12 @@
     "@arcanis/slice-ansi": "^1.0.2",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
-    "@yarnpkg/fslib": "workspace:^2.3.0",
+    "@yarnpkg/fslib": "workspace:^2.4.0",
     "@yarnpkg/json-proxy": "workspace:^2.1.0",
     "@yarnpkg/libzip": "workspace:^2.2.1",
     "@yarnpkg/parsers": "workspace:^2.3.0",
-    "@yarnpkg/pnp": "workspace:^2.3.1",
-    "@yarnpkg/shell": "workspace:^2.4.0",
+    "@yarnpkg/pnp": "workspace:^2.3.2",
+    "@yarnpkg/shell": "workspace:^2.4.1",
     "binjumper": "^0.1.4",
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
@@ -46,10 +46,10 @@
     "@types/node": "^13.7.0",
     "@types/tar-stream": "1.6.0",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.3.3",
+    "@yarnpkg/cli": "workspace:^2.4.0",
     "@yarnpkg/plugin-link": "workspace:^2.1.1",
-    "@yarnpkg/plugin-npm": "workspace:^2.3.0",
-    "@yarnpkg/plugin-pnp": "workspace:^2.3.1"
+    "@yarnpkg/plugin-npm": "workspace:^2.4.0",
+    "@yarnpkg/plugin-pnp": "workspace:^2.4.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",
