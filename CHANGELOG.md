@@ -16,9 +16,11 @@
 
 - Progress bars are rendered less often, which should help performances on some terminals.
 
+- Aliased packages no longer include themselves in node_modules installs
+
 ### CLI
 
-- The `upgrade-interactive` command will now only show upgrade suggestions for packages that have available upgrades (rather than all of them). 
+- The `upgrade-interactive` command will now only show upgrade suggestions for packages that have available upgrades (rather than all of them).
 
 - The `upgrade-interactive` command has received UI improvements that should make it easier to look at.
 
