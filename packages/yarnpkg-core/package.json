@@ -14,7 +14,6 @@
     "@yarnpkg/parsers": "workspace:^2.3.0",
     "@yarnpkg/pnp": "workspace:^2.3.2",
     "@yarnpkg/shell": "workspace:^2.4.1",
-    "binjumper": "^0.1.4",
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "ci-info": "^2.0.0",
