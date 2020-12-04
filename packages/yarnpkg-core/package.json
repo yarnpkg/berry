@@ -32,6 +32,7 @@
     "pretty-bytes": "^5.1.0",
     "semver": "^7.1.2",
     "stream-to-promise": "^2.2.0",
+    "strip-ansi": "^6.0.0",
     "tar-stream": "^2.0.1",
     "treeify": "^1.1.0",
     "tslib": "^1.13.0",
