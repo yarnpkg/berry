@@ -8,6 +8,11 @@ JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
 
 FIRST_PR_COMMIT="5d50de3"
 
+# Added as `local` remote
+LOCAL_REMOTE=https://github.com/cspotcode/TypeScript
+# LOCAL_REMOTE=/d/Personal-dev/@yarnpkg/berry/TypeScript
+ADDITIONAL_CHERRYPICK=6dbdd2f2c3177cde0d2cc3afd26fee07e0060a0f..local/ab/fix-typesVersions
+
 # Defines which commits need to be cherry-picked onto which other commit to
 # generate a patch suitable for the specified range.
 HASHES=(
@@ -22,10 +27,23 @@ HASHES=(
 )
 
 mkdir -p "$TEMP_DIR"
+# This local mirror makes subsequent clone faster when I want to `rm -rf /tmp/ts-repo/clone` because things are failing for mysterious reasons
+# Could also be accomplished with git worktrees or `git clean -xdf`, but this is the hammer I knew how to use
+if ! [[ -d "$TEMP_DIR"/mirror ]]; then (
+    git clone https://github.com/arcanis/typescript "$TEMP_DIR"/mirror
+    cd "$TEMP_DIR"/mirror
+    git remote add upstream https://github.com/microsoft/typescript
+); fi
+cd "$TEMP_DIR"/mirror
+git fetch origin
+git fetch upstream
 if ! [[ -d "$TEMP_DIR"/clone ]]; then (
-    git clone https://github.com/arcanis/typescript "$TEMP_DIR"/clone
+    git clone --reference "$TEMP_DIR"/mirror https://github.com/arcanis/typescript "$TEMP_DIR"/clone
     cd "$TEMP_DIR"/clone
     git remote add upstream https://github.com/microsoft/typescript
+    if [ ! -z "$LOCAL_REMOTE"]; then
+      git remote add local "$LOCAL_REMOTE"
+    fi
 ); fi
 
 rm -rf "$TEMP_DIR"/builds
@@ -38,12 +56,17 @@ git config user.name "Your Name"
 
 git fetch origin
 git fetch upstream
+if [ ! -z "$LOCAL_REMOTE" ]; then
+  git fetch local
+fi
 
 reset-git() {
   git reset --hard "$1"
-  git clean -df
+  git clean -xdf
 
   npm install --before "$(git show -s --format=%ci)"
+  # npm 7 normalizes "bin" entries, which causes merge conflicts later
+  git checkout -- package.json
 }
 
 build-dir-for() {
@@ -75,6 +98,9 @@ make-build-for() {
         git merge --no-edit "$CHERRYPICK_TO"
       else
         git cherry-pick "$CHERRYPICK_FROM"^.."$CHERRYPICK_TO"
+      fi
+      if [ ! -z "$ADDITIONAL_CHERRYPICK" ]; then
+        git cherry-pick "$ADDITIONAL_CHERRYPICK"
       fi
     fi
 
