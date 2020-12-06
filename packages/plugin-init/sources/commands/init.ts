@@ -168,7 +168,6 @@ export default class InitCommand extends BaseCommand {
 
       const gitattributesLines = [
         `/.yarn/** linguist-vendored`,
-        `/.pnp.* linguist-generated`,
       ];
 
       const gitattributesBody = gitattributesLines.map(line => {
