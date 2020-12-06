@@ -114,6 +114,16 @@ Then, from any workspace that contains its own `tsconfig.json`, you'll be able t
 }
 ```
 
+Should you want to run a script in the base of your project:
+
+```json
+{
+  "scripts": {
+    "build": "run node ${PROJECT_CWD}/scripts/update-contributors.js"
+  }
+}
+```
+
 ## Is Yarn operated by Facebook?
 
 **No.**
