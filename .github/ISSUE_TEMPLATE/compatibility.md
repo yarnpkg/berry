@@ -11,12 +11,13 @@ assignees: ''
 
 Compatibility issues go in two categories:
 
-- Either they are actionable (for instance the problem is that Yarn doesn't is missing
-  the `gist:` protocol), in which case you should open either a bug or an enhancement.
+- Either they are actionable (for instance the problem is that Yarn is missing support for
+  the `gist:` protocol), in which case you should open either a bug (or an enhancement in
+  this particular case).
 
 - Or they are not actionable (for instance the relevant package is throwing "accessing
   undeclared dependency" errors), in which case you should open a Discussion, and probably
-  open a bug upstream.
+  also an upstream bug.
 
 Some other important notes:
 
