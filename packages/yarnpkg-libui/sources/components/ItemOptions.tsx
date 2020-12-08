@@ -41,6 +41,13 @@ export const ItemOptions = function <T>({
         .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, ``);
 
       const padWidth = Math.max(0, boxWidth - (simpleLabel).length - 2);
+
+      if (!label) {
+        return (
+          <Box key={index} width={boxWidth} marginLeft={1} />
+        );
+      }
+
       return (
         <Box key={label} width={boxWidth} marginLeft={1}>
           <Text wrap="truncate">

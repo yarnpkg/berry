@@ -127,6 +127,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       }
 
       if (latest && latest !== resolution && latest !== descriptor.range) {
+        // If we don't also have a range match, then we need to put a spacer value in.
+        if (suggestions.length == 1)
+          suggestions.push({value: null, label: ``});
+
         suggestions.push({
           value: latest,
           label: colorizeVersionDiff(descriptor.range, latest),
