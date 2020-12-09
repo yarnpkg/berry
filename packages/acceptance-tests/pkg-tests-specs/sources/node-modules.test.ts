@@ -342,7 +342,7 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
         // We must not create self-reference directory 'node_modules/no-deps2/node_modules/no-deps'
-        expect(await xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).toEqual(false);
+        await expect(xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).resolves.toEqual(false);
       },
     ),
   );
