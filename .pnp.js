@@ -43989,7 +43989,7 @@ function hydrateRuntimeState(data, {
         linkType: packageInformationData.linkType,
         discardFromLookup: packageInformationData.discardFromLookup || false,
 
-        // Only need this for packages that are used by the currently running script
+        // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {
           // We use ppath.join instead of ppath.resolve because:
