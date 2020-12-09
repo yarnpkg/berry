@@ -55,10 +55,10 @@ export const ItemOptions = function <T>({
 
       return (
         <Box key={label} width={boxWidth} marginLeft={1}>
-          <Text wrap="truncate">
+          <Text wrap={`truncate`}>
             <Gem active={isGemActive} />{` `}{label}
           </Text>
-          { skewer ? <Pad active={active} length={padWidth}/> : null }
+          {skewer ? <Pad active={active} length={padWidth}/> : null}
         </Box>
       );
     })}
