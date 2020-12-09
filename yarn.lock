@@ -4517,6 +4517,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^12.12.7":
+  version: 12.19.8
+  resolution: "@types/node@npm:12.19.8"
+  checksum: f1d21f9d5df94b6217491e3bc2a1c8ae5b1cf9d3dc78b8570ed5b3a4c7abf01a18b80f2588c9691b9405c43130a6fb76aedc4296b5934a0a41d7cc1b64c4eba4
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^13.7.0":
   version: 13.7.0
   resolution: "@types/node@npm:13.7.0"
@@ -5735,8 +5742,10 @@ __metadata:
     jest-environment-node: ^26.0.1
     jest-junit: ^10.0.0
     micromatch: ^4.0.2
+    ts-node: ^9.1.1
     tslib: ^1.13.0
     typescript: 4.1.0-beta
+    typescript-cached-transpile: ^0.0.6
   dependenciesMeta:
     core-js:
       built: false
@@ -6737,6 +6746,13 @@ __metadata:
     delegates: ^1.0.0
     readable-stream: ^2.0.6
   checksum: 2d6fdb0ddde9b8cb120b6851b42c75f6b6db78b540b579a00d144ad38cb9e1bdf1248e5454049fcf5b47ef61d1a6f2ea433a8e38984158afd441bc1e0db7a625
+  languageName: node
+  linkType: hard
+
+"arg@npm:^4.1.0":
+  version: 4.1.3
+  resolution: "arg@npm:4.1.3"
+  checksum: 81b3b40b1529c4fbf75b12f7c3e6fb2dcce9e78072063babc169de9b4f40777788f3d2b04380f659ef676a756e03ccfbfe78adf4477353bda906295fa69dab89
   languageName: node
   linkType: hard
 
@@ -9580,6 +9596,13 @@ __metadata:
     prop-types: ^15.0.0
     react: ^0.14.0 || ^15.0.0 || ^16.0.0
   checksum: dfb153bbcfe44fb0b5d74e097f41fef382c9ea513084f604fea1759aea6683da0eef13b02ede2f0672c4eeacdd8efce0023935ca02909fcb2ae8be28b9aa63f5
+  languageName: node
+  linkType: hard
+
+"create-require@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "create-require@npm:1.1.1"
+  checksum: babd307893abfb26d77ae11cb9d6b6cfa6d18c9cee435cf70b5a3fb44aa8d90c9ec26ea89cbb16e0a94b8d34f5fcaee164b90ed526cdd3158955673ab9652d01
   languageName: node
   linkType: hard
 
@@ -18181,6 +18204,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"make-error@npm:^1.1.1":
+  version: 1.3.6
+  resolution: "make-error@npm:1.3.6"
+  checksum: 2c780bab8409b865e8ee86697c599a2bf2765ec64d21eb67ccda27050e039f983feacad05a0d43aba3c966ea03d305d2612e94fec45474bcbc61181f57c5bb88
+  languageName: node
+  linkType: hard
+
 "makeerror@npm:1.0.x":
   version: 1.0.11
   resolution: "makeerror@npm:1.0.11"
@@ -24524,7 +24554,7 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.19":
+"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.19":
   version: 0.5.19
   resolution: "source-map-support@npm:0.5.19"
   dependencies:
@@ -26176,6 +26206,27 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
+"ts-node@npm:^9.1.1":
+  version: 9.1.1
+  resolution: "ts-node@npm:9.1.1"
+  dependencies:
+    arg: ^4.1.0
+    create-require: ^1.1.0
+    diff: ^4.0.1
+    make-error: ^1.1.1
+    source-map-support: ^0.5.17
+    yn: 3.1.1
+  peerDependencies:
+    typescript: ">=2.7"
+  bin:
+    ts-node: dist/bin.js
+    ts-node-script: dist/bin-script.js
+    ts-node-transpile-only: dist/bin-transpile.js
+    ts-script: dist/bin-script-deprecated.js
+  checksum: a90db4a342872cd0e7a80babdfcb15d2f7c06e700d735003098f7cc79db575c3380580c58a19ae0d0eaab553af083651d4237060c92170e6f8ac4e64693113ea
+  languageName: node
+  linkType: hard
+
 "ts-pnp@npm:^1.1.6":
   version: 1.2.0
   resolution: "ts-pnp@npm:1.2.0"
@@ -26459,6 +26510,19 @@ resolve@1.9.0:
   bin:
     typedoc: bin/typedoc
   checksum: bc3155f6657ce8a18a8c13dc45f65d85a235bf6bf4d8ba8acdbcf8dcee77f1bcd38a9f6bb6c731242a0a1693f1ec930196524621b214953b61af18fd61b06f20
+  languageName: node
+  linkType: hard
+
+"typescript-cached-transpile@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "typescript-cached-transpile@npm:0.0.6"
+  dependencies:
+    "@types/node": ^12.12.7
+    fs-extra: ^8.1.0
+    tslib: ^1.10.0
+  peerDependencies:
+    typescript: "*"
+  checksum: 5be5d5ef75873fa0072108860265f33cddc7b4194770dc3478d966a49b5c5456ae6ae9cfc31393d8939692b6cb65968562ca22460d1154ea9b4d18b96c821329
   languageName: node
   linkType: hard
 
@@ -28668,6 +28732,13 @@ typescript@4.1.0-beta:
   version: 0.1.2
   resolution: "yeast@npm:0.1.2"
   checksum: ce326a71c7f25059ef7581121104c21d2837511a95cb44604f9e1825c5722f5b65324fb0b1d20bcfe3975efe45e418106100aa0d0e9fc502f90f3d07d059e177
+  languageName: node
+  linkType: hard
+
+"yn@npm:3.1.1":
+  version: 3.1.1
+  resolution: "yn@npm:3.1.1"
+  checksum: bff63b80568d80c711670935427494dde47cdf97e8b04196b140ce0af519c81c5ee857eddad0caa8b422dd65aea0157bbfaacbb1546bebba623f0f383d5d9ae5
   languageName: node
   linkType: hard
 

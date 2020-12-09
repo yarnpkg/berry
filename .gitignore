@@ -34,3 +34,5 @@ package.tgz
 !/packages/yarnpkg-pnp/lib/hook.js
 
 /vscode-case-study
+
+/.typescript-cached-transpile
