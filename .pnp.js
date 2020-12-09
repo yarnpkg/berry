@@ -8704,6 +8704,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/js-yaml", [
+        ["npm:3.12.5", {
+          "packageLocation": "./.yarn/cache/@types-js-yaml-npm-3.12.5-9b6b585722-82ca4b40ee.zip/node_modules/@types/js-yaml/",
+          "packageDependencies": [
+            ["@types/js-yaml", "npm:3.12.5"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/json-schema", [
         ["npm:7.0.4", {
           "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.4-e9c65098ca-5094037431.zip/node_modules/@types/json-schema/",
@@ -10564,6 +10573,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-parsers/",
           "packageDependencies": [
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
+            ["@types/js-yaml", "npm:3.12.5"],
             ["js-yaml", "npm:3.12.2"],
             ["pegjs", "npm:0.10.0"],
             ["tslib", "npm:1.13.0"]
