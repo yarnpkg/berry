@@ -10277,6 +10277,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pretty-bytes", "npm:5.1.0"],
             ["semver", "npm:7.3.2"],
             ["stream-to-promise", "npm:2.2.0"],
+            ["strip-ansi", "npm:6.0.0"],
             ["tar-stream", "npm:2.0.1"],
             ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
