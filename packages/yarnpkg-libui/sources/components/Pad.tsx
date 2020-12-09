@@ -1,4 +1,3 @@
-import chalk  from 'chalk';
 import {Text} from 'ink';
 import React  from 'react';
 
@@ -12,7 +11,7 @@ export const Pad = ({length, active}: PadProps) => {
     return null;
 
   const text = length > 1
-    ? ` ${chalk.underline(` `.repeat(length - 1))}`
+    ? ` ${`-`.repeat(length - 1)}`
     : ` `;
 
   return <Text dimColor={!active}>{text}</Text>;

@@ -194,11 +194,22 @@ const BUILTINS = new Map<string, ShellBuiltin>([
             inputs.push(() => getFileDescriptorStream(Number(args[u]), StreamType.Readable, state));
           } break;
 
-          case `>`: {
-            outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u]))));
-          } break;
+          case `>`:
           case `>>`: {
-            outputs.push(opts.baseFs.createWriteStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])), {flags: `a`}));
+            const outputPath = ppath.resolve(state.cwd, npath.toPortablePath(args[u]));
+            if (outputPath === `/dev/null`) {
+              outputs.push(
+                new Writable({
+                  autoDestroy: true,
+                  emitClose: true,
+                  write(chunk, encoding, callback) {
+                    setImmediate(callback);
+                  },
+                })
+              );
+            } else {
+              outputs.push(opts.baseFs.createWriteStream(outputPath, type === `>>` ? {flags: `a`} : undefined));
+            }
           } break;
           case `>&`: {
             outputs.push(getFileDescriptorStream(Number(args[u]), StreamType.Writable, state));

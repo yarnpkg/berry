@@ -18,9 +18,12 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
   [/^https:\/\/((?:[^/]+?)@)?github\.com\/([^/]+\/[^/]+?)(?:\.git)?#([0-9a-f]+)$/, (version, $0, $1 = ``, $2, $3) => `https://${$1}github.com/${$2}.git#commit=${$3}`],
 
   // These ones come from the npm registry
-  [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@[^/]+\/)?([^/]+)\/-\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  // Note: /download/ is used by custom registries like Taobao
+  [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@[^/]+\/)?([^/]+)\/(?:-|download)\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
   // The GitHub package registry uses a different style of URLs
   [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)$/, version => `npm:${version}`],
+  // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
+  [/^https:\/\/npm\.fontawesome\.com\/(?:@[^/]+)\/([^/]+)\/-\/([^/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
 
   // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],

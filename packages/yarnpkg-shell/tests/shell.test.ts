@@ -836,6 +836,22 @@ describe(`Shell`, () => {
         });
       });
     });
+
+    describe(`>`, () => {
+      it(`should support redirecting to /dev/null`, async () => {
+        await expect(bufferResult(`(echo foo > /dev/null) && echo bar`)).resolves.toMatchObject({
+          stdout: `bar\n`,
+        });
+      });
+    });
+
+    describe(`>>`, () => {
+      it(`should support redirecting to /dev/null`, async () => {
+        await expect(bufferResult(`(echo foo >> /dev/null) && echo bar`)).resolves.toMatchObject({
+          stdout: `bar\n`,
+        });
+      });
+    });
   });
 
   describe(`Lists`, () => {

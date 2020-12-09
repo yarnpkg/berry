@@ -124,6 +124,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           value: resolution,
           label: colorizeVersionDiff(descriptor.range, resolution),
         });
+      } else {
+        suggestions.push({value: null, label: ``});
       }
 
       if (latest && latest !== resolution && latest !== descriptor.range) {
@@ -131,6 +133,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           value: latest,
           label: colorizeVersionDiff(descriptor.range, latest),
         });
+      } else {
+        suggestions.push({value: null, label: ``});
       }
 
       return suggestions;

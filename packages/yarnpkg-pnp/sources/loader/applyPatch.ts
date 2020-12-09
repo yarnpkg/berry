@@ -320,7 +320,12 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (request === `pnpapi`)
       return false;
 
-    if (!enableNativeHooks)
+    // Node sometimes call this function with an absolute path and a `null` set
+    // of paths. This would cause the resolution to fail. To avoid that, we
+    // fallback on the regular resolution. We only do this when `isMain` is
+    // true because the Node default resolution doesn't handle well in-zip
+    // paths, even absolute, so we try to use it as little as possible.
+    if (!enableNativeHooks || (isMain && npath.isAbsolute(request)))
       return originalFindPath.call(Module, request, paths, isMain);
 
     for (const path of paths || []) {

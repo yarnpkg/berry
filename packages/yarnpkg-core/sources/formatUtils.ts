@@ -1,5 +1,6 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
+import stripAnsi                                                            from 'strip-ansi';
 
 import {Configuration}                                                      from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
@@ -305,6 +306,14 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
   return value;
 }
 
+export function mark(configuration: Configuration) {
+  return {
+    Check: applyColor(configuration, `✓`, `green`),
+    Cross: applyColor(configuration, `✘`, `red`),
+    Question: applyColor(configuration, `?`, `cyan`),
+  };
+}
+
 export enum LogLevel {
   Error = `error`,
   Warning = `warning`,
@@ -342,7 +351,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       return defaultLevel;
 
     if (logFiltersByText.size > 0) {
-      const level = logFiltersByText.get(chalk.reset(text));
+      const level = logFiltersByText.get(stripAnsi(text));
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
       }

@@ -31,7 +31,7 @@ Generally speaking:
 | [vscode-stylelint](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint) | [stylelint](https://stylelint.io/) |
 | [flow-for-vscode*](https://marketplace.visualstudio.com/items?itemName=flowtype.flow-for-vscode) | [flow-bin](https://flow.org/) |
 
-> \* Flow is [incompatible with PnP](/features/pnp#incompatible) yet.
+> \* Flow is currently [incompatible with PnP](/features/pnp#incompatible).
 
 If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-pnpify/sources/generateSdk.ts)
 

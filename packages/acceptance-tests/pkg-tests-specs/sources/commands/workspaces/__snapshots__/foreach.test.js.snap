@@ -94,6 +94,22 @@ Object {
 }
 `;
 
+exports[`Commands workspace foreach should run execute global scripts even on workspaces that don't declare them 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: One execution
+➤ YN0000: One execution
+➤ YN0000: One execution
+➤ YN0000: One execution
+➤ YN0000: One execution
+➤ YN0000: One execution
+➤ YN0000: One execution
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
 Object {
   "code": 0,
@@ -117,6 +133,22 @@ Object {
 ➤ YN0000: Test Workspace D
 ➤ YN0000: Test Workspace E
 ➤ YN0000: Test Workspace F
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach should run set INIT_CWD to each individual workspace cwd even with global scripts 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: 
+➤ YN0000: packages/workspace-a
+➤ YN0000: packages/workspace-b
+➤ YN0000: packages/workspace-c
+➤ YN0000: packages/workspace-c/packages/workspace-d
+➤ YN0000: packages/workspace-c/packages/workspace-d/packages/workspace-e
+➤ YN0000: packages/workspace-c/packages/workspace-f
 ➤ YN0000: Done
 ",
 }

@@ -267,6 +267,8 @@ type AllIntegrations = {
 };
 
 export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexistingIntegrations}: AllIntegrations, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {
+  const Mark = formatUtils.mark(configuration);
+
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
@@ -316,7 +318,7 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
       const displayName = getDisplayName(pkgName);
 
       if (topLevelInformation.packageDependencies.has(pkgName)) {
-        report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${displayName}`);
+        report.reportInfo(MessageName.UNNAMED, `${Mark.Check} ${displayName}`);
         const wrapper = await generateBaseWrapper(pnpApi, targetFolder);
 
         for (const sdks of integrationSdks) {
@@ -350,9 +352,9 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
     await report.startTimerPromise(`Generating settings`, async () => {
       for (const integration of allIntegrations) {
         if (preexistingIntegrations.has(integration)) {
-          report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (updated 🔼)`);
+          report.reportInfo(MessageName.UNNAMED, `${Mark.Check} ${getDisplayName(integration)} (updated 🔼)`);
         } else {
-          report.reportInfo(MessageName.UNNAMED, `${chalk.green(`✓`)} ${getDisplayName(integration)} (new ✨)`);
+          report.reportInfo(MessageName.UNNAMED, `${Mark.Check} ${getDisplayName(integration)} (new ✨)`);
         }
       }
     });

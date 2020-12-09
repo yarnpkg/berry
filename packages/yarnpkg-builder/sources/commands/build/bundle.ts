@@ -184,13 +184,15 @@ export default class BuildBundleCommand extends Command {
 
     report.reportSeparator();
 
+    const Mark = formatUtils.mark(configuration);
+
     if (buildErrors) {
-      report.reportError(MessageName.EXCEPTION, `${chalk.red(`✗`)} Failed to build the CLI:`);
+      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build the CLI:`);
       report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
     } else {
-      report.reportInfo(null, `${chalk.green(`✓`)} Done building the CLI!`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
-      report.reportInfo(null, `${chalk.cyan(`?`)} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
+      report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
+      report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
+      report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
 
       report.reportSeparator();
 
