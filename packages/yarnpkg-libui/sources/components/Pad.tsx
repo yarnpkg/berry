@@ -1,4 +1,3 @@
-import chalk  from 'chalk';
 import {Text} from 'ink';
 import React  from 'react';
 
