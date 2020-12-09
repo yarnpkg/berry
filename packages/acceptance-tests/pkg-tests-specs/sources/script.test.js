@@ -392,6 +392,62 @@ describe(`Scripts tests`, () => {
   );
 
   test(
+    `it should set INIT_CWD`,
+    makeTemporaryEnv({
+      private: true,
+      workspaces: [`packages/*`],
+    }, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/packages/test`);
+
+      await xfs.writeJsonPromise(`${path}/packages/test/package.json`, {
+        scripts: {
+          [`test:script`]: `echo "$INIT_CWD"`,
+        },
+      });
+
+      await run(`install`);
+
+      await expect(run(`run`, `test:script`)).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(path)}\n`,
+      });
+
+      await expect(run(`run`, `test:script`, {
+        cwd: `${path}/packages`,
+      })).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
+      });
+    })
+  );
+
+  test(
+    `it should set PROJECT_CWD`,
+    makeTemporaryEnv({
+      private: true,
+      workspaces: [`packages/*`],
+    }, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/packages/test`);
+
+      await xfs.writeJsonPromise(`${path}/packages/test/package.json`, {
+        scripts: {
+          [`test:script`]: `echo "$PROJECT_CWD"`,
+        },
+      });
+
+      await run(`install`);
+
+      await expect(run(`run`, `test:script`)).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(path)}\n`,
+      });
+
+      await expect(run(`run`, `test:script`, {
+        cwd: `${path}/packages`,
+      })).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(path)}\n`,
+      });
+    })
+  );
+
+  test(
     `it should correctly run scripts when project path has space inside`,
     makeTemporaryEnv({
       private: true,
