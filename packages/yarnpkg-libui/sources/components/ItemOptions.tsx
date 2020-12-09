@@ -21,8 +21,12 @@ export const ItemOptions = function <T>({
   onChange: (value: T) => void,
   sizes?: Array<number>
 }) {
-  const values = options.map(({value}) => value);
-  const selectedIndex = values.indexOf(value);
+  // Our possible values are those that have been provided with a label so that
+  // the user can see what they're selecting.
+  const values = options.filter(({label}) => !!label).map(({value}) => value);
+  const selectedIndex = options.findIndex(o => {
+    return o.value === value && o.label != ``;
+  });
 
   useListInput(value, values, {
     active,
@@ -35,6 +39,7 @@ export const ItemOptions = function <T>({
     {options.map(({label}, index) => {
       const isGemActive = index === selectedIndex;
       const boxWidth = sizes[index] -1 || 0;
+
       const simpleLabel = label
         // https://stackoverflow.com/a/29497680
         // eslint-disable-next-line no-control-regex
@@ -44,7 +49,7 @@ export const ItemOptions = function <T>({
 
       if (!label) {
         return (
-          <Box key={index} width={boxWidth} marginLeft={1} />
+          <Box key={`spacer-${index}`} width={boxWidth} marginLeft={1}/>
         );
       }
 
