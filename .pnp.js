@@ -43982,25 +43982,23 @@ function hydrateRuntimeState(data, {
         packageLocationLengths.add(packageInformationData.packageLocation.length);
       }
 
-      const packageInformation = {
+      let resolvedPackageLocation = null;
+      return [packageReference, {
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
         discardFromLookup: packageInformationData.discardFromLookup || false,
-        _packageLocation: undefined,
 
-        // we only need this for packages that are used by the currently running script
+        // Only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {
           // We use ppath.join instead of ppath.resolve because:
           // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
           // 2) ppath.join preserves trailing slashes
-          if (this._packageLocation === undefined) this._packageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation);
-          return this._packageLocation;
+          return resolvedPackageLocation || (resolvedPackageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation));
         }
 
-      };
-      return [packageReference, packageInformation];
+      }];
     }))];
   }));
 

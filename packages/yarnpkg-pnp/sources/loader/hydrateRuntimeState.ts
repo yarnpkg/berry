@@ -1,6 +1,6 @@
-import {PortablePath, npath, ppath}                                          from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                                              from '@yarnpkg/fslib';
 
-import {PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
+import {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
 
 export type HydrateRuntimeStateOptions = {
   basePath: string,
@@ -17,8 +17,8 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
   const packageLocatorsByLocations = new Map<PortablePath, PhysicalPackageLocator | null>();
   const packageLocationLengths = new Set<number>();
 
-  const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
-    return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
+  const packageRegistry = new Map<string | null, PackageStore>(data.packageRegistryData.map(([packageName, packageStoreData]) => {
+    return [packageName, new Map<string | null, PackageInformation<PortablePath>>(packageStoreData.map(([packageReference, packageInformationData]) => {
       if ((packageName === null) !== (packageReference === null))
         throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
 
@@ -30,28 +30,23 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         packageLocationLengths.add(packageInformationData.packageLocation.length);
       }
 
-      const packageInformation = {
+      let resolvedPackageLocation: PortablePath | null = null;
+
+      return [packageReference, {
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
         discardFromLookup: packageInformationData.discardFromLookup || false,
-        _packageLocation: undefined as PortablePath | undefined,
-
         // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {
           // We use ppath.join instead of ppath.resolve because:
           // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
           // 2) ppath.join preserves trailing slashes
-          if (this._packageLocation === undefined)
-            this._packageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation);
-
-          return this._packageLocation;
+          return resolvedPackageLocation || (resolvedPackageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation));
         },
-      };
-
-      return [packageReference, packageInformation];
-    }))] as [string | null, PackageStore];
+      }];
+    }))];
   }));
 
   for (const location of data.locationBlacklistData)
