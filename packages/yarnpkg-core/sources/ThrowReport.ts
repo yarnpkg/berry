@@ -1,6 +1,6 @@
-import type {MessageName}          from './MessageName';
+import type {MessageName}     from './MessageName';
 import {Report, TimerOptions} from './Report';
-import type {Locator}              from './types';
+import type {Locator}         from './types';
 
 export class ThrowReport extends Report {
   reportCacheHit(locator: Locator) {

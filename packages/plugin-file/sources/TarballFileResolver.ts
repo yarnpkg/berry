@@ -1,10 +1,10 @@
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Descriptor, Locator, Manifest}                        from '@yarnpkg/core';
+import {LinkType}                                             from '@yarnpkg/core';
+import {miscUtils, structUtils}                               from '@yarnpkg/core';
+import {npath}                                                from '@yarnpkg/fslib';
 
-import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
+import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}                from './constants';
 
 export class TarballFileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

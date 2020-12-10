@@ -1,9 +1,9 @@
 import type {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import type {Locator}                                    from '@yarnpkg/core';
-import {structUtils}                                from '@yarnpkg/core';
-import {CwdFS, JailFS, ppath, PortablePath}         from '@yarnpkg/fslib';
+import {structUtils}                                     from '@yarnpkg/core';
+import {CwdFS, JailFS, ppath, PortablePath}              from '@yarnpkg/fslib';
 
-import {LINK_PROTOCOL}                              from './constants';
+import {LINK_PROTOCOL}                                   from './constants';
 
 export class LinkFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

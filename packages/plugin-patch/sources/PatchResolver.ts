@@ -1,5 +1,5 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, hashUtils} from '@yarnpkg/core';
-import type {Descriptor, Locator, Package}                                               from '@yarnpkg/core';
+import type {Descriptor, Locator, Package}                                          from '@yarnpkg/core';
 import {structUtils}                                                                from '@yarnpkg/core';
 
 import * as patchUtils                                                              from './patchUtils';

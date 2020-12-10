@@ -1,11 +1,11 @@
 import {Report, Workspace, scriptUtils}                            from '@yarnpkg/core';
 import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath} from '@yarnpkg/fslib';
-import type {Hooks as StageHooks}                                       from '@yarnpkg/plugin-stage';
+import type {Hooks as StageHooks}                                  from '@yarnpkg/plugin-stage';
 import mm                                                          from 'micromatch';
 import tar                                                         from 'tar-stream';
 import {createGzip}                                                from 'zlib';
 
-import type {Hooks}                                                     from './';
+import type {Hooks}                                                from './';
 
 const NEVER_IGNORE = [
   `/package.json`,

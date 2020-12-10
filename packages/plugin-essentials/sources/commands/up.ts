@@ -7,7 +7,7 @@ import {prompt}                                                                 
 import micromatch                                                                                                   from 'micromatch';
 
 import * as suggestUtils                                                                                            from '../suggestUtils';
-import type {Hooks}                                                                                                      from '..';
+import type {Hooks}                                                                                                 from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {

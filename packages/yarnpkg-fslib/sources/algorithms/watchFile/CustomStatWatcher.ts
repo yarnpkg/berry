@@ -1,9 +1,9 @@
-import {EventEmitter}                                             from 'events';
+import {EventEmitter}                                                  from 'events';
 import type {Stats}                                                    from 'fs';
 
 import type {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../../FakeFS';
 import type {Path}                                                     from '../../path';
-import * as statUtils                                             from '../../statUtils';
+import * as statUtils                                                  from '../../statUtils';
 
 export enum Event {
   Change = `change`,

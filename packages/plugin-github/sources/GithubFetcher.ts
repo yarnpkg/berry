@@ -1,10 +1,10 @@
-import type {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
-import type {Locator}                                       from '@yarnpkg/core';
-import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {PortablePath, CwdFS, ppath, xfs}               from '@yarnpkg/fslib';
-import {gitUtils}                                      from '@yarnpkg/plugin-git';
+import type {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
+import type {Locator}                                    from '@yarnpkg/core';
+import {httpUtils, scriptUtils, structUtils, tgzUtils}   from '@yarnpkg/core';
+import {PortablePath, CwdFS, ppath, xfs}                 from '@yarnpkg/fslib';
+import {gitUtils}                                        from '@yarnpkg/plugin-git';
 
-import * as githubUtils                                from './githubUtils';
+import * as githubUtils                                  from './githubUtils';
 
 export class GithubFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

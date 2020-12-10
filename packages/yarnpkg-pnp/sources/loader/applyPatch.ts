@@ -3,10 +3,10 @@ import fs                                                                    fro
 import {Module}                                                              from 'module';
 import {URL, fileURLToPath}                                                  from 'url';
 
-import type {PnpApi}                                                              from '../types';
+import type {PnpApi}                                                         from '../types';
 
 import {ErrorCode, makeError, getIssuerModule}                               from './internalTools';
-import type {Manager}                                                             from './makeManager';
+import type {Manager}                                                        from './makeManager';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>,

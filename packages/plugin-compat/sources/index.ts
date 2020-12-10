@@ -1,5 +1,5 @@
 import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
-import type {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
+import type {Hooks as PatchHooks}                from '@yarnpkg/plugin-patch';
 
 import {packageExtensions}                       from './extensions';
 import {getPatch as getFseventsPatch}            from './patches/fsevents.patch';

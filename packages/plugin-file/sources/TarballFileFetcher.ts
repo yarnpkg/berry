@@ -1,9 +1,9 @@
 import type {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import type {Locator}                                    from '@yarnpkg/core';
-import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {PortablePath, ppath, CwdFS}                 from '@yarnpkg/fslib';
+import {miscUtils, structUtils, tgzUtils}                from '@yarnpkg/core';
+import {PortablePath, ppath, CwdFS}                      from '@yarnpkg/fslib';
 
-import {TARBALL_REGEXP, PROTOCOL}                   from './constants';
+import {TARBALL_REGEXP, PROTOCOL}                        from './constants';
 
 export class TarballFileFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

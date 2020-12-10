@@ -1,7 +1,7 @@
 import {BaseCommand, openWorkspace}                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Report, miscUtils} from '@yarnpkg/core';
 import {StreamReport}                                  from '@yarnpkg/core';
-import type {PortablePath}                                  from '@yarnpkg/fslib';
+import type {PortablePath}                             from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils}                  from '@yarnpkg/plugin-npm';
 import {Command, Usage}                                from 'clipanion';
 import {prompt}                                        from 'enquirer';

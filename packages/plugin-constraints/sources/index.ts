@@ -1,5 +1,5 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
-import type {PortablePath}         from '@yarnpkg/fslib';
+import type {PortablePath}    from '@yarnpkg/fslib';
 
 import queryConstraints       from './commands/constraints/query';
 import sourceConstraints      from './commands/constraints/source';

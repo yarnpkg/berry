@@ -1,7 +1,7 @@
 /// <reference path="./tauProlog.d.ts"/>
 
 import {Project, structUtils} from '@yarnpkg/core';
-import type {PortablePath}         from '@yarnpkg/fslib';
+import type {PortablePath}    from '@yarnpkg/fslib';
 import getPath                from 'lodash/get';
 import pl                     from 'tau-prolog';
 import vm                     from 'vm';

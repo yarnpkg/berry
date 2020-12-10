@@ -1,10 +1,10 @@
 import type {EventEmitter}                                                          from 'events';
 import type {Dirent as NodeDirent, ReadStream, Stats, WriteStream, NoParamCallback} from 'fs';
-import {EOL}                                                                   from 'os';
+import {EOL}                                                                        from 'os';
 
-import {copyPromise}                                                           from './algorithms/copyPromise';
+import {copyPromise}                                                                from './algorithms/copyPromise';
 import type {FSPath, Path, PortablePath, PathUtils, Filename}                       from './path';
-import {convertPath, ppath}                                                    from './path';
+import {convertPath, ppath}                                                         from './path';
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,

@@ -1,6 +1,6 @@
 import {PortablePath, npath, ppath, FakeFS, NodeFS}                                  from '@yarnpkg/fslib';
 import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
-import type {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
+import type {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                    from '@yarnpkg/parsers';
 import {homedir}                                                                     from 'os';
 import {PassThrough, Readable, Writable}                                             from 'stream';
 

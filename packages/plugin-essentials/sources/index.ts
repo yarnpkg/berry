@@ -1,5 +1,5 @@
 import {Descriptor, Plugin, SettingsType, Package, formatUtils} from '@yarnpkg/core';
-import type {Workspace}                                              from '@yarnpkg/core';
+import type {Workspace}                                         from '@yarnpkg/core';
 
 import add                                                      from './commands/add';
 import bin                                                      from './commands/bin';

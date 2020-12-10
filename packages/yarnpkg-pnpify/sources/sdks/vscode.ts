@@ -1,8 +1,8 @@
-import {PortablePath, npath, ppath}                                                   from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                                        from '@yarnpkg/fslib';
 import type {PnpApi}                                                                       from '@yarnpkg/pnp';
 
 import type {Wrapper, GenerateIntegrationWrapper, GenerateDefaultWrapper, IntegrationSdks} from '../generateSdk';
-import * as sdkUtils                                                                  from '../sdkUtils';
+import * as sdkUtils                                                                       from '../sdkUtils';
 
 export enum VSCodeConfiguration {
   settings = `settings.json`,

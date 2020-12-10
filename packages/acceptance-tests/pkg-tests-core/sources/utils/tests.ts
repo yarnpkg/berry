@@ -1,16 +1,16 @@
-import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
-import crypto                            from 'crypto';
-import finalhandler                      from 'finalhandler';
-import https                             from 'https';
-import http                              from 'http';
+import {PortablePath, npath, toFilename}      from '@yarnpkg/fslib';
+import crypto                                 from 'crypto';
+import finalhandler                           from 'finalhandler';
+import https                                  from 'https';
+import http                                   from 'http';
 
 import type {IncomingMessage, ServerResponse} from 'http';
-import invariant                         from 'invariant';
+import invariant                              from 'invariant';
 import type {AddressInfo}                     from 'net';
-import pem                               from 'pem';
-import semver                            from 'semver';
-import serveStatic                       from 'serve-static';
-import {promisify}                       from 'util';
+import pem                                    from 'pem';
+import semver                                 from 'semver';
+import serveStatic                            from 'serve-static';
+import {promisify}                            from 'util';
 
 const deepResolve = require(`super-resolve`);
 
@@ -19,7 +19,7 @@ const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtu
 import type {Gzip}       from 'zlib';
 
 import type {ExecResult} from './exec';
-import * as fsUtils from './fs';
+import * as fsUtils      from './fs';
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;

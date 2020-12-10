@@ -1,5 +1,5 @@
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
+import * as structUtils                                       from './structUtils';
 import type {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export class MultiResolver implements Resolver {

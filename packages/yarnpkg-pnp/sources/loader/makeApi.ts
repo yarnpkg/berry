@@ -1,11 +1,11 @@
-import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
-import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
+import {ppath, Filename}                                                                                         from '@yarnpkg/fslib';
+import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                                from '@yarnpkg/fslib';
 
-import {Module}                                                                                             from 'module';
+import {Module}                                                                                                  from 'module';
 
 import type {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
 
-import {ErrorCode, makeError, getPathForDisplay}                                                            from './internalTools';
+import {ErrorCode, makeError, getPathForDisplay}                                                                 from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,

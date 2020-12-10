@@ -4,7 +4,7 @@ import {xfs}                                                                    
 import {Command, Usage, UsageError}                                                                                                                                   from 'clipanion';
 import mm                                                                                                                                                             from 'micromatch';
 
-import type {Hooks}                                                                                                                                                        from '..';
+import type {Hooks}                                                                                                                                                   from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {

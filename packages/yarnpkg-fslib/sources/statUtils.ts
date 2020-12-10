@@ -1,7 +1,7 @@
-import type {Stats}                             from 'fs';
+import type {Stats}                        from 'fs';
 
 import {S_IFDIR, S_IFLNK, S_IFMT, S_IFREG} from './constants';
-import type {Filename}                          from './path';
+import type {Filename}                     from './path';
 
 export class DirEntry {
   public name: Filename = `` as Filename;

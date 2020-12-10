@@ -4,7 +4,7 @@ import fs                                                               from 'fs
 import Module                                                           from 'module';
 import StringDecoder                                                    from 'string_decoder';
 
-import type {RuntimeState, PnpApi}                                           from '../types';
+import type {RuntimeState, PnpApi}                                      from '../types';
 
 import {applyPatch}                                                     from './applyPatch';
 import {hydrateRuntimeState}                                            from './hydrateRuntimeState';

@@ -1,5 +1,5 @@
-import {MessageName}                                     from './MessageName';
-import {ReportError}                                     from './Report';
+import {MessageName}                                          from './MessageName';
+import {ReportError}                                          from './Report';
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import type {Descriptor, Locator}                             from './types';
 

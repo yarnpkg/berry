@@ -1,7 +1,7 @@
 import crossSpawn                                   from 'cross-spawn';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
 
-import type {ShellOptions}                               from './index';
+import type {ShellOptions}                          from './index';
 
 export enum Pipe {
   STDIN = 0b00,

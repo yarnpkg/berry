@@ -1,9 +1,9 @@
-import type {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import type {Libzip}                                                                                                                                 from '@yarnpkg/libzip';
 import {constants}                                                                                                                                   from 'fs';
 
-import type {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
-import type {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
-import type {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
+import type {WatchOptions, WatchCallback, Watcher}                                                                                                   from './FakeFS';
+import type {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                   from './FakeFS';
+import type {Dirent, SymlinkType}                                                                                                                    from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {ZipFS}                                                                                                                                       from './ZipFS';

@@ -1,10 +1,10 @@
 import type {FakeFS, PortablePath} from '@yarnpkg/fslib';
-import {readFile}             from 'fs';
-import {dirname}              from 'path';
-import {promisify}            from 'util';
+import {readFile}                  from 'fs';
+import {dirname}                   from 'path';
+import {promisify}                 from 'util';
 
-import {hydrateRuntimeState}  from './loader/hydrateRuntimeState';
-import {makeApi}              from './loader/makeApi';
+import {hydrateRuntimeState}       from './loader/hydrateRuntimeState';
+import {makeApi}                   from './loader/makeApi';
 import type {SerializedState}      from './types';
 
 const readFileP = promisify(readFile);

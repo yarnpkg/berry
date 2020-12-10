@@ -3,13 +3,13 @@ import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                          from '@y
 import {getLibzipPromise}                                               from '@yarnpkg/libzip';
 import fs                                                               from 'fs';
 
-import type {Configuration}                                                  from './Configuration';
+import type {Configuration}                                             from './Configuration';
 import {MessageName}                                                    from './MessageName';
 import {ReportError}                                                    from './Report';
 import * as hashUtils                                                   from './hashUtils';
 import * as miscUtils                                                   from './miscUtils';
 import * as structUtils                                                 from './structUtils';
-import type {LocatorHash, Locator}                                           from './types';
+import type {LocatorHash, Locator}                                      from './types';
 
 const CACHE_VERSION = 7;
 

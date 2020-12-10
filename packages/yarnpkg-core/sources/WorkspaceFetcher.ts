@@ -1,7 +1,7 @@
-import {CwdFS, PortablePath}   from '@yarnpkg/fslib';
+import {CwdFS, PortablePath}        from '@yarnpkg/fslib';
 
 import type {Fetcher, FetchOptions} from './Fetcher';
-import {WorkspaceResolver}     from './WorkspaceResolver';
+import {WorkspaceResolver}          from './WorkspaceResolver';
 import type {Locator}               from './types';
 
 export class WorkspaceFetcher implements Fetcher {

@@ -1,8 +1,8 @@
-import type {Writable}       from 'stream';
-import {asTree}         from 'treeify';
+import type {Writable}      from 'stream';
+import {asTree}             from 'treeify';
 
-import type {Configuration}  from './Configuration';
-import * as formatUtils from './formatUtils';
+import type {Configuration} from './Configuration';
+import * as formatUtils     from './formatUtils';
 
 export type TreeNode = {
   label?: string,

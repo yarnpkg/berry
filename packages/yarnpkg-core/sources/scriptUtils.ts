@@ -7,19 +7,19 @@ import capitalize                                             from 'lodash/capit
 import pLimit                                                 from 'p-limit';
 import {PassThrough, Readable, Writable}                      from 'stream';
 
-import type {Configuration}                                        from './Configuration';
+import type {Configuration}                                   from './Configuration';
 import {Manifest}                                             from './Manifest';
 import {MessageName}                                          from './MessageName';
-import type {Project}                                              from './Project';
+import type {Project}                                         from './Project';
 import {ReportError, Report}                                  from './Report';
 import {StreamReport}                                         from './StreamReport';
-import type {Workspace}                                            from './Workspace';
+import type {Workspace}                                       from './Workspace';
 import {YarnVersion}                                          from './YarnVersion';
 import * as execUtils                                         from './execUtils';
 import * as formatUtils                                       from './formatUtils';
 import * as miscUtils                                         from './miscUtils';
 import * as structUtils                                       from './structUtils';
-import type {LocatorHash, Locator}                                 from './types';
+import type {LocatorHash, Locator}                            from './types';
 
 enum PackageManager {
   Yarn1 = `Yarn Classic`,

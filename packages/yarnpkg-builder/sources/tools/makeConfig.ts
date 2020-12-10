@@ -1,6 +1,6 @@
 import {npath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 import ForkTsCheckerWebpackPlugin    from 'fork-ts-checker-webpack-plugin';
-import type tsLoader                      from 'ts-loader';
+import type tsLoader                 from 'ts-loader';
 import merge                         from 'webpack-merge';
 import webpack                       from 'webpack';
 

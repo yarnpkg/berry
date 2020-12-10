@@ -1,8 +1,8 @@
 import type {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import type {Locator}                                    from '@yarnpkg/core';
-import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {httpUtils, structUtils, tgzUtils}                from '@yarnpkg/core';
 
-import {TARBALL_REGEXP, PROTOCOL_REGEXP}            from './constants';
+import {TARBALL_REGEXP, PROTOCOL_REGEXP}                 from './constants';
 
 export class TarballHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

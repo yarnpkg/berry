@@ -3,12 +3,12 @@ import globby                                      from 'globby';
 import semver                                      from 'semver';
 
 import {Manifest}                                  from './Manifest';
-import type {Project}                                   from './Project';
+import type {Project}                              from './Project';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
 import * as hashUtils                              from './hashUtils';
 import * as structUtils                            from './structUtils';
-import type {IdentHash}                                 from './types';
-import type {Descriptor, Locator}                       from './types';
+import type {IdentHash}                            from './types';
+import type {Descriptor, Locator}                  from './types';
 
 export class Workspace {
   public readonly project: Project;

@@ -1,9 +1,9 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 
-import type {Configuration}                                                      from './Configuration';
+import type {Configuration}                                                 from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
-import type {Report}                                                             from './Report';
+import type {Report}                                                        from './Report';
 import * as miscUtils                                                       from './miscUtils';
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';

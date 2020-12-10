@@ -1,10 +1,10 @@
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import type {Descriptor, Locator}                             from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {structUtils}                                     from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {LinkType}                                             from '@yarnpkg/core';
+import {structUtils}                                          from '@yarnpkg/core';
+import {npath}                                                from '@yarnpkg/fslib';
 
-import {RAW_LINK_PROTOCOL}                               from './constants';
+import {RAW_LINK_PROTOCOL}                                    from './constants';
 
 export class RawLinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

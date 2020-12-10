@@ -1,10 +1,10 @@
-import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils}                    from '@yarnpkg/core';
+import {LinkType}                                             from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                        from '@yarnpkg/core';
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 
-import {FILE_REGEXP, PROTOCOL}                           from './constants';
-import * as fileUtils                                    from './fileUtils';
+import {FILE_REGEXP, PROTOCOL}                                from './constants';
+import * as fileUtils                                         from './fileUtils';
 
 // We use this for the folders to be regenerated without bumping the whole cache
 const CACHE_VERSION = 1;

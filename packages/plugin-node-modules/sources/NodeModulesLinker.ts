@@ -1,6 +1,6 @@
 import {MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor, DependencyMeta} from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
-import type {Locator, Package, FinalizeInstallStatus}                                               from '@yarnpkg/core';
+import type {Locator, Package, FinalizeInstallStatus}                                          from '@yarnpkg/core';
 import {structUtils, Report, Manifest, miscUtils}                                              from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                         from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
@@ -9,7 +9,7 @@ import {parseSyml}                                                              
 import {jsInstallUtils}                                                                        from '@yarnpkg/plugin-pnp';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}                     from '@yarnpkg/pnpify';
 import {buildNodeModulesTree}                                                                  from '@yarnpkg/pnpify';
-import type {PnpApi, PackageInformation}                                                            from '@yarnpkg/pnp';
+import type {PnpApi, PackageInformation}                                                       from '@yarnpkg/pnp';
 import cmdShim                                                                                 from '@zkochan/cmd-shim';
 import {UsageError}                                                                            from 'clipanion';
 import fs                                                                                      from 'fs';

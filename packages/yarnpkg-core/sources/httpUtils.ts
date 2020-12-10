@@ -1,12 +1,12 @@
 import type {ConfigurationValueMap}           from '@yarnpkg/core';
-import {PortablePath, xfs}               from '@yarnpkg/fslib';
+import {PortablePath, xfs}                    from '@yarnpkg/fslib';
 import type {ExtendOptions, Response}         from 'got';
-import {Agent as HttpsAgent}             from 'https';
-import {Agent as HttpAgent}              from 'http';
-import micromatch                        from 'micromatch';
-import tunnel, {ProxyOptions}            from 'tunnel';
+import {Agent as HttpsAgent}                  from 'https';
+import {Agent as HttpAgent}                   from 'http';
+import micromatch                             from 'micromatch';
+import tunnel, {ProxyOptions}                 from 'tunnel';
 
-import {URL}                             from 'url';
+import {URL}                                  from 'url';
 
 import type {Configuration}                   from './Configuration';
 import type {MapValue, MapValueToObjectValue} from './miscUtils';

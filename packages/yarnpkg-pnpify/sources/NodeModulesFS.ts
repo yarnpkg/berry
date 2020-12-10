@@ -1,16 +1,16 @@
 import type {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
 import type {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                        from '@yarnpkg/fslib';
 import type {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                                    from '@yarnpkg/fslib';
 import type {CreateReadStreamOptions, CreateWriteStreamOptions}                                                                         from '@yarnpkg/fslib';
 import type {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
-import fs                                                                                                                          from 'fs';
+import fs                                                                                                                               from 'fs';
 
-import {WatchManager}                                                                                                              from './WatchManager';
+import {WatchManager}                                                                                                                   from './WatchManager';
 import type {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
-import {buildNodeModulesTree}                                                                                                      from './buildNodeModulesTree';
-import {resolveNodeModulesPath, ResolvedPath}                                                                                      from './resolveNodeModulesPath';
+import {buildNodeModulesTree}                                                                                                           from './buildNodeModulesTree';
+import {resolveNodeModulesPath, ResolvedPath}                                                                                           from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs,

@@ -1,12 +1,12 @@
-import {xfs, ppath}                                      from '@yarnpkg/fslib';
-import {parseSyml}                                       from '@yarnpkg/parsers';
-import semver                                            from 'semver';
+import {xfs, ppath}                                           from '@yarnpkg/fslib';
+import {parseSyml}                                            from '@yarnpkg/parsers';
+import semver                                                 from 'semver';
 
-import {MessageName}                                     from './MessageName';
+import {MessageName}                                          from './MessageName';
 import type {Project}                                         from './Project';
 import type {Report}                                          from './Report';
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
+import * as structUtils                                       from './structUtils';
 import type {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [

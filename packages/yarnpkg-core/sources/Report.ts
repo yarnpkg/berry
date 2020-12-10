@@ -2,7 +2,7 @@ import {PassThrough}   from 'stream';
 import {StringDecoder} from 'string_decoder';
 
 import {MessageName}   from './MessageName';
-import type {Locator}       from './types';
+import type {Locator}  from './types';
 
 export class ReportError extends Error {
   public reportCode: MessageName;

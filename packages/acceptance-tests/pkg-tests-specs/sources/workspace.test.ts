@@ -1,6 +1,6 @@
 import type {PortablePath} from '@yarnpkg/fslib';
 import type {exec}         from 'pkg-tests-core';
-import {fs}           from 'pkg-tests-core';
+import {fs}                from 'pkg-tests-core';
 
 const {readFile, writeFile, writeJson} = fs;
 

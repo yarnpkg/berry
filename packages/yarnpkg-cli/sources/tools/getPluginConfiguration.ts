@@ -1,8 +1,8 @@
 // @ts-expect-error
-import packageJson           from '@yarnpkg/cli/package.json';
+import packageJson                from '@yarnpkg/cli/package.json';
 import type {PluginConfiguration} from '@yarnpkg/core';
 
-import {getDynamicLibs}      from './getDynamicLibs';
+import {getDynamicLibs}           from './getDynamicLibs';
 
 export function getPluginConfiguration(): PluginConfiguration {
   const plugins = new Set<string>();
