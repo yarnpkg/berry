@@ -14,7 +14,7 @@
     // "compiler": "./scripts/ts-compiler.js",
 
     "compilerOptions": {
-      "importHelpers": false, // set to false to avoid depending on @swc/helpers everywhere when using swc compiler
+      "importHelpers": false, // to avoid depending on @swc/helpers everywhere when using swc compiler
     }
   },
   "compilerOptions": {
