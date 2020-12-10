@@ -3976,10 +3976,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin@npm:^1.2.40":
+"@swc/core-darwin@npm:*, @swc/core-darwin@npm:^1.2.40":
   version: 1.2.40
   resolution: "@swc/core-darwin@npm:1.2.40"
   checksum: 6e8511a02402aa784f99ef65fd0a1d52a75f6b990f49560e30ade31fc9ab18771dd25b50676fc53de254792f103608abec3a85378885cb818f17755215602a67
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-musl@npm:*":
+  version: 1.2.40
+  resolution: "@swc/core-linux-musl@npm:1.2.40"
+  checksum: dd62230f16911b011f12a0dacb4f800f1e795e5cd74f70a66afb0ec574100c7970ca8445a3a3f8275ab7e203e7b734941ae7377742f28e37e739c3a6609f82b5
   languageName: node
   linkType: hard
 
@@ -3990,7 +3997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-win32@npm:^1.2.40":
+"@swc/core-win32@npm:*, @swc/core-win32@npm:^1.2.40":
   version: 1.2.40
   resolution: "@swc/core-win32@npm:1.2.40"
   checksum: 1aa1038606b7bca6dfc62fd3052df9e8e3be5bf27418dd9cd2561842541f977cc62a3ca7d32bbba467c28b704c7edb98043e0885cef8c21509476d9ea778880d

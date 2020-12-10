@@ -7266,7 +7266,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@node-rs-helper-npm-0.4.0-71240137a1-f98033ed82.zip/node_modules/@node-rs/helper/",
           "packageDependencies": [
             ["@node-rs/helper", "npm:0.4.0"],
+            ["@swc/core-darwin", "npm:1.2.40"],
             ["@swc/core-linux", "npm:1.2.40"],
+            ["@swc/core-linux-musl", "npm:1.2.40"],
+            ["@swc/core-win32", "npm:1.2.40"],
             ["tslib", "npm:2.0.3"]
           ],
           "linkType": "HARD",
@@ -8180,6 +8183,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/unplugged/@swc-core-linux-npm-1.2.40-742cefc1a3/node_modules/@swc/core-linux/",
           "packageDependencies": [
             ["@swc/core-linux", "npm:1.2.40"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@swc/core-linux-musl", [
+        ["npm:1.2.40", {
+          "packageLocation": "./.yarn/unplugged/@swc-core-linux-musl-npm-1.2.40-65617b2b2b/node_modules/@swc/core-linux-musl/",
+          "packageDependencies": [
+            ["@swc/core-linux-musl", "npm:1.2.40"]
           ],
           "linkType": "HARD",
         }]
