@@ -1,6 +1,6 @@
-import {ConfigurationValueMap}           from '@yarnpkg/core';
+import type {ConfigurationValueMap}           from '@yarnpkg/core';
 import {PortablePath, xfs}               from '@yarnpkg/fslib';
-import {ExtendOptions, Response}         from 'got';
+import type {ExtendOptions, Response}         from 'got';
 import {Agent as HttpsAgent}             from 'https';
 import {Agent as HttpAgent}              from 'http';
 import micromatch                        from 'micromatch';
@@ -8,8 +8,8 @@ import tunnel, {ProxyOptions}            from 'tunnel';
 
 import {URL}                             from 'url';
 
-import {Configuration}                   from './Configuration';
-import {MapValue, MapValueToObjectValue} from './miscUtils';
+import type {Configuration}                   from './Configuration';
+import type {MapValue, MapValueToObjectValue} from './miscUtils';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();

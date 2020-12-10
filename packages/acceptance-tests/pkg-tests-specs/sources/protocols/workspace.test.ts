@@ -1,4 +1,4 @@
-import {PortablePath} from '@yarnpkg/fslib';
+import type {PortablePath} from '@yarnpkg/fslib';
 import {fs}           from 'pkg-tests-core';
 
 const {writeJson} = fs;

@@ -6,7 +6,7 @@ import {Command, Usage, UsageError}                        from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
-import {Writable}                                          from 'stream';
+import type {Writable}                                          from 'stream';
 import * as yup                                            from 'yup';
 
 /**

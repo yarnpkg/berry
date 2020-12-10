@@ -1,6 +1,6 @@
 import {Filename, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 
-import {Configuration}                      from './Configuration';
+import type {Configuration}                      from './Configuration';
 import * as httpUtils                       from './httpUtils';
 import * as miscUtils                       from './miscUtils';
 

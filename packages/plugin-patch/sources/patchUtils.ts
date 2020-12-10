@@ -2,7 +2,7 @@ import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, mi
 
 import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                      from '@yarnpkg/fslib';
 
-import {Hooks as PatchHooks}                                                                                               from './index';
+import type {Hooks as PatchHooks}                                                                                               from './index';
 
 export {applyPatchFile} from './tools/apply';
 export {parsePatchFile} from './tools/parse';

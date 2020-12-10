@@ -6,7 +6,7 @@ import {Command, Usage, UsageError}                                         from
 import micromatch                                                           from 'micromatch';
 
 import * as suggestUtils                                                    from '../suggestUtils';
-import {Hooks}                                                              from '..';
+import type {Hooks}                                                              from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends BaseCommand {

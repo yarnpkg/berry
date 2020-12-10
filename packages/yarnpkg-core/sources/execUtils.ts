@@ -1,6 +1,6 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
 import crossSpawn            from 'cross-spawn';
-import {Readable, Writable}  from 'stream';
+import type {Readable, Writable}  from 'stream';
 
 export enum EndStrategy {
   Never,

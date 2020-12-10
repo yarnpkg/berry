@@ -1,7 +1,7 @@
-import {PortablePath}                              from '@yarnpkg/fslib';
+import type {PortablePath}                              from '@yarnpkg/fslib';
 
-import {FetchResult}                               from './Fetcher';
-import {Descriptor, Locator, Package, LocatorHash} from './types';
+import type {FetchResult}                               from './Fetcher';
+import type {Descriptor, Locator, Package, LocatorHash} from './types';
 
 export enum BuildType {
   SCRIPT = 0,

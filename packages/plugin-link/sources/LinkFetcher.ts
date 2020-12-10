@@ -1,5 +1,5 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator}                                    from '@yarnpkg/core';
+import type {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
+import type {Locator}                                    from '@yarnpkg/core';
 import {structUtils}                                from '@yarnpkg/core';
 import {CwdFS, JailFS, ppath, PortablePath}         from '@yarnpkg/fslib';
 

@@ -1,10 +1,10 @@
 import {MessageName}              from './MessageName';
-import {Plugin}                   from './Plugin';
-import {Project}                  from './Project';
-import {Resolver, ResolveOptions} from './Resolver';
-import {Workspace}                from './Workspace';
+import type {Plugin}                   from './Plugin';
+import type {Project}                  from './Project';
+import type {Resolver, ResolveOptions} from './Resolver';
+import type {Workspace}                from './Workspace';
 import * as structUtils           from './structUtils';
-import {Descriptor, Locator}      from './types';
+import type {Descriptor, Locator}      from './types';
 
 export const CorePlugin: Plugin = {
   hooks: {

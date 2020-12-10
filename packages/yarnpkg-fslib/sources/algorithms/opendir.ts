@@ -1,8 +1,8 @@
-import {NoParamCallback}     from 'fs';
+import type {NoParamCallback}     from 'fs';
 
-import {Dir, Dirent, FakeFS} from '../FakeFS';
+import type {Dir, Dirent, FakeFS} from '../FakeFS';
 import * as errors           from '../errors';
-import {Filename, Path}      from '../path';
+import type {Filename, Path}      from '../path';
 
 export type CustomDirOptions = {
   onClose?: () => void;

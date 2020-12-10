@@ -1,8 +1,8 @@
 import {FakeFS, Filename, NativePath, PortablePath, VirtualFS, npath, ppath, xfs} from '@yarnpkg/fslib';
-import fs                                                                         from 'fs';
+import type fs                                                                         from 'fs';
 import {Module}                                                                   from 'module';
 
-import {PnpApi}                                                                   from '../types';
+import type {PnpApi}                                                                   from '../types';
 
 export type ApiMetadata = {
   cache: typeof Module._cache,

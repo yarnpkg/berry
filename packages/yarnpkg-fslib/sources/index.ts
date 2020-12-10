@@ -1,8 +1,8 @@
-import fs                                                 from 'fs';
+import type fs                                                 from 'fs';
 import os                                                 from 'os';
 import {promisify}                                        from 'util';
 
-import {FakeFS}                                           from './FakeFS';
+import type {FakeFS}                                           from './FakeFS';
 import {NodeFS}                                           from './NodeFS';
 import {Filename, PortablePath, NativePath, npath, ppath} from './path';
 import * as statUtils                                     from './statUtils';

@@ -1,4 +1,4 @@
-import {CommandContext} from '@yarnpkg/core';
+import type {CommandContext} from '@yarnpkg/core';
 import {Command}        from 'clipanion';
 
 export abstract class BaseCommand extends Command<CommandContext> {

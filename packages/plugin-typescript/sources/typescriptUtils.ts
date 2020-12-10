@@ -1,5 +1,5 @@
-import {Request, Requester, Response} from '@algolia/requester-common';
-import {Configuration, Descriptor}    from '@yarnpkg/core';
+import type {Request, Requester, Response} from '@algolia/requester-common';
+import type {Configuration, Descriptor}    from '@yarnpkg/core';
 import {httpUtils, structUtils}       from '@yarnpkg/core';
 import algoliasearch                  from 'algoliasearch';
 

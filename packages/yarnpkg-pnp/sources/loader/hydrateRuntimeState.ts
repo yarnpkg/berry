@@ -1,6 +1,6 @@
 import {PortablePath, npath, ppath}                                                              from '@yarnpkg/fslib';
 
-import {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
+import type {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
 
 export type HydrateRuntimeStateOptions = {
   basePath: string,

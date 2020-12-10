@@ -3,7 +3,7 @@ import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}               
 
 import {Module}                                                                                             from 'module';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
+import type {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
 
 import {ErrorCode, makeError, getPathForDisplay}                                                            from './internalTools';
 

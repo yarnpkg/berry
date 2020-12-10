@@ -1,9 +1,9 @@
 import fs, {Stats}                                                                                                                from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                                      from './FakeFS';
+import type {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
+import type {Dirent, SymlinkType}                                                                                                      from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
-import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
+import type {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
 import {ENOSYS}                                                                                                                   from './errors';
 import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                 from './path';
 

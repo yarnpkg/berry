@@ -1,7 +1,7 @@
-import {Writable}       from 'stream';
+import type {Writable}       from 'stream';
 import {asTree}         from 'treeify';
 
-import {Configuration}  from './Configuration';
+import type {Configuration}  from './Configuration';
 import * as formatUtils from './formatUtils';
 
 export type TreeNode = {

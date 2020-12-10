@@ -1,7 +1,7 @@
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
-import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
-import {FSPath, Filename, Path}                                                                                                                               from './path';
+import type {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
+import type {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
+import type {FSPath, Filename, Path}                                                                                                                               from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
   protected abstract readonly baseFs: FakeFS<IP>;

@@ -1,14 +1,14 @@
-import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
-import {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
+import type {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
+import type {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
+import type {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
-import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                                         from '@yarnpkg/fslib';
-import {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
+import type {CreateReadStreamOptions, CreateWriteStreamOptions}                                                                         from '@yarnpkg/fslib';
+import type {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
 import fs                                                                                                                          from 'fs';
 
 import {WatchManager}                                                                                                              from './WatchManager';
-import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
+import type {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
 import {buildNodeModulesTree}                                                                                                      from './buildNodeModulesTree';
 import {resolveNodeModulesPath, ResolvedPath}                                                                                      from './resolveNodeModulesPath';
 

@@ -1,5 +1,5 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
-import {Locator}                                       from '@yarnpkg/core';
+import type {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
+import type {Locator}                                       from '@yarnpkg/core';
 import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
 import {PortablePath, CwdFS, ppath, xfs}               from '@yarnpkg/fslib';
 import {gitUtils}                                      from '@yarnpkg/plugin-git';

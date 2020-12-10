@@ -4,7 +4,7 @@ import {prompt}                          from 'enquirer';
 import {URL}                             from 'url';
 
 import * as npmConfigUtils               from './npmConfigUtils';
-import {MapLike}                         from './npmConfigUtils';
+import type {MapLike}                         from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,

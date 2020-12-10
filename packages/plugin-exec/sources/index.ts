@@ -1,4 +1,4 @@
-import {Plugin}               from '@yarnpkg/core';
+import type {Plugin}               from '@yarnpkg/core';
 
 import {ExecFetcher, ExecEnv} from './ExecFetcher';
 import {ExecResolver}         from './ExecResolver';

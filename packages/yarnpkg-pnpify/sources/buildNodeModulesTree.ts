@@ -1,7 +1,7 @@
 import {structUtils, Project}                                                 from '@yarnpkg/core';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
-import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
+import type {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
 import {hoist, HoisterTree, HoisterResult}                                    from './hoist';
 

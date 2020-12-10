@@ -1,4 +1,4 @@
-import {Plugin}          from '@yarnpkg/core';
+import type {Plugin}          from '@yarnpkg/core';
 
 import {LinkFetcher}     from './LinkFetcher';
 import {LinkResolver}    from './LinkResolver';

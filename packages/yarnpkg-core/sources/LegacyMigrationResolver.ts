@@ -3,11 +3,11 @@ import {parseSyml}                                       from '@yarnpkg/parsers'
 import semver                                            from 'semver';
 
 import {MessageName}                                     from './MessageName';
-import {Project}                                         from './Project';
-import {Report}                                          from './Report';
-import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import type {Project}                                         from './Project';
+import type {Report}                                          from './Report';
+import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {DescriptorHash, Descriptor, Locator}             from './types';
+import type {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls

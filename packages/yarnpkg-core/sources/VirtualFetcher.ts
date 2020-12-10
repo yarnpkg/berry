@@ -1,8 +1,8 @@
 import {AliasFS, VirtualFS, ppath}          from '@yarnpkg/fslib';
 
-import {Fetcher, FetchOptions, FetchResult} from './Fetcher';
+import type {Fetcher, FetchOptions, FetchResult} from './Fetcher';
 import * as structUtils                     from './structUtils';
-import {Locator}                            from './types';
+import type {Locator}                            from './types';
 
 export class VirtualFetcher implements Fetcher {
   supports(locator: Locator) {

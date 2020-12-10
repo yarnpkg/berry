@@ -2,14 +2,14 @@ import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 
-import {Configuration}                          from './Configuration';
-import {Workspace}                              from './Workspace';
+import type {Configuration}                          from './Configuration';
+import type {Workspace}                              from './Workspace';
 import * as formatUtils                         from './formatUtils';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
 import * as structUtils                         from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash} from './types';
-import {Ident, Descriptor, Locator, Package}    from './types';
+import type {IdentHash, DescriptorHash, LocatorHash} from './types';
+import type {Ident, Descriptor, Locator, Package}    from './types';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;

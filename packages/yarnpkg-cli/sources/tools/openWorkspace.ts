@@ -1,5 +1,5 @@
 import {Configuration, Project} from '@yarnpkg/core';
-import {PortablePath}           from '@yarnpkg/fslib';
+import type {PortablePath}           from '@yarnpkg/fslib';
 
 import {WorkspaceRequiredError} from './WorkspaceRequiredError';
 

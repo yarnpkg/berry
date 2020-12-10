@@ -1,4 +1,4 @@
-import {Plugin} from '@yarnpkg/core';
+import type {Plugin} from '@yarnpkg/core';
 
 import focus    from './commands/focus';
 import foreach  from './commands/foreach';

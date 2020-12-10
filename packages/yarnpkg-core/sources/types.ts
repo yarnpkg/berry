@@ -1,6 +1,6 @@
-import {PortablePath}                       from '@yarnpkg/fslib';
+import type {PortablePath}                       from '@yarnpkg/fslib';
 
-import {DependencyMeta, PeerDependencyMeta} from './Manifest';
+import type {DependencyMeta, PeerDependencyMeta} from './Manifest';
 
 /**
  * Unique hash of a package descriptor. Used as key in various places so that

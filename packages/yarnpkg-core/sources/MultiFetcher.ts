@@ -1,8 +1,8 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
+import type {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
 import {MessageName}                                from './MessageName';
 import {ReportError}                                from './Report';
 import * as structUtils                             from './structUtils';
-import {Locator}                                    from './types';
+import type {Locator}                                    from './types';
 
 export class MultiFetcher implements Fetcher {
   private readonly fetchers: Array<Fetcher>;

@@ -2,12 +2,12 @@ import {BaseCommand, WorkspaceRequiredError}                        from '@yarnp
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
 import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
-import {PortablePath}                                               from '@yarnpkg/fslib';
+import type {PortablePath}                                               from '@yarnpkg/fslib';
 import {Command, Usage, UsageError}                                 from 'clipanion';
 import {prompt}                                                     from 'enquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
-import {Hooks}                                                      from '..';
+import type {Hooks}                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {

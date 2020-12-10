@@ -1,11 +1,11 @@
-import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import type {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {ReadStream, Stats, WriteStream, constants}                                                                                                   from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 import {isDate}                                                                                                                                      from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import {WatchOptions, WatchCallback, Watcher, Dir}                                                                                                   from './FakeFS';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
+import type {WatchOptions, WatchCallback, Watcher, Dir}                                                                                                   from './FakeFS';
+import type {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {opendir}                                                                                                                                     from './algorithms/opendir';

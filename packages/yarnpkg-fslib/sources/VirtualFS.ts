@@ -1,4 +1,4 @@
-import {FakeFS, ExtractHintOptions}    from './FakeFS';
+import type {FakeFS, ExtractHintOptions}    from './FakeFS';
 import {NodeFS}                        from './NodeFS';
 import {ProxiedFS}                     from './ProxiedFS';
 import {Filename, PortablePath, ppath} from './path';

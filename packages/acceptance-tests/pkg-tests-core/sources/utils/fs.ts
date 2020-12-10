@@ -3,7 +3,7 @@ import {stringifySyml, parseSyml}                  from '@yarnpkg/parsers';
 import klaw                                        from 'klaw';
 import tarFs                                       from 'tar-fs';
 import zlib                                        from 'zlib';
-import {Gzip}                                      from 'zlib';
+import type {Gzip}                                      from 'zlib';
 
 import * as miscUtils                              from './misc';
 

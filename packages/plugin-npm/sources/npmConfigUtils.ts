@@ -1,4 +1,4 @@
-import {Configuration, Manifest, Ident} from '@yarnpkg/core';
+import type {Configuration, Manifest, Ident} from '@yarnpkg/core';
 
 export enum RegistryType {
   FETCH_REGISTRY = `npmRegistryServer`,

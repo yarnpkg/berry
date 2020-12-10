@@ -5,7 +5,7 @@ import {Command, Usage, UsageError}      from 'clipanion';
 
 import {Driver as GitDriver}             from '../drivers/GitDriver';
 import {Driver as MercurialDriver}       from '../drivers/MercurialDriver';
-import {Hooks}                           from '..';
+import type {Hooks}                           from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
