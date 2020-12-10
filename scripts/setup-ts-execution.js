@@ -21,7 +21,9 @@ if (tsNode) {
 
 if (tsNode) {
   // Configuration declared in tsconfig.json
-  require('ts-node').register();
+  require('ts-node').register({
+    dir: path.resolve(__dirname, '../'),
+  });
 } else {
   require(`@babel/register`)({
     root,
