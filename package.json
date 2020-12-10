@@ -19,6 +19,7 @@
     "@babel/preset-react": "^7.10.1",
     "@babel/preset-typescript": "^7.10.1",
     "@babel/register": "^7.10.1",
+    "@swc/core": "^1.2.40",
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
@@ -38,7 +39,7 @@
     "jest-environment-node": "^26.0.1",
     "jest-junit": "^10.0.0",
     "micromatch": "^4.0.2",
-    "ts-node": "^9.1.1",
+    "ts-node": "github:TypeStrong/ts-node#ab/swc-compiler",
     "tslib": "^1.13.0",
     "typescript": "4.1.0-beta",
     "typescript-cached-transpile": "^0.0.6"

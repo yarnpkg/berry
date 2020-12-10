@@ -1,7 +1,21 @@
 {
   "ts-node": {
     "transpileOnly": true,
-    "compiler": "typescript-cached-transpile"
+
+    // Uncomment one of the following to choose the compiler
+
+    // TSC but with caching
+    // "compiler": "typescript-cached-transpile",
+
+    // swc, no caching
+    "compiler": "ts-node/dist/compilers/swc",
+
+    // swc with caching (combination of the 2x from above)
+    // "compiler": "./scripts/ts-compiler.js",
+
+    "compilerOptions": {
+      "importHelpers": false, // set to false to avoid depending on @swc/helpers everywhere when using swc compiler
+    }
   },
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
@@ -18,7 +32,8 @@
     "declaration": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "importsNotUsedAsValues": "error"
   },
   "exclude": [
     "packages/*/lib",
