@@ -2,7 +2,7 @@ import {Project, ResolveOptions, ThrowReport, Resolver, miscUtils, Descriptor, P
 import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions}          from '@yarnpkg/core';
 import micromatch                                                                                      from 'micromatch';
 
-export type Algorithm = (project: Project, patterns: Array<string>, opts: {
+export type Algorithm = (project: Project, patterns: Array<string>, exclude: Array<string>, opts: {
   resolver: Resolver,
   resolveOptions: ResolveOptions,
   fetcher: Fetcher,
@@ -27,7 +27,7 @@ export enum Strategy {
 export const acceptedStrategies = new Set(Object.values(Strategy));
 
 const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
-  highest: async (project, patterns, {resolver, fetcher, resolveOptions, fetchOptions}) => {
+  highest: async (project, patterns, exclude, {resolver, fetcher, resolveOptions, fetchOptions}) => {
     const locatorsByIdent = new Map<IdentHash, Set<LocatorHash>>();
     for (const [descriptorHash, locatorHash] of project.storedResolutions) {
       const descriptor = project.storedDescriptors.get(descriptorHash);
@@ -40,6 +40,10 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
     return Array.from(project.storedDescriptors.values(), async descriptor => {
       if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
         return null;
+
+      if (exclude.length && micromatch.isMatch(structUtils.stringifyIdent(descriptor), exclude))
+        return null;
+
 
       const currentResolution = project.storedResolutions.get(descriptor.descriptorHash);
       if (typeof currentResolution === `undefined`)
@@ -95,11 +99,12 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
 export type DedupeOptions = {
   strategy: Strategy,
   patterns: Array<string>,
+  exclude: Array<string>,
   cache: Cache,
   report: Report,
 };
 
-export async function dedupe(project: Project, {strategy, patterns, cache, report}: DedupeOptions) {
+export async function dedupe(project: Project, {strategy, patterns, exclude, cache, report}: DedupeOptions) {
   const {configuration} = project;
   const throwReport = new ThrowReport();
 
@@ -123,7 +128,7 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
 
   return await report.startTimerPromise(`Deduplication step`, async () => {
     const algorithm = DEDUPE_ALGORITHMS[strategy];
-    const dedupePromises = await algorithm(project, patterns, {resolver, resolveOptions, fetcher, fetchOptions});
+    const dedupePromises = await algorithm(project, patterns, exclude, {resolver, resolveOptions, fetcher, fetchOptions});
 
     const progress = Report.progressViaCounter(dedupePromises.length);
     report.reportProgress(progress);

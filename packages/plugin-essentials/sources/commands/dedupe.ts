@@ -24,6 +24,9 @@ export default class DedupeCommand extends BaseCommand {
   @Command.Rest()
   patterns: Array<string> = [];
 
+  @Command.Array(`-e,--exclude`, {description: `Glob exclude patterns`})
+  exclude: Array<string> = [];
+
   @Command.String(`-s,--strategy`, {description: `The strategy to use when deduping dependencies`})
   strategy: dedupeUtils.Strategy = dedupeUtils.Strategy.HIGHEST;
 
@@ -82,6 +85,9 @@ export default class DedupeCommand extends BaseCommand {
       `Dedupe all packages with the \`@babel/*\` scope`,
       `$0 dedupe '@babel/*'`,
     ], [
+      `Dedupe all packages excluding those with the \`@babel/*\` scope`,
+      `$0 dedupe --exclude '@babel/*'`,
+    ],[
       `Check for duplicates (can be used as a CI step)`,
       `$0 dedupe --check`,
     ]],
@@ -100,7 +106,7 @@ export default class DedupeCommand extends BaseCommand {
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
-      dedupedPackageCount = await dedupeUtils.dedupe(project, {strategy: this.strategy, patterns: this.patterns, cache, report});
+      dedupedPackageCount = await dedupeUtils.dedupe(project, {strategy: this.strategy, patterns: this.patterns, exclude: this.exclude, cache, report});
     });
 
     if (dedupeReport.hasErrors())
