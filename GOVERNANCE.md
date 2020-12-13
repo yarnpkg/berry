@@ -89,7 +89,7 @@ Outlined below is the process for Code of Conduct violation reviews.
 Anyone may report a violation. Violations can be reported in the following ways:
 
 - In private, via email to one or more stewards
-- In private, via direct message to a project steward on Discor
+- In private, via direct message to a project steward on Discord
 - In public, via a GitHub comment (mentioning one of the stewards)
 - In public, via the project Discord server
 
