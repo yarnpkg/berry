@@ -61,7 +61,7 @@ New stewards will be added based on a unanimous vote by the existing stewards - 
 
 ## Project direction and planning
 
-Project direction and planning is a shared responsibility amongst members. Stewards are responsible for dictating high level goals and scope of the project that should be adhered to.
+Project direction and planning is a shared responsibility amongst members. Stewards are responsible for defining high level goals and scope of the project that should be adhered to.
 
 ## Voting
 
