@@ -187,7 +187,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     };
 
     const useReleases = (): [Releases, (workspace: Workspace, decision: versionUtils.Decision) => void] => {
-      const [releases, setReleases] = useState<Releases>(versionFile.releases);
+      const [releases, setReleases] = useState<Releases>(() => new Map(versionFile.releases));
 
       const setWorkspaceRelease = useCallback((workspace: Workspace, decision: versionUtils.Decision) => {
         const copy = new Map(releases);
