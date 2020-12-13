@@ -30,7 +30,7 @@
       "examples": ["1.2.3"]
     },
     "type": {
-      "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs` (the default) and `module`. If `module`, Yarn will generate a `.pnp.cjs` file when using PnP. If `commonjs`, Yarn will generate a `.pnp.js` file when using PnP.",
+      "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs` (the default) and `module`. Yarn 3+ will generate a `.pnp.cjs` file when using PnP regardless of this option.",
       "type": "string",
       "enum": ["commonjs", "module"],
       "default": "commonjs"

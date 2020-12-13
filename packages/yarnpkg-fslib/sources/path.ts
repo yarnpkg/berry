@@ -21,7 +21,11 @@ export const Filename = {
   nodeModules: `node_modules` as Filename,
   manifest: `package.json` as Filename,
   lockfile: `yarn.lock` as Filename,
+  /**
+   * @deprecated
+   */
   pnpJs: `.pnp.js` as Filename,
+  pnpCjs: `.pnp.cjs` as Filename,
   rc: `.yarnrc.yml` as Filename,
 };
 

@@ -33,7 +33,7 @@ The way installs used to work was simple: when running `yarn install` Yarn would
 
 When you think about it, Yarn already knows everything there is to know about your dependency tree - it even installs it on the disk for you. So the question becomes: why do we leave it to Node to locate the packages? Why don't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? It's from this postulate that Plug'n'Play was created.
 
-In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.js` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.js` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Yarn can tell Node exactly where to look for files being required - regardless of who asks for them!
+In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.cjs` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.cjs` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Yarn can tell Node exactly where to look for files being required - regardless of who asks for them!
 
 This approach has various benefits:
 
@@ -43,7 +43,7 @@ This approach has various benefits:
 
 - Perfect optimization of the dependency tree (aka perfect hoisting) and predictable package instantiations.
 
-- The generated .pnp.js file can be committed to your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
+- The generated .pnp.cjs file can be committed to your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
 
 - Faster application startup, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
 
@@ -133,7 +133,7 @@ This list is kept up-to-date based on the latest release we've published startin
 ### Packages are stored inside Zip archives: How can I access their files?
 
 When using PnP, packages are stored and accessed directly inside the Zip archives from the cache.
-The PnP runtime (`.pnp.js`) automatically patches Node's `fs` module to add support for accessing files inside Zip archives. This way, you don't have to do anything special:
+The PnP runtime (`.pnp.cjs`) automatically patches Node's `fs` module to add support for accessing files inside Zip archives. This way, you don't have to do anything special:
 
 ```js
 const {readFileSync} = require(`fs`);
@@ -146,6 +146,6 @@ console.log(readFileSync(lodashCeilPath));
 
 ### Different behaviours based on workspace / not-a-workspace
 
-Back when PnP was implemented, the compatibility wasn't as good as it is now. To help with the transition, we designed a fallback mechanism: if a package tries to access an unlisted dependency, we still allow to resolve it *if the top-level package lists it as a dependency*. We allow this because there's no resolution ambiguity, as there's a single top-level package in any project. Unfortunately, it may cause confusing behaviors depending on how your project is setup - when that happens, remember that PnP is always right, and that the only reason it works when not in a workspace is due to some extra laxism. 
+Back when PnP was implemented, the compatibility wasn't as good as it is now. To help with the transition, we designed a fallback mechanism: if a package tries to access an unlisted dependency, we still allow to resolve it *if the top-level package lists it as a dependency*. We allow this because there's no resolution ambiguity, as there's a single top-level package in any project. Unfortunately, it may cause confusing behaviors depending on how your project is setup - when that happens, remember that PnP is always right, and that the only reason it works when not in a workspace is due to some extra laxism.
 
 Regardless, this behaviour was just a patch, and will eventually be removed to clear up the confusion. You can prepare for that by setting [`pnpFallbackMode`](https://yarnpkg.com/configuration/yarnrc#pnpFallbackMode) to `none`, which will disable the fallback mechanism altogether.

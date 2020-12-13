@@ -75,7 +75,7 @@ The `module` builtin module is extended when operating within the PnP API with o
 export function findPnpApi(lookupSource: URL | string): PnpApi | null;
 ```
 
-When called, this function will traverse the filesystem hierarchy starting from the given `lookupSource` in order to locate the closest `.pnp.js` file. It'll then load this file, register it inside the PnP loader internal store, and return the resulting API to you.
+When called, this function will traverse the filesystem hierarchy starting from the given `lookupSource` in order to locate the closest `.pnp.cjs` file. It'll then load this file, register it inside the PnP loader internal store, and return the resulting API to you.
 
 Note that while you'll be able to resolve the dependencies by using the API returned to you, you'll need to make sure they are properly *loaded* on behalf of the project too, by using `createRequire`:
 

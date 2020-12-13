@@ -246,7 +246,7 @@
         "type": "string"
       },
       "default": [],
-      "_exampleItems": ["**/.pnp.js"]
+      "_exampleItems": ["**/.pnp.*"]
     },
     "initScope": {
       "_package": "@yarnpkg/plugin-init",
@@ -563,7 +563,7 @@
     },
     "pnpEnableInlining": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "If true (the default), Yarn will generate a single `.pnp.js` file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a `.pnp.data.json` file meant to be consumed by the `@yarnpkg/pnp` package.",
+      "description": "If true (the default), Yarn will generate a single `.pnp.cjs` file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a `.pnp.data.json` file meant to be consumed by the `@yarnpkg/pnp` package.",
       "type": "boolean",
       "default": true
     },
@@ -575,7 +575,7 @@
     },
     "pnpIgnorePatterns": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "An Array of glob patterns. Files matching the following locations (in term of relative path compared to the generated `.pnp.js` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
+      "description": "An Array of glob patterns. Files matching the following locations (in term of relative path compared to the generated `.pnp.cjs` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
       "type": "array",
       "items": {
         "type": "string"
@@ -592,7 +592,7 @@
     },
     "pnpShebang": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "A header that will be prepended to the generated `.pnp.js` file. You're allowed to write multiple lines, but this is slightly frowned upon.",
+      "description": "A header that will be prepended to the generated `.pnp.cjs` file. You're allowed to write multiple lines, but this is slightly frowned upon.",
       "type": "string",
       "pattern": "^(#!.*\n?)+",
       "default": "#!/usr/bin/env node"
