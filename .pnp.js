@@ -7418,7 +7418,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-refresh", null],
             ["@types/sockjs-client", null],
             ["@types/type-fest", null],
-            ["@types/types__webpack", null],
             ["@types/webpack", null],
             ["@types/webpack-dev-server", null],
             ["@types/webpack-hot-middleware", null],
@@ -7440,7 +7439,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/react-refresh",
             "@types/sockjs-client",
             "@types/type-fest",
-            "@types/types__webpack",
             "@types/webpack-dev-server",
             "@types/webpack-hot-middleware",
             "@types/webpack-plugin-serve",
@@ -23181,7 +23179,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
             ["@types/react", "npm:16.9.2"],
-            ["@types/types__react", null],
             ["ansi-escapes", "npm:4.3.1"],
             ["auto-bind", "npm:4.0.0"],
             ["chalk", "npm:4.1.0"],
@@ -23209,7 +23206,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",
@@ -23219,7 +23215,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["ink", "virtual:b355cdf7e74491b33ed8f617ce90b7e2d7713727354c1fe0dd4b6be58017042fd59443b716658c4dad185fa40a65318028e943e265b0b14f654f7230ee44ec7e#npm:2.7.1"],
             ["@types/react", null],
-            ["@types/types__react", null],
             ["ansi-escapes", "npm:4.3.1"],
             ["arrify", "npm:2.0.1"],
             ["auto-bind", "npm:4.0.0"],
@@ -23242,7 +23237,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",
@@ -23252,7 +23246,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["ink", "virtual:c819ceb7c60ba1d8463f30a407ba310c078c8a2209a484b309345b763aee1b0fcbeebf7c8e75af8c43c82ecd81352f516adb2463120467e0ad3edaa25acbc33b#npm:2.7.1"],
             ["@types/react", "npm:16.9.2"],
-            ["@types/types__react", null],
             ["ansi-escapes", "npm:4.3.1"],
             ["arrify", "npm:2.0.1"],
             ["auto-bind", "npm:4.0.0"],
@@ -23275,7 +23268,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",
@@ -31091,7 +31083,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-hot-loader", "virtual:15a4ce32d5d4050f24516cc183beac36ecfe2ea944dbe26f0479ace6feca3da8da69ccbe0ef245a42f9cfb83bb6744c5345b861af3a1ee88030a887877f39e20#npm:4.12.21"],
             ["@types/react", "npm:16.9.2"],
             ["@types/react-dom", null],
-            ["@types/types__react", null],
             ["fast-levenshtein", "npm:2.0.6"],
             ["global", "npm:4.4.0"],
             ["hoist-non-react-statics", "npm:3.3.2"],
@@ -31106,7 +31097,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [
             "@types/react-dom",
             "@types/react",
-            "@types/types__react",
             "react-dom",
             "react"
           ],
@@ -31118,7 +31108,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-hot-loader", "virtual:ed266f3f91846e29655aeac7183fc26f8d6448132d8946974d5a85cdc46821c27477c717701330a230e4751fd77548492ce17b4308c660bdf9b589cc31fc5b76#npm:4.12.21"],
             ["@types/react", null],
             ["@types/react-dom", null],
-            ["@types/types__react", null],
             ["fast-levenshtein", "npm:2.0.6"],
             ["global", "npm:4.4.0"],
             ["hoist-non-react-statics", "npm:3.3.2"],
@@ -31133,7 +31122,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [
             "@types/react-dom",
             "@types/react",
-            "@types/types__react",
             "react-dom",
             "react"
           ],
@@ -31417,7 +31405,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["react-remove-scroll", "virtual:2a5aeae094861ec91fa444dfed7eff982a845670a280de5f47556e95763acb7d5e65766e93c714fa0aaca7f21afbb997508a98f3adecb5d7f6028d2128e5fdda#npm:2.3.0"],
             ["@types/react", null],
-            ["@types/types__react", null],
             ["react", "npm:16.13.1"],
             ["react-remove-scroll-bar", "virtual:bd353683359a3899650c9860cd759f584cc44d0e4b1a814c18a6990ef877d492d845364063003489cbf3ceba415728ca4f44baec862ac54c6bb5bd368d7d874a#npm:2.1.0"],
             ["react-style-singleton", "virtual:bd353683359a3899650c9860cd759f584cc44d0e4b1a814c18a6990ef877d492d845364063003489cbf3ceba415728ca4f44baec862ac54c6bb5bd368d7d874a#npm:2.1.0"],
@@ -31427,7 +31414,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",
@@ -31446,14 +31432,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["react-remove-scroll-bar", "virtual:bd353683359a3899650c9860cd759f584cc44d0e4b1a814c18a6990ef877d492d845364063003489cbf3ceba415728ca4f44baec862ac54c6bb5bd368d7d874a#npm:2.1.0"],
             ["@types/react", null],
-            ["@types/types__react", null],
             ["react", "npm:16.13.1"],
             ["react-style-singleton", "virtual:bd353683359a3899650c9860cd759f584cc44d0e4b1a814c18a6990ef877d492d845364063003489cbf3ceba415728ca4f44baec862ac54c6bb5bd368d7d874a#npm:2.1.0"],
             ["tslib", "npm:1.13.0"]
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",
@@ -31594,7 +31578,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["react-style-singleton", "virtual:bd353683359a3899650c9860cd759f584cc44d0e4b1a814c18a6990ef877d492d845364063003489cbf3ceba415728ca4f44baec862ac54c6bb5bd368d7d874a#npm:2.1.0"],
             ["@types/react", null],
-            ["@types/types__react", null],
             ["get-nonce", "npm:1.0.1"],
             ["invariant", "npm:2.2.4"],
             ["react", "npm:16.13.1"],
@@ -31602,7 +31585,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",
@@ -36993,12 +36975,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["use-callback-ref", "virtual:2ceea025312f73a2dd30820616649e9b941200e091efb224dc7fbb4c945e6410921837567d2070278a1c7f328a831d92a9f185c24023d0fd26e2f5f76bc3af2e#npm:1.2.4"],
             ["@types/react", null],
-            ["@types/types__react", null],
             ["react", "npm:16.13.1"]
           ],
           "packagePeers": [
             "@types/react",
-            "@types/types__react",
             "react"
           ],
           "linkType": "HARD",

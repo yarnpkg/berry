@@ -1514,16 +1514,17 @@ export class Configuration {
     };
 
     for (const descriptor of pkg.peerDependencies.values()) {
-      if (descriptor.scope === `@types`)
+      if (descriptor.scope === `types`)
         continue;
 
       const typesName = getTypesName(descriptor);
       const typesIdent = structUtils.makeIdent(`types`, typesName);
+      const stringifiedTypesIdent = structUtils.stringifyIdent(typesIdent);
 
-      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(typesIdent.identHash))
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(stringifiedTypesIdent))
         continue;
 
-      pkg.peerDependenciesMeta.set(structUtils.stringifyIdent(typesIdent), {
+      pkg.peerDependenciesMeta.set(stringifiedTypesIdent, {
         optional: true,
       });
     }
