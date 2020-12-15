@@ -2,7 +2,6 @@ import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fsl
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
 import {execute}                                              from '@yarnpkg/shell';
-import {getBinjumper}                                         from "binjumper";
 import capitalize                                             from 'lodash/capitalize';
 import pLimit                                                 from 'p-limit';
 import {PassThrough, Readable, Writable}                      from 'stream';
@@ -30,11 +29,9 @@ enum PackageManager {
 
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
-    await Promise.all([
-      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.exe`}), getBinjumper()),
-      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.exe.info`}), [argv0, ...args].join(`\n`)),
-      xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), `@"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*\n`),
-    ]);
+    // https://github.com/microsoft/terminal/issues/217#issuecomment-737594785
+    const cmdScript = `@goto #_undefined_# 2>NUL || @title %COMSPEC% & @"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*`;
+    await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
   }
 
   await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
