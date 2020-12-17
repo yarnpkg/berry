@@ -233,34 +233,29 @@ export class DefaultStream extends Transform {
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!
 
-export function dynamicRequire(path: string) {
-  // @ts-expect-error
-  if (typeof __non_webpack_require__ !== `undefined`) {
-    // @ts-expect-error
-    return __non_webpack_require__(path);
-  } else {
-    return require(path);
-  }
-}
+declare const __non_webpack_require__: typeof require | undefined;
+export const dynamicRequire = (typeof __non_webpack_require__ !== `undefined`) ? __non_webpack_require__ : require;
 
 export function dynamicRequireNoCache(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
-  const currentCacheEntry = require.cache[physicalPath];
-  delete require.cache[physicalPath];
+  const currentCacheEntry = dynamicRequire.cache[physicalPath];
+  delete dynamicRequire.cache[physicalPath];
 
   let result;
   try {
     result = dynamicRequire(physicalPath);
 
-    const freshCacheEntry = require.cache[physicalPath];
-    const freshCacheIndex = module.children.indexOf(freshCacheEntry);
+    const freshCacheEntry = dynamicRequire.cache[physicalPath];
+
+    const dynamicModule = eval(`module`) as NodeModule;
+    const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);
 
     if (freshCacheIndex !== -1) {
-      module.children.splice(freshCacheIndex, 1);
+      dynamicModule.children.splice(freshCacheIndex, 1);
     }
   } finally {
-    require.cache[physicalPath] = currentCacheEntry;
+    dynamicRequire.cache[physicalPath] = currentCacheEntry;
   }
 
   return result;
