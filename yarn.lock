@@ -4872,15 +4872,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tunnel@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@types/tunnel@npm:0.0.0"
-  dependencies:
-    "@types/node": "*"
-  checksum: 5dee8cf7ceffde87c1be165c5b5caecc5bbeee05cd862357f2dc93f5355dd295eb8275bf4cb1388dc00961e3d61e8cddc3f8d9bde817f1a977468c37074276b7
-  languageName: node
-  linkType: hard
-
 "@types/uglify-js@npm:*":
   version: 3.0.4
   resolution: "@types/uglify-js@npm:3.0.4"
@@ -5501,7 +5492,6 @@ __metadata:
     "@types/semver": ^7.1.0
     "@types/tar": ^4.0.4
     "@types/treeify": ^1.0.0
-    "@types/tunnel": ^0.0.0
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
@@ -5520,6 +5510,7 @@ __metadata:
     diff: ^4.0.1
     globby: ^11.0.1
     got: ^11.7.0
+    hpagent: ^0.1.1
     json-file-plus: ^3.3.1
     lodash: ^4.17.15
     micromatch: ^4.0.2
@@ -5533,7 +5524,6 @@ __metadata:
     tar: ^6.0.5
     treeify: ^1.1.0
     tslib: ^1.13.0
-    tunnel: ^0.0.6
   languageName: unknown
   linkType: soft
 
@@ -14847,6 +14837,13 @@ fsevents@^1.2.7:
     readable-stream: ^2.0.1
     wbuf: ^1.1.0
   checksum: a22a28aa318167f29d65994ac28a238356142a3dcbcdcf20b0a87f14a746af7017596c91a895933d79ee68edf0303a4de5e629a2141cb1dbddb2cd9cad07418b
+  languageName: node
+  linkType: hard
+
+"hpagent@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "hpagent@npm:0.1.1"
+  checksum: c68850c445e6679525e395122ff77e17a81574939178aab25ecd51a49fa84a53d76d9d0ecbe727f38e0ecd4a3c16cfb933979a1620ee3c73398c68cd9a38dbb6
   languageName: node
   linkType: hard
 
@@ -26280,13 +26277,6 @@ resolve@1.9.0:
   version: 0.0.4
   resolution: "tunnel@npm:0.0.4"
   checksum: 81faf737a19fd32f81de3cacc5681ad14937a9095f2f2ad5de5e57721d3dd846758321ce04856450d008c3c20174cb06e4481c54e4043e8ad07671e6e01294dd
-  languageName: node
-  linkType: hard
-
-"tunnel@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "tunnel@npm:0.0.6"
-  checksum: 78fbb1a55a44fc8de6a497923bf7bf6e7b14b396e0ddaf11fe624ab7f646a0d2ada03f6dcb4a80940faed9649e30d229114f218e8906badd12ded2323a6f666b
   languageName: node
   linkType: hard
 

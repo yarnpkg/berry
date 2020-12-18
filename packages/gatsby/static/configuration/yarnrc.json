@@ -202,14 +202,14 @@
     },
     "httpProxy": {
       "_package": "@yarnpkg/core",
-      "description": "Defines a proxy to use when making an HTTP request. Note that Yarn only supports HTTP proxies at the moment (help welcome!).",
+      "description": "Defines a proxy to use when making an HTTP request.",
       "type": "string",
       "format": "uri",
       "examples": ["http://proxy:4040"]
     },
     "httpsProxy": {
       "_package": "@yarnpkg/core",
-      "description": "Defines a proxy to use when making an HTTPS request. Note that Yarn only supports HTTP proxies at the moment (help welcome!).",
+      "description": "Defines a proxy to use when making an HTTPS request.",
       "type": "string",
       "format": "uri",
       "examples": ["http://proxy:4040"]

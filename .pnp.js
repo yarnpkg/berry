@@ -9249,16 +9249,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/tunnel", [
-        ["npm:0.0.0", {
-          "packageLocation": "./.yarn/cache/@types-tunnel-npm-0.0.0-60b0691686-5dee8cf7ce.zip/node_modules/@types/tunnel/",
-          "packageDependencies": [
-            ["@types/tunnel", "npm:0.0.0"],
-            ["@types/node", "npm:10.12.18"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@types/uglify-js", [
         ["npm:3.0.4", {
           "packageLocation": "./.yarn/cache/@types-uglify-js-npm-3.0.4-17dd492e5f-078bccbb6d.zip/node_modules/@types/uglify-js/",
@@ -10266,7 +10256,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:7.1.0"],
             ["@types/tar", "npm:4.0.4"],
             ["@types/treeify", "npm:1.0.0"],
-            ["@types/tunnel", "npm:0.0.0"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
@@ -10285,6 +10274,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["diff", "npm:4.0.1"],
             ["globby", "npm:11.0.1"],
             ["got", "npm:11.7.0"],
+            ["hpagent", "npm:0.1.1"],
             ["json-file-plus", "npm:3.3.1"],
             ["lodash", "npm:4.17.15"],
             ["micromatch", "npm:4.0.2"],
@@ -10297,8 +10287,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["strip-ansi", "npm:6.0.0"],
             ["tar", "npm:6.0.5"],
             ["treeify", "npm:1.1.0"],
-            ["tslib", "npm:1.13.0"],
-            ["tunnel", "npm:0.0.6"]
+            ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -22536,6 +22525,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["obuf", "npm:1.1.2"],
             ["readable-stream", "npm:2.3.6"],
             ["wbuf", "npm:1.7.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["hpagent", [
+        ["npm:0.1.1", {
+          "packageLocation": "./.yarn/cache/hpagent-npm-0.1.1-6e908aa2dd-c68850c445.zip/node_modules/hpagent/",
+          "packageDependencies": [
+            ["hpagent", "npm:0.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -35903,13 +35901,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/tunnel-npm-0.0.4-14c43b87d4-81faf737a1.zip/node_modules/tunnel/",
           "packageDependencies": [
             ["tunnel", "npm:0.0.4"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:0.0.6", {
-          "packageLocation": "./.yarn/cache/tunnel-npm-0.0.6-b1c0830ea4-78fbb1a55a.zip/node_modules/tunnel/",
-          "packageDependencies": [
-            ["tunnel", "npm:0.0.6"]
           ],
           "linkType": "HARD",
         }]
