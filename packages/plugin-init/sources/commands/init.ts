@@ -47,7 +47,7 @@ export default class InitCommand extends BaseCommand {
       `yarn init -p`,
     ], [
       `Create a new package and store the Yarn release inside`,
-      `yarn init -i latest`,
+      `yarn init -i=latest`,
     ], [
       `Create a new private package and defines it as a workspace root`,
       `yarn init -w`,
