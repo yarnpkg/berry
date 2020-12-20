@@ -225,6 +225,8 @@ export class DefaultStream extends Transform {
   _flush(cb: any) {
     if (this.active && this.ifEmpty.length > 0) {
       cb(null, this.ifEmpty);
+    } else {
+      cb(null);
     }
   }
 }
