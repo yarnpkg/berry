@@ -1,5 +1,7 @@
 import semver from 'semver';
 
+export {SemVer} from 'semver';
+
 /**
  * Returns whether the given semver version satisfies the given range. Notably
  * this supports prerelease versions so that "2.0.0-rc.0" satisfies the range
