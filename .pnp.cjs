@@ -39877,14 +39877,22 @@ class NodeFS extends BasePortableFakeFS {
     return this.realFs.existsSync(npath.fromPortablePath(p));
   }
 
-  async statPromise(p) {
+  async statPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  statSync(p) {
-    return this.realFs.statSync(npath.fromPortablePath(p));
+  statSync(p, opts) {
+    if (opts) {
+      return this.realFs.statSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.statSync(npath.fromPortablePath(p));
+    }
   }
 
   async fstatPromise(fd) {
@@ -39897,14 +39905,24 @@ class NodeFS extends BasePortableFakeFS {
     return this.realFs.fstatSync(fd);
   }
 
-  async lstatPromise(p) {
+  async lstatPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        // @ts-expect-error - TS does not know this takes options
+        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  lstatSync(p) {
-    return this.realFs.lstatSync(npath.fromPortablePath(p));
+  lstatSync(p, opts) {
+    if (opts) {
+      // @ts-expect-error - TS does not know this takes options
+      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.lstatSync(npath.fromPortablePath(p));
+    }
   }
 
   async chmodPromise(p, mask) {
@@ -40258,12 +40276,12 @@ class ProxiedFS extends FakeFS {
     return this.baseFs.accessPromise(this.mapToBase(p), mode);
   }
 
-  async statPromise(p) {
-    return this.baseFs.statPromise(this.mapToBase(p));
+  async statPromise(p, opts) {
+    return this.baseFs.statPromise(this.mapToBase(p), opts);
   }
 
-  statSync(p) {
-    return this.baseFs.statSync(this.mapToBase(p));
+  statSync(p, opts) {
+    return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
   async fstatPromise(fd) {
@@ -40274,12 +40292,12 @@ class ProxiedFS extends FakeFS {
     return this.baseFs.fstatSync(fd);
   }
 
-  async lstatPromise(p) {
-    return this.baseFs.lstatPromise(this.mapToBase(p));
+  async lstatPromise(p, opts) {
+    return this.baseFs.lstatPromise(this.mapToBase(p), opts);
   }
 
-  lstatSync(p) {
-    return this.baseFs.lstatSync(this.mapToBase(p));
+  lstatSync(p, opts) {
+    return this.baseFs.lstatSync(this.mapToBase(p), opts);
   }
 
   async chmodPromise(p, mask) {
@@ -41404,11 +41422,11 @@ class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async statPromise(p) {
+  async statPromise(p, opts) {
     return this.statSync(p);
   }
 
-  statSync(p) {
+  statSync(p, opts) {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`stat '${p}'`);
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`stat '${p}'`);
@@ -41431,11 +41449,11 @@ class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`fstat '${p}'`, resolvedP);
   }
 
-  async lstatPromise(p) {
-    return this.lstatSync(p);
+  async lstatPromise(p, opts) {
+    return this.lstatSync(p, opts);
   }
 
-  lstatSync(p) {
+  lstatSync(p, opts) {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`lstat '${p}'`);
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`lstat '${p}'`);
@@ -42472,23 +42490,23 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async statPromise(p) {
+  async statPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.statPromise(p);
+      return await this.baseFs.statPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.statPromise(subPath);
+      return await zipFs.statPromise(subPath, opts);
     });
   }
 
-  statSync(p) {
+  statSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.statSync(p);
+      return this.baseFs.statSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.statSync(subPath);
+      return zipFs.statSync(subPath, opts);
     });
   }
 
@@ -42508,23 +42526,23 @@ class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.fstatSync(realFd);
   }
 
-  async lstatPromise(p) {
+  async lstatPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.lstatPromise(p);
+      return await this.baseFs.lstatPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.lstatPromise(subPath);
+      return await zipFs.lstatPromise(subPath, opts);
     });
   }
 
-  lstatSync(p) {
+  lstatSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.lstatSync(p);
+      return this.baseFs.lstatSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.lstatSync(subPath);
+      return zipFs.lstatSync(subPath, opts);
     });
   }
 

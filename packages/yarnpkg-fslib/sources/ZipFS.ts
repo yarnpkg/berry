@@ -1,5 +1,5 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
-import {ReadStream, Stats, WriteStream, constants}                                                                                                   from 'fs';
+import {ReadStream, Stats, WriteStream, constants, BigIntStats}                                                                                      from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 import {isDate}                                                                                                                                      from 'util';
 import zlib                                                                                                                                          from 'zlib';
@@ -571,11 +571,17 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
     return this.statSync(p);
   }
 
-  statSync(p: PortablePath) {
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: {bigint: boolean}) {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -609,11 +615,17 @@ export class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`fstat '${p}'`, resolvedP);
   }
 
-  async lstatPromise(p: PortablePath) {
-    return this.lstatSync(p);
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+    return this.lstatSync(p, opts);
   }
 
-  lstatSync(p: PortablePath) {
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))

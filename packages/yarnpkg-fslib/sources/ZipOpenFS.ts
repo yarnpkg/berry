@@ -1,5 +1,5 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
-import {constants}                                                                                                                                   from 'fs';
+import {BigIntStats, constants, Stats}                                                                                                               from 'fs';
 
 import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
@@ -331,19 +331,25 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: { bigint: boolean }) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.statPromise(p);
+      return await this.baseFs.statPromise(p, opts);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.statPromise(subPath);
+      return await zipFs.statPromise(subPath, opts);
     });
   }
 
-  statSync(p: PortablePath) {
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: { bigint: boolean }) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.statSync(p);
+      return this.baseFs.statSync(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.statSync(subPath);
+      return zipFs.statSync(subPath, opts);
     });
   }
 
@@ -371,19 +377,25 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.fstatSync(realFd);
   }
 
-  async lstatPromise(p: PortablePath) {
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.lstatPromise(p);
+      return await this.baseFs.lstatPromise(p, opts);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.lstatPromise(subPath);
+      return await zipFs.lstatPromise(subPath, opts);
     });
   }
 
-  lstatSync(p: PortablePath) {
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
     return this.makeCallSync(p, () => {
-      return this.baseFs.lstatSync(p);
+      return this.baseFs.lstatSync(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.lstatSync(subPath);
+      return zipFs.lstatSync(subPath, opts);
     });
   }
 

@@ -1,4 +1,4 @@
-import fs, {Stats}                                                                                                                from 'fs';
+import fs, {BigIntStats, Stats}                                                                                                   from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                      from './FakeFS';
@@ -154,14 +154,28 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.existsSync(npath.fromPortablePath(p));
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  statSync(p: PortablePath) {
-    return this.realFs.statSync(npath.fromPortablePath(p));
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: {bigint: boolean}) {
+    if (opts) {
+      return this.realFs.statSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.statSync(npath.fromPortablePath(p));
+    }
   }
 
   async fstatPromise(fd: number) {
@@ -174,14 +188,30 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.fstatSync(fd);
   }
 
-  async lstatPromise(p: PortablePath) {
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        // @ts-expect-error - TS does not know this takes options
+        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  lstatSync(p: PortablePath) {
-    return this.realFs.lstatSync(npath.fromPortablePath(p));
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
+    if (opts) {
+      // @ts-expect-error - TS does not know this takes options
+      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.lstatSync(npath.fromPortablePath(p));
+    }
   }
 
   async chmodPromise(p: PortablePath, mask: number) {
