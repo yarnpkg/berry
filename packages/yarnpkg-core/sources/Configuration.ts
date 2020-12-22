@@ -582,7 +582,7 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
 }
 
 function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
-  if (definition.isArray) {
+  if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     if (!Array.isArray(value)) {
       return String(value).split(/,/).map(segment => {
         return parseSingleValue(configuration, path, segment, definition, folder);
