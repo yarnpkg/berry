@@ -184,6 +184,7 @@ export class Manifest {
     this.raw = data;
     const errors: Array<Error> = [];
 
+    this.name = null;
     if (typeof data.name === `string`) {
       try {
         this.name = structUtils.parseIdent(data.name);
@@ -194,6 +195,8 @@ export class Manifest {
 
     if (typeof data.version === `string`)
       this.version = data.version;
+    else
+      this.version = null;
 
     if (Array.isArray(data.os)) {
       const os: Array<string> = [];
@@ -206,6 +209,8 @@ export class Manifest {
           os.push(item);
         }
       }
+    } else {
+      this.os = null;
     }
 
     if (Array.isArray(data.cpu)) {
@@ -219,25 +224,39 @@ export class Manifest {
           cpu.push(item);
         }
       }
+    } else {
+      this.cpu = null;
     }
 
     if (typeof data.type === `string`)
       this.type = data.type;
+    else
+      this.type = null;
 
     if (typeof data.private === `boolean`)
       this.private = data.private;
+    else
+      this.private = false;
 
     if (typeof data.license === `string`)
       this.license = data.license;
+    else
+      this.license = null;
 
     if (typeof data.languageName === `string`)
       this.languageName = data.languageName;
+    else
+      this.languageName = null;
 
     if (typeof data.main === `string`)
       this.main = normalizeSlashes(data.main);
+    else
+      this.main = null;
 
     if (typeof data.module === `string`)
       this.module = normalizeSlashes(data.module);
+    else
+      this.module = null;
 
     if (data.browser != null) {
       if (typeof data.browser === `string`) {
@@ -251,11 +270,14 @@ export class Manifest {
           );
         }
       }
+    } else {
+      this.browser = null;
     }
 
+    this.bin = new Map();
     if (typeof data.bin === `string`) {
       if (this.name !== null) {
-        this.bin = new Map([[this.name.name, normalizeSlashes(data.bin)]]);
+        this.bin.set(this.name.name, normalizeSlashes(data.bin));
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
@@ -270,6 +292,7 @@ export class Manifest {
       }
     }
 
+    this.scripts = new Map();
     if (typeof data.scripts === `object` && data.scripts !== null) {
       for (const [key, value] of Object.entries(data.scripts)) {
         if (typeof value !== `string`) {
@@ -281,6 +304,7 @@ export class Manifest {
       }
     }
 
+    this.dependencies = new Map();
     if (typeof data.dependencies === `object` && data.dependencies !== null) {
       for (const [name, range] of Object.entries(data.dependencies)) {
         if (typeof range !== `string`) {
@@ -301,6 +325,7 @@ export class Manifest {
       }
     }
 
+    this.devDependencies = new Map();
     if (typeof data.devDependencies === `object` && data.devDependencies !== null) {
       for (const [name, range] of Object.entries(data.devDependencies)) {
         if (typeof range !== `string`) {
@@ -321,6 +346,7 @@ export class Manifest {
       }
     }
 
+    this.peerDependencies = new Map();
     if (typeof data.peerDependencies === `object` && data.peerDependencies !== null) {
       for (let [name, range] of Object.entries(data.peerDependencies)) {
         let ident;
@@ -350,6 +376,7 @@ export class Manifest {
         ? data.workspaces.packages
         : [];
 
+    this.workspaceDefinitions = [];
     for (const entry of workspaces) {
       if (typeof entry !== `string`) {
         errors.push(new Error(`Invalid workspace definition for '${entry}'`));
@@ -361,6 +388,7 @@ export class Manifest {
       });
     }
 
+    this.dependenciesMeta = new Map();
     if (typeof data.dependenciesMeta === `object` && data.dependenciesMeta !== null) {
       for (const [pattern, meta] of Object.entries(data.dependenciesMeta) as Array<[string, any]>) {
         if (typeof meta !== `object` || meta === null) {
@@ -393,6 +421,7 @@ export class Manifest {
       }
     }
 
+    this.peerDependenciesMeta = new Map();
     if (typeof data.peerDependenciesMeta === `object` && data.peerDependenciesMeta !== null) {
       for (const [pattern, meta] of Object.entries(data.peerDependenciesMeta) as Array<[string, any]>) {
         if (typeof meta !== `object` || meta === null) {
@@ -413,6 +442,7 @@ export class Manifest {
       }
     }
 
+    this.resolutions = [];
     if (typeof data.resolutions === `object` && data.resolutions !== null) {
       for (const [pattern, reference] of Object.entries(data.resolutions)) {
         if (typeof reference !== `string`) {
@@ -440,6 +470,8 @@ export class Manifest {
 
         this.files.add(filename as PortablePath);
       }
+    } else {
+      this.files = null;
     }
 
     if (typeof data.publishConfig === `object` && data.publishConfig !== null) {
@@ -502,6 +534,8 @@ export class Manifest {
           this.publishConfig.executableFiles.add(normalizeSlashes(value));
         }
       }
+    } else {
+      this.publishConfig = null;
     }
 
     if (typeof data.installConfig === `object` && data.installConfig !== null) {
@@ -518,6 +552,8 @@ export class Manifest {
           errors.push(new Error(`Unrecognized installConfig key: ${key}`));
         }
       }
+    } else {
+      this.installConfig = null;
     }
 
     // We treat optional dependencies after both the regular dependency field
@@ -555,6 +591,8 @@ export class Manifest {
 
     if (typeof data.preferUnplugged === `boolean`)
       this.preferUnplugged = data.preferUnplugged;
+    else
+      this.preferUnplugged = null;
 
     this.errors = errors;
   }
