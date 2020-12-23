@@ -144,11 +144,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       eslint: optionalPeerDep,
     },
   }],
-  // https://github.com/react-component/animate/pull/89
-  [`rc-animate@*`, {
+  // https://github.com/react-component/animate/pull/116
+  [`rc-animate@<=3.1.1`, {
     peerDependencies: {
-      react: `^15.0.0 || ^16.0.0`,
-      "react-dom": `^15.0.0 || ^16.0.0`,
+      react: `>=16.9.0`,
+      'react-dom': `>=16.9.0`,
     },
   }],
   // https://github.com/react-bootstrap-table/react-bootstrap-table2/pull/1491
