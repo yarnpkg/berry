@@ -225,4 +225,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       protobufjs: `^6.8.6`,
     },
   }],
+  // https://github.com/thinhle-agilityio/gatsby-source-apiserver/pull/58
+  [`gatsby-source-apiserver@*`, {
+    dependencies: {
+      [`babel-polyfill`]: `^6.26.0`,
+    },
+  }],
 ];
