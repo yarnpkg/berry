@@ -237,4 +237,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`cross-spawn`]: `^7.0.3`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/20156
+  [`gatsby-remark-prismjs@<3.3.28`, {
+    dependencies: {
+      [`lodash`]: `^4`,
+    },
+  }],
 ];

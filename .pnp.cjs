@@ -20983,7 +20983,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/gatsby", null],
             ["@types/prismjs", null],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
-            ["lodash", "npm:4.17.15"],
             ["parse-numeric-range", "npm:0.0.2"],
             ["prismjs", "npm:1.16.0"],
             ["unist-util-visit", "npm:1.4.1"]
