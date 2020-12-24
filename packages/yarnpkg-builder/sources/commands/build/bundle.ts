@@ -23,7 +23,7 @@ const pkgJsonVersion = (basedir: string): string => {
 const suggestHash = async (basedir: string) => {
   try {
     const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
-    return `git.${unique.stdout.trim().replace(/-/g, ``)}`;
+    return `git.${unique.stdout.trim().replace(/-/g, ``).replace(`.`, `.hash-`)}`;
   } catch {
     return null;
   }
