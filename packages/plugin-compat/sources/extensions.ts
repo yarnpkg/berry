@@ -231,4 +231,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`babel-polyfill`]: `^6.26.0`,
     },
   }],
+  // https://github.com/webpack/webpack-cli/pull/2097
+  [`@webpack-cli/package-utils@<=1.0.1-alpha.2`, {
+    dependencies: {
+      [`cross-spawn`]: `^7.0.3`,
+    },
+  }],
 ];
