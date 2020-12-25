@@ -4,6 +4,18 @@
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
 
+**Important:** Development of the next major version (3.x) is happening on the master branch. A list of breaking changes can be found below.
+
+### **Breaking Changes**
+
+- The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
+
+### Settings
+
+- Various `initFields` edge cases have been fixed.
+
+## 2.4.0
+
 ### Installs
 
 - The resolution pipeline got reimplemented. We previously used a multi-pass approach where we performed SAT optimization between each pass, but after investigating it turned out the SAT optims had little impact and added performance bottlenecks. We now run the resolution using a much simpler and more efficient algorithm.
