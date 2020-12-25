@@ -5745,7 +5745,7 @@ __metadata:
     babel-jest: ^26.0.1
     clipanion: ^2.6.2
     eslint: ^6.8.0
-    eslint-plugin-arca: ^0.9.0
+    eslint-plugin-arca: ^0.10.0
     eslint-plugin-react: ^7.20.0
     github-api: ^3.2.2
     jest: ^26.0.1
@@ -11322,12 +11322,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-arca@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "eslint-plugin-arca@npm:0.9.0"
+"eslint-plugin-arca@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "eslint-plugin-arca@npm:0.10.0"
   dependencies:
     requireindex: ~1.1.0
-  checksum: bdc0d324fa953d77deb6b521c03c7504601d7230a96ed8e50814c3905424a9a95e8e6bfd89ad2657d1cc462288b56bb327f690aa8a4646b1f657672175a02b74
+  checksum: 3dea6a18bb1d5be022172961ceef8eeb1d334e95e4861894651f1d08eab131afa3efe8df3a25994a557d7d51848f58e97e5fd06315f42b78349e42f4ed006ea8
   languageName: node
   linkType: hard
 

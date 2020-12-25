@@ -8,7 +8,6 @@ import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/r
 import {Command, Usage}                      from 'clipanion';
 import InkTextInput                          from 'ink-text-input';
 import {Box, Text}                           from 'ink';
-
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';

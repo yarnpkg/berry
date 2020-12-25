@@ -1,0 +1,13 @@
+releases:
+  "@yarnpkg/eslint-config": minor
+
+declined:
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"
+  - "@yarnpkg/pnp"
+  - "@yarnpkg/pnpify"

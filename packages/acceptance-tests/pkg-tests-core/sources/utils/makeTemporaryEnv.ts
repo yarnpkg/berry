@@ -1,6 +1,5 @@
 import {npath}     from '@yarnpkg/fslib';
 import {delimiter} from 'path';
-
 import {URL}       from 'url';
 
 import * as exec   from './exec';

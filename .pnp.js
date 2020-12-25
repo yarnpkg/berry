@@ -267,7 +267,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-jest", "virtual:0975d94dee9ff79a18bada017469f037204c9b3564a1ecea9f0b0ed843f047fea139f0fb17afacefab3ae165c22666d09b4a19e31c5471b4e6eeae0f593875b5#npm:26.0.1"],
             ["clipanion", "npm:2.6.2"],
             ["eslint", "npm:6.8.0"],
-            ["eslint-plugin-arca", "npm:0.9.0"],
+            ["eslint-plugin-arca", "npm:0.10.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.20.0"],
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:26.0.1"],
@@ -10337,7 +10337,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:4.2.0"],
             ["@typescript-eslint/parser", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:4.2.0"],
             ["eslint", "npm:6.8.0"],
-            ["eslint-plugin-arca", "npm:0.9.0"],
+            ["eslint-plugin-arca", "npm:0.10.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.20.0"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"]
           ],
@@ -10563,7 +10563,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-jest", "virtual:0975d94dee9ff79a18bada017469f037204c9b3564a1ecea9f0b0ed843f047fea139f0fb17afacefab3ae165c22666d09b4a19e31c5471b4e6eeae0f593875b5#npm:26.0.1"],
             ["clipanion", "npm:2.6.2"],
             ["eslint", "npm:6.8.0"],
-            ["eslint-plugin-arca", "npm:0.9.0"],
+            ["eslint-plugin-arca", "npm:0.10.0"],
             ["eslint-plugin-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.20.0"],
             ["github-api", "npm:3.2.2"],
             ["jest", "npm:26.0.1"],
@@ -17876,10 +17876,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["eslint-plugin-arca", [
-        ["npm:0.9.0", {
-          "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.9.0-e8523cf96b-bdc0d324fa.zip/node_modules/eslint-plugin-arca/",
+        ["npm:0.10.0", {
+          "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.10.0-eea2ede7c2-3dea6a18bb.zip/node_modules/eslint-plugin-arca/",
           "packageDependencies": [
-            ["eslint-plugin-arca", "npm:0.9.0"],
+            ["eslint-plugin-arca", "npm:0.10.0"],
             ["requireindex", "npm:1.1.0"]
           ],
           "linkType": "HARD",

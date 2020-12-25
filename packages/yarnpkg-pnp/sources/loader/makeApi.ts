@@ -1,6 +1,5 @@
 import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
 import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
-
 import {Module}                                                                                             from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';

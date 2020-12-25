@@ -1,5 +1,4 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
-
 import {PortablePath}         from '@yarnpkg/fslib';
 
 import versionApply           from './commands/version/apply';
