@@ -1,5 +1,4 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils} from '@yarnpkg/core';
-
 import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                      from '@yarnpkg/fslib';
 
 import {Hooks as PatchHooks}                                                                                               from './index';

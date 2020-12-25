@@ -8,7 +8,6 @@ import capitalize                                                   from 'lodash
 import startCase                                                    from 'lodash/startCase';
 
 import {dynamicRequire}                                             from './dynamicRequire';
-
 import {BASE_SDKS}                                                  from './sdks/base';
 import {COC_VIM_SDKS}                                               from './sdks/cocvim';
 import {VSCODE_SDKS}                                                from './sdks/vscode';
@@ -121,11 +120,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  ...(usePnpify ? [
-    `const {resolve, dirname} = require(\`path\`);\n`,
-  ] : [
-    `const {resolve} = require(\`path\`);\n`,
-  ]),
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
@@ -152,14 +147,20 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   ...(usePnpify ? [
     `\n`,
-    `  const pnpifyResolution = require.resolve(\`@yarnpkg/pnpify\`, {paths: [dirname(absPnpApiPath)]});\n`,
-    `  if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
-    `    Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
+    `  let pnpifyResolution;\n`,
+    `  try {\n`,
+    `    pnpifyResolution = absRequire.resolve(\`@yarnpkg/pnpify\`);\n`,
+    `  } catch (err) {}\n`,
+    `  \n`,
+    `  if (pnpifyResolution) {\n`,
+    `    if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
+    `      Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
     `\n`,
-    `    process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
+    `      process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
     `\n`,
-    `    // Apply PnPify to the current process\n`,
-    `    absRequire(pnpifyResolution).patchFs();\n`,
+    `      // Apply PnPify to the current process\n`,
+    `      absRequire(pnpifyResolution).patchFs();\n`,
+    `    }\n`,
     `  }\n`,
   ] : []),
   `}\n`,

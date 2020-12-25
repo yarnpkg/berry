@@ -98,6 +98,53 @@ jobs:
         node ./scripts/run-yarn.js typecheck:all
       shell: bash
 
+  build:
+    name: 'Build artifacts'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 14.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Build bundle & plugins'
+      run: |
+        export BUILD_MONITORING_ENABLED=1
+        node --version
+        node ./scripts/run-yarn.js build:pnp:hook
+        node ./scripts/run-yarn.js build:cli
+        mv ./packages/yarnpkg-cli/bundles/yarn.js ./packages/yarnpkg-cli/bundles/yarn-min.js
+        node ./scripts/run-yarn.js build:cli --no-minify
+        node ./scripts/run-yarn.js build:plugin-constraints
+        node ./scripts/run-yarn.js build:plugin-exec
+        node ./scripts/run-yarn.js build:plugin-interactive-tools
+        node ./scripts/run-yarn.js build:plugin-stage
+        node ./scripts/run-yarn.js build:plugin-typescript
+        node ./scripts/run-yarn.js build:plugin-version
+        node ./scripts/run-yarn.js build:plugin-workspace-tools
+      shell: bash
+      env:
+        DD_API_KEY: ${{ secrets.DD_API_KEY }}
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: yarn-artifacts
+        path: |
+          ./packages/*/bundles
+          ./packages/yarnpkg-pnp/sources/hook.js
+
+    - name: 'Build vscode-zipfs'
+      run: |
+        node ./scripts/run-yarn.js package:vscode-zipfs
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: vscode-zipfs
+        path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix
+
   acceptance:
     strategy:
       fail-fast: false
@@ -113,6 +160,7 @@ jobs:
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
     runs-on: ${{matrix.platform}}
+    needs: build
 
     steps:
     - uses: actions/checkout@master
@@ -122,21 +170,10 @@ jobs:
       with:
         node-version: ${{matrix.node}}.x
 
-    - name: 'Build the standard bundle & plugins'
-      run: |
-        export BUILD_MONITORING_ENABLED=1
-        node --version
-        node ./scripts/run-yarn.js build:cli --no-minify
-        node ./scripts/run-yarn.js build:plugin-constraints
-        node ./scripts/run-yarn.js build:plugin-exec
-        node ./scripts/run-yarn.js build:plugin-interactive-tools
-        node ./scripts/run-yarn.js build:plugin-stage
-        node ./scripts/run-yarn.js build:plugin-typescript
-        node ./scripts/run-yarn.js build:plugin-version
-        node ./scripts/run-yarn.js build:plugin-workspace-tools
-      shell: bash
-      env:
-        DD_API_KEY: ${{ secrets.DD_API_KEY }}
+    - uses: actions/download-artifact@v2
+      with:
+        name: yarn-artifacts
+        path: packages
 
     - name: 'Run the integration tests'
       run: |

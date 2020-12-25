@@ -1,7 +1,6 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
-
 import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';

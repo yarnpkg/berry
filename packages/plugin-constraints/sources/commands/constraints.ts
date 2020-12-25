@@ -49,38 +49,44 @@ export default class ConstraintsCheckCommand extends BaseCommand {
       for (let t = 0, T = this.fix ? 10 : 1; t < T; ++t) {
         errors = [];
 
-        const toSave = new Set<Workspace>();
         const result = await constraints.process();
 
-        await processDependencyConstraints(toSave, errors, result.enforcedDependencies, {
+        const modifiedDependencies = new Set<Workspace>();
+        await processDependencyConstraints(modifiedDependencies, errors, result.enforcedDependencies, {
           fix: this.fix,
           configuration,
         });
 
-        await processFieldConstraints(toSave, errors, result.enforcedFields, {
+        // Dependency constraints work on the manifess, field constraints work on the raw JSON objects
+        for (const {manifest} of modifiedDependencies)
+          manifest.exportTo(manifest.raw = {});
+
+        const modifiedFields = new Set<Workspace>();
+        await processFieldConstraints(modifiedFields, errors, result.enforcedFields, {
           fix: this.fix,
           configuration,
         });
+
+        // Persist changes made by the constraints back to the Manifest instance
+        for (const {manifest} of modifiedFields)
+          manifest.load(manifest.raw);
 
         allSaves = new Set([
           ...allSaves,
-          ...toSave,
+          ...modifiedDependencies,
+          ...modifiedFields,
         ]);
 
         // If we didn't apply any change then we can exit the loop
-        if (toSave.size === 0) {
+        if (modifiedDependencies.size === 0 && modifiedFields.size === 0) {
           break;
         }
       }
 
       // save all modified manifests
       await Promise.all([...allSaves].map(async workspace => {
-        // Constraints modify the raw manifest so we need to reload it here
-        // otherwise changes are not persisted
-        workspace.manifest.load(workspace.manifest.raw);
         await workspace.persistManifest();
       }));
-
 
       // report all outstanding errors
       for (const [messageName, message] of errors) {

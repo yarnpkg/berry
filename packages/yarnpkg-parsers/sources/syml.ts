@@ -1,4 +1,3 @@
-// @ts-expect-error
 import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
 
 import {parse}                     from './grammars/syml';
@@ -144,6 +143,7 @@ function parseViaJsYaml(source: string) {
 
   const value = safeLoad(source, {
     schema: FAILSAFE_SCHEMA,
+    json: true,
   });
 
   // Empty files are parsed as `undefined` instead of an empty object

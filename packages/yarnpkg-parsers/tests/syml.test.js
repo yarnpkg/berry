@@ -18,4 +18,16 @@ describe(`Syml parser`, () => {
       foo: {bar: `true`, baz: `quux`},
     });
   });
+
+  it(`should merge duplicates`, () => {
+    expect(
+      parseSyml(`    
+      "lodash@npm:^4.17.20":
+        version: 4.17.20
+      
+      "lodash@npm:^4.17.20":
+        version: 4.17.20
+      `)
+    ).toEqual({'lodash@npm:^4.17.20': {version: `4.17.20`}});
+  });
 });

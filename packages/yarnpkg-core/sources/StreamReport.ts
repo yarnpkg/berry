@@ -1,5 +1,4 @@
 import sliceAnsi                                  from '@arcanis/slice-ansi';
-
 import {Writable}                                 from 'stream';
 
 import {Configuration}                            from './Configuration';

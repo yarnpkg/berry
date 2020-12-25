@@ -199,4 +199,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'react-dom': `^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0`,
     },
   }],
+  // https://github.com/facebook/create-react-app/pull/9872
+  [`create-react-app@*`, {
+    peerDependencies: {
+      [`react`]: `*`,
+    },
+  }],
 ];

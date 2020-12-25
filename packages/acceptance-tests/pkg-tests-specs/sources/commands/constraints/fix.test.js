@@ -1,0 +1,58 @@
+import {xfs} from '@yarnpkg/fslib';
+
+describe(`Commands`, () => {
+  const config = {
+    plugins: [
+      require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
+    ],
+  };
+
+  const manifest = {
+    dependencies: {
+      'is-number': `1.0.0`,
+    },
+    license: `MIT`,
+  };
+
+  describe(`constraints --fix`, () => {
+    test(`test apply fix to dependencies`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest.dependencies[`is-number`]).toBe(`2.0.0`);
+      expect(fixedManifest.license).toBe(`MIT`);
+    }));
+
+    test(`test apply fix to fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_field('.', 'license', 'BSD-2-Clause').
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest.dependencies[`is-number`]).toBe(`1.0.0`);
+      expect(fixedManifest.license).toBe(`BSD-2-Clause`);
+    }));
+
+    test(`test apply fix to fields and manifests`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
+      gen_enforced_field('.', 'license', 'BSD-2-Clause').
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest.dependencies[`is-number`]).toBe(`2.0.0`);
+      expect(fixedManifest.license).toBe(`BSD-2-Clause`);
+    }));
+  });
+});
