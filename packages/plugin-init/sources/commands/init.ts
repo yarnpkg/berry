@@ -132,9 +132,7 @@ export default class InitCommand extends BaseCommand {
     manifest.load(fields);
 
     manifest.name = structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
-    manifest.version = configuration.get(`initVersion`);
     manifest.private = this.private || this.workspace;
-    manifest.license = configuration.get(`initLicense`);
 
     if (this.workspace) {
       await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages` as Filename), {recursive: true});
