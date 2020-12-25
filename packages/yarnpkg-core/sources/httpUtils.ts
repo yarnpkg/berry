@@ -5,7 +5,6 @@ import {Agent as HttpsAgent}             from 'https';
 import {Agent as HttpAgent}              from 'http';
 import micromatch                        from 'micromatch';
 import tunnel, {ProxyOptions}            from 'tunnel';
-
 import {URL}                             from 'url';
 
 import {Configuration}                   from './Configuration';

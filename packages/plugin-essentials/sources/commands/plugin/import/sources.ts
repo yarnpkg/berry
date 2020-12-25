@@ -7,7 +7,6 @@ import {tmpdir}                                                         from 'os
 
 import {prepareRepo, runWorkflow}                                       from '../../set/version/sources';
 import {savePlugin}                                                     from '../import';
-
 import {getAvailablePlugins}                                            from '../list';
 
 const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [

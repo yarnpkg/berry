@@ -8,7 +8,6 @@ import capitalize                                                   from 'lodash
 import startCase                                                    from 'lodash/startCase';
 
 import {dynamicRequire}                                             from './dynamicRequire';
-
 import {BASE_SDKS}                                                  from './sdks/base';
 import {COC_VIM_SDKS}                                               from './sdks/cocvim';
 import {VSCODE_SDKS}                                                from './sdks/vscode';

@@ -36,9 +36,13 @@ module.exports = {
       collapseExtraSpaces: true,
     }],
 
-    'arca/import-ordering': 2,
+    'arca/import-ordering': [2, {
+      hoistOneliners: true,
+    }],
 
-    'arca/newline-after-import-section': 2,
+    'arca/newline-after-import-section': [2, {
+      enableOnelinerSections: true,
+    }],
 
     'array-bracket-spacing': 2,
 

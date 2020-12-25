@@ -3,7 +3,6 @@ import {PortablePath, npath, xfs}                                               
 import {execFileSync}                                                                      from 'child_process';
 import {isCI}                                                                              from 'ci-info';
 import {Cli, UsageError}                                                                   from 'clipanion';
-
 import {realpathSync}                                                                      from 'fs';
 
 import {pluginCommands}                                                                    from './pluginCommands';
