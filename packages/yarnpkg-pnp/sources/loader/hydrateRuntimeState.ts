@@ -14,39 +14,40 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     ? new RegExp(data.ignorePatternData)
     : null;
 
-  const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
-    return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
+  const packageLocatorsByLocations = new Map<PortablePath, PhysicalPackageLocator | null>();
+  const packageLocationLengths = new Set<number>();
+
+  const packageRegistry = new Map<string | null, PackageStore>(data.packageRegistryData.map(([packageName, packageStoreData]) => {
+    return [packageName, new Map<string | null, PackageInformation<PortablePath>>(packageStoreData.map(([packageReference, packageInformationData]) => {
+      if ((packageName === null) !== (packageReference === null))
+        throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
+
+      if (!packageInformationData.discardFromLookup) {
+        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
+        const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
+        packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
+
+        packageLocationLengths.add(packageInformationData.packageLocation.length);
+      }
+
+      let resolvedPackageLocation: PortablePath | null = null;
+
       return [packageReference, {
-        // We use ppath.join instead of ppath.resolve because:
-        // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
-        // 2) ppath.join preserves trailing slashes
-        packageLocation: ppath.join(absolutePortablePath, packageInformationData.packageLocation),
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
         discardFromLookup: packageInformationData.discardFromLookup || false,
-      }] as [string | null, PackageInformation<PortablePath>];
-    }))] as [string | null, PackageStore];
+        // we only need this for packages that are used by the currently running script
+        // this is a lazy getter because `ppath.join` has some overhead
+        get packageLocation() {
+          // We use ppath.join instead of ppath.resolve because:
+          // 1) packageInformationData.packageLocation is a relative path when part of the SerializedState
+          // 2) ppath.join preserves trailing slashes
+          return resolvedPackageLocation || (resolvedPackageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation));
+        },
+      }];
+    }))];
   }));
-
-  const packageLocatorsByLocations = new Map<PortablePath, PhysicalPackageLocator | null>();
-  const packageLocationLengths = new Set<number>();
-
-  for (const [packageName, storeData] of data.packageRegistryData) {
-    for (const [packageReference, packageInformationData] of storeData) {
-      if ((packageName === null) !== (packageReference === null))
-        throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
-
-      if (packageInformationData.discardFromLookup)
-        continue;
-
-      // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-      const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
-      packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
-
-      packageLocationLengths.add(packageInformationData.packageLocation.length);
-    }
-  }
 
   for (const location of data.locationBlacklistData)
     packageLocatorsByLocations.set(location, null);
