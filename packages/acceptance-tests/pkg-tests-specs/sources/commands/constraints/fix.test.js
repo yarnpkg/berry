@@ -8,6 +8,9 @@ describe(`Commands`, () => {
   };
 
   const manifest = {
+    workspaces: [
+      `packages/*`,
+    ],
     dependencies: {
       'is-number': `1.0.0`,
     },
@@ -53,6 +56,19 @@ describe(`Commands`, () => {
 
       expect(fixedManifest.dependencies[`is-number`]).toBe(`2.0.0`);
       expect(fixedManifest.license).toBe(`BSD-2-Clause`);
+    }));
+
+    test(`test applying fix shouldn't duplicate workspaces`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
+      gen_enforced_field('.', 'license', 'BSD-2-Clause').
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest.workspaces.length).toBe(1);
     }));
   });
 });
