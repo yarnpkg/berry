@@ -21,7 +21,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-json-proxy"
   },
   "engines": {
     "node": ">=10.19.0"

@@ -26,7 +26,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/acceptance-tests/pkg-tests-core"
   },
   "devDependencies": {
     "@types/finalhandler": "1.1.0",

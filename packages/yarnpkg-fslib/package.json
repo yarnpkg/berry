@@ -24,7 +24,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-fslib"
   },
   "engines": {
     "node": ">=10.19.0"
