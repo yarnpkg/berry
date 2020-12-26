@@ -19362,6 +19362,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.10.1"],
             ["@types/eslint", null],
             ["@types/typescript", null],
+            ["@types/vue-template-compiler", null],
             ["@types/webpack", null],
             ["chalk", "npm:2.4.2"],
             ["cosmiconfig", "npm:6.0.0"],
@@ -19374,14 +19375,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"],
             ["tapable", "npm:1.1.3"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"],
+            ["vue-template-compiler", null],
             ["webpack", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.1.1"]
           ],
           "packagePeers": [
             "@types/eslint",
             "@types/typescript",
+            "@types/vue-template-compiler",
             "@types/webpack",
             "eslint",
             "typescript",
+            "vue-template-compiler",
             "webpack"
           ],
           "linkType": "HARD",

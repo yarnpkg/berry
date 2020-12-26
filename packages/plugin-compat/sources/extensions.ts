@@ -139,9 +139,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       eslint: `>= 6`,
       typescript: `>= 2.7`,
       webpack: `>= 4`,
+      'vue-template-compiler': `*`,
     },
     peerDependenciesMeta: {
       eslint: optionalPeerDep,
+      'vue-template-compiler': optionalPeerDep,
     },
   }],
   // https://github.com/react-component/animate/pull/116
@@ -253,6 +255,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`gatsby-plugin-sharp@*`, {
     dependencies: {
       [`debug`]: `^4.3.1`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/28759
+  [`gatsby-react-router-scroll@*`, {
+    dependencies: {
+      [`prop-types`]: `^15.7.2`,
     },
   }],
 ];
