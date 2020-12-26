@@ -249,4 +249,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`webpack`]: `*`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/28759
+  [`gatsby-plugin-sharp@*`, {
+    dependencies: {
+      [`debug`]: `^4.3.1`,
+    },
+  }],
 ];
