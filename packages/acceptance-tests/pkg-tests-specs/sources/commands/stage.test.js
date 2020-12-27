@@ -79,6 +79,7 @@ describe(`Commands`, () => {
         // Otherwise we can't always commit
         await execFile(`git`, [`config`, `user.name`, `John Doe`], {cwd: path});
         await execFile(`git`, [`config`, `user.email`, `john.doe@example.org`], {cwd: path});
+        await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
 
         await mkdirp(`${path}/new-package`);
         await run(`${path}/new-package`, `init`);

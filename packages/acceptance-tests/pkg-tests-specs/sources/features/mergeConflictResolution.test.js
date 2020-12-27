@@ -33,6 +33,7 @@ describe(`Features`, () => {
           await execFile(`git`, [`init`], {cwd: path});
           await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
           await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
+          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
 
           await run(`install`);
           await writeJson(`${path}/package.json`, {dependencies:{[`no-deps`]: `*`}});
