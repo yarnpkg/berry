@@ -39,7 +39,7 @@ export class PnpLinker implements Linker {
 
     const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
 
-    const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
+    const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
 
     if (!packageInformation)
@@ -101,7 +101,7 @@ export class PnpInstaller implements Installer {
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
-    const key1 = structUtils.requirableIdent(pkg);
+    const key1 = structUtils.stringifyIdent(pkg);
     const key2 = pkg.reference;
 
     const isWorkspace =
@@ -158,7 +158,7 @@ export class PnpInstaller implements Installer {
     // just ignore their declared peer dependencies.
     if (structUtils.isVirtualLocator(pkg)) {
       for (const descriptor of pkg.peerDependencies.values()) {
-        packageDependencies.set(structUtils.requirableIdent(descriptor), null);
+        packageDependencies.set(structUtils.stringifyIdent(descriptor), null);
         packagePeers.add(structUtils.stringifyIdent(descriptor));
       }
 
@@ -190,10 +190,10 @@ export class PnpInstaller implements Installer {
 
     for (const [descriptor, locator] of dependencies) {
       const target = !structUtils.areIdentsEqual(descriptor, locator)
-        ? [structUtils.requirableIdent(locator), locator.reference] as [string, string]
+        ? [structUtils.stringifyIdent(locator), locator.reference] as [string, string]
         : locator.reference;
 
-      packageInformation.packageDependencies.set(structUtils.requirableIdent(descriptor), target);
+      packageInformation.packageDependencies.set(structUtils.stringifyIdent(descriptor), target);
     }
   }
 
@@ -201,7 +201,7 @@ export class PnpInstaller implements Installer {
     for (const dependentPath of dependentPaths) {
       const packageInformation = this.getDiskInformation(dependentPath);
 
-      packageInformation.packageDependencies.set(structUtils.requirableIdent(locator), locator.reference);
+      packageInformation.packageDependencies.set(structUtils.stringifyIdent(locator), locator.reference);
     }
   }
 
@@ -226,7 +226,7 @@ export class PnpInstaller implements Installer {
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const blacklistedLocations = blacklistedPaths;
-    const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
+    const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const fallbackPool = new Map();
@@ -237,7 +237,7 @@ export class PnpInstaller implements Installer {
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
         if (this.opts.project.tryWorkspaceByLocator(pkg))
-          fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
+          fallbackExclusionList.push({name: structUtils.stringifyIdent(pkg), reference: pkg.reference});
 
     await this.finalizeInstallWithPnp({
       blacklistedLocations,
@@ -382,7 +382,7 @@ export class PnpInstaller implements Installer {
   }
 
   private getPackageInformation(locator: Locator) {
-    const key1 = structUtils.requirableIdent(locator);
+    const key1 = structUtils.stringifyIdent(locator);
     const key2 = locator.reference;
 
     const packageInformationStore = this.packageRegistry.get(key1);

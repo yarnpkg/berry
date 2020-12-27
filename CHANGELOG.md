@@ -10,6 +10,10 @@
 
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
 
+### API
+
+- `structUtils.requirableIdent` got removed; use `structUtils.stringifyIdent` instead, which is strictly the same.
+
 ### Settings
 
 - Various `initFields` edge cases have been fixed.

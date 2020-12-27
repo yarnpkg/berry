@@ -569,17 +569,6 @@ export function convertToManifestRange(range: string) {
 }
 
 /**
- * @deprecated Prefer using `stringifyIdent`
- */
-export function requirableIdent(ident: Ident) {
-  if (ident.scope) {
-    return `@${ident.scope}/${ident.name}`;
-  } else {
-    return `${ident.name}`;
-  }
-}
-
-/**
  * Returns a string from an ident (eg. `@types/lodash`).
  */
 export function stringifyIdent(ident: Ident) {
@@ -810,5 +799,5 @@ export function prettyDependent(configuration: Configuration, locator: Locator, 
  * them to a different location if that's a critical requirement.
  */
 export function getIdentVendorPath(ident: Ident) {
-  return `node_modules/${requirableIdent(ident)}` as PortablePath;
+  return `node_modules/${stringifyIdent(ident)}` as PortablePath;
 }
