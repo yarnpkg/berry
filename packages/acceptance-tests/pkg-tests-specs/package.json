@@ -17,7 +17,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/acceptance-tests/pkg-tests-specs"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",

@@ -56,6 +56,7 @@ gen_enforced_field(WorkspaceCwd, 'engines.node', '>=10.19.0').
 % Required to make the package work with the GitHub Package Registry
 gen_enforced_field(WorkspaceCwd, 'repository.type', 'git').
 gen_enforced_field(WorkspaceCwd, 'repository.url', 'ssh://git@github.com/yarnpkg/berry.git').
+gen_enforced_field(WorkspaceCwd, 'repository.directory', WorkspaceCwd).
 
 % This rule will require that the plugins that aren't embed in the CLI list a specific script that'll
 % be called as part of our release process (to rebuild them in the context of our repository)

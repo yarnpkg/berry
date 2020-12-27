@@ -91,7 +91,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/vscode-zipfs"
   },
   "dependencies": {
     "tslib": "^1.13.0"

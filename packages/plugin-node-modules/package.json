@@ -31,7 +31,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/plugin-node-modules"
   },
   "scripts": {
     "postpack": "rm -rf lib",
