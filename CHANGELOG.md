@@ -13,6 +13,7 @@
 ### API
 
 - `structUtils.requirableIdent` got removed; use `structUtils.stringifyIdent` instead, which is strictly the same.
+- `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 
 ### Settings
 

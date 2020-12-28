@@ -1613,11 +1613,4 @@ export class Configuration {
 
     return null;
   }
-
-  /**
-   * @deprecated Prefer using formatUtils.pretty instead, which is type-safe
-   */
-  format(value: string, formatType: formatUtils.Type | string): string {
-    return formatUtils.pretty(this, value, formatType);
-  }
 }
