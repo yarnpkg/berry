@@ -62,10 +62,6 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   @Command.Proxy()
   args: Array<string> = [];
 
-  // TODO: remove in next major
-  @Command.Boolean(`-a`, {hidden: true})
-  allLegacy: boolean = false;
-
   @Command.Boolean(`-R,--recursive`, {description: `Find packages via dependencies/devDependencies instead of using the workspaces field`})
   recursive: boolean = false;
 
@@ -147,8 +143,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-    const all = this.all ?? this.allLegacy;
-    if (!all && !cwdWorkspace)
+    if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
@@ -159,7 +154,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = all
+    const rootWorkspace = this.all
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
