@@ -42786,7 +42786,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 289:
+/***/ 614:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -47728,6 +47728,14 @@ function applyPatch(pnpapi, opts) {
   function getIssuerSpecsFromModule(module) {
     var _a;
 
+    if (module && !module.parent && !module.filename && module.paths.length > 0) {
+      return [{
+        apiPath: opts.manager.findApiPathFor(module.paths[0]),
+        path: module.paths[0],
+        module
+      }];
+    }
+
     const issuer = getIssuerModule(module);
 
     if (issuer !== null) {
@@ -47962,7 +47970,7 @@ function hydrateRuntimeState(data, {
     packageRegistry
   };
 }
-// CONCATENATED MODULE: ../../.yarn/cache/resolve.exports-npm-1.0.2-bbb8d62ef6-012a46e3ae.zip/node_modules/resolve.exports/dist/index.mjs
+// CONCATENATED MODULE: ../../.yarn/cache/resolve.exports-npm-1.0.2-bbb8d62ef6-1de1e50dc6.zip/node_modules/resolve.exports/dist/index.mjs
 /**
  * @param {object} exports
  * @param {Set<string>} keys
@@ -53829,7 +53837,7 @@ module.exports = require("path");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(289);
+/******/ 	return __webpack_require__(614);
 /******/ })()
 .default;
 });

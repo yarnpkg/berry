@@ -1842,4 +1842,29 @@ describe(`Plug'n'Play`, () => {
       await expect(source(`require('./ignored/index.js')`)).resolves.toBe(42);
     })
   );
+
+  test(
+    `it should be able to resolve a dependency using a module instance without an id`,
+    makeTemporaryEnv({
+      workspaces: [`workspace-a`],
+    }, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/workspace-a`);
+      await xfs.writeJsonPromise(`${path}/workspace-a/package.json`, {dependencies: {[`no-deps`]: `*`}});
+      await xfs.writeFilePromise(`${path}/index.js`, `
+        const Module = require('module');
+        const path = require('path');
+
+        module.exports = Module._resolveFilename(
+          'no-deps',
+          Object.assign(new Module(), {
+            paths: Module._nodeModulePaths(path.join(__dirname, 'workspace-a')),
+          })
+        );
+        `);
+
+      await run(`install`);
+
+      await expect(source(`require('./index.js')`)).resolves.toMatch(/no-deps(\\|\/)index.js/);
+    })
+  );
 });
