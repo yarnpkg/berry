@@ -375,3 +375,7 @@ export function tryParseOptionalBoolean(value: unknown): boolean | undefined | n
     return null;
   }
 }
+
+export type FilterKeys<T extends {}, Filter> = {
+  [K in keyof T]: T[K] extends Filter ? K : never;
+}[keyof T];
