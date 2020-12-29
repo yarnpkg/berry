@@ -9,6 +9,7 @@
 ### **Breaking Changes**
 
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
+- The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 
 ### API
 
