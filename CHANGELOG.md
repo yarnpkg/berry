@@ -9,6 +9,7 @@
 ### **Breaking Changes**
 
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
+- The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 
 ### API
