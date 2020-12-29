@@ -10,10 +10,13 @@
 
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
+- The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 
 ### API
 
 - `structUtils.requirableIdent` got removed; use `structUtils.stringifyIdent` instead, which is strictly the same.
+- `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
+- `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
 
 ### Settings
 
