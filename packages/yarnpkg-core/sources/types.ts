@@ -189,8 +189,4 @@ export type PackageExtension = (
   status: PackageExtensionStatus,
   userProvided: boolean,
   parentDescriptor: Descriptor,
-  /**
-   * @deprecated Use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead
-   */
-  description: string,
 };
