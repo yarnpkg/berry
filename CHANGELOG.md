@@ -15,6 +15,7 @@
 ### API
 
 - `structUtils.requirableIdent` got removed; use `structUtils.stringifyIdent` instead, which is strictly the same.
+- `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
 - `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
 
