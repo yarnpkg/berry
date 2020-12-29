@@ -1307,10 +1307,7 @@ export class Configuration {
   }
 
   get<K extends keyof ConfigurationValueMap>(key: K): ConfigurationValueMap[K];
-  /** @deprecated pass in a known configuration key instead */
-  get<T>(key: string): T;
-  /** @note Type will change to unknown in a future major version */
-  get(key: string): any;
+  get(key: string): unknown;
   get(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
@@ -1550,9 +1547,9 @@ export class Configuration {
     return pkg;
   }
 
-  getLimit(key: string) {
+  getLimit<K extends miscUtils.FilterKeys<ConfigurationValueMap, number>>(key: K) {
     return miscUtils.getFactoryWithDefault(this.limits, key, () => {
-      return pLimit(this.get<number>(key));
+      return pLimit(this.get(key));
     });
   }
 
