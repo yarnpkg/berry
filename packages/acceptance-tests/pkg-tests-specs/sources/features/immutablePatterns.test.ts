@@ -47,7 +47,7 @@ describe(`Features`, () => {
 
           await run(`install`);
 
-          await xfs.unlinkPromise(ppath.join(path, Filename.pnpJs));
+          await xfs.unlinkPromise(ppath.join(path, Filename.pnpCjs));
 
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \.pnp\.cjs has been modified by this install/);
         },
