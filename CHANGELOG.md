@@ -9,6 +9,7 @@
 ### **Breaking Changes**
 
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
+- Yarn will now always generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 
 ### API
 
