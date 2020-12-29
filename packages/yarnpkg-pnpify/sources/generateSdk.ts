@@ -12,7 +12,6 @@ import {BASE_SDKS}                                                  from './sdks
 import {COC_VIM_SDKS}                                               from './sdks/cocvim';
 import {VSCODE_SDKS}                                                from './sdks/vscode';
 
-export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
 export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
 
 export const INTEGRATIONS_FILE = `integrations.yml` as Filename;
@@ -279,13 +278,6 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
     ...requestedIntegrations,
     ...preexistingIntegrations,
   ]);
-
-  // TODO: remove in next major
-  const oldTargetFolder = ppath.join(projectRoot, OLD_SDK_FOLDER);
-  if (xfs.existsSync(oldTargetFolder) && !xfs.lstatSync(oldTargetFolder).isSymbolicLink()) {
-    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${formatUtils.pretty(configuration, OLD_SDK_FOLDER, formatUtils.Type.PATH)} folder. You might need to manually update existing references outside the ${formatUtils.pretty(configuration, `.vscode`, formatUtils.Type.PATH)} folder (e.g. .gitignore)...`);
-    await xfs.removePromise(oldTargetFolder);
-  }
 
   if (xfs.existsSync(targetFolder)) {
     report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files...`);
