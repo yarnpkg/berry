@@ -1424,13 +1424,13 @@ export class Configuration {
       } as const;
 
       for (const dependency of extension.dependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency});
       for (const peerDependency of extension.peerDependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency});
 
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
-          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
+          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value});
         }
       }
     };
