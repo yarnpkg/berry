@@ -54,6 +54,8 @@ module.exports = {
 
     'computed-property-spacing': 2,
 
+    'eol-last': [`error`, `always`],
+
     'generator-star-spacing': [`error`, {
       before: true,
       after: true,
