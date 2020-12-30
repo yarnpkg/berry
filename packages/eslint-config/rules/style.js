@@ -36,6 +36,8 @@ module.exports = {
 
     '@typescript-eslint/semi': 2,
 
+    '@typescript-eslint/space-infix-ops': 2,
+
     '@typescript-eslint/type-annotation-spacing': 2,
 
     'arca/curly': 2,

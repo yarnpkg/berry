@@ -38,7 +38,7 @@ export const ItemOptions = function <T>({
   return <>
     {options.map(({label}, index) => {
       const isGemActive = index === selectedIndex;
-      const boxWidth = sizes[index] -1 || 0;
+      const boxWidth = sizes[index] - 1 || 0;
 
       const simpleLabel = label
         // https://stackoverflow.com/a/29497680
