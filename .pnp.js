@@ -43326,13 +43326,13 @@ const external_url_namespaceObject = require("url");;
 
 
 /**
- * Adds support for URLs to the wrapped `baseFs`, but *not* inside the typings.
+ * Adds support for file URLs to the wrapped `baseFs`, but *not* inside the typings.
  *
  * Only exists for compatibility with Node's behavior.
  *
  * Automatically wraps all FS instances passed to `patchFs` & `extendFs`.
  *
- * Don't use this!
+ * Don't use it!
  */
 
 class URLFS extends ProxiedFS {
