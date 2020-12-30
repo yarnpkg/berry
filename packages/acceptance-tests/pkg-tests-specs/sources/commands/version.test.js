@@ -237,17 +237,15 @@ describe(`Commands`, () => {
           ].join(`\n`));
 
           let stdout;
-          let stderr;
-          let code;
 
           try {
             // Ensure everything is in place.
             await run(`install`);
 
             // Execute a version patch.
-            ({code, stdout, stderr} = await run(`workspace`,`pkg-primary`,`version`, `patch`));
+            ({stdout} = await run(`workspace`,`pkg-primary`,`version`, `patch`));
           } catch (error) {
-            ({code, stdout, stderr} = error);
+            ({stdout} = error);
           }
 
           // Ensure the primary package version has increased.
