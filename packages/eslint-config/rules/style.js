@@ -13,6 +13,8 @@ module.exports = {
 
     '@typescript-eslint/comma-spacing': 2,
 
+    '@typescript-eslint/keyword-spacing': 2,
+
     '@typescript-eslint/naming-convention': [`error`, {
       selector: `default`,
       format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
@@ -66,8 +68,6 @@ module.exports = {
     }],
 
     'jsx-quotes': 2,
-
-    'keyword-spacing': 2,
 
     'key-spacing': 2,
 
