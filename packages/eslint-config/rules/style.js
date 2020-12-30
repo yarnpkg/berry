@@ -67,6 +67,8 @@ module.exports = {
 
     'keyword-spacing': 2,
 
+    'key-spacing': 2,
+
     'no-extra-semi': 2,
 
     'no-irregular-whitespace': 2,
