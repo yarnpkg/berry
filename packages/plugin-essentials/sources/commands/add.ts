@@ -172,14 +172,14 @@ export default class AddCommand extends BaseCommand {
       Workspace,
       suggestUtils.Target,
       Descriptor,
-      Array<suggestUtils.Strategy>
+      Array<suggestUtils.Strategy>,
     ]> = [];
 
     const afterWorkspaceDependencyReplacementList: Array<[
       Workspace,
       suggestUtils.Target,
       Descriptor,
-      Descriptor
+      Descriptor,
     ]> = [];
 
     for (const [/*request*/, {suggestions}, target] of allSuggestions) {

@@ -11,6 +11,8 @@ module.exports = {
 
     '@typescript-eslint/brace-style': 2,
 
+    '@typescript-eslint/comma-dangle': [`error`, `always-multiline`],
+
     '@typescript-eslint/comma-spacing': 2,
 
     '@typescript-eslint/keyword-spacing': 2,
@@ -59,8 +61,6 @@ module.exports = {
     'arrow-parens': [`error`, `as-needed`],
 
     'arrow-spacing': 2,
-
-    'comma-dangle': [`error`, `always-multiline`],
 
     'computed-property-spacing': 2,
 

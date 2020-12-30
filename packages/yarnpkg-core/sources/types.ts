@@ -107,7 +107,7 @@ export enum LinkType {
    * so the linkers aren't allowed to do anything with them except use them as
    * they are.
    */
-  SOFT = `SOFT`
+  SOFT = `SOFT`,
 }
 
 /**

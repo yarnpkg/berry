@@ -60,7 +60,7 @@ type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident
 type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident> }>;
 
 enum Hoistable {
-  YES, NO, DEPENDS
+  YES, NO, DEPENDS,
 }
 type HoistInfo = {
   isHoistable: Hoistable.YES
@@ -82,7 +82,7 @@ const makeIdent = (name: string, reference: string) => {
 };
 
 enum DebugLevel {
-  NONE = -1, PERF = 0, CHECK = 1, REASONS = 2, INTENSIVE_CHECK = 9
+  NONE = -1, PERF = 0, CHECK = 1, REASONS = 2, INTENSIVE_CHECK = 9,
 }
 
 export type HoistOptions = {
