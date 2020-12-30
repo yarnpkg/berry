@@ -43,6 +43,6 @@ export default class PatchCommitCommand extends BaseCommand {
 
     const originalPath = await patchUtils.extractPackageToDisk(locator, {cache, project});
 
-    this.context.stdout.write(await patchUtils.diffFolders(originalPath,folderPath));
+    this.context.stdout.write(await patchUtils.diffFolders(originalPath, folderPath));
   }
 }

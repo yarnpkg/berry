@@ -191,7 +191,7 @@ function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGUR
     return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
-    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
+    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);
   } else {
     return null;
   }

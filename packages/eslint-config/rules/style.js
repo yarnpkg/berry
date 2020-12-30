@@ -9,6 +9,8 @@ module.exports = {
       default: `generic`,
     }],
 
+    '@typescript-eslint/comma-spacing': 2,
+
     '@typescript-eslint/naming-convention': [`error`, {
       selector: `default`,
       format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
