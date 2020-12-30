@@ -1,5 +1,7 @@
+import {xfs, ppath} from '@yarnpkg/fslib';
+
 const {
-  fs: {readJson},
+  fs: {readJson,writeFile},
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
@@ -195,6 +197,72 @@ describe(`Commands`, () => {
           version: `0.0.1`,
         });
       }),
+    );
+
+    test(
+      `it should correctly report a dependent workspace when unable to upgrade its version.`,
+
+      makeTemporaryEnv(
+        {private: true,
+          workspaces: [
+            `packages/*`,
+          ],
+        },
+
+        async ({path, run, source}) => {
+        // Create the primary package.
+          const pkgPrimary = ppath.join(path, `packages/pkg-primary`);
+          await xfs.mkdirpPromise(pkgPrimary);
+          await xfs.writeJsonPromise(ppath.join(pkgPrimary, `package.json`), {
+            name: `pkg-primary`,
+            version: `1.0.0`,
+          });
+
+          // Create the dependant package.
+          const pkgDependant = ppath.join(path, `packages/pkg-dependant`);
+          await xfs.mkdirpPromise(pkgDependant);
+          await xfs.writeJsonPromise(ppath.join(pkgDependant, `package.json`), {
+            name: `pkg-dependant`,
+            version: `1.0.0`,
+            dependencies: {
+              [`pkg-primary`]: `workspace:*`,
+            },
+          });
+
+          // Ensure we have the appropiate plugin.
+          await writeFile(`${path}/.yarnrc.yml`, [
+            `plugins:`,
+            `  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`))}`,
+
+          ].join(`\n`));
+
+          let stdout;
+          let stderr;
+          let code;
+
+          try {
+            // Ensure everything is in place.
+            await run(`install`);
+
+            // Execute a version patch.
+            ({code, stdout, stderr} = await run(`workspace`,`pkg-primary`,`version`, `patch`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          // Ensure the primary package version has increased.
+          await expect(xfs.readJsonPromise(ppath.join(pkgPrimary, `package.json`))).resolves.toMatchObject({
+            version: `1.0.1`,
+          });
+
+          // Ensure the depenadant package version has not increased.
+          await expect(xfs.readJsonPromise(ppath.join(pkgDependant, `package.json`))).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
+
+          // Ensure that the dependant package has appeared in the reported output as failing to upgrade.
+          expect(stdout).toContain(`Couldn't auto-upgrade range * (in pkg-dependant@workspace:packages/pkg-dependant)`);
+        }),
     );
   });
 });
