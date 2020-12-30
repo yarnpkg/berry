@@ -42,8 +42,12 @@ export enum Errors {
 
 export const makeInterface = (libzip: EmscriptenModule) => ({
   // Those are getters because they can change after memory growth
-  get HEAP8() { return libzip.HEAP8; },
-  get HEAPU8() { return libzip.HEAPU8; },
+  get HEAP8() {
+    return libzip.HEAP8;
+  },
+  get HEAPU8() {
+    return libzip.HEAPU8;
+  },
 
   errors: Errors,
 

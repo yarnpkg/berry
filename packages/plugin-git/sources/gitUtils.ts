@@ -102,10 +102,8 @@ export function splitRepoUrl(url: string): RepoUrlParts {
         [key: string]: string,
       },
     };
-  }
-
-  // Old-style: "#commit:abcdef" or "#abcdef"
-  else {
+  } else {
+    // Old-style: "#commit:abcdef" or "#abcdef"
     const colonIndex = subsequent.indexOf(`:`);
 
     let protocol: string | null;

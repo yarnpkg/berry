@@ -74,8 +74,7 @@ export default class AuditCommand extends BaseCommand {
       for (const key of Object.keys(dependencies)) {
         if (!Object.prototype.hasOwnProperty.call(requires, key)) {
           delete dependencies[key];
-        }
-        else {
+        } else {
           dependencies[key].requires = {};
         }
       }

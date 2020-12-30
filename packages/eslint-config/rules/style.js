@@ -9,6 +9,8 @@ module.exports = {
       default: `generic`,
     }],
 
+    '@typescript-eslint/brace-style': 2,
+
     '@typescript-eslint/comma-spacing': 2,
 
     '@typescript-eslint/naming-convention': [`error`, {
