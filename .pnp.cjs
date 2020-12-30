@@ -48037,7 +48037,6 @@ function hydrateRuntimeState(data, {
   const absolutePortablePath = ppath.resolve(portablePath);
   const ignorePattern = data.ignorePatternData !== null ? new RegExp(data.ignorePatternData) : null;
   const packageLocatorsByLocations = new Map();
-  const packageLocationLengths = new Set();
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
       var _a;
@@ -48064,7 +48063,6 @@ function hydrateRuntimeState(data, {
         }
       }
 
-      packageLocationLengths.add(packageInformationData.packageLocation.length);
       let resolvedPackageLocation = null;
       return [packageReference, {
         packageDependencies: new Map(packageInformationData.packageDependencies),
@@ -48097,7 +48095,6 @@ function hydrateRuntimeState(data, {
     fallbackExclusionList,
     fallbackPool,
     ignorePattern,
-    packageLocationLengths: [...packageLocationLengths].sort((a, b) => b - a),
     packageLocatorsByLocations,
     packageRegistry
   };
@@ -48318,8 +48315,7 @@ function makeApi(runtimeState, opts) {
   const {
     ignorePattern,
     packageRegistry,
-    packageLocatorsByLocations,
-    packageLocationLengths
+    packageLocatorsByLocations
   } = runtimeState;
   /**
    * Allows to print useful logs just be setting a value in the environment
@@ -48707,18 +48703,17 @@ function makeApi(runtimeState, opts) {
     let relativeLocation = ppath.relative(runtimeState.basePath, location);
     if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}`;
     if (!relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/`;
-    let from = 0; // If someone wants to use a binary search to go from O(n) to O(log n), be my guest
 
-    while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length) from += 1;
+    do {
+      const entry = packageLocatorsByLocations.get(relativeLocation);
 
-    for (let t = from; t < packageLocationLengths.length; ++t) {
-      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
-
-      if (typeof entry !== `undefined`) {
-        if (entry.discardFromLookup && !includeDiscardFromLookup) continue;
-        return entry.locator;
+      if (typeof entry === `undefined` || entry.discardFromLookup && !includeDiscardFromLookup) {
+        relativeLocation = relativeLocation.substring(0, relativeLocation.lastIndexOf(`/`, relativeLocation.length - 2) + 1);
+        continue;
       }
-    }
+
+      return entry.locator;
+    } while (relativeLocation !== ``);
 
     return null;
   }
