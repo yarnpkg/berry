@@ -230,7 +230,7 @@ describe(`Commands`, () => {
           });
 
           // Ensure we have the appropiate plugin.
-          await writeFile(`${path}/.yarnrc.yml`, [
+          await xfs.writeFilePromise(`${path}/.yarnrc.yml`, [
             `plugins:`,
             `  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`))}`,
 
