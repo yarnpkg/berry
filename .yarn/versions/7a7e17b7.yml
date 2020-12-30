@@ -1,0 +1,8 @@
+releases:
+  "@yarnpkg/eslint-config": minor
+
+declined:
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/core"
+  - "@yarnpkg/doctor"

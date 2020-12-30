@@ -54,7 +54,7 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
 
   const mergedNetworkSettings: UndefinableSettings = {
     enableNetwork: undefined,
-    caFilePath: undefined ,
+    caFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
   };

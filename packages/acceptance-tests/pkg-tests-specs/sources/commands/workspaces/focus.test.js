@@ -169,7 +169,7 @@ async function setupProject(path) {
     await xfs.writeJsonPromise(ppath.join(path, `packages/${name}/package.json`), {name, dependencies, devDependencies, scripts});
   };
 
-  await pkg(`foo`, {[`no-deps`]: `1.0.0`}, {},{postinstall: `echo 'postinstall' > postinstall.log`});
+  await pkg(`foo`, {[`no-deps`]: `1.0.0`}, {}, {postinstall: `echo 'postinstall' > postinstall.log`});
   await pkg(`bar`, {[`no-deps`]: `2.0.0`});
   await pkg(`baz`, {[`bar`]: `workspace:*`});
   await pkg(`qux`, {[`no-deps`]: `1.0.0`}, {[`no-deps-bins`]: `1.0.0`}, {postinstall: `echo 'postinstall' > postinstall.log`});
