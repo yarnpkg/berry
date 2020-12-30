@@ -1,7 +1,7 @@
 import {xfs, ppath} from '@yarnpkg/fslib';
 
 const {
-  fs: {readJson,writeFile},
+  fs: {readJson},
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
