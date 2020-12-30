@@ -71,7 +71,7 @@ type HoistInfo = {
   isHoistable: Hoistable.DEPENDS
   dependsOn: Set<HoisterWorkTree>
   reason: string | null
-}
+};
 
 const makeLocator = (name: string, reference: string) => `${name}@${reference}`;
 const makeIdent = (name: string, reference: string) => {
@@ -92,13 +92,13 @@ export type HoistOptions = {
   debugLevel?: DebugLevel;
   /** Hoist borders are defined by parent node locator and its dependency name. The dependency is considered a border, nothing can be hoisted past this dependency, but dependency can be hoisted */
   hoistingLimits?: Map<Locator, Set<PackageName>>;
-}
+};
 
 type InternalHoistOptions = {
   check?: boolean;
   debugLevel: DebugLevel;
   hoistingLimits: Map<Locator, Set<PackageName>>;
-}
+};
 
 /**
  * Hoists package tree.

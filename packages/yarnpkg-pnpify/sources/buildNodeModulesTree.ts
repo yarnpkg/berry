@@ -102,7 +102,7 @@ export type NodeModulesLocatorMap = Map<LocatorKey, {
   linkType: LinkType;
   locations: Array<PortablePath>;
   aliases: Array<string>;
-}>
+}>;
 
 export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
   const map = new Map();

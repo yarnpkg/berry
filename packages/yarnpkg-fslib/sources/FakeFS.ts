@@ -97,7 +97,7 @@ export type StatWatcher = EventEmitter & {
 
 export type ExtractHintOptions = {
   relevantExtensions: Set<string>;
-}
+};
 
 export type SymlinkType = 'file' | 'dir' | 'junction';
 

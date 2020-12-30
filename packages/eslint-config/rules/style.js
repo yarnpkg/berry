@@ -34,6 +34,8 @@ module.exports = {
 
     '@typescript-eslint/quotes': [`error`, `backtick`],
 
+    '@typescript-eslint/semi': 2,
+
     '@typescript-eslint/type-annotation-spacing': 2,
 
     'arca/curly': 2,
@@ -90,8 +92,6 @@ module.exports = {
     'quote-props': [`error`, `as-needed`],
 
     'rest-spread-spacing': 2,
-
-    semi: 2,
 
     'space-before-blocks': 2,
 

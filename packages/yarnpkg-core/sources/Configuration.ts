@@ -579,7 +579,7 @@ type DefinitionForType<T> = T extends Array<infer U>
 // against what's actually put in the `values` field.
 export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
-}
+};
 
 function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
