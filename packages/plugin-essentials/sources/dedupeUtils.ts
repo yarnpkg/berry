@@ -1,4 +1,3 @@
-
 import {Project, ResolveOptions, ThrowReport, Resolver, miscUtils, Descriptor, Package, Report, Cache} from '@yarnpkg/core';
 import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions}          from '@yarnpkg/core';
 import micromatch                                                                                      from 'micromatch';

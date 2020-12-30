@@ -77,7 +77,7 @@ module.exports = {
 
     'no-mixed-spaces-and-tabs': 2,
 
-    'no-multiple-empty-lines': 2,
+    'no-multiple-empty-lines': [`error`, {max: 2, maxBOF: 0, maxEOF: 0}],
 
     'no-tabs': 2,
 
