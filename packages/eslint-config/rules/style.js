@@ -89,6 +89,8 @@ module.exports = {
 
     'space-before-blocks': 2,
 
+    'space-in-parens': 2,
+
     'template-curly-spacing': 2,
   },
 };

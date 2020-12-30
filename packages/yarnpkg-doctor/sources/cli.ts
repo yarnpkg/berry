@@ -161,19 +161,19 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
 
       case ts.SyntaxKind.StringLiteral: {
         const stringNode = node as ts.StringLiteral;
-        checkForNodeModuleStrings(stringNode, {configuration, report} );
+        checkForNodeModuleStrings(stringNode, {configuration, report});
       } break;
 
       case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
         const stringNode = node as ts.NoSubstitutionTemplateLiteral;
 
-        checkForNodeModuleStrings(stringNode, {configuration, report} );
+        checkForNodeModuleStrings(stringNode, {configuration, report});
       } break;
 
       case ts.SyntaxKind.TemplateExpression: {
         const stringNode = node as ts.TemplateExpression;
 
-        checkForNodeModuleStrings(stringNode, {configuration, report} );
+        checkForNodeModuleStrings(stringNode, {configuration, report});
       } break;
     }
 
