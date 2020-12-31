@@ -13,8 +13,6 @@ module.exports = {
 
     '@typescript-eslint/comma-dangle': [`error`, `always-multiline`],
 
-    '@typescript-eslint/comma-spacing': 2,
-
     '@typescript-eslint/keyword-spacing': 2,
 
     '@typescript-eslint/comma-spacing': 2,
