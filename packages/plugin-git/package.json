@@ -14,6 +14,7 @@
     "@yarnpkg/core": "^3.0.0-rc.2"
   },
   "devDependencies": {
+    "@types/git-url-parse": "^9.0.0",
     "@yarnpkg/core": "workspace:*"
   },
   "repository": {
