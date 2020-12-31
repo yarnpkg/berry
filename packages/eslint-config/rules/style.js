@@ -9,6 +9,12 @@ module.exports = {
       default: `generic`,
     }],
 
+    '@typescript-eslint/brace-style': 2,
+
+    '@typescript-eslint/comma-dangle': [`error`, `always-multiline`],
+
+    '@typescript-eslint/keyword-spacing': 2,
+
     '@typescript-eslint/comma-spacing': 2,
 
     '@typescript-eslint/naming-convention': [`error`, {
@@ -29,6 +35,10 @@ module.exports = {
     }],
 
     '@typescript-eslint/quotes': [`error`, `backtick`],
+
+    '@typescript-eslint/semi': 2,
+
+    '@typescript-eslint/space-infix-ops': 2,
 
     '@typescript-eslint/type-annotation-spacing': 2,
 
@@ -52,8 +62,6 @@ module.exports = {
 
     'arrow-spacing': 2,
 
-    'comma-dangle': [`error`, `always-multiline`],
-
     'computed-property-spacing': 2,
 
     'eol-last': [`error`, `always`],
@@ -65,7 +73,7 @@ module.exports = {
 
     'jsx-quotes': 2,
 
-    'keyword-spacing': 2,
+    'key-spacing': 2,
 
     'no-extra-semi': 2,
 
@@ -73,7 +81,7 @@ module.exports = {
 
     'no-mixed-spaces-and-tabs': 2,
 
-    'no-multiple-empty-lines': 2,
+    'no-multiple-empty-lines': [`error`, {max: 2, maxBOF: 0, maxEOF: 0}],
 
     'no-tabs': 2,
 
@@ -87,9 +95,9 @@ module.exports = {
 
     'rest-spread-spacing': 2,
 
-    semi: 2,
-
     'space-before-blocks': 2,
+
+    'space-in-parens': 2,
 
     'template-curly-spacing': 2,
   },

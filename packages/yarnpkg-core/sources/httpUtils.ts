@@ -49,7 +49,7 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
     return keyB.length - keyA.length;
   });
 
-  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap['networkSettings']>>
+  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap['networkSettings']>>;
   type UndefinableSettings = { [P in keyof NetworkSettingsType]: NetworkSettingsType[P] | undefined; };
 
   const mergedNetworkSettings: UndefinableSettings = {

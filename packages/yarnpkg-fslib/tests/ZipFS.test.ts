@@ -140,7 +140,7 @@ describe(`ZipFS`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
 
-    zipFs.writeFileSync(`/foo.txt`as PortablePath, `Test`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
     const zipContent = zipFs.getBufferAndClose();
 
@@ -151,7 +151,7 @@ describe(`ZipFS`, () => {
   it(`can handle nested symlinks`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
-    zipFs.writeFileSync(`/foo.txt`as PortablePath, `Test`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
     zipFs.symlinkSync(`/foo.txt` as PortablePath, `/linkA` as PortablePath);
     zipFs.symlinkSync(`/linkA` as PortablePath, `/linkB` as PortablePath);
@@ -571,4 +571,3 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 });
-

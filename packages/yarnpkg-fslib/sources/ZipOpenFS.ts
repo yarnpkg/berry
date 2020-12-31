@@ -55,7 +55,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
   private isZip: Set<PortablePath> = new Set();
   private notZip: Set<PortablePath> = new Set();
-  private realPaths: Map<PortablePath, PortablePath> = new Map()
+  private realPaths: Map<PortablePath, PortablePath> = new Map();
 
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();

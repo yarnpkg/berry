@@ -13,7 +13,7 @@ export enum Pipe {
 export type Stdio = [
   any,
   any,
-  any
+  any,
 ];
 
 export type ProcessImplementation = (

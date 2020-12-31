@@ -561,12 +561,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       // No need to use the return value; we just want to check the blacklist status
       findPackageLocator(unqualifiedPath);
-    }
+    } else {
+      // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
+      // particular the exact version for the given location on the dependency tree
 
-    // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
-    // particular the exact version for the given location on the dependency tree
-
-    else {
       if (!issuer) {
         throw makeError(
           ErrorCode.API_ERROR,
