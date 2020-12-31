@@ -17,6 +17,8 @@ module.exports = {
 
     '@typescript-eslint/keyword-spacing': 2,
 
+    '@typescript-eslint/comma-spacing': 2,
+
     '@typescript-eslint/naming-convention': [`error`, {
       selector: `default`,
       format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
