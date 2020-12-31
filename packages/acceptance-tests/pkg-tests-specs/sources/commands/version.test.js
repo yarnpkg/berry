@@ -1,3 +1,5 @@
+import {xfs, ppath} from '@yarnpkg/fslib';
+
 const {
   fs: {readJson},
 } = require(`pkg-tests-core`);
@@ -195,6 +197,49 @@ describe(`Commands`, () => {
           version: `0.0.1`,
         });
       }),
+    );
+
+    test(
+      `it should correctly report a dependent workspace when unable to upgrade its version.`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [
+            `packages/*`,
+          ],
+        },
+        {
+          plugins: [
+            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+          ],
+        },
+        async ({path, run, source}) => {
+          // Create the primary package.
+          const pkgPrimary = ppath.join(path, `packages/pkg-primary`);
+          await xfs.mkdirpPromise(pkgPrimary);
+          await xfs.writeJsonPromise(ppath.join(pkgPrimary, `package.json`), {
+            name: `pkg-primary`,
+            version: `1.0.0`,
+          });
+
+          // Create the dependant package.
+          const pkgDependant = ppath.join(path, `packages/pkg-dependant`);
+          await xfs.mkdirpPromise(pkgDependant);
+          await xfs.writeJsonPromise(ppath.join(pkgDependant, `package.json`), {
+            name: `pkg-dependant`,
+            version: `1.0.0`,
+            dependencies: {
+              [`pkg-primary`]: `workspace:*`,
+            },
+          });
+
+          await run(`install`);
+
+          expect(run(`workspace`, `pkg-primary`, `version`, `patch`)).resolves.toMatchObject({
+            code: 0,
+            stdout: expect.stringContaining(`Couldn't auto-upgrade range * (in pkg-dependant@workspace:packages/pkg-dependant)`),
+          });
+        }),
     );
   });
 });
