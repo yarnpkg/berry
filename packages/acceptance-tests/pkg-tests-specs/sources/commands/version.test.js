@@ -243,7 +243,7 @@ describe(`Commands`, () => {
             await run(`install`);
 
             // Execute a version patch.
-            ({stdout} = await run(`workspace`,`pkg-primary`,`version`, `patch`));
+            ({stdout} = await run(`workspace`, `pkg-primary`, `version`, `patch`));
           } catch (error) {
             ({stdout} = error);
           }
