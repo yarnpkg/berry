@@ -265,7 +265,7 @@ export class Manifest {
         this.browser = new Map();
         for (const [key, value] of Object.entries(data.browser)) {
           this.browser.set(
-            normalizeSlashes(key) ,
+            normalizeSlashes(key),
             typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
           );
         }
@@ -493,7 +493,7 @@ export class Manifest {
           this.publishConfig.browser = new Map();
           for (const [key, value] of Object.entries(data.publishConfig.browser)) {
             this.publishConfig.browser.set(
-              normalizeSlashes(key) ,
+              normalizeSlashes(key),
               typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
             );
           }
