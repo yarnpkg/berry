@@ -49,12 +49,12 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
     return keyB.length - keyA.length;
   });
 
-  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap['networkSettings']>>
+  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap['networkSettings']>>;
   type UndefinableSettings = { [P in keyof NetworkSettingsType]: NetworkSettingsType[P] | undefined; };
 
   const mergedNetworkSettings: UndefinableSettings = {
     enableNetwork: undefined,
-    caFilePath: undefined ,
+    caFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
   };
@@ -102,12 +102,10 @@ export type Options = {
   headers?: {[headerName: string]: string};
   jsonRequest?: boolean,
   jsonResponse?: boolean,
-  /** @deprecated use jsonRequest and jsonResponse instead */
-  json?: boolean;
   method?: Method,
 };
 
-export async function request(target: string, body: Body, {configuration, headers, json, jsonRequest = json, jsonResponse = json, method = Method.GET}: Options) {
+export async function request(target: string, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Options) {
   const networkConfig = getNetworkSettings(target, {configuration});
   if (networkConfig.enableNetwork === false)
     throw new Error(`Request to '${target}' has been blocked because of your configuration settings`);
@@ -167,7 +165,7 @@ export async function request(target: string, body: Body, {configuration, header
   });
 }
 
-export async function get(target: string, {configuration, json, jsonResponse = json, ...rest}: Options) {
+export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
   let entry = cache.get(target);
 
   if (!entry) {

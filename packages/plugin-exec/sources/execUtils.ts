@@ -62,4 +62,3 @@ export async function loadGeneratorFile(range: string, protocol: string, opts: F
 
   return await generatorFs.readFilePromise(generatorPath, `utf8`);
 }
-

@@ -38,7 +38,7 @@ export enum Type {
 }
 
 export enum Style {
-  BOLD = 1 << 1
+  BOLD = 1 << 1,
 }
 
 const chalkOptions = process.env.GITHUB_ACTIONS

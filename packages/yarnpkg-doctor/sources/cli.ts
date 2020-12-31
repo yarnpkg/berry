@@ -104,7 +104,7 @@ function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode
   report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Webpack configs from non-private packages should avoid referencing loaders without require.resolve`);
 }
 
-function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression , {configuration, report}: {configuration: Configuration, report: Report}) {
+function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression, {configuration, report}: {configuration: Configuration, report: Report}) {
   const match = /node_modules(?!(\\{2}|\/)\.cache)/g.test(stringishNode.getText());
   if (match) {
     const prettyLocation = ast.prettyNodeLocation(configuration, stringishNode);
@@ -161,19 +161,19 @@ function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, 
 
       case ts.SyntaxKind.StringLiteral: {
         const stringNode = node as ts.StringLiteral;
-        checkForNodeModuleStrings(stringNode, {configuration, report} );
+        checkForNodeModuleStrings(stringNode, {configuration, report});
       } break;
 
       case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
         const stringNode = node as ts.NoSubstitutionTemplateLiteral;
 
-        checkForNodeModuleStrings(stringNode, {configuration, report} );
+        checkForNodeModuleStrings(stringNode, {configuration, report});
       } break;
 
       case ts.SyntaxKind.TemplateExpression: {
         const stringNode = node as ts.TemplateExpression;
 
-        checkForNodeModuleStrings(stringNode, {configuration, report} );
+        checkForNodeModuleStrings(stringNode, {configuration, report});
       } break;
     }
 

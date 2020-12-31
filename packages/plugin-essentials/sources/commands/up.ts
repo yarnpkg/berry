@@ -173,7 +173,7 @@ export default class UpCommand extends BaseCommand {
       Workspace,
       suggestUtils.Target,
       Descriptor,
-      Descriptor
+      Descriptor,
     ]> = [];
 
     for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {

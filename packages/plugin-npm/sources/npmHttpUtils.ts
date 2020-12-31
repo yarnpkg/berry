@@ -191,7 +191,7 @@ function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGUR
     return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
-    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
+    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);
   } else {
     return null;
   }
@@ -215,7 +215,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 }
 
 async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
-  if (typeof headers === `undefined` || typeof headers.authorization === `undefined` )
+  if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
     return `an anonymous user`;
 
   try {

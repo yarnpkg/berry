@@ -29,4 +29,3 @@ export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeF
     automaticNewlines: true,
   });
 };
-
