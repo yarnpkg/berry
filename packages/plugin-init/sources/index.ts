@@ -12,6 +12,11 @@ declare module '@yarnpkg/core' {
 
 const plugin: Plugin = {
   configuration: {
+    createDefaultFiles: {
+      description: `If true, create some basic files in the project directory`,
+      type: SettingsType.BOOLEAN,
+      default: true,
+    },
     initScope: {
       description: `Scope used when creating packages via the init command`,
       type: SettingsType.STRING,

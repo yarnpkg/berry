@@ -156,14 +156,21 @@ export default class InitCommand extends BaseCommand {
     const manifestPath = ppath.join(this.context.cwd, Manifest.fileName);
     await xfs.changeFilePromise(manifestPath, `${JSON.stringify(serialized, null, 2)}\n`);
 
-    const readmePath = ppath.join(this.context.cwd, `README.md` as Filename);
-    if (!xfs.existsSync(readmePath))
-      await xfs.writeFilePromise(readmePath, `# ${structUtils.stringifyIdent(manifest.name)}\n`);
+    const createDefaultFiles = configuration.get(`createDefaultFiles`);
+
+    if (createDefaultFiles) {
+      const readmePath = ppath.join(this.context.cwd, `README.md` as Filename);
+      if (!xfs.existsSync(readmePath)) {
+        await xfs.writeFilePromise(readmePath, `# ${structUtils.stringifyIdent(manifest.name)}\n`);
+      }
+    }
 
     if (!existingProject) {
       const lockfilePath = ppath.join(this.context.cwd, Filename.lockfile);
       await xfs.writeFilePromise(lockfilePath, ``);
+    }
 
+    if (!existingProject && createDefaultFiles) {
       const gitattributesLines = [
         `/.yarn/** linguist-vendored`,
       ];
