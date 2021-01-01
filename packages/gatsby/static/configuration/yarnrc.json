@@ -248,6 +248,12 @@
       "default": [],
       "_exampleItems": ["**/.pnp.js"]
     },
+    "createDefaultFiles": {
+      "_package": "@yarnpkg/plugin-init",
+      "description": "If false, Yarn will not initialize your project directory with a git repo, a README, a gitignore, and other helpful additions.",
+      "type": "boolean",
+      "default": true
+    },
     "initScope": {
       "_package": "@yarnpkg/plugin-init",
       "description": "Scope used when creating packages via the `init` command.",
