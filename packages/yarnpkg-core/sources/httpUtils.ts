@@ -1,10 +1,10 @@
 import {ConfigurationValueMap}           from '@yarnpkg/core';
 import {PortablePath, xfs}               from '@yarnpkg/fslib';
 import {ExtendOptions, Response}         from 'got';
+import {HttpProxyAgent, HttpsProxyAgent} from 'hpagent';
 import {Agent as HttpsAgent}             from 'https';
 import {Agent as HttpAgent}              from 'http';
 import micromatch                        from 'micromatch';
-import tunnel, {ProxyOptions}            from 'tunnel';
 import {URL}                             from 'url';
 
 import {Configuration}                   from './Configuration';
@@ -15,16 +15,6 @@ const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
-
-function parseProxy(specifier: string) {
-  const url = new URL(specifier);
-  const proxy: ProxyOptions = {host: url.hostname, headers: {}};
-
-  if (url.port)
-    proxy.port = Number(url.port);
-
-  return {proxy};
-}
 
 async function getCachedCertificate(caFilePath: PortablePath) {
   let certificate = certCache.get(caFilePath);
@@ -116,10 +106,10 @@ export async function request(target: string, body: Body, {configuration, header
 
   const agent = {
     http: networkConfig.httpProxy
-      ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
+      ? new HttpProxyAgent({proxy: networkConfig.httpProxy})
       : globalHttpAgent,
     https: networkConfig.httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
+      ? new HttpsProxyAgent({proxy: networkConfig.httpsProxy})
       : globalHttpsAgent,
   };
 
