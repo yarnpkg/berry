@@ -8,6 +8,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, E
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {ZipFS}                                                                                                                                       from './ZipFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
+import * as errors                                                                                                                                   from './errors';
 import {Filename, FSPath, PortablePath}                                                                                                              from './path';
 
 const ZIP_FD = 0x80000000;
@@ -154,7 +155,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+      throw errors.EBADF(`read`);
 
     const [zipFs, realFd] = entry;
     return await zipFs.readPromise(realFd, buffer, offset, length, position);
@@ -166,7 +167,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+      throw errors.EBADF(`readSync`);
 
     const [zipFs, realFd] = entry;
     return zipFs.readSync(realFd, buffer, offset, length, position);
@@ -185,7 +186,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {code: `EBADF`});
+      throw errors.EBADF(`write`);
 
     const [zipFs, realFd] = entry;
 
@@ -209,7 +210,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {code: `EBADF`});
+      throw errors.EBADF(`writeSync`);
 
     const [zipFs, realFd] = entry;
 
@@ -226,7 +227,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {code: `EBADF`});
+      throw errors.EBADF(`close`);
 
     this.fdMap.delete(fd);
 
@@ -240,7 +241,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {code: `EBADF`});
+      throw errors.EBADF(`closeSync`);
 
     this.fdMap.delete(fd);
 
