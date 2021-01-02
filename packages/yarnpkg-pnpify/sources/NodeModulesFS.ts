@@ -302,6 +302,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.statSync(this.resolveDirOrFilePath(p));
   }
 
+  async fstatPromise(fd: number) {
+    return await this.baseFs.fstatPromise(fd);
+  }
+
+  fstatSync(fd: number) {
+    return this.baseFs.fstatSync(fd);
+  }
+
   async lstatPromise(p: PortablePath) {
     return this.resolveLink(p, `lstat`,
       stats => PortableNodeModulesFS.makeSymlinkStats(stats),

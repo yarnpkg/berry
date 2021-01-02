@@ -161,6 +161,9 @@ export abstract class FakeFS<P extends Path> {
   abstract statPromise(p: P): Promise<Stats>;
   abstract statSync(p: P): Stats;
 
+  abstract fstatPromise(fd: number): Promise<Stats>;
+  abstract fstatSync(fd: number): Stats;
+
   abstract lstatPromise(p: P): Promise<Stats>;
   abstract lstatSync(p: P): Stats;
 

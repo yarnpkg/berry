@@ -164,6 +164,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.statSync(npath.fromPortablePath(p));
   }
 
+  async fstatPromise(fd: number) {
+    return await new Promise<Stats>((resolve, reject) => {
+      this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+    });
+  }
+
+  fstatSync(fd: number) {
+    return this.realFs.fstatSync(fd);
+  }
+
   async lstatPromise(p: PortablePath) {
     return await new Promise<Stats>((resolve, reject) => {
       this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
