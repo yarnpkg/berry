@@ -19,6 +19,10 @@
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
 - `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
 
+### Bugfixes
+
+- The patched fs now supports file URLs.
+
 ### Settings
 
 - Various `initFields` edge cases have been fixed.
