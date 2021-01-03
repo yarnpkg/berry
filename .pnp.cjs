@@ -51692,23 +51692,28 @@ function makeManager(pnpapi, opts) {
   }
 
   function findApiPathFor(modulePath) {
-    const controlledBy = [];
+    const candidates = [];
 
     for (const [apiPath, apiEntry] of apiMetadata) {
       const locator = apiEntry.instance.findPackageLocator(modulePath);
-
-      if (locator) {
-        if (apiMetadata.size === 1) {
-          return apiPath;
-        } else {
-          controlledBy.push(apiPath);
-        }
-      }
+      if (!locator) continue;
+      if (apiMetadata.size === 1) return apiPath;
+      const packageInformation = apiEntry.instance.getPackageInformation(locator);
+      if (!packageInformation) throw new Error(`Assertion failed: Couldn't get package information for '${modulePath}'`);
+      candidates.push({
+        packageLocation: packageInformation.packageLocation,
+        apiPath
+      });
     }
 
-    if (controlledBy.length !== 0) {
-      if (controlledBy.length === 1) return controlledBy[0];
-      throw new Error(`Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\nThis is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${controlledBy.map(pnpPath => `  ${npath.fromPortablePath(pnpPath)}`).join(`\n`)}`);
+    if (candidates.length === 1) return candidates[0].apiPath;
+
+    if (candidates.length > 1) {
+      const [candidateA, candidateB] = [...candidates].sort((a, b) => b.packageLocation.length - a.packageLocation.length);
+      if (candidateA.packageLocation.length > candidateB.packageLocation.length) return candidateA.apiPath;
+      throw new Error(`Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\n` + `This is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${candidates.map(({
+        apiPath
+      }) => `  ${npath.fromPortablePath(apiPath)}`).join(`\n`)}`);
     }
 
     const start = ppath.resolve(npath.toPortablePath(modulePath));
