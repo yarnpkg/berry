@@ -4,7 +4,6 @@ import {Command, Usage, UsageError}                                         from
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 import TerserPlugin                                                         from 'terser-webpack-plugin';
-import {ConcatSource}                                                       from "webpack-sources";
 import webpack                                                              from 'webpack';
 
 
@@ -122,7 +121,7 @@ export default class BuildPluginCommand extends Command {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
                       // @ts-expect-error
-                      compilation.assets[file] = new ConcatSource(
+                      compilation.assets[file] = new webpack.sources.ConcatSource(
                         [
                           `/* eslint-disable */`,
                           `module.exports = {`,
