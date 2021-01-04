@@ -5421,12 +5421,14 @@ __metadata:
     "@types/webpack-merge": ^4.1.5
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
+    "@yarnpkg/esbuild-plugin-pnp": "workspace:packages/esbuild-plugin-pnp"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
     clipanion: ^2.6.2
+    esbuild-wasm: ^0.8.31
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
     semver: ^7.1.2
@@ -5554,6 +5556,18 @@ __metadata:
     typescript: 4.1.0-beta
   bin:
     doctor: ./sources/boot-cli-dev.js
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
+  dependencies:
+    "@yarnpkg/pnp": "workspace:^2.3.2"
+    esbuild-wasm: ^0.8.31
+    tslib: ^1.13.0
+  peerDependencies:
+    esbuild-wasm: ^0.8.29
   languageName: unknown
   linkType: soft
 
@@ -11217,6 +11231,15 @@ __metadata:
     d: ^1.0.1
     ext: ^1.1.2
   checksum: 0915d72de8760b56b69ca4360276123a4f61de5a3172fe340ce9288271cf48bcebe3ee46ca8ee0f2fd73206bbbefa7c4a40a6673d278a87c97d3a155de778931
+  languageName: node
+  linkType: hard
+
+"esbuild-wasm@npm:^0.8.31":
+  version: 0.8.31
+  resolution: "esbuild-wasm@npm:0.8.31"
+  bin:
+    esbuild: bin/esbuild
+  checksum: 4d6495f561d525e556f544e8a223ceaa149daccd21ade4d3d52275ae24225d343b3d7d91827262541a19134c46f4982519d6308981fe3439ae3cc68ef767370b
   languageName: node
   linkType: hard
 

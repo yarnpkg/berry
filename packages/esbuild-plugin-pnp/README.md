@@ -1,0 +1,1 @@
+# `@yarnpkg/esbuild-plugin-pnp`

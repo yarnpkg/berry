@@ -985,7 +985,7 @@ export class Configuration {
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
-        requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
+        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
@@ -996,7 +996,7 @@ export class Configuration {
       };
 
       const importPlugin = (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+        const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
