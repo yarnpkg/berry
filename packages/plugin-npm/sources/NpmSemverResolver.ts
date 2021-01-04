@@ -54,7 +54,7 @@ export class NpmSemverResolver implements Resolver {
     });
 
     const candidates = Object.keys(registryData.versions)
-      .map(version => new semverUtils.SemVer(version))
+      .map(version => new semverUtils.SemVer(version, { loose: true }))
       .filter(version => range.test(version));
 
     const noDeprecatedCandidates = candidates.filter(version => {
