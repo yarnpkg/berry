@@ -120,7 +120,6 @@ export default class BuildPluginCommand extends Command {
                 compilation.hooks.optimizeChunkAssets.tap(`WrapperPlugin`, (chunks: Set<webpack.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
-                      // @ts-expect-error
                       compilation.assets[file] = new webpack.sources.ConcatSource(
                         [
                           `/* eslint-disable */`,
