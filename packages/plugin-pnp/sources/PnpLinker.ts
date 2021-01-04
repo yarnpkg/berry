@@ -255,6 +255,10 @@ export class PnpInstaller implements Installer {
     };
   }
 
+  async transformPnpSettings(pnpSettings: PnpSettings) {
+    // Nothing to transform
+  }
+
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
       return;
@@ -282,6 +286,8 @@ export class PnpInstaller implements Installer {
         await xfs.removePromise(nodeModulesPath);
       }
     }
+
+    await this.transformPnpSettings(pnpSettings);
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);

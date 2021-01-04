@@ -16,10 +16,7 @@ export class PnpLooseLinker extends PnpLinker {
 class PnpLooseInstaller extends PnpInstaller {
   protected mode = `loose`;
 
-  async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
-    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return undefined;
-
+  async transformPnpSettings(pnpSettings: PnpSettings) {
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({
         libzip: await getLibzipPromise(),
@@ -79,7 +76,5 @@ class PnpLooseInstaller extends PnpInstaller {
         }
       }
     }
-
-    return super.finalizeInstallWithPnp(pnpSettings);
   }
 }
