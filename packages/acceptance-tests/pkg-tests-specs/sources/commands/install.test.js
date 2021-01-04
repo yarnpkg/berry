@@ -39,7 +39,7 @@ describe(`Commands`, () => {
           [`no-deps-scripted`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        const pnpPath = ppath.join(path, Filename.pnpJs);
+        const pnpPath = ppath.join(path, Filename.pnpCjs);
 
         await run(`install`);
         const pnpFileWithBuilds = await xfs.readFilePromise(pnpPath);

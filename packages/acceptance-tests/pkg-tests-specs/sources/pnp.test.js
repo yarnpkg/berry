@@ -9,20 +9,20 @@ const {
 
 describe(`Plug'n'Play`, () => {
   test(
-    `it should not touch the .pnp.js file when it already exists and is up-to-date`,
+    `it should not touch the .pnp.cjs file when it already exists and is up-to-date`,
     makeTemporaryEnv(
       {},
       async ({path, run, source}) => {
         await run(`install`);
 
-        const beforeTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
+        const beforeTime = (await xfs.statPromise(`${path}/.pnp.cjs`)).mtimeMs;
 
         // Need to wait two seconds to be sure that the mtime will change
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         await run(`install`);
 
-        const afterTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
+        const afterTime = (await xfs.statPromise(`${path}/.pnp.cjs`)).mtimeMs;
 
         expect(afterTime).toEqual(beforeTime);
       },
@@ -30,13 +30,13 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should update the .pnp.js file when it already exists but isn't up-to-date`,
+    `it should update the .pnp.cjs file when it already exists but isn't up-to-date`,
     makeTemporaryEnv(
       {},
       async ({path, run, source}) => {
         await run(`install`);
 
-        const beforeTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
+        const beforeTime = (await xfs.statPromise(`${path}/.pnp.cjs`)).mtimeMs;
 
         await writeJson(`${path}/package.json`, {
           dependencies: {
@@ -49,7 +49,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        const afterTime = (await xfs.statPromise(`${path}/.pnp.js`)).mtimeMs;
+        const afterTime = (await xfs.statPromise(`${path}/.pnp.cjs`)).mtimeMs;
 
         expect(afterTime).not.toEqual(beforeTime);
       },
@@ -113,8 +113,8 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      const api = require(`${path}/.pnp.js`);
-      api.resolveToUnqualified(`${path}/.pnp.js`, `${path}/some/path/that/doesnt/exists/please/`);
+      const api = require(`${path}/.pnp.cjs`);
+      api.resolveToUnqualified(`${path}/.pnp.cjs`, `${path}/some/path/that/doesnt/exists/please/`);
     }),
   );
 
@@ -621,7 +621,7 @@ describe(`Plug'n'Play`, () => {
 
   testIf(
     () => satisfies(process.versions.node, `>=8.9.0`),
-    `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.js in the working dir`,
+    `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.cjs in the working dir`,
     makeTemporaryEnv(
       {
         private: true,
@@ -853,9 +853,9 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect((await xfs.statPromise(`${path}/.pnp.js`)).mode & 0o111).toEqual(0o111);
+        expect((await xfs.statPromise(`${path}/.pnp.cjs`)).mode & 0o111).toEqual(0o111);
 
-        const result = JSON.parse(cp.execFileSync(`${path}/.pnp.js`, [`no-deps`, `${path}/`], {encoding: `utf-8`}));
+        const result = JSON.parse(cp.execFileSync(`${path}/.pnp.cjs`, [`no-deps`, `${path}/`], {encoding: `utf-8`}));
 
         expect(result[0]).toEqual(null);
         expect(typeof result[1]).toEqual(`string`);
@@ -880,9 +880,9 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect((await xfs.statPromise(`${path}/.pnp.js`)).mode & 0o111).toEqual(0o111);
+        expect((await xfs.statPromise(`${path}/.pnp.cjs`)).mode & 0o111).toEqual(0o111);
 
-        const result = JSON.parse(cp.execFileSync(`${path}/.pnp.js`, [`fs`, `${path}/`], {encoding: `utf-8`}));
+        const result = JSON.parse(cp.execFileSync(`${path}/.pnp.cjs`, [`fs`, `${path}/`], {encoding: `utf-8`}));
 
         expect(result[0]).toEqual(null);
         expect(result[1]).toEqual(null);
@@ -902,10 +902,10 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        expect((await xfs.statPromise(`${path}/.pnp.js`)).mode & 0o111).toEqual(0o111);
+        expect((await xfs.statPromise(`${path}/.pnp.cjs`)).mode & 0o111).toEqual(0o111);
 
         const result = JSON.parse(
-          cp.execFileSync(`${path}/.pnp.js`, [`doesnt-exists`, `${path}/`], {encoding: `utf-8`}),
+          cp.execFileSync(`${path}/.pnp.cjs`, [`doesnt-exists`, `${path}/`], {encoding: `utf-8`}),
         );
 
         expect(typeof result[0].code).toEqual(`string`);
@@ -926,7 +926,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const pnpJs = await readFile(`${path}/.pnp.js`, `utf8`);
+        const pnpJs = await readFile(`${path}/.pnp.cjs`, `utf8`);
 
         expect(pnpJs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
       },
@@ -1033,9 +1033,9 @@ describe(`Plug'n'Play`, () => {
           },
           async ({path: path2, run: run2, source: source2}) => {
             // Move the install artifacts into a new location
-            // If the .pnp.js file references absolute paths, they will stop working
+            // If the .pnp.cjs file references absolute paths, they will stop working
             await xfs.renamePromise(`${path}/.yarn`, `${path2}/.yarn`);
-            await xfs.renamePromise(`${path}/.pnp.js`, `${path2}/.pnp.js`);
+            await xfs.renamePromise(`${path}/.pnp.cjs`, `${path2}/.pnp.cjs`);
 
             await expect(source2(`require('no-deps')`)).resolves.toMatchObject({
               name: `no-deps`,
@@ -1069,7 +1069,7 @@ describe(`Plug'n'Play`, () => {
 
             await run2(`install`);
 
-            expect(readFile(`${path2}/.pnp.js`, `utf8`)).resolves.toEqual(await readFile(`${path}/.pnp.js`, `utf8`));
+            expect(readFile(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await readFile(`${path}/.pnp.cjs`, `utf8`));
           },
         )();
       },
@@ -1358,7 +1358,7 @@ describe(`Plug'n'Play`, () => {
         const rndBefore = await source(`require('no-deps-scripted/rnd.js')`);
 
         await xfs.removePromise(`${path}/.yarn`);
-        await xfs.removePromise(`${path}/.pnp.js`);
+        await xfs.removePromise(`${path}/.pnp.cjs`);
 
         await run(`install`);
 
@@ -1582,7 +1582,7 @@ describe(`Plug'n'Play`, () => {
 
       cp.execFileSync(`node`, [
         npath.fromPortablePath(`${tmp}/index.js`),
-        npath.fromPortablePath(`${path}/.pnp.js`),
+        npath.fromPortablePath(`${path}/.pnp.cjs`),
       ], {encoding: `utf-8`});
     }),
   );

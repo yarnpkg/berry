@@ -1,11 +1,8 @@
-import {Plugin, Project, SettingsType} from '@yarnpkg/core';
-import {Filename, ppath}               from '@yarnpkg/fslib';
-import {NodeModulesHoistingLimits}     from '@yarnpkg/pnpify';
+import {Plugin, SettingsType}      from '@yarnpkg/core';
+import {NodeModulesHoistingLimits} from '@yarnpkg/pnpify';
 
-import {NodeModulesLinker}             from './NodeModulesLinker';
-import {PnpLooseLinker}                from './PnpLooseLinker';
-
-export const getPnpPath = (project: Project) => ppath.join(project.cwd, `.pnp.js` as Filename);
+import {NodeModulesLinker}         from './NodeModulesLinker';
+import {PnpLooseLinker}            from './PnpLooseLinker';
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {

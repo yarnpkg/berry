@@ -132,13 +132,15 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       if (cached !== undefined)
         return addToCacheAndReturn(start, curr, cached);
 
-      const candidate = ppath.join(curr, `.pnp.js` as Filename);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile())
-        return addToCacheAndReturn(start, curr, candidate);
-
-      const cjsCandidate = ppath.join(curr, `.pnp.cjs` as Filename);
+      const cjsCandidate = ppath.join(curr, Filename.pnpCjs);
       if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
         return addToCacheAndReturn(start, curr, cjsCandidate);
+
+      // We still support .pnp.js files to improve multi-project compatibility.
+      // TODO: Remove support for .pnp.js files after they stop being used.
+      const legacyCjsCandidate = ppath.join(curr, Filename.pnpJs);
+      if (xfs.existsSync(legacyCjsCandidate) && xfs.statSync(legacyCjsCandidate).isFile())
+        return addToCacheAndReturn(start, curr, legacyCjsCandidate);
 
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);

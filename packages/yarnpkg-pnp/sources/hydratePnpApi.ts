@@ -21,7 +21,7 @@ const readFileP = promisify(readFile);
 //
 //   - Or if you're not running within a PnP environment, or wish to interact
 //     with a different one than the current one, then you can directly require
-//     its `.pnp.js` file.
+//     its `.pnp.cjs` file.
 //
 // The function exported in this file only work when the PnP data are kept
 // outside of the loader (pnpEnableInlining = false in Yarn), and their only

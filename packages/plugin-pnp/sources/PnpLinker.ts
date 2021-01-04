@@ -33,7 +33,7 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project).main;
+    const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
@@ -49,7 +49,7 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project).main;
+    const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
       return null;
 
@@ -262,10 +262,14 @@ export class PnpInstaller implements Installer {
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
-    await xfs.removePromise(pnpPath.other);
+    if (xfs.existsSync(pnpPath.cjsLegacy)) {
+      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
+
+      await xfs.removePromise(pnpPath.cjsLegacy);
+    }
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
-      await xfs.removePromise(pnpPath.main);
+      await xfs.removePromise(pnpPath.cjs);
       await xfs.removePromise(pnpDataPath);
 
       return;
@@ -282,16 +286,16 @@ export class PnpInstaller implements Installer {
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
 
-      await xfs.changeFilePromise(pnpPath.main, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath.main, 0o755);
+      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {automaticNewlines: true});
+      await xfs.chmodPromise(pnpPath.cjs, 0o755);
 
       await xfs.removePromise(pnpDataPath);
     } else {
-      const dataLocation = ppath.relative(ppath.dirname(pnpPath.main), pnpDataPath);
+      const dataLocation = ppath.relative(ppath.dirname(pnpPath.cjs), pnpDataPath);
       const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
 
-      await xfs.changeFilePromise(pnpPath.main, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath.main, 0o755);
+      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {automaticNewlines: true});
+      await xfs.chmodPromise(pnpPath.cjs, 0o755);
 
       await xfs.changeFilePromise(pnpDataPath, dataFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpDataPath, 0o644);

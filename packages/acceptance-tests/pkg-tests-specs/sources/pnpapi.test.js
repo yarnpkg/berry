@@ -227,7 +227,7 @@ describe(`Plug'n'Play API`, () => {
           await expect(
             source(`require('pnpapi').resolveRequest('pnpapi', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`),
           ).resolves.toEqual(
-            npath.fromPortablePath(`${path}/.pnp.js`),
+            npath.fromPortablePath(`${path}/.pnp.cjs`),
           );
         }),
       );
