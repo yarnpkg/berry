@@ -148,6 +148,12 @@ At some point npm switched to Cloudflare as well, and we turned off the proxy to
 
 While we do gather some basic [client-side telemetry](/advanced/telemetry), no http logs can ever even reach the Yarn project infrastructure - and even less Facebook, which has no control over the project (see also, [Is Yarn operated by Facebook?](/getting-started/qa#is-yarn-operated-by-facebook)).
 
+## Queries to `registry.yarnpkg.com` return a 404/500/...; is it down?
+
+**No.**
+
+As mentioned in the [previous section](#why-registryyarnpkgcom-does-facebook-track-us), the Yarn registry is just a CNAME to the npm registry. Since we don't even have a backend, any server error can only come from the npm registry and thus should be reported to them and monitored on their [status page](https://status.npmjs.org/).
+
 ## Is Yarn faster than other package managers?
 
 **Shrug 🤷‍♀️**

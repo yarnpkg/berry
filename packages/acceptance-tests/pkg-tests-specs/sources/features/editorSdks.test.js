@@ -66,7 +66,7 @@ describe(`Features`, () => {
         await pnpify([`--sdk`, `base`], path);
 
         await run(`install`, {nodeLinker: `node-modules`});
-        expect(xfs.existsSync(ppath.join(path, `.pnp.js`))).toEqual(false);
+        expect(xfs.existsSync(ppath.join(path, `.pnp.cjs`))).toEqual(false);
 
         const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
