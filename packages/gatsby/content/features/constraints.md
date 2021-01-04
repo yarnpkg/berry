@@ -21,7 +21,7 @@ Constraints are a solution to a very basic need: I have a lot of [workspaces](/f
 
 ## Creating a constraint
 
-Constraints are created by adding a `constraints.pro` file at the root of your project (repository). The `.pro` extension might leave you perplex: this is because constraints aren't written in JavaScript (!) but rather in Prolog, a fact-based rule engine. The goal of this section isn't to teach you Prolog (good tutorials already exist, such as [Learn Prolog in Y Minutes](https://learnxinyminutes.com/docs/prolog/)),
+Constraints are created by adding a `constraints.pro` file at the root of your project (repository). The `.pro` extension might leave you perplexed: this is because constraints aren't written in JavaScript (!) but rather in Prolog, a fact-based rule engine. The goal of this section isn't to teach you Prolog (good tutorials already exist, such as [Learn Prolog in Y Minutes](https://learnxinyminutes.com/docs/prolog/)),
 but rather to show you why we chose it and the value it brings.
 
 As we mentioned, Prolog is a fact-based engine. It starts with a list of *facts* that are always true, and a list of *predicates* that basically read as "predicate `f(X)` is true if `u(X)` and `v(X)` are both true". By computing for which values of `X` are `u(X)` and `v(X)` true, Prolog is able to automatically compute the list of values for which `f(X)` would be true. This is particularly useful for constraints, because it allows you to write very simple but powerful rules that have the ability to affect all your workspaces in very few lines.

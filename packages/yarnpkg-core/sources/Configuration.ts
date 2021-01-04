@@ -579,7 +579,7 @@ type DefinitionForType<T> = T extends Array<infer U>
 // against what's actually put in the `values` field.
 export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
-}
+};
 
 function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
@@ -682,7 +682,7 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const normalizedKey = definition.normalizeKeys? definition.normalizeKeys(propKey) : propKey;
+    const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
     const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
@@ -1307,10 +1307,7 @@ export class Configuration {
   }
 
   get<K extends keyof ConfigurationValueMap>(key: K): ConfigurationValueMap[K];
-  /** @deprecated pass in a known configuration key instead */
-  get<T>(key: string): T;
-  /** @note Type will change to unknown in a future major version */
-  get(key: string): any;
+  get(key: string): unknown;
   get(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
@@ -1424,13 +1421,13 @@ export class Configuration {
       } as const;
 
       for (const dependency of extension.dependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency});
       for (const peerDependency of extension.peerDependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency});
 
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
-          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
+          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value});
         }
       }
     };
@@ -1550,9 +1547,9 @@ export class Configuration {
     return pkg;
   }
 
-  getLimit(key: string) {
+  getLimit<K extends miscUtils.FilterKeys<ConfigurationValueMap, number>>(key: K) {
     return miscUtils.getFactoryWithDefault(this.limits, key, () => {
-      return pLimit(this.get<number>(key));
+      return pLimit(this.get(key));
     });
   }
 
@@ -1612,12 +1609,5 @@ export class Configuration {
     }
 
     return null;
-  }
-
-  /**
-   * @deprecated Prefer using formatUtils.pretty instead, which is type-safe
-   */
-  format(value: string, formatType: formatUtils.Type | string): string {
-    return formatUtils.pretty(this, value, formatType);
   }
 }

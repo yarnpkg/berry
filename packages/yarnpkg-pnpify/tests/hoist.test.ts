@@ -178,10 +178,10 @@ describe(`hoist`, () => {
     //   -> B@X
     //   -> C -> B@Y
     const tree = {
-      '.':   {dependencies: [`A`]},
-      A:   {dependencies: [`B@X`]},
+      '.': {dependencies: [`A`]},
+      A: {dependencies: [`B@X`]},
       'B@X': {dependencies: [`C`]},
-      C:   {dependencies: [`B@Y`]},
+      C: {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
@@ -196,10 +196,10 @@ describe(`hoist`, () => {
     //   -> B@Y
     //   -> C@X
     const tree = {
-      '.':   {dependencies: [`A`, `B@Y`, `C@X`]},
-      A:   {dependencies: [`B@X`, `C@X`]},
+      '.': {dependencies: [`A`, `B@Y`, `C@X`]},
+      A: {dependencies: [`B@X`, `C@X`]},
       'B@X': {dependencies: [`C@Y`]},
-      C:   {dependencies: [`B@Y`]},
+      C: {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
@@ -214,10 +214,10 @@ describe(`hoist`, () => {
     //   -> B@Y
     //   -> C@X
     const tree = {
-      '.':   {dependencies: [`.`, `A`, `B@Y`, `C@X`]},
-      A:   {dependencies: [`A`, `B@X`, `C@X`]},
+      '.': {dependencies: [`.`, `A`, `B@Y`, `C@X`]},
+      A: {dependencies: [`A`, `B@X`, `C@X`]},
       'B@X': {dependencies: [`B@X`, `C@Y`]},
-      C:   {dependencies: [`B@Y`]},
+      C: {dependencies: [`B@Y`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });

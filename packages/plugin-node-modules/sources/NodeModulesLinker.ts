@@ -530,7 +530,7 @@ type LocationRoot = PortablePath;
  *   ...
  * }
  */
-type LocationTree = Map<LocationRoot, LocationNode>
+type LocationTree = Map<LocationRoot, LocationNode>;
 
 const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: PortablePath}): {locationRoot: PortablePath, segments: Array<Filename>} => {
   const projectRelativePath = ppath.contains(skipPrefix, location);

@@ -157,4 +157,3 @@ export function genCommitMessage(consensus: Consensus, actions: Array<[ActionTyp
 
   return `${prefix}${all.join(`, `)}`;
 }
-

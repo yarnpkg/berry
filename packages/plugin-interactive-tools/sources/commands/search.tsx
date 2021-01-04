@@ -147,7 +147,7 @@ export default class SearchCommand extends BaseCommand {
           target =>
             <Box key={target} width={14} marginLeft={1}>
               <Text>
-                {` `}<Gem active={action===target} />{` `}
+                {` `}<Gem active={action === target} />{` `}
                 <Text bold>{target}</Text>
               </Text>
             </Box>

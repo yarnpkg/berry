@@ -121,7 +121,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-catch-links`,
       options: {
-        excludePattern: /^\/api$/,
+        excludePattern: /^\/(api|playground)$/,
       },
     },
     {

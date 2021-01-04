@@ -487,7 +487,7 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
       // We can only auto-upgrade the basic semver ranges (we can't auto-upgrade ">=1.0.0 <2.0.0", for example)
       const parsed = range.match(SUPPORTED_UPGRADE_REGEXP);
       if (!parsed) {
-        report.reportWarning(MessageName.UNNAMED, `Couldn't auto-upgrade range ${range} (in ${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
+        report.reportWarning(MessageName.UNNAMED, `Couldn't auto-upgrade range ${range} (in ${structUtils.prettyLocator(project.configuration, dependent.anchoredLocator)})`);
         continue;
       }
 

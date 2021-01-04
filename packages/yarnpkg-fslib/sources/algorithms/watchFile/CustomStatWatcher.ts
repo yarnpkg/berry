@@ -7,7 +7,7 @@ import * as statUtils                                             from '../../st
 
 export enum Event {
   Change = `change`,
-  Stop = `stop`
+  Stop = `stop`,
 }
 
 export enum Status {

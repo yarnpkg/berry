@@ -102,7 +102,7 @@ export type NodeModulesLocatorMap = Map<LocatorKey, {
   linkType: LinkType;
   locations: Array<PortablePath>;
   aliases: Array<string>;
-}>
+}>;
 
 export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {
   const map = new Map();
@@ -124,7 +124,7 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
     val.locations = val.locations.sort((loc1: PortablePath, loc2: PortablePath) => {
       const len1 = loc1.split(ppath.delimiter).length;
       const len2 = loc2.split(ppath.delimiter).length;
-      return len1 !== len2 ? len2 - len1: loc2.localeCompare(loc1);
+      return len1 !== len2 ? len2 - len1 : loc2.localeCompare(loc1);
     });
   }
 
@@ -528,7 +528,7 @@ const dumpNodeModulesTree = (tree: NodeModulesTree, rootPath: PortablePath): str
       for (let idx = 0; idx < dirs.length; idx++) {
         const dir = dirs[idx];
         str += `${prefix}${idx < dirs.length - 1 ? `├─` : `└─`}${dirPrefix}${dir}\n`;
-        str += dumpTree(ppath.join(nodePath, dir), `${prefix}${idx < dirs.length - 1 ?`│ ` : `  `}`);
+        str += dumpTree(ppath.join(nodePath, dir), `${prefix}${idx < dirs.length - 1 ? `│ ` : `  `}`);
       }
     } else {
       const {target, linkType} = node;
@@ -583,7 +583,7 @@ const dumpDepTree = (tree: HoisterResult) => {
     for (let idx = 0; idx < dependencies.length; idx++) {
       const dep = dependencies[idx];
       str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.includes(dep) ? `>` : ``) + dumpLocator({name: dep.name, reference: Array.from(dep.references)[0]})}\n`;
-      str += dumpPackage(dep, [...parents, dep], `${prefix}${idx < dependencies.length - 1 ?`│ ` : `  `}`);
+      str += dumpPackage(dep, [...parents, dep], `${prefix}${idx < dependencies.length - 1 ? `│ ` : `  `}`);
     }
     return str;
   };

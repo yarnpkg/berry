@@ -59,7 +59,9 @@ type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident
  */
 type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident> }>;
 
-enum Hoistable { YES, NO, DEPENDS }
+enum Hoistable {
+  YES, NO, DEPENDS,
+}
 type HoistInfo = {
   isHoistable: Hoistable.YES
 } | {
@@ -69,7 +71,7 @@ type HoistInfo = {
   isHoistable: Hoistable.DEPENDS
   dependsOn: Set<HoisterWorkTree>
   reason: string | null
-}
+};
 
 const makeLocator = (name: string, reference: string) => `${name}@${reference}`;
 const makeIdent = (name: string, reference: string) => {
@@ -79,7 +81,9 @@ const makeIdent = (name: string, reference: string) => {
   return makeLocator(name, realReference);
 };
 
-enum DebugLevel { NONE = -1, PERF = 0, CHECK = 1, REASONS = 2, INTENSIVE_CHECK = 9}
+enum DebugLevel {
+  NONE = -1, PERF = 0, CHECK = 1, REASONS = 2, INTENSIVE_CHECK = 9,
+}
 
 export type HoistOptions = {
   /** Runs self-checks after hoisting is finished */
@@ -88,13 +92,13 @@ export type HoistOptions = {
   debugLevel?: DebugLevel;
   /** Hoist borders are defined by parent node locator and its dependency name. The dependency is considered a border, nothing can be hoisted past this dependency, but dependency can be hoisted */
   hoistingLimits?: Map<Locator, Set<PackageName>>;
-}
+};
 
 type InternalHoistOptions = {
   check?: boolean;
   debugLevel: DebugLevel;
   hoistingLimits: Map<Locator, Set<PackageName>>;
-}
+};
 
 /**
  * Hoists package tree.
@@ -823,8 +827,8 @@ const dumpDepTree = (tree: HoisterWorkTree) => {
       if (!pkg.peerNames.has(dep.name)) {
         const reason = pkg.reasons.get(dep.name);
         const identName = getIdentName(dep.locator);
-        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) + prettyPrintLocator(dep.locator) + (reason ? ` ${reason}`: ``)}\n`;
-        str += dumpPackage(dep, parents, `${prefix}${idx < dependencies.length - 1 ?`│ ` : `  `}`);
+        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) + prettyPrintLocator(dep.locator) + (reason ? ` ${reason}` : ``)}\n`;
+        str += dumpPackage(dep, parents, `${prefix}${idx < dependencies.length - 1 ? `│ ` : `  `}`);
       }
     }
     parents.delete(pkg);

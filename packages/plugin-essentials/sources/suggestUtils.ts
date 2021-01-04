@@ -13,12 +13,12 @@ export type NullableSuggestion = {
   descriptor: Descriptor | null,
   name: string,
   reason: string,
-}
+};
 
 export type Results = {
   suggestions: Array<NullableSuggestion>,
   rejections: Array<Error>,
-}
+};
 
 export enum Target {
   REGULAR = `dependencies`,

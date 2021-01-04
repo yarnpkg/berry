@@ -16,7 +16,7 @@ const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$
 const DEFAULT_WINDOW_SIZE = 10;
 
 type UpgradeSuggestion = {value: string | null, label: string};
-type UpgradeSuggestions = Array<UpgradeSuggestion>
+type UpgradeSuggestions = Array<UpgradeSuggestion>;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
