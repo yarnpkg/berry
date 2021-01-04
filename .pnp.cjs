@@ -38995,7 +38995,12 @@ const Filename = {
   nodeModules: `node_modules`,
   manifest: `package.json`,
   lockfile: `yarn.lock`,
+
+  /**
+   * @deprecated
+   */
   pnpJs: `.pnp.js`,
+  pnpCjs: `.pnp.cjs`,
   rc: `.yarnrc.yml`
 };
 const npath = Object.create((external_path_default()));
@@ -39882,6 +39887,16 @@ class NodeFS extends BasePortableFakeFS {
     return this.realFs.statSync(npath.fromPortablePath(p));
   }
 
+  async fstatPromise(fd) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+    });
+  }
+
+  fstatSync(fd) {
+    return this.realFs.fstatSync(fd);
+  }
+
   async lstatPromise(p) {
     return await new Promise((resolve, reject) => {
       this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
@@ -40249,6 +40264,14 @@ class ProxiedFS extends FakeFS {
 
   statSync(p) {
     return this.baseFs.statSync(this.mapToBase(p));
+  }
+
+  async fstatPromise(fd) {
+    return this.baseFs.fstatPromise(fd);
+  }
+
+  fstatSync(fd) {
+    return this.baseFs.fstatSync(fd);
   }
 
   async lstatPromise(p) {
@@ -41389,6 +41412,22 @@ class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`stat '${p}'`, resolvedP);
   }
 
+  async fstatPromise(fd) {
+    return this.fstatSync(fd);
+  }
+
+  fstatSync(fd) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`) throw EBADF(`fstatSync`);
+    const {
+      p
+    } = entry;
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`stat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`stat '${p}'`);
+    return this.statImpl(`fstat '${p}'`, resolvedP);
+  }
+
   async lstatPromise(p) {
     return this.lstatSync(p);
   }
@@ -42131,6 +42170,7 @@ class ZipFS extends BasePortableFakeFS {
 
 
 
+
 const ZIP_FD = 0x80000000;
 const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
 class ZipOpenFS extends BasePortableFakeFS {
@@ -42260,9 +42300,7 @@ class ZipOpenFS extends BasePortableFakeFS {
   async readPromise(fd, buffer, offset, length, position) {
     if ((fd & ZIP_FD) === 0) return await this.baseFs.readPromise(fd, buffer, offset, length, position);
     const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`) throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {
-      code: `EBADF`
-    });
+    if (typeof entry === `undefined`) throw EBADF(`read`);
     const [zipFs, realFd] = entry;
     return await zipFs.readPromise(realFd, buffer, offset, length, position);
   }
@@ -42270,9 +42308,7 @@ class ZipOpenFS extends BasePortableFakeFS {
   readSync(fd, buffer, offset, length, position) {
     if ((fd & ZIP_FD) === 0) return this.baseFs.readSync(fd, buffer, offset, length, position);
     const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`) throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {
-      code: `EBADF`
-    });
+    if (typeof entry === `undefined`) throw EBADF(`readSync`);
     const [zipFs, realFd] = entry;
     return zipFs.readSync(realFd, buffer, offset, length, position);
   }
@@ -42287,9 +42323,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     }
 
     const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`) throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {
-      code: `EBADF`
-    });
+    if (typeof entry === `undefined`) throw EBADF(`write`);
     const [zipFs, realFd] = entry;
 
     if (typeof buffer === `string`) {
@@ -42309,9 +42343,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     }
 
     const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`) throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {
-      code: `EBADF`
-    });
+    if (typeof entry === `undefined`) throw EBADF(`writeSync`);
     const [zipFs, realFd] = entry;
 
     if (typeof buffer === `string`) {
@@ -42324,9 +42356,7 @@ class ZipOpenFS extends BasePortableFakeFS {
   async closePromise(fd) {
     if ((fd & ZIP_FD) === 0) return await this.baseFs.closePromise(fd);
     const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`) throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {
-      code: `EBADF`
-    });
+    if (typeof entry === `undefined`) throw EBADF(`close`);
     this.fdMap.delete(fd);
     const [zipFs, realFd] = entry;
     return await zipFs.closePromise(realFd);
@@ -42335,9 +42365,7 @@ class ZipOpenFS extends BasePortableFakeFS {
   closeSync(fd) {
     if ((fd & ZIP_FD) === 0) return this.baseFs.closeSync(fd);
     const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`) throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {
-      code: `EBADF`
-    });
+    if (typeof entry === `undefined`) throw EBADF(`closeSync`);
     this.fdMap.delete(fd);
     const [zipFs, realFd] = entry;
     return zipFs.closeSync(realFd);
@@ -42459,6 +42487,22 @@ class ZipOpenFS extends BasePortableFakeFS {
     }) => {
       return zipFs.statSync(subPath);
     });
+  }
+
+  async fstatPromise(fd) {
+    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatPromise(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`) throw EBADF(`fstat`);
+    const [zipFs, realFd] = entry;
+    return zipFs.fstatPromise(realFd);
+  }
+
+  fstatSync(fd) {
+    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatSync(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`) throw EBADF(`fstatSync`);
+    const [zipFs, realFd] = entry;
+    return zipFs.fstatSync(realFd);
   }
 
   async lstatPromise(p) {
@@ -43354,8 +43398,8 @@ class URLFS extends ProxiedFS {
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/patchFs.ts
 
 
-const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `chownSync`, `closeSync`, `copyFileSync`, `linkSync`, `lstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `opendirSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `truncateSync`, `unlinkSync`, `unwatchFile`, `utimesSync`, `watch`, `watchFile`, `writeFileSync`, `writeSync`]);
-const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `copyFilePromise`, `linkPromise`, `lstatPromise`, `lutimesPromise`, `mkdirPromise`, `openPromise`, `opendirPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `truncatePromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
+const SYNC_IMPLEMENTATIONS = new Set([`accessSync`, `appendFileSync`, `createReadStream`, `chmodSync`, `chownSync`, `closeSync`, `copyFileSync`, `linkSync`, `lstatSync`, `fstatSync`, `lutimesSync`, `mkdirSync`, `openSync`, `opendirSync`, `readSync`, `readlinkSync`, `readFileSync`, `readdirSync`, `readlinkSync`, `realpathSync`, `renameSync`, `rmdirSync`, `statSync`, `symlinkSync`, `truncateSync`, `unlinkSync`, `unwatchFile`, `utimesSync`, `watch`, `watchFile`, `writeFileSync`, `writeSync`]);
+const ASYNC_IMPLEMENTATIONS = new Set([`accessPromise`, `appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `copyFilePromise`, `linkPromise`, `fstatPromise`, `lstatPromise`, `lutimesPromise`, `mkdirPromise`, `openPromise`, `opendirPromise`, `readdirPromise`, `realpathPromise`, `readFilePromise`, `readdirPromise`, `readlinkPromise`, `renamePromise`, `rmdirPromise`, `statPromise`, `symlinkPromise`, `truncatePromise`, `unlinkPromise`, `utimesPromise`, `writeFilePromise`, `writeSync`]);
 const FILEHANDLE_IMPLEMENTATIONS = new Set([`appendFilePromise`, `chmodPromise`, `chownPromise`, `closePromise`, `readPromise`, `readFilePromise`, `statPromise`, `truncatePromise`, `utimesPromise`, `writePromise`, `writeFilePromise`]);
 function patchFs(patchedFs, fakeFs) {
   // We wrap the `fakeFs` with a `URLFS` to add support for URL instances
@@ -44416,177 +44460,177 @@ function makeApi(runtimeState, opts) {
 
 
       findPackageLocator(unqualifiedPath);
-    } // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
-    // particular the exact version for the given location on the dependency tree
-    else {
-        if (!issuer) {
-          throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
+    } else {
+      // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
+      // particular the exact version for the given location on the dependency tree
+      if (!issuer) {
+        throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`, {
+          request: requestForDisplay,
+          issuer: issuerForDisplay
+        });
+      }
+
+      const [, dependencyName, subPath] = dependencyNameMatch;
+      const issuerLocator = findPackageLocator(issuer); // If the issuer file doesn't seem to be owned by a package managed through pnp, then we resort to using the next
+      // resolution algorithm in the chain, usually the native Node resolution one
+
+      if (!issuerLocator) {
+        const result = callNativeResolution(request, issuer);
+
+        if (result === false) {
+          throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
             request: requestForDisplay,
             issuer: issuerForDisplay
           });
         }
 
-        const [, dependencyName, subPath] = dependencyNameMatch;
-        const issuerLocator = findPackageLocator(issuer); // If the issuer file doesn't seem to be owned by a package managed through pnp, then we resort to using the next
-        // resolution algorithm in the chain, usually the native Node resolution one
+        return npath.toPortablePath(result);
+      }
 
-        if (!issuerLocator) {
-          const result = callNativeResolution(request, issuer);
+      const issuerInformation = getPackageInformationSafe(issuerLocator); // We obtain the dependency reference in regard to the package that request it
 
-          if (result === false) {
-            throw internalTools_makeError(ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`, {
-              request: requestForDisplay,
-              issuer: issuerForDisplay
-            });
-          }
+      let dependencyReference = issuerInformation.packageDependencies.get(dependencyName);
+      let fallbackReference = null; // If we can't find it, we check if we can potentially load it from the packages that have been defined as potential fallbacks.
+      // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
+      // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
 
-          return npath.toPortablePath(result);
-        }
+      if (dependencyReference == null) {
+        if (issuerLocator.name !== null) {
+          // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
+          // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
+          const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
+          const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
 
-        const issuerInformation = getPackageInformationSafe(issuerLocator); // We obtain the dependency reference in regard to the package that request it
+          if (canUseFallbacks) {
+            for (let t = 0, T = fallbackLocators.length; t < T; ++t) {
+              const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
+              const reference = fallbackInformation.packageDependencies.get(dependencyName);
+              if (reference == null) continue;
+              if (alwaysWarnOnFallback) fallbackReference = reference;else dependencyReference = reference;
+              break;
+            }
 
-        let dependencyReference = issuerInformation.packageDependencies.get(dependencyName);
-        let fallbackReference = null; // If we can't find it, we check if we can potentially load it from the packages that have been defined as potential fallbacks.
-        // It's a bit of a hack, but it improves compatibility with the existing Node ecosystem. Hopefully we should eventually be able
-        // to kill this logic and become stricter once pnp gets enough traction and the affected packages fix themselves.
+            if (runtimeState.enableTopLevelFallback) {
+              if (dependencyReference == null && fallbackReference === null) {
+                const reference = runtimeState.fallbackPool.get(dependencyName);
 
-        if (dependencyReference == null) {
-          if (issuerLocator.name !== null) {
-            // To allow programs to become gradually stricter, starting from the v2 we enforce that workspaces cannot depend on fallbacks.
-            // This works by having a list containing all their locators, and checking when a fallback is required whether it's one of them.
-            const exclusionEntry = runtimeState.fallbackExclusionList.get(issuerLocator.name);
-            const canUseFallbacks = !exclusionEntry || !exclusionEntry.has(issuerLocator.reference);
-
-            if (canUseFallbacks) {
-              for (let t = 0, T = fallbackLocators.length; t < T; ++t) {
-                const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
-                const reference = fallbackInformation.packageDependencies.get(dependencyName);
-                if (reference == null) continue;
-                if (alwaysWarnOnFallback) fallbackReference = reference;else dependencyReference = reference;
-                break;
-              }
-
-              if (runtimeState.enableTopLevelFallback) {
-                if (dependencyReference == null && fallbackReference === null) {
-                  const reference = runtimeState.fallbackPool.get(dependencyName);
-
-                  if (reference != null) {
-                    fallbackReference = reference;
-                  }
+                if (reference != null) {
+                  fallbackReference = reference;
                 }
               }
             }
           }
-        } // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
+        }
+      } // If we can't find the path, and if the package making the request is the top-level, we can offer nicer error messages
 
 
-        let error = null;
+      let error = null;
 
-        if (dependencyReference === null) {
+      if (dependencyReference === null) {
+        if (isDependencyTreeRoot(issuerLocator)) {
+          error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            request: requestForDisplay,
+            issuer: issuerForDisplay,
+            dependencyName
+          });
+        } else {
+          const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
+
+          if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
+            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
+              issuerLocator: Object.assign({}, issuerLocator),
+              dependencyName,
+              brokenAncestors
+            });
+          } else {
+            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
+              issuerLocator: Object.assign({}, issuerLocator),
+              dependencyName,
+              brokenAncestors
+            });
+          }
+        }
+      } else if (dependencyReference === undefined) {
+        if (!considerBuiltins && builtinModules.has(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               dependencyName
             });
           } else {
-            const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
-
-            if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
-                request: requestForDisplay,
-                issuer: issuerForDisplay,
-                issuerLocator: Object.assign({}, issuerLocator),
-                dependencyName,
-                brokenAncestors
-              });
-            } else {
-              error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
-                request: requestForDisplay,
-                issuer: issuerForDisplay,
-                issuerLocator: Object.assign({}, issuerLocator),
-                dependencyName,
-                brokenAncestors
-              });
-            }
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
+              issuerLocator: Object.assign({}, issuerLocator),
+              dependencyName
+            });
           }
-        } else if (dependencyReference === undefined) {
-          if (!considerBuiltins && builtinModules.has(request)) {
-            if (isDependencyTreeRoot(issuerLocator)) {
-              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
-                request: requestForDisplay,
-                issuer: issuerForDisplay,
-                dependencyName
-              });
-            } else {
-              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
-                request: requestForDisplay,
-                issuer: issuerForDisplay,
-                issuerLocator: Object.assign({}, issuerLocator),
-                dependencyName
-              });
-            }
-          } else {
-            if (isDependencyTreeRoot(issuerLocator)) {
-              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
-                request: requestForDisplay,
-                issuer: issuerForDisplay,
-                dependencyName
-              });
-            } else {
-              error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
-                request: requestForDisplay,
-                issuer: issuerForDisplay,
-                issuerLocator: Object.assign({}, issuerLocator),
-                dependencyName
-              });
-            }
-          }
-        }
-
-        if (dependencyReference == null) {
-          if (fallbackReference === null || error === null) throw error || new Error(`Assertion failed: Expected an error to have been set`);
-          dependencyReference = fallbackReference;
-          const message = error.message.replace(/\n.*/g, ``);
-          error.message = message;
-
-          if (!emittedWarnings.has(message)) {
-            emittedWarnings.add(message);
-            process.emitWarning(error);
-          }
-        } // We need to check that the package exists on the filesystem, because it might not have been installed
-
-
-        const dependencyLocator = Array.isArray(dependencyReference) ? {
-          name: dependencyReference[0],
-          reference: dependencyReference[1]
-        } : {
-          name: dependencyName,
-          reference: dependencyReference
-        };
-        const dependencyInformation = getPackageInformationSafe(dependencyLocator);
-
-        if (!dependencyInformation.packageLocation) {
-          throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
-            request: requestForDisplay,
-            issuer: issuerForDisplay,
-            dependencyLocator: Object.assign({}, dependencyLocator)
-          });
-        } // Now that we know which package we should resolve to, we only have to find out the file location
-        // packageLocation is always absolute as it's returned by getPackageInformationSafe
-
-
-        const dependencyLocation = dependencyInformation.packageLocation;
-
-        if (subPath) {
-          // We use ppath.join instead of ppath.resolve because:
-          // 1) subPath is always a relative path
-          // 2) ppath.join preserves trailing slashes
-          unqualifiedPath = ppath.join(dependencyLocation, subPath);
         } else {
-          unqualifiedPath = dependencyLocation;
+          if (isDependencyTreeRoot(issuerLocator)) {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
+              dependencyName
+            });
+          } else {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+              request: requestForDisplay,
+              issuer: issuerForDisplay,
+              issuerLocator: Object.assign({}, issuerLocator),
+              dependencyName
+            });
+          }
         }
       }
+
+      if (dependencyReference == null) {
+        if (fallbackReference === null || error === null) throw error || new Error(`Assertion failed: Expected an error to have been set`);
+        dependencyReference = fallbackReference;
+        const message = error.message.replace(/\n.*/g, ``);
+        error.message = message;
+
+        if (!emittedWarnings.has(message)) {
+          emittedWarnings.add(message);
+          process.emitWarning(error);
+        }
+      } // We need to check that the package exists on the filesystem, because it might not have been installed
+
+
+      const dependencyLocator = Array.isArray(dependencyReference) ? {
+        name: dependencyReference[0],
+        reference: dependencyReference[1]
+      } : {
+        name: dependencyName,
+        reference: dependencyReference
+      };
+      const dependencyInformation = getPackageInformationSafe(dependencyLocator);
+
+      if (!dependencyInformation.packageLocation) {
+        throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+          request: requestForDisplay,
+          issuer: issuerForDisplay,
+          dependencyLocator: Object.assign({}, dependencyLocator)
+        });
+      } // Now that we know which package we should resolve to, we only have to find out the file location
+      // packageLocation is always absolute as it's returned by getPackageInformationSafe
+
+
+      const dependencyLocation = dependencyInformation.packageLocation;
+
+      if (subPath) {
+        // We use ppath.join instead of ppath.resolve because:
+        // 1) subPath is always a relative path
+        // 2) ppath.join preserves trailing slashes
+        unqualifiedPath = ppath.join(dependencyLocation, subPath);
+      } else {
+        unqualifiedPath = dependencyLocation;
+      }
+    }
 
     return ppath.normalize(unqualifiedPath);
   }
@@ -44943,10 +44987,12 @@ function makeManager(pnpapi, opts) {
       curr = next;
       const cached = findApiPathCache.get(curr);
       if (cached !== undefined) return addToCacheAndReturn(start, curr, cached);
-      const candidate = ppath.join(curr, `.pnp.js`);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile()) return addToCacheAndReturn(start, curr, candidate);
-      const cjsCandidate = ppath.join(curr, `.pnp.cjs`);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) return addToCacheAndReturn(start, curr, cjsCandidate);
+      const cjsCandidate = ppath.join(curr, Filename.pnpCjs);
+      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile()) return addToCacheAndReturn(start, curr, cjsCandidate); // We still support .pnp.js files to improve multi-project compatibility.
+      // TODO: Remove support for .pnp.js files after they stop being used.
+
+      const legacyCjsCandidate = ppath.join(curr, Filename.pnpJs);
+      if (xfs.existsSync(legacyCjsCandidate) && xfs.statSync(legacyCjsCandidate).isFile()) return addToCacheAndReturn(start, curr, legacyCjsCandidate);
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);
 

@@ -120,6 +120,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.statSync(this.mapToBase(p));
   }
 
+  async fstatPromise(fd: number) {
+    return this.baseFs.fstatPromise(fd);
+  }
+
+  fstatSync(fd: number) {
+    return this.baseFs.fstatSync(fd);
+  }
+
   async lstatPromise(p: P) {
     return this.baseFs.lstatPromise(this.mapToBase(p));
   }

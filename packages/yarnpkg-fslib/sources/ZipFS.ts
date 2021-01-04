@@ -587,6 +587,28 @@ export class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`stat '${p}'`, resolvedP);
   }
 
+  async fstatPromise(fd: number) {
+    return this.fstatSync(fd);
+  }
+
+  fstatSync(fd: number) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fstatSync`);
+
+    const {p} = entry;
+
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw errors.ENOENT(`stat '${p}'`);
+
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw errors.ENOTDIR(`stat '${p}'`);
+
+    return this.statImpl(`fstat '${p}'`, resolvedP);
+  }
+
   async lstatPromise(p: PortablePath) {
     return this.lstatSync(p);
   }
