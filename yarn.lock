@@ -4747,6 +4747,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/source-list-map@npm:*":
+  version: 0.1.2
+  resolution: "@types/source-list-map@npm:0.1.2"
+  checksum: 191f0e3b056b481e7a0bbb38f3d5b54b015556e38075726ca2637a35d3694df85cd16761b1b188729ac687a55aec3cbc2b07033ac090bcc13efe09ad10a3e935
+  languageName: node
+  linkType: hard
+
 "@types/ssri@npm:^6.0.1":
   version: 6.0.1
   resolution: "@types/ssri@npm:6.0.1"
@@ -4938,6 +4945,17 @@ __metadata:
   dependencies:
     "@types/webpack": "*"
   checksum: 2988bb97d79c48cb490832caf8b7cd94be33189aab247761ca669c3ac08741488cd5a93bef8a6e0164b1271b301999fb52b3623af05c1e6021f2cf470059d419
+  languageName: node
+  linkType: hard
+
+"@types/webpack-sources@npm:^2":
+  version: 2.1.0
+  resolution: "@types/webpack-sources@npm:2.1.0"
+  dependencies:
+    "@types/node": "*"
+    "@types/source-list-map": "*"
+    source-map: ^0.7.3
+  checksum: 26aba8ae682529be737eff726dcf08019460b180e9d22e80925e65240c908312096067b5547ac3dcb6d7b383a4bf0473eb68d0fd4ff483b17f3147fefce149af
   languageName: node
   linkType: hard
 
@@ -5419,6 +5437,7 @@ __metadata:
     "@types/semver": ^7.1.0
     "@types/terser-webpack-plugin": ^3.0.0
     "@types/webpack-merge": ^4.1.5
+    "@types/webpack-sources": ^2
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
@@ -5437,6 +5456,7 @@ __metadata:
     val-loader: ^2.1.1
     webpack: ^5.1.1
     webpack-merge: ^4.2.2
+    webpack-sources: ^2.2.0
   peerDependencies:
     typescript: "*"
   bin:
@@ -27793,6 +27813,16 @@ typescript@4.1.0-beta:
     source-list-map: ^2.0.1
     source-map: ^0.6.1
   checksum: fde296d7e3603afab2d832dec6b0d76ad4dcf2f2b9b0a06da92bdde7004cf62fad685cdda84a57abe5c97f975b529cc9a35e7a419c2c9b56074bcbdcad15036a
+  languageName: node
+  linkType: hard
+
+"webpack-sources@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "webpack-sources@npm:2.2.0"
+  dependencies:
+    source-list-map: ^2.0.1
+    source-map: ^0.6.1
+  checksum: 7c4b797fa90d310872b70469dc04254e35571fb34530280a47b93edbe9cd6b0ffb79cf2b7565f4a18ff5b70315ff245d465ad35f952366cfd93c55d6445e2378
   languageName: node
   linkType: hard
 

@@ -43,6 +43,9 @@ export default class BuildBundleCommand extends Command {
   @Command.Boolean(`--no-minify`, {description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
+  @Command.Boolean(`--include-source-map`, {description: `Includes a source map in the bundle`})
+  includeSourceMap: boolean = false;
+
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
     details: `
@@ -98,6 +101,10 @@ export default class BuildBundleCommand extends Command {
           entry: `./sources/cli.ts`,
 
           bail: true,
+
+          ...this.includeSourceMap && {
+            devtool: `inline-source-map`,
+          },
 
           ...!this.noMinify && {
             mode: `production`,
