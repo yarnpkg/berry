@@ -176,9 +176,15 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
   const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
 
-  const {stdout} = await execUtils.execvp(`git`, [`diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
+  const {stdout, stderr} = await execUtils.execvp(`git`, [`diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
     cwd: npath.toPortablePath(process.cwd()),
   });
+
+  // we cannot rely on exit code, because --no-index implies --exit-code
+  // i.e. git diff will exit with 1 if there were differences
+  if (stderr.length > 0)
+    throw new Error(`Unable to diff directories. Make sure you have a recent version of 'git' available in PATH.\nThe following error was reported by 'git':\n${stderr}`);
+
 
   const normalizePath = folderAN.startsWith(`/`)
     ? (p: NativePath) => p.slice(1)
