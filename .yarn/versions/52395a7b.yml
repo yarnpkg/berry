@@ -1,2 +1,3 @@
 releases:
+  "@yarnpkg/cli": patch
   "@yarnpkg/plugin-patch": patch
