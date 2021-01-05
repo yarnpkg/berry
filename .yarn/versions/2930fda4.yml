@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/fslib": patch
+  "@yarnpkg/pnp": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -28,6 +29,5 @@ declined:
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
-  - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/shell"
