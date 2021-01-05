@@ -1,4 +1,5 @@
 import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}       from '@yarnpkg/fslib';
+import {npath}                                                          from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                       from '@yarnpkg/parsers';
 import {UsageError}                                                     from 'clipanion';
 import {createHash}                                                     from 'crypto';
@@ -1757,7 +1758,8 @@ function applyVirtualResolutionMutations({
 
     xfs.writeFileSync(logFile, content);
 
-    throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${logFile}`);
+    xfs.detachTemp(logDir);
+    throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${npath.fromPortablePath(logFile)}`);
   };
 
   const getPackageFromDescriptor = (descriptor: Descriptor): Package => {
