@@ -12,7 +12,8 @@ export default class PatchCommitCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     description: `
-      This will turn the folder passed in parameter into a patchfile suitable for consumption with the \`patch:\` protocol.
+      This will print a patchfile based on the diff between the folder passed in and the original version of the package.
+      Such file is suitable for consumption with the \`patch:\` protocol.
 
       Only folders generated through \`yarn patch\` are accepted as valid input for \`yarn patch-commit\`.
     `,
