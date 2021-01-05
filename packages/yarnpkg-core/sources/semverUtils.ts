@@ -1,6 +1,6 @@
 import semver from 'semver';
 
-export {SemVer} from 'semver';
+export {SemVer, valid} from 'semver';
 
 /**
  * Returns whether the given semver version satisfies the given range. Notably
