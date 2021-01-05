@@ -40526,7 +40526,7 @@ class VirtualFS extends ProxiedFS {
   }
 
   mapToBase(p) {
-    return VirtualFS.resolveVirtual(p);
+    return VirtualFS.resolveVirtual(this.baseFs.resolve(p));
   }
 
   mapFromBase(p) {
