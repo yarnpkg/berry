@@ -104,7 +104,7 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
   }
 
   mapToBase(p: PortablePath): PortablePath {
-    return VirtualFS.resolveVirtual(p);
+    return VirtualFS.resolveVirtual(this.baseFs.resolve(p));
   }
 
   mapFromBase(p: PortablePath) {
