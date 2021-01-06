@@ -6,7 +6,6 @@ import path                                                                 from
 import TerserPlugin                                                         from 'terser-webpack-plugin';
 import webpack                                                              from 'webpack';
 
-
 import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
 import {makeConfig, WebpackPlugin}                                          from '../../tools/makeConfig';
 
@@ -26,8 +25,8 @@ export default class BuildPluginCommand extends Command {
   @Command.Boolean(`--no-minify`, {description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
-  @Command.Boolean(`--include-source-map`, {description: `Includes a source map in the bundle`})
-  includeSourceMap: boolean = false;
+  @Command.Boolean(`--source-map`, {description: `Includes a source map in the bundle`})
+  sourceMap: boolean = false;
 
   static usage: Usage = Command.Usage({
     description: `build a local plugin`,
@@ -72,7 +71,7 @@ export default class BuildPluginCommand extends Command {
           context: basedir,
           entry: `.`,
 
-          ...this.includeSourceMap && {
+          ...this.sourceMap && {
             devtool: `inline-source-map`,
           },
 
