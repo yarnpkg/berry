@@ -118,6 +118,18 @@ describe(`VirtualFS`, () => {
     expect(virtualContent).toEqual(physicalContent);
   });
 
+  it(`should allow accessing virtual files through relative urls`, () => {
+    const virtualPath = ppath.join(npath.toPortablePath(__dirname), `$$virtual` as Filename);
+    const virtualEntry = ppath.join(virtualPath, `12345` as Filename, `1` as Filename);
+
+    const virtualFs = new VirtualFS();
+
+    const virtualContent = virtualFs.readFileSync(ppath.relative(ppath.cwd(), ppath.join(virtualEntry, `package.json` as Filename)));
+    const physicalContent = xfs.readFileSync(ppath.join(ppath.dirname(ppath.dirname(virtualPath)), `package.json` as Filename));
+
+    expect(virtualContent).toEqual(physicalContent);
+  });
+
   it(`should preserve the virtual path across realpath (virtual directory)`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), `$$virtual` as Filename);
 

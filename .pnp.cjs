@@ -40526,7 +40526,10 @@ class VirtualFS extends ProxiedFS {
   }
 
   mapToBase(p) {
-    return VirtualFS.resolveVirtual(p);
+    if (this.pathUtils.isAbsolute(p)) return VirtualFS.resolveVirtual(p);
+    const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
+    const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
+    return ppath.relative(resolvedRoot, resolvedP);
   }
 
   mapFromBase(p) {
