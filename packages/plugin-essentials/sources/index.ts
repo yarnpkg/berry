@@ -6,6 +6,7 @@ import bin                                                      from './commands
 import cleanCache                                               from './commands/cache/clean';
 import getConfig                                                from './commands/config/get';
 import setConfig                                                from './commands/config/set';
+import unsetConfig                                              from './commands/config/unset';
 import config                                                   from './commands/config';
 import dedupe                                                   from './commands/dedupe';
 import clipanionEntry                                           from './commands/entries/clipanion';
@@ -99,6 +100,7 @@ const plugin: Plugin = {
     cleanCache,
     getConfig,
     setConfig,
+    unsetConfig,
     setResolutionPolicy,
     setVersionFromSources,
     setVersionPolicy,

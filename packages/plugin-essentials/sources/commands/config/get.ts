@@ -5,7 +5,7 @@ import getPath                                  from 'lodash/get';
 import {inspect}                                from 'util';
 
 // eslint-disable-next-line arca/no-default-export
-export default class ConfigSetCommand extends BaseCommand {
+export default class ConfigGetCommand extends BaseCommand {
   @Command.String()
   name!: string;
 
