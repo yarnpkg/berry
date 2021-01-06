@@ -1,7 +1,7 @@
-import {FakeFS, ExtractHintOptions}    from './FakeFS';
-import {NodeFS}                        from './NodeFS';
-import {ProxiedFS}                     from './ProxiedFS';
-import {Filename, PortablePath, ppath} from './path';
+import {FakeFS, ExtractHintOptions, SymlinkType} from './FakeFS';
+import {NodeFS}                                  from './NodeFS';
+import {ProxiedFS}                               from './ProxiedFS';
+import {Filename, PortablePath, ppath}           from './path';
 
 const NUMBER_REGEXP = /^[0-9]+$/;
 
@@ -104,7 +104,13 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
   }
 
   mapToBase(p: PortablePath): PortablePath {
-    return VirtualFS.resolveVirtual(this.baseFs.resolve(p));
+    if (this.pathUtils.isAbsolute(p))
+      return VirtualFS.resolveVirtual(p);
+
+    const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
+    const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
+
+    return ppath.relative(resolvedRoot, resolvedP);
   }
 
   mapFromBase(p: PortablePath) {
