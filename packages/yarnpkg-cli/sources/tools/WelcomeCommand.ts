@@ -7,10 +7,10 @@ const getMessage = (configuration: Configuration) => `
 ${formatUtils.pretty(configuration, `Welcome to Yarn 2!`, `bold`)} 🎉 Thanks for helping us shape our vision of how projects
 should be managed going forward.
 
-Yarn 2 is continiously undergoing improvements. Some missing features are being
+Yarn 2 is continuously undergoing improvement. Some features are being
 added, and some behaviors may receive major overhaul.
 
-You can find out more about any changes by visiting the following URLs:
+You can find out more about changes by visiting the following URLs:
 
   - The changelog:
     ${formatUtils.pretty(configuration, `https://github.com/yarnpkg/berry/tree/CHANGELOG.md`, `cyan`)}
