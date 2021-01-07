@@ -87,7 +87,7 @@ export default class DedupeCommand extends BaseCommand {
     ], [
       `Dedupe all packages excluding those with the \`@babel/*\` scope`,
       `$0 dedupe --exclude '@babel/*'`,
-    ],[
+    ], [
       `Check for duplicates (can be used as a CI step)`,
       `$0 dedupe --check`,
     ]],
