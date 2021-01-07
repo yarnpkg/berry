@@ -13,19 +13,19 @@ export default class ConfigUnsetCommand extends BaseCommand {
   home: boolean = false;
 
   static usage: Usage = Command.Usage({
-    description: `unset a configuration settings`,
+    description: `unset a configuration setting`,
     details: `
-      This command will set a configuration setting.
+      This command will unset a configuration setting.
     `,
     examples: [[
       `Unset a simple configuration setting`,
-      `yarn config set initScope`,
+      `yarn config unset initScope`,
     ], [
       `Unset a complex configuration setting`,
-      `yarn config set packageExtensions`,
+      `yarn config unset packageExtensions`,
     ], [
       `Unset a nested configuration setting`,
-      `yarn config set npmScopes.company.npmRegistryServer`,
+      `yarn config unset npmScopes.company.npmRegistryServer`,
     ]],
   });
 
