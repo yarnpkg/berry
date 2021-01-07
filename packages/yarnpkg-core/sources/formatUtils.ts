@@ -9,7 +9,9 @@ import * as miscUtils                                                       from
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
 
-export enum Type {
+// We have to make this enum a "const enum" to workaround a TS bug:
+// https://github.com/microsoft/TypeScript/issues/35329
+export const enum Type {
   NO_HINT = `NO_HINT`,
 
   NULL = `NULL`,
