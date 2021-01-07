@@ -4,12 +4,13 @@ import {Command}                    from 'clipanion';
 import {BaseCommand}                from './BaseCommand';
 
 const getMessage = (configuration: Configuration) => `
-${formatUtils.pretty(configuration, `Welcome on Yarn 2!`, `bold`)} 🎉 Thanks for helping us shape our vision of how projects
+${formatUtils.pretty(configuration, `Welcome to Yarn 2!`, `bold`)} 🎉 Thanks for helping us shape our vision of how projects
 should be managed going forward.
 
-Being still in RC, Yarn 2 isn't completely stable yet. Some features might be
-missing, and some behaviors may have received major overhaul. In case of doubt,
-use the following URLs to get some insight:
+Yarn 2 is continiously undergoing improvements. Some missing features are being
+added, and some behaviors may receive major overhaul.
+
+You can find out more about any changes by visiting the following URLs:
 
   - The changelog:
     ${formatUtils.pretty(configuration, `https://github.com/yarnpkg/berry/tree/CHANGELOG.md`, `cyan`)}
@@ -20,14 +21,15 @@ use the following URLs to get some insight:
   - Our Discord server:
     ${formatUtils.pretty(configuration, `https://discord.gg/yarnpkg`, `cyan`)}
 
-We're hoping you will enjoy the experience. For now, a good start is to run
-the two following commands:
+We hope you will enjoy your experience with Yarn 2.
+
+A good start is to run the two following commands:
 
   ${formatUtils.pretty(configuration, `find . -name node_modules -prune -exec rm -r {} \\;`, `magenta`)}
   ${formatUtils.pretty(configuration, `yarn install`, `magenta`)}
 
-One last trick! If you need at some point to upgrade Yarn to a nightly build,
-the following command will install the CLI straight from master:
+One last trick! If you desire to upgrade Yarn to the nightly build,
+the following command will install the CLI straight from the master branch, this is where Yarn 3 is being developed:
 
   ${formatUtils.pretty(configuration, `yarn set version from sources`, `magenta`)}
 
