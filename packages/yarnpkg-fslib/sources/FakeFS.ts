@@ -166,7 +166,11 @@ export abstract class FakeFS<P extends Path> {
   abstract statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract fstatPromise(fd: number): Promise<Stats>;
+  abstract fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   abstract fstatSync(fd: number): Stats;
+  abstract fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
+  abstract fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract lstatPromise(p: P): Promise<Stats>;
   abstract lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;

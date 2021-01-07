@@ -308,12 +308,18 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.statSync(this.resolveDirOrFilePath(p), opts);
   }
 
-  async fstatPromise(fd: number) {
-    return await this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+    return await this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd: number) {
-    return this.baseFs.fstatSync(fd);
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
+    return this.baseFs.fstatSync(fd, opts);
   }
 
   async lstatPromise(p: PortablePath): Promise<Stats>

@@ -593,11 +593,17 @@ export class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`stat '${p}'`, resolvedP, opts);
   }
 
-  async fstatPromise(fd: number) {
-    return this.fstatSync(fd);
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+    return this.fstatSync(fd, opts);
   }
 
-  fstatSync(fd: number) {
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`)
       throw errors.EBADF(`fstatSync`);
@@ -612,7 +618,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw errors.ENOTDIR(`stat '${p}'`);
 
-    return this.statImpl(`fstat '${p}'`, resolvedP);
+    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
   }
 
   async lstatPromise(p: PortablePath): Promise<Stats>

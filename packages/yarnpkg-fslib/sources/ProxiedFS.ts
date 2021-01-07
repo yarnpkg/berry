@@ -128,12 +128,18 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
-  async fstatPromise(fd: number) {
-    return this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+    return this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd: number) {
-    return this.baseFs.fstatSync(fd);
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
+    return this.baseFs.fstatSync(fd, opts);
   }
 
   async lstatPromise(p: P): Promise<Stats>

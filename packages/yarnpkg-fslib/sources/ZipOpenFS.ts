@@ -353,28 +353,34 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async fstatPromise(fd: number) {
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: { bigint: boolean }) {
     if ((fd & ZIP_FD) === 0)
-      return this.baseFs.fstatPromise(fd);
+      return this.baseFs.fstatPromise(fd, opts);
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
       throw errors.EBADF(`fstat`);
 
     const [zipFs, realFd] = entry;
-    return zipFs.fstatPromise(realFd);
+    return zipFs.fstatPromise(realFd, opts);
   }
 
-  fstatSync(fd: number) {
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: { bigint: boolean }) {
     if ((fd & ZIP_FD) === 0)
-      return this.baseFs.fstatSync(fd);
+      return this.baseFs.fstatSync(fd, opts);
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
       throw errors.EBADF(`fstatSync`);
 
     const [zipFs, realFd] = entry;
-    return zipFs.fstatSync(realFd);
+    return zipFs.fstatSync(realFd, opts);
   }
 
   async lstatPromise(p: PortablePath): Promise<Stats>
