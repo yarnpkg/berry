@@ -13,7 +13,7 @@ export default class ConfigUnsetCommand extends BaseCommand {
   home: boolean = false;
 
   static usage: Usage = Command.Usage({
-    description: `unset a configuration settings`,
+    description: `unset a configuration setting`,
     details: `
       This command will unset a configuration setting.
     `,
