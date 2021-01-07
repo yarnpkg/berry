@@ -58,6 +58,9 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdio,
   });
 
+  const sigtermHandler = () => child.kill(`SIGTERM`);
+  process.on(`SIGTERM`, sigtermHandler);
+
   if (!hasFd(stdin) && stdin !== null)
     stdin.pipe(child.stdin!);
 
@@ -76,6 +79,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
   return new Promise((resolve, reject) => {
     child.on(`error`, error => {
+      process.off(`SIGTERM`, sigtermHandler);
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
 
@@ -86,6 +90,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     });
 
     child.on(`close`, (code, sig) => {
+      process.off(`SIGTERM`, sigtermHandler);
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
 
