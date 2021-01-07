@@ -44196,14 +44196,6 @@ function makeApi(runtimeState, opts) {
     return fakeModule;
   }
   /**
-   * Normalize path to posix format.
-   */
-
-
-  function normalizePath(p) {
-    return npath.toPortablePath(p);
-  }
-  /**
    * Forward the resolution to the next resolver (usually the native one)
    */
 
@@ -44350,9 +44342,9 @@ function makeApi(runtimeState, opts) {
 
   function findPackageLocator(location) {
     if (isPathIgnored(location)) return null;
-    let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
+    let relativeLocation = ppath.relative(runtimeState.basePath, location);
     if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}`;
-    if (location.match(isDirRegExp) && !relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/`;
+    if (!relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/`;
     let from = 0; // If someone wants to use a binary search to go from O(n) to O(log n), be my guest
 
     while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length) from += 1;
