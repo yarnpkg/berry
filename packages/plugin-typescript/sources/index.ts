@@ -141,17 +141,36 @@ const plugin: Plugin<EssentialsHooks & PackHooks & CoreHooks> = {
           return ppath.relative(workspace.cwd, dependingWorkspace.cwd);
         });
 
+        let configChanged = false;
+
         let tsconfig: {references?: Array<{path: string}>} = {};
         try {
           tsconfig = await xfs.readJsonPromise(ppath.join(workspace.cwd, `tsconfig.json` as Filename));
-        } catch { }
+        } catch {
+          configChanged = true;
+        }
 
-        if (referencedWorkspaces.length === 0)
-          tsconfig.references = undefined;
-        else
-          tsconfig.references = referencedWorkspaces.map(relativePath => ({path: relativePath}));
+        if (referencedWorkspaces.length === 0) {
+          if (typeof tsconfig.references !== `undefined`) {
+            configChanged = true;
+            tsconfig.references = undefined;
+          }
+        } else {
+          const oldReferences = new Set(tsconfig.references?.map(ref => ref.path));
 
-        await xfs.writeJsonPromise(ppath.join(workspace.cwd, `tsconfig.json` as Filename), tsconfig);
+          tsconfig.references = [];
+
+          for (const relativePath of referencedWorkspaces) {
+            if (!oldReferences.has(relativePath))
+              configChanged = true;
+
+            tsconfig.references.push({path: relativePath});
+          }
+        }
+
+        if (configChanged) {
+          await xfs.writeJsonPromise(ppath.join(workspace.cwd, `tsconfig.json` as Filename), tsconfig);
+        }
       }
     },
     afterWorkspaceDependencyAddition,
