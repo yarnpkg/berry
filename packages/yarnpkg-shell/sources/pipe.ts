@@ -53,6 +53,9 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stderr,
     ]});
 
+    const sigtermHandler = () => child.kill(`SIGTERM`);
+    process.on(`SIGTERM`, sigtermHandler);
+
     if (sigintRefCount++ === 0)
       process.on(`SIGINT`, sigintHandler);
 
@@ -67,6 +70,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
+          process.off(`SIGTERM`, sigtermHandler);
           if (--sigintRefCount === 0)
             process.off(`SIGINT`, sigintHandler);
 
@@ -88,6 +92,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
         });
 
         child.on(`exit`, code => {
+          process.off(`SIGTERM`, sigtermHandler);
           if (--sigintRefCount === 0)
             process.off(`SIGINT`, sigintHandler);
 

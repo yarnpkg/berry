@@ -144,9 +144,16 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
     stderrChunks.push(chunk);
   });
 
+  const sigtermHandler = () => child.kill(`SIGTERM`);
+  process.on(`SIGTERM`, sigtermHandler);
+
   return await new Promise((resolve, reject) => {
-    subprocess.on(`error`, reject);
+    subprocess.on(`error`, () => {
+      process.off(`SIGTERM`, sigtermHandler);
+      reject();
+    });
     subprocess.on(`close`, (code, signal) => {
+      process.off(`SIGTERM`, sigtermHandler);
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)
         : Buffer.concat(stdoutChunks).toString(encoding);
