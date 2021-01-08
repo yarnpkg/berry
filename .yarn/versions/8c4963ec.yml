@@ -2,6 +2,7 @@ releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
   "@yarnpkg/plugin-exec": patch
+  "@yarnpkg/shell": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
