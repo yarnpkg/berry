@@ -144,7 +144,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
     stderrChunks.push(chunk);
   });
 
-  const sigtermHandler = () => child.kill(`SIGTERM`);
+  const sigtermHandler = () => subprocess.kill(`SIGTERM`);
   process.on(`SIGTERM`, sigtermHandler);
 
   return await new Promise((resolve, reject) => {
