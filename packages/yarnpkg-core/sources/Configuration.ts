@@ -1468,7 +1468,7 @@ export class Configuration {
             switch (extension.type) {
               case PackageExtensionType.Dependency: {
                 const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
-                if (typeof currentDependency === `undefined`) {
+                if (typeof currentDependency === `undefined` || extension.status === PackageExtensionStatus.Redundant) {
                   extension.status = PackageExtensionStatus.Active;
                   pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
@@ -1476,7 +1476,7 @@ export class Configuration {
 
               case PackageExtensionType.PeerDependency: {
                 const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
-                if (typeof currentPeerDependency === `undefined`) {
+                if (typeof currentPeerDependency === `undefined` || extension.status === PackageExtensionStatus.Redundant) {
                   extension.status = PackageExtensionStatus.Active;
                   pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
@@ -1484,7 +1484,7 @@ export class Configuration {
 
               case PackageExtensionType.PeerDependencyMeta: {
                 const currentPeerDependencyMeta = pkg.peerDependenciesMeta.get(extension.selector);
-                if (typeof currentPeerDependencyMeta === `undefined` || !Object.prototype.hasOwnProperty.call(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value) {
+                if (typeof currentPeerDependencyMeta === `undefined` || !Object.prototype.hasOwnProperty.call(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value || extension.status === PackageExtensionStatus.Redundant) {
                   extension.status = PackageExtensionStatus.Active;
                   miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
                 }
