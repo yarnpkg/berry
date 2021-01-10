@@ -233,10 +233,11 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     };
 
     const ChangeLogInput = ({active = true, onFocusRequest}: {active?: boolean, onFocusRequest?: FocusRequestHandler}) => {
-      const [changelogText, setChangelogText] = useState(``);
+      const [changelogText, setChangelogText] = useState(versionFile.changelog ?? ``);
       const onChangelogTextChange = (val: string) => {
         if (!active) return;
         setChangelogText(val);
+        versionFile.changelog = val === `` ? undefined : val;
       };
 
       useFocusRequest({
