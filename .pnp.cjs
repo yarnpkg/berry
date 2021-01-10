@@ -39895,14 +39895,24 @@ class NodeFS extends BasePortableFakeFS {
     }
   }
 
-  async fstatPromise(fd) {
+  async fstatPromise(fd, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+      if (opts) {
+        // @ts-expect-error - The node typings doesn't know about the options
+        this.realFs.fstat(fd, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  fstatSync(fd) {
-    return this.realFs.fstatSync(fd);
+  fstatSync(fd, opts) {
+    if (opts) {
+      // @ts-expect-error - The node typings doesn't know about the options
+      return this.realFs.fstatSync(fd, opts);
+    } else {
+      return this.realFs.fstatSync(fd);
+    }
   }
 
   async lstatPromise(p, opts) {
@@ -40284,12 +40294,12 @@ class ProxiedFS extends FakeFS {
     return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
-  async fstatPromise(fd) {
-    return this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd, opts) {
+    return this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd) {
-    return this.baseFs.fstatSync(fd);
+  fstatSync(fd, opts) {
+    return this.baseFs.fstatSync(fd, opts);
   }
 
   async lstatPromise(p, opts) {
@@ -41539,11 +41549,11 @@ class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`stat '${p}'`, resolvedP, opts);
   }
 
-  async fstatPromise(fd) {
-    return this.fstatSync(fd);
+  async fstatPromise(fd, opts) {
+    return this.fstatSync(fd, opts);
   }
 
-  fstatSync(fd) {
+  fstatSync(fd, opts) {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`) throw EBADF(`fstatSync`);
     const {
@@ -41552,7 +41562,7 @@ class ZipFS extends BasePortableFakeFS {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`stat '${p}'`);
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`stat '${p}'`);
-    return this.statImpl(`fstat '${p}'`, resolvedP);
+    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
   }
 
   async lstatPromise(p, opts) {
@@ -42618,20 +42628,20 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async fstatPromise(fd) {
-    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd, opts) {
+    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatPromise(fd, opts);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`) throw EBADF(`fstat`);
     const [zipFs, realFd] = entry;
-    return zipFs.fstatPromise(realFd);
+    return zipFs.fstatPromise(realFd, opts);
   }
 
-  fstatSync(fd) {
-    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatSync(fd);
+  fstatSync(fd, opts) {
+    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatSync(fd, opts);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`) throw EBADF(`fstatSync`);
     const [zipFs, realFd] = entry;
-    return zipFs.fstatSync(realFd);
+    return zipFs.fstatSync(realFd, opts);
   }
 
   async lstatPromise(p, opts) {
