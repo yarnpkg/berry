@@ -8,7 +8,7 @@ import {useListInput}                                                           
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage, UsageError}                                                                             from 'clipanion';
 import {Box, Text}                                                                                              from 'ink';
-import React, {useCallback, useState}                                                                           from 'react';
+import React, {useCallback, useEffect, useState}                                                                from 'react';
 import semver                                                                                                   from 'semver';
 
 import * as versionUtils                                                                                        from '../../versionUtils';
@@ -235,18 +235,49 @@ export default class VersionCheckCommand extends Command<CommandContext> {
         return !versionFile.releaseRoots.has(workspace);
       }));
 
+      const focusGroupVisbility = [
+        versionFile.releaseRoots.size > 0,  // workspaces version
+        dependentWorkspaces.size > 0,       // dependencies version
+        versionFile.releaseRoots.size > 0,  // changelog
+      ];
+      // This would be more elegant once tuple and record is supported so we don't have to
+      // workaround React equality check like this
+      // See https://github.com/tc39/proposal-record-tuple
+      const focusGroupVisbilityMemoString = focusGroupVisbility.map(val => val ? `1` : `0`).join(``);
+      const numberOfFocusGroups = focusGroupVisbility.filter(Boolean).length;
       const [focus, setFocus] = useState(0);
 
       const handleFocusRequest = useCallback((request: FocusRequest) => {
+        // due to this constraints, the next/previous focus index will never be -1
+        if (numberOfFocusGroups <= 1)
+          return;
+
         switch (request) {
           case FocusRequest.BEFORE: {
-            setFocus(focus - 1);
+            const prevFocusIndex = focusGroupVisbilityMemoString.lastIndexOf(`1`, focus - 1) === -1
+              ? focusGroupVisbilityMemoString.lastIndexOf(`1`)
+              : focusGroupVisbilityMemoString.lastIndexOf(`1`, focus - 1);
+            setFocus(prevFocusIndex);
           } break;
           case FocusRequest.AFTER: {
-            setFocus(focus + 1);
+            const nextFocusIndex = focusGroupVisbilityMemoString.indexOf(`1`, focus + 1) === -1
+              ? focusGroupVisbilityMemoString.indexOf(`1`)
+              : focusGroupVisbilityMemoString.indexOf(`1`, focus + 1);
+            setFocus(nextFocusIndex);
           } break;
         }
-      }, [focus, setFocus]);
+      }, [focus, setFocus, focusGroupVisbilityMemoString, numberOfFocusGroups]);
+
+      useEffect(() => {
+        if (focusGroupVisbilityMemoString.charAt(focus) !== `1`) {
+          if (numberOfFocusGroups > 0) {
+            const nextFocusIndex = focusGroupVisbilityMemoString.indexOf(`1`, focus + 1) === -1
+              ? focusGroupVisbilityMemoString.indexOf(`1`)
+              : focusGroupVisbilityMemoString.indexOf(`1`, focus + 1);
+            setFocus(nextFocusIndex);
+          }
+        }
+      }, [focus, focusGroupVisbilityMemoString, numberOfFocusGroups]);
 
       return (
         <Box flexDirection={`column`}>
@@ -275,7 +306,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
               <Stats workspaces={versionFile.releaseRoots} releases={releases} />
             </Box> : null}
             <Box marginTop={1} flexDirection={`column`}>
-              <ScrollableItems active={focus % 2 === 0} radius={1} size={2} onFocusRequest={handleFocusRequest}>
+              <ScrollableItems active={focus === 0} radius={1} size={2} onFocusRequest={handleFocusRequest}>
                 {[...versionFile.releaseRoots].map(workspace => (
                   <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />
                 ))}
@@ -300,7 +331,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
                 </Box>
               ) : null}
               <Box marginTop={1} flexDirection={`column`}>
-                <ScrollableItems active={focus % 2 === 1} radius={2} size={2} onFocusRequest={handleFocusRequest}>
+                <ScrollableItems active={focus === 1} radius={2} size={2} onFocusRequest={handleFocusRequest}>
                   {[...dependentWorkspaces].map(workspace => (
                     <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />
                   ))}
