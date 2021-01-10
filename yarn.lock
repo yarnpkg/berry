@@ -6175,6 +6175,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
     clipanion: ^2.6.2
     ink: ^3.0.7
+    ink-text-input: ^4.0.1
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0

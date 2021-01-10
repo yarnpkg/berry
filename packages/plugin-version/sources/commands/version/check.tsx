@@ -3,10 +3,11 @@ import {CommandContext, Configuration, MessageName, Project, StreamReport, Works
 import {ppath}                                                                                                  from '@yarnpkg/fslib';
 import {Gem}                                                                                                    from '@yarnpkg/libui/sources/components/Gem';
 import {ScrollableItems}                                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
+import {FocusRequest, FocusRequestHandler, useFocusRequest}                                                     from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage, UsageError}                                                                             from 'clipanion';
+import InkTextInput                                                                                             from 'ink-text-input';
 import {Box, Text}                                                                                              from 'ink';
 import React, {useCallback, useEffect, useState}                                                                from 'react';
 import semver                                                                                                   from 'semver';
@@ -74,7 +75,12 @@ export default class VersionCheckCommand extends Command<CommandContext> {
             </Box>
             <Box>
               <Text>
-                 Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select release strategies.
+                Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select release strategies.
+              </Text>
+            </Box>
+            <Box>
+              <Text>
+                Press <Text bold color="cyanBright">{`<tab>`}</Text> to move the focus between the sections.
               </Text>
             </Box>
           </Box>
@@ -226,6 +232,47 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       return <Text color="yellow">{parts.join(`, `)}</Text>;
     };
 
+    const ChangeLogInput = ({active = true, onFocusRequest}: {active?: boolean, onFocusRequest?: FocusRequestHandler}) => {
+      const [changelogText, setChangelogText] = useState(``);
+      const onChangelogTextChange = (val: string) => {
+        if (!active) return;
+        setChangelogText(val);
+      };
+
+      useFocusRequest({
+        active: active && !!onFocusRequest,
+      }, request => {
+        onFocusRequest?.(request);
+      }, [
+        onFocusRequest,
+      ]);
+
+      return (
+        <Box flexDirection={`column`} width={`100%`}>
+          <Box>
+            <Text wrap="wrap">
+              Enter a summary for this change (this will be in the changelogs):
+            </Text>
+          </Box>
+          <Box flexDirection={`row`} width={`100%`} marginTop={1}>
+            <Box marginTop={1} marginLeft={1} marginRight={1}>
+              <Text>
+                {active ? <Text color="cyan" bold>{`>`}</Text> : ` `}
+              </Text>
+            </Box>
+            <Box marginLeft={0} borderStyle="round" borderColor={active ? `cyan` : `grey`} paddingY={1} paddingX={2} width={`100%`}>
+              <InkTextInput
+                value={changelogText}
+                onChange={onChangelogTextChange}
+                showCursor={active}
+                placeholder={` `}
+              />
+            </Box>
+          </Box>
+        </Box>
+      );
+    };
+
     const App = ({useSubmit}: {useSubmit: (value: Releases) => void}) => {
       const [releases, setWorkspaceRelease] = useReleases();
       useSubmit(releases);
@@ -320,11 +367,6 @@ export default class VersionCheckCommand extends Command<CommandContext> {
                   The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:
                 </Text>
               </Box>
-              <Box>
-                <Text>
-                  (Press <Text bold color="cyanBright">{`<tab>`}</Text> to move the focus between the workspace groups.)
-                </Text>
-              </Box>
               {dependentWorkspaces.size > 5 ? (
                 <Box marginTop={1}>
                   <Stats workspaces={dependentWorkspaces} releases={releases} />
@@ -339,6 +381,11 @@ export default class VersionCheckCommand extends Command<CommandContext> {
               </Box>
             </>
           ) : null}
+          {versionFile.releaseRoots.size > 0 && <>
+            <Box marginTop={1} flexDirection={`column`}>
+              <ChangeLogInput active={focus === 2} onFocusRequest={handleFocusRequest} />
+            </Box>
+          </>}
         </Box>
       );
     };
