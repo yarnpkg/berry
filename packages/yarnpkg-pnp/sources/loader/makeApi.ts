@@ -201,7 +201,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (!/^\.{0,2}\//.test(subpath))
       subpath = `./${subpath}` as PortablePath;
 
-    const resolvedExport = resolveExports(pkgJson, subpath, {
+    const resolvedExport = resolveExports(pkgJson, ppath.normalize(subpath), {
       require: true,
       browser: false,
       conditions: [],

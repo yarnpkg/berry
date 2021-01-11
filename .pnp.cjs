@@ -44482,7 +44482,7 @@ function makeApi(runtimeState, opts) {
     }
 
     if (!/^\.{0,2}\//.test(subpath)) subpath = `./${subpath}`;
-    const resolvedExport = resolve(pkgJson, subpath, {
+    const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
       require: true,
       browser: false,
       conditions: []
