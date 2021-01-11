@@ -11688,6 +11688,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/monorepo", "workspace:."],
+            ["resolve.exports", "npm:1.0.1"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"],
             ["webpack", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:5.1.1"],
@@ -32776,6 +32777,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["resolve.exports", [
+        ["npm:1.0.1", {
+          "packageLocation": "./.yarn/cache/resolve.exports-npm-1.0.1-f2809eb2c5-fed0e3abed.zip/node_modules/resolve.exports/",
+          "packageDependencies": [
+            ["resolve.exports", "npm:1.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["responselike", [
         ["npm:1.0.2", {
           "packageLocation": "./.yarn/cache/responselike-npm-1.0.2-d0bf50cde4-c904f14994.zip/node_modules/responselike/",
@@ -39008,7 +39018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 345:
+/***/ 42:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44160,7 +44170,155 @@ function hydrateRuntimeState(data, {
     packageRegistry
   };
 }
+// CONCATENATED MODULE: ../../.yarn/cache/resolve.exports-npm-1.0.1-f2809eb2c5-fed0e3abed.zip/node_modules/resolve.exports/dist/index.mjs
+/**
+ * @param {object} exports
+ * @param {Set<string>} keys
+ */
+function loop(exports, keys) {
+	if (typeof exports === 'string') {
+		return exports;
+	}
+
+	if (exports) {
+		let idx, tmp;
+		if (Array.isArray(exports)) {
+			for (idx=0; idx < exports.length; idx++) {
+				if (tmp = loop(exports[idx], keys)) return tmp;
+			}
+		} else {
+			for (idx in exports) {
+				if (keys.has(idx)) {
+					return loop(exports[idx], keys);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * @param {string} name The package name
+ * @param {string} entry The target entry, eg "."
+ * @param {number} [condition] Unmatched condition?
+ */
+function bail(name, entry, condition) {
+	throw new Error(
+		condition
+		? `No known conditions for "${entry}" entry in "${name}" package`
+		: `Missing "${entry}" export in "${name}" package`
+	);
+}
+
+/**
+ * @param {string} name the package name
+ * @param {string} entry the target path/import
+ */
+function toName(name, entry) {
+	return entry === name ? '.'
+		: entry[0] === '.' ? entry
+		: entry.replace(new RegExp('^' + name + '\/'), './');
+}
+
+/**
+ * @param {object} pkg package.json contents
+ * @param {string} [entry] entry name or import path
+ * @param {object} [options]
+ * @param {boolean} [options.browser]
+ * @param {boolean} [options.require]
+ * @param {string[]} [options.conditions]
+ */
+function resolve(pkg, entry='.', options={}) {
+	let { name, exports } = pkg;
+
+	if (exports) {
+		let { browser, require, conditions=[] } = options;
+
+		let target = toName(name, entry);
+		if (target[0] !== '.') target = './' + target;
+
+		if (typeof exports === 'string') {
+			return target === '.' ? exports : bail(name, target);
+		}
+
+		let allows = new Set(['default', ...conditions]);
+		allows.add(require ? 'require' : 'import');
+		allows.add(browser ? 'browser' : 'node');
+
+		let key, tmp, isSingle=false;
+
+		for (key in exports) {
+			isSingle = key[0] !== '.';
+			break;
+		}
+
+		if (isSingle) {
+			return target === '.'
+				? loop(exports, allows) || bail(name, target, 1)
+				: bail(name, target);
+		}
+
+		if (tmp = exports[target]) {
+			return loop(tmp, allows) || bail(name, target, 1);
+		}
+
+		for (key in exports) {
+			tmp = key[key.length - 1];
+			if (tmp === '/' && target.startsWith(key)) {
+				return (tmp = loop(exports[key], allows))
+					? (tmp + target.substring(key.length))
+					: bail(name, target, 1);
+			}
+			if (tmp === '*' && target.startsWith(key.slice(0, -1))) {
+				// do not trigger if no *content* to inject
+				if (target.length - key.length > 1) {
+					return (tmp = loop(exports[key], allows))
+						? tmp.replace('*', target.substring(key.length - 1))
+						: bail(name, target, 1);
+				}
+			}
+		}
+
+		return bail(name, target);
+	}
+}
+
+/**
+ * @param {object} pkg
+ * @param {object} [options]
+ * @param {string|boolean} [options.browser]
+ * @param {string[]} [options.fields]
+ */
+function legacy(pkg, options={}) {
+	let i=0, value,
+		browser = options.browser,
+		fields = options.fields || ['module', 'main'];
+
+	if (browser && !fields.includes('browser')) {
+		fields.unshift('browser');
+	}
+
+	for (; i < fields.length; i++) {
+		if (value = pkg[fields[i]]) {
+			if (typeof value == 'string') {
+				//
+			} else if (typeof value == 'object' && fields[i] == 'browser') {
+				if (typeof browser == 'string') {
+					value = value[browser=toName(pkg.name, browser)];
+					if (value == null) return browser;
+				}
+			} else {
+				continue;
+			}
+
+			return typeof value == 'string'
+				? ('./' + value.replace(/^\.?\//, ''))
+				: value;
+		}
+	}
+}
+
 // CONCATENATED MODULE: ./sources/loader/makeApi.ts
+
 
 
 
@@ -44298,6 +44456,33 @@ function makeApi(runtimeState, opts) {
     for (const dependencyTreeRoot of runtimeState.dependencyTreeRoots) if (dependencyTreeRoot.name === packageLocator.name && dependencyTreeRoot.reference === packageLocator.reference) return true;
 
     return false;
+  }
+  /**
+   * Implements the node resolution for the "exports" field
+   *
+   * @returns The remapped path or `null` if the package doesn't have an "exports" field
+   */
+
+
+  function applyNodeExportsResolution(unqualifiedPath) {
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`));
+
+    if (locator === null) {
+      throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`);
+    }
+
+    const {
+      packageLocation
+    } = getPackageInformationSafe(locator);
+    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(packageLocation, `package.json`), `utf8`));
+    const subpath = `.${unqualifiedPath.slice(packageLocation.length)}`;
+    const resolvedExport = resolve(pkgJson, subpath, {
+      require: true,
+      browser: false,
+      conditions: []
+    });
+    if (typeof resolvedExport === `string`) return ppath.join(packageLocation, resolvedExport);
+    return null;
   }
   /**
    * Implements the node resolution for folder access and extension selection
@@ -44841,6 +45026,14 @@ function makeApi(runtimeState, opts) {
       });
     }
   }
+
+  function resolveUnqualifiedExport(request, unqualifiedPath) {
+    var _a; // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
+
+
+    if (isStrictRegExp.test(request)) return unqualifiedPath;
+    return (_a = applyNodeExportsResolution(unqualifiedPath)) !== null && _a !== void 0 ? _a : unqualifiedPath;
+  }
   /**
    * Transforms a request into a fully qualified path.
    *
@@ -44858,9 +45051,10 @@ function makeApi(runtimeState, opts) {
       considerBuiltins
     });
     if (unqualifiedPath === null) return null;
+    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath);
 
     try {
-      return resolveUnqualified(unqualifiedPath, {
+      return resolveUnqualified(remappedPath, {
         extensions
       });
     } catch (resolutionError) {
@@ -44926,6 +45120,9 @@ function makeApi(runtimeState, opts) {
       const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null) return null;
       return npath.fromPortablePath(resolution);
+    }),
+    resolveUnqualifiedExport: maybeLog(`resolveUnqualifiedExport`, (request, unqualifiedPath) => {
+      return npath.fromPortablePath(resolveUnqualifiedExport(npath.toPortablePath(request), npath.toPortablePath(unqualifiedPath)));
     }),
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath, opts) => {
       return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
@@ -45007,7 +45204,7 @@ const xfs = Object.assign(new NodeFS(), {
           }
         }
       } else {
-        return p;
+        return realP;
       }
     }
   },
@@ -49802,7 +49999,7 @@ module.exports = require("path");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(345);
+/******/ 	return __webpack_require__(42);
 /******/ })()
 .default;
 });

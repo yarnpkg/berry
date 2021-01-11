@@ -1,6 +1,7 @@
 import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                 from '@yarnpkg/fslib';
 import {Module}                                                                                             from 'module';
+import {resolve as resolveExports}                                                                          from 'resolve.exports';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
 
@@ -172,9 +173,40 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
+   * Implements the node resolution for the "exports" field
+   *
+   * @returns The remapped path or `null` if the package doesn't have an "exports" field
+   */
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath) {
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename));
+    if (locator === null) {
+      throw makeError(
+        ErrorCode.API_ERROR,
+        `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`,
+      );
+    }
+
+    const {packageLocation} = getPackageInformationSafe(locator);
+
+    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(packageLocation, `package.json` as Filename), `utf8`));
+
+    const subpath = `.${unqualifiedPath.slice(packageLocation.length)}`;
+
+    const resolvedExport = resolveExports(pkgJson, subpath, {
+      require: true,
+      browser: false,
+      conditions: [],
+    });
+
+    if (typeof resolvedExport === `string`)
+      return ppath.join(packageLocation, resolvedExport as PortablePath);
+
+    return null;
+  }
+
+  /**
    * Implements the node resolution for folder access and extension selection
    */
-
   function applyNodeExtensionResolution(unqualifiedPath: PortablePath, candidates: Array<PortablePath>, {extensions}: {extensions: Array<string>}): PortablePath | null {
     let stat;
 
@@ -761,6 +793,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
   }
 
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath) {
+    // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
+    if (isStrictRegExp.test(request))
+      return unqualifiedPath;
+
+    return applyNodeExportsResolution(unqualifiedPath) ?? unqualifiedPath;
+  }
+
   /**
    * Transforms a request into a fully qualified path.
    *
@@ -775,8 +815,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (unqualifiedPath === null)
       return null;
 
+    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath);
+
     try {
-      return resolveUnqualified(unqualifiedPath, {extensions});
+      return resolveUnqualified(remappedPath, {extensions});
     } catch (resolutionError) {
       if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`)
         Object.assign(resolutionError.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
@@ -843,6 +885,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       return npath.fromPortablePath(resolution);
+    }),
+
+    resolveUnqualifiedExport: maybeLog(`resolveUnqualifiedExport`, (request: NativePath, unqualifiedPath: NativePath) => {
+      return npath.fromPortablePath(resolveUnqualifiedExport(npath.toPortablePath(request), npath.toPortablePath(unqualifiedPath)));
     }),
 
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
