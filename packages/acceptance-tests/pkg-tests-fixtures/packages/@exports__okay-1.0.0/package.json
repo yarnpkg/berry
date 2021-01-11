@@ -1,0 +1,17 @@
+{
+  "name": "@exports/okay",
+  "version": "1.0.0",
+  "exports": {
+      ".": "./main.js",
+      "./conditional": {
+          "node": {
+              "require": "./conditional/node-require.js",
+              "import": "./conditional/node-import.js"
+          },
+          "require": "./conditional/require.js",
+          "import": "./conditional/import.js",
+          "default": "./conditional/default.js"
+      },
+      "./": "./public/"
+  }
+}
