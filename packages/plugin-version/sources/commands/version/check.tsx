@@ -262,12 +262,14 @@ export default class VersionCheckCommand extends Command<CommandContext> {
               </Text>
             </Box>
             <Box marginLeft={0} borderStyle="round" borderColor={active ? `cyan` : `grey`} paddingY={1} paddingX={2} width={`100%`}>
-              <InkTextInput
+              {/* Without unmounting the input component like this, while inactive, the component will still listen to input */}
+              {active && <InkTextInput
                 value={changelogText}
                 onChange={onChangelogTextChange}
                 showCursor={active}
                 placeholder={` `}
-              />
+              />}
+              {!active && <Text color="grey">{changelogText}</Text>}
             </Box>
           </Box>
         </Box>
@@ -279,14 +281,22 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       useSubmit(releases);
 
       const {relevantWorkspaces} = getRelevancy(releases);
+      const acceptedWorkspaces = new Set([...relevantWorkspaces].filter(workspace => {
+        const decision = releases.get(workspace);
+        return decision && decision !== versionUtils.Decision.DECLINE;
+      }));
       const dependentWorkspaces = new Set([...relevantWorkspaces].filter(workspace => {
         return !versionFile.releaseRoots.has(workspace);
       }));
 
+      const showRelevantWorkspacesVersionBumper = versionFile.releaseRoots.size > 0;
+      const showDependentWorkspacesVersionBumper = dependentWorkspaces.size > 0;
+      const showChangelogEditor = acceptedWorkspaces.size > 0;
+
       const focusGroupVisbility = [
-        versionFile.releaseRoots.size > 0,  // workspaces version
-        dependentWorkspaces.size > 0,       // dependencies version
-        versionFile.releaseRoots.size > 0,  // changelog
+        showRelevantWorkspacesVersionBumper,
+        showDependentWorkspacesVersionBumper,
+        showChangelogEditor,
       ];
       // This would be more elegant once tuple and record is supported so we don't have to
       // workaround React equality check like this
@@ -382,7 +392,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
               </Box>
             </>
           ) : null}
-          {versionFile.releaseRoots.size > 0 && <>
+          {acceptedWorkspaces.size > 0 && <>
             <Box marginTop={1} flexDirection={`column`}>
               <ChangeLogInput active={focus === 2} onFocusRequest={handleFocusRequest} />
             </Box>
