@@ -84,13 +84,15 @@ const FILEHANDLE_IMPLEMENTATIONS = new Set([
   `writeFilePromise`,
 ]);
 
-export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
+export function patchFs(patchedFs: Partial<typeof fs> | null, fakeFs: FakeFS<NativePath>): Partial<typeof fs> {
+  const outputFs = patchedFs ?? {};
+
   // We wrap the `fakeFs` with a `URLFS` to add support for URL instances
   fakeFs = new URLFS(fakeFs);
 
-  const setupFn = (target: any, name: string, replacement: any) => {
-    const orig = target[name];
-    target[name] = replacement;
+  const setupFn = (input: any, output: any, name: string, replacement: any) => {
+    const orig = input[name];
+    output[name] = replacement;
 
     // Preserve any util.promisify implementations
     if (typeof orig?.[promisify.custom] !== `undefined`) {
@@ -100,7 +102,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
   /** Callback implementations */
   {
-    setupFn(patchedFs, `exists`, (p: string, ...args: Array<any>) => {
+    setupFn(patchedFs, outputFs, `exists`, (p: string, ...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
@@ -113,7 +115,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       });
     });
 
-    setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: Array<any>) => {
+    setupFn(patchedFs, outputFs, `read`, (p: number, buffer: Buffer, ...args: Array<any>) => {
       const hasCallback = typeof args[args.length - 1] === `function`;
       const callback = hasCallback ? args.pop() : () => {};
 
@@ -148,15 +150,17 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         });
       };
 
-      setupFn(patchedFs, origName, wrapper);
+      setupFn(patchedFs, outputFs, origName, wrapper);
     }
 
-    patchedFs.realpath.native = patchedFs.realpath;
+    if (outputFs.realpath) {
+      outputFs.realpath.native = outputFs.realpath;
+    }
   }
 
   /** Sync implementations */
   {
-    setupFn(patchedFs, `existsSync`, (p: string) => {
+    setupFn(patchedFs, outputFs, `existsSync`, (p: string) => {
       try {
         return fakeFs.existsSync(p);
       } catch (error) {
@@ -173,10 +177,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       if (typeof fakeImpl === `undefined`)
         continue;
 
-      setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
+      setupFn(patchedFs, outputFs, origName, fakeImpl.bind(fakeFs));
     }
 
-    patchedFs.realpathSync.native = patchedFs.realpathSync;
+    if (outputFs.realpathSync) {
+      outputFs.realpathSync.native = outputFs.realpathSync;
+    }
   }
 
   /** Promise implementations */
@@ -189,7 +195,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
     let patchedFsPromises;
     try {
-      patchedFsPromises = patchedFs.promises;
+      patchedFsPromises = outputFs.promises;
     } finally {
       process.emitWarning = origEmitWarning;
     }
@@ -211,7 +217,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (fnName === `open`)
           continue;
 
-        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
+        setupFn(patchedFsPromises, patchedFsPromises, origName, fakeImpl.bind(fakeFs));
       }
 
       class FileHandle {
@@ -226,12 +232,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (typeof fakeImpl === `undefined`)
           continue;
 
-        setupFn(FileHandle.prototype, origName, function (this: FileHandle, ...args: Array<any>) {
+        setupFn(FileHandle.prototype, FileHandle.prototype, origName, function (this: FileHandle, ...args: Array<any>) {
           return fakeImpl.call(fakeFs, this.fd, ...args);
         });
       }
 
-      setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
+      setupFn(patchedFsPromises, patchedFsPromises, `open`, async (...args: Array<any>) => {
         // @ts-expect-error
         const fd = await fakeFs.openPromise(...args);
         return new FileHandle(fd);
@@ -248,11 +254,13 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     // and
     // https://github.com/nodejs/node/blob/ba684805b6c0eded76e5cd89ee00328ac7a59365/lib/internal/util.js#L293
     // @ts-expect-error
-    patchedFs.read[promisify.custom] = async (p: number, buffer: Buffer, ...args: Array<any>) => {
+    outputFs.read[promisify.custom] = async (p: number, buffer: Buffer, ...args: Array<any>) => {
       const res = fakeFs.readPromise(p, buffer, ...args);
       return {bytesRead: await res, buffer};
     };
   }
+
+  return outputFs;
 }
 
 export function extendFs(realFs: typeof fs, fakeFs: FakeFS<NativePath>): typeof fs {

@@ -862,7 +862,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
-  private limitOpenFilesTimeout: NodeJS.Timeout | null = null;
+  private limitOpenFilesTimeout: ReturnType<typeof setTimeout> | null = null;
   private limitOpenFiles(max: number | null) {
     if (this.zipInstances === null)
       return;
@@ -890,10 +890,16 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
 
     if (this.limitOpenFilesTimeout === null && ((max === null && this.zipInstances.size > 0) || max !== null)) {
-      this.limitOpenFilesTimeout = setTimeout(() => {
+      const timeout = setTimeout(() => {
         this.limitOpenFilesTimeout = null;
         this.limitOpenFiles(null);
-      }, nextExpiresAt - now).unref();
+      }, nextExpiresAt - now);
+
+      this.limitOpenFilesTimeout = timeout;
+
+      if (typeof timeout !== `number`) {
+        (timeout as NodeJS.Timeout).unref();
+      }
     }
   }
 

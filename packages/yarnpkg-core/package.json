@@ -32,7 +32,7 @@
     "semver": "^7.1.2",
     "stream-to-promise": "^2.2.0",
     "strip-ansi": "^6.0.0",
-    "tar": "^6.0.5",
+    "tar": "^6.1.0",
     "treeify": "^1.1.0",
     "tslib": "^1.13.0",
     "tunnel": "^0.0.6"
@@ -46,6 +46,7 @@
     "@types/node": "^13.7.0",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
+    "@types/whatwg-fetch": "^0.0.33",
     "@yarnpkg/cli": "workspace:^2.4.0",
     "@yarnpkg/plugin-link": "workspace:^2.1.1",
     "@yarnpkg/plugin-npm": "workspace:^2.4.0",

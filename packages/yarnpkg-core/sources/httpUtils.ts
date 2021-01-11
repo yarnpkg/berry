@@ -1,6 +1,6 @@
 import {ConfigurationValueMap}           from '@yarnpkg/core';
 import {PortablePath, xfs}               from '@yarnpkg/fslib';
-import {ExtendOptions, Response}         from 'got';
+import {ExtendOptions}                   from 'got';
 import {Agent as HttpsAgent}             from 'https';
 import {Agent as HttpAgent}              from 'http';
 import micromatch                        from 'micromatch';
@@ -13,8 +13,23 @@ import {MapValue, MapValueToObjectValue} from './miscUtils';
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
-const globalHttpAgent = new HttpAgent({keepAlive: true});
-const globalHttpsAgent = new HttpsAgent({keepAlive: true});
+let defaultAgents: {
+  http: HttpAgent;
+  https: HttpsAgent;
+};
+
+function getDefaultAgents() {
+  if (typeof defaultAgents !== `undefined`)
+    return defaultAgents;
+
+  const http = new HttpAgent({keepAlive: true});
+  const https = new HttpsAgent({keepAlive: true});
+
+  const agents = {https, http};
+  defaultAgents = agents;
+
+  return agents;
+}
 
 function parseProxy(specifier: string) {
   const url = new URL(specifier);
@@ -105,7 +120,12 @@ export type Options = {
   method?: Method,
 };
 
-export async function request(target: string, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Options) {
+export type Response = {
+  statusCode: number;
+  body: any;
+};
+
+export async function request(target: string, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Options): Promise<Response> {
   const networkConfig = getNetworkSettings(target, {configuration});
   if (networkConfig.enableNetwork === false)
     throw new Error(`Request to '${target}' has been blocked because of your configuration settings`);
@@ -114,54 +134,100 @@ export async function request(target: string, body: Body, {configuration, header
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
-  const agent = {
-    http: networkConfig.httpProxy
-      ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
-      : globalHttpAgent,
-    https: networkConfig.httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
-      : globalHttpsAgent,
-  };
+  async function requestViaFetch(): Promise<Response> {
+    if (networkConfig.httpProxy || networkConfig.httpsProxy)
+      throw new Error(`Proxies aren't supported when networkApi is set to 'fetch'`);
 
-  const gotOptions: ExtendOptions = {agent, headers, method};
-  gotOptions.responseType = jsonResponse
-    ? `json`
-    : `buffer`;
+    if (typeof fetch === `undefined`)
+      throw new Error(`The networkApi setting is set to 'fetch', but the fetch API isn't available`);
 
-  if (body !== null) {
-    if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
-      gotOptions.body = body;
+    const defaultHeaders: Record<string, string> = {};
+
+    let finalBody: BodyInit | null;
+    if (body === null || typeof body === `string` || Buffer.isBuffer(body)) {
+      finalBody = body;
     } else {
-      // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
-      gotOptions.json = body;
+      if (jsonRequest) {
+        defaultHeaders[`Content-Type`] = `application/json`;
+        finalBody = JSON.stringify(body);
+      } else {
+        const formData = new FormData();
+        for (const [key, value] of Object.entries(body))
+          formData.set(key, value);
+        finalBody = formData;
+      }
     }
+
+    const res = await fetch(target, {
+      method,
+      body: finalBody,
+      headers: {...defaultHeaders, ...headers},
+    });
+
+    const stream = jsonResponse
+      ? res.json()
+      : res.arrayBuffer().then(arrayBuffer => Buffer.from(arrayBuffer));
+
+    return stream.then(body => ({
+      statusCode: res.status,
+      body,
+    }));
   }
 
-  const socketTimeout = configuration.get(`httpTimeout`);
-  const retry = configuration.get(`httpRetry`);
-  const rejectUnauthorized = configuration.get(`enableStrictSsl`);
-  const caFilePath = networkConfig.caFilePath;
+  async function requestViaGot(): Promise<Response> {
+    const agent = {
+      http: networkConfig.httpProxy
+        ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
+        : getDefaultAgents().http,
+      https: networkConfig.httpsProxy
+        ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
+        : getDefaultAgents().https,
+    };
 
-  const {default: got} = await import(`got`);
+    const gotOptions: ExtendOptions = {agent, headers, method};
+    gotOptions.responseType = jsonResponse
+      ? `json`
+      : `buffer`;
 
-  const certificateAuthority = caFilePath
-    ? await getCachedCertificate(caFilePath)
-    : undefined;
+    if (body !== null) {
+      if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
+        gotOptions.body = body;
+      } else {
+        // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
+        gotOptions.json = body;
+      }
+    }
 
-  const gotClient = got.extend({
-    timeout: {
-      socket: socketTimeout,
-    },
-    retry,
-    https: {
-      rejectUnauthorized,
-      certificateAuthority,
-    },
-    ...gotOptions,
-  });
+    const socketTimeout = configuration.get(`httpTimeout`);
+    const retry = configuration.get(`httpRetry`);
+    const rejectUnauthorized = configuration.get(`enableStrictSsl`);
+    const caFilePath = networkConfig.caFilePath;
+
+    const {default: got} = await import(`got`);
+
+    const certificateAuthority = caFilePath
+      ? await getCachedCertificate(caFilePath)
+      : undefined;
+
+    return got.extend({
+      timeout: {
+        socket: socketTimeout,
+      },
+      retry,
+      https: {
+        rejectUnauthorized,
+        certificateAuthority,
+      },
+      ...gotOptions,
+    })(target);
+  }
 
   return configuration.getLimit(`networkConcurrency`)(() => {
-    return gotClient(target) as unknown as Response<any>;
+    if (configuration.get(`networkApi`) === `fetch`) {
+      return requestViaFetch();
+    } else {
+      return requestViaGot();
+    }
   });
 }
 

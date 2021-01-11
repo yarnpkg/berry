@@ -1,3 +1,4 @@
+/packages/*/bundles
 /packages/yarnpkg-pnp/sources/hook.js
 
 /packages/yarnpkg-libzip/sources/libzipAsync.js

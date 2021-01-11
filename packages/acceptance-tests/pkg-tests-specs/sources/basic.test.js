@@ -17,6 +17,7 @@ describe(`Basic tests`, () => {
       },
     ),
   );
+
   test(
     `it should correctly install a single dependency that contains no sub-dependencies`,
     makeTemporaryEnv(

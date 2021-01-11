@@ -12,8 +12,9 @@
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.15",
     "pkg-tests-core": "workspace:0.0.0",
+    "puppeteer-core": "^5.5.0",
     "semver": "^7.1.2",
-    "tar": "^6.0.5"
+    "tar": "^6.1.0"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,10 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
-    "@types/tar": "^4.0.4"
+    "@types/node-fetch": "^2",
+    "@types/puppeteer-core": "^5",
+    "@types/tar": "^4.0.4",
+    "node-fetch": "^2.6.1"
   },
   "engines": {
     "node": ">=10.19.0"

@@ -30,37 +30,40 @@ const mte = generatePkgDriver({
       ? [projectFolder]
       : [];
 
+    const finalEnv: Record<string, string> = {
+      [`HOME`]: tempHomeFolder,
+      [`USERPROFILE`]: tempHomeFolder,
+      [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
+      [`TEST_ENV`]: `true`,
+      [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
+      [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
+      [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
+      // Otherwise we'd send telemetry event when running tests
+      [`YARN_ENABLE_TELEMETRY`]: `0`,
+      // Otherwise snapshots relying on this would break each time it's bumped
+      [`YARN_CACHE_KEY_OVERRIDE`]: `0`,
+      // Otherwise the tests would break when C:\tmp is on a different drive than the repo
+      [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
+      // Otherwise the output isn't stable between runs
+      [`YARN_ENABLE_TIMERS`]: `false`,
+      [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
+      // Otherwise the output wouldn't be the same on CI vs non-CI
+      [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
+      // Otherwise we would more often test the fallback rather than the real logic
+      [`YARN_PNP_FALLBACK_MODE`]: `none`,
+      // Otherwise tests fail on systems where this is globally set to true
+      [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
+      // Older versions of Windows need this set to not have node throw an error
+      [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
+      [`YARN_NETWORK_API`]: `fetch`,
+      ...rcEnv,
+      ...env,
+    };
+
     const yarnBinary = require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
     const res = await execFile(process.execPath, [yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
-      env: {
-        [`HOME`]: tempHomeFolder,
-        [`USERPROFILE`]: tempHomeFolder,
-        [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
-        [`TEST_ENV`]: `true`,
-        [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
-        [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
-        [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
-        // Otherwise we'd send telemetry event when running tests
-        [`YARN_ENABLE_TELEMETRY`]: `0`,
-        // Otherwise snapshots relying on this would break each time it's bumped
-        [`YARN_CACHE_KEY_OVERRIDE`]: `0`,
-        // Otherwise the tests would break when C:\tmp is on a different drive than the repo
-        [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
-        // Otherwise the output isn't stable between runs
-        [`YARN_ENABLE_TIMERS`]: `false`,
-        [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
-        // Otherwise the output wouldn't be the same on CI vs non-CI
-        [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
-        // Otherwise we would more often test the fallback rather than the real logic
-        [`YARN_PNP_FALLBACK_MODE`]: `none`,
-        // Otherwise tests fail on systems where this is globally set to true
-        [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
-        // Older versions of Windows need this set to not have node throw an error
-        [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
-        ...rcEnv,
-        ...env,
-      },
+      env: finalEnv,
     });
 
     if (process.env.JEST_LOG_SPAWNS) {

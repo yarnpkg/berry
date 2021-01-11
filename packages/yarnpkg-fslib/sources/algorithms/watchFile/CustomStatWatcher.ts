@@ -39,11 +39,11 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
   private status: Status = Status.Ready;
 
-  private changeListeners: Map<WatchFileCallback, NodeJS.Timeout> = new Map();
+  private changeListeners: Map<WatchFileCallback, ReturnType<typeof setTimeout>> = new Map();
 
   private lastStats: Stats;
 
-  private startTimeout: NodeJS.Timeout | null = null;
+  private startTimeout: ReturnType<typeof setTimeout> | null = null;
 
   static create<P extends Path>(fakeFs: FakeFS<P>, path: P, opts?: CustomStatWatcherOptions) {
     const statWatcher = new CustomStatWatcher<P>(fakeFs, path, opts);
@@ -124,7 +124,10 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
       this.emit(Event.Change, currentStats, previousStats);
     }, opts.interval);
 
-    return opts.persistent ? interval : interval.unref();
+    if (typeof interval !== `number` && !opts.persistent)
+      (interval as NodeJS.Timeout).unref();
+
+    return interval;
   }
 
   /**
@@ -167,7 +170,8 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
    */
   ref() {
     for (const interval of this.changeListeners.values())
-      interval.ref();
+      if (typeof interval !== `number`)
+        (interval as NodeJS.Timeout).ref();
 
     return this;
   }
@@ -177,7 +181,8 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
    */
   unref() {
     for (const interval of this.changeListeners.values())
-      interval.unref();
+      if (typeof interval !== `number`)
+        (interval as NodeJS.Timeout).unref();
 
     return this;
   }

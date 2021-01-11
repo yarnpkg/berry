@@ -287,6 +287,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to network access
+  networkApi: {
+    description: `Which API to use when accessing the network`,
+    type: SettingsType.STRING,
+    default: `node`,
+  },
   enableMirror: {
     description: `If true, the downloaded packages will be retrieved and stored in both the local and global folders`,
     type: SettingsType.BOOLEAN,
@@ -512,6 +517,7 @@ export interface ConfigurationValueMap {
   defaultProtocol: string;
   enableTransparentWorkspaces: boolean;
 
+  networkApi: string;
   enableMirror: boolean;
   enableNetwork: boolean;
   httpProxy: string | null;

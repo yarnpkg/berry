@@ -9,9 +9,10 @@ export function getLibzipSync() {
 export async function getLibzipPromise() {
   if (promise === null) {
     promise = new Promise<Libzip>(resolve => {
-      require(`./libzipAsync`).then((libzip: EmscriptenModule) => {
+      const libzip = require(`./libzipAsync`) as EmscriptenModule;
+      libzip.onRuntimeInitialized = () => {
         resolve(makeInterface(libzip));
-      });
+      };
     });
   }
 
