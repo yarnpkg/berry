@@ -9,33 +9,41 @@ import * as miscUtils                                                       from
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
 
-export enum Type {
-  NO_HINT = `NO_HINT`,
+// We have to workaround a TS bug:
+// https://github.com/microsoft/TypeScript/issues/35329
+//
+// We also can't use const enum because Babel doesn't support them:
+// https://github.com/babel/babel/issues/8741
+//
+export const Type = {
+  NO_HINT: `NO_HINT`,
 
-  NULL = `NULL`,
+  NULL: `NULL`,
 
-  SCOPE = `SCOPE`,
-  NAME = `NAME`,
-  RANGE = `RANGE`,
-  REFERENCE = `REFERENCE`,
+  SCOPE: `SCOPE`,
+  NAME: `NAME`,
+  RANGE: `RANGE`,
+  REFERENCE: `REFERENCE`,
 
-  NUMBER = `NUMBER`,
-  PATH = `PATH`,
-  URL = `URL`,
-  ADDED = `ADDED`,
-  REMOVED = `REMOVED`,
-  CODE = `CODE`,
+  NUMBER: `NUMBER`,
+  PATH: `PATH`,
+  URL: `URL`,
+  ADDED: `ADDED`,
+  REMOVED: `REMOVED`,
+  CODE: `CODE`,
 
-  DURATION = `DURATION`,
-  SIZE = `SIZE`,
+  DURATION: `DURATION`,
+  SIZE: `SIZE`,
 
-  IDENT = `IDENT`,
-  DESCRIPTOR = `DESCRIPTOR`,
-  LOCATOR = `LOCATOR`,
-  RESOLUTION = `RESOLUTION`,
-  DEPENDENT = `DEPENDENT`,
-  PACKAGE_EXTENSION = `PACKAGE_EXTENSION`,
-}
+  IDENT: `IDENT`,
+  DESCRIPTOR: `DESCRIPTOR`,
+  LOCATOR: `LOCATOR`,
+  RESOLUTION: `RESOLUTION`,
+  DEPENDENT: `DEPENDENT`,
+  PACKAGE_EXTENSION: `PACKAGE_EXTENSION`,
+} as const;
+
+export type Type = keyof typeof Type;
 
 export enum Style {
   BOLD = 1 << 1,
@@ -52,7 +60,7 @@ export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 
-const colors = new Map([
+const colors = new Map<Type, [string, number] | null>([
   [Type.NO_HINT, null],
 
   [Type.NULL, [`#a853b5`, 129]],
