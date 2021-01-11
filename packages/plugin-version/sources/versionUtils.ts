@@ -35,7 +35,7 @@ export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array
   if (ancestorBases.length === 0)
     throw new UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
 
-  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
+  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `--octopus`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
   const hash = mergeBaseStdout.trim();
 
   const {stdout: showStdout} = await execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {cwd: root, strict: true});
