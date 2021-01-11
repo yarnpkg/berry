@@ -44475,7 +44475,13 @@ function makeApi(runtimeState, opts) {
       packageLocation
     } = getPackageInformationSafe(locator);
     const pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(packageLocation, `package.json`), `utf8`));
-    const subpath = `.${unqualifiedPath.slice(packageLocation.length)}`;
+    let subpath = ppath.contains(packageLocation, unqualifiedPath);
+
+    if (subpath === null) {
+      throw internalTools_makeError(ErrorCode.INTERNAL, `unqualifiedPath doesn't contain the packageLocation (this is probably an internal error)`);
+    }
+
+    if (!/^\.{0,2}\//.test(subpath)) subpath = `./${subpath}`;
     const resolvedExport = resolve(pkgJson, subpath, {
       require: true,
       browser: false,
@@ -45003,6 +45009,14 @@ function makeApi(runtimeState, opts) {
 
     return ppath.normalize(unqualifiedPath);
   }
+
+  function resolveUnqualifiedExport(request, unqualifiedPath) {
+    var _a; // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
+
+
+    if (isStrictRegExp.test(request)) return unqualifiedPath;
+    return (_a = applyNodeExportsResolution(unqualifiedPath)) !== null && _a !== void 0 ? _a : unqualifiedPath;
+  }
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
@@ -45025,14 +45039,6 @@ function makeApi(runtimeState, opts) {
         unqualifiedPath: unqualifiedPathForDisplay
       });
     }
-  }
-
-  function resolveUnqualifiedExport(request, unqualifiedPath) {
-    var _a; // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
-
-
-    if (isStrictRegExp.test(request)) return unqualifiedPath;
-    return (_a = applyNodeExportsResolution(unqualifiedPath)) !== null && _a !== void 0 ? _a : unqualifiedPath;
   }
   /**
    * Transforms a request into a fully qualified path.
