@@ -1,5 +1,4 @@
 const {xfs} = require(`@yarnpkg/fslib`);
-const cp = require(`child_process`);
 
 describe(`SIGTERM`, () => {
   test(
