@@ -272,4 +272,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `^16.8.6`,
     },
   }],
+  // https://github.com/rebassjs/rebass/pull/934
+  [`rebass@*`, {
+    peerDependencies: {
+      react: `^16.8.6`,
+    },
+  }],
 ];
