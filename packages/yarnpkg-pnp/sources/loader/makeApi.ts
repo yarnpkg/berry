@@ -1,5 +1,5 @@
 import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
-import {FakeFS, NativePath, Path, PortablePath, VirtualFS, npath}                                           from '@yarnpkg/fslib';
+import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                 from '@yarnpkg/fslib';
 import {Module}                                                                                             from 'module';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
@@ -258,14 +258,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
-   * Normalize path to posix format.
-   */
-
-  function normalizePath(p: Path) {
-    return npath.toPortablePath(p);
-  }
-
-  /**
    * Forward the resolution to the next resolver (usually the native one)
    */
 
@@ -425,12 +417,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (isPathIgnored(location))
       return null;
 
-    let relativeLocation = normalizePath(ppath.relative(runtimeState.basePath, location));
+    let relativeLocation = ppath.relative(runtimeState.basePath, location);
 
     if (!relativeLocation.match(isStrictRegExp))
       relativeLocation = `./${relativeLocation}` as PortablePath;
 
-    if (location.match(isDirRegExp) && !relativeLocation.endsWith(`/`))
+    if (!relativeLocation.endsWith(`/`))
       relativeLocation = `${relativeLocation}/` as PortablePath;
 
     let from = 0;
