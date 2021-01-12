@@ -33,6 +33,16 @@ function sigintHandler() {
 // longer needed.
 let sigintRefCount = 0;
 
+const activeChildren = new Set();
+function sigtermHandler() {
+  for (const child of activeChildren) {
+    child.kill();
+  }
+}
+
+process.on(`SIGTERM`, sigtermHandler);
+
+
 export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr, end = EndStrategy.Always}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
 
@@ -49,6 +59,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   if (sigintRefCount++ === 0)
     process.on(`SIGINT`, sigintHandler);
 
+
   const child = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
     env: {
@@ -58,8 +69,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     stdio,
   });
 
-  const sigtermHandler = () => child.kill(`SIGTERM`);
-  process.on(`SIGTERM`, sigtermHandler);
+  activeChildren.add(child);
 
   if (!hasFd(stdin) && stdin !== null)
     stdin.pipe(child.stdin!);
@@ -79,9 +89,10 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
   return new Promise((resolve, reject) => {
     child.on(`error`, error => {
-      process.off(`SIGTERM`, sigtermHandler);
+      activeChildren.delete(child);
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
+
 
       if (end === EndStrategy.Always || end === EndStrategy.ErrorCode)
         closeStreams();
@@ -90,9 +101,10 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     });
 
     child.on(`close`, (code, sig) => {
-      process.off(`SIGTERM`, sigtermHandler);
+      activeChildren.delete(child);
       if (--sigintRefCount === 0)
         process.off(`SIGINT`, sigintHandler);
+
 
       if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0))
         closeStreams();
@@ -144,16 +156,15 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
     stderrChunks.push(chunk);
   });
 
-  const sigtermHandler = () => subprocess.kill(`SIGTERM`);
-  process.on(`SIGTERM`, sigtermHandler);
+  activeChildren.add(subprocess);
 
   return await new Promise((resolve, reject) => {
     subprocess.on(`error`, () => {
-      process.off(`SIGTERM`, sigtermHandler);
+      activeChildren.delete(subprocess);
       reject();
     });
     subprocess.on(`close`, (code, signal) => {
-      process.off(`SIGTERM`, sigtermHandler);
+      activeChildren.delete(subprocess);
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)
         : Buffer.concat(stdoutChunks).toString(encoding);

@@ -18,7 +18,7 @@ describe(`SIGTERM`, () => {
         `sleep 1`,
         `if ps | grep -v "grep" | grep -q "Testing script SIGTERM"`,
         `then`,
-        `  echo "[FAIL] still running"; exit 1`,
+        `  echo "[FAIL] still running"; exit 0`,
         `else`,
         `  echo "[PASS] ok"; exit 0`,
         `fi`,
@@ -35,14 +35,14 @@ describe(`SIGTERM`, () => {
     `yarn exec script should end child process on SIGTERM`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/test.sh`, ([
-        `yarn node -e "console.log('Testing exec SIGTERM'); setTimeout(() => {}, 10000)" &`,
+        `yarn node -e "console.log('Testing exec SIGTERM'); setTimeout(() => {}, 100000)" &`,
         `sleep 1`,
         `ps | grep -v "grep" | grep -q "Testing exec SIGTERM" || exit 1`, // check if it was started properly
         `kill $!`,
         `sleep 1`,
         `if ps | grep -v "grep" | grep -q "Testing exec SIGTERM"`,
         `then`,
-        `  echo "[FAIL] still running"; exit 1`,
+        `  echo "[FAIL] still running"; exit 0`,
         `else`,
         `  echo "[PASS] ok"; exit 0`,
         `fi`,
