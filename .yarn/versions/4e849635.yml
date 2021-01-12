@@ -1,0 +1,8 @@
+releases:
+  "@yarnpkg/pnp": patch
+
+declined:
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/core"
+  - "@yarnpkg/pnpify"
