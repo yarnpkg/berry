@@ -5,7 +5,7 @@ import {WatchOptions, WatchCallback, Watcher}                                   
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                                         from '@yarnpkg/fslib';
 import {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
-import fs                                                                                                                          from 'fs';
+import fs, {BigIntStats, Stats}                                                                                                    from 'fs';
 
 import {WatchManager}                                                                                                              from './WatchManager';
 import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
@@ -141,12 +141,20 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return pnpPath.forwardedDirPath || pnpPath.resolvedPath;
   }
 
-  private resolveLink(p: PortablePath, op: string, onSymlink: (stats: fs.Stats, targetPath: PortablePath) => any, onRealPath: (targetPath: PortablePath) => any) {
+  private resolveLink(opts: {
+    p: PortablePath,
+    op: string,
+    onSymlink: (stats: fs.Stats | fs.BigIntStats, targetPath: PortablePath) => any
+    onRealPath: (targetPath: PortablePath) => any
+    statOptions?: {bigint: boolean}
+  }) {
+    const {p, onSymlink, onRealPath, statOptions} = opts;
+
     const pnpPath = this.resolvePath(p);
     if (pnpPath.isSymlink) {
       let stat;
       try {
-        stat = this.baseFs.lstatSync(pnpPath.resolvedPath);
+        stat = this.baseFs.lstatSync(pnpPath.resolvedPath, statOptions);
       } catch (e) {}
 
       if (stat) {
@@ -294,34 +302,58 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.accessSync(this.resolveDirOrFilePath(p), mode);
   }
 
-  async statPromise(p: PortablePath) {
-    return await this.baseFs.statPromise(this.resolveDirOrFilePath(p));
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
+    return await this.baseFs.statPromise(this.resolveDirOrFilePath(p), opts);
   }
 
-  statSync(p: PortablePath) {
-    return this.baseFs.statSync(this.resolveDirOrFilePath(p));
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: {bigint: boolean}) {
+    return this.baseFs.statSync(this.resolveDirOrFilePath(p), opts);
   }
 
-  async fstatPromise(fd: number) {
-    return await this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+    return await this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd: number) {
-    return this.baseFs.fstatSync(fd);
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
+    return this.baseFs.fstatSync(fd, opts);
   }
 
-  async lstatPromise(p: PortablePath) {
-    return this.resolveLink(p, `lstat`,
-      stats => PortableNodeModulesFS.makeSymlinkStats(stats),
-      async resolvedPath => await this.baseFs.lstatPromise(resolvedPath)
-    );
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+    return this.resolveLink({
+      p,
+      op: `lstat`,
+      onSymlink: stats => PortableNodeModulesFS.makeSymlinkStats(stats),
+      onRealPath: async resolvedPath => await this.baseFs.lstatPromise(resolvedPath, opts),
+      statOptions: opts,
+    });
   }
 
-  lstatSync(p: PortablePath) {
-    return this.resolveLink(p, `lstat`,
-      stats => PortableNodeModulesFS.makeSymlinkStats(stats),
-      resolvedPath => this.baseFs.lstatSync(this.resolveDirOrFilePath(resolvedPath))
-    );
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
+    return this.resolveLink({
+      p,
+      op: `lstat`,
+      onSymlink: stats => PortableNodeModulesFS.makeSymlinkStats(stats),
+      onRealPath: resolvedPath =>  this.baseFs.lstatSync(resolvedPath, opts),
+      statOptions: opts,
+    });
   }
 
   async chmodPromise(p: PortablePath, mask: number) {
@@ -503,17 +535,21 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   }
 
   async readlinkPromise(p: PortablePath) {
-    return this.resolveLink(p, `readlink`,
-      (_stats, targetPath) => targetPath,
-      async targetPath => await this.baseFs.readlinkPromise(this.resolveDirOrFilePath(targetPath))
-    );
+    return this.resolveLink({
+      p,
+      op: `readlink`,
+      onSymlink: (_stats, targetPath) => targetPath,
+      onRealPath: async targetPath => await this.baseFs.readlinkPromise(this.resolveDirOrFilePath(targetPath)),
+    });
   }
 
   readlinkSync(p: PortablePath) {
-    return this.resolveLink(p, `readlink`,
-      (_stats, targetPath) => targetPath,
-      targetPath => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath))
-    );
+    return this.resolveLink({
+      p,
+      op: `readlink`,
+      onSymlink: (_stats, targetPath) => targetPath,
+      onRealPath: targetPath => this.baseFs.readlinkSync(this.resolveDirOrFilePath(targetPath)),
+    });
   }
 
   async truncatePromise(p: PortablePath, len?: number) {

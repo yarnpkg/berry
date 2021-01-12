@@ -39877,34 +39877,62 @@ class NodeFS extends BasePortableFakeFS {
     return this.realFs.existsSync(npath.fromPortablePath(p));
   }
 
-  async statPromise(p) {
+  async statPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  statSync(p) {
-    return this.realFs.statSync(npath.fromPortablePath(p));
+  statSync(p, opts) {
+    if (opts) {
+      return this.realFs.statSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.statSync(npath.fromPortablePath(p));
+    }
   }
 
-  async fstatPromise(fd) {
+  async fstatPromise(fd, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+      if (opts) {
+        // @ts-expect-error - The node typings doesn't know about the options
+        this.realFs.fstat(fd, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  fstatSync(fd) {
-    return this.realFs.fstatSync(fd);
+  fstatSync(fd, opts) {
+    if (opts) {
+      // @ts-expect-error - The node typings doesn't know about the options
+      return this.realFs.fstatSync(fd, opts);
+    } else {
+      return this.realFs.fstatSync(fd);
+    }
   }
 
-  async lstatPromise(p) {
+  async lstatPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        // @ts-expect-error - TS does not know this takes options
+        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  lstatSync(p) {
-    return this.realFs.lstatSync(npath.fromPortablePath(p));
+  lstatSync(p, opts) {
+    if (opts) {
+      // @ts-expect-error - TS does not know this takes options
+      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.lstatSync(npath.fromPortablePath(p));
+    }
   }
 
   async chmodPromise(p, mask) {
@@ -40258,28 +40286,28 @@ class ProxiedFS extends FakeFS {
     return this.baseFs.accessPromise(this.mapToBase(p), mode);
   }
 
-  async statPromise(p) {
-    return this.baseFs.statPromise(this.mapToBase(p));
+  async statPromise(p, opts) {
+    return this.baseFs.statPromise(this.mapToBase(p), opts);
   }
 
-  statSync(p) {
-    return this.baseFs.statSync(this.mapToBase(p));
+  statSync(p, opts) {
+    return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
-  async fstatPromise(fd) {
-    return this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd, opts) {
+    return this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd) {
-    return this.baseFs.fstatSync(fd);
+  fstatSync(fd, opts) {
+    return this.baseFs.fstatSync(fd, opts);
   }
 
-  async lstatPromise(p) {
-    return this.baseFs.lstatPromise(this.mapToBase(p));
+  async lstatPromise(p, opts) {
+    return this.baseFs.lstatPromise(this.mapToBase(p), opts);
   }
 
-  lstatSync(p) {
-    return this.baseFs.lstatSync(this.mapToBase(p));
+  lstatSync(p, opts) {
+    return this.baseFs.lstatSync(this.mapToBase(p), opts);
   }
 
   async chmodPromise(p, mask) {
@@ -40619,6 +40647,7 @@ const constants_S_IFREG = 0o100000;
 const constants_S_IFLNK = 0o120000;
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/statUtils.ts
 
+
 class DirEntry {
   constructor() {
     this.name = ``;
@@ -40656,9 +40685,21 @@ class DirEntry {
 }
 class StatEntry {
   constructor() {
+    this.uid = 0;
+    this.gid = 0;
+    this.size = 0;
+    this.blksize = 0;
+    this.atimeMs = 0;
+    this.mtimeMs = 0;
+    this.ctimeMs = 0;
+    this.birthtimeMs = 0;
+    this.atime = new Date(0);
+    this.mtime = new Date(0);
+    this.ctime = new Date(0);
+    this.birthtime = new Date(0);
     this.dev = 0;
     this.ino = 0;
-    this.mode = 0;
+    this.mode = constants_S_IFREG | 0o644;
     this.nlink = 1;
     this.rdev = 0;
     this.blocks = 1;
@@ -40693,29 +40734,113 @@ class StatEntry {
   }
 
 }
+class BigIntStatsEntry {
+  constructor() {
+    this.uid = BigInt(0);
+    this.gid = BigInt(0);
+    this.size = BigInt(0);
+    this.blksize = BigInt(0);
+    this.atimeMs = BigInt(0);
+    this.mtimeMs = BigInt(0);
+    this.ctimeMs = BigInt(0);
+    this.birthtimeMs = BigInt(0);
+    this.atimeNs = BigInt(0);
+    this.mtimeNs = BigInt(0);
+    this.ctimeNs = BigInt(0);
+    this.birthtimeNs = BigInt(0);
+    this.atime = new Date(0);
+    this.mtime = new Date(0);
+    this.ctime = new Date(0);
+    this.birthtime = new Date(0);
+    this.dev = BigInt(0);
+    this.ino = BigInt(0);
+    this.mode = BigInt(constants_S_IFREG | 0o644);
+    this.nlink = BigInt(1);
+    this.rdev = BigInt(0);
+    this.blocks = BigInt(1);
+  }
+
+  isBlockDevice() {
+    return false;
+  }
+
+  isCharacterDevice() {
+    return false;
+  }
+
+  isDirectory() {
+    return (this.mode & BigInt(constants_S_IFMT)) === BigInt(constants_S_IFDIR);
+  }
+
+  isFIFO() {
+    return false;
+  }
+
+  isFile() {
+    return (this.mode & BigInt(constants_S_IFMT)) === BigInt(constants_S_IFREG);
+  }
+
+  isSocket() {
+    return false;
+  }
+
+  isSymbolicLink() {
+    return (this.mode & BigInt(constants_S_IFMT)) === BigInt(constants_S_IFLNK);
+  }
+
+}
 function makeDefaultStats() {
-  return Object.assign(new StatEntry(), {
-    uid: 0,
-    gid: 0,
-    size: 0,
-    blksize: 0,
-    atimeMs: 0,
-    mtimeMs: 0,
-    ctimeMs: 0,
-    birthtimeMs: 0,
-    atime: new Date(0),
-    mtime: new Date(0),
-    ctime: new Date(0),
-    birthtime: new Date(0),
-    mode: constants_S_IFREG | 0o644
-  });
+  return new StatEntry();
 }
 function makeEmptyStats() {
-  return Object.assign(makeDefaultStats(), {
-    nlink: 0,
-    blocks: 0,
-    mode: 0
-  });
+  return clearStats(makeDefaultStats());
+}
+/**
+ * Mutates the provided stats object to zero it out then returns it for convenience
+ */
+
+function clearStats(stats) {
+  for (const key in stats) {
+    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+      const element = stats[key];
+
+      if (typeof element === `number`) {
+        // @ts-expect-error Typescript can't tell that stats[key] is a number
+        stats[key] = 0;
+      } else if (typeof element === `bigint`) {
+        // @ts-expect-error Typescript can't tell that stats[key] is a bigint
+        stats[key] = BigInt(0);
+      } else if (external_util_namespaceObject.types.isDate(element)) {
+        // @ts-expect-error Typescript can't tell that stats[key] is a bigint
+        stats[key] = new Date(0);
+      }
+    }
+  }
+
+  return stats;
+}
+function convertToBigIntStats(stats) {
+  const bigintStats = new BigIntStatsEntry();
+
+  for (const key in stats) {
+    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+      const element = stats[key];
+
+      if (typeof element === `number`) {
+        // @ts-expect-error Typescript isn't able to tell this is valid
+        bigintStats[key] = BigInt(element);
+      } else if (external_util_namespaceObject.types.isDate(element)) {
+        // @ts-expect-error Typescript isn't able to tell this is valid
+        bigintStats[key] = new Date(element);
+      }
+    }
+  }
+
+  bigintStats.atimeNs = bigintStats.atimeMs * BigInt(1e6);
+  bigintStats.mtimeNs = bigintStats.mtimeMs * BigInt(1e6);
+  bigintStats.ctimeNs = bigintStats.ctimeMs * BigInt(1e6);
+  bigintStats.birthtimeNs = bigintStats.birthtimeMs * BigInt(1e6);
+  return bigintStats;
 }
 function areStatsEqual(a, b) {
   if (a.atimeMs !== b.atimeMs) return false;
@@ -40739,6 +40864,12 @@ function areStatsEqual(a, b) {
   if (a.rdev !== b.rdev) return false;
   if (a.size !== b.size) return false;
   if (a.uid !== b.uid) return false;
+  const aN = a;
+  const bN = b;
+  if (aN.atimeNs !== bN.atimeNs) return false;
+  if (aN.mtimeNs !== bN.mtimeNs) return false;
+  if (aN.ctimeNs !== bN.ctimeNs) return false;
+  if (aN.birthtimeNs !== bN.birthtimeNs) return false;
   return true;
 }
 // CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/watchFile/CustomStatWatcher.ts
@@ -40815,10 +40946,13 @@ class CustomStatWatcher extends external_events_namespaceObject.EventEmitter {
 
   stat() {
     try {
-      return this.fakeFs.statSync(this.path);
+      return this.fakeFs.statSync(this.path, {
+        bigint: this.bigint
+      });
     } catch (error) {
       if (error.code === `ENOENT`) {
-        return makeEmptyStats();
+        const statInstance = this.bigint ? new BigIntStatsEntry() : new StatEntry();
+        return clearStats(statInstance);
       } else {
         throw error;
       }
@@ -41404,22 +41538,22 @@ class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async statPromise(p) {
-    return this.statSync(p);
+  async statPromise(p, opts) {
+    return this.statSync(p, opts);
   }
 
-  statSync(p) {
+  statSync(p, opts) {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`stat '${p}'`);
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`stat '${p}'`);
-    return this.statImpl(`stat '${p}'`, resolvedP);
+    return this.statImpl(`stat '${p}'`, resolvedP, opts);
   }
 
-  async fstatPromise(fd) {
-    return this.fstatSync(fd);
+  async fstatPromise(fd, opts) {
+    return this.fstatSync(fd, opts);
   }
 
-  fstatSync(fd) {
+  fstatSync(fd, opts) {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`) throw EBADF(`fstatSync`);
     const {
@@ -41428,21 +41562,21 @@ class ZipFS extends BasePortableFakeFS {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`stat '${p}'`);
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`stat '${p}'`);
-    return this.statImpl(`fstat '${p}'`, resolvedP);
+    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
   }
 
-  async lstatPromise(p) {
-    return this.lstatSync(p);
+  async lstatPromise(p, opts) {
+    return this.lstatSync(p, opts);
   }
 
-  lstatSync(p) {
+  lstatSync(p, opts) {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`lstat '${p}'`);
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP)) throw ENOTDIR(`lstat '${p}'`);
-    return this.statImpl(`lstat '${p}'`, resolvedP);
+    return this.statImpl(`lstat '${p}'`, resolvedP, opts);
   }
 
-  statImpl(reason, p) {
+  statImpl(reason, p, opts = {}) {
     const entry = this.entries.get(p); // File, or explicit directory
 
     if (typeof entry !== `undefined`) {
@@ -41465,7 +41599,7 @@ class ZipFS extends BasePortableFakeFS {
       const type = this.listings.has(p) ? constants_S_IFDIR : this.isSymbolicLink(entry) ? constants_S_IFLNK : constants_S_IFREG;
       const defaultMode = type === constants_S_IFDIR ? 0o755 : 0o644;
       const mode = type | this.getUnixMode(entry, defaultMode) & 0o777;
-      return Object.assign(new StatEntry(), {
+      const statInstance = Object.assign(new StatEntry(), {
         uid,
         gid,
         size,
@@ -41481,6 +41615,7 @@ class ZipFS extends BasePortableFakeFS {
         mtimeMs,
         mode
       });
+      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
     } // Implicit directory
 
 
@@ -41499,7 +41634,7 @@ class ZipFS extends BasePortableFakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
       const mode = constants_S_IFDIR | 0o755;
-      return Object.assign(new StatEntry(), {
+      const statInstance = Object.assign(new StatEntry(), {
         uid,
         gid,
         size,
@@ -41515,6 +41650,7 @@ class ZipFS extends BasePortableFakeFS {
         mtimeMs,
         mode
       });
+      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
     }
 
     throw new Error(`Unreachable`);
@@ -42472,59 +42608,59 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async statPromise(p) {
+  async statPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.statPromise(p);
+      return await this.baseFs.statPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.statPromise(subPath);
+      return await zipFs.statPromise(subPath, opts);
     });
   }
 
-  statSync(p) {
+  statSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.statSync(p);
+      return this.baseFs.statSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.statSync(subPath);
+      return zipFs.statSync(subPath, opts);
     });
   }
 
-  async fstatPromise(fd) {
-    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd, opts) {
+    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatPromise(fd, opts);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`) throw EBADF(`fstat`);
     const [zipFs, realFd] = entry;
-    return zipFs.fstatPromise(realFd);
+    return zipFs.fstatPromise(realFd, opts);
   }
 
-  fstatSync(fd) {
-    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatSync(fd);
+  fstatSync(fd, opts) {
+    if ((fd & ZIP_FD) === 0) return this.baseFs.fstatSync(fd, opts);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`) throw EBADF(`fstatSync`);
     const [zipFs, realFd] = entry;
-    return zipFs.fstatSync(realFd);
+    return zipFs.fstatSync(realFd, opts);
   }
 
-  async lstatPromise(p) {
+  async lstatPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.lstatPromise(p);
+      return await this.baseFs.lstatPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.lstatPromise(subPath);
+      return await zipFs.lstatPromise(subPath, opts);
     });
   }
 
-  lstatSync(p) {
+  lstatSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.lstatSync(p);
+      return this.baseFs.lstatSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.lstatSync(subPath);
+      return zipFs.lstatSync(subPath, opts);
     });
   }
 
