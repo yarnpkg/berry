@@ -1,7 +1,7 @@
 import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                 from '@yarnpkg/fslib';
 import {Module}                                                                                             from 'module';
-import {resolve as resolveExports}                                                                          from 'resolve.exports';
+import {resolve as resolveExport}                                                                           from 'resolve.exports';
 
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
 
@@ -201,7 +201,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (!/^\.{0,2}\//.test(subpath))
       subpath = `./${subpath}` as PortablePath;
 
-    const resolvedExport = resolveExports(pkgJson, ppath.normalize(subpath), {
+    const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
       require: true,
       browser: false,
       conditions: [],
