@@ -155,15 +155,12 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
     stderrChunks.push(chunk);
   });
 
-  activeChildren.add(subprocess);
-
   return await new Promise((resolve, reject) => {
     subprocess.on(`error`, () => {
-      activeChildren.delete(subprocess);
       reject();
     });
+
     subprocess.on(`close`, (code, signal) => {
-      activeChildren.delete(subprocess);
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)
         : Buffer.concat(stdoutChunks).toString(encoding);
