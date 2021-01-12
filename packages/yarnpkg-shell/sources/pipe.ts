@@ -24,23 +24,18 @@ export type ProcessImplementation = (
   promise: Promise<number>,
 };
 
+const activeChildren = new Set<ChildProcess>();
+
 function sigintHandler() {
   // We don't want SIGINT to kill our process; we want it to kill the
   // innermost process, whose end will cause our own to exit.
 }
 
-// Rather than attaching one SIGINT handler for each process, we
-// attach a single one and use a refcount to detect once it's no
-// longer needed.
-let sigintRefCount = 0;
-const activeChildren = new Set<ChildProcess>();
 function sigtermHandler() {
   for (const child of activeChildren) {
     child.kill();
   }
 }
-
-process.on(`SIGTERM`, sigtermHandler);
 
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
@@ -64,8 +59,10 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
 
     activeChildren.add(child);
 
-    if (sigintRefCount++ === 0)
+    if (activeChildren.size === 1) {
       process.on(`SIGINT`, sigintHandler);
+      process.on(`SIGTERM`, sigtermHandler);
+    }
 
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
@@ -79,8 +76,11 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       promise: new Promise(resolve => {
         child.on(`error`, error => {
           activeChildren.delete(child);
-          if (--sigintRefCount === 0)
+
+          if (activeChildren.size === 0) {
             process.off(`SIGINT`, sigintHandler);
+            process.off(`SIGTERM`, sigtermHandler);
+          }
 
           // @ts-expect-error
           switch (error.code) {
@@ -101,9 +101,11 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
 
         child.on(`exit`, code => {
           activeChildren.delete(child);
-          process.off(`SIGTERM`, sigtermHandler);
-          if (--sigintRefCount === 0)
+
+          if (activeChildren.size === 0) {
             process.off(`SIGINT`, sigintHandler);
+            process.off(`SIGTERM`, sigtermHandler);
+          }
 
           if (code !== null) {
             resolve(code);
