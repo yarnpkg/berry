@@ -3,12 +3,13 @@ import {CommandContext, Configuration, MessageName, Project, StreamReport, Works
 import {ppath}                                                                                                  from '@yarnpkg/fslib';
 import {Gem}                                                                                                    from '@yarnpkg/libui/sources/components/Gem';
 import {ScrollableItems}                                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
+import {FocusRequest, FocusRequestHandler, useFocusRequest}                                                     from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage, UsageError}                                                                             from 'clipanion';
+import InkTextInput                                                                                             from 'ink-text-input';
 import {Box, Text}                                                                                              from 'ink';
-import React, {useCallback, useState}                                                                           from 'react';
+import React, {useCallback, useEffect, useState}                                                                from 'react';
 import semver                                                                                                   from 'semver';
 
 import * as versionUtils                                                                                        from '../../versionUtils';
@@ -74,7 +75,12 @@ export default class VersionCheckCommand extends Command<CommandContext> {
             </Box>
             <Box>
               <Text>
-                 Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select release strategies.
+                Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select release strategies.
+              </Text>
+            </Box>
+            <Box>
+              <Text>
+                Press <Text bold color="cyanBright">{`<tab>`}</Text> to move the focus between the sections.
               </Text>
             </Box>
           </Box>
@@ -226,27 +232,110 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       return <Text color="yellow">{parts.join(`, `)}</Text>;
     };
 
+    const ChangeLogInput = ({active = true, onFocusRequest}: {active?: boolean, onFocusRequest?: FocusRequestHandler}) => {
+      const [changelogText, setChangelogText] = useState(versionFile.changelog ?? ``);
+      const onChangelogTextChange = (val: string) => {
+        if (!active) return;
+        setChangelogText(val);
+        versionFile.changelog = val === `` ? undefined : val;
+      };
+
+      useFocusRequest({
+        active: active && !!onFocusRequest,
+      }, request => {
+        onFocusRequest?.(request);
+      }, [
+        onFocusRequest,
+      ]);
+
+      return (
+        <Box flexDirection={`column`} width={`100%`}>
+          <Box>
+            <Text wrap="wrap">
+              Enter a summary for this change (this will be in the changelogs):
+            </Text>
+          </Box>
+          <Box flexDirection={`row`} width={`100%`} marginTop={1}>
+            <Box marginTop={1} marginLeft={1} marginRight={1}>
+              <Text>
+                {active ? <Text color="cyan" bold>{`>`}</Text> : ` `}
+              </Text>
+            </Box>
+            <Box marginLeft={0} borderStyle="round" borderColor={active ? `cyan` : `grey`} paddingY={1} paddingX={2} width={`100%`}>
+              {/* Without unmounting the input component like this, while inactive, the component will still listen to input */}
+              {active && <InkTextInput
+                value={changelogText}
+                onChange={onChangelogTextChange}
+                showCursor={active}
+                placeholder={` `}
+              />}
+              {!active && <Text color="grey">{changelogText}</Text>}
+            </Box>
+          </Box>
+        </Box>
+      );
+    };
+
     const App = ({useSubmit}: {useSubmit: (value: Releases) => void}) => {
       const [releases, setWorkspaceRelease] = useReleases();
       useSubmit(releases);
 
       const {relevantWorkspaces} = getRelevancy(releases);
+      const acceptedWorkspaces = new Set([...relevantWorkspaces].filter(workspace => {
+        const decision = releases.get(workspace);
+        return decision && decision !== versionUtils.Decision.DECLINE;
+      }));
       const dependentWorkspaces = new Set([...relevantWorkspaces].filter(workspace => {
         return !versionFile.releaseRoots.has(workspace);
       }));
 
+      const showRelevantWorkspacesVersionBumper = versionFile.releaseRoots.size > 0;
+      const showDependentWorkspacesVersionBumper = dependentWorkspaces.size > 0;
+      const showChangelogEditor = acceptedWorkspaces.size > 0;
+
+      const focusGroupVisbility = [
+        showRelevantWorkspacesVersionBumper,
+        showDependentWorkspacesVersionBumper,
+        showChangelogEditor,
+      ];
+      // This would be more elegant once tuple and record is supported so we don't have to
+      // workaround React equality check like this
+      // See https://github.com/tc39/proposal-record-tuple
+      const focusGroupVisbilityMemoString = focusGroupVisbility.map(val => val ? `1` : `0`).join(``);
+      const numberOfFocusGroups = focusGroupVisbility.filter(Boolean).length;
       const [focus, setFocus] = useState(0);
 
       const handleFocusRequest = useCallback((request: FocusRequest) => {
+        // due to this constraints, the next/previous focus index will never be -1
+        if (numberOfFocusGroups <= 1)
+          return;
+
         switch (request) {
           case FocusRequest.BEFORE: {
-            setFocus(focus - 1);
+            const prevFocusIndex = focusGroupVisbilityMemoString.lastIndexOf(`1`, focus - 1) === -1
+              ? focusGroupVisbilityMemoString.lastIndexOf(`1`)
+              : focusGroupVisbilityMemoString.lastIndexOf(`1`, focus - 1);
+            setFocus(prevFocusIndex);
           } break;
           case FocusRequest.AFTER: {
-            setFocus(focus + 1);
+            const nextFocusIndex = focusGroupVisbilityMemoString.indexOf(`1`, focus + 1) === -1
+              ? focusGroupVisbilityMemoString.indexOf(`1`)
+              : focusGroupVisbilityMemoString.indexOf(`1`, focus + 1);
+            setFocus(nextFocusIndex);
           } break;
         }
-      }, [focus, setFocus]);
+      }, [focus, setFocus, focusGroupVisbilityMemoString, numberOfFocusGroups]);
+
+      useEffect(() => {
+        if (focusGroupVisbilityMemoString.charAt(focus) !== `1`) {
+          if (numberOfFocusGroups > 0) {
+            const nextFocusIndex = focusGroupVisbilityMemoString.indexOf(`1`, focus + 1) === -1
+              ? focusGroupVisbilityMemoString.indexOf(`1`)
+              : focusGroupVisbilityMemoString.indexOf(`1`, focus + 1);
+            setFocus(nextFocusIndex);
+          }
+        }
+      }, [focus, focusGroupVisbilityMemoString, numberOfFocusGroups]);
 
       return (
         <Box flexDirection={`column`}>
@@ -275,7 +364,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
               <Stats workspaces={versionFile.releaseRoots} releases={releases} />
             </Box> : null}
             <Box marginTop={1} flexDirection={`column`}>
-              <ScrollableItems active={focus % 2 === 0} radius={1} size={2} onFocusRequest={handleFocusRequest}>
+              <ScrollableItems active={focus === 0} radius={1} size={2} onFocusRequest={handleFocusRequest}>
                 {[...versionFile.releaseRoots].map(workspace => (
                   <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />
                 ))}
@@ -289,18 +378,13 @@ export default class VersionCheckCommand extends Command<CommandContext> {
                   The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:
                 </Text>
               </Box>
-              <Box>
-                <Text>
-                  (Press <Text bold color="cyanBright">{`<tab>`}</Text> to move the focus between the workspace groups.)
-                </Text>
-              </Box>
               {dependentWorkspaces.size > 5 ? (
                 <Box marginTop={1}>
                   <Stats workspaces={dependentWorkspaces} releases={releases} />
                 </Box>
               ) : null}
               <Box marginTop={1} flexDirection={`column`}>
-                <ScrollableItems active={focus % 2 === 1} radius={2} size={2} onFocusRequest={handleFocusRequest}>
+                <ScrollableItems active={focus === 1} radius={2} size={2} onFocusRequest={handleFocusRequest}>
                   {[...dependentWorkspaces].map(workspace => (
                     <Undecided key={workspace.cwd} workspace={workspace} decision={releases.get(workspace) || versionUtils.Decision.UNDECIDED} setDecision={decision => setWorkspaceRelease(workspace, decision)} />
                   ))}
@@ -308,6 +392,11 @@ export default class VersionCheckCommand extends Command<CommandContext> {
               </Box>
             </>
           ) : null}
+          {acceptedWorkspaces.size > 0 && <>
+            <Box marginTop={1} flexDirection={`column`}>
+              <ChangeLogInput active={focus === 2} onFocusRequest={handleFocusRequest} />
+            </Box>
+          </>}
         </Box>
       );
     };

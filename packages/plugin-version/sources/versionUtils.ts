@@ -35,7 +35,7 @@ export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array
   if (ancestorBases.length === 0)
     throw new UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
 
-  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
+  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `--octopus`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
   const hash = mergeBaseStdout.trim();
 
   const {stdout: showStdout} = await execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {cwd: root, strict: true});
@@ -89,6 +89,7 @@ export type VersionFile = {
 
   releaseRoots: Set<Workspace>,
   releases: Releases,
+  changelog?: string,
 
   saveAll: () => Promise<void>,
 } & ({
@@ -234,6 +235,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     : `{}`;
 
   const versionData = parseSyml(versionContent);
+  const changelog = versionData.changelog;
   const releaseStore: Releases = new Map();
 
   for (const identStr of versionData.declined || []) {
@@ -250,7 +252,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     releaseStore.set(workspace, decision as any);
   }
 
-  return {
+  const versionFile = {
     project,
 
     root,
@@ -268,6 +270,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
 
     releaseRoots: new Set([...changedWorkspaces].filter(workspace => workspace.manifest.version !== null)),
     releases: releaseStore,
+    changelog,
 
     async saveAll() {
       const releases: {[key: string]: Exclude<Decision, Decision.UNDECIDED | Decision.DECLINE>} = {};
@@ -298,10 +301,13 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
           releases: Object.keys(releases).length > 0 ? releases : undefined,
           declined: declined.length > 0 ? declined : undefined,
           undecided: undecided.length > 0 ? undecided : undefined,
+          changelog: versionFile.changelog,
         }),
       ));
     },
-  } as VersionFile;
+  };
+
+  return versionFile as VersionFile;
 }
 
 export function requireMoreDecisions(versionFile: VersionFile) {
