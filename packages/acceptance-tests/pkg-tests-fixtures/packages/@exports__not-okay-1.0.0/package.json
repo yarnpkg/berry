@@ -1,0 +1,12 @@
+{
+  "name": "@exports/not-okay",
+  "version": "1.0.0",
+  "exports": {
+      "./only-import": {
+        "node": {
+          "import": "./only-import/node-import.js"
+        },
+        "import": "./only-import/import.js"
+      }
+  }
+}
