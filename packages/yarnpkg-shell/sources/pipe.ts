@@ -1,3 +1,4 @@
+import {ChildProcess}                               from 'child_process';
 import crossSpawn                                   from 'cross-spawn';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
 
@@ -32,6 +33,14 @@ function sigintHandler() {
 // attach a single one and use a refcount to detect once it's no
 // longer needed.
 let sigintRefCount = 0;
+const activeChildren = new Set<ChildProcess>();
+function sigtermHandler() {
+  for (const child of activeChildren) {
+    child.kill();
+  }
+}
+
+process.on(`SIGTERM`, sigtermHandler);
 
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
@@ -53,8 +62,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stderr,
     ]});
 
-    const sigtermHandler = () => child.kill(`SIGTERM`);
-    process.on(`SIGTERM`, sigtermHandler);
+    activeChildren.add(child);
 
     if (sigintRefCount++ === 0)
       process.on(`SIGINT`, sigintHandler);
@@ -70,7 +78,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
-          process.off(`SIGTERM`, sigtermHandler);
+          activeChildren.delete(child);
           if (--sigintRefCount === 0)
             process.off(`SIGINT`, sigintHandler);
 
@@ -92,6 +100,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
         });
 
         child.on(`exit`, code => {
+          activeChildren.delete(child);
           process.off(`SIGTERM`, sigtermHandler);
           if (--sigintRefCount === 0)
             process.off(`SIGINT`, sigintHandler);

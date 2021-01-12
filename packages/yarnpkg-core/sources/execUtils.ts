@@ -1,4 +1,5 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
+import {ChildProcess}        from 'child_process';
 import crossSpawn            from 'cross-spawn';
 import {Readable, Writable}  from 'stream';
 
@@ -33,7 +34,7 @@ function sigintHandler() {
 // longer needed.
 let sigintRefCount = 0;
 
-const activeChildren = new Set();
+const activeChildren = new Set<ChildProcess>();
 function sigtermHandler() {
   for (const child of activeChildren) {
     child.kill();
@@ -41,7 +42,6 @@ function sigtermHandler() {
 }
 
 process.on(`SIGTERM`, sigtermHandler);
-
 
 export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr, end = EndStrategy.Always}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
