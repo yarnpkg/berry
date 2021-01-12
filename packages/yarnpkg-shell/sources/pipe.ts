@@ -1,3 +1,4 @@
+import {ChildProcess}                               from 'child_process';
 import crossSpawn                                   from 'cross-spawn';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
 
@@ -23,15 +24,18 @@ export type ProcessImplementation = (
   promise: Promise<number>,
 };
 
+const activeChildren = new Set<ChildProcess>();
+
 function sigintHandler() {
   // We don't want SIGINT to kill our process; we want it to kill the
   // innermost process, whose end will cause our own to exit.
 }
 
-// Rather than attaching one SIGINT handler for each process, we
-// attach a single one and use a refcount to detect once it's no
-// longer needed.
-let sigintRefCount = 0;
+function sigtermHandler() {
+  for (const child of activeChildren) {
+    child.kill();
+  }
+}
 
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
@@ -53,8 +57,12 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stderr,
     ]});
 
-    if (sigintRefCount++ === 0)
+    activeChildren.add(child);
+
+    if (activeChildren.size === 1) {
       process.on(`SIGINT`, sigintHandler);
+      process.on(`SIGTERM`, sigtermHandler);
+    }
 
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
@@ -67,8 +75,12 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
-          if (--sigintRefCount === 0)
+          activeChildren.delete(child);
+
+          if (activeChildren.size === 0) {
             process.off(`SIGINT`, sigintHandler);
+            process.off(`SIGTERM`, sigtermHandler);
+          }
 
           // @ts-expect-error
           switch (error.code) {
@@ -88,8 +100,12 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
         });
 
         child.on(`exit`, code => {
-          if (--sigintRefCount === 0)
+          activeChildren.delete(child);
+
+          if (activeChildren.size === 0) {
             process.off(`SIGINT`, sigintHandler);
+            process.off(`SIGTERM`, sigtermHandler);
+          }
 
           if (code !== null) {
             resolve(code);

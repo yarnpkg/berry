@@ -1,4 +1,5 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
+import {ChildProcess}        from 'child_process';
 import crossSpawn            from 'cross-spawn';
 import {Readable, Writable}  from 'stream';
 
@@ -23,15 +24,18 @@ function hasFd(stream: null | Readable | Writable) {
   return stream !== null && typeof stream.fd === `number`;
 }
 
+const activeChildren = new Set<ChildProcess>();
+
 function sigintHandler() {
   // We don't want SIGINT to kill our process; we want it to kill the
   // innermost process, whose end will cause our own to exit.
 }
 
-// Rather than attaching one SIGINT handler for each process, we
-// attach a single one and use a refcount to detect once it's no
-// longer needed.
-let sigintRefCount = 0;
+function sigtermHandler() {
+  for (const child of activeChildren) {
+    child.kill();
+  }
+}
 
 export async function pipevp(fileName: string, args: Array<string>, {cwd, env = process.env, strict = false, stdin = null, stdout, stderr, end = EndStrategy.Always}: PipevpOptions): Promise<{code: number}> {
   const stdio: Array<any> = [`pipe`, `pipe`, `pipe`];
@@ -46,9 +50,6 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   if (hasFd(stderr))
     stdio[2] = stderr;
 
-  if (sigintRefCount++ === 0)
-    process.on(`SIGINT`, sigintHandler);
-
   const child = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
     env: {
@@ -57,6 +58,13 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     },
     stdio,
   });
+
+  activeChildren.add(child);
+
+  if (activeChildren.size === 1) {
+    process.on(`SIGINT`, sigintHandler);
+    process.on(`SIGTERM`, sigtermHandler);
+  }
 
   if (!hasFd(stdin) && stdin !== null)
     stdin.pipe(child.stdin!);
@@ -76,8 +84,12 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
   return new Promise((resolve, reject) => {
     child.on(`error`, error => {
-      if (--sigintRefCount === 0)
+      activeChildren.delete(child);
+
+      if (activeChildren.size === 0) {
         process.off(`SIGINT`, sigintHandler);
+        process.off(`SIGTERM`, sigtermHandler);
+      }
 
       if (end === EndStrategy.Always || end === EndStrategy.ErrorCode)
         closeStreams();
@@ -86,8 +98,12 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
     });
 
     child.on(`close`, (code, sig) => {
-      if (--sigintRefCount === 0)
+      activeChildren.delete(child);
+
+      if (activeChildren.size === 0) {
         process.off(`SIGINT`, sigintHandler);
+        process.off(`SIGTERM`, sigtermHandler);
+      }
 
       if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0))
         closeStreams();
@@ -140,7 +156,10 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   return await new Promise((resolve, reject) => {
-    subprocess.on(`error`, reject);
+    subprocess.on(`error`, () => {
+      reject();
+    });
+
     subprocess.on(`close`, (code, signal) => {
       const stdout = encoding === `buffer`
         ? Buffer.concat(stdoutChunks)
