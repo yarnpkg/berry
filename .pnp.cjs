@@ -11688,7 +11688,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/monorepo", "workspace:."],
-            ["resolve.exports", "npm:1.0.1"],
+            ["resolve.exports", "npm:1.0.2"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"],
             ["webpack", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:5.1.1"],
@@ -32778,10 +32778,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["resolve.exports", [
-        ["npm:1.0.1", {
-          "packageLocation": "./.yarn/cache/resolve.exports-npm-1.0.1-f2809eb2c5-fed0e3abed.zip/node_modules/resolve.exports/",
+        ["npm:1.0.2", {
+          "packageLocation": "./.yarn/cache/resolve.exports-npm-1.0.2-bbb8d62ef6-012a46e3ae.zip/node_modules/resolve.exports/",
           "packageDependencies": [
-            ["resolve.exports", "npm:1.0.1"]
+            ["resolve.exports", "npm:1.0.2"]
           ],
           "linkType": "HARD",
         }]
@@ -39018,7 +39018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 42:
+/***/ 289:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44170,7 +44170,7 @@ function hydrateRuntimeState(data, {
     packageRegistry
   };
 }
-// CONCATENATED MODULE: ../../.yarn/cache/resolve.exports-npm-1.0.1-f2809eb2c5-fed0e3abed.zip/node_modules/resolve.exports/dist/index.mjs
+// CONCATENATED MODULE: ../../.yarn/cache/resolve.exports-npm-1.0.2-bbb8d62ef6-012a46e3ae.zip/node_modules/resolve.exports/dist/index.mjs
 /**
  * @param {object} exports
  * @param {Set<string>} keys
@@ -44270,7 +44270,7 @@ function resolve(pkg, entry='.', options={}) {
 			}
 			if (tmp === '*' && target.startsWith(key.slice(0, -1))) {
 				// do not trigger if no *content* to inject
-				if (target.length - key.length > 1) {
+				if (target.substring(key.length - 1).length > 0) {
 					return (tmp = loop(exports[key], allows))
 						? tmp.replace('*', target.substring(key.length - 1))
 						: bail(name, target, 1);
@@ -50005,7 +50005,7 @@ module.exports = require("path");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(42);
+/******/ 	return __webpack_require__(289);
 /******/ })()
 .default;
 });
