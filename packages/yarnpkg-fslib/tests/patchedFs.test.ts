@@ -1,12 +1,16 @@
-import fs                from 'fs';
-import {pathToFileURL}   from 'url';
-import {promisify}       from 'util';
+import {getLibzipPromise}     from '@yarnpkg/libzip';
+import fs                     from 'fs';
+import {pathToFileURL}        from 'url';
+import {promisify}            from 'util';
 
-import {NodeFS}          from '../sources/NodeFS';
-import {PosixFS}         from '../sources/PosixFS';
-import {extendFs}        from '../sources/patchFs';
-import {Filename, npath} from '../sources/path';
-import {xfs}             from '../sources/xfs';
+import {NodeFS}               from '../sources/NodeFS';
+import {PosixFS}              from '../sources/PosixFS';
+import {extendFs}             from '../sources/patchFs';
+import {Filename, npath}      from '../sources/path';
+import {xfs}                  from '../sources/xfs';
+import {statUtils, ZipOpenFS} from '../sources';
+
+import {ZIP_FILE1}            from "./ZipOpenFS.test";
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
@@ -83,5 +87,38 @@ describe(`patchedFs`, () => {
     patchedFs.unlinkSync(renamedUrl);
 
     expect(patchedFs.existsSync(renamedUrl)).toStrictEqual(false);
+  });
+
+  it(`should support fstat`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+
+    const fd = patchedFs.openSync(__filename, `r`);
+    try {
+      const stat = patchedFs.statSync(__filename);
+      const fdStat = patchedFs.fstatSync(fd);
+
+      expect(statUtils.areStatsEqual(stat, fdStat)).toEqual(true);
+    } finally {
+      patchedFs.closeSync(fd);
+    }
+
+    const zipFd = patchedFs.openSync(ZIP_FILE1, `r`);
+    try {
+      const stat = await new Promise<fs.Stats>((resolve, reject) => {
+        patchedFs.stat(ZIP_FILE1, (err, stats) => {
+          err ? reject(err) : resolve(stats);
+        });
+      });
+
+      const fdStat = await new Promise<fs.Stats>((resolve, reject) => {
+        patchedFs.fstat(zipFd, (err, stats) => {
+          err ? reject(err) : resolve(stats);
+        });
+      });
+
+      expect(statUtils.areStatsEqual(stat, fdStat)).toEqual(true);
+    } finally {
+      patchedFs.closeSync(fd);
+    }
   });
 });

@@ -3,10 +3,18 @@ import {PnpApi}                          from '@yarnpkg/pnp';
 import CJSON                             from 'comment-json';
 import mergeWith                         from 'lodash/mergeWith';
 
-export const merge = (object: unknown, source: unknown) =>
-  mergeWith(object, source, (objValue, srcValue) => {
-    if (Array.isArray(objValue))
-      return [...new Set(objValue.concat(srcValue))];
+export const merge = (cjsonData: unknown, patch: unknown) =>
+  mergeWith(cjsonData, patch, (cjsonValue: unknown, patchValue: unknown) => {
+    // We need to preserve comments in CommentArrays, so we can't use spread or Sets
+    if (Array.isArray(cjsonValue) && Array.isArray(patchValue)) {
+      for (const patchItem of patchValue) {
+        if (!cjsonValue.includes(patchItem)) {
+          cjsonValue.push(patchItem);
+        }
+      }
+
+      return cjsonValue;
+    }
 
     return undefined;
   });

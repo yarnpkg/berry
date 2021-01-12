@@ -42,6 +42,9 @@ export default class BuildBundleCommand extends Command {
   @Command.Boolean(`--no-minify`, {description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
+  @Command.Boolean(`--source-map`, {description: `Includes a source map in the bundle`})
+  sourceMap: boolean = false;
+
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
     details: `
@@ -110,6 +113,7 @@ export default class BuildBundleCommand extends Command {
           outfile: output,
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
+          sourcemap: this.sourceMap ? `inline` : false,
         });
       });
     });

@@ -1,5 +1,5 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
-import {constants}                                                                                                                                   from 'fs';
+import {BigIntStats, constants, Stats}                                                                                                               from 'fs';
 
 import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
@@ -8,6 +8,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, E
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {ZipFS}                                                                                                                                       from './ZipFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
+import * as errors                                                                                                                                   from './errors';
 import {Filename, FSPath, PortablePath}                                                                                                              from './path';
 
 const ZIP_FD = 0x80000000;
@@ -154,7 +155,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+      throw errors.EBADF(`read`);
 
     const [zipFs, realFd] = entry;
     return await zipFs.readPromise(realFd, buffer, offset, length, position);
@@ -166,7 +167,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, read`), {code: `EBADF`});
+      throw errors.EBADF(`readSync`);
 
     const [zipFs, realFd] = entry;
     return zipFs.readSync(realFd, buffer, offset, length, position);
@@ -185,7 +186,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {code: `EBADF`});
+      throw errors.EBADF(`write`);
 
     const [zipFs, realFd] = entry;
 
@@ -209,7 +210,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, write`), {code: `EBADF`});
+      throw errors.EBADF(`writeSync`);
 
     const [zipFs, realFd] = entry;
 
@@ -226,7 +227,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {code: `EBADF`});
+      throw errors.EBADF(`close`);
 
     this.fdMap.delete(fd);
 
@@ -240,7 +241,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
-      throw Object.assign(new Error(`EBADF: bad file descriptor, close`), {code: `EBADF`});
+      throw errors.EBADF(`closeSync`);
 
     this.fdMap.delete(fd);
 
@@ -330,35 +331,77 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: { bigint: boolean }) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.statPromise(p);
+      return await this.baseFs.statPromise(p, opts);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.statPromise(subPath);
+      return await zipFs.statPromise(subPath, opts);
     });
   }
 
-  statSync(p: PortablePath) {
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: { bigint: boolean }) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.statSync(p);
+      return this.baseFs.statSync(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.statSync(subPath);
+      return zipFs.statSync(subPath, opts);
     });
   }
 
-  async lstatPromise(p: PortablePath) {
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: { bigint: boolean }) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fstatPromise(fd, opts);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fstat`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.fstatPromise(realFd, opts);
+  }
+
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: { bigint: boolean }) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fstatSync(fd, opts);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fstatSync`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.fstatSync(realFd, opts);
+  }
+
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.lstatPromise(p);
+      return await this.baseFs.lstatPromise(p, opts);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.lstatPromise(subPath);
+      return await zipFs.lstatPromise(subPath, opts);
     });
   }
 
-  lstatSync(p: PortablePath) {
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
     return this.makeCallSync(p, () => {
-      return this.baseFs.lstatSync(p);
+      return this.baseFs.lstatSync(p, opts);
     }, (zipFs, {subPath}) => {
-      return zipFs.lstatSync(subPath);
+      return zipFs.lstatSync(subPath, opts);
     });
   }
 

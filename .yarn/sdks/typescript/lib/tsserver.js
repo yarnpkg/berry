@@ -4,7 +4,7 @@ const {existsSync} = require(`fs`);
 const {createRequire, createRequireFromPath} = require(`module`);
 const {resolve} = require(`path`);
 
-const relPnpApiPath = "../../../../.pnp.js";
+const relPnpApiPath = "../../../../.pnp.cjs";
 
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
@@ -53,7 +53,7 @@ const moduleWrapper = tsserver => {
       // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
       //
       if (str.match(/\.zip\//)) {
-        str = `${isVSCode ? '^' : ''}zip:${str}`;
+        str = `${isVSCode ? `^` : ``}zip:${str}`;
       }
     }
 

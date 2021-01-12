@@ -55,16 +55,19 @@ export default class SdkCommand extends Command {
     let nextProjectRoot = npath.toPortablePath(this.cwd);
     let currProjectRoot = null;
 
-    let isCJS = ``;
+    let pnpFilename!: Filename;
     while (nextProjectRoot !== currProjectRoot) {
       currProjectRoot = nextProjectRoot;
       nextProjectRoot = ppath.dirname(currProjectRoot);
 
-      if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename)))
+      if (xfs.existsSync(ppath.join(currProjectRoot, Filename.pnpCjs))) {
+        pnpFilename = Filename.pnpCjs;
         break;
+      }
 
-      if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.cjs` as Filename))) {
-        isCJS = `c`;
+      // TODO: Drop support for .pnp.js files after they stop being used.
+      if (xfs.existsSync(ppath.join(currProjectRoot, Filename.pnpJs))) {
+        pnpFilename = Filename.pnpJs;
         break;
       }
     }
@@ -73,7 +76,7 @@ export default class SdkCommand extends Command {
       throw new Error(`This tool can only be used with projects using Yarn Plug'n'Play`);
 
     const configuration = Configuration.create(currProjectRoot);
-    const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
+    const pnpPath = ppath.join(currProjectRoot, pnpFilename);
     const pnpApi = dynamicRequire(npath.fromPortablePath(pnpPath)) as PnpApi;
 
     // Need to setup the fs patch so we can read from the archives

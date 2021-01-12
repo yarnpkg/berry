@@ -153,6 +153,7 @@ jobs:
         - 10
         - 12
         - 14
+        - 15
         platform:
         - ubuntu-latest
         - windows-latest

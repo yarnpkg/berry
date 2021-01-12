@@ -14,7 +14,7 @@ const ZIP_DIR2 = ppath.join(
   `fixtures/folder.zip/foo.zip` as Filename
 );
 
-const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
+export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
 const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
 
 describe(`ZipOpenFS`, () => {

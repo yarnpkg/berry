@@ -25,6 +25,9 @@ export default class BuildPluginCommand extends Command {
   @Command.Boolean(`--no-minify`, {description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`})
   noMinify: boolean = false;
 
+  @Command.Boolean(`--source-map`, {description: `Includes a source map in the bundle`})
+  sourceMap: boolean = false;
+
   static usage: Usage = Command.Usage({
     description: `build a local plugin`,
     details: `
@@ -68,6 +71,10 @@ export default class BuildPluginCommand extends Command {
           context: basedir,
           entry: `.`,
 
+          ...this.sourceMap && {
+            devtool: `inline-source-map`,
+          },
+
           ...!this.noMinify && {
             mode: `production`,
           },
@@ -108,18 +115,19 @@ export default class BuildPluginCommand extends Command {
             // get evaluated right now - until after we give it a custom require
             // function that will be able to fetch the dynamic modules.
             {apply: (compiler: webpack.Compiler) => {
-              compiler.hooks.compilation.tap(`MyPlugin`, (compilation: webpack.Compilation) => {
-                compilation.hooks.optimizeChunkAssets.tap(`MyPlugin`, (chunks: Set<webpack.Chunk>) => {
+              compiler.hooks.compilation.tap(`WrapperPlugin`, (compilation: webpack.Compilation) => {
+                compilation.hooks.optimizeChunkAssets.tap(`WrapperPlugin`, (chunks: Set<webpack.Chunk>) => {
                   for (const chunk of chunks) {
                     for (const file of chunk.files) {
-                      // @ts-expect-error
-                      compilation.assets[file] = new webpack.sources.RawSource(
+                      compilation.assets[file] = new webpack.sources.ConcatSource(
                         [
                           `/* eslint-disable */`,
                           `module.exports = {`,
                           `name: ${JSON.stringify(name)},`,
                           `factory: function (require) {`,
-                          compilation.assets[file].source(),
+                        ].join(`\n`),
+                        compilation.assets[file],
+                        [
                           `return plugin;`,
                           `}`,
                           `};`,

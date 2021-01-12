@@ -5,7 +5,7 @@ title: "Migration"
 description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 ---
 
-Yarn v2 is a very different software from the v1. While one of our goals is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
+Any major release has its breaking changes, and Yarn 2 isn't the exception. A few old behaviors were cleaned, fixed, modified, or removed. While one of our goals is to make the transition as easy as we can, there are a few things to be aware of when migrating a codebase. To make this process more efficient we've listed below the recommended migration steps, along with solutions for the most common problems you might face.
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -19,7 +19,7 @@ Put simply, there are very few reasons not to upgrade. Even if you don't use Plu
 
 ## Step by step
 
-**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**, and only in a later optional section we will cover how to enable PnP support (which is recommended, but not mandatory). Baby steps! 😉
+**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**. Only in a later optional section we will cover how to enable PnP support, and this part will only be recommended not mandatory. Baby steps! 😉
 
 1. Run `npm install -g yarn` to update the global yarn version to latest v1
 2. Go into your project directory
@@ -33,9 +33,9 @@ Put simply, there are very few reasons not to upgrade. Even if you don't use Plu
 
 Some optional features are available via external plugins:
 
-11. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
-12. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
-13. Commit the yarn plugins
+10. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
+11. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
+12. Commit the yarn plugins
 
 Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts)), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
 

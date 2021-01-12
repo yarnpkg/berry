@@ -27,40 +27,43 @@ jobs:
       run: |
         node ./scripts/run-yarn.js build:cli
 
-    - name: 'Running the integration test'
+    - name: 'Vanilla Webpack'
       run: |
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
         yarn add -D webpack webpack-cli lodash
 
-        # Vanilla webpack
         echo "const path = require('path'); module.exports = { entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist')} };" | tee webpack.config.js
 
         mkdir src
         echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/index.js
         
         yarn webpack info
-
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello webpack" ]]
+        
+    - name: 'raw-loader'
+      run: |
+        source scripts/e2e-setup-ci.sh
 
-        rm -rf dist src webpack.config.js
-
-        # raw-loader (imported)
-        yarn add raw-loader
+        yarn init -p
+        yarn add webpack webpack-cli raw-loader
 
         mkdir src
         echo 'import text from "raw-loader!./text.txt"; console.log(text);' | tee src/index.js
         echo 'Hello raw-loader' | tee src/text.txt
 
+        yarn webpack info
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello raw-loader" ]]
 
-        rm -rf dist src webpack.config.js
+    - name: 'ts-loader'
+      run: |
+        source scripts/e2e-setup-ci.sh
 
-        # ts-loader
-        yarn add -D ts-loader typescript @types/lodash
+        yarn init -p
+        yarn add -D webpack webpack-cli ts-loader typescript @types/lodash lodash
 
         echo "module.exports = {mode: 'none', entry: './src/index.ts',output: { filename: 'main.js'}, resolve: { extensions: ['.ts', '.tsx', '.js']},module: { rules: [ { test: /\.tsx?$/, loader: require.resolve('ts-loader') }  ]}};" | tee webpack.config.js
 
@@ -69,13 +72,16 @@ jobs:
         mkdir src
         echo "import * as _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'ts-loader'], ' '))}; printHello();" | tee src/index.ts
 
+        yarn webpack info
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello ts-loader" ]]
 
-        rm -rf dist src webpack.config.js tsconfig.json
+    - name: 'less-loader'
+      run: |
+        source scripts/e2e-setup-ci.sh
 
-        # less-loader
-        yarn add -D less less-loader css-loader style-loader file-loader bootstrap-less
+        yarn init -p
+        yarn add -D webpack webpack-cli less less-loader css-loader style-loader file-loader bootstrap-less
 
         echo "const path = require('path'); module.exports = { mode: 'none', entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist') }, module: { rules: [ { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] }, { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] }, { test: /\.(woff|woff2|eot|ttf|otf)$/, use: ['file-loader'] } ] } }; " | tee webpack.config.js
 
@@ -84,26 +90,30 @@ jobs:
         echo "@import '~bootstrap-less/bootstrap/index.less';@import './other.less';.box:extend(.hotpink) {width: 200px;height: 200px;}" | tee src/main.less
         echo ".hotpink {background: hotpink;}" | tee src/other.less
 
+        yarn webpack info
         yarn webpack
 
         ls dist | grep "main.js"
         ls dist | grep ".svg"
         ls dist | grep ".woff2"
 
-        rm -rf dist src webpack.config.js
+    - name: 'less-loader + thread-loader'
+      run: |
+        source scripts/e2e-setup-ci.sh
 
-        # thread-loader, babel-loader and sass-loader (source: https://github.com/webpack-contrib/thread-loader/tree/master/example)
-        yarn add -D thread-loader babel-loader  @babel/core babel-preset-env @babel/plugin-proposal-object-rest-spread node-sass sass-loader css-loader style-loader react lodash-es bootstrap-scss
+        yarn init -p
+        yarn add -D webpack webpack-cli less less-loader css-loader style-loader file-loader bootstrap-less thread-loader
 
-        echo "const path = require('path'); const threadLoader = require('thread-loader'); module.exports = (env = { threads: 0, watch: true }) => { const workerPool = { workers: +env.threads, poolTimeout: env.watch ? Infinity : 2000 }; const workerPoolSass = { workers: +env.threads, workerParallelJobs: 2, poolTimeout: env.watch ? Infinity : 2000 }; if (+env.threads > 0) { threadLoader.warmup(workerPool, ['babel-loader', 'babel-preset-env']); threadLoader.warmup(workerPoolSass, ['sass-loader', 'css-loader']); } return { mode: 'none', context: __dirname, entry: ['./src/index.js', 'react', 'lodash-es'], output: { path: path.resolve('dist'), filename: 'main.js' }, module: { rules: [ { test: /\.js$/, use: [ env.threads !== 0 && { loader: threadLoader.loader, options: workerPool }, 'babel-loader' ].filter(Boolean) }, { test: /\.scss$/, use: [ 'style-loader', env.threads !== 0 && { loader: threadLoader.loader, options: workerPoolSass }, 'css-loader', 'sass-loader' ].filter(Boolean) } ] }, stats: { children: false } }; };" | tee webpack.config.js
-        echo "{\"presets\": [[\"env\", {\"useBuiltIns\": true, \"targets\": {\"node\": \"6.9.0\"}, \"exclude\": [\"transform-async-to-generator\", \"transform-regenerator\"]}]], \"plugins\": [[\"@babel/plugin-proposal-object-rest-spread\", {\"useBuiltIns\": true}]], \"env\": {\"test\": {\"presets\": [\"env\"], \"plugins\": [\"@babel/plugin-proposal-object-rest-spread\"]}}} " | tee .babelrc
+        echo "const path = require('path'); module.exports = { mode: 'none', entry: './src/index.js', output: { filename: 'main.js', path: path.resolve(__dirname, 'dist') }, module: { rules: [ { test: /\.less$/, use: ['style-loader', 'thread-loader', 'css-loader', 'less-loader'] }, { test: /\.(png|svg|jpg|gif)$/, use: ['file-loader'] }, { test: /\.(woff|woff2|eot|ttf|otf)$/, use: ['file-loader'] } ] } }; " | tee webpack.config.js
 
         mkdir src
-        echo "import './main.scss';" | tee src/index.js
-        echo "@import '~bootstrap-scss'; @import './_other.scss';.box {width: 200px;height: 200px; background-color: \$base-color}" | tee src/main.scss
-        echo "\$base-color: hotpink;" | tee src/_other.scss
+        echo "import './main.less';" | tee src/index.js
+        echo "@import '~bootstrap-less/bootstrap/index.less';@import './other.less';.box:extend(.hotpink) {width: 200px;height: 200px;}" | tee src/main.less
+        echo ".hotpink {background: hotpink;}" | tee src/other.less
 
-        yarn unplug bootstrap-scss
-
+        yarn webpack info
         yarn webpack
+
         ls dist | grep "main.js"
+        ls dist | grep ".svg"
+        ls dist | grep ".woff2"
