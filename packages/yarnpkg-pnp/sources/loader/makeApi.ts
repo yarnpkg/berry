@@ -700,7 +700,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         const message = error.message.replace(/\n.*/g, ``);
         error.message = message;
 
-        if (!emittedWarnings.has(message)) {
+        if (!emittedWarnings.has(message) && debugLevel !== 0) {
           emittedWarnings.add(message);
           process.emitWarning(error);
         }
