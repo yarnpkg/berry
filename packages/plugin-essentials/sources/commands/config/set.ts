@@ -8,6 +8,10 @@ import {inspect}                                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigSetCommand extends BaseCommand {
+  static paths = [
+    [`config`, `set`],
+  ];
+
   static usage: Usage = Command.Usage({
     description: `change a configuration settings`,
     details: `
