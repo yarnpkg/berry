@@ -7,6 +7,7 @@ import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
 import {Writable}                                          from 'stream';
+import * as t                                              from 'typanion';
 
 /**
  * Retrieves all the child workspaces of a given root workspace recursively
@@ -115,6 +116,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
   jobs = Option.String(`-j,--jobs`, {
     description: `The maximum number of parallel tasks that the execution will be limited to`,
+    validator: t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(2)]),
   });
 
   topological = Option.Boolean(`-t,--topological`, false, {

@@ -4995,13 +4995,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yup@npm:0.26.12":
-  version: 0.26.12
-  resolution: "@types/yup@npm:0.26.12"
-  checksum: dabc157241c3aa85b7c823824e192ef0326224570df3026002d4408690930cf53ad844a0a33780c50862f5a555e40e42b71eeeb96d37b34bdac827776afc6482
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/eslint-plugin@npm:^2.24.0, @typescript-eslint/eslint-plugin@npm:^2.28.0":
   version: 2.29.0
   resolution: "@typescript-eslint/eslint-plugin@npm:2.29.0"
@@ -5449,7 +5442,6 @@ __metadata:
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
     "@types/ci-info": ^2
-    "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
@@ -5480,8 +5472,8 @@ __metadata:
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
+    typanion: ^3.2.0
     typescript: 4.1.0-beta
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/core": ^2.4.0
   languageName: unknown
@@ -5851,7 +5843,6 @@ __metadata:
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
@@ -5865,7 +5856,6 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typanion: ^3.2.0
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -6026,7 +6016,6 @@ __metadata:
   dependencies:
     "@npm/types": ^1.0.1
     "@types/semver": ^7.1.0
-    "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
@@ -6037,7 +6026,6 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typanion: ^3.2.0
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -6167,7 +6155,6 @@ __metadata:
   dependencies:
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
-    "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
@@ -6181,7 +6168,6 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typescript: 4.1.0-beta
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -6194,7 +6180,6 @@ __metadata:
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
     "@types/micromatch": ^4.0.1
-    "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
@@ -6203,8 +6188,8 @@ __metadata:
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
+    typanion: ^3.2.0
     typescript: 4.1.0-beta
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0

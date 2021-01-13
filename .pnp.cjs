@@ -9389,15 +9389,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@types/yup", [
-        ["npm:0.26.12", {
-          "packageLocation": "./.yarn/cache/@types-yup-npm-0.26.12-acc57a9b95-dabc157241.zip/node_modules/@types/yup/",
-          "packageDependencies": [
-            ["@types/yup", "npm:0.26.12"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@typescript-eslint/eslint-plugin", [
         ["npm:2.29.0", {
           "packageLocation": "./.yarn/cache/@typescript-eslint-eslint-plugin-npm-2.29.0-ddef65d1de-c25376152c.zip/node_modules/@typescript-eslint/eslint-plugin/",
@@ -10169,7 +10160,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/yarnpkg__core", null],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10200,8 +10190,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"],
+            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"]
           ],
           "packagePeers": [
             "@types/yarnpkg__core",
@@ -10214,7 +10204,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@types/ci-info", "npm:2.0.0"],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10245,8 +10234,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"],
+            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"]
           ],
           "linkType": "SOFT",
         }]
@@ -10741,7 +10730,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/treeify", "npm:1.0.0"],
             ["@types/yarnpkg__cli", null],
             ["@types/yarnpkg__core", null],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10754,8 +10742,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typanion", "npm:3.2.0"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"]
           ],
           "packagePeers": [
             "@types/yarnpkg__cli",
@@ -10776,7 +10763,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/treeify", "npm:1.0.0"],
             ["@types/yarnpkg__cli", null],
             ["@types/yarnpkg__core", null],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10789,8 +10775,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typanion", "npm:3.2.0"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"]
           ],
           "packagePeers": [
             "@types/yarnpkg__cli",
@@ -10809,7 +10794,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/micromatch", "npm:4.0.1"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/treeify", "npm:1.0.0"],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -10822,8 +10806,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typanion", "npm:3.2.0"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -11255,7 +11238,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__core", null],
             ["@types/yarnpkg__plugin-npm", null],
             ["@types/yarnpkg__plugin-pack", null],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -11265,8 +11247,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typanion", "npm:3.2.0"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"]
           ],
           "packagePeers": [
             "@types/yarnpkg__cli",
@@ -11290,7 +11271,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__core", null],
             ["@types/yarnpkg__plugin-npm", null],
             ["@types/yarnpkg__plugin-pack", null],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -11300,8 +11280,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typanion", "npm:3.2.0"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"]
           ],
           "packagePeers": [
             "@types/yarnpkg__cli",
@@ -11321,7 +11300,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-npm-cli", "workspace:packages/plugin-npm-cli"],
             ["@npm/types", "npm:1.0.1"],
             ["@types/semver", "npm:7.1.0"],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -11331,8 +11309,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["enquirer", "npm:2.3.6"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typanion", "npm:3.2.0"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -11621,7 +11598,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-version", "workspace:packages/plugin-version"],
             ["@types/react", "npm:16.9.2"],
             ["@types/semver", "npm:7.1.0"],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
@@ -11634,8 +11610,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:16.13.1"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
-            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"],
-            ["yup", "npm:0.27.0"]
+            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"]
           ],
           "linkType": "SOFT",
         }]
@@ -11646,7 +11621,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-workspace-tools", "workspace:packages/plugin-workspace-tools"],
             ["@types/micromatch", "npm:4.0.1"],
-            ["@types/yup", "npm:0.26.12"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
@@ -11655,8 +11629,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.2"],
             ["p-limit", "npm:2.2.0"],
             ["tslib", "npm:1.13.0"],
-            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"],
-            ["yup", "npm:0.27.0"]
+            ["typanion", "npm:3.2.0"],
+            ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"]
           ],
           "linkType": "SOFT",
         }]
