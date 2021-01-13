@@ -8,6 +8,7 @@
 
 ### **Breaking Changes**
 
+- Node 10 isn't supported anymore.
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
 - Yarn will now generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
