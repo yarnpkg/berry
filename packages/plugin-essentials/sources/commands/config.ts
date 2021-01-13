@@ -1,19 +1,14 @@
 import {BaseCommand}                              from '@yarnpkg/cli';
 import {Configuration, MessageName, StreamReport} from '@yarnpkg/core';
 import {miscUtils}                                from '@yarnpkg/core';
-import {Command, Usage}                           from 'clipanion';
+import {Command, Option, Usage}                   from 'clipanion';
 import {inspect}                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {
-  @Command.Boolean(`-v,--verbose`, {description: `Print the setting description on top of the regular key/value information`})
-  verbose: boolean = false;
-
-  @Command.Boolean(`--why`, {description: `Print the reason why a setting is set a particular way`})
-  why: boolean = false;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`config`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `display the current configuration`,
@@ -26,7 +21,18 @@ export default class ConfigCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`config`)
+  verbose = Option.Boolean(`-v,--verbose`, false, {
+    description: `Print the setting description on top of the regular key/value information`,
+  });
+
+  why = Option.Boolean(`--why`, false, {
+    description: `Print the reason why a setting is set a particular way`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins, {
       strict: false,

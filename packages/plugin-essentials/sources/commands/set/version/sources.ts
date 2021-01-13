@@ -1,7 +1,7 @@
 import {BaseCommand}                                                                                         from '@yarnpkg/cli';
 import {Configuration, MessageName, StreamReport, execUtils, formatUtils, CommandContext, Report, hashUtils} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}                                                           from '@yarnpkg/fslib';
-import {Command, Usage}                                                                                      from 'clipanion';
+import {Command, Option, Usage}                                                                              from 'clipanion';
 import {tmpdir}                                                                                              from 'os';
 import path                                                                                                  from 'path';
 
@@ -36,23 +36,9 @@ const buildWorkflow = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<s
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionSourcesCommand extends BaseCommand {
-  @Command.String(`--path`, {description: `The path where the repository should be cloned to`})
-  installPath?: string;
-
-  @Command.String(`--repository`, {description: `The repository that should be cloned`})
-  repository: string = `https://github.com/yarnpkg/berry.git`;
-
-  @Command.String(`--branch`, {description: `The branch of the repository that should be cloned`})
-  branch: string = `master`;
-
-  @Command.Array(`--plugin`, {description: `An array of additional plugins that should be included in the bundle`})
-  plugins: Array<string> = [];
-
-  @Command.Boolean(`--no-minify`, {description: `Build a bundle for development (debugging) - non-minified and non-mangled`})
-  noMinify: boolean = false;
-
-  @Command.Boolean(`-f,--force`, {description: `Always clone the repository instead of trying to fetch the latest commits`})
-  force: boolean = false;
+  static paths = [
+    [`set`, `version`, `from`, `sources`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `build Yarn from master`,
@@ -65,7 +51,30 @@ export default class SetVersionSourcesCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`set`, `version`, `from`, `sources`)
+  installPath = Option.String(`--path`, {
+    description: `The path where the repository should be cloned to`,
+  });
+
+  repository = Option.String(`--repository`, `https://github.com/yarnpkg/berry.git`, {
+    description: `The repository that should be cloned`,
+  });
+
+  branch = Option.String(`--branch`, `master`, {
+    description: `The branch of the repository that should be cloned`,
+  });
+
+  plugins = Option.Array(`--plugin`, [], {
+    description: `An array of additional plugins that should be included in the bundle`,
+  });
+
+  noMinify = Option.Boolean(`--no-minify`, false, {
+    description: `Build a bundle for development (debugging) - non-minified and non-mangled`,
+  });
+
+  force = Option.Boolean(`-f,--force`, false, {
+    description: `Always clone the repository instead of trying to fetch the latest commits`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

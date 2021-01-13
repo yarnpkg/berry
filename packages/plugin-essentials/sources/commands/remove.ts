@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                from
 import {Configuration, Cache, Descriptor, Project, formatUtils, FormatType} from '@yarnpkg/core';
 import {StreamReport, Workspace}                                            from '@yarnpkg/core';
 import {structUtils}                                                        from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                         from 'clipanion';
+import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import micromatch                                                           from 'micromatch';
 
 import * as suggestUtils                                                    from '../suggestUtils';
@@ -10,11 +10,9 @@ import {Hooks}                                                              from
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`, {description: `Apply the operation to all workspaces from the current project`})
-  all: boolean = false;
-
-  @Command.Rest()
-  patterns: Array<string> = [];
+  static paths = [
+    [`remove`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `remove dependencies from the project`,
@@ -41,7 +39,12 @@ export default class RemoveCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`remove`)
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Apply the operation to all workspaces from the current project`,
+  });
+
+  patterns = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

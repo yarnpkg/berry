@@ -16,6 +16,10 @@ const TARGETS = [`regular`, `dev`, `peer`];
 
 // eslint-disable-next-line arca/no-default-export
 export default class SearchCommand extends BaseCommand {
+  static paths = [
+    [`search`],
+  ];
+
   static usage: Usage = Command.Usage({
     category: `Interactive commands`,
     description: `open the search interface`,
@@ -28,7 +32,6 @@ export default class SearchCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`search`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

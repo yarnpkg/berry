@@ -2,7 +2,7 @@ import {BaseCommand}                                                    from '@y
 import {Configuration, IdentHash, Ident, Project, Workspace, miscUtils} from '@yarnpkg/core';
 import {MessageName, StreamReport, AllDependencies}                     from '@yarnpkg/core';
 import {formatUtils, structUtils}                                       from '@yarnpkg/core';
-import {Command, Usage}                                                 from 'clipanion';
+import {Command, Option, Usage}                                         from 'clipanion';
 import getPath                                                          from 'lodash/get';
 import setPath                                                          from 'lodash/set';
 import unsetPath                                                        from 'lodash/unset';
@@ -11,8 +11,9 @@ import {Constraints, EnforcedDependency, EnforcedField}                 from '..
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
-  @Command.Boolean(`--fix`, {description: `Attempt to automatically fix unambiguous issues, following a multi-pass process`})
-  fix: boolean = false;
+  static paths = [
+    [`constraints`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
@@ -33,7 +34,10 @@ export default class ConstraintsCheckCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`constraints`)
+  fix = Option.Boolean(`--fix`, false, {
+    description: `Attempt to automatically fix unambiguous issues, following a multi-pass process`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

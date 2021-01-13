@@ -1,17 +1,14 @@
 import {BaseCommand}                                                                                                          from '@yarnpkg/cli';
 import {Configuration, MessageName, miscUtils, Project, StreamReport, structUtils, semverUtils, formatUtils, PeerRequirement} from '@yarnpkg/core';
-import {Command}                                                                                                              from 'clipanion';
+import {Command, Option}                                                                                                      from 'clipanion';
 import {Writable}                                                                                                             from 'stream';
-import * as yup                                                                                                               from 'yup';
+import * as t                                                                                                                 from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
-  @Command.String({required: false})
-  hash?: string;
-
-  static schema = yup.object().shape({
-    hash: yup.string().matches(/^p[0-9a-f]{5}$/),
-  });
+  static paths = [
+    [`explain`, `peer-requirements`],
+  ];
 
   static usage = Command.Usage({
     description: `explain a set of peer requirements`,
@@ -33,7 +30,13 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`explain`, `peer-requirements`)
+  hash = Option.String({
+    required: false,
+    validator: t.applyCascade(t.isString(), [
+      t.matchesRegExp(/^p[0-9a-f]{5}$/),
+    ]),
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

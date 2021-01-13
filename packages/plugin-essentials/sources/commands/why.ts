@@ -2,21 +2,13 @@ import {BaseCommand, WorkspaceRequiredError}                          from '@yar
 import {Configuration, LocatorHash, Package, formatUtils, Descriptor} from '@yarnpkg/core';
 import {IdentHash, Project}                                           from '@yarnpkg/core';
 import {miscUtils, structUtils, treeUtils}                            from '@yarnpkg/core';
-import {Command, Usage}                                               from 'clipanion';
+import {Command, Option, Usage}                                       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WhyCommand extends BaseCommand {
-  @Command.String()
-  package!: string;
-
-  @Command.Boolean(`-R,--recursive`, {description: `List, for each workspace, what are all the paths that lead to the dependency`})
-  recursive: boolean = false;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.Boolean(`--peers`, {description: `Also print the peer dependencies that match the specified name`})
-  peers: boolean = false;
+  static paths = [
+    [`why`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `display the reason why a package is needed`,
@@ -31,7 +23,20 @@ export default class WhyCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`why`)
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `List, for each workspace, what are all the paths that lead to the dependency`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  peers = Option.Boolean(`--peers`, false, {
+    description: `Also print the peer dependencies that match the specified name`,
+  });
+
+  package = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

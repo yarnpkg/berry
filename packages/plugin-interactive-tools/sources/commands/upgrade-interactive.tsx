@@ -20,6 +20,10 @@ type UpgradeSuggestions = Array<UpgradeSuggestion>;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
+  static paths = [
+    [`upgrade-interactive`],
+  ];
+
   static usage: Usage = Command.Usage({
     category: `Interactive commands`,
     description: `open the upgrade interface`,
@@ -32,7 +36,6 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`upgrade-interactive`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
