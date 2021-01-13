@@ -36,7 +36,7 @@ jobs:
 
     - uses: actions/checkout@master
 
-    - name: 'Use Node.js 10.x'
+    - name: 'Install Node'
       uses: actions/setup-node@master
       with:
         version: 10.x
