@@ -57,7 +57,7 @@ export default class RunCommand extends BaseCommand {
   // this anymore, but many workflows use `yarn run --silent` to make sure that
   // they don't get this header, and it makes sense to support it as well (even
   // if it's a no-op in our case).
-  silebt = Option.Boolean(`--silent`, {hidden: true});
+  silent = Option.Boolean(`--silent`, {hidden: true});
 
   scriptName = Option.String();
   args = Option.Proxy();
