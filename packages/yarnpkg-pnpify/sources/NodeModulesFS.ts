@@ -10,7 +10,7 @@ import fs, {BigIntStats, Stats}                                                 
 import {WatchManager}                                                                                                              from './WatchManager';
 import {buildNodeModulesTree}                                                                                                      from './buildNodeModulesTree';
 import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
-import {dynamicRequire, dynamicRequireNoCache}                                                                                     from './dynamicRequire';
+import {dynamicRequireNoCache}                                                                                                     from './dynamicRequire';
 import {resolveNodeModulesPath, ResolvedPath}                                                                                      from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
