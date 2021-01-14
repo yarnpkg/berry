@@ -4,12 +4,8 @@ import {pnpPlugin}                                                          from
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
-<<<<<<< HEAD
-import {Command, Usage}                                                     from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild-wasm';
-=======
 import {Command, Option, Usage}                                             from 'clipanion';
->>>>>>> origin/master
+import {build, Plugin}                                                      from 'esbuild-wasm';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
@@ -117,16 +113,34 @@ export default class BuildBundleCommand extends Command {
           },
         };
 
-        await build({
+        const res = await build({
           banner: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
           define: {YARN_VERSION: JSON.stringify(version)},
           outfile: output,
+          logLevel: `silent`,
+          mainFields: [`module`, `main`],
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
         });
+
+        for (const warning of res.warnings) {
+          if (warning.location !== null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, warning.text);
+        }
+
+
+        for (const warning of res.warnings) {
+          if (warning.location === null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
+          report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
+        }
       });
     });
 
