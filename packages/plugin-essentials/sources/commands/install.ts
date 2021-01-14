@@ -3,51 +3,14 @@ import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, f
 import {xfs, ppath}                                                                         from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
 import {TRAVIS}                                                                             from 'ci-info';
-import {Command, Usage}                                                                     from 'clipanion';
+import {Command, Option, Usage}                                                             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.Boolean(`--immutable`, {description: `Abort with an error exit code if the lockfile was to be modified`})
-  immutable?: boolean;
-
-  @Command.Boolean(`--immutable-cache`, {description: `Abort with an error exit code if the cache folder was to be modified`})
-  immutableCache?: boolean;
-
-  @Command.Boolean(`--check-cache`, {description: `Always refetch the packages and ensure that their checksums are consistent`})
-  checkCache: boolean = false;
-
-  @Command.Boolean(`--production`, {hidden: true})
-  production?: boolean;
-
-  @Command.Boolean(`--non-interactive`, {hidden: true})
-  nonInteractive?: boolean;
-
-  @Command.Boolean(`--frozen-lockfile`, {hidden: true})
-  frozenLockfile?: boolean;
-
-  @Command.Boolean(`--prefer-offline`, {hidden: true})
-  preferOffline?: boolean;
-
-  @Command.Boolean(`--ignore-engines`, {hidden: true})
-  ignoreEngines?: boolean;
-
-  @Command.String(`--registry`, {hidden: true})
-  registry?: string;
-
-  @Command.Boolean(`--inline-builds`, {description: `Verbosely print the output of the build steps of dependencies`})
-  inlineBuilds?: boolean;
-
-  @Command.Boolean(`--skip-builds`, {description: `Skip the build step altogether`})
-  skipBuilds?: boolean = false;
-
-  @Command.String(`--cache-folder`, {hidden: true})
-  cacheFolder?: string;
-
-  @Command.Boolean(`--silent`, {hidden: true})
-  silent?: boolean = false;
+  static paths = [
+    [`install`],
+    Command.Default,
+  ];
 
   static usage: Usage = Command.Usage({
     description: `install the project dependencies`,
@@ -86,8 +49,40 @@ export default class YarnCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path()
-  @Command.Path(`install`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  immutable = Option.Boolean(`--immutable`, {
+    description: `Abort with an error exit code if the lockfile was to be modified`,
+  });
+
+  immutableCache = Option.Boolean(`--immutable-cache`, {
+    description: `Abort with an error exit code if the cache folder was to be modified`,
+  });
+
+  checkCache = Option.Boolean(`--check-cache`, false, {
+    description: `Always refetch the packages and ensure that their checksums are consistent`,
+  });
+
+  inlineBuilds = Option.Boolean(`--inline-builds`, {
+    description: `Verbosely print the output of the build steps of dependencies`,
+  });
+
+  skipBuilds = Option.Boolean(`--skip-builds`, false, {
+    description: `Skip the build step altogether`,
+  });
+
+  // Legacy flags; will emit errors or warnings when used
+  cacheFolder = Option.String(`--cache-folder`, {hidden: true});
+  frozenLockfile = Option.Boolean(`--frozen-lockfile`, {hidden: true});
+  ignoreEngines = Option.Boolean(`--ignore-engines`, {hidden: true});
+  nonInteractive = Option.Boolean(`--non-interactive`, {hidden: true});
+  preferOffline = Option.Boolean(`--prefer-offline`, {hidden: true});
+  production = Option.Boolean(`--production`, {hidden: true});
+  registry = Option.String(`--registry`, {hidden: true});
+  silent = Option.Boolean(`--silent`, {hidden: true});
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

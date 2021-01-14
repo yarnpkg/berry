@@ -2,15 +2,13 @@ import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {execUtils, scriptUtils} from '@yarnpkg/core';
 import {xfs}                    from '@yarnpkg/fslib';
-import {Command, Usage}         from 'clipanion';
+import {Command, Option, Usage} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExecCommand extends BaseCommand {
-  @Command.String()
-  commandName!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
+  static paths = [
+    [`exec`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `execute a shell command`,
@@ -25,7 +23,9 @@ export default class ExecCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`exec`)
+  commandName = Option.String();
+  args = Option.Proxy();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

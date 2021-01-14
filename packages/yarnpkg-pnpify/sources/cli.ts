@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {Cli, Command}   from 'clipanion';
+import {Cli, Builtins}  from 'clipanion';
 
 import ClipanionCommand from './commands/ClipanionCommand';
 import RunCommand       from './commands/RunCommand';
@@ -16,7 +16,7 @@ cli.register(RunCommand);
 cli.register(SdkCommand);
 
 cli.register(ClipanionCommand);
-cli.register(Command.Entries.Help);
-cli.register(Command.Entries.Version);
+cli.register(Builtins.HelpCommand);
+cli.register(Builtins.VersionCommand);
 
 cli.runExit(process.argv.slice(2), Cli.defaultContext);

@@ -1,12 +1,13 @@
-import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
-import chalk                         from 'chalk';
-import {Command, Usage, UsageError}  from 'clipanion';
-import path                          from 'path';
+import {Filename, npath, ppath, xfs}        from '@yarnpkg/fslib';
+import chalk                                from 'chalk';
+import {Command, Option, Usage, UsageError} from 'clipanion';
+import path                                 from 'path';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NewPluginCommand extends Command {
-  @Command.String()
-  target!: string;
+  static paths = [
+    [`new`, `plugin`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `generate the template for a new plugin`,
@@ -19,7 +20,8 @@ export default class NewPluginCommand extends Command {
     ]],
   });
 
-  @Command.Path(`new`, `plugin`)
+  target = Option.String();
+
   async execute() {
     const target = npath.toPortablePath(path.resolve(this.target));
     if (await xfs.existsPromise(target)) {
@@ -37,10 +39,14 @@ export default class NewPluginCommand extends Command {
       `import {Command} from 'clipanion';\n`,
       `\n`,
       `class HelloWorldCommand extends Command<CommandContext> {\n`,
-      `  @Command.String(\`--name\`)\n`,
-      `  name: string = \`John Doe\`;\n`,
+      `  static paths = [\n`,
+      `    [\`hello\`, \`world\`],\n`,
+      `  ];\n`,
       `\n`,
-      `  @Command.Path(\`hello\`, \`world\`)\n`,
+      `  name = Command.String(\`--name\`, \`John Doe\`, {\n`,
+      `    description: \`Your name\`,\n`,
+      `  });\n`,
+      `\n`,
       `  async execute() {\n`,
       `    console.log(\`Hello \${this.name}!\`);\n`,
       `  }\n`,

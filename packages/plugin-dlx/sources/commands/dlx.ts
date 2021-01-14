@@ -2,21 +2,13 @@ import {BaseCommand, WorkspaceRequiredError}     from '@yarnpkg/cli';
 import {Configuration, Project}                  from '@yarnpkg/core';
 import {scriptUtils, structUtils}                from '@yarnpkg/core';
 import {NativePath, Filename, ppath, xfs, npath} from '@yarnpkg/fslib';
-import {Command, Usage}                          from 'clipanion';
+import {Command, Option, Usage}                  from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
-  @Command.String(`-p,--package`, {description: `The package to run the provided command from`})
-  pkg: string | undefined;
-
-  @Command.Boolean(`-q,--quiet`, {description: `Only report critical errors instead of printing the full install logs`})
-  quiet: boolean = false;
-
-  @Command.String()
-  command!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
+  static paths = [
+    [`dlx`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `run a package in a temporary environment`,
@@ -33,7 +25,17 @@ export default class DlxCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`dlx`)
+  pkg = Option.String(`-p,--package`, {
+    description: `The package to run the provided command from`,
+  });
+
+  quiet = Option.Boolean(`-q,--quiet`, false, {
+    description: `Only report critical errors instead of printing the full install logs`,
+  });
+
+  command = Option.String();
+  args = Option.Proxy();
+
   async execute() {
     // Disable telemetry to prevent each `dlx` call from counting as a project
     Configuration.telemetry = null;

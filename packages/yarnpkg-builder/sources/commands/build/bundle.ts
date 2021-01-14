@@ -4,8 +4,12 @@ import {pnpPlugin}                                                          from
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
+<<<<<<< HEAD
 import {Command, Usage}                                                     from 'clipanion';
 import {build, Plugin}                                                      from 'esbuild-wasm';
+=======
+import {Command, Option, Usage}                                             from 'clipanion';
+>>>>>>> origin/master
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
@@ -30,20 +34,9 @@ const suggestHash = async (basedir: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildBundleCommand extends Command {
-  @Command.String(`--profile`, {description: `Only include plugins that are part of the the specified profile`})
-  profile: string = `standard`;
-
-  @Command.Array(`--plugin`, {description: `An array of plugins that should be included besides the ones specified in the profile`})
-  plugins: Array<string> = [];
-
-  @Command.Boolean(`--no-git-hash`, {description: `Don't include the git hash of the current commit in bundle version`})
-  noGitHash: boolean = false;
-
-  @Command.Boolean(`--no-minify`, {description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`})
-  noMinify: boolean = false;
-
-  @Command.Boolean(`--source-map`, {description: `Includes a source map in the bundle`})
-  sourceMap: boolean = false;
+  static paths = [
+    [`build`, `bundle`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
@@ -59,7 +52,26 @@ export default class BuildBundleCommand extends Command {
     ]],
   });
 
-  @Command.Path(`build`, `bundle`)
+  profile = Option.String(`--profile`, `standard`, {
+    description: `Only include plugins that are part of the the specified profile`,
+  });
+
+  plugins = Option.Array(`--plugin`, [], {
+    description: `An array of plugins that should be included besides the ones specified in the profile`,
+  });
+
+  noGitHash = Option.Boolean(`--no-git-hash`, false, {
+    description: `Don't include the git hash of the current commit in bundle version`,
+  });
+
+  noMinify = Option.Boolean(`--no-minify`, false, {
+    description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`,
+  });
+
+  sourceMap = Option.Boolean(`--source-map`, false, {
+    description: `Includes a source map in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);

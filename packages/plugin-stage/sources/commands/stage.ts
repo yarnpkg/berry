@@ -1,11 +1,11 @@
-import {BaseCommand}                     from '@yarnpkg/cli';
-import {Configuration, Project}          from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}      from 'clipanion';
+import {BaseCommand}                        from '@yarnpkg/cli';
+import {Configuration, Project}             from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}    from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError} from 'clipanion';
 
-import {Driver as GitDriver}             from '../drivers/GitDriver';
-import {Driver as MercurialDriver}       from '../drivers/MercurialDriver';
-import {Hooks}                           from '..';
+import {Driver as GitDriver}                from '../drivers/GitDriver';
+import {Driver as MercurialDriver}          from '../drivers/MercurialDriver';
+import {Hooks}                              from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
@@ -14,21 +14,9 @@ const ALL_DRIVERS = [
 
 // eslint-disable-next-line arca/no-default-export
 export default class StageCommand extends BaseCommand {
-  @Command.Boolean(`-c,--commit`, {description: `Commit the staged files`})
-  commit: boolean = false;
-
-  @Command.Boolean(`-r,--reset`, {description: `Remove all files from the staging area`})
-  reset: boolean = false;
-
-  // TODO: implement it. Its purpose is, quoting @arcanis:
-  // "iirc I intended it to update (amend) the current
-  // commit if it exists, or to create a new one otherwise"
-  // TODO: unhide it and add a description once implemented
-  @Command.Boolean(`-u,--update`, {hidden: true})
-  update: boolean = false;
-
-  @Command.Boolean(`-n,--dry-run`, {description: `Print the commit message and the list of modified files without staging / committing`})
-  dryRun: boolean = false;
+  static paths = [
+    [`stage`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `add all yarn files to your vcs`,
@@ -48,7 +36,24 @@ export default class StageCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`stage`)
+  commit = Option.Boolean(`-c,--commit`, false, {
+    description: `Commit the staged files`,
+  });
+
+  reset = Option.Boolean(`-r,--reset`, false, {
+    description: `Remove all files from the staging area`,
+  });
+
+  dryRun = Option.Boolean(`-n,--dry-run`, false, {
+    description: `Print the commit message and the list of modified files without staging / committing`,
+  });
+
+  // TODO: implement it. Its purpose is, quoting @arcanis:
+  // "iirc I intended it to update (amend) the current
+  // commit if it exists, or to create a new one otherwise"
+  // TODO: unhide it and add a description once implemented
+  update = Option.Boolean(`-u,--update`, false, {hidden: true});
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

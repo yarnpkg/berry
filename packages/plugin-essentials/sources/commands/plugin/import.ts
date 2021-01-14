@@ -2,7 +2,7 @@ import {BaseCommand}                                                            
 import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
 import {formatUtils, httpUtils, structUtils}                                               from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
-import {Command, Usage}                                                                    from 'clipanion';
+import {Command, Option, Usage}                                                            from 'clipanion';
 import {URL}                                                                               from 'url';
 import {runInNewContext}                                                                   from 'vm';
 
@@ -10,8 +10,9 @@ import {getAvailablePlugins}                                                    
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlCommand extends BaseCommand {
-  @Command.String()
-  name!: string;
+  static paths = [
+    [`plugin`, `import`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
@@ -42,7 +43,8 @@ export default class PluginDlCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`plugin`, `import`)
+  name = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

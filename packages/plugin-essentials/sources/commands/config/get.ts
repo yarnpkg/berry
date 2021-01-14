@@ -1,19 +1,14 @@
 import {BaseCommand}                            from '@yarnpkg/cli';
 import {Configuration, StreamReport, miscUtils} from '@yarnpkg/core';
-import {Command, Usage, UsageError}             from 'clipanion';
+import {Command, Option, Usage, UsageError}     from 'clipanion';
 import getPath                                  from 'lodash/get';
 import {inspect}                                from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigGetCommand extends BaseCommand {
-  @Command.String()
-  name!: string;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.Boolean(`--no-redacted`, {description: `Don't redact secrets (such as tokens) from the output`})
-  unsafe: boolean = false;
+  static paths = [
+    [`config`, `get`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `read a configuration settings`,
@@ -40,7 +35,16 @@ export default class ConfigGetCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`config`, `get`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  unsafe = Option.Boolean(`--no-redacted`, false, {
+    description: `Don't redact secrets (such as tokens) from the output`,
+  });
+
+  name = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

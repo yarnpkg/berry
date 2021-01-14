@@ -2,15 +2,13 @@ import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
 import {Configuration, MessageName}   from '@yarnpkg/core';
 import {StreamReport, structUtils}    from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
-import {Command, Usage}               from 'clipanion';
+import {Command, Option, Usage}       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmWhoamiCommand extends BaseCommand {
-  @Command.String(`-s,--scope`, {description: `Print username for the registry configured for a given scope`})
-  scope?: string;
-
-  @Command.Boolean(`--publish`, {description: `Print username for the publish registry`})
-  publish: boolean = false;
+  static paths = [
+    [`npm`, `whoami`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -31,7 +29,14 @@ export default class NpmWhoamiCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `whoami`)
+  scope = Option.String(`-s,--scope`, {
+    description: `Print username for the registry configured for a given scope`,
+  });
+
+  publish = Option.Boolean(`--publish`, false, {
+    description: `Print username for the publish registry`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

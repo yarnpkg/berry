@@ -1,17 +1,15 @@
 import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
 import {Cache, Configuration}                from '@yarnpkg/core';
 import {Project, StreamReport}               from '@yarnpkg/core';
-import {Command, Usage}                      from 'clipanion';
+import {Command, Option, Usage}              from 'clipanion';
 
 import * as versionUtils                     from '../../versionUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends BaseCommand {
-  @Command.Boolean(`--all`, {description: `Apply the deferred version changes on all workspaces`})
-  all: boolean = false;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`version`, `apply`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
@@ -30,7 +28,14 @@ export default class VersionApplyCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`version`, `apply`)
+  all = Option.Boolean(`--all`, false, {
+    description: `Apply the deferred version changes on all workspaces`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

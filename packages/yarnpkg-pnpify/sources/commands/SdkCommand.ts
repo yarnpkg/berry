@@ -1,21 +1,16 @@
 import {StreamReport, Configuration}                                                                       from '@yarnpkg/core';
-import {NativePath, npath, ppath, xfs, Filename}                                                           from '@yarnpkg/fslib';
+import {npath, ppath, xfs, Filename}                                                                       from '@yarnpkg/fslib';
 import type {PnpApi}                                                                                       from '@yarnpkg/pnp';
-import {Command, UsageError}                                                                               from 'clipanion';
+import {Command, Option, UsageError}                                                                       from 'clipanion';
 
 import {dynamicRequire}                                                                                    from '../dynamicRequire';
 import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedIntegration, IntegrationsFile} from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
-  @Command.Rest()
-  integrations: Array<string> = [];
-
-  @Command.String(`--cwd`, {description: `The directory to run the command in`})
-  cwd: NativePath = process.cwd();
-
-  @Command.Boolean(`-v,--verbose`, {description: `Print all skipped dependencies`})
-  verbose: boolean = false;
+  static paths = [
+    [`--sdk`],
+  ];
 
   static usage = Command.Usage({
     description: `generate editor SDKs and settings`,
@@ -50,7 +45,16 @@ export default class SdkCommand extends Command {
     ]],
   });
 
-  @Command.Path(`--sdk`)
+  cwd = Option.String(`--cwd`, process.cwd(), {
+    description: `The directory to run the command in`,
+  });
+
+  verbose = Option.Boolean(`-v,--verbose`, false, {
+    description: `Print all skipped dependencies`,
+  });
+
+  integrations = Option.Rest();
+
   async execute() {
     let nextProjectRoot = npath.toPortablePath(this.cwd);
     let currProjectRoot = null;

@@ -1,14 +1,11 @@
 import {CommandContext, structUtils} from '@yarnpkg/core';
 import {npath, ppath}                from '@yarnpkg/fslib';
-import {Command}                     from 'clipanion';
+import {Command, Option}             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class EntryCommand extends Command<CommandContext> {
-  @Command.String()
-  leadingArgument!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
+  leadingArgument = Option.String();
+  args = Option.Proxy();
 
   async execute() {
     if (this.leadingArgument.match(/[\\/]/) && !structUtils.tryParseIdent(this.leadingArgument)) {
