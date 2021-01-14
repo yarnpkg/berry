@@ -50,7 +50,7 @@ jobs:
         # With NPM packages
         yarn add lodash
 
-        echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/index.js
+        echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/main.js
 
         yarn ts-node --transpile-only build.js
         [[ "$(node dist/bundle.js)" = "Hello webpack" ]]
