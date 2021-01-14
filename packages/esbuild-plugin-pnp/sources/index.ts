@@ -2,7 +2,7 @@ import {PnpApi}                                                                 
 import {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild-wasm';
 import fs                                                                              from 'fs';
 
-const defaultExtensions = [`.js`, `.jsx`, `.ts`, `.tsx`, `.json`];
+const defaultExtensions = [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.cjs`, `.js`, `.css`, `.json`];
 
 async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
   return {

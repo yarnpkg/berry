@@ -5444,6 +5444,7 @@ __metadata:
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
     "@types/ci-info": ^2
+    "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"

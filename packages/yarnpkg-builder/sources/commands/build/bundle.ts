@@ -120,7 +120,6 @@ export default class BuildBundleCommand extends Command {
           define: {YARN_VERSION: JSON.stringify(version)},
           outfile: output,
           logLevel: `silent`,
-          mainFields: [`module`, `main`],
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
