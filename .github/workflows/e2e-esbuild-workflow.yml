@@ -32,7 +32,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D esbuild @yarnpkg/esbuild-plugin-pnp@file:"$HERE_DIR/../packages/esbuild-plugin-pnp"
+        yarn add -D esbuild @yarnpkg/esbuild-plugin-pnp@portal:"$HERE_DIR/../packages/esbuild-plugin-pnp" ts-node typescript
 
         echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['src/main.js'], outfile: 'dist/bundle.js', plugins: [require('@yarnpkg/esbuild-plugin-pnp').pnpPlugin()]})" > build.js
 
@@ -43,7 +43,7 @@ jobs:
         echo "export function square(x) {return x * x} export function cube(x) {return x * x * x}" | tee src/maths.js
         echo "import {cube} from './maths.js'; console.log(cube(5));" | tee src/main.js
 
-        yarn node build.js
+        yarn ts-node --transpile-only build.js
         [[ "$(node dist/bundle.js)" = "125" ]]
         ! cat dist/bundle.js | grep "square"
 
@@ -53,6 +53,5 @@ jobs:
         mkdir src
         echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/index.js
 
-        yarn node build.js
+        yarn ts-node --transpile-only build.js
         [[ "$(node dist/bundle.js)" = "Hello webpack" ]]
-
