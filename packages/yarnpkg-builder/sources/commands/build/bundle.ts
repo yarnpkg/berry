@@ -89,8 +89,6 @@ export default class BuildBundleCommand extends Command {
         ? `${version}.${hash}`
         : `${version}-${hash}`;
 
-    const buildErrors: string | null = null;
-
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
@@ -148,9 +146,8 @@ export default class BuildBundleCommand extends Command {
 
     const Mark = formatUtils.mark(configuration);
 
-    if (buildErrors) {
-      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build the CLI:`);
-      report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
+    if (report.hasErrors()) {
+      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build the CLI`);
     } else {
       report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
