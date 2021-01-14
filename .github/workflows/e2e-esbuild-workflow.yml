@@ -32,7 +32,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D esbuild @yarnpkg/esbuild-plugin-pnp@file:"$HERE_DIR/packages/esbuild-plugin-pnp"
+        yarn add -D esbuild @yarnpkg/esbuild-plugin-pnp@file:"$HERE_DIR/../packages/esbuild-plugin-pnp"
 
         echo "build({bundle: true, entryPoints: ['src/main.js'], outfile: 'dist/bundle.js', plugins: [require('@yarnpkg/esbuild-plugin-pnp')()]})" > build.js
 
