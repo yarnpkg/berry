@@ -1,6 +1,6 @@
 import {PnpApi}                                                                        from '@yarnpkg/pnp';
 import {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild-wasm';
-import fs                                                                              from 'fs';
+import * as fs                                                                         from 'fs';
 
 const defaultExtensions = [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.cjs`, `.js`, `.css`, `.json`];
 
@@ -20,12 +20,14 @@ async function defaultOnResolve(args: OnResolveArgs, resolvedPath: string | null
 }
 
 export type PluginOptions = {
+  baseDir?: string,
   extensions?: Array<string>,
   onResolve?: (args: OnResolveArgs, resolvedPath: string | null) => Promise<OnResolveResult | null>,
   onLoad?: (args: OnLoadArgs) => Promise<OnLoadResult>,
 };
 
 export function pnpPlugin({
+  baseDir = process.cwd(),
   extensions = defaultExtensions,
   onResolve = defaultOnResolve,
   onLoad = defaultOnLoad,
@@ -44,7 +46,12 @@ export function pnpPlugin({
         if (!pnpApi)
           throw new Error(`Path is external to the project`);
 
-        const path = pnpApi.resolveRequest(args.path, args.importer, {
+        // The entry point resolution uses an empty string
+        const effectiveImporter = args.importer
+          ? args.importer
+          : `${baseDir}/`;
+
+        const path = pnpApi.resolveRequest(args.path, effectiveImporter, {
           considerBuiltins: true,
           extensions,
         });
