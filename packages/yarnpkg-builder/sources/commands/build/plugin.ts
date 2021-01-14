@@ -56,7 +56,7 @@ export default class BuildPluginCommand extends Command {
     const {name: rawName} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);
     const prettyName = structUtils.prettyIdent(configuration, structUtils.parseIdent(name));
-    const output = `${basedir}/bundles/${name}.js`;
+    const output = path.join(basedir, `bundles/${name}.js`);
 
     let buildErrors: string | null = null;
 

@@ -76,7 +76,7 @@ export default class BuildBundleCommand extends Command {
 
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
     const modules = [...getDynamicLibs().keys()].concat(plugins);
-    const output = `${basedir}/bundles/yarn.js`;
+    const output = path.join(basedir, `bundles/yarn.js`);
 
     let version = pkgJsonVersion(basedir);
 
