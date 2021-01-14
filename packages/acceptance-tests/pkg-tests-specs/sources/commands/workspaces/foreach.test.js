@@ -338,7 +338,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
 
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `1`, `run`, `print`)).rejects.toThrowError(/expected to be at least 2 (got 1)/);
+          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `1`, `run`, `print`)).rejects.toThrowError(/expected to be at least 2 \(got 1\)/);
         }
       )
     );
