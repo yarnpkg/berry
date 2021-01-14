@@ -2,7 +2,7 @@ import {BaseCommand}                                                    from '@y
 import {structUtils, hashUtils}                                         from '@yarnpkg/core';
 import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs, Filename}                      from '@yarnpkg/fslib';
-import {Command, Usage}                                                 from 'clipanion';
+import {Command, Option, Usage}                                         from 'clipanion';
 import {tmpdir}                                                         from 'os';
 
 import {prepareRepo, runWorkflow}                                       from '../../set/version/sources';
@@ -15,23 +15,9 @@ const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: s
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlSourcesCommand extends BaseCommand {
-  @Command.String()
-  name!: string;
-
-  @Command.String(`--path`, {description: `The path where the repository should be cloned to`})
-  installPath?: string;
-
-  @Command.String(`--repository`, {description: `The repository that should be cloned`})
-  repository: string = `https://github.com/yarnpkg/berry.git`;
-
-  @Command.String(`--branch`, {description: `The branch of the repository that should be cloned`})
-  branch: string = `master`;
-
-  @Command.Boolean(`--no-minify`, {description: `Build a plugin for development (debugging) - non-minified and non-mangled`})
-  noMinify: boolean = false;
-
-  @Command.Boolean(`-f,--force`, {description: `Always clone the repository instead of trying to fetch the latest commits`})
-  force: boolean = false;
+  static paths = [
+    [`plugin`, `import`, `from`, `sources`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
@@ -50,7 +36,28 @@ export default class PluginDlSourcesCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`plugin`, `import`, `from`, `sources`)
+  installPath = Option.String(`--path`, {
+    description: `The path where the repository should be cloned to`,
+  });
+
+  repository = Option.String(`--repository`, `https://github.com/yarnpkg/berry.git`, {
+    description: `The repository that should be cloned`,
+  });
+
+  branch = Option.String(`--branch`, `master`, {
+    description: `The branch of the repository that should be cloned`,
+  });
+
+  noMinify = Option.Boolean(`--no-minify`, false, {
+    description: `Build a plugin for development (debugging) - non-minified and non-mangled`,
+  });
+
+  force = Option.Boolean(`-f,--force`, false, {
+    description: `Always clone the repository instead of trying to fetch the latest commits`,
+  });
+
+  name = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

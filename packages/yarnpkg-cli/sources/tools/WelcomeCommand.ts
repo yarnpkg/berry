@@ -1,5 +1,4 @@
 import {Configuration, formatUtils} from '@yarnpkg/core';
-import {Command}                    from 'clipanion';
 
 import {BaseCommand}                from './BaseCommand';
 
@@ -35,7 +34,10 @@ See you later 👋
 `;
 
 export class WelcomeCommand extends BaseCommand {
-  @Command.Path(`--welcome`)
+  static paths = [
+    [`--welcome`],
+  ];
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     this.context.stdout.write(`${getMessage(configuration).trim()}\n`);

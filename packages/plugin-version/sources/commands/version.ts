@@ -1,36 +1,15 @@
 import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
 import {Configuration, Project}              from '@yarnpkg/core';
-import {Command, Usage, UsageError}          from 'clipanion';
+import {Command, Option, Usage, UsageError}  from 'clipanion';
 import semver                                from 'semver';
-import * as yup                              from 'yup';
 
 import * as versionUtils                     from '../versionUtils';
 
-const acceptedStrategies = new Set(Object.values(versionUtils.Decision).filter(decision => {
-  return decision !== versionUtils.Decision.UNDECIDED;
-}));
-
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends BaseCommand {
-  @Command.String()
-  strategy!: string;
-
-  @Command.Boolean(`-d,--deferred`, {description: `Prepare the version to be bumped during the next release cycle`})
-  deferred?: boolean;
-
-  @Command.Boolean(`-i,--immediate`, {description: `Bump the version immediately`})
-  immediate?: boolean;
-
-  static schema = yup.object().shape({
-    strategy: yup.string().test({
-      name: `strategy`,
-      message: `\${path} must be a semver range or one of \${strategies}`,
-      params: {strategies: [...acceptedStrategies].join(`, `)},
-      test: (range: string) => {
-        return semver.valid(range) !== null || acceptedStrategies.has(range as any);
-      },
-    }),
-  });
+  static paths = [
+    [`version`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
@@ -58,7 +37,16 @@ export default class VersionCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`version`)
+  deferred = Option.Boolean(`-d,--deferred`, {
+    description: `Prepare the version to be bumped during the next release cycle`,
+  });
+
+  immediate = Option.Boolean(`-i,--immediate`, {
+    description: `Bump the version immediately`,
+  });
+
+  strategy = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

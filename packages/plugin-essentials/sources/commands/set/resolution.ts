@@ -1,18 +1,13 @@
 import {BaseCommand, WorkspaceRequiredError}         from '@yarnpkg/cli';
 import {Configuration, Cache, Project, StreamReport} from '@yarnpkg/core';
 import {structUtils}                                 from '@yarnpkg/core';
-import {Command, Usage}                              from 'clipanion';
+import {Command, Option, Usage}                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetResolutionCommand extends BaseCommand {
-  @Command.String()
-  descriptor!: string;
-
-  @Command.String()
-  resolution!: string;
-
-  @Command.Boolean(`-s,--save`, {description: `Persist the resolution inside the top-level manifest`})
-  save: boolean = false;
+  static paths = [
+    [`set`, `resolution`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `enforce a package resolution`,
@@ -29,7 +24,13 @@ export default class SetResolutionCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`set`, `resolution`)
+  save = Option.Boolean(`-s,--save`, false, {
+    description: `Persist the resolution inside the top-level manifest`,
+  });
+
+  descriptor = Option.String();
+  resolution = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

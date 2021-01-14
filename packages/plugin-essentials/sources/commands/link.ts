@@ -1,21 +1,13 @@
 import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
 import {npath, ppath}                                             from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                               from 'clipanion';
+import {Command, Option, Usage, UsageError}                       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
-  @Command.String()
-  destination!: string;
-
-  @Command.Boolean(`-A,--all`, {description: `Link all workspaces belonging to the target project to the current one`})
-  all: boolean = false;
-
-  @Command.Boolean(`-p,--private`, {description: `Also link private workspaces belonging to the target project to the current one`})
-  private: boolean = false;
-
-  @Command.Boolean(`-r,--relative`, {description: `Link workspaces using relative paths instead of absolute paths`})
-  relative: boolean = false;
+  static paths = [
+    [`link`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `connect the local project to another one`,
@@ -33,7 +25,20 @@ export default class LinkCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`link`)
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Link all workspaces belonging to the target project to the current one`,
+  });
+
+  private = Option.Boolean(`-p,--private`, false, {
+    description: `Also link private workspaces belonging to the target project to the current one`,
+  });
+
+  relative = Option.Boolean(`-r,--relative`, false, {
+    description: `Link workspaces using relative paths instead of absolute paths`,
+  });
+
+  destination = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

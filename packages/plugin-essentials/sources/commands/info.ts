@@ -1,42 +1,16 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                                                          from '@yarnpkg/cli';
 import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, formatUtils, miscUtils, Locator, Cache, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
 import {xfs}                                                                                                                                                          from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                                                                                                                   from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                                                                                           from 'clipanion';
 import mm                                                                                                                                                             from 'micromatch';
 
 import {Hooks}                                                                                                                                                        from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`, {description: `Print versions of a package from the whole project`})
-  all: boolean = false;
-
-  @Command.Boolean(`-R,--recursive`, {description: `Print information for all packages, including transitive dependencies`})
-  recursive: boolean = false;
-
-  @Command.Array(`-X,--extra`, {description: `An array of requests of extra data provided by plugins`})
-  extra: Array<string> = [];
-
-  @Command.Boolean(`--cache`, {description: `Print information about the cache entry of a package (path, size, checksum)`})
-  cache: boolean = false;
-
-  @Command.Boolean(`--dependents`, {description: `Print all dependents for each matching package`})
-  dependents: boolean = false;
-
-  @Command.Boolean(`--manifest`, {description: `Print data obtained by looking at the package archive (license, homepage, ...)`})
-  manifest: boolean = false;
-
-  @Command.Boolean(`--name-only`, {description: `Only print the name for the matching packages`})
-  nameOnly: boolean = false;
-
-  @Command.Boolean(`--virtuals`, {description: `Print each instance of the virtual packages`})
-  virtuals: boolean = false;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.Rest()
-  patterns: Array<string> = [];
+  static paths = [
+    [`info`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `see information related to packages`,
@@ -55,7 +29,44 @@ export default class InfoCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`info`)
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Print versions of a package from the whole project`,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Print information for all packages, including transitive dependencies`,
+  });
+
+  extra = Option.Array(`-X,--extra`, [], {
+    description: `An array of requests of extra data provided by plugins`,
+  });
+
+  cache = Option.Boolean(`--cache`, false, {
+    description: `Print information about the cache entry of a package (path, size, checksum)`,
+  });
+
+  dependents = Option.Boolean(`--dependents`, false, {
+    description: `Print all dependents for each matching package`,
+  });
+
+  manifest = Option.Boolean(`--manifest`, false, {
+    description: `Print data obtained by looking at the package archive (license, homepage, ...)`,
+  });
+
+  nameOnly = Option.Boolean(`--name-only`, false, {
+    description: `Only print the name for the matching packages`,
+  });
+
+  virtuals = Option.Boolean(`--virtuals`, false, {
+    description: `Print each instance of the virtual packages`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  patterns = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

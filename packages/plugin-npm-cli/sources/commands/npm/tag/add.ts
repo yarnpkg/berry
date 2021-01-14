@@ -1,18 +1,16 @@
 import {BaseCommand, WorkspaceRequiredError}                                         from '@yarnpkg/cli';
 import {Configuration, Project, structUtils, MessageName, StreamReport, formatUtils} from '@yarnpkg/core';
 import {npmHttpUtils, npmConfigUtils}                                                from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage}                                                  from 'clipanion';
+import {Command, UsageError, Usage, Option}                                          from 'clipanion';
 import semver                                                                        from 'semver';
 
 import {getDistTags}                                                                 from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagAddCommand extends BaseCommand {
-  @Command.String()
-  package!: string;
-
-  @Command.String()
-  tag!: string;
+  static paths = [
+    [`npm`, `tag`, `add`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -26,7 +24,9 @@ export default class NpmTagAddCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `tag`, `add`)
+  package = Option.String();
+  tag = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

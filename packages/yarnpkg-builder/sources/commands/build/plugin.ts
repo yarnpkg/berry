@@ -1,6 +1,6 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
 import {npath}                                                              from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                         from 'clipanion';
+import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 import TerserPlugin                                                         from 'terser-webpack-plugin';
@@ -22,11 +22,9 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
-  @Command.Boolean(`--no-minify`, {description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`})
-  noMinify: boolean = false;
-
-  @Command.Boolean(`--source-map`, {description: `Includes a source map in the bundle`})
-  sourceMap: boolean = false;
+  static paths = [
+    [`build`, `plugin`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `build a local plugin`,
@@ -42,7 +40,14 @@ export default class BuildPluginCommand extends Command {
     ]],
   });
 
-  @Command.Path(`build`, `plugin`)
+  noMinify = Option.Boolean(`--no-minify`, false, {
+    description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`,
+  });
+
+  sourceMap = Option.Boolean(`--source-map`, false, {
+    description: `Includes a source map in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);

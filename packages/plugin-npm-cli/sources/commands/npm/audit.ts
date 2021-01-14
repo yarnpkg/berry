@@ -1,27 +1,17 @@
 import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
 import {Configuration, Project, ReportError, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                                                         from 'clipanion';
+import {Command, Option, Usage}                                                                 from 'clipanion';
+import * as t                                                                                   from 'typanion';
 
 import * as npmAuditTypes                                                                       from '../../npmAuditTypes';
 import * as npmAuditUtils                                                                       from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AuditCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`)
-  all: boolean = false;
-
-  @Command.Boolean(`-R,--recursive`)
-  recursive: boolean = false;
-
-  @Command.String(`--environment`)
-  environment: npmAuditTypes.Environment = npmAuditTypes.Environment.All;
-
-  @Command.Boolean(`--json`)
-  json: boolean = false;
-
-  @Command.String(`--severity`)
-  severity: npmAuditTypes.Severity = npmAuditTypes.Severity.Info;
+  static paths = [
+    [`npm`, `audit`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `perform a vulnerability audit against the installed packages`,
@@ -57,7 +47,28 @@ export default class AuditCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `audit`)
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Audit dependencies from all workspaces`,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Audit transitive dependencies as well`,
+  });
+
+  environment = Option.String(`--environment`, npmAuditTypes.Environment.All, {
+    description: `Which environments to cover`,
+    validator: t.isEnum(npmAuditTypes.Environment),
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  severity = Option.String(`--severity`, npmAuditTypes.Severity.Info, {
+    description: `Minimal severity requested for packages to be displayed`,
+    validator: t.isEnum(npmAuditTypes.Severity),
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

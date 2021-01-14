@@ -2,7 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
 import {Project, StreamReport, Workspace}                                                                           from '@yarnpkg/core';
 import {structUtils}                                                                                                from '@yarnpkg/core';
-import {Command, Usage, UsageError}                                                                                 from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                                         from 'clipanion';
 import {prompt}                                                                                                     from 'enquirer';
 import micromatch                                                                                                   from 'micromatch';
 
@@ -11,20 +11,9 @@ import {Hooks}                                                                  
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
-  @Command.Rest()
-  patterns: Array<string> = [];
-
-  @Command.Boolean(`-i,--interactive`, {description: `Offer various choices, depending on the detected upgrade paths`})
-  interactive: boolean | null = null;
-
-  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
-  exact: boolean = false;
-
-  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
-  tilde: boolean = false;
-
-  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
-  caret: boolean = false;
+  static paths = [
+    [`up`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `upgrade dependencies across the project`,
@@ -62,7 +51,24 @@ export default class UpCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`up`)
+  interactive = Option.Boolean(`-i,--interactive`, {
+    description: `Offer various choices, depending on the detected upgrade paths`,
+  });
+
+  exact = Option.Boolean(`-E,--exact`, false, {
+    description: `Don't use any semver modifier on the resolved range`,
+  });
+
+  tilde = Option.Boolean(`-T,--tilde`, false, {
+    description: `Use the \`~\` semver modifier on the resolved range`,
+  });
+
+  caret = Option.Boolean(`-C,--caret`, false, {
+    description: `Use the \`^\` semver modifier on the resolved range`,
+  });
+
+  patterns = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

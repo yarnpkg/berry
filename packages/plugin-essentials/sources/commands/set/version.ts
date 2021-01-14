@@ -2,16 +2,14 @@ import {BaseCommand}                                      from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report} from '@yarnpkg/core';
 import {execUtils, formatUtils, httpUtils, semverUtils}   from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs, npath}        from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                       from 'clipanion';
+import {Command, Option, Usage, UsageError}               from 'clipanion';
 import semver                                             from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
-  @Command.Boolean(`--only-if-needed`, {description: `Only lock the Yarn version if it isn't already locked`})
-  onlyIfNeeded: boolean = false;
-
-  @Command.String()
-  version!: string;
+  static paths = [
+    [`set`, `version`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `lock the Yarn version used by the project`,
@@ -35,9 +33,12 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
-  // TODO: Remove alias in next major
-  @Command.Path(`policies`, `set-version`)
-  @Command.Path(`set`, `version`)
+  onlyIfNeeded = Option.Boolean(`--only-if-needed`, false, {
+    description: `Only lock the Yarn version if it isn't already locked`,
+  });
+
+  version = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (configuration.get(`yarnPath`) && this.onlyIfNeeded)

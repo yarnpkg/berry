@@ -1,22 +1,24 @@
 import {BaseCommand} from '@yarnpkg/cli';
 import {structUtils} from '@yarnpkg/core';
-import {Command}     from 'clipanion';
+import {Option}      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CreateCommand extends BaseCommand {
-  @Command.String(`-p,--package`, {description: `The package to run the provided command from`})
-  pkg: string | undefined;
+  static paths = [
+    [`create`],
+  ];
 
-  @Command.Boolean(`-q,--quiet`, {description: `Only report critical errors instead of printing the full install logs`})
-  quiet: boolean = false;
+  pkg = Option.String(`-p,--package`, {
+    description: `The package to run the provided command from`,
+  });
 
-  @Command.String()
-  command!: string;
+  quiet = Option.Boolean(`-q,--quiet`, false, {
+    description: `Only report critical errors instead of printing the full install logs`,
+  });
 
-  @Command.Proxy()
-  args: Array<string> = [];
+  command = Option.String();
+  args = Option.Proxy();
 
-  @Command.Path(`create`)
   async execute() {
     const flags = [];
     if (this.pkg)

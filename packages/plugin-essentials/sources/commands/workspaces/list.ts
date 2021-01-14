@@ -1,14 +1,12 @@
 import {BaseCommand}                                                                        from '@yarnpkg/cli';
 import {Configuration, Manifest, Project, StreamReport, structUtils, Descriptor, Workspace} from '@yarnpkg/core';
-import {Command, Usage}                                                                     from 'clipanion';
+import {Command, Option, Usage}                                                             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesListCommand extends BaseCommand {
-  @Command.Boolean(`-v,--verbose`, {description: `Also return the cross-dependencies between workspaces`})
-  verbose: boolean = false;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`workspaces`, `list`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -18,7 +16,14 @@ export default class WorkspacesListCommand extends BaseCommand {
     `,
   });
 
-  @Command.Path(`workspaces`, `list`)
+  verbose = Option.Boolean(`-v,--verbose`, false, {
+    description: `Also return the cross-dependencies between workspaces`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

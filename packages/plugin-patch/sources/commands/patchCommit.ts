@@ -1,14 +1,15 @@
 import {BaseCommand, WorkspaceRequiredError}        from '@yarnpkg/cli';
 import {Cache, Configuration, Project, structUtils} from '@yarnpkg/core';
 import {npath, xfs, Filename, ppath}                from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                 from 'clipanion';
+import {Command, Option, Usage, UsageError}         from 'clipanion';
 
 import * as patchUtils                              from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommitCommand extends BaseCommand {
-  @Command.String()
-  patchFolder!: string;
+  static paths = [
+    [`patch-commit`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `
@@ -19,7 +20,8 @@ export default class PatchCommitCommand extends BaseCommand {
     `,
   });
 
-  @Command.Path(`patch-commit`)
+  patchFolder = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

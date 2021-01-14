@@ -1,23 +1,15 @@
 import {BaseCommand, WorkspaceRequiredError}                                         from '@yarnpkg/cli';
 import {Configuration, Project, structUtils, MessageName, StreamReport, formatUtils} from '@yarnpkg/core';
 import {npmHttpUtils, npmConfigUtils}                                                from '@yarnpkg/plugin-npm';
-import {Command, Usage, UsageError}                                                  from 'clipanion';
-import * as yup                                                                      from 'yup';
+import {Command, Option, Usage, UsageError}                                          from 'clipanion';
 
 import {getDistTags}                                                                 from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagRemoveCommand extends BaseCommand {
-  @Command.String()
-  package!: string;
-
-  @Command.String()
-  tag!: string;
-
-  static schema = yup.object().shape({
-    // Better show a more detailed error, rather than the npm registry's "Bad request"
-    tag: yup.string().notOneOf([`latest`]),
-  });
+  static paths = [
+    [`npm`, `tag`, `remove`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -31,8 +23,13 @@ export default class NpmTagRemoveCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `tag`, `remove`)
+  package = Option.String();
+  tag = Option.String();
+
   async execute() {
+    if (this.tag === `latest`)
+      throw new UsageError(`The 'latest' tag cannot be removed.`);
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 

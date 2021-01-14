@@ -9,7 +9,7 @@ const DYNAMIC_LIBS = [
   // Those ones are always useful
   `clipanion`,
   `semver`,
-  `yup`,
+  `typanion`,
 ];
 
 export const getDynamicLibs = () => {
