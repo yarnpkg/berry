@@ -2,7 +2,7 @@ import {npath, PortablePath} from '@yarnpkg/fslib';
 
 // This file is copied from miscUtils.ts - make sure your changes are synced there
 
-export const dynamicRequire: NodeRequire = eval(`eval`);
+export const dynamicRequire: NodeRequire = eval(`require`);
 
 export function dynamicRequireNoCache(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
