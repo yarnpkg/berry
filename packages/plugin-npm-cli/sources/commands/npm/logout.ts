@@ -14,7 +14,7 @@ const LOGOUT_KEYS = new Set([
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLogoutCommand extends BaseCommand {
   static paths = [
-    [`npm`, `login`],
+    [`npm`, `logout`],
   ];
 
   static usage: Usage = Command.Usage({

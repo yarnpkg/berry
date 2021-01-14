@@ -8,8 +8,8 @@ import {Command, Option, Usage}                                                 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
   static paths = [
-    Command.Default,
     [`install`],
+    Command.Default,
   ];
 
   static usage: Usage = Command.Usage({

@@ -8,7 +8,7 @@ import {Command, Option, Usage}                         from 'clipanion';
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
   static paths = [
-    [`paths`],
+    [`rebuild`],
   ];
 
   static usage: Usage = Command.Usage({
