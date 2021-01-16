@@ -403,20 +403,20 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         if (prevNode) {
           if (prevNode.dirList) {
             throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge dir node with leaf node`);
-          } else {
+          } else if (prevNode.linkType === LinkType.HARD && leafNode.linkType === LinkType.HARD) {
+            // We merge together HARD nodes, SOFT nodes are just overwritten
             const locator1 = structUtils.parseLocator(prevNode.locator);
             const locator2 = structUtils.parseLocator(leafNode.locator);
 
-            if (prevNode.linkType !== leafNode.linkType)
-              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different link types`);
-            else if (locator1.identHash !== locator2.identHash)
+            if (locator1.identHash !== locator2.identHash)
               throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different idents ${structUtils.stringifyLocator(locator1)} and ${structUtils.stringifyLocator(locator2)}`);
 
             leafNode.aliases = [...leafNode.aliases, ...prevNode.aliases, structUtils.parseLocator(prevNode.locator).reference];
           }
         }
 
-        tree.set(nodeModulesLocation, leafNode);
+        if (!prevNode || leafNode.linkType === LinkType.HARD)
+          tree.set(nodeModulesLocation, leafNode);
 
         const segments = nodeModulesLocation.split(`/`);
         const nodeModulesIdx = segments.indexOf(NODE_MODULES);
