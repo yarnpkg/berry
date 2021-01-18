@@ -103,12 +103,6 @@
       "format": "uri-reference",
       "default": "./.yarn/versions"
     },
-    "enableAbsoluteVirtuals": {
-      "_package": "@yarnpkg/core",
-      "description": "If true, the virtual symlinks will use absolute (non-portable!) paths if required.",
-      "type": "boolean",
-      "default": false
-    },
     "enableColors": {
       "_package": "@yarnpkg/core",
       "description": "If true (by default detects terminal capabilities), Yarn will format its pretty-print its output by using colors to differentiate important parts of its messages.",

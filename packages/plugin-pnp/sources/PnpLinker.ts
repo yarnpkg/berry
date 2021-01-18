@@ -204,8 +204,6 @@ export class PnpInstaller implements Installer {
 
 
   async finalizeInstall() {
-    const blacklistedPaths = new Set<PortablePath>();
-
     for (const {locator, location} of this.virtualTemplates.values()) {
       miscUtils.getMapWithDefault(this.packageRegistry, structUtils.stringifyIdent(locator)).set(locator.reference, {
         packageLocation: location,
@@ -222,7 +220,6 @@ export class PnpInstaller implements Installer {
 
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
-    const blacklistedLocations = blacklistedPaths;
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
@@ -237,7 +234,6 @@ export class PnpInstaller implements Installer {
           fallbackExclusionList.push({name: structUtils.stringifyIdent(pkg), reference: pkg.reference});
 
     await this.finalizeInstallWithPnp({
-      blacklistedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,

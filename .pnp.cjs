@@ -240,8 +240,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     ],
     "fallbackPool": [
     ],
-    "locationBlacklistData": [
-    ],
     "packageRegistryData": [
       [null, [
         [null, {
@@ -43817,7 +43815,6 @@ var ErrorCode;
 
 (function (ErrorCode) {
   ErrorCode["API_ERROR"] = "API_ERROR";
-  ErrorCode["BLACKLISTED"] = "BLACKLISTED";
   ErrorCode["BUILTIN_NODE_RESOLUTION_FAILED"] = "BUILTIN_NODE_RESOLUTION_FAILED";
   ErrorCode["MISSING_DEPENDENCY"] = "MISSING_DEPENDENCY";
   ErrorCode["MISSING_PEER_DEPENDENCY"] = "MISSING_PEER_DEPENDENCY";
@@ -43829,7 +43826,7 @@ var ErrorCode;
 // that expect this umbrella error when the resolution fails
 
 
-const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BLACKLISTED, ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, ErrorCode.MISSING_DEPENDENCY, ErrorCode.MISSING_PEER_DEPENDENCY, ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, ErrorCode.UNDECLARED_DEPENDENCY]);
+const MODULE_NOT_FOUND_ERRORS = new Set([ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED, ErrorCode.MISSING_DEPENDENCY, ErrorCode.MISSING_PEER_DEPENDENCY, ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, ErrorCode.UNDECLARED_DEPENDENCY]);
 /**
  * Simple helper function that assign an error code to an error, so that it can more easily be caught and used
  * by third-parties.
@@ -44209,9 +44206,6 @@ function hydrateRuntimeState(data, {
       }];
     }))];
   }));
-
-  for (const location of data.locationBlacklistData) packageLocatorsByLocations.set(location, null);
-
   const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
     return [packageName, new Set(packageReferences)];
   }));
@@ -44841,31 +44835,11 @@ function makeApi(runtimeState, opts) {
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
       const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
-      if (typeof entry === `undefined`) continue; // Ensures that the returned locator isn't a blacklisted one.
-      //
-      // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
-      // happens with peer dependencies, which effectively have different sets of dependencies depending on their
-      // parents.
-      //
-      // In order to deambiguate those different sets of dependencies, the Yarn implementation of PnP will generate a
-      // symlink for each combination of <package name>/<package version>/<dependent package> it will find, and will
-      // blacklist the target of those symlinks. By doing this, we ensure that files loaded through a specific path
-      // will always have the same set of dependencies, provided the symlinks are correctly preserved.
-      //
-      // Unfortunately, some tools do not preserve them, and when it happens PnP isn't able anymore to deduce the set of
-      // dependencies based on the path of the file that makes the require calls. But since we've blacklisted those
-      // paths, we're able to print a more helpful error message that points out that a third-party package is doing
-      // something incompatible!
 
-      if (entry === null) {
-        const locationForDisplay = getPathForDisplay(location);
-        throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
-          location: locationForDisplay
-        });
+      if (typeof entry !== `undefined`) {
+        if (entry.discardFromLookup && !includeDiscardFromLookup) continue;
+        return entry.locator;
       }
-
-      if (entry.discardFromLookup && !includeDiscardFromLookup) continue;
-      return entry.locator;
     }
 
     return null;
@@ -44942,10 +44916,7 @@ function makeApi(runtimeState, opts) {
         } else {
           unqualifiedPath = ppath.normalize(ppath.join(ppath.dirname(absoluteIssuer), request));
         }
-      } // No need to use the return value; we just want to check the blacklist status
-
-
-      findPackageLocator(unqualifiedPath);
+      }
     } else {
       // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
       // particular the exact version for the given location on the dependency tree
