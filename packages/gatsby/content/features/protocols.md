@@ -25,7 +25,7 @@ The following protocols can be used by any dependency entry listed in the `depen
 | Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                   |
 | Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                     |
 | Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                   |
-| Workspace     | `workpace:*`                            | Creates a link to a package in another workspace                                                                                   |
+| Workspace     | `workspace:*`                           | Creates a link to a package in another workspace                                                                                   |
 | [Exec](#exec) | `exec:./my-generator-package`           | <sup>*Experimental & Plugin*</sup><br>Instructs Yarn to execute the specified Node script and use its output as package content |
 
 ## Details
