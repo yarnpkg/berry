@@ -206,14 +206,14 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/DevExpress/testcafe/pull/5872
-  [`testcafe@*`, {
+  [`testcafe@<=1.10.1`, {
     dependencies: {
       '@babel/plugin-transform-for-of': `^7.12.1`,
       '@babel/runtime': `^7.12.5`,
     },
   }],
   // https://github.com/DevExpress/testcafe-legacy-api/pull/51
-  [`testcafe-legacy-api@*`, {
+  [`testcafe-legacy-api@<=4.2.0`, {
     dependencies: {
       'testcafe-hammerhead': `^17.0.1`,
       'read-file-relative': `^1.2.0`,
