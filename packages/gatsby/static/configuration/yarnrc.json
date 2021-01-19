@@ -177,7 +177,7 @@
     },
     "enableTelemetry": {
       "_package": "@yarnpkg/core",
-      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/telemetry) page for more details about it.",
+      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/advanced/telemetry) page for more details about it.",
       "type": "boolean",
       "examples": [true]
     },
