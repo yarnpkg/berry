@@ -221,17 +221,24 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       });
 
       useEffect(() => {
-        Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
-          .then(allSuggestions => {
-            const mappedToSuggestions = dependencies.map((descriptor, i) => {
-              const suggestionsForDescriptor = allSuggestions[i];
-              return [descriptor, suggestionsForDescriptor] as const;
-            }).filter(([_, suggestions]) => suggestions.length > 1);
+        async function loadAllSuggestions() {
+          const allSuggestions: Array<UpgradeSuggestions> = [];
+          const chunkSize = 10;
+          for (let i = 0; i < dependencies.length; i += chunkSize) {
+            const chunk = dependencies.slice(i, i + chunkSize);
+            allSuggestions.push(...(await Promise.all(chunk.map(descriptor => fetchSuggestions(descriptor)))));
+          }
 
-            if (mountedRef.current) {
-              setSuggestions(mappedToSuggestions);
-            }
-          });
+          const mappedToSuggestions = dependencies.map((descriptor, i) => {
+            const suggestionsForDescriptor = allSuggestions[i];
+            return [descriptor, suggestionsForDescriptor] as const;
+          }).filter(([_, suggestions]) => suggestions.length > 1);
+
+          if (mountedRef.current) {
+            setSuggestions(mappedToSuggestions);
+          }
+        }
+        loadAllSuggestions();
       }, []);
 
       // Still fetching
