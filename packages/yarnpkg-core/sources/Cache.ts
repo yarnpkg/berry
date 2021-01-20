@@ -127,6 +127,8 @@ export class Cache {
 
       await xfs.changeFilePromise(gitignorePath, `/.gitignore\n*.flock\n`);
     }
+
+    await xfs.mkdirPromise(this.mirrorCwd || this.cwd, {recursive: true});
   }
 
   async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, skipIntegrityCheck}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>, skipIntegrityCheck?: boolean}): Promise<[FakeFS<PortablePath>, () => void, string]> {
@@ -306,8 +308,6 @@ export class Cache {
   private async writeFileWithLock<T>(file: PortablePath | null, generator: () => Promise<T>) {
     if (file === null)
       return await generator();
-
-    await xfs.mkdirPromise(ppath.dirname(file), {recursive: true});
 
     return await xfs.lockPromise(file, async () => {
       return await generator();

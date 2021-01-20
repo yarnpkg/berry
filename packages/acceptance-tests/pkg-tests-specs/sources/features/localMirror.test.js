@@ -27,8 +27,8 @@ describe(`Features`, () => {
       await xfs.removePromise(`${path}/.yarn/global/cache`);
       await run(`install`);
 
-      const exists = await xfs.existsSync(`${path}/.yarn/global/cache`);
-      expect(exists).toEqual(false);
+      const fileCount = (await xfs.readdirPromise(`${path}/.yarn/global/cache`)).length;
+      expect(fileCount).toEqual(0);
     }));
   });
 });
