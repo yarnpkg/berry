@@ -15,7 +15,14 @@ Any major release has its breaking changes, and Yarn 2 isn't the exception. A fe
 
 We answer this question in details [here](https://yarnpkg.com/getting-started/qa#why-should-you-upgrade-to-yarn-modern).
 
-Put simply, there are very few reasons not to upgrade. Even if you don't use Plug'n'Play nor plan to use it, your project will still benefit from more stable `node_modules` layouts, improved performances, improved user experience, active development, and many other boons.
+In a few words, upgrading to the latest versions is critical to a fast and stable Yarn experience. Numerous bugs were fixed since the first major, and we no longer expect to build new features on the old trunk. **Even if you don't plan to use the new default installation strategy called Plug'n'Play** your projects will still get benefits from the upgrade:
+
+- The classic `node_modules` installer got improved, and various edge cases were fixed
+- A renewed focus on performances and good practices (we now formally track perfs via a [dashboard](https://yarnpkg.com/benchmarks))
+- Improved user experience for various CLI commands and settings ([`yarn add -i`](/cli/add), [`yarn up`](/cli/up), [`logFilters`](/configuration/yarnrc#logFilters), ...)
+- New commands and capabilities (such as the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript#yarnpkgplugin-typescript), or the [release workflow](/features/release-workflow))
+
+And of course a very active development cycle.
 
 ## Step by step
 
@@ -37,7 +44,7 @@ Some optional features are available via external plugins:
 11. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
 12. Commit the yarn plugins
 
-Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts)), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
+Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), and renamed `--frozen-lockfile` into `--immutable`), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
 
 ## Switching to Plug'n'Play
 
