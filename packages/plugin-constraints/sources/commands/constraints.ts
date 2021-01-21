@@ -62,8 +62,11 @@ export default class ConstraintsCheckCommand extends BaseCommand {
         });
 
         // Dependency constraints work on the manifess, field constraints work on the raw JSON objects
-        for (const {manifest} of modifiedDependencies)
-          manifest.exportTo(manifest.raw = {});
+        for (const {manifest} of modifiedDependencies) {
+          const newManifest = {};
+          manifest.exportTo(newManifest);
+          manifest.raw = newManifest;
+        }
 
         const modifiedFields = new Set<Workspace>();
         await processFieldConstraints(modifiedFields, errors, result.enforcedFields, {
