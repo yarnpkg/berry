@@ -496,20 +496,23 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
         parentNode.hoistedDependencies.set(node.name, node);
         parentNode.reasons.delete(node.name);
         const hoistedNode = rootNode.dependencies.get(node.name);
+        let hoistedFrom: string | null = null;
+        if (options.debugLevel >= DebugLevel.REASONS)
+          hoistedFrom = [``].concat(Array.from(locatorPath).slice(rootNodePathLocators.size).concat([parentNode.locator]).map(x => prettyPrintLocator(x))).join(`→`);
         // Add hoisted node to root node, in case it is not already there
         if (!hoistedNode) {
           // Avoid adding other version of root node to itself
           if (rootNode.ident !== node.ident) {
             rootNode.dependencies.set(node.name, node);
             if (options.debugLevel >= DebugLevel.REASONS)
-              node.hoistedFrom.push(Array.from(locatorPath).concat([parentNode.locator]).map(x => prettyPrintLocator(x)).join(`→`));
+              node.hoistedFrom.push(hoistedFrom!);
             newNodes.add(node);
           }
         } else {
           for (const reference of node.references) {
             hoistedNode.references.add(reference);
             if (options.debugLevel >= DebugLevel.REASONS) {
-              hoistedNode.hoistedFrom.push(Array.from(locatorPath).concat([parentNode.locator]).map(x => prettyPrintLocator(x)).join(`→`));
+              hoistedNode.hoistedFrom.push(hoistedFrom!);
             }
           }
         }
