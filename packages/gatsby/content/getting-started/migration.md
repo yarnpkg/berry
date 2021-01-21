@@ -17,7 +17,7 @@ We answer this question in details [here](https://yarnpkg.com/getting-started/qa
 
 In a few words, upgrading to the latest versions is critical to a fast and stable Yarn experience. Numerous bugs were fixed since the first major, and we no longer expect to build new features on the old trunk. **Even if you don't plan to use the new default installation strategy called Plug'n'Play** your projects will still get benefits from the upgrade:
 
-- The classic `node_modules` installer got improved, and various edge cases were fixed
+- The good old `node_modules` installer improved as well as various edge cases got fixed
 - A renewed focus on performances and good practices (we now formally track perfs via a [dashboard](https://yarnpkg.com/benchmarks))
 - Improved user experience for various CLI commands and settings ([`yarn add -i`](/cli/add), [`yarn up`](/cli/up), [`logFilters`](/configuration/yarnrc#logFilters), ...)
 - New commands and capabilities (such as the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript#yarnpkgplugin-typescript), or the [release workflow](/features/release-workflow))
