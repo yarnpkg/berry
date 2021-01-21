@@ -360,7 +360,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
   }
 };
 
-const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, hoistedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, {outputReason}: {outputReason: boolean}): HoistInfo => {
+const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, hoistedDependencies: Map<PackageName, HoisterWorkTree>, {outputReason}: {outputReason: boolean}): HoistInfo => {
   let reasonRoot;
   let reason: string | null = null;
   let dependsOn: Set<HoisterWorkTree> | null = new Set();
@@ -373,14 +373,6 @@ const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<Ho
   let isHoistable = !isSelfReference;
   if (outputReason && !isHoistable)
     reason = `- self-reference`;
-
-  if (isHoistable) {
-    const hoistedIdent = hoistIdents.get(node.name);
-    isHoistable = hoistedIdent === node.ident;
-    if (outputReason && !isHoistable) {
-      reason = `- filled by: ${prettyPrintLocator(hoistIdentMap.get(node.name)![0])} at ${reasonRoot}`;
-    }
-  }
 
   if (isHoistable) {
     let isNameAvailable = false;
@@ -463,7 +455,13 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     const dependantTree = new Map<PackageName, Set<PackageName>>();
     const hoistInfos = new Map<HoisterWorkTree, HoistInfo>();
     for (const subDependency of getSortedRegularDependencies(parentNode)) {
-      const hoistInfo = getNodeHoistInfo(rootNodePathLocators, [rootNode, ...nodePath, parentNode], subDependency, hoistedDependencies, hoistIdents, hoistIdentMap, {outputReason: options.debugLevel >= DebugLevel.REASONS});
+      let hoistInfo: HoistInfo | null = null;
+      const hoistableIdent = hoistIdents.get(subDependency.name);
+      if (hoistableIdent !== subDependency.ident)
+        hoistInfo = {isHoistable: Hoistable.NO, reason: null};
+
+      if (!hoistInfo)
+        hoistInfo = getNodeHoistInfo(rootNodePathLocators, [rootNode, ...nodePath, parentNode], subDependency, hoistedDependencies, {outputReason: options.debugLevel >= DebugLevel.REASONS});
 
       hoistInfos.set(subDependency, hoistInfo);
       if (hoistInfo.isHoistable === Hoistable.DEPENDS) {
@@ -527,7 +525,8 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     for (const node of children) {
       if (unhoistableNodes.has(node)) {
         const hoistInfo = hoistInfos.get(node)!;
-        if (hoistInfo.isHoistable !== Hoistable.YES)
+        const hoistableIdent = hoistIdents.get(node.name);
+        if (hoistableIdent === node.ident && hoistInfo.isHoistable !== Hoistable.YES)
           parentNode.reasons.set(node.name, hoistInfo.reason!);
 
         if (!node.isHoistBorder && nextLocatorPath.indexOf(node.locator) < 0) {
