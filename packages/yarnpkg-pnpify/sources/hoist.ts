@@ -183,7 +183,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistedFrom} = node;
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
@@ -199,7 +199,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
     reasons: new Map(reasons),
     decoupled: true,
     isHoistBorder,
-    hoistedFrom,
+    hoistedFrom: [],
   };
   const selfDep = clone.dependencies.get(name);
   if (selfDep && selfDep.ident == clone.ident)
