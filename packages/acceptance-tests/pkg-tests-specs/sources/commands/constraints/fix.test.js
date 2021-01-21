@@ -18,7 +18,7 @@ describe(`Commands`, () => {
     scripts: {
       echo: `echo`,
     },
-    unparsedKey: 'foo',
+    unparsedKey: `foo`,
   };
 
   describe(`constraints --fix`, () => {
@@ -85,7 +85,7 @@ describe(`Commands`, () => {
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
 
       expect(fixedManifest.scripts).toMatchObject({echo: `echo`});
-      expect(fixedManifest.unparsedKey).toBe('foo');
+      expect(fixedManifest.unparsedKey).toBe(`foo`);
     }));
   });
 });
