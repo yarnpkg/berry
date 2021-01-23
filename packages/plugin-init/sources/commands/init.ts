@@ -206,7 +206,7 @@ export default class InitCommand extends BaseCommand {
           endOfLine: `lf`,
           insertFinalNewline: true,
         },
-        [`*.{js,json,.yml}`]: {
+        [`*.{js,json,yml}`]: {
           charset: `utf-8`,
           indentStyle: `space`,
           indentSize: 2,
