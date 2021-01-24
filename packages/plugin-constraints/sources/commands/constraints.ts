@@ -136,7 +136,8 @@ async function processDependencyConstraints(toSave: Set<Workspace>, errors: Arra
         throw new Error(`Assertion failed: The ident should have been registered`);
 
       for (const [dependencyType, byDependencyTypeStore] of byIdentStore) {
-        const expectedRanges = [...byDependencyTypeStore];
+        // If any of the expected ranges are `null` then the dependency should be removed
+        const expectedRanges = byDependencyTypeStore.has(null) ? [null] : [...byDependencyTypeStore];
         if (expectedRanges.length > 2) {
           errors.push([MessageName.CONSTRAINTS_AMBIGUITY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via conflicting ranges ${expectedRanges.slice(0, -1).map(expectedRange => structUtils.prettyRange(configuration, String(expectedRange))).join(`, `)}, and ${structUtils.prettyRange(configuration, String(expectedRanges[expectedRanges.length - 1]))} (in ${dependencyType})`]);
         } else if (expectedRanges.length > 1) {
