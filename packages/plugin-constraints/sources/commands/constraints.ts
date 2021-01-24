@@ -220,7 +220,7 @@ async function processFieldConstraints(toSave: Set<Workspace>, errors: Array<[Me
               await setWorkspaceField(workspace, fieldPath, null);
               toSave.add(workspace);
             } else {
-              errors.push([MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, String(expectedValue), `magenta`)}`]);
+              errors.push([MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, JSON.stringify(actualValue), `magenta`)}`]);
             }
           }
         }
