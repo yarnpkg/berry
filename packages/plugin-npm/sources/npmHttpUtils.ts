@@ -35,7 +35,8 @@ export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
  */
 export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
   if (error.name === `HTTPError` && error.response.statusCode === 401) {
-    throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
+    const message = `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})${error.message}`;
+    throw new ReportError(MessageName.AUTHENTICATION_INVALID, message, {includeStack: false});
   }
 }
 

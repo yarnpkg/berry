@@ -4,13 +4,25 @@ import {StringDecoder} from 'string_decoder';
 import {MessageName}   from './MessageName';
 import {Locator}       from './types';
 
+export type ReportErrorOptions = {
+  includeStack: boolean;
+  reportExtra: (report: Report) => void
+};
+
 export class ReportError extends Error {
   public reportCode: MessageName;
 
-  constructor(code: MessageName, message: string, public reportExtra?: (report: Report) => void) {
+  public reportExtra?: (report: Report) => void;
+
+  constructor(code: MessageName, message: string, {includeStack = true, reportExtra}: Partial<ReportErrorOptions> = {}) {
     super(message);
 
     this.reportCode = code;
+    this.reportExtra = reportExtra;
+
+    if (!includeStack) {
+      delete this.stack;
+    }
   }
 }
 

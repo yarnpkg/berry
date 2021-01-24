@@ -1,12 +1,12 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName} from '@yarnpkg/core';
-import {Locator}                                                              from '@yarnpkg/core';
-import {miscUtils, structUtils}                                               from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                     from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                     from '@yarnpkg/libzip';
+import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
+import {Locator}                                                                           from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                            from '@yarnpkg/core';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                                  from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                  from '@yarnpkg/libzip';
 
-import * as patchUtils                                                        from './patchUtils';
-import {UnmatchedHunkError}                                                   from './tools/UnmatchedHunkError';
-import {reportHunk}                                                           from './tools/format';
+import * as patchUtils                                                                     from './patchUtils';
+import {UnmatchedHunkError}                                                                from './tools/UnmatchedHunkError';
+import {reportHunk}                                                                        from './tools/format';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -78,17 +78,19 @@ export class PatchFetcher implements Fetcher {
 
           const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
           const suggestion = !enableInlineHunks
-            ? ` (set enableInlineHunks for details)`
+            ? ` (set ${formatUtils.pretty(opts.project.configuration, `enableInlineHunks`, formatUtils.Type.CONFIGURATION_SETTING)} for details)`
             : ``;
 
-          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, report => {
-            if (!enableInlineHunks)
-              return;
+          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, {
+            reportExtra: report => {
+              if (!enableInlineHunks)
+                return;
 
-            reportHunk(err.hunk, {
-              configuration: opts.project.configuration,
-              report,
-            });
+              reportHunk(err.hunk, {
+                configuration: opts.project.configuration,
+                report,
+              });
+            },
           });
         }
       }

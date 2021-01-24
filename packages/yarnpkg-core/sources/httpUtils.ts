@@ -1,14 +1,14 @@
-import {ConfigurationValueMap}           from '@yarnpkg/core';
-import {PortablePath, xfs}               from '@yarnpkg/fslib';
-import {ExtendOptions, Response}         from 'got';
-import {Agent as HttpsAgent}             from 'https';
-import {Agent as HttpAgent}              from 'http';
-import micromatch                        from 'micromatch';
-import tunnel, {ProxyOptions}            from 'tunnel';
-import {URL}                             from 'url';
+import {ConfigurationValueMap, formatUtils}                             from '@yarnpkg/core';
+import {PortablePath, xfs}                                              from '@yarnpkg/fslib';
+import {ExtendOptions, HTTPError, RequestError, Response, TimeoutError} from 'got';
+import {Agent as HttpsAgent}                                            from 'https';
+import {Agent as HttpAgent}                                             from 'http';
+import micromatch                                                       from 'micromatch';
+import tunnel, {ProxyOptions}                                           from 'tunnel';
+import {URL}                                                            from 'url';
 
-import {Configuration}                   from './Configuration';
-import {MapValue, MapValueToObjectValue} from './miscUtils';
+import {Configuration}                                                  from './Configuration';
+import {MapValue, MapValueToObjectValue}                                from './miscUtils';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
@@ -81,6 +81,46 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
   }
 
   return mergedNetworkSettings as NetworkSettingsType;
+}
+
+const prettifyResponseCode = ({statusCode, statusMessage}: Response, configuration: Configuration) => {
+  const prettyStatusCode = formatUtils.pretty(configuration, statusCode, formatUtils.Type.NUMBER);
+  const href = `https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${statusCode}`;
+
+  return formatUtils.applyHyperlink(configuration, `${prettyStatusCode}${statusMessage ? ` (${statusMessage})` : ``}`, href);
+};
+
+export function prettifyRequestError(error: RequestError, configuration: Configuration) {
+  const addInfoField = (label: string, [value, type]: formatUtils.Tuple) => {
+    error.message += `\n    ${formatUtils.pretty(configuration, label, formatUtils.Type.CODE)}: ${formatUtils.pretty(configuration, value, type)}`;
+  };
+
+  // HTTPError.message contains the Response Code which we already display below
+  if (error instanceof HTTPError)
+    error.message = ``;
+
+  if (error.response) {
+    addInfoField(`Response Code`, formatUtils.tuple(formatUtils.Type.NO_HINT, prettifyResponseCode(error.response, configuration)));
+    error.message += `\n`;
+  }
+
+  if (error instanceof TimeoutError && error.event === `socket`)
+    error.message += ` (can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.CONFIGURATION_SETTING)})`;
+
+  if (error.request) {
+    addInfoField(`Request Method`, formatUtils.tuple(formatUtils.Type.NO_HINT, error.request.options.method));
+    addInfoField(`Request URL`, formatUtils.tuple(formatUtils.Type.URL, error.request.requestUrl));
+    if (error.request.redirects.length > 0)
+      addInfoField(`Request Redirects`, formatUtils.tuple(formatUtils.Type.NO_HINT, formatUtils.prettyList(configuration, error.request.redirects, formatUtils.Type.URL)));
+
+    if (error.request.retryCount === error.request.options.retry.limit) {
+      addInfoField(`Request Retry Count`, formatUtils.tuple(formatUtils.Type.NO_HINT, `${formatUtils.pretty(configuration, error.request.retryCount, formatUtils.Type.NUMBER)} (can be increased via ${formatUtils.pretty(configuration, `httpRetry`, formatUtils.Type.CONFIGURATION_SETTING)})`));
+    }
+  }
+
+  error.stack = ``;
+
+  return error;
 }
 
 export type Body = (
@@ -161,7 +201,12 @@ export async function request(target: string, body: Body, {configuration, header
   });
 
   return configuration.getLimit(`networkConcurrency`)(() => {
-    return gotClient(target) as unknown as Response<any>;
+    return gotClient(target).catch(error => {
+      if (error instanceof RequestError)
+        throw prettifyRequestError(error, configuration);
+
+      throw error;
+    }) as unknown as Response<any>;
   });
 }
 
