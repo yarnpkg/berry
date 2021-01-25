@@ -1,4 +1,3 @@
-import {ConfigurationValueMap, formatUtils}                             from '@yarnpkg/core';
 import {PortablePath, xfs}                                              from '@yarnpkg/fslib';
 import {ExtendOptions, HTTPError, RequestError, Response, TimeoutError} from 'got';
 import {Agent as HttpsAgent}                                            from 'https';
@@ -7,7 +6,8 @@ import micromatch                                                       from 'mi
 import tunnel, {ProxyOptions}                                           from 'tunnel';
 import {URL}                                                            from 'url';
 
-import {Configuration}                                                  from './Configuration';
+import {Configuration, ConfigurationValueMap}                           from './Configuration';
+import * as formatUtils                                                 from './formatUtils';
 import {MapValue, MapValueToObjectValue}                                from './miscUtils';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
