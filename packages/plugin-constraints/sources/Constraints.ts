@@ -89,11 +89,6 @@ function extractError(val: any) {
   return err;
 }
 
-// Node 8 doesn't have Symbol.asyncIterator
-// https://github.com/Microsoft/TypeScript/issues/14151#issuecomment-280812617
-if (Symbol.asyncIterator == null)
-  (Symbol as any).asyncIterator = Symbol.for(`Symbol.asyncIterator`);
-
 class Session {
   private readonly session: pl.type.Session;
 

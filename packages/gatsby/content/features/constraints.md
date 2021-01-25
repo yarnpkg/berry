@@ -143,7 +143,7 @@ gen_enforced_dependency(
 ).
 ```
 
-The `gen_enforced_dependency` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null) in the `DependencyType` dependencies block.
+The `gen_enforced_dependency` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null; takes precedence over any conflicting range) in the `DependencyType` dependencies block.
 
 Running `yarn constraints --fix` will instruct Yarn to fix the detected errors the best it can, but in some cases ambiguities will arise. Those will have to be solved manually, although Yarn will help you in the process.
 
