@@ -110,6 +110,7 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
+| ESBuild | Via [`@yarnpkg/esbuild-plugin-pnp`](https://github.com/yarnpkg/berry/tree/master/packages/esbuild-plugin-pnp#yarnpkgesbuild-plugin-pnp) |
 | VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | VSCode | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack 4.x | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) (native starting from 5+) |
