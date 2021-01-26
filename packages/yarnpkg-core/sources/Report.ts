@@ -1,3 +1,4 @@
+import camelcase       from 'camelcase';
 import {PassThrough}   from 'stream';
 import {StringDecoder} from 'string_decoder';
 
@@ -16,6 +17,13 @@ export class ReportError extends Error {
 
   constructor(code: MessageName, message: string, {includeStack = true, reportExtra}: Partial<ReportErrorOptions> = {}) {
     super(message);
+
+    if (code !== MessageName.UNNAMED && code !== MessageName.EXCEPTION) {
+      this.name = camelcase(MessageName[code], {pascalCase: true});
+      if (!this.name.endsWith(`Error`) && !this.name.endsWith(`Exception`)) {
+        this.name += `Error`;
+      }
+    }
 
     this.reportCode = code;
     this.reportExtra = reportExtra;
