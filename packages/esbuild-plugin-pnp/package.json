@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@yarnpkg/pnp": "workspace:^2.3.2",
-    "esbuild-wasm": "^0.8.31"
+    "esbuild-wasm": "^0.8.35"
   },
   "scripts": {
     "postpack": "rm -rf lib",

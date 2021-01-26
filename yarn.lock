@@ -5421,7 +5421,7 @@ __metadata:
     babel-loader: ^8.1.0
     chalk: ^3.0.0
     clipanion: ^3.0.0-rc.5
-    esbuild-wasm: ^0.8.31
+    esbuild-wasm: ^0.8.35
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
     semver: ^7.1.2
@@ -5557,7 +5557,7 @@ __metadata:
   resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
   dependencies:
     "@yarnpkg/pnp": "workspace:^2.3.2"
-    esbuild-wasm: ^0.8.31
+    esbuild-wasm: ^0.8.35
     tslib: ^1.13.0
   peerDependencies:
     esbuild-wasm: ^0.8.29
@@ -11226,12 +11226,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:^0.8.31":
-  version: 0.8.32
-  resolution: "esbuild-wasm@npm:0.8.32"
+"esbuild-wasm@npm:^0.8.35":
+  version: 0.8.35
+  resolution: "esbuild-wasm@npm:0.8.35"
   bin:
     esbuild: bin/esbuild
-  checksum: fe6ae677087d98a48ca1a6bd9cede2095e43bb1de23df2efe7eefa1cda6f29df3c20798b260699e29e40e796e4011dfbc3c212f8e0c000bf4bade10143640c92
+  checksum: 7e72527f83bff29366d71b37bb3ef923a65f67e7e99dd022debbca0c8f426a637477436e43c811a0a616409aa296e2687538cb99cc09cd94bb417cbd1972378c
   languageName: node
   linkType: hard
 
