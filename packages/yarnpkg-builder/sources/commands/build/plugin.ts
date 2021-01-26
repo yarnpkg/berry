@@ -56,7 +56,7 @@ export default class BuildPluginCommand extends Command {
     const {name: rawName} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);
     const prettyName = structUtils.prettyIdent(configuration, structUtils.parseIdent(name));
-    const output = `${basedir}/bundles/${name}.js`;
+    const output = path.join(basedir, `bundles/${name}.js`);
 
     let buildErrors: string | null = null;
 
@@ -171,9 +171,11 @@ export default class BuildPluginCommand extends Command {
 
     const Mark = formatUtils.mark(configuration);
 
-    if (buildErrors !== null) {
-      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build ${prettyName}:`);
-      report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
+    if (report.hasErrors() || buildErrors !== null) {
+      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build ${prettyName}`);
+      if (buildErrors) {
+        report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
+      }
     } else {
       report.reportInfo(null, `${Mark.Check} Done building ${prettyName}!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);

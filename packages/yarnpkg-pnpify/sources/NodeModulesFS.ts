@@ -1,15 +1,16 @@
-import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
-import {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
-import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
-import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions}                                                                         from '@yarnpkg/fslib';
+import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
+import {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
+import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
+import {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
+import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
 import {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
 import fs, {BigIntStats, Stats}                                                                                                    from 'fs';
 
 import {WatchManager}                                                                                                              from './WatchManager';
-import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
 import {buildNodeModulesTree}                                                                                                      from './buildNodeModulesTree';
+import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from './buildNodeModulesTree';
+import {dynamicRequireNoCache}                                                                                                     from './dynamicRequire';
 import {resolveNodeModulesPath, ResolvedPath}                                                                                      from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
@@ -69,8 +70,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   private watchPnpFile(pnpRootPath: PortablePath) {
     this.baseFs.watch(pnpRootPath, {persistent: false},  (_, filename) => {
       if (filename === Filename.pnpCjs) {
-        delete require.cache[this.pnpFilePath];
-        const pnp = require(this.pnpFilePath);
+        const pnp = dynamicRequireNoCache(this.pnpFilePath);
         this.nodeModulesTree = buildNodeModulesTree(pnp, this.options);
         this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree));
       }

@@ -1,0 +1,56 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-esbuild-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E ESBuild'
+jobs:
+  chore:
+    name: 'Validating ESBuild'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add -D esbuild @yarnpkg/esbuild-plugin-pnp@portal:"$HERE_DIR/../packages/esbuild-plugin-pnp" ts-node typescript
+
+        echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js', plugins: [require('@yarnpkg/esbuild-plugin-pnp').pnpPlugin()]})" > build.js
+
+        # Tree-shaking
+        echo "export default {input: 'src/main.js', output: {file: 'dist/bundle.js', format: 'cjs'}};" | tee rollup.config.js
+
+        mkdir src
+        echo "export function square(x) {return x * x} export function cube(x) {return x * x * x}" | tee src/maths.js
+        echo "import {cube} from './maths.js'; console.log(cube(5));" | tee src/main.js
+
+        yarn ts-node --transpile-only build.js
+        [[ "$(node dist/bundle.js)" = "125" ]]
+        ! cat dist/bundle.js | grep "square"
+
+        # With NPM packages
+        yarn add lodash
+
+        echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'webpack'], ' '))}; printHello();" | tee src/main.js
+
+        yarn ts-node --transpile-only build.js
+        [[ "$(node dist/bundle.js)" = "Hello webpack" ]]
