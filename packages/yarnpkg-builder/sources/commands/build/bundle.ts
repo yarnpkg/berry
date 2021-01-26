@@ -104,7 +104,7 @@ export default class BuildBundleCommand extends Command {
         const valLoader: Plugin = {
           name: `val-loader`,
           setup(build) {
-            build.onLoad({filter: /\/getPluginConfiguration\.ts$/}, async args => ({
+            build.onLoad({filter: /[/\\]getPluginConfiguration\.ts$/}, async args => ({
               contents: valLoad(args.path, {modules, plugins}),
               loader: `default`,
             }));
