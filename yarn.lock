@@ -5557,10 +5557,10 @@ __metadata:
   resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
   dependencies:
     "@yarnpkg/pnp": "workspace:^2.3.2"
-    esbuild-wasm: ^0.8.36
+    esbuild: "npm:esbuild-wasm@^0.8.36"
     tslib: ^1.13.0
   peerDependencies:
-    esbuild-wasm: ^0.8.29
+    esbuild: ^0.8.36
   languageName: unknown
   linkType: soft
 
@@ -11226,7 +11226,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:^0.8.36":
+"esbuild-wasm@npm:^0.8.36, esbuild@npm:esbuild-wasm@^0.8.36":
   version: 0.8.36
   resolution: "esbuild-wasm@npm:0.8.36"
   bin:

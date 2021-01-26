@@ -1,7 +1,8 @@
-import {PnpApi}                                                                        from '@yarnpkg/pnp';
-import {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild-wasm';
-import * as fs                                                                         from 'fs';
+import {PnpApi}                                                                             from '@yarnpkg/pnp';
+import type {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild';
+import * as fs                                                                              from 'fs';
 
+const matchAll = /()/;
 const defaultExtensions = [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.cjs`, `.js`, `.css`, `.json`];
 
 async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
@@ -22,6 +23,7 @@ async function defaultOnResolve(args: OnResolveArgs, resolvedPath: string | null
 export type PluginOptions = {
   baseDir?: string,
   extensions?: Array<string>,
+  filter?: RegExp,
   onResolve?: (args: OnResolveArgs, resolvedPath: string | null) => Promise<OnResolveResult | null>,
   onLoad?: (args: OnLoadArgs) => Promise<OnLoadResult>,
 };
@@ -29,6 +31,7 @@ export type PluginOptions = {
 export function pnpPlugin({
   baseDir = process.cwd(),
   extensions = defaultExtensions,
+  filter = matchAll,
   onResolve = defaultOnResolve,
   onLoad = defaultOnLoad,
 }: PluginOptions = {}): Plugin {
@@ -39,7 +42,7 @@ export function pnpPlugin({
       if (typeof findPnpApi === `undefined`)
         return;
 
-      build.onResolve({filter: /.*/}, args => {
+      build.onResolve({filter}, args => {
         // In theory we should delegate to the real resolution, but ESBuild
         // doesn't currently offer any way to do that.
         const pnpApi = findPnpApi(args.importer) as PnpApi | null;
@@ -62,7 +65,9 @@ export function pnpPlugin({
       // We register on the build to prevent ESBuild from reading the files
       // itself, since it wouldn't know how to access the files from within
       // the zip archives.
-      build.onLoad({filter: /.*/, namespace: `pnp`}, onLoad);
+      if (build.onLoad !== null) {
+        build.onLoad({filter}, onLoad);
+      }
     },
   };
 }

@@ -7,11 +7,11 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "esbuild-wasm": "^0.8.29"
+    "esbuild": "^0.8.36"
   },
   "devDependencies": {
     "@yarnpkg/pnp": "workspace:^2.3.2",
-    "esbuild-wasm": "^0.8.36"
+    "esbuild": "npm:esbuild-wasm@^0.8.36"
   },
   "scripts": {
     "postpack": "rm -rf lib",
