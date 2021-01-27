@@ -115,19 +115,22 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   const check = opts.check || debugLevel >= DebugLevel.INTENSIVE_CHECK;
   const hoistingLimits = opts.hoistingLimits || new Map();
   const options: InternalHoistOptions = {check, debugLevel, hoistingLimits};
+  let startTime: number;
 
   if (options.debugLevel >= DebugLevel.PERF)
-    console.time(`hoist`);
+    startTime = Date.now();
 
   const treeCopy = cloneTree(tree, options);
 
   let isGraphChanged = false;
+  let round = 0;
   do {
     isGraphChanged = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), options);
+    round++;
   } while (isGraphChanged);
 
   if (options.debugLevel >= DebugLevel.PERF)
-    console.timeEnd(`hoist`);
+    console.log(`hoist time: ${Date.now() - startTime!}ms, rounds: ${round}`);
 
   if (options.debugLevel >= DebugLevel.CHECK) {
     const checkLog = selfCheck(treeCopy);
