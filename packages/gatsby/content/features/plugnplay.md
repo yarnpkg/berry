@@ -49,13 +49,37 @@ This approach has various benefits:
 
 ## Initializing PnP
 
-As we mentioned, Yarn generates a single `.pnp.cjs` file that needs to be installed in your Node environment in order for Node to know where to find the relevant packages. This registration is generally transparent: any `node` command run via one of your `scripts` entries will automatically register the `.pnp.cjs` file as a runtime dependency.
+As we mentioned, Yarn generates a single `.pnp.cjs` file that needs to be installed in your Node environment in order for Node to know where to find the relevant packages. This registration is generally transparent: any direct or indirect `node` command executed through one of your `scripts` entries will automatically register the `.pnp.cjs` file as a runtime dependency. As a result, the following will work just as you would expect:
 
-In some particular cases however some small setup may be required:
+```json
+{
+  "scripts": {
+    "start": "node ./server.js",
+    "test": "jest"
+  }
+}
+```
 
-- If you need to run an arbitrary Node script from the command line, use `yarn node ...` instead of `node`. This will be enough to register the `.pnp.cjs` file as runtime dependency. Consider moving it into a `scripts` entry if you find yourself calling this script a lot!
+While that will be enough for the vast majority of the cases, for the few remaining ones, a small setup may be required:
 
-- If you operate on a system that automatically executes a Node script without you having the opportunity to choose how they are executed (for instance that's what happens with Google Cloud Platform), add `require('./.pnp.cjs').setup()` at the top of your init script.
+- If you need to run an arbitrary Node script from the command line, but not often enough that it's worth making it a proper `scripts` entry, use [`yarn node`](/cli/node) as interpreter instead of `node`. This will be enough to register the `.pnp.cjs` file as runtime dependency.
+
+```
+yarn node ./server.js
+```
+
+- If you operate on a system that automatically executes a Node script without you having the opportunity to choose how they are executed (for instance that's what happens with Google Cloud Platform), simply require the PnP file at the top of your init script and call its `setup` function.
+
+```
+require('./.pnp.cjs').setup();
+```
+
+As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
+
+```
+node -r ./.pnp.js ./server.js
+NODE_OPTIONS="--require $(pwd)/.pnp.js" node ./server.js
+```
 
 ## PnP `loose` mode
 
