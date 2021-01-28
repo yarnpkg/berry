@@ -90,7 +90,7 @@ const prettifyResponseCode = ({statusCode, statusMessage}: Response, configurati
   return formatUtils.applyHyperlink(configuration, `${prettyStatusCode}${statusMessage ? ` (${statusMessage})` : ``}`, href);
 };
 
-export function prettifyRequestError(error: RequestError, configuration: Configuration) {
+function prettifyRequestError(error: RequestError, configuration: Configuration) {
   const addInfoField = (label: string, [value, type]: formatUtils.Tuple) => {
     error.message += `\n    ${formatUtils.pretty(configuration, label, formatUtils.Type.CODE)}: ${formatUtils.pretty(configuration, value, type)}`;
   };
