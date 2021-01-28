@@ -89,7 +89,7 @@ export class PatchFetcher implements Fetcher {
               configuration: opts.project.configuration,
               report,
             });
-          },);
+          });
         }
       }
     }
