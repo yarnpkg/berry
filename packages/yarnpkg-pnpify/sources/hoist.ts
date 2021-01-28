@@ -149,11 +149,11 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
   const rootNode = rootNodePath[rootNodePath.length - 1];
   const usedDependencies = new Map(rootNode.dependencies);
   const seenNodes = new Set<HoisterWorkTree>();
-  const useableDependencies = new Map<PackageName, HoisterWorkTree>();
+  const reachableDependencies = new Map<PackageName, HoisterWorkTree>();
 
   for (const node of rootNodePath)
     for (const dep of node.dependencies.values())
-      useableDependencies.set(dep.name, dep);
+      reachableDependencies.set(dep.name, dep);
 
   const hiddenDependencies = new Set<PackageName>();
   const addUsedDependencies = (node: HoisterWorkTree, hiddenDependencies: Set<PackageName>) => {
@@ -163,8 +163,8 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
 
     for (const dep of node.hoistedDependencies.values()) {
       if (!hiddenDependencies.has(dep.name)) {
-        const useableDep = useableDependencies.get(dep.name)!;
-        usedDependencies.set(useableDep.name, useableDep);
+        const reachableDependency = reachableDependencies.get(dep.name)!;
+        usedDependencies.set(reachableDependency.name, reachableDependency);
       }
     }
 
@@ -180,11 +180,7 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
     }
   };
 
-  for (const dep of rootNode.dependencies.values()) {
-    if (!rootNode.peerNames.has(dep.name)) {
-      addUsedDependencies(rootNode, hiddenDependencies);
-    }
-  }
+  addUsedDependencies(rootNode, hiddenDependencies);
 
   return usedDependencies;
 };
