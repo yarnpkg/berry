@@ -81,17 +81,15 @@ export class PatchFetcher implements Fetcher {
             ? ` (set ${formatUtils.pretty(opts.project.configuration, `enableInlineHunks`, formatUtils.Type.CONFIGURATION_SETTING)} for details)`
             : ``;
 
-          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, {
-            reportExtra: report => {
-              if (!enableInlineHunks)
-                return;
+          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, report => {
+            if (!enableInlineHunks)
+              return;
 
-              reportHunk(err.hunk, {
-                configuration: opts.project.configuration,
-                report,
-              });
-            },
-          });
+            reportHunk(err.hunk, {
+              configuration: opts.project.configuration,
+              report,
+            });
+          },);
         }
       }
     }
