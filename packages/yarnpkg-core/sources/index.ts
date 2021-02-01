@@ -29,6 +29,8 @@ export {Project}                                                                
 export {TAG_REGEXP}                                                                                       from './ProtocolResolver';
 export {ReportError, Report}                                                                              from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                             from './Resolver';
+export {EnhancedError}                                                                                    from './EnhancedError';
+export type {EnhancedErrorBuilder, EnhancedErrorField}                                                    from './EnhancedError';
 export {StreamReport}                                                                                     from './StreamReport';
 export {TelemetryManager}                                                                                 from './TelemetryManager';
 export {ThrowReport}                                                                                      from './ThrowReport';

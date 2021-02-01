@@ -1,14 +1,15 @@
-import {PortablePath, xfs}                                              from '@yarnpkg/fslib';
-import {ExtendOptions, HTTPError, RequestError, Response, TimeoutError} from 'got';
-import {Agent as HttpsAgent}                                            from 'https';
-import {Agent as HttpAgent}                                             from 'http';
-import micromatch                                                       from 'micromatch';
-import tunnel, {ProxyOptions}                                           from 'tunnel';
-import {URL}                                                            from 'url';
+import {PortablePath, xfs}                                   from '@yarnpkg/fslib';
+import {ExtendOptions, RequestError, Response, TimeoutError} from 'got';
+import {Agent as HttpsAgent}                                 from 'https';
+import {Agent as HttpAgent}                                  from 'http';
+import micromatch                                            from 'micromatch';
+import tunnel, {ProxyOptions}                                from 'tunnel';
+import {URL}                                                 from 'url';
 
-import {Configuration, ConfigurationValueMap}                           from './Configuration';
-import * as formatUtils                                                 from './formatUtils';
-import {MapValue, MapValueToObjectValue}                                from './miscUtils';
+import {Configuration, ConfigurationValueMap}                from './Configuration';
+import {EnhancedError}                                       from './EnhancedError';
+import * as formatUtils                                      from './formatUtils';
+import {MapValue, MapValueToObjectValue}                     from './miscUtils';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
@@ -90,37 +91,48 @@ const prettifyResponseCode = ({statusCode, statusMessage}: Response, configurati
   return formatUtils.applyHyperlink(configuration, `${prettyStatusCode}${statusMessage ? ` (${statusMessage})` : ``}`, href);
 };
 
-function prettifyRequestError(error: RequestError, configuration: Configuration) {
-  const addInfoField = (label: string, [value, type]: formatUtils.Tuple) => {
-    error.message += `\n    ${formatUtils.pretty(configuration, label, formatUtils.Type.CODE)}: ${formatUtils.pretty(configuration, value, type)}`;
-  };
+function enhanceRequestError(error: RequestError, configuration: Configuration) {
+  const enhancedError = new EnhancedError(error, {includeStack: false}, configuration);
 
-  // HTTPError.message contains the Response Code which we already display below
-  if (error instanceof HTTPError)
-    error.message = ``;
-
-  if (error.response) {
-    addInfoField(`Response Code`, formatUtils.tuple(formatUtils.Type.NO_HINT, prettifyResponseCode(error.response, configuration)));
-    error.message += `\n`;
+  if (error instanceof TimeoutError && error.event === `socket`) {
+    EnhancedError.enhance(enhancedError, {
+      summary: summary => `${summary} (can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.CONFIGURATION_SETTING)})`,
+    });
   }
 
-  if (error instanceof TimeoutError && error.event === `socket`)
-    error.message += ` (can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.CONFIGURATION_SETTING)})`;
-
   if (error.request) {
-    addInfoField(`Request Method`, formatUtils.tuple(formatUtils.Type.NO_HINT, error.request.options.method));
-    addInfoField(`Request URL`, formatUtils.tuple(formatUtils.Type.URL, error.request.requestUrl));
-    if (error.request.redirects.length > 0)
-      addInfoField(`Request Redirects`, formatUtils.tuple(formatUtils.Type.NO_HINT, formatUtils.prettyList(configuration, error.request.redirects, formatUtils.Type.URL)));
+    EnhancedError.enhance(enhancedError, {
+      fields: [
+        {label: `Request Method`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, error.request.options.method)},
+        {label: `Request URL`, value: formatUtils.tuple(formatUtils.Type.URL, error.request.requestUrl)},
+      ],
+    });
 
+    if (error.request.redirects.length > 0) {
+      EnhancedError.enhance(enhancedError, {
+        fields: [
+          {label: `Request Redirects`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, formatUtils.prettyList(configuration, error.request.redirects, formatUtils.Type.URL))},
+        ],
+      });
+    }
     if (error.request.retryCount === error.request.options.retry.limit) {
-      addInfoField(`Request Retry Count`, formatUtils.tuple(formatUtils.Type.NO_HINT, `${formatUtils.pretty(configuration, error.request.retryCount, formatUtils.Type.NUMBER)} (can be increased via ${formatUtils.pretty(configuration, `httpRetry`, formatUtils.Type.CONFIGURATION_SETTING)})`));
+      EnhancedError.enhance(enhancedError, {
+        fields: [
+          {label: `Request Retry Count`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, `${formatUtils.pretty(configuration, error.request.retryCount, formatUtils.Type.NUMBER)} (can be increased via ${formatUtils.pretty(configuration, `httpRetry`, formatUtils.Type.CONFIGURATION_SETTING)})`)},
+        ],
+      });
     }
   }
 
-  error.stack = ``;
+  if (error.response) {
+    EnhancedError.enhance(enhancedError, {
+      fields: [
+        {label: `Response Code`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, prettifyResponseCode(error.response, configuration))},
+      ],
+    });
+  }
 
-  return error;
+  return enhancedError;
 }
 
 export type Body = (
@@ -203,7 +215,7 @@ export async function request(target: string, body: Body, {configuration, header
   return configuration.getLimit(`networkConcurrency`)(() => {
     return gotClient(target).catch(error => {
       if (error instanceof RequestError)
-        throw prettifyRequestError(error, configuration);
+        throw enhanceRequestError(error, configuration);
 
       throw error;
     }) as unknown as Response<any>;

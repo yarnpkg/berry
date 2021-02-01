@@ -157,8 +157,6 @@ export default class UpCommand extends BaseCommand {
           if (typeof firstError === `undefined`)
             throw new Error(`Assertion failed: Expected an error to have been set`);
 
-          delete firstError.stack;
-
           const prettyError = this.cli.error(firstError);
 
           if (!project.configuration.get(`enableNetwork`)) {

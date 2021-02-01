@@ -2,14 +2,15 @@ import camelcase       from 'camelcase';
 import {PassThrough}   from 'stream';
 import {StringDecoder} from 'string_decoder';
 
+import {EnhancedError} from './EnhancedError';
 import {MessageName}   from './MessageName';
 import {Locator}       from './types';
 
-export class ReportError extends Error {
+export class ReportError extends EnhancedError {
   public reportCode: MessageName;
 
-  constructor(code: MessageName, message: string, public reportExtra?: (report: Report) => void) {
-    super(message);
+  constructor(code: MessageName, messageOrEnhancedError: string | EnhancedError, public reportExtra?: (report: Report) => void) {
+    super(typeof messageOrEnhancedError === `string` ? new Error(messageOrEnhancedError) : messageOrEnhancedError);
 
     if (code !== MessageName.UNNAMED && code !== MessageName.EXCEPTION) {
       this.name = camelcase(MessageName[code], {pascalCase: true});

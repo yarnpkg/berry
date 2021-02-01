@@ -1,10 +1,10 @@
-import {Configuration, Ident, httpUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}        from '@yarnpkg/core';
-import {prompt}                          from 'enquirer';
-import {URL}                             from 'url';
+import {Configuration, Ident, httpUtils, EnhancedError, formatUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                    from '@yarnpkg/core';
+import {prompt}                                                      from 'enquirer';
+import {URL}                                                         from 'url';
 
-import * as npmConfigUtils               from './npmConfigUtils';
-import {MapLike}                         from './npmConfigUtils';
+import * as npmConfigUtils                                           from './npmConfigUtils';
+import {MapLike}                                                     from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -28,16 +28,24 @@ type RegistryOptions = {
 export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 
 /**
- * Consumes all 401 Unauthorized errors and reports them as `AUTHENTICATION_INVALID`.
+ * Enhance all errors to include the whoami.
  *
- * It doesn't handle 403 Forbidden, as the npm registry uses it when the user attempts
+ * Reports all 401 Unauthorized errors as `AUTHENTICATION_INVALID`.
+ *
+ * It doesn't report 403 Forbidden as `AUTHENTICATION_INVALID`, as the npm registry uses it when the user attempts
  * a prohibited action, such as publishing a package with a similar name to an existing package.
  */
-export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
-  if (error.name === `HTTPError` && error.response.statusCode === 401) {
-    const message = `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})${error.message}`;
-    throw new ReportError(MessageName.AUTHENTICATION_INVALID, message);
-  }
+export async function enhanceNpmRequestError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
+  const enhancedError = new EnhancedError(error, {
+    fields: [
+      {label: `${typeof attemptedAs !== `string` ? `Attempted` : `Authenticated`} as`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, attemptedAs ?? await whoami(registry, headers, {configuration}))},
+    ],
+  }, configuration);
+
+  if (error.name === `HTTPError` && error.response?.statusCode === 401)
+    return new ReportError(MessageName.AUTHENTICATION_INVALID, new EnhancedError(enhancedError, {summary: `Invalid authentication`}));
+
+  return enhancedError;
 }
 
 export function getIdentUrl(ident: Ident) {
@@ -71,9 +79,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   try {
     return await httpUtils.get(url.href, {configuration, headers, ...rest});
   } catch (error) {
-    await handleInvalidAuthenticationError(error, {registry, configuration, headers});
-
-    throw error;
+    throw await enhanceNpmRequestError(error, {registry, configuration, headers});
   }
 }
 
@@ -91,11 +97,9 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   try {
     return await httpUtils.post(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error)) {
-      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
+    if (!isOtpError(error))
+      throw await enhanceNpmRequestError(error, {attemptedAs, registry, configuration, headers});
 
-      throw error;
-    }
 
     const otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
@@ -104,9 +108,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
     try {
       return await httpUtils.post(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
-      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
-
-      throw error;
+      throw await enhanceNpmRequestError(error, {attemptedAs, registry, configuration, headers: headersWithOtp});
     }
   }
 }
@@ -125,11 +127,8 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   try {
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error)) {
-      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
-
-      throw error;
-    }
+    if (!isOtpError(error))
+      throw await enhanceNpmRequestError(error, {attemptedAs, registry, configuration, headers});
 
     const otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
@@ -138,9 +137,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
     try {
       return await httpUtils.put(`${registry}${path}`, body, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
-      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
-
-      throw error;
+      throw await enhanceNpmRequestError(error, {attemptedAs, registry, configuration, headers: headersWithOtp});
     }
   }
 }
@@ -159,11 +156,8 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   try {
     return await httpUtils.del(registry + path, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error)) {
-      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
-
-      throw error;
-    }
+    if (!isOtpError(error))
+      throw await enhanceNpmRequestError(error, {attemptedAs, registry, configuration, headers});
 
     const otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
@@ -172,9 +166,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
     try {
       return await httpUtils.del(`${registry}${path}`, {configuration, headers: headersWithOtp, ...rest});
     } catch (error) {
-      await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
-
-      throw error;
+      throw await enhanceNpmRequestError(error, {attemptedAs, registry, configuration, headers: headersWithOtp});
     }
   }
 }
