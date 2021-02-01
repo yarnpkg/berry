@@ -24,6 +24,7 @@
 ### Bugfixes
 
 - The patched fs now supports file URLs.
+- The node-modules linker now ensures that hoisting result is terminal, by doing several hoisting rounds when needed
 
 ### Settings
 
