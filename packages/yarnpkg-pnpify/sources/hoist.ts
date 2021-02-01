@@ -444,6 +444,34 @@ const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<Ho
     reason = `- self-reference`;
 
   if (isHoistable) {
+    let isNameAvailable = false;
+    const usedDep = usedDependencies.get(node.name);
+    isNameAvailable = (!usedDep || usedDep.ident === node.ident);
+    if (outputReason && !isNameAvailable)
+      reason = `- filled by: ${prettyPrintLocator(usedDep!.locator)} at ${reasonRoot}`;
+    if (isNameAvailable) {
+      for (let idx = nodePath.length - 1; idx >= 1; idx--) {
+        const parent = nodePath[idx];
+        const parentDep = parent.dependencies.get(node.name);
+        if (parentDep && parentDep.ident !== node.ident) {
+          isNameAvailable = false;
+          let shadowedNames = shadowedNodes.get(parentNode);
+          if (!shadowedNames) {
+            shadowedNames = new Set();
+            shadowedNodes.set(parentNode, shadowedNames);
+          }
+          shadowedNames.add(node.name);
+          if (outputReason)
+            reason = `- filled by ${prettyPrintLocator(parentDep!.locator)} at ${nodePath.slice(0, idx).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
+          break;
+        }
+      }
+    }
+
+    isHoistable = isNameAvailable;
+  }
+
+  if (isHoistable) {
     const hoistedIdent = hoistIdents.get(node.name);
     isHoistable = hoistedIdent === node.ident;
     if (outputReason && !isHoistable) {
@@ -479,34 +507,6 @@ const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<Ho
       }
     }
     isHoistable = arePeerDepsSatisfied;
-  }
-
-  if (isHoistable) {
-    let isNameAvailable = false;
-    const usedDep = usedDependencies.get(node.name);
-    isNameAvailable = (!usedDep || usedDep.ident === node.ident);
-    if (outputReason && !isNameAvailable)
-      reason = `- filled by: ${prettyPrintLocator(usedDep!.locator)} at ${reasonRoot}`;
-    if (isNameAvailable) {
-      for (let idx = nodePath.length - 1; idx >= 1; idx--) {
-        const parent = nodePath[idx];
-        const parentDep = parent.dependencies.get(node.name);
-        if (parentDep && parentDep.ident !== node.ident) {
-          isNameAvailable = false;
-          let shadowedNames = shadowedNodes.get(parentNode);
-          if (!shadowedNames) {
-            shadowedNames = new Set();
-            shadowedNodes.set(parentNode, shadowedNames);
-          }
-          shadowedNames.add(node.name);
-          if (outputReason)
-            reason = `- filled by ${prettyPrintLocator(parentDep!.locator)} at ${nodePath.slice(0, idx).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
-          break;
-        }
-      }
-    }
-
-    isHoistable = isNameAvailable;
   }
 
   if (dependsOn !== null && dependsOn.size > 0) {
