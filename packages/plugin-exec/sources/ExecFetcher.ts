@@ -88,7 +88,7 @@ export class ExecFetcher implements Fetcher {
 
   private async generatePackage(cwd: PortablePath, locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     return await xfs.mktempPromise(async binFolder => {
-      const env = await scriptUtils.makeScriptEnv({project: opts.project, locator, binFolder});
+      const env = await scriptUtils.makeScriptEnv({project: opts.project, binFolder});
       const runtimeFile = ppath.join(cwd, `runtime.js` as Filename);
 
       return await xfs.mktempPromise(async logDir => {
