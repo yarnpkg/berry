@@ -100,16 +100,15 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
     if (!project)
       throw new Error(`Assertion failed: Missing project`);
 
-    const pkg = project.storedPackages.get(locator.locatorHash);
-    if (typeof pkg === `undefined`)
-      throw new Error(`Assertion failed: Expected locator to be registered`);
-
     // Workspaces have 0.0.0-use.local in their "pkg" registrations, so we
     // need to access the actual workspace to get its real version.
-    const workspace = project.tryWorkspaceByLocator(pkg);
+    const workspace = project.tryWorkspaceByLocator(locator);
+    const version = workspace
+      ? workspace.manifest.version ?? ``
+      : project.storedPackages.get(locator.locatorHash)!.version ?? ``;
 
-    scriptEnv.npm_package_name = structUtils.stringifyIdent(pkg);
-    scriptEnv.npm_package_version = workspace?.manifest.version ?? pkg.version ?? ``;
+    scriptEnv.npm_package_name = structUtils.stringifyIdent(locator);
+    scriptEnv.npm_package_version = version;
   }
 
   const version = YarnVersion !== null
