@@ -99,14 +99,22 @@ export class EnhancedError extends Error {
     EnhancedError.enhance(this, builder);
   }
 
-  get message() {
-    let message = this.summary;
+  getStringifiedFields() {
+    let stringifiedFields = ``;
 
     for (const field of this.fields)
       // We can't use Configuration.create because of import cycles, so this is the best we can do
-      message += `\n    ${this.configuration ? EnhancedError.prettyField(field, this.configuration) : EnhancedError.jsonField(field)}`;
+      stringifiedFields += `\n    ${this.configuration ? EnhancedError.prettyField(field, this.configuration) : EnhancedError.jsonField(field)}`;
 
-    return message;
+    return stringifiedFields;
+  }
+
+  get message() {
+    return this.summary + this.getStringifiedFields();
+  }
+
+  set message(message) {
+    this.summary = message.replaceAll(this.getStringifiedFields(), ``);
   }
 
   private addField(field: EnhancedErrorField) {
