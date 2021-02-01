@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                         from '@yarnpkg/cli';
-import {Configuration, Project, structUtils, MessageName, StreamReport, formatUtils} from '@yarnpkg/core';
-import {npmHttpUtils, npmConfigUtils}                                                from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage, Option}                                          from 'clipanion';
-import semver                                                                        from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                                                        from '@yarnpkg/cli';
+import {Configuration, Project, structUtils, MessageName, StreamReport, formatUtils, EnhancedError} from '@yarnpkg/core';
+import {npmHttpUtils, npmConfigUtils}                                                               from '@yarnpkg/plugin-npm';
+import {Command, UsageError, Usage, Option}                                                         from 'clipanion';
+import semver                                                                                       from 'semver';
 
-import {getDistTags}                                                                 from './list';
+import {getDistTags}                                                                                from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagAddCommand extends BaseCommand {
@@ -67,11 +67,9 @@ export default class NpmTagAddCommand extends BaseCommand {
         if (error.name !== `HTTPError`) {
           throw error;
         } else {
-          const message = error.response.body && error.response.body.error
-            ? error.response.body.error
-            : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+          const summary = error.response.body?.error ?? `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
 
-          report.reportError(MessageName.NETWORK_ERROR, message);
+          report.reportError(MessageName.NETWORK_ERROR, new EnhancedError(error, {summary}).toString());
         }
       }
 

@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, Project, ReportError, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage}                                                                 from 'clipanion';
-import * as t                                                                                   from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                   from '@yarnpkg/cli';
+import {Configuration, Project, ReportError, MessageName, treeUtils, LightReport, StreamReport, EnhancedError} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                          from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                                                                from 'clipanion';
+import * as t                                                                                                  from 'typanion';
 
-import * as npmAuditTypes                                                                       from '../../npmAuditTypes';
-import * as npmAuditUtils                                                                       from '../../npmAuditUtils';
+import * as npmAuditTypes                                                                                      from '../../npmAuditTypes';
+import * as npmAuditUtils                                                                                      from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AuditCommand extends BaseCommand {
@@ -116,7 +116,7 @@ export default class AuditCommand extends BaseCommand {
         if (err.name !== `HTTPError`) {
           throw err;
         } else {
-          throw new ReportError(MessageName.EXCEPTION, err.toString());
+          throw new ReportError(MessageName.EXCEPTION, new EnhancedError(err));
         }
       }
     });

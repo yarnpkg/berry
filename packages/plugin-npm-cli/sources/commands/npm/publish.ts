@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                   from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils, EnhancedError} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                                         from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                                             from '@yarnpkg/plugin-pack';
+import {Command, Option, Usage, UsageError}                                                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -83,7 +83,7 @@ export default class NpmPublishCommand extends BaseCommand {
           if (error.name !== `HTTPError`) {
             throw error;
           } else if (error.response.statusCode !== 404) {
-            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
+            throw new ReportError(MessageName.NETWORK_ERROR, new EnhancedError(error, {summary: `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`}));
           }
         }
       }
@@ -116,11 +116,9 @@ export default class NpmPublishCommand extends BaseCommand {
           if (error.name !== `HTTPError`) {
             throw error;
           } else {
-            const message = error.response.body && error.response.body.error
-              ? error.response.body.error
-              : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+            const summary = error.response.body?.error ?? `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
 
-            report.reportError(MessageName.NETWORK_ERROR, message);
+            report.reportError(MessageName.NETWORK_ERROR, new EnhancedError(error, {summary}).toString());
           }
         }
       });

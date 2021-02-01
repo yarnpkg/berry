@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                     from '@yarnpkg/cli';
-import {Configuration, Project, Ident, structUtils, ReportError, MessageName, formatUtils, treeUtils, miscUtils} from '@yarnpkg/core';
-import {ppath, Filename}                                                                                         from '@yarnpkg/fslib';
-import {npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage, Option}                                                                      from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                    from '@yarnpkg/cli';
+import {Configuration, Project, Ident, structUtils, ReportError, MessageName, formatUtils, treeUtils, miscUtils, EnhancedError} from '@yarnpkg/core';
+import {ppath, Filename}                                                                                                        from '@yarnpkg/fslib';
+import {npmHttpUtils}                                                                                                           from '@yarnpkg/plugin-npm';
+import {Command, UsageError, Usage, Option}                                                                                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagListCommand extends BaseCommand {
@@ -78,9 +78,9 @@ export async function getDistTags(ident: Ident, configuration: Configuration): P
     if (err.name !== `HTTPError`) {
       throw err;
     } else if (err.response.statusCode === 404) {
-      throw new ReportError(MessageName.EXCEPTION, `Package not found`);
+      throw new ReportError(MessageName.EXCEPTION, new EnhancedError(err, {summary: `Package not found`}));
     } else {
-      throw new ReportError(MessageName.EXCEPTION, err.toString());
+      throw new ReportError(MessageName.EXCEPTION, new EnhancedError(err));
     }
   });
 }

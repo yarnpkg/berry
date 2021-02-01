@@ -1,12 +1,12 @@
-import * as npm                                                       from '@npm/types';
-import {BaseCommand}                                                  from '@yarnpkg/cli';
-import {Project, Configuration, structUtils, ReportError, Descriptor} from '@yarnpkg/core';
-import {StreamReport, MessageName}                                    from '@yarnpkg/core';
-import {npmHttpUtils}                                                 from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage, UsageError}                           from 'clipanion';
-import path                                                           from 'path';
-import semver                                                         from 'semver';
-import {inspect}                                                      from 'util';
+import * as npm                                                                      from '@npm/types';
+import {BaseCommand}                                                                 from '@yarnpkg/cli';
+import {Project, Configuration, structUtils, ReportError, Descriptor, EnhancedError} from '@yarnpkg/core';
+import {StreamReport, MessageName}                                                   from '@yarnpkg/core';
+import {npmHttpUtils}                                                                from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage, UsageError}                                          from 'clipanion';
+import path                                                                          from 'path';
+import semver                                                                        from 'semver';
+import {inspect}                                                                     from 'util';
 
 declare module '@npm/types' {
   /*
@@ -126,9 +126,9 @@ export default class InfoCommand extends BaseCommand {
           if (err.name !== `HTTPError`) {
             throw err;
           } else if (err.response.statusCode === 404) {
-            throw new ReportError(MessageName.EXCEPTION, `Package not found`);
+            throw new ReportError(MessageName.EXCEPTION, new EnhancedError(err, {summary: `Package not found`}));
           } else {
-            throw new ReportError(MessageName.EXCEPTION, err.toString());
+            throw new ReportError(MessageName.EXCEPTION, new EnhancedError(err));
           }
         }
 
