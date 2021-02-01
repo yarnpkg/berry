@@ -73,11 +73,17 @@ export class EnhancedError extends Error {
     }
   }
 
-  constructor(error: unknown, builder: EnhancedErrorBuilder = {}, configuration?: Configuration) {
+  constructor(messageOrError: unknown, builder: EnhancedErrorBuilder = {}, configuration?: Configuration) {
     super();
 
-    if (!isError(error)) {
-      this.summary = `Non-error exception ${JSON.stringify(error)} of type ${typeof error}`;
+    let error: Error;
+
+    if (typeof messageOrError === `string`) {
+      error = new Error(messageOrError);
+    } else if (isError(messageOrError)) {
+      error = messageOrError;
+    } else {
+      this.summary = `Non-error exception ${JSON.stringify(messageOrError)} of type ${typeof messageOrError}`;
       return;
     }
 

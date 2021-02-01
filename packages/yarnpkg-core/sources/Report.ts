@@ -10,7 +10,7 @@ export class ReportError extends EnhancedError {
   public reportCode: MessageName;
 
   constructor(code: MessageName, messageOrEnhancedError: string | EnhancedError, public reportExtra?: (report: Report) => void) {
-    super(typeof messageOrEnhancedError === `string` ? new Error(messageOrEnhancedError) : messageOrEnhancedError);
+    super(messageOrEnhancedError);
 
     if (code !== MessageName.UNNAMED && code !== MessageName.EXCEPTION) {
       this.name = camelcase(MessageName[code], {pascalCase: true});
