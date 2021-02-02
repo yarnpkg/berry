@@ -38,7 +38,7 @@ export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 export async function enhanceNpmRequestError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
   const enhancedError = new EnhancedError(error, {
     fields: [
-      {label: `${typeof attemptedAs !== `string` ? `Attempted` : `Authenticated`} as`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, attemptedAs ?? await whoami(registry, headers, {configuration}))},
+      {label: `${typeof attemptedAs === `string` ? `Attempted` : `Authenticated`} as`, value: formatUtils.tuple(formatUtils.Type.NO_HINT, attemptedAs ?? await whoami(registry, headers, {configuration}))},
     ],
   }, configuration);
 
