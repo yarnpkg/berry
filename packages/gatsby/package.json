@@ -3,7 +3,7 @@
   "private": true,
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@babel/core": "^7.10.2",
+    "@babel/core": "^7.12.10",
     "@emotion/core": "^10.0.7",
     "@emotion/styled": "^10.0.17",
     "@emotion/styled-base": "^10.0.7",
