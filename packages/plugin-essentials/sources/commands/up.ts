@@ -1,10 +1,11 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
+import {IdentHash, structUtils}                                                                                     from '@yarnpkg/core';
 import {Project, StreamReport, Workspace}                                                                           from '@yarnpkg/core';
-import {structUtils}                                                                                                from '@yarnpkg/core';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                                                                         from 'clipanion';
 import {prompt}                                                                                                     from 'enquirer';
 import micromatch                                                                                                   from 'micromatch';
+import * as t                                                                                                       from 'typanion';
 
 import * as suggestUtils                                                                                            from '../suggestUtils';
 import {Hooks}                                                                                                      from '..';
@@ -67,9 +68,69 @@ export default class UpCommand extends BaseCommand {
     description: `Use the \`^\` semver modifier on the resolved range`,
   });
 
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Resolve again ALL resolutions for those packages`,
+  });
+
   patterns = Option.Rest();
 
+  static schema = [
+    t.hasKeyRelationship(`recursive`, t.KeyRelationship.Forbids, [`interactive`, `exact`, `tilde`, `caret`], {ignore: [false]}),
+  ];
+
   async execute() {
+    if (this.recursive) {
+      return await this.executeUpRecursive();
+    } else {
+      return await this.executeUpClassic();
+    }
+  }
+
+  async executeUpRecursive() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const cache = await Cache.find(configuration);
+
+    if (!workspace)
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+
+    const allDescriptors = [...project.storedDescriptors.values()];
+
+    const stringifiedIdents = allDescriptors.map(descriptor => {
+      return structUtils.stringifyIdent(descriptor);
+    });
+
+    const relevantIdents = new Set<IdentHash>();
+    for (const pattern of this.patterns) {
+      if (structUtils.parseDescriptor(pattern).range !== `unknown`)
+        throw new UsageError(`Ranges aren't allowed when using --recursive`);
+
+      for (const stringifiedIdent of micromatch(stringifiedIdents, pattern)) {
+        const ident = structUtils.parseIdent(stringifiedIdent);
+        relevantIdents.add(ident.identHash);
+      }
+    }
+
+    const relevantDescriptors = allDescriptors.filter(descriptor => {
+      return relevantIdents.has(descriptor.identHash);
+    });
+
+    for (const descriptor of relevantDescriptors) {
+      project.storedDescriptors.delete(descriptor.descriptorHash);
+      project.storedResolutions.delete(descriptor.descriptorHash);
+    }
+
+    const installReport = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
+      await project.install({cache, report});
+    });
+
+    return installReport.exitCode();
+  }
+
+  async executeUpClassic() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);

@@ -7,7 +7,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.4.0",
     "@yarnpkg/parsers": "workspace:^2.3.0",
-    "clipanion": "^3.0.0-rc.5",
+    "clipanion": "^3.0.0-rc.6",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
     "micromatch": "^4.0.2",
