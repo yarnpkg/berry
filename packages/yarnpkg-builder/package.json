@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.10.2",
     "@yarnpkg/cli": "workspace:^2.4.0",
     "@yarnpkg/core": "workspace:^2.4.0",
     "@yarnpkg/esbuild-plugin-pnp": "workspace:packages/esbuild-plugin-pnp",
