@@ -727,8 +727,8 @@ describe(`"exports" field`, () => {
   );
 
   test(
-    `manifest not exposed`,
-    makeTemporaryExportsEnv(`manifest-not-exposed`, {
+    `manifest not exported`,
+    makeTemporaryExportsEnv(`manifest-not-exported`, {
       exports: `./file.js`,
     }, [
       `index.js`,
