@@ -93,6 +93,20 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           : str.replace(/^\\^?zip:/, \`\`);
       }
 
+      // Force enable 'allowLocalPluginLoads'
+      // TypeScript tries to resolve plugins using a path relative to itself
+      // which doesn't work when using the global cache
+      // https://github.com/microsoft/TypeScript/blob/1b57a0395e0bff191581c9606aab92832001de62/src/server/project.ts#L2238
+      // VSCode doesn't want to enable 'allowLocalPluginLoads' due to security concerns but
+      // TypeScript already does local loads and if this code is running the user trusts the workspace
+      // https://github.com/microsoft/vscode/issues/45856
+      const ConfiguredProject = tsserver.server.ConfiguredProject;
+      const {enablePluginsWithOptions: originalEnablePluginsWithOptions} = ConfiguredProject.prototype;
+      ConfiguredProject.prototype.enablePluginsWithOptions = function() {
+        this.projectService.allowLocalPluginLoads = true;
+        return originalEnablePluginsWithOptions.apply(this, arguments);
+      };
+
       // And here is the point where we hijack the VSCode <-> TS communications
       // by adding ourselves in the middle. We locate everything that looks
       // like an absolute path of ours and normalize it.
