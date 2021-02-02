@@ -28,8 +28,8 @@ export async function writeTestPackage(path: PortablePath, manifest: Manifest, f
 // }
 
 export type Assertions = {
-  pass?: Array<[request: string, resolved: string]>,
-  fail?: Array<[request: string, errorMessage: string]>,
+  pass?: Array<[/*request: */string, /*resolved: */string]>,
+  fail?: Array<[/*request: */string, /*error: */string | {message: string, code?: string, pnpCode?: string}]>,
 };
 
 export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<Manifest, 'name'>, files: Array<string>, {pass, fail}: Assertions) {
@@ -67,9 +67,12 @@ export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<
 
     if (typeof fail !== `undefined`) {
       for (const [request, message] of fail) {
+        const actualMessage = typeof message === `string` ? message : message.message;
+
         await expect(sourceRequest(request)).rejects.toMatchObject({
           externalException: {
-            message: expect.stringContaining(interpolateVariables(message)),
+            ...(typeof message === `object` ? message : {}),
+            message: expect.stringContaining(interpolateVariables(actualMessage)),
           },
         });
       }
@@ -555,6 +558,11 @@ describe(`"exports" field`, () => {
         [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
         [`$PKG/src/`, `Missing "./src/" export in "$PKG" package`],
         [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/src/d`, {
+          code: `MODULE_NOT_FOUND`,
+          message: `Qualified path resolution failed`,
+          pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
+        }],
       ],
     })
   );
@@ -588,6 +596,11 @@ describe(`"exports" field`, () => {
         [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
         [`$PKG/src/`, `Missing "./src/" export in "$PKG" package`],
         [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/src/d`, {
+          code: `MODULE_NOT_FOUND`,
+          message: `Qualified path resolution failed`,
+          pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
+        }],
       ],
     })
   );
@@ -595,7 +608,7 @@ describe(`"exports" field`, () => {
   // Deprecated by Node, will eventually be removed
   test(
     `object subpath folder mappings "exports" field`,
-    makeTemporaryExportsEnv(`exports-object-subpath-patterns`, {
+    makeTemporaryExportsEnv(`exports-object-subpath-folder-mappings`, {
       exports: {
         [`.`]: `file.js`,
         [`./src/`]: `./lib/`,
@@ -620,6 +633,11 @@ describe(`"exports" field`, () => {
         [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
         [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
         [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/src/d`, {
+          code: `MODULE_NOT_FOUND`,
+          message: `Qualified path resolution failed`,
+          pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
+        }],
       ],
     })
   );
@@ -627,7 +645,7 @@ describe(`"exports" field`, () => {
   // Deprecated by Node, will eventually be removed
   test(
     `"main" field and object subpath subpath folder mappings "exports" field`,
-    makeTemporaryExportsEnv(`main-exports-object-subpath-patterns`, {
+    makeTemporaryExportsEnv(`main-exports-object-subpath-folder-mappings`, {
       main: `main.js`,
       exports: {
         [`.`]: `file.js`,
@@ -655,6 +673,11 @@ describe(`"exports" field`, () => {
         [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
         [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
         [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/src/d`, {
+          code: `MODULE_NOT_FOUND`,
+          message: `Qualified path resolution failed`,
+          pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
+        }],
       ],
     })
   );
@@ -664,24 +687,11 @@ describe(`"exports" field`, () => {
   //   makeTemporaryEnv(
   //     {
   //       dependencies: {
-  //         [`@exports/okay`]: `1.0.0`,
   //         [`@exports/not-okay`]: `1.0.0`,
   //       },
   //     },
   //     async ({path, run, source}) => {
   //       await run(`install`);
-
-  //       await expect(source(`require('@exports/okay')`)).resolves.toBe(`main`);
-  //       await expect(source(`require('@exports/okay/conditional')`)).resolves.toBe(`conditional/node-require`);
-  //       await expect(source(`require('@exports/okay/exists')`)).resolves.toBe(`exists`);
-
-  //       await expect(source(`require('@exports/okay/package.json')`)).rejects.toMatchObject({
-  //         externalException: {
-  //           code: `MODULE_NOT_FOUND`,
-  //           message: expect.stringMatching(`Qualified path resolution failed`),
-  //           pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
-  //         },
-  //       });
 
   //       await expect(source(`require('@exports/not-okay/not-exposed')`)).rejects.toMatchObject({
   //         externalException: {
