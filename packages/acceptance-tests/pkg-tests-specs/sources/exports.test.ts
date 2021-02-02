@@ -726,31 +726,18 @@ describe(`"exports" field`, () => {
     })
   );
 
-  // test(
-  //   `it should support package exports`,
-  //   makeTemporaryEnv(
-  //     {
-  //       dependencies: {
-  //         [`@exports/not-okay`]: `1.0.0`,
-  //       },
-  //     },
-  //     async ({path, run, source}) => {
-  //       await run(`install`);
-
-  //       await expect(source(`require('@exports/not-okay/not-exposed')`)).rejects.toMatchObject({
-  //         externalException: {
-  //           // code: `ERR_PACKAGE_PATH_NOT_EXPORTED`,
-  //           message: expect.stringContaining(`Missing "./not-exposed" export in "@exports/not-okay" package`),
-  //         },
-  //       });
-
-  //       await expect(source(`require('@exports/not-okay/package.json')`)).rejects.toMatchObject({
-  //         externalException: {
-  //           // code: `ERR_PACKAGE_PATH_NOT_EXPORTED`,
-  //           message: expect.stringContaining(`Missing "./package.json" export in "@exports/not-okay" package`),
-  //         },
-  //       });
-  //     },
-  //   ),
-  // );
+  test(
+    `manifest not exposed`,
+    makeTemporaryExportsEnv(`manifest-not-exposed`, {
+      exports: `./file.js`,
+    }, [
+      `index.js`,
+      `index.mjs`,
+      `file.js`,
+    ], {
+      fail: [
+        [`$PKG/package.json`, `Missing "./package.json" export in "$PKG" package`],
+      ],
+    })
+  );
 });
