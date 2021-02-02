@@ -30,7 +30,7 @@
     "fromentries": "^1.2.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",
-    "typanion": "^3.2.1"
+    "typanion": "^3.3.0"
   },
   "devDependencies": {
     "@types/ci-info": "^2",
