@@ -740,4 +740,28 @@ describe(`"exports" field`, () => {
       ],
     })
   );
+
+  test(
+    `self-referencing with exports`,
+    makeTemporaryEnv({
+      name: `pkg`,
+      exports: {
+        [`.`]: `./main.js`,
+        [`./foo`]: `./bar.js`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await xfs.writeFilePromise(`${path}/main.js` as PortablePath, ``);
+      await xfs.writeFilePromise(`${path}/bar.js` as PortablePath, ``);
+
+      await expect(source(`require.resolve('pkg')`)).resolves.toStrictEqual(`${path}/main.js`);
+      await expect(source(`require.resolve('pkg/foo')`)).resolves.toStrictEqual(`${path}/bar.js`);
+      await expect(source(`require.resolve('pkg/bar')`)).rejects.toMatchObject({
+        externalException: {
+          message: expect.stringContaining(`Missing "./bar" export in "pkg" package`),
+        },
+      });
+    })
+  );
 });
