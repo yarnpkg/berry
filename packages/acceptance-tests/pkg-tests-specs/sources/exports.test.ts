@@ -186,7 +186,7 @@ describe(`"exports" field`, () => {
     `top-level object conditional "exports" field`,
     makeTemporaryExportsEnv(`exports-top-level-object`, {
       exports: {
-        import: `./import.js`,
+        import: `./import.mjs`,
         node: `./node.js`,
         require: `./require.js`,
         default: `./default.js`,
@@ -216,7 +216,7 @@ describe(`"exports" field`, () => {
     makeTemporaryExportsEnv(`main-exports-top-level-object`, {
       main: `main.js`,
       exports: {
-        import: `./import.js`,
+        import: `./import.mjs`,
         node: `./node.js`,
         require: `./require.js`,
         default: `./default.js`,
@@ -248,7 +248,7 @@ describe(`"exports" field`, () => {
     makeTemporaryExportsEnv(`exports-dot-object`, {
       exports: {
         [`.`]: {
-          import: `./import.js`,
+          import: `./import.mjs`,
           node: `./node.js`,
           require: `./require.js`,
           default: `./default.js`,
@@ -280,7 +280,7 @@ describe(`"exports" field`, () => {
       main: `main.js`,
       exports: {
         [`.`]: {
-          import: `./import.js`,
+          import: `./import.mjs`,
           node: `./node.js`,
           require: `./require.js`,
           default: `./default.js`,
@@ -314,7 +314,7 @@ describe(`"exports" field`, () => {
       exports: {
         [`.`]: {
           node: {
-            import: `./import.js`,
+            import: `./import.mjs`,
             require: `./require.js`,
           },
           default: `./default.js`,
@@ -347,7 +347,7 @@ describe(`"exports" field`, () => {
       exports: {
         [`.`]: {
           node: {
-            import: `./import.js`,
+            import: `./import.mjs`,
             require: `./require.js`,
           },
           default: `./default.js`,
@@ -682,6 +682,50 @@ describe(`"exports" field`, () => {
     })
   );
 
+  test(
+    `only import top-level object conditional "exports" field`,
+    makeTemporaryExportsEnv(`exports-top-level-object-only-import`, {
+      exports: {
+        node: {
+          import: `./node-import.mjs`,
+        },
+        import: `./import.mjs`,
+      },
+    }, [
+      `index.js`,
+      `index.mjs`,
+      `import.mjs`,
+      `node-import.mjs`,
+    ], {
+      fail: [
+        [`$PKG`, `No known conditions for "." entry in "$PKG" package`],
+      ],
+    })
+  );
+
+  test(
+    `main field and only import top-level object conditional "exports" field`,
+    makeTemporaryExportsEnv(`main-exports-top-level-object-only-import`, {
+      main: `main.js`,
+      exports: {
+        node: {
+          import: `./node-import.mjs`,
+        },
+        import: `./import.mjs`,
+      },
+    }, [
+      `index.js`,
+      `index.mjs`,
+      `main.js`,
+      `import.mjs`,
+      `node-import.mjs`,
+    ], {
+      fail: [
+        [`$PKG`, `No known conditions for "." entry in "$PKG" package`],
+      ],
+    })
+  );
+
   // test(
   //   `it should support package exports`,
   //   makeTemporaryEnv(
@@ -697,13 +741,6 @@ describe(`"exports" field`, () => {
   //         externalException: {
   //           // code: `ERR_PACKAGE_PATH_NOT_EXPORTED`,
   //           message: expect.stringContaining(`Missing "./not-exposed" export in "@exports/not-okay" package`),
-  //         },
-  //       });
-
-  //       await expect(source(`require('@exports/not-okay/only-import')`)).rejects.toMatchObject({
-  //         externalException: {
-  //           // code: `ERR_PACKAGE_PATH_NOT_EXPORTED`,
-  //           message: expect.stringContaining(`No known conditions for "./only-import" entry in "@exports/not-okay" package`),
   //         },
   //       });
 
