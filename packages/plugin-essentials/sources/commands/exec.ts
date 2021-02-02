@@ -28,7 +28,7 @@ export default class ExecCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project} = await Project.find(configuration, this.context.cwd);
+    const {project, locator} = await Project.find(configuration, this.context.cwd);
 
     return await xfs.mktempPromise(async binFolder => {
       const {code} = await execUtils.pipevp(this.commandName, this.args, {
@@ -36,7 +36,7 @@ export default class ExecCommand extends BaseCommand {
         stdin: this.context.stdin,
         stdout: this.context.stdout,
         stderr: this.context.stderr,
-        env: await scriptUtils.makeScriptEnv({project, binFolder}),
+        env: await scriptUtils.makeScriptEnv({project, locator, binFolder}),
       });
 
       return code;
