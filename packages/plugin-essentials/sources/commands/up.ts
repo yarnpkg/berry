@@ -21,6 +21,8 @@ export default class UpCommand extends BaseCommand {
     details: `
       This command upgrades the packages matching the list of specified patterns to their latest available version across the whole project (regardless of whether they're part of \`dependencies\` or \`devDependencies\` - \`peerDependencies\` won't be affected). This is a project-wide command: all workspaces will be upgraded in the process.
 
+      If \`-R,--recursive\` is set the command will change behavior and no other switch will be allowed. When operating under this mode \`yarn up\` will force all ranges matching the selected packages to be resolved again (often to the highest available versions) before being stored in the lockfile. It however won't touch your manifests anymore, so depending on your needs you might want to run both \`yarn up\` and \`yarn up -R\` to cover all bases.
+
       If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
       The, \`-C,--caret\`, \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
