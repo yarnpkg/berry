@@ -1,6 +1,4 @@
 // @ts-expect-error: missing declaration
-import fromEntries from 'fromentries';
+import replaceAll from 'string.prototype.replaceall';
 
-// Remove when dropping Node 10 (~April 2021)
-if (!Object.fromEntries)
-  Object.fromEntries = fromEntries;
+replaceAll.shim();
