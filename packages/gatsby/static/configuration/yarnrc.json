@@ -554,6 +554,41 @@
       "additionalProperties": false,
       "_exampleKeys": ["webpack@*"]
     },
+    "plugins": {
+      "_package": "@yarnpkg/core",
+      "description": "The list of plugins that Yarn will load or disable.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "type": "string",
+            "description": "Plugin's package name.",
+            "examples": ["@yarnpkg/plugin-interactive-tools"]
+          },
+          "path": {
+            "type": "string",
+            "description": "Path to the file that exports the plugin.",
+            "examples": [".yarn/plugins/@yarnpkg/plugin-interactive-tools.cjs"]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the plugin is enabled or disabled. May be used to disable built-in plugins by only specifying it's `spec` and setting `enabled` to `false`.",
+            "examples": ["false"]
+          }
+        }
+      },
+      "_exampleItems": [
+        {
+          "spec": "@yarnpkg/plugin-interactive-tools",
+          "path": ".yarn/plugins/@yarnpkg/plugin-interactive-tools.cjs"
+        },
+        {
+          "spec": "@yarnpkg/plugin-compat",
+          "enabled": false
+        }
+      ]
+    },
     "pnpDataPath": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "The location where Yarn will read and write the `.pnp.meta.json` file.",

@@ -1038,9 +1038,18 @@ export class Configuration {
           continue;
 
         for (const userPluginEntry of data.plugins) {
-          const userProvidedPath = typeof userPluginEntry !== `string`
-            ? userPluginEntry.path
-            : userPluginEntry;
+          let userProvidedPath: string;
+          if (typeof userPluginEntry !== `string`) {
+            if (userPluginEntry.enabled === `false`) {
+              // all built-in modules have already been required,
+              // however none of their functionality has been initialized yet
+              plugins.delete(userPluginEntry.spec);
+              continue;
+            }
+            userProvidedPath = userPluginEntry.path;
+          } else {
+            userProvidedPath = userPluginEntry;
+          }
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           importPlugin(pluginPath, path);
