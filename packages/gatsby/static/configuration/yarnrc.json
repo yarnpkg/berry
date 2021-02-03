@@ -574,7 +574,8 @@
           "enabled": {
             "type": "boolean",
             "description": "Whether the plugin is enabled or disabled. May be used to disable built-in plugins by only specifying it's `spec` and setting `enabled` to `false`.",
-            "examples": ["false"]
+            "examples": [false],
+            "default": true
           }
         }
       },
