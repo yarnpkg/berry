@@ -202,7 +202,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/facebook/create-react-app/pull/9872
-  [`create-react-app@*`, {
+  [`react-scripts@<=4.0.1`, {
     peerDependencies: {
       [`react`]: `*`,
     },
