@@ -44464,7 +44464,10 @@ function makeApi(runtimeState, opts) {
    */
 
 
-  function applyNodeExportsResolution(unqualifiedPath) {
+  function applyNodeExportsResolution(unqualifiedPath, {
+    conditions = [],
+    require = true
+  } = {}) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`));
 
     if (locator === null) {
@@ -44483,11 +44486,11 @@ function makeApi(runtimeState, opts) {
 
     if (!/^\.{0,2}\//.test(subpath)) subpath = `./${subpath}`;
     const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
-      require: true,
       browser: false,
+      require,
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions: []
+      conditions
     });
     if (typeof resolvedExport === `string`) return ppath.join(packageLocation, resolvedExport);
     return null;
@@ -45012,12 +45015,12 @@ function makeApi(runtimeState, opts) {
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request, unqualifiedPath) {
+  function resolveUnqualifiedExport(request, unqualifiedPath, opts) {
     var _a; // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
 
 
     if (isStrictRegExp.test(request)) return unqualifiedPath;
-    return (_a = applyNodeExportsResolution(unqualifiedPath)) !== null && _a !== void 0 ? _a : unqualifiedPath;
+    return (_a = applyNodeExportsResolution(unqualifiedPath, opts)) !== null && _a !== void 0 ? _a : unqualifiedPath;
   }
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
@@ -45053,13 +45056,18 @@ function makeApi(runtimeState, opts) {
 
   function resolveRequest(request, issuer, {
     considerBuiltins,
-    extensions
+    extensions,
+    conditions,
+    require
   } = {}) {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {
       considerBuiltins
     });
     if (unqualifiedPath === null) return null;
-    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath);
+    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath, {
+      conditions,
+      require
+    });
 
     try {
       return resolveUnqualified(remappedPath, {
