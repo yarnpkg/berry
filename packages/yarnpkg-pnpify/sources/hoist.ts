@@ -117,7 +117,7 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   const debugLevel = opts.debugLevel || Number(process.env.NM_DEBUG_LEVEL || DebugLevel.NONE);
   const check = opts.check || debugLevel >= DebugLevel.INTENSIVE_CHECK;
   const hoistingLimits = opts.hoistingLimits || new Map();
-  const options: InternalHoistOptions = {check, debugLevel, hoistingLimits, fastLookupPossible: false};
+  const options: InternalHoistOptions = {check, debugLevel, hoistingLimits, fastLookupPossible: true};
   let startTime: number;
 
   if (options.debugLevel >= DebugLevel.PERF)
