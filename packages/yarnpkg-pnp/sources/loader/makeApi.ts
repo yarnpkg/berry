@@ -1,11 +1,11 @@
-import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
-import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                 from '@yarnpkg/fslib';
-import {Module}                                                                                             from 'module';
-import {resolve as resolveExport}                                                                           from 'resolve.exports';
+import {ppath, Filename}                                                                                                                                                                                                    from '@yarnpkg/fslib';
+import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                                                 from '@yarnpkg/fslib';
+import {Module}                                                                                                                                                                                                             from 'module';
+import {resolve as resolveExport}                                                                                                                                                                                           from 'resolve.exports';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions, ResolveUnqualifiedExportOptions} from '../types';
 
-import {ErrorCode, makeError, getPathForDisplay}                                                            from './internalTools';
+import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                                                            from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -13,18 +13,6 @@ export type MakeApiOptions = {
   fakeFs: FakeFS<PortablePath>,
   pnpapiResolution: NativePath,
 };
-
-export type ResolveToUnqualifiedOptions = {
-  considerBuiltins?: boolean,
-};
-
-export type ResolveUnqualifiedOptions = {
-  extensions?: Array<string>,
-};
-
-export type ResolveRequestOptions =
-  ResolveToUnqualifiedOptions &
-  ResolveUnqualifiedOptions;
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
@@ -177,7 +165,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    *
    * @returns The remapped path or `null` if the package doesn't have an "exports" field
    */
-  function applyNodeExportsResolution(unqualifiedPath: PortablePath) {
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename));
     if (locator === null) {
       throw makeError(
@@ -202,11 +190,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       subpath = `./${subpath}` as PortablePath;
 
     const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
-      require: true,
       browser: false,
+      require,
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions: [],
+      conditions,
     });
 
     if (typeof resolvedExport === `string`)
@@ -783,12 +771,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath) {
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, opts?: ResolveUnqualifiedExportOptions) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request))
       return unqualifiedPath;
 
-    return applyNodeExportsResolution(unqualifiedPath) ?? unqualifiedPath;
+    return applyNodeExportsResolution(unqualifiedPath, opts) ?? unqualifiedPath;
   }
 
   /**
@@ -820,13 +808,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions, require}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     if (unqualifiedPath === null)
       return null;
 
-    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath);
+    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath, {conditions, require});
 
     try {
       return resolveUnqualified(remappedPath, {extensions});
