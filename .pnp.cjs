@@ -44485,6 +44485,8 @@ function makeApi(runtimeState, opts) {
     const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
       require: true,
       browser: false,
+      // TODO: implement support for the --conditions flag
+      // Waiting on https://github.com/nodejs/node/issues/36935
       conditions: []
     });
     if (typeof resolvedExport === `string`) return ppath.join(packageLocation, resolvedExport);
