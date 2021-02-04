@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/core": patch
+
+declined:
+  - "@yarnpkg/plugin-dlx"
