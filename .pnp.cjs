@@ -10635,7 +10635,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/plugin-npm", "virtual:f9d90af7d716b3ed916c405f2a01eaf983ac84baf75bd67dc1fa320a529fda05c09bbfb4fa47252f3b3e23450138f3130fa2e3d0cec9917c6c8492798c353e12#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"],
-            ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"]
+            ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"],
+            ["semver", "npm:7.3.2"]
           ],
           "packagePeers": [
             "@types/yarnpkg__core",
@@ -10658,7 +10659,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/plugin-npm", "virtual:f9d90af7d716b3ed916c405f2a01eaf983ac84baf75bd67dc1fa320a529fda05c09bbfb4fa47252f3b3e23450138f3130fa2e3d0cec9917c6c8492798c353e12#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-patch", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-patch"],
-            ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"]
+            ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"],
+            ["semver", "npm:7.3.2"]
           ],
           "packagePeers": [
             "@types/yarnpkg__core",
@@ -10679,7 +10681,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/plugin-npm", "virtual:f9d90af7d716b3ed916c405f2a01eaf983ac84baf75bd67dc1fa320a529fda05c09bbfb4fa47252f3b3e23450138f3130fa2e3d0cec9917c6c8492798c353e12#workspace:packages/plugin-npm"],
             ["@yarnpkg/plugin-patch", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-patch"],
-            ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"]
+            ["resolve", "patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"],
+            ["semver", "npm:7.3.2"]
           ],
           "linkType": "SOFT",
         }]

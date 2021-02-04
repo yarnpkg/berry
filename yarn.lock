@@ -5806,6 +5806,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^2.4.0"
     "@yarnpkg/plugin-patch": "workspace:^2.1.2"
     resolve: ^1.17.0
+    semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/core": ^2.4.0
     "@yarnpkg/plugin-patch": ^2.1.2
