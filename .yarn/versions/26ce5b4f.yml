@@ -1,9 +1,6 @@
 releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
-  "@yarnpkg/plugin-node-modules": patch
-  "@yarnpkg/plugin-npm": patch
-  "@yarnpkg/plugin-npm-cli": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -18,6 +15,9 @@ declined:
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"
