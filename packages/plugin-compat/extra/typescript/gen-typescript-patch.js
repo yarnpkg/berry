@@ -10,7 +10,36 @@ const TS_REPO_SPAWN = {cwd: TS_REPO};
 
 const TMP_DIR = `/tmp/ts-builds`;
 
+const IGNORED_VERSIONS = new Set([
+  `3.3.3333`,
+]);
+
 const SLICES = [{
+  from: `5d50de3`,
+  to: `426f5a7`,
+  onto: `e39bdc3`,
+  range: `>=3.2 <3.5`,
+}, {
+  from: `5d50de3`,
+  to: `426f5a7`,
+  onto: `cf7b2d4`,
+  range: `>=3.5 <=3.6`,
+}, {
+  from: `5d50de3`,
+  to: `426f5a7`,
+  onto: `cda54b8`,
+  range: `>3.6 <3.7`,
+}, {
+  from: `5d50de3`,
+  to: `2f85932`,
+  onto: `e39bdc3`,
+  range: `>=3.7 <3.9`,
+}, {
+  from: `5d50de3`,
+  to: `3af06df`,
+  onto: `551f0dd`,
+  range: `>=3.9 <4.0`,
+}, {
   from: `6dbdd2f`,
   to: `6dbdd2f`,
   onto: `56865f7`,
@@ -59,26 +88,29 @@ async function execFile(binary, args, {checkExitCode = true, ...opts} = {}) {
 
   return new Promise((resolve, reject) => {
     const child = cp.spawn(binary, args, opts);
-    const chunks = [];
+
+    const outChunks = [];
+    const allChunks = [];
 
     child.stdout.on(`data`, chunk => {
-      chunks.push(chunk);
+      outChunks.push(chunk);
+      allChunks.push(chunk);
     });
 
     child.stderr.on(`data`, chunk => {
-      chunks.push(chunk);
+      allChunks.push(chunk);
     });
 
     child.on(`error`, err => {
-      err.message += `\n\n${Buffer.concat(chunks).toString()}\n`;
+      err.message += `\n\n${Buffer.concat(allChunks).toString()}\n`;
       reject(err);
     });
 
     child.on(`close`, code => {
       if (code === 0 || !checkExitCode) {
-        resolve(Buffer.concat(chunks));
+        resolve(Buffer.concat(outChunks));
       } else {
-        reject(new Error(`The process exited\n\n${Buffer.concat(chunks).toString()}\n`));
+        reject(new Error(`The process exited\n\n${Buffer.concat(allChunks).toString()}\n`));
       }
     });
   });
@@ -95,6 +127,9 @@ async function fetchVersions(range) {
 
     let highestPre;
     for (const version of allVersions) {
+      if (IGNORED_VERSIONS.has(version))
+        continue;
+
       const pre = semver.prerelease(version);
       if (pre) {
         if (pre[0] !== `beta` && pre[0] !== `rc`)
@@ -149,7 +184,12 @@ async function resetGit(hash) {
   await execFile(`git`, [`reset`, `--hard`, hash], TS_REPO_SPAWN);
   await execFile(`git`, [`clean`, `-df`], TS_REPO_SPAWN);
 
-  await execFile(`npm`, [`install`], TS_REPO_SPAWN);
+  if (fs.existsSync(path.join(TS_REPO, `package-lock.json`))) {
+    await execFile(`npm`, [`install`], TS_REPO_SPAWN);
+  } else {
+    const date = await execFile(`git`, [`show`, `-s`, `--format=%ci`], TS_REPO_SPAWN);
+    await execFile(`npm`, [`install`, `--before`, date.toString().trim()], TS_REPO_SPAWN);
+  }
 }
 
 async function buildRepository({from, to, onto}) {
@@ -161,7 +201,7 @@ async function buildRepository({from, to, onto}) {
   if (to) {
     let isAncestor;
     try {
-      await execFile(`git`, [`merge-base`, `--is-ancestor`, onto, to]);
+      await execFile(`git`, [`merge-base`, `--is-ancestor`, onto, to], TS_REPO_SPAWN);
       isAncestor = true;
     } catch {
       isAncestor = false;
@@ -211,7 +251,7 @@ async function run({from, to, onto, range}) {
   const buffer = await execFile(`git`, [`diff`, `--no-index`, base, patched], {checkExitCode: false});
 
   let patch = buffer.toString();
-  patch = patch.replace(/^--- /, `semver exclusivity ${range}\n--- `);
+  patch = patch.replaceAll(/^--- /gm, `semver exclusivity ${range}\n--- `);
   patch = patch.replaceAll(`${base}/`, `/`);
   patch = patch.replaceAll(`${patched}/`, `/`);
   patch = patch.replaceAll(`${patched}/`, `/`);
@@ -231,8 +271,12 @@ async function validate(version, patchFile) {
   await fs.promises.mkdir(tmpDir, {recursive: true});
   await fs.promises.writeFile(tarball, data);
 
+  let patch = await fs.promises.readFile(patchFile, `utf8`);
+  patch = patch.replaceAll(/^semver .*\n/gm, ``);
+  await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patch);
+
   await execFile(`tar`, [`xvf`, tarball], {cwd: tmpDir});
-  await execFile(`git`, [`apply`, patchFile], {cwd: path.join(tmpDir, `package`)});
+  await execFile(`git`, [`apply`, `../patch.diff`], {cwd: path.join(tmpDir, `package`)});
 }
 
 async function main() {

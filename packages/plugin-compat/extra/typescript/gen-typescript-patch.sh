@@ -1,7 +1,7 @@
 set -ex
 
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-TEMP_DIR="/tmp/ts-repo"
+TEMP_DIR="/tmp/ts-repo-2"
 
 PATCHFILE="$TEMP_DIR"/patch.tmp
 JSPATCH="$THIS_DIR"/../../sources/patches/typescript.patch.ts
@@ -12,13 +12,13 @@ FIRST_PR_COMMIT="5d50de3"
 # generate a patch suitable for the specified range.
 HASHES=(
   # From    # To      # Onto    # Ranges
-  "5d50de3" "426f5a7" "e39bdc3" ">=3.2 <3.5"
-  "5d50de3" "426f5a7" "cf7b2d4" ">=3.5 <=3.6"
-  "5d50de3" "426f5a7" "cda54b8" ">3.6 <3.7"
-  "5d50de3" "2f85932" "e39bdc3" ">=3.7 <3.9"
+# "5d50de3" "426f5a7" "e39bdc3" ">=3.2 <3.5"
+#  "5d50de3" "426f5a7" "cf7b2d4" ">=3.5 <=3.6"
+#  "5d50de3" "426f5a7" "cda54b8" ">3.6 <3.7"
+#  "5d50de3" "2f85932" "e39bdc3" ">=3.7 <3.9"
   "5d50de3" "3af06df" "551f0dd" ">=3.9 <4.0"
-  "6dbdd2f" "6dbdd2f" "56865f7" ">=4.0 <4.1"
-  "746d79b" "746d79b" "69972a3" ">=4.1"
+#  "6dbdd2f" "6dbdd2f" "56865f7" ">=4.0 <4.1"
+#  "746d79b" "746d79b" "69972a3" ">=4.1"
 )
 
 mkdir -p "$TEMP_DIR"
@@ -74,7 +74,7 @@ make-build-for() {
       if git merge-base --is-ancestor "$CHERRYPICK_ONTO" "$CHERRYPICK_TO"; then
         git merge --no-edit "$CHERRYPICK_TO"
       else
-        git cherry-pick "$CHERRYPICK_FROM"^.."$CHERRYPICK_TO"
+        git cherry-pick "$CHERRYPICK_FROM"^.. "$CHERRYPICK_TO"
       fi
     fi
 
