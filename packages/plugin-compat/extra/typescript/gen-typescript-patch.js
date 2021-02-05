@@ -272,7 +272,7 @@ async function validate(version, patchFile) {
   await fs.promises.writeFile(tarball, data);
 
   let patch = await fs.promises.readFile(patchFile, `utf8`);
-  patch = patch.replaceAll(/^semver .*\n/gm, ``);
+  patch = patch.replace(/^semver .*\n/gm, ``);
   await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patch);
 
   await execFile(`tar`, [`xvf`, tarball], {cwd: tmpDir});
