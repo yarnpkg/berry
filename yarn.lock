@@ -5806,6 +5806,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^2.4.0"
     "@yarnpkg/plugin-patch": "workspace:^2.1.2"
     resolve: ^1.17.0
+    semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/core": ^2.4.0
     "@yarnpkg/plugin-patch": ^2.1.2
@@ -26552,31 +26553,31 @@ typescript@4.1.0-beta:
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: cf3413606dfe8a8c8e08392afe1f52975541b900ad407bc072279ad27b57ce4939eac389e74477bb0f8747122cf3442b944023ddfd87143d3b9ea3122fff40ad
+  checksum: cc7bbd5b746a427c19b2f91eeef23fa1367bf7a327a5c78423fe2b8610b0c2346bd427594b222373f71609622ac51c562c31b014fdede75da9439bbb6ec0f11c
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@4.1.0-beta#builtin<compat/typescript>":
   version: 4.1.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2537751eed5f4b407c0f07f52917a2cc62dccbb9119d1be14e11a4171ab9cb841910c06f11d88651f9dc5ff25915c845495b70cc3992ec6518f54a165a1f2738
+  checksum: 8f8f9508d07a655f8a9381329a0ace866a9c4923837892722f8cecbc6763df83e952dd0e1be9f6baaa0dd28291251506e97837e6b159b6b64843571abea26110
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 452cdd20d801630727433a990652c1e65f5eb5586383dda60f178b4fbda5c7951256f9aa31327c73722af9b1b664e3a53d724aabfd8a68866e9b1631818f004c
+  checksum: 251df026e882c7d31165ad6f5a2aa8a24b43655766d1f008f4548ccb6944188a251e7d359763e3d330999c200506ab7322b703cf33429c9482cb7013e9a1fdd7
   languageName: node
   linkType: hard
 
