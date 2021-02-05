@@ -251,10 +251,10 @@ async function run({from, to, onto, range}) {
   const buffer = await execFile(`git`, [`diff`, `--no-index`, base, patched], {checkExitCode: false});
 
   let patch = buffer.toString();
-  patch = patch.replaceAll(/^--- /gm, `semver exclusivity ${range}\n--- `);
-  patch = patch.replaceAll(`${base}/`, `/`);
-  patch = patch.replaceAll(`${patched}/`, `/`);
-  patch = patch.replaceAll(`${patched}/`, `/`);
+  patch = patch.replace(/^--- /gm, `semver exclusivity ${range}\n--- `);
+  patch = patch.replace(new RegExp(`${base}/`, `g`), `/`);
+  patch = patch.replace(new RegExp(`${patched}/`, `g`), `/`);
+  patch = patch.replace(new RegExp(`${patched}/`, `g`), `/`);
 
   await fs.promises.writeFile(patchFile, patch);
 
