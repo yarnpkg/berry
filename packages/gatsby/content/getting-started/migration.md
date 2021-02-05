@@ -26,7 +26,9 @@ And of course a very active development cycle.
 
 ## Step by step
 
-**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**. Only in a later optional section we will cover how to enable PnP support, and this part will only be recommended not mandatory. Baby steps! 😉
+**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**. Only in a later optional section we will cover how to enable PnP support, and this part will only be recommended, not mandatory. Baby steps! 😉
+
+Note that those commands only need to be run once for the whole project and will automatically take effect for all your contributors as soon as they pull the migration commit, thanks to the power of [`yarnPath`](/configuration/yarnrc#yarnPath):
 
 1. Run `npm install -g yarn` to update the global yarn version to latest v1
 2. Go into your project directory

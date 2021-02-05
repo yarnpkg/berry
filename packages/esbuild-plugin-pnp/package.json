@@ -1,0 +1,37 @@
+{
+  "name": "@yarnpkg/esbuild-plugin-pnp",
+  "version": "0.0.1",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "dependencies": {
+    "tslib": "^1.13.0"
+  },
+  "peerDependencies": {
+    "esbuild": "^0.8.36"
+  },
+  "devDependencies": {
+    "@yarnpkg/pnp": "workspace:^2.3.2",
+    "esbuild": "npm:esbuild-wasm@^0.8.36"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\"",
+    "release": "yarn npm publish"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "bin": "./lib/cli.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/esbuild-plugin-pnp"
+  },
+  "engines": {
+    "node": ">=10.19.0"
+  }
+}

@@ -61,7 +61,7 @@ async function detectPackageManager(location: PortablePath) {
   return null;
 }
 
-export async function makeScriptEnv({project, binFolder, lifecycleScript}: {project?: Project, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -95,6 +95,21 @@ export async function makeScriptEnv({project, binFolder, lifecycleScript}: {proj
 
   scriptEnv.npm_execpath = `${nBinFolder}${npath.sep}yarn`;
   scriptEnv.npm_node_execpath = `${nBinFolder}${npath.sep}node`;
+
+  if (locator) {
+    if (!project)
+      throw new Error(`Assertion failed: Missing project`);
+
+    // Workspaces have 0.0.0-use.local in their "pkg" registrations, so we
+    // need to access the actual workspace to get its real version.
+    const workspace = project.tryWorkspaceByLocator(locator);
+    const version = workspace
+      ? workspace.manifest.version ?? ``
+      : project.storedPackages.get(locator.locatorHash)!.version ?? ``;
+
+    scriptEnv.npm_package_name = structUtils.stringifyIdent(locator);
+    scriptEnv.npm_package_version = version;
+  }
 
   const version = YarnVersion !== null
     ? `yarn/${YarnVersion}`
@@ -342,7 +357,7 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const env = await makeScriptEnv({project, binFolder, lifecycleScript});
+    const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript});
 
     await Promise.all(
       Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
@@ -526,7 +541,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
   return await xfs.mktempPromise(async binFolder => {
     const [, binaryPath] = binary;
-    const env = await makeScriptEnv({project, binFolder});
+    const env = await makeScriptEnv({project, locator, binFolder});
 
     await Promise.all(
       Array.from(packageAccessibleBinaries, ([binaryName, [, binaryPath]]) =>

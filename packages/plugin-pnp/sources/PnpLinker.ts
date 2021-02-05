@@ -53,10 +53,7 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       return null;
 
-    const physicalPath = npath.fromPortablePath(pnpPath);
-    const pnpFile = miscUtils.dynamicRequire(physicalPath);
-    delete require.cache[physicalPath];
-
+    const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
     if (!locator)
       return null;

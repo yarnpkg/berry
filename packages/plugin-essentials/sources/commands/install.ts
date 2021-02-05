@@ -27,7 +27,7 @@ export default class YarnCommand extends BaseCommand {
 
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.cjs file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
-      If the \`--immutable\` option is set, Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePaths\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
+      If the \`--immutable\` option is set, Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePatterns\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
 
       If the \`--immutable-cache\` option is set, Yarn will abort with an error exit code if the cache folder was to be modified (either because files would be added, or because they'd be removed).
 

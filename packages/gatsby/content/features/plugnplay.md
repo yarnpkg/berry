@@ -23,7 +23,7 @@ The way installs used to work was simple: when running `yarn install` Yarn would
 
 - Because the `node_modules` generation was an I/O-heavy operation, package managers didn't have a lot of leeways to optimize it much further than just doing a simple file copy - and even though we could have used hardlinks or copy-on-write when possible, we would still have needed to diff the current state of the filesystem before making a bunch of syscalls to manipulate the disk.
 
-- Because Node had no concept of packages, it also didn't know whether a file was _meant_ to be accessed (versus being available by the sheer virtue of hoisting). It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
+- Because Node had no concept of packages, it also didn't know whether a file was _meant_ to be accessed, versus being available by the sheer virtue of hoisting. It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
 
 - Even at runtime, the Node resolution had to make a bunch of `stat` and `readdir` calls to figure out where to load every single required file from. It was extremely wasteful, and was part of why booting Node applications took so much time.
 
@@ -31,9 +31,9 @@ The way installs used to work was simple: when running `yarn install` Yarn would
 
 ## Fixing node_modules
 
-When you think about it, Yarn already knows everything there is to know about your dependency tree - it even installs it on the disk for you. So the question becomes: why do we leave it to Node to locate the packages? Why don't we simply tell Node where to find them, and inform it that any require call to X by Y was meant to access the files from a specific set of dependencies? It's from this postulate that Plug'n'Play was created.
+When you think about it, Yarn already knows everything there is to know about your dependency tree - it even installs it on the disk for you. So the question becomes: why is it up to Node to find where your packages are? Why isn't it the package manager's job to inform the interpreter about the location of the packages on the disk, and that any require call to package X by package Y is meant to resolve to version V? It's from this postulate that Plug'n'Play was created.
 
-In this install mode (now the default starting from Yarn v2), Yarn generates a single `.pnp.cjs` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.cjs` file contains a map linking a package name and version to a location on the disk, and another map linking a package name and version to its set of dependencies. Thanks to this efficient system, Yarn can tell Node exactly where to look for files being required - regardless of who asks for them!
+In this install mode (the default starting from Yarn 2.0), Yarn generates a single `.pnp.cjs` file instead of the usual `node_modules`. Instead of containing the source code of the installed packages, the `.pnp.cjs` file contains various maps: one linking package names and versions to their location on the disk, and another one linking package names and versions to their list of dependencies. By an ingenious use of those statically generated tables, and as long as this file is loaded within your environment (more on that in the next section), Yarn can instantly tell Node where to find any package it needs to access, as long as they are part of the dependency tree.
 
 This approach has various benefits:
 
@@ -43,9 +43,43 @@ This approach has various benefits:
 
 - Perfect optimization of the dependency tree (aka perfect hoisting) and predictable package instantiations.
 
-- The generated .pnp.cjs file can be committed to your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
+- The generated `.pnp.cjs` file can be committed to your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
 
 - Faster application startup, because the Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
+
+## Initializing PnP
+
+As we mentioned, Yarn generates a single `.pnp.cjs` file that needs to be installed in your Node environment in order for Node to know where to find the relevant packages. This registration is generally transparent: any direct or indirect `node` command executed through one of your `scripts` entries will automatically register the `.pnp.cjs` file as a runtime dependency. As a result, the following will work just as you would expect:
+
+```json
+{
+  "scripts": {
+    "start": "node ./server.js",
+    "test": "jest"
+  }
+}
+```
+
+While that will be enough for the vast majority of the cases, for the few remaining ones, a small setup may be required:
+
+- If you need to run an arbitrary Node script from the command line, but not often enough that it's worth making it a proper `scripts` entry, use [`yarn node`](/cli/node) as interpreter instead of `node`. This will be enough to register the `.pnp.cjs` file as runtime dependency.
+
+```
+yarn node ./server.js
+```
+
+- If you operate on a system that automatically executes a Node script without you having the opportunity to choose how they are executed (for instance that's what happens with Google Cloud Platform), simply require the PnP file at the top of your init script and call its `setup` function.
+
+```
+require('./.pnp.cjs').setup();
+```
+
+As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
+
+```
+node -r ./.pnp.js ./server.js
+NODE_OPTIONS="--require $(pwd)/.pnp.js" node ./server.js
+```
 
 ## PnP `loose` mode
 
@@ -110,6 +144,7 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
+| ESBuild | Via [`@yarnpkg/esbuild-plugin-pnp`](https://github.com/yarnpkg/berry/tree/master/packages/esbuild-plugin-pnp#yarnpkgesbuild-plugin-pnp) |
 | VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | VSCode | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack 4.x | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) (native starting from 5+) |
@@ -129,6 +164,12 @@ The following tools unfortunately cannot be used with pure Plug'n'Play install (
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
 
 ## Frequently Asked Questions
+
+### Why not use import maps?
+
+This got answered in more details in [this thread](https://github.com/nodejs/modules/issues/477#issuecomment-578091424), but the gist is that more than just the resolution, Yarn Plug'n'Play also provides semantic errors (explaining you the exact reason why a package isn't reachable from another) and a [sensible JS API](/advanced/pnpapi) to solve various shortcomings with `require.resolve`. Those are things that import maps wouldn't solve by themselves.
+
+Additionally, one of the main reasons we're in this mess today is that the original `node_modules` design tried to abstract packages away in order to provide a generic system that would work without any semantic notion about packages are, prompting many implementers to come up with their own interpretations. Import maps unfortunately suffer from the same flaw.
 
 ### Packages are stored inside Zip archives: How can I access their files?
 

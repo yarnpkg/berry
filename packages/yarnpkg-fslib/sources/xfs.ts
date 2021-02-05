@@ -82,7 +82,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
           }
         }
       } else {
-        return p;
+        return realP;
       }
     }
   },

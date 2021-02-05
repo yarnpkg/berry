@@ -469,6 +469,27 @@ describe(`Scripts tests`, () => {
   );
 
   test(
+    `it should make expose some basic information via the environment`,
+    makeTemporaryEnv({
+      name: `helloworld`,
+      version: `1.2.3`,
+      scripts: {
+        [`test`]: `node -p 'JSON.stringify(process.env)'`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      const {stdout} = await run(`run`, `test`);
+      const env = JSON.parse(stdout);
+
+      expect(env).toMatchObject({
+        npm_package_name: `helloworld`,
+        npm_package_version: `1.2.3`,
+      });
+    })
+  );
+
+  test(
     `it should setup the correct path for locally installed binaries`,
     makeTemporaryEnv({
       scripts: {
