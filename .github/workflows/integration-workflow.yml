@@ -45,7 +45,7 @@ jobs:
             bash $generator;
           done
           for generator in packages/plugin-compat/extra/*/gen-*-patch.js; do
-            node $generator;
+            yarn node $generator;
           done
           [[ $(git diff --name-only packages/plugin-compat/sources/patches | tee /dev/stderr | wc -l) -eq 0 ]]
         fi
