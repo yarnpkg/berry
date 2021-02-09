@@ -12,6 +12,7 @@ cd "$BENCH_DIR"
 
 bench() {
   SUBTEST_NAME=$1; shift
+  echo "Testing $SUBTEST_NAME"
   hyperfine ${HYPERFINE_OPTIONS:-} --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
 }
 
@@ -84,8 +85,6 @@ case $PACKAGE_MANAGER in
       'yarn install'
     bench install-cache-and-lock \
       --prepare 'rm -rf .yarn node_modules' \
-      'yarn install'
-    bench install-ready \
       'yarn install'
     bench install-ready \
       --prepare 'yarn remove dummy-pkg || true' \
