@@ -39011,7 +39011,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 345:
+/***/ 807:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -43952,13 +43952,27 @@ function applyPatch(pnpapi, opts) {
   }
 
   function getIssuerSpecsFromModule(module) {
+    var _a;
+
     const issuer = getIssuerModule(module);
-    const issuerPath = issuer !== null ? npath.dirname(issuer.filename) : process.cwd();
-    return [{
-      apiPath: opts.manager.getApiPathFromParent(issuer),
-      path: issuerPath,
-      module
-    }];
+
+    if (issuer !== null) {
+      const path = npath.dirname(issuer.filename);
+      const apiPath = opts.manager.getApiPathFromParent(issuer);
+      return [{
+        apiPath,
+        path,
+        module
+      }];
+    } else {
+      const path = process.cwd();
+      const apiPath = (_a = opts.manager.findApiPathFor(npath.join(path, `[file]`))) !== null && _a !== void 0 ? _a : opts.manager.getApiPathFromParent(null);
+      return [{
+        apiPath,
+        path,
+        module
+      }];
+    }
   }
 
   function makeFakeParent(path) {
@@ -45010,7 +45024,7 @@ const xfs = Object.assign(new NodeFS(), {
           }
         }
       } else {
-        return p;
+        return realP;
       }
     }
   },
@@ -49805,7 +49819,7 @@ module.exports = require("path");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(345);
+/******/ 	return __webpack_require__(807);
 /******/ })()
 .default;
 });
