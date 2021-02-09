@@ -812,7 +812,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`, {cwd: tmp});
 
-        cp.execFileSync(`node`, [`-r`, `${tmp}/.pnp.cjs`, `-e`, `require('no-deps')`], {
+        cp.execFileSync(`node`, [`-r`, `${npath.fromPortablePath(tmp)}/.pnp.cjs`, `-e`, `require('no-deps')`], {
           env: {...process.env, NODE_OPTIONS: ``},
           cwd: npath.fromPortablePath(path),
         });
