@@ -151,7 +151,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 const MAX_PREPARE_CONCURRENCY = 2;
 const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
 
-export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null}: {configuration: Configuration, report: Report, workspace?: string | null}) {
+export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator}: {configuration: Configuration, report: Report, workspace?: string | null, locator: Locator}) {
   await prepareLimit(async () => {
     await xfs.mktempPromise(async logDir => {
       const logFile = ppath.join(logDir, `pack.log` as Filename);
@@ -159,18 +159,16 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-      const projectName: string = await xfs.readFilePromise(ppath.join(cwd, `package.json` as PortablePath), `utf8`)
-        .then((packageInfo: string) => JSON.parse(packageInfo).name);
-      stdout.write(`Installing the external project "${projectName}" from sources\n\n`);
+      stdout.write(`Installing the external project "${locator.name}" from sources\n\n`);
 
       const packageManagerSelection = await detectPackageManager(cwd);
       let effectivePackageManager: PackageManager;
 
       if (packageManagerSelection !== null) {
-        stdout.write(`Installing the external project "${projectName}" using ${packageManagerSelection.packageManager}. Reason: ${packageManagerSelection.reason}\n\n`);
+        stdout.write(`Installing the external project "${locator.name}" using ${packageManagerSelection.packageManager}. Reason: ${packageManagerSelection.reason}\n\n`);
         effectivePackageManager = packageManagerSelection.packageManager;
       } else {
-        stdout.write(`No package manager detected for external project "${projectName}"; defaulting to Yarn\n\n`);
+        stdout.write(`No package manager detected for external project "${locator.name}"; defaulting to Yarn\n\n`);
         effectivePackageManager = PackageManager.Yarn2;
       }
 
