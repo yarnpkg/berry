@@ -154,10 +154,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
+      const projectName: string = await JSON.parse(xfs.readFilePromise(ppath.join(cwd, `package.json`), `utf8`))
+        .then((packageInfo: { name: string }) => packageInfo.name);
       stdout.write(`Installing the external project "${projectName}" from sources\n\n`);
 
-      let projectName: string = await JSON.parse(xfs.readFilePromise(ppath.join(cwd, 'package.json'), `utf8`))
-        .then((packageInfo: { name: string }) => packageInfo.name);
 
       const packageManager = await detectPackageManager(cwd, stdout, projectName);
       let effectivePackageManager: PackageManager;
