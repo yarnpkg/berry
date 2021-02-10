@@ -28,7 +28,7 @@ const MODULE_NOT_FOUND_ERRORS = new Set([
  * by third-parties.
  */
 
-export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}): Error {
+export function makeError(pnpCode: ErrorCode, message: string, data: Record<string, any> = {}): Error & {code: string, pnpCode: ErrorCode, data: Record<string, any>} {
   const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode)
     ? `MODULE_NOT_FOUND`
     : pnpCode;

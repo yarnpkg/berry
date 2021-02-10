@@ -43901,7 +43901,13 @@ function applyPatch(pnpapi, opts) {
     if (request === `pnpapi`) return parentApi; // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
     // which file we should load
 
-    const modulePath = external_module_.Module._resolveFilename(request, parent, isMain); // We check whether the module is owned by the dependency tree of the
+    let modulePath;
+    try {
+      modulePath = external_module_.Module._resolveFilename(request, parent, isMain); // We check whether the module is owned by the dependency tree of the
+    } catch (error) {
+      Error.captureStackTrace(error, external_module_.Module._load)
+      throw error;
+    }
     // module that required it. If it isn't, then we need to create a new
     // store and possibly load its sandboxed PnP runtime.
 
@@ -49764,7 +49770,7 @@ module.exports = require("path");;
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -49777,14 +49783,14 @@ module.exports = require("path");;
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
@@ -49797,7 +49803,7 @@ module.exports = require("path");;
 /******/ 			return getter;
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -49809,12 +49815,12 @@ module.exports = require("path");;
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
