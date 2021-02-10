@@ -38,7 +38,7 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   await xfs.chmodPromise(ppath.join(location, name), 0o755);
 }
 
-async function detectPackageManager(location: PortablePath) {
+async function detectPackageManager(location: PortablePath, stdout: any, projectName: string) {
   let yarnLock = null;
   try {
     yarnLock = await xfs.readFilePromise(ppath.join(location, Filename.lockfile), `utf8`);
@@ -48,16 +48,20 @@ async function detectPackageManager(location: PortablePath) {
     if (yarnLock.match(/^__metadata:$/m)) {
       return PackageManager.Yarn2;
     } else {
+      stdout.write(`"__metadata" key not found in yarn.lock in project "${projectName}", must be a Yarn classic lockfile\n\n`);
       return PackageManager.Yarn1;
     }
   }
 
-  if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
+  if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath))) {
+    stdout.write(`Found npm "package-lock.json" lockfile in project ${projectName}\n\n`);
     return PackageManager.Npm;
+  }
 
-  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
+  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath))) {
+    stdout.write(`Found pnpm "pnpm-lock.yaml" lockfile in project ${projectName}\n\n`);
     return PackageManager.Pnpm;
-
+  }
   return null;
 }
 
@@ -150,14 +154,19 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-      const packageManager = await detectPackageManager(cwd);
+      stdout.write(`Installing the external project "${projectName}" from sources\n\n`);
+
+      let projectName: string = await JSON.parse(xfs.readFilePromise(ppath.join(cwd, 'package.json'), `utf8`))
+        .then((packageInfo: { name: string }) => packageInfo.name);
+
+      const packageManager = await detectPackageManager(cwd, stdout, projectName);
       let effectivePackageManager: PackageManager;
 
       if (packageManager !== null) {
-        stdout.write(`Installing the project using ${packageManager}\n\n`);
+        stdout.write(`Installing the external project "${projectName}" using ${packageManager}\n\n`);
         effectivePackageManager = packageManager;
       } else {
-        stdout.write(`No package manager detected; defaulting to Yarn\n\n`);
+        stdout.write(`No package manager detected for external project "${projectName}"; defaulting to Yarn\n\n`);
         effectivePackageManager = PackageManager.Yarn2;
       }
 
