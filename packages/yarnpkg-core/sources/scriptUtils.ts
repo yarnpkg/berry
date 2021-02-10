@@ -151,7 +151,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 const MAX_PREPARE_CONCURRENCY = 2;
 const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
 
-export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator}: {configuration: Configuration, report: Report, workspace?: string | null, locator: Locator}) {
+export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator = null}: {configuration: Configuration, report: Report, workspace?: string | null, locator?: Locator|null}) {
   await prepareLimit(async () => {
     await xfs.mktempPromise(async logDir => {
       const logFile = ppath.join(logDir, `pack.log` as Filename);
