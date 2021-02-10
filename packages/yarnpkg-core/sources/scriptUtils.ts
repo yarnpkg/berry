@@ -159,16 +159,17 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-      stdout.write(`Installing the external project "${locator.name}" from sources\n\n`);
+      const projectName = locator ? ` "${structUtils.stringifyLocator(locator)}"` : ``;
+      stdout.write(`Installing the external project${projectName} from sources\n\n`);
 
       const packageManagerSelection = await detectPackageManager(cwd);
       let effectivePackageManager: PackageManager;
 
       if (packageManagerSelection !== null) {
-        stdout.write(`Installing the external project "${locator.name}" using ${packageManagerSelection.packageManager}. Reason: ${packageManagerSelection.reason}\n\n`);
+        stdout.write(`Installing the external project${projectName} using ${packageManagerSelection.packageManager}. Reason: ${packageManagerSelection.reason}\n\n`);
         effectivePackageManager = packageManagerSelection.packageManager;
       } else {
-        stdout.write(`No package manager detected for external project "${locator.name}"; defaulting to Yarn\n\n`);
+        stdout.write(`No package manager detected for external project${projectName}; defaulting to Yarn\n\n`);
         effectivePackageManager = PackageManager.Yarn2;
       }
 
