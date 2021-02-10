@@ -669,7 +669,7 @@
     },
     "yarnPath": {
       "_package": "@yarnpkg/core",
-      "description": "The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with `.js` it will be required, and will be spawned in any other case.",
+      "description": "The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with `.js` it will be required, and will be spawned in any other case.\n\nThe `yarnPath` setting is currently the preferred way to install Yarn within a project, as it ensures that your whole team will use the exact same Yarn version, without having to individually keep it up-to-date.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["./scripts/yarn-2.0.0-rc001.js"]

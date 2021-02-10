@@ -770,10 +770,52 @@ describe(`Plug'n'Play`, () => {
 
         const tmp = await createTemporaryFolder();
 
-        await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
-        await writeFile(`${path}/index.js`, `require('no-deps')`);
+        await writeFile(`${tmp}/first.js`, `require(process.argv[2])`);
+        await writeFile(`${path}/second.js`, `require('no-deps')`);
 
-        await run(`node`, `${npath.fromPortablePath(tmp)}/index.js`, `${npath.fromPortablePath(path)}/index.js`);
+        await run(`node`, `${npath.fromPortablePath(tmp)}/first.js`, `${npath.fromPortablePath(path)}/second.js`);
+      },
+    ),
+  );
+
+  test(
+    `it should allow other PnP projects to require files from this one`,
+    makeTemporaryEnv(
+      {dependencies: {[`no-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const tmp = await createTemporaryFolder();
+
+        await writeFile(`${tmp}/package.json`, `{}`);
+
+        await run(`install`, {cwd: tmp});
+
+        await writeFile(`${tmp}/first.js`, `require(process.argv[2])`);
+        await writeFile(`${path}/second.js`, `require('no-deps')`);
+
+        await run(`node`, `./first.js`, `${npath.fromPortablePath(path)}/second.js`, {cwd: tmp});
+      },
+    ),
+  );
+
+  test(
+    `it should allow other PnP projects to spawn inline scripts in this one`,
+    makeTemporaryEnv(
+      {dependencies: {[`no-deps`]: `1.0.0`}},
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        const tmp = await createTemporaryFolder();
+
+        await writeFile(`${tmp}/package.json`, `{}`);
+
+        await run(`install`, {cwd: tmp});
+
+        cp.execFileSync(`node`, [`-r`, `${npath.fromPortablePath(tmp)}/.pnp.cjs`, `-e`, `require('no-deps')`], {
+          env: {...process.env, NODE_OPTIONS: ``},
+          cwd: npath.fromPortablePath(path),
+        });
       },
     ),
   );

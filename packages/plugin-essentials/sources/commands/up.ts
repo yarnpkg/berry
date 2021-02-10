@@ -77,7 +77,7 @@ export default class UpCommand extends BaseCommand {
   patterns = Option.Rest();
 
   static schema = [
-    t.hasKeyRelationship(`recursive`, t.KeyRelationship.Forbids, [`interactive`, `exact`, `tilde`, `caret`], {ignore: [false]}),
+    t.hasKeyRelationship(`recursive`, t.KeyRelationship.Forbids, [`interactive`, `exact`, `tilde`, `caret`], {ignore: [undefined, false]}),
   ];
 
   async execute() {
