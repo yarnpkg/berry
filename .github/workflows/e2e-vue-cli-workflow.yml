@@ -31,7 +31,7 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
 
-        yarn dlx -p @vue/cli vue config --set useTaobaoRegistry false
+        echo '{"useTaobaoRegistry": false}' | tee ~/.vuerc
 
         yarn dlx -p @vue/cli vue create -d my-vue && cd my-vue
         yarn build
