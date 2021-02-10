@@ -604,15 +604,15 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
 
   try {
     if (process.platform === `win32`) {
-      stats = xfs.lstatSync(srcPath);
+      stats = await xfs.lstatPromise(srcPath);
     }
   } catch (e) {
   }
 
   if (process.platform == `win32` && (!stats || stats.isDirectory())) {
-    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+    await xfs.symlinkPromise(srcPath, dstPath, `junction`);
   } else {
-    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+    await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
   }
 };
 
