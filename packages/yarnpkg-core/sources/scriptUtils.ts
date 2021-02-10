@@ -27,6 +27,11 @@ enum PackageManager {
   Pnpm = `pnpm`,
 }
 
+interface PackageManagerSelection {
+  packageManager: PackageManager;
+  reason: string;
+}
+
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
     // https://github.com/microsoft/terminal/issues/217#issuecomment-737594785
@@ -38,7 +43,7 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   await xfs.chmodPromise(ppath.join(location, name), 0o755);
 }
 
-async function detectPackageManager(location: PortablePath, stdout: any, projectName: string) {
+async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
   let yarnLock = null;
   try {
     yarnLock = await xfs.readFilePromise(ppath.join(location, Filename.lockfile), `utf8`);
@@ -46,22 +51,22 @@ async function detectPackageManager(location: PortablePath, stdout: any, project
 
   if (yarnLock !== null) {
     if (yarnLock.match(/^__metadata:$/m)) {
-      return PackageManager.Yarn2;
+      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
     } else {
-      stdout.write(`"__metadata" key not found in yarn.lock in project "${projectName}", must be a Yarn classic lockfile\n\n`);
-      return PackageManager.Yarn1;
+      return {
+        packageManager: PackageManager.Yarn1,
+        reason: `"__metadata" key not found in yarn.lock, must be a Yarn classic lockfile`,
+      };
     }
   }
 
-  if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath))) {
-    stdout.write(`Found npm "package-lock.json" lockfile in project ${projectName}\n\n`);
-    return PackageManager.Npm;
-  }
+  if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
+    return {packageManager: PackageManager.Npm, reason: `Found npm "package-lock.json" lockfile`};
 
-  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath))) {
-    stdout.write(`Found pnpm "pnpm-lock.yaml" lockfile in project ${projectName}\n\n`);
-    return PackageManager.Pnpm;
-  }
+
+  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
+    return {packageManager: PackageManager.Pnpm, reason: `Found pnpm "pnpm-lock.yaml" lockfile`};
+
   return null;
 }
 
@@ -158,13 +163,12 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         .then((packageInfo: string) => JSON.parse(packageInfo).name);
       stdout.write(`Installing the external project "${projectName}" from sources\n\n`);
 
-
-      const packageManager = await detectPackageManager(cwd, stdout, projectName);
+      const packageManagerSelection = await detectPackageManager(cwd);
       let effectivePackageManager: PackageManager;
 
-      if (packageManager !== null) {
-        stdout.write(`Installing the external project "${projectName}" using ${packageManager}\n\n`);
-        effectivePackageManager = packageManager;
+      if (packageManagerSelection !== null) {
+        stdout.write(`Installing the external project "${projectName}" using ${packageManagerSelection.packageManager}. Reason: ${packageManagerSelection.reason}\n\n`);
+        effectivePackageManager = packageManagerSelection.packageManager;
       } else {
         stdout.write(`No package manager detected for external project "${projectName}"; defaulting to Yarn\n\n`);
         effectivePackageManager = PackageManager.Yarn2;
