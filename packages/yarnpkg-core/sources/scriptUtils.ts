@@ -154,8 +154,8 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-      const projectName: string = await JSON.parse(xfs.readFilePromise(ppath.join(cwd, `package.json`), `utf8`))
-        .then((packageInfo: { name: string }) => packageInfo.name);
+      const projectName: string = await xfs.readFilePromise(ppath.join(cwd, `package.json` as PortablePath), `utf8`)
+        .then((packageInfo: string) => JSON.parse(packageInfo).name);
       stdout.write(`Installing the external project "${projectName}" from sources\n\n`);
 
 
