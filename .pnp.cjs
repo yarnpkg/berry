@@ -44520,7 +44520,7 @@ function makeApi(runtimeState, opts) {
   /**
    * Implements the node resolution for the "exports" field
    *
-   * @returns The remapped path or `null` if the package doesn't have an "exports" field
+   * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
 
 
@@ -44539,7 +44539,9 @@ function makeApi(runtimeState, opts) {
     const {
       packageLocation
     } = getPackageInformationSafe(locator);
-    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(packageLocation, `package.json`), `utf8`));
+    const manifestPath = ppath.join(packageLocation, Filename.manifest);
+    if (!opts.fakeFs.existsSync(manifestPath)) return null;
+    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(manifestPath, `utf8`));
     let subpath = ppath.contains(packageLocation, unqualifiedPath);
 
     if (subpath === null) {
@@ -44579,7 +44581,7 @@ function makeApi(runtimeState, opts) {
       let pkgJson;
 
       try {
-        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, `package.json`), `utf8`));
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, Filename.manifest), `utf8`));
       } catch (error) {}
 
       let nextUnqualifiedPath;

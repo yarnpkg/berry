@@ -197,7 +197,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   /**
    * Implements the node resolution for the "exports" field
    *
-   * @returns The remapped path or `null` if the package doesn't have an "exports" field
+   * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
   function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {includeDiscardFromLookup: true});
@@ -210,7 +210,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     const {packageLocation} = getPackageInformationSafe(locator);
 
-    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(packageLocation, `package.json` as Filename), `utf8`));
+    const manifestPath = ppath.join(packageLocation, Filename.manifest);
+    if (!opts.fakeFs.existsSync(manifestPath))
+      return null;
+
+    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(manifestPath, `utf8`));
 
     let subpath = ppath.contains(packageLocation, unqualifiedPath);
     if (subpath === null) {
@@ -259,7 +263,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       let pkgJson;
 
       try {
-        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, `package.json` as Filename), `utf8`));
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, Filename.manifest), `utf8`));
       } catch (error) {}
 
       let nextUnqualifiedPath;
