@@ -316,7 +316,9 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (requireStack.length > 0)
       firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
 
-    Error.captureStackTrace(firstError);
+    if (typeof firstError.pnpCode === `string`)
+      Error.captureStackTrace(firstError);
+
     throw firstError;
   };
 
