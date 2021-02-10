@@ -44136,24 +44136,26 @@ function hydrateRuntimeState(data, {
   const packageLocationLengths = new Set();
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
+      var _a;
+
       if (packageName === null !== (packageReference === null)) throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
+      const discardFromLookup = (_a = packageInformationData.discardFromLookup) !== null && _a !== void 0 ? _a : false; // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
 
-      if (!packageInformationData.discardFromLookup) {
-        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-        const packageLocator = {
-          name: packageName,
-          reference: packageReference
-        };
-        packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
-        packageLocationLengths.add(packageInformationData.packageLocation.length);
-      }
-
+      const packageLocator = {
+        name: packageName,
+        reference: packageReference
+      };
+      packageLocatorsByLocations.set(packageInformationData.packageLocation, {
+        locator: packageLocator,
+        discardFromLookup
+      });
+      packageLocationLengths.add(packageInformationData.packageLocation.length);
       let resolvedPackageLocation = null;
       return [packageReference, {
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
-        discardFromLookup: packageInformationData.discardFromLookup || false,
+        discardFromLookup,
 
         // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
@@ -44353,7 +44355,9 @@ function makeApi(runtimeState, opts) {
 
   const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/; // Matches if the path must point to a directory (ie ends with /)
 
-  const isDirRegExp = /\/$/; // We only instantiate one of those so that we can use strict-equal comparisons
+  const isDirRegExp = /\/$/; // Matches if the path starts with a relative path qualifier (./, ../)
+
+  const isRelativeRegexp = /^\.{0,2}\//; // We only instantiate one of those so that we can use strict-equal comparisons
 
   const topLevelLocator = {
     name: null,
@@ -44524,7 +44528,9 @@ function makeApi(runtimeState, opts) {
     conditions = [],
     require = true
   } = {}) {
-    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`));
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
+      includeDiscardFromLookup: true
+    });
 
     if (locator === null) {
       throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`);
@@ -44540,7 +44546,7 @@ function makeApi(runtimeState, opts) {
       throw internalTools_makeError(ErrorCode.INTERNAL, `unqualifiedPath doesn't contain the packageLocation (this is probably an internal error)`);
     }
 
-    if (!/^\.{0,2}\//.test(subpath)) subpath = `./${subpath}`;
+    if (!isRelativeRegexp.test(subpath)) subpath = `./${subpath}`;
     const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
       browser: false,
       require,
@@ -44781,7 +44787,9 @@ function makeApi(runtimeState, opts) {
    */
 
 
-  function findPackageLocator(location) {
+  function findPackageLocator(location, {
+    includeDiscardFromLookup = false
+  } = {}) {
     if (isPathIgnored(location)) return null;
     let relativeLocation = ppath.relative(runtimeState.basePath, location);
     if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}`;
@@ -44791,8 +44799,8 @@ function makeApi(runtimeState, opts) {
     while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length) from += 1;
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
-      const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
-      if (typeof locator === `undefined`) continue; // Ensures that the returned locator isn't a blacklisted one.
+      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
+      if (typeof entry === `undefined`) continue; // Ensures that the returned locator isn't a blacklisted one.
       //
       // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
       // happens with peer dependencies, which effectively have different sets of dependencies depending on their
@@ -44808,14 +44816,15 @@ function makeApi(runtimeState, opts) {
       // paths, we're able to print a more helpful error message that points out that a third-party package is doing
       // something incompatible!
 
-      if (locator === null) {
+      if (entry === null) {
         const locationForDisplay = getPathForDisplay(location);
         throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
           location: locationForDisplay
         });
       }
 
-      return locator;
+      if (entry.discardFromLookup && !includeDiscardFromLookup) continue;
+      return entry.locator;
     }
 
     return null;

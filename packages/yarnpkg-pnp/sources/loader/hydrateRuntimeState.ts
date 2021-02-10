@@ -14,7 +14,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     ? new RegExp(data.ignorePatternData)
     : null;
 
-  const packageLocatorsByLocations = new Map<PortablePath, PhysicalPackageLocator | null>();
+  const packageLocatorsByLocations = new Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean} | null>();
   const packageLocationLengths = new Set<number>();
 
   const packageRegistry = new Map<string | null, PackageStore>(data.packageRegistryData.map(([packageName, packageStoreData]) => {
@@ -22,13 +22,13 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       if ((packageName === null) !== (packageReference === null))
         throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
 
-      if (!packageInformationData.discardFromLookup) {
-        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-        const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
-        packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
+      const discardFromLookup = packageInformationData.discardFromLookup ?? false;
 
-        packageLocationLengths.add(packageInformationData.packageLocation.length);
-      }
+      // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
+      const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
+      packageLocatorsByLocations.set(packageInformationData.packageLocation, {locator: packageLocator, discardFromLookup});
+
+      packageLocationLengths.add(packageInformationData.packageLocation.length);
 
       let resolvedPackageLocation: PortablePath | null = null;
 
@@ -36,7 +36,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
-        discardFromLookup: packageInformationData.discardFromLookup || false,
+        discardFromLookup,
         // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {

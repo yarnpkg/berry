@@ -32,6 +32,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   // Matches if the path must point to a directory (ie ends with /)
   const isDirRegExp = /\/$/;
 
+  // Matches if the path starts with a relative path qualifier (./, ../)
+  const isRelativeRegexp = /^\.{0,2}\//;
+
   // We only instantiate one of those so that we can use strict-equal comparisons
   const topLevelLocator = {name: null, reference: null};
 
@@ -197,7 +200,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * @returns The remapped path or `null` if the package doesn't have an "exports" field
    */
   function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
-    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename));
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {includeDiscardFromLookup: true});
     if (locator === null) {
       throw makeError(
         ErrorCode.API_ERROR,
@@ -217,7 +220,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       );
     }
 
-    if (!/^\.{0,2}\//.test(subpath))
+    if (!isRelativeRegexp.test(subpath))
       subpath = `./${subpath}` as PortablePath;
 
     const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
@@ -475,7 +478,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: PortablePath): PhysicalPackageLocator | null {
+  function findPackageLocator(location: PortablePath, {includeDiscardFromLookup = false}: {includeDiscardFromLookup?: boolean} = {}): PhysicalPackageLocator | null {
     if (isPathIgnored(location))
       return null;
 
@@ -494,8 +497,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       from += 1;
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
-      const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-      if (typeof locator === `undefined`)
+      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
+      if (typeof entry === `undefined`)
         continue;
 
       // Ensures that the returned locator isn't a blacklisted one.
@@ -514,7 +517,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // paths, we're able to print a more helpful error message that points out that a third-party package is doing
       // something incompatible!
 
-      if (locator === null) {
+      if (entry === null) {
         const locationForDisplay = getPathForDisplay(location);
         throw makeError(
           ErrorCode.BLACKLISTED,
@@ -523,7 +526,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         );
       }
 
-      return locator;
+      if (entry.discardFromLookup && !includeDiscardFromLookup)
+        continue;
+
+      return entry.locator;
     }
 
     return null;

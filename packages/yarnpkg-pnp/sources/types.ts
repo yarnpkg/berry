@@ -56,7 +56,7 @@ export type RuntimeState = {
   fallbackPool: Map<string, DependencyTarget>,
   ignorePattern: RegExp | null,
   packageLocationLengths: Array<number>,
-  packageLocatorsByLocations: Map<PortablePath, PhysicalPackageLocator | null>;
+  packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean} | null>;
   packageRegistry: PackageRegistry,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
