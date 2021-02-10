@@ -44073,6 +44073,7 @@ function applyPatch(pnpapi, opts) {
       value: requireStack
     });
     if (requireStack.length > 0) firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
+    if (typeof firstError.pnpCode === `string`) Error.captureStackTrace(firstError);
     throw firstError;
   };
 
@@ -44182,6 +44183,7 @@ function hydrateRuntimeState(data, {
 
 
 
+
 function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL); // @ts-expect-error
@@ -44258,6 +44260,43 @@ function makeApi(runtimeState, opts) {
     };
   }
 
+  function trace(entry) {
+    var _a, _b, _c, _d, _e;
+
+    const colors = (_b = (_a = process.stderr) === null || _a === void 0 ? void 0 : _a.hasColors()) !== null && _b !== void 0 ? _b : process.stdout.isTTY;
+
+    const c = (n, str) => `\u001b[${n}m${str}\u001b[0m`;
+
+    const error = entry.error;
+    if (error) console.error(c(`31;1`, `✖ ${(_c = entry.error) === null || _c === void 0 ? void 0 : _c.message.replace(/\n.*/s, ``)}`));else console.error(c(`33;1`, `‼ Resolution`));
+    if (entry.args.length > 0) console.error();
+
+    for (const arg of entry.args) console.error(`  ${c(`37;1`, `In ←`)} ${(0,external_util_namespaceObject.inspect)(arg, {
+      colors,
+      compact: true
+    })}`);
+
+    if (entry.result) {
+      console.error();
+      console.error(`  ${c(`37;1`, `Out →`)} ${(0,external_util_namespaceObject.inspect)(entry.result, {
+        colors,
+        compact: true
+      })}`);
+    }
+
+    const stack = (_e = (_d = new Error().stack.match(/(?<=^ +)at.*/gm)) === null || _d === void 0 ? void 0 : _d.slice(2)) !== null && _e !== void 0 ? _e : [];
+
+    if (stack.length > 0) {
+      console.error();
+
+      for (const line of stack) {
+        console.error(`  ${c(`38;5;244`, line)}`);
+      }
+    }
+
+    console.error();
+  }
+
   function maybeLog(name, fn) {
     if (opts.allowDebug === false) return fn;
 
@@ -44271,7 +44310,7 @@ function makeApi(runtimeState, opts) {
           } catch (error) {
             throw logEntry.error = error;
           } finally {
-            console.trace(logEntry);
+            trace(logEntry);
           }
         };
       } else if (debugLevel >= 1) {
@@ -44281,7 +44320,7 @@ function makeApi(runtimeState, opts) {
           } catch (error) {
             const logEntry = makeLogEntry(name, args);
             logEntry.error = error;
-            console.trace(logEntry);
+            trace(logEntry);
             throw error;
           }
         };
@@ -44729,7 +44768,7 @@ function makeApi(runtimeState, opts) {
 
       if (dependencyReference === null) {
         if (isDependencyTreeRoot(issuerLocator)) {
-          error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+          error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`, {
             request: requestForDisplay,
             issuer: issuerForDisplay,
             dependencyName
@@ -44738,7 +44777,7 @@ function makeApi(runtimeState, opts) {
           const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
 
           if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
-            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -44746,7 +44785,7 @@ function makeApi(runtimeState, opts) {
               brokenAncestors
             });
           } else {
-            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
+            error = internalTools_makeError(ErrorCode.MISSING_PEER_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -44758,13 +44797,13 @@ function makeApi(runtimeState, opts) {
       } else if (dependencyReference === undefined) {
         if (!considerBuiltins && builtinModules.has(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               dependencyName
             });
           } else {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -44773,13 +44812,13 @@ function makeApi(runtimeState, opts) {
           }
         } else {
           if (isDependencyTreeRoot(issuerLocator)) {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerForDisplay}\n`, {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               dependencyName
             });
           } else {
-            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+            error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
               request: requestForDisplay,
               issuer: issuerForDisplay,
               issuerLocator: Object.assign({}, issuerLocator),
@@ -44812,7 +44851,7 @@ function makeApi(runtimeState, opts) {
       const dependencyInformation = getPackageInformationSafe(dependencyLocator);
 
       if (!dependencyInformation.packageLocation) {
-        throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference} (via "${requestForDisplay}")\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
+        throw internalTools_makeError(ErrorCode.MISSING_DEPENDENCY, `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference}${dependencyLocator.name !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`, {
           request: requestForDisplay,
           issuer: issuerForDisplay,
           dependencyLocator: Object.assign({}, dependencyLocator)
@@ -44853,7 +44892,7 @@ function makeApi(runtimeState, opts) {
       return ppath.normalize(qualifiedPath);
     } else {
       const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
-      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of the candidates can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Rejected candidate: ${getPathForDisplay(candidate)}\n`).join(``)}`, {
+      throw internalTools_makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of those files can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Not found: ${getPathForDisplay(candidate)}\n`).join(``)}`, {
         unqualifiedPath: unqualifiedPathForDisplay
       });
     }
