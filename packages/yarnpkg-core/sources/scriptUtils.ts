@@ -61,11 +61,11 @@ async function detectPackageManager(location: PortablePath): Promise<PackageMana
   }
 
   if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
-    return {packageManager: PackageManager.Npm, reason: `Found npm "package-lock.json" lockfile`};
+    return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
 
 
   if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
-    return {packageManager: PackageManager.Pnpm, reason: `Found pnpm "pnpm-lock.yaml" lockfile`};
+    return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
 
   return null;
 }
@@ -159,17 +159,24 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-      const projectName = locator ? ` "${structUtils.stringifyLocator(locator)}"` : ``;
-      stdout.write(`Installing the external project${projectName} from sources\n\n`);
+      const devirtualizedLocator = locator && structUtils.isVirtualLocator(locator)
+        ? structUtils.devirtualizeLocator(locator)
+        : locator;
+
+      const name = devirtualizedLocator
+        ? structUtils.stringifyLocator(devirtualizedLocator)
+        : `an external project`;
+
+      stdout.write(`Packing ${name} from sources\n`);
 
       const packageManagerSelection = await detectPackageManager(cwd);
       let effectivePackageManager: PackageManager;
 
       if (packageManagerSelection !== null) {
-        stdout.write(`Installing the external project${projectName} using ${packageManagerSelection.packageManager}. Reason: ${packageManagerSelection.reason}\n\n`);
+        stdout.write(`Using ${packageManagerSelection.packageManager} for bootstrap. Reason: ${packageManagerSelection.reason}\n\n`);
         effectivePackageManager = packageManagerSelection.packageManager;
       } else {
-        stdout.write(`No package manager detected for external project${projectName}; defaulting to Yarn\n\n`);
+        stdout.write(`No package manager configuration detected; defaulting to Yarn\n\n`);
         effectivePackageManager = PackageManager.Yarn2;
       }
 
