@@ -27,6 +27,11 @@ enum PackageManager {
   Pnpm = `pnpm`,
 }
 
+interface PackageManagerSelection {
+  packageManager: PackageManager;
+  reason: string;
+}
+
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
     // https://github.com/microsoft/terminal/issues/217#issuecomment-737594785
@@ -38,7 +43,7 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   await xfs.chmodPromise(ppath.join(location, name), 0o755);
 }
 
-async function detectPackageManager(location: PortablePath) {
+async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
   let yarnLock = null;
   try {
     yarnLock = await xfs.readFilePromise(ppath.join(location, Filename.lockfile), `utf8`);
@@ -46,17 +51,21 @@ async function detectPackageManager(location: PortablePath) {
 
   if (yarnLock !== null) {
     if (yarnLock.match(/^__metadata:$/m)) {
-      return PackageManager.Yarn2;
+      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
     } else {
-      return PackageManager.Yarn1;
+      return {
+        packageManager: PackageManager.Yarn1,
+        reason: `"__metadata" key not found in yarn.lock, must be a Yarn classic lockfile`,
+      };
     }
   }
 
   if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
-    return PackageManager.Npm;
+    return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
+
 
   if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
-    return PackageManager.Pnpm;
+    return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
 
   return null;
 }
@@ -142,7 +151,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 const MAX_PREPARE_CONCURRENCY = 2;
 const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
 
-export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null}: {configuration: Configuration, report: Report, workspace?: string | null}) {
+export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator = null}: {configuration: Configuration, report: Report, workspace?: string | null, locator?: Locator|null}) {
   await prepareLimit(async () => {
     await xfs.mktempPromise(async logDir => {
       const logFile = ppath.join(logDir, `pack.log` as Filename);
@@ -150,14 +159,24 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
 
-      const packageManager = await detectPackageManager(cwd);
+      const devirtualizedLocator = locator && structUtils.isVirtualLocator(locator)
+        ? structUtils.devirtualizeLocator(locator)
+        : locator;
+
+      const name = devirtualizedLocator
+        ? structUtils.stringifyLocator(devirtualizedLocator)
+        : `an external project`;
+
+      stdout.write(`Packing ${name} from sources\n`);
+
+      const packageManagerSelection = await detectPackageManager(cwd);
       let effectivePackageManager: PackageManager;
 
-      if (packageManager !== null) {
-        stdout.write(`Installing the project using ${packageManager}\n\n`);
-        effectivePackageManager = packageManager;
+      if (packageManagerSelection !== null) {
+        stdout.write(`Using ${packageManagerSelection.packageManager} for bootstrap. Reason: ${packageManagerSelection.reason}\n\n`);
+        effectivePackageManager = packageManagerSelection.packageManager;
       } else {
-        stdout.write(`No package manager detected; defaulting to Yarn\n\n`);
+        stdout.write(`No package manager configuration detected; defaulting to Yarn\n\n`);
         effectivePackageManager = PackageManager.Yarn2;
       }
 
