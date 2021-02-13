@@ -989,6 +989,22 @@ export class Configuration {
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
+      // Todo: Compatibility layer with Clipanion 2. Remove in Yarn 4.
+      if (requireEntries.has(`clipanion`)) {
+        const clipanion = requireEntries.get(`clipanion`)();
+
+        clipanion.Command.Path = (...p: Array<any>) => (instance: any) => {
+          instance.paths = instance.paths || [];
+          instance.paths.push(p);
+        };
+
+        for (const fn of [`Array`, `Boolean`, `String`]) {
+          clipanion.Command[fn] = (...args: Array<any>) => (instance: any, propertyName: any) => {
+            instance[propertyName] = clipanion.Option[fn](...args);
+          };
+        }
+      }
+
       const dynamicPlugins = new Set();
 
       const getDefault = (object: any) => {
