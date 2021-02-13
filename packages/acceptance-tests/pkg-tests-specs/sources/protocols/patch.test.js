@@ -144,7 +144,7 @@ describe(`Protocols`, () => {
     );
 
     test(
-      `it should apply a patch when package is virtual`,
+      `it should apply patches relative to the package`,
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
