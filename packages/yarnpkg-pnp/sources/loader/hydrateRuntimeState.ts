@@ -26,7 +26,15 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
 
       // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
       const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
-      packageLocatorsByLocations.set(packageInformationData.packageLocation, {locator: packageLocator, discardFromLookup});
+      const entry = packageLocatorsByLocations.get(packageInformationData.packageLocation);
+      if (!entry) {
+        packageLocatorsByLocations.set(packageInformationData.packageLocation, {locator: packageLocator, discardFromLookup});
+      } else {
+        entry.discardFromLookup = entry.discardFromLookup && discardFromLookup;
+        if (!discardFromLookup) {
+          entry.locator = packageLocator;
+        }
+      }
 
       packageLocationLengths.add(packageInformationData.packageLocation.length);
 

@@ -46,7 +46,7 @@ describe(`Plug'n'Play API`, () => {
         },
       }, async ({path, run, source}) => {
         await xfs.mkdirpPromise(`${path}/workspace` as PortablePath);
-        await xfs.writeJsonPromise(`${path}/workspace/package.json as PortablePath` as PortablePath, {
+        await xfs.writeJsonPromise(`${path}/workspace/package.json` as PortablePath, {
           name: `workspace`,
           peerDependencies: {
             [`no-deps`]: `*`,

@@ -44145,10 +44145,21 @@ function hydrateRuntimeState(data, {
         name: packageName,
         reference: packageReference
       };
-      packageLocatorsByLocations.set(packageInformationData.packageLocation, {
-        locator: packageLocator,
-        discardFromLookup
-      });
+      const entry = packageLocatorsByLocations.get(packageInformationData.packageLocation);
+
+      if (!entry) {
+        packageLocatorsByLocations.set(packageInformationData.packageLocation, {
+          locator: packageLocator,
+          discardFromLookup
+        });
+      } else {
+        entry.discardFromLookup = entry.discardFromLookup && discardFromLookup;
+
+        if (!discardFromLookup) {
+          entry.locator = packageLocator;
+        }
+      }
+
       packageLocationLengths.add(packageInformationData.packageLocation.length);
       let resolvedPackageLocation = null;
       return [packageReference, {
