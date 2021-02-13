@@ -58,6 +58,7 @@ export class GitFetcher implements Fetcher {
       configuration: opts.project.configuration,
       report: opts.report,
       workspace: repoUrlParts.extra.workspace,
+      locator,
     });
 
     const sourceBuffer = await xfs.readFilePromise(packagePath);
