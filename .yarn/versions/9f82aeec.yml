@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": minor
   "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-pack": minor
   "@yarnpkg/plugin-pnp": minor
   "@yarnpkg/pnp": minor
 
@@ -12,8 +13,8 @@ declined:
   - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
-  - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
