@@ -200,13 +200,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
   function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
+    // Not all required files are part of the dependency tree (for example
+    // some may be covered by a pnpIgnorePatterns rule). It's not too clear
+    // how to detect the package root in those case, so leaving that for the
+    // next iteration.
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {includeDiscardFromLookup: true});
-    if (locator === null) {
-      throw makeError(
-        ErrorCode.API_ERROR,
-        `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`,
-      );
-    }
+    if (locator === null)
+      return unqualifiedPath;
 
     const {packageLocation} = getPackageInformationSafe(locator);
 
@@ -553,12 +553,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function resolveToUnqualified(request: PortablePath, issuer: PortablePath | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): PortablePath | null {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
-
     if (request === `pnpapi`)
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-
     if (considerBuiltins && builtinModules.has(request))
       return null;
 
@@ -598,7 +596,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // If the request is a relative or absolute path, we just return it normalized
 
     const dependencyNameMatch = request.match(pathRegExp);
-
     if (!dependencyNameMatch) {
       if (ppath.isAbsolute(request)) {
         unqualifiedPath = ppath.normalize(request);
@@ -817,7 +814,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (isStrictRegExp.test(request))
       return unqualifiedPath;
 
-    return applyNodeExportsResolution(unqualifiedPath, opts) ?? unqualifiedPath;
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, opts);
+    if (unqualifiedExportPath) {
+      return ppath.normalize(unqualifiedExportPath);
+    } else {
+      return unqualifiedPath;
+    }
   }
 
   /**
@@ -851,11 +853,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions, require}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
-
     if (unqualifiedPath === null)
       return null;
 
-    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath, {conditions, require});
+    const remappedPath = !considerBuiltins || !builtinModules.has(request)
+      ? resolveUnqualifiedExport(request, unqualifiedPath, {conditions, require})
+      : unqualifiedPath;
 
     try {
       return resolveUnqualified(remappedPath, {extensions});

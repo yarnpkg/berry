@@ -44528,14 +44528,14 @@ function makeApi(runtimeState, opts) {
     conditions = [],
     require = true
   } = {}) {
+    // Not all required files are part of the dependency tree (for example
+    // some may be covered by a pnpIgnorePatterns rule). It's not too clear
+    // how to detect the package root in those case, so leaving that for the
+    // next iteration.
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       includeDiscardFromLookup: true
     });
-
-    if (locator === null) {
-      throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`);
-    }
-
+    if (locator === null) return unqualifiedPath;
     const {
       packageLocation
     } = getPackageInformationSafe(locator);
@@ -45083,11 +45083,15 @@ function makeApi(runtimeState, opts) {
   }
 
   function resolveUnqualifiedExport(request, unqualifiedPath, opts) {
-    var _a; // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
-
-
+    // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request)) return unqualifiedPath;
-    return (_a = applyNodeExportsResolution(unqualifiedPath, opts)) !== null && _a !== void 0 ? _a : unqualifiedPath;
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, opts);
+
+    if (unqualifiedExportPath) {
+      return ppath.normalize(unqualifiedExportPath);
+    } else {
+      return unqualifiedPath;
+    }
   }
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
@@ -45131,10 +45135,10 @@ function makeApi(runtimeState, opts) {
       considerBuiltins
     });
     if (unqualifiedPath === null) return null;
-    const remappedPath = resolveUnqualifiedExport(request, unqualifiedPath, {
+    const remappedPath = !considerBuiltins || !builtinModules.has(request) ? resolveUnqualifiedExport(request, unqualifiedPath, {
       conditions,
       require
-    });
+    }) : unqualifiedPath;
 
     try {
       return resolveUnqualified(remappedPath, {
