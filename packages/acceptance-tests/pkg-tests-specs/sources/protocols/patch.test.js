@@ -142,5 +142,33 @@ describe(`Protocols`, () => {
       ),
       10000,
     );
+
+    test(
+      `it should apply patches relative to the package`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await xfs.mktempPromise(async fileTarget => {
+            await xfs.writeFilePromise(ppath.join(fileTarget, `my-patch.patch`), NO_DEPS_PATCH);
+            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
+            await xfs.writeJsonPromise(ppath.join(fileTarget, `package.json`), {
+              dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+            });
+
+            await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+              dependencies: {[`file`]: `file:${fileTarget}`},
+            });
+
+            await run(`install`);
+
+            await expect(source(`require('file')`)).resolves.toMatchObject({
+              name: `no-deps`,
+              version: `1.0.0`,
+              hello: `world`,
+            });
+          });
+        },
+      ),
+    );
   });
 });
