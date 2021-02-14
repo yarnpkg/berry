@@ -12,7 +12,8 @@ export default class PatchCommand extends BaseCommand {
   ];
 
   static usage: Usage = Command.Usage({
-    description: `
+    description: `prepare a package for patching`,
+    details: `
       This command will cause a package to be extracted in a temporary directory (under a folder named "patch-workdir"). This folder will be editable at will; running \`yarn patch\` inside it will then cause Yarn to generate a patchfile and register it into your top-level manifest (cf the \`patch:\` protocol).
     `,
   });
