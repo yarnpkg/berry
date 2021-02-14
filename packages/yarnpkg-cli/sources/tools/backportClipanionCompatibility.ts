@@ -9,4 +9,6 @@ export function backportClipanionCompatibility(clipanion: any) {
       instance[propertyName] = clipanion.Option[fn](...args);
     };
   }
+
+  return clipanion;
 }
