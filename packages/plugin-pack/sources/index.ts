@@ -54,11 +54,10 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
 
         // For workspace:path/to/workspace and workspace:* we look up the workspace version
         if (structUtils.areDescriptorsEqual(descriptor, matchingWorkspace.anchoredDescriptor) || range.selector === `*`)
-          versionToWrite = matchingWorkspace.manifest.version!;
+          versionToWrite = matchingWorkspace.manifest.version ?? `0.0.0`;
         else
           // for workspace:version we simply strip the protocol
           versionToWrite = range.selector;
-
 
         rawManifest[dependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
       }
