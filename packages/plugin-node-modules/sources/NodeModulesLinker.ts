@@ -13,7 +13,6 @@ import {PnpApi, PackageInformation}                                             
 import cmdShim                                                                                 from '@zkochan/cmd-shim';
 import {UsageError}                                                                            from 'clipanion';
 import fs                                                                                      from 'fs';
-import {report}                                                                                from 'process';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
