@@ -507,7 +507,7 @@ export class Project {
     for (const workspace of this.workspaces) {
       const pkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
       if (!pkg)
-        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
+        throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.configuration, workspace)} (${formatUtils.pretty(this.configuration, ppath.join(workspace.cwd, `package.json` as Filename), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
 
       workspace.dependencies = new Map(pkg.dependencies);
     }
