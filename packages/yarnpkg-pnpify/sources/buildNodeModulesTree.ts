@@ -239,14 +239,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (isPortalLocator(stringifyLocator(locator)) && options.report && options.project) {
+    if (isPortalLocator(stringifyLocator(locator)) && options.report && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
       for (const [name, referencish] of pkg.packageDependencies) {
         const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
         const parentReferencish = parentDependencies.get(name);
         if (parentReferencish) {
           const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
           if (!areLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
-            options.report.reportError(MessageName.NM_CANT_INSTALL_PORTAL, `Cannot install ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(stringifyLocator(locator)))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`);
+            options.report.reportError(MessageName.NM_CANT_INSTALL_PORTAL, `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`);
             nonpersistableGraph = true;
           }
         }
