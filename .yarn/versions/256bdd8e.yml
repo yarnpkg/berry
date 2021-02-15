@@ -1,0 +1,8 @@
+releases:
+  "@yarnpkg/pnpify": patch
+
+declined:
+  - "@yarnpkg/plugin-node-modules"
+  - vscode-zipfs
+  - "@yarnpkg/builder"
+  - "@yarnpkg/cli"
