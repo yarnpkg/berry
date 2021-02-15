@@ -136,14 +136,6 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
   return map;
 };
 
-function isPortalLocator(locatorKey: LocatorKey): boolean {
-  let descriptor = structUtils.parseDescriptor(locatorKey);
-  if (structUtils.isVirtualDescriptor(descriptor))
-    descriptor = structUtils.devirtualizeDescriptor(descriptor);
-
-  return descriptor.range.startsWith(`portal:`);
-}
-
 /**
  * Traverses PnP tree and produces input for the `RawHoister`
  *
@@ -239,7 +231,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (isPortalLocator(stringifyLocator(locator)) && options.report && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
+    if (pkg.linkType === LinkType.SOFT && options.report && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
       for (const [name, referencish] of pkg.packageDependencies) {
         const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
         const parentReferencish = parentDependencies.get(name);
