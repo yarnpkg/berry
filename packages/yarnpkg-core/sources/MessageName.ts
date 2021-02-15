@@ -72,6 +72,7 @@ export enum MessageName {
   INVALID_CONFIGURATION_VALUE = 67,
   UNUSED_PACKAGE_EXTENSION = 68,
   REDUNDANT_PACKAGE_EXTENSION = 69,
+  NM_CANT_INSTALL_PORTAL = 70,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

@@ -1,6 +1,7 @@
-import {structUtils, Project}                                                 from '@yarnpkg/core';
-import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
+import {areLocatorsEqual}                                                     from '@yarnpkg/core/sources/structUtils';
+import {structUtils, Project, Report, MessageName}                            from '@yarnpkg/core';
 import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
+import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
 import {hoist, HoisterTree, HoisterResult}                                    from './hoist';
@@ -52,6 +53,7 @@ export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
   hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
   project?: Project;
+  report?: Report;
 }
 
 /** node_modules path segment */
@@ -88,8 +90,10 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  *
  * @returns hoisted `node_modules` directories representation in-memory
  */
-export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree => {
-  const {packageTree, hoistingLimits} = buildPackageTree(pnp, options);
+export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree | null => {
+  const {packageTree, hoistingLimits, nonpersistableGraph} = buildPackageTree(pnp, options);
+  if (nonpersistableGraph)
+    return null;
 
   const hoistedTree = hoist(packageTree, {hoistingLimits});
 
@@ -147,8 +151,9 @@ function isPortalLocator(locatorKey: LocatorKey): boolean {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>> } => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, nonpersistableGraph: boolean } => {
   const pnpRoots = pnp.getDependencyTreeRoots();
+  let nonpersistableGraph = false;
 
   const hoistingLimits = new Map<LocatorKey, Set<string>>();
   const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
@@ -234,6 +239,20 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
+    if (isPortalLocator(stringifyLocator(locator)) && options.report && options.project) {
+      for (const [name, referencish] of pkg.packageDependencies) {
+        const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
+        const parentReferencish = parentDependencies.get(name);
+        if (parentReferencish) {
+          const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
+          if (!areLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
+            options.report.reportError(MessageName.NM_CANT_INSTALL_PORTAL, `Cannot install ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(stringifyLocator(locator)))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`);
+            nonpersistableGraph = true;
+          }
+        }
+      }
+    }
+
     if (!node) {
       node = {
         name,
@@ -281,10 +300,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     parent.dependencies.add(node);
 
-    // If we link dependencies to file system we must not try to install children dependencies inside portal folders
-    const shouldAddChildrenDependencies = options.pnpifyFs || !isPortalLocator(nodeKey);
-
-    if (!isSeen && shouldAddChildrenDependencies) {
+    if (!isSeen) {
       for (const [depName, referencish] of allDependencies) {
         if (referencish !== null) {
           const depLocator = pnp.getLocator(depName, referencish);
@@ -309,7 +325,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
-  return {packageTree, hoistingLimits};
+  return {packageTree, hoistingLimits, nonpersistableGraph};
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {

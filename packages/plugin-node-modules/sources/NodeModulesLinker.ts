@@ -13,6 +13,7 @@ import {PnpApi, PackageInformation}                                             
 import cmdShim                                                                                 from '@zkochan/cmd-shim';
 import {UsageError}                                                                            from 'clipanion';
 import fs                                                                                      from 'fs';
+import {report}                                                                                from 'process';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -267,7 +268,9 @@ class NodeModulesInstaller implements Installer {
       },
     };
 
-    const nmTree = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
+    const nmTree = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project, report: this.opts.report});
+    if (!nmTree)
+      return undefined;
     const locatorMap = buildLocatorMap(nmTree);
 
     await persistNodeModules(preinstallState, locatorMap, {
