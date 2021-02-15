@@ -76,7 +76,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         const pnp = dynamicRequireNoCache(this.pnpFilePath);
         const nodeModulesTree = buildNodeModulesTree(pnp, this.options);
         if (!nodeModulesTree)
-          throw new Error(`Assertion failed. Have got non-peristable node_modules graph`);
+          throw new Error(`Assertion failed. Have got non-persistable node_modules graph`);
         this.watchManager.notifyWatchers((nodePath: PortablePath) => resolveNodeModulesPath(nodePath, this.nodeModulesTree));
       }
     });
