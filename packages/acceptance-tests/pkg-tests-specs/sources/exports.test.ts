@@ -1,4 +1,5 @@
 import {NativePath, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {createTemporaryFolder}                       from 'pkg-tests-core/sources/utils/fs';
 import {yarn}                                        from 'pkg-tests-core';
 
 export type Manifest = {
@@ -17,15 +18,6 @@ export async function writeTestPackage(path: PortablePath, manifest: Manifest, f
     await xfs.writeFilePromise(p, `module.exports = __filename;\n`);
   }));
 }
-
-// export function exportsError(message: string) {
-//   return {
-//     externalException: {
-//       // code: `ERR_PACKAGE_PATH_NOT_EXPORTED`,
-//       message: expect.stringContaining(message),
-//     },
-//   };
-// }
 
 export type Assertions = {
   pass?: Array<[/*request: */string, /*resolved: */string]>,
@@ -755,13 +747,87 @@ describe(`"exports" field`, () => {
       await xfs.writeFilePromise(`${path}/main.js` as PortablePath, ``);
       await xfs.writeFilePromise(`${path}/bar.js` as PortablePath, ``);
 
-      await expect(source(`require.resolve('pkg')`)).resolves.toStrictEqual(`${path}/main.js`);
-      await expect(source(`require.resolve('pkg/foo')`)).resolves.toStrictEqual(`${path}/bar.js`);
+      await expect(source(`require.resolve('pkg')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/main.js`));
+      await expect(source(`require.resolve('pkg/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/bar.js`));
       await expect(source(`require.resolve('pkg/bar')`)).rejects.toMatchObject({
         externalException: {
           message: expect.stringContaining(`Missing "./bar" export in "pkg" package`),
         },
       });
+    })
+  );
+
+  test(
+    `link: with exports (inside the project)`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await xfs.mkdirPromise(`${path}/linked` as PortablePath);
+
+      await xfs.writeJsonPromise(`${path}/linked/package.json` as PortablePath, {
+        name: `linked`,
+        exports: {
+          [`.`]: `./main.js`,
+          [`./foo`]: `./bar.js`,
+        },
+      });
+
+      await xfs.writeFilePromise(`${path}/linked/main.js` as PortablePath, ``);
+      await xfs.writeFilePromise(`${path}/linked/bar.js` as PortablePath, ``);
+
+      await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+        name: `pkg`,
+        dependencies: {
+          [`linked`]: `link:./linked`,
+        },
+        exports: {
+          [`.`]: `./main.js`,
+          [`./foo`]: `./bar.js`,
+        },
+      });
+
+      await xfs.writeFilePromise(`${path}/main.js` as PortablePath, ``);
+      await xfs.writeFilePromise(`${path}/bar.js` as PortablePath, ``);
+
+      await run(`install`);
+
+      await expect(source(`require.resolve('linked')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/linked/main.js`));
+      await expect(source(`require.resolve('linked/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/linked/bar.js`));
+    })
+  );
+
+  test(
+    `link: with exports (outside the project)`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      const tmp = await createTemporaryFolder();
+
+      await xfs.writeJsonPromise(`${tmp}/package.json` as PortablePath, {
+        name: `linked`,
+        exports: {
+          [`.`]: `./main.js`,
+          [`./foo`]: `./bar.js`,
+        },
+      });
+
+      await xfs.writeFilePromise(`${tmp}/main.js` as PortablePath, ``);
+      await xfs.writeFilePromise(`${tmp}/bar.js` as PortablePath, ``);
+
+      await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+        name: `pkg`,
+        dependencies: {
+          [`linked`]: `link:${tmp}`,
+        },
+        exports: {
+          [`.`]: `./main.js`,
+          [`./foo`]: `./bar.js`,
+        },
+      });
+
+      await xfs.writeFilePromise(`${path}/main.js` as PortablePath, ``);
+      await xfs.writeFilePromise(`${path}/bar.js` as PortablePath, ``);
+
+      await run(`install`);
+
+      await expect(source(`require.resolve('linked')`)).resolves.toStrictEqual(npath.fromPortablePath(`${tmp}/main.js`));
+      await expect(source(`require.resolve('linked/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${tmp}/bar.js`));
     })
   );
 });
