@@ -840,7 +840,7 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should install dependencies from portals`,
+  it(`should install dependencies from portals without modifying portal directory`,
     makeTemporaryEnv({},
       {
         nodeLinker: `node-modules`,
@@ -849,10 +849,13 @@ describe(`Node_Modules`, () => {
         await xfs.mktempPromise(async portalTarget => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
+            bin: `./index.js`,
             dependencies: {
               [`no-deps`]: `1.0.0`,
             },
           });
+          await xfs.writeFilePromise(`${portalTarget}/index.js` as PortablePath, ``);
+          const binScriptMode = (await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode;
 
           await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
             dependencies: {
@@ -868,6 +871,8 @@ describe(`Node_Modules`, () => {
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
             version: `1.0.0`,
           });
+          expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
+          expect((await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode).toEqual(binScriptMode);
         });
       })
   );

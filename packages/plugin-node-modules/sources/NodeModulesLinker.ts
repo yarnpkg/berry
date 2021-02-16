@@ -1005,7 +1005,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
-    await persistBinSymlinks(prevBinSymlinks, binSymlinks);
+    await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd);
 
     await writeInstallState(project, installState, binSymlinks);
   } finally {
@@ -1013,9 +1013,11 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   }
 }
 
-async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap) {
+async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap, projectCwd: PortablePath) {
   // Delete outdated .bin folders
   for (const location of previousBinSymlinks.keys()) {
+    if (ppath.contains(projectCwd, location) === null)
+      throw new Error(`Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`);
     if (!binSymlinks.has(location)) {
       const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
       await xfs.removePromise(binDir);
@@ -1023,6 +1025,8 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
   }
 
   for (const [location, symlinks] of binSymlinks) {
+    if (ppath.contains(projectCwd, location) === null)
+      throw new Error(`Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`);
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
     await xfs.mkdirPromise(binDir, {recursive: true});
@@ -1048,7 +1052,9 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       } else {
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
-        await xfs.chmodPromise(target, 0o755);
+        if (ppath.contains(target, projectCwd) !== null) {
+          await xfs.chmodPromise(target, 0o755);
+        }
       }
     }
   }
