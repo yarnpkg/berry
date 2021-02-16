@@ -839,4 +839,91 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  it(`should install dependencies from portals`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              [`portal`]: `portal:${portalTarget}`,
+            },
+          });
+
+          await run(`install`);
+
+          await expect(readJson(`${path}/node_modules/portal/package.json` as PortablePath)).resolves.toMatchObject({
+            name: `portal`,
+          });
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
+        });
+      })
+  );
+
+  it(`should error out on external portal requiring a dependency that conflicts with parent package`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              [`no-deps`]: `2.0.0`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+              'no-deps': `1.0.0`,
+            },
+          });
+
+          let stdout;
+          try {
+            await run(`install`);
+          } catch (e) {
+            stdout = e.stdout;
+          }
+
+          expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
+        });
+      })
+  );
+
+  it(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
+    makeTemporaryEnv({
+      dependencies: {
+        portal: `portal:./portal`,
+        'no-deps': `1.0.0`,
+      },
+    },
+    {
+      nodeLinker: `node-modules`,
+    },
+    async ({path, run}) => {
+      await writeJson(`${path}/portal/package.json` as PortablePath, {
+        name: `portal`,
+        dependencies: {
+          [`no-deps`]: `2.0.0`,
+        },
+      });
+
+      await expect(async () => await run(`install`)).not.toThrow();
+    })
+  );
 });
