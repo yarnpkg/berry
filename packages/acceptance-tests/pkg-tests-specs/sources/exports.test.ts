@@ -1,5 +1,5 @@
-import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {yarn}                     from 'pkg-tests-core';
+import {NativePath, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {yarn}                                        from 'pkg-tests-core';
 
 export type Manifest = {
   name: string;
@@ -47,8 +47,8 @@ export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<
 
     const makeScript = (request: string) => `require(${JSON.stringify(request)})`;
 
-    const getPathRelativeToPackageRoot = (filename: string) => {
-      const match = /node_modules\/.+?\/(.+)$/.exec(ppath.relative(path, filename as PortablePath));
+    const getPathRelativeToPackageRoot = (filename: NativePath) => {
+      const match = /node_modules\/.+?\/(.+)$/.exec(ppath.relative(path, npath.toPortablePath(filename)));
       if (match === null)
         throw new Error(`Assertion failed: Expected the match to be successful`);
 
