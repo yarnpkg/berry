@@ -839,4 +839,53 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  it(`should handle the edge case when node_modules is a file`, () => {
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.resolve(path, `node_modules` as Filename), ``);
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toEqual({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      }
+    );
+  });
+
+  it(`should tolerate if node_modules is a symlink to other directory`, () => {
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        const nmDir = ppath.resolve(path, `node_modules` as Filename);
+        const trueInstallDir = ppath.resolve(path, `target` as Filename);
+        await xfs.mkdirPromise(trueInstallDir);
+        await xfs.symlinkPromise(trueInstallDir, nmDir);
+
+        await run(`install`);
+
+        expect((await xfs.lstatPromise(nmDir)).isSymbolicLink()).toBeTruthy();
+        expect(await xfs.existsSync(ppath.join(trueInstallDir, `no-deps` as Filename))).toBeTruthy();
+      }
+    );
+  });
 });
