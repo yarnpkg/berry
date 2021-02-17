@@ -830,4 +830,43 @@ describe(`"exports" field`, () => {
       await expect(source(`require.resolve('linked/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${tmp}/bar.js`));
     })
   );
+
+  test(
+    `pnpIgnorePatterns with exports`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpIgnorePatterns: `foo/**`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+          name: `pkg`,
+          exports: {
+            [`.`]: `./main.js`,
+          },
+        });
+
+        await run(`install`);
+
+        await xfs.writeFilePromise(`${path}/main.js` as PortablePath, ``);
+
+        await xfs.mkdirpPromise(`${path}/node_modules/dep` as PortablePath);
+
+        await xfs.writeJsonPromise(`${path}/node_modules/dep/package.json` as PortablePath, {
+          name: `dep`,
+          exports: {
+            [`.`]: `./main.js`,
+          },
+        });
+
+        await xfs.writeFilePromise(`${path}/node_modules/dep/main.js` as PortablePath, ``);
+
+        await xfs.mkdirPromise(`${path}/foo` as PortablePath);
+
+        await xfs.writeFilePromise(`${path}/foo/node-resolution.js` as PortablePath, `module.exports = require.resolve('dep');\n`);
+
+        await expect(source(`require('./foo/node-resolution')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/node_modules/dep/main.js`));
+      },
+    ),
+  );
 });

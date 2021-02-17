@@ -200,13 +200,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
   function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
-    // Not all required files are part of the dependency tree (for example
-    // some may be covered by a pnpIgnorePatterns rule). It's not too clear
-    // how to detect the package root in those case, so leaving that for the
-    // next iteration.
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {includeDiscardFromLookup: true});
-    if (locator === null)
-      return unqualifiedPath;
+    if (locator === null) {
+      throw makeError(
+        ErrorCode.API_ERROR,
+        `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`,
+      );
+    }
 
     const {packageLocation} = getPackageInformationSafe(locator);
 
@@ -856,7 +856,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (unqualifiedPath === null)
       return null;
 
-    const remappedPath = !considerBuiltins || !builtinModules.has(request)
+    const isIssuerIgnored = () =>
+      issuer !== null
+        ? isPathIgnored(issuer)
+        : false;
+
+    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored()
       ? resolveUnqualifiedExport(request, unqualifiedPath, {conditions, require})
       : unqualifiedPath;
 

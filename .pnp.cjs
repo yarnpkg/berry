@@ -44539,14 +44539,14 @@ function makeApi(runtimeState, opts) {
     conditions = [],
     require = true
   } = {}) {
-    // Not all required files are part of the dependency tree (for example
-    // some may be covered by a pnpIgnorePatterns rule). It's not too clear
-    // how to detect the package root in those case, so leaving that for the
-    // next iteration.
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       includeDiscardFromLookup: true
     });
-    if (locator === null) return unqualifiedPath;
+
+    if (locator === null) {
+      throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`);
+    }
+
     const {
       packageLocation
     } = getPackageInformationSafe(locator);
@@ -45146,7 +45146,10 @@ function makeApi(runtimeState, opts) {
       considerBuiltins
     });
     if (unqualifiedPath === null) return null;
-    const remappedPath = !considerBuiltins || !builtinModules.has(request) ? resolveUnqualifiedExport(request, unqualifiedPath, {
+
+    const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
+
+    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath, {
       conditions,
       require
     }) : unqualifiedPath;
