@@ -10295,6 +10295,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.3.2"],
             ["stream-to-promise", "npm:2.2.0"],
             ["strip-ansi", "npm:6.0.0"],
+            ["sucrase", "npm:3.17.1"],
             ["tar", "npm:6.0.5"],
             ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
@@ -27418,6 +27419,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["mz", [
+        ["npm:2.7.0", {
+          "packageLocation": "./.yarn/cache/mz-npm-2.7.0-ec3cef4ec2-063966dd8e.zip/node_modules/mz/",
+          "packageDependencies": [
+            ["mz", "npm:2.7.0"],
+            ["any-promise", "npm:1.3.0"],
+            ["object-assign", "npm:4.1.1"],
+            ["thenify-all", "npm:1.6.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["name-all-modules-plugin", [
         ["npm:1.0.1", {
           "packageLocation": "./.yarn/cache/name-all-modules-plugin-npm-1.0.1-eb8b2ec267-018be54a13.zip/node_modules/name-all-modules-plugin/",
@@ -34829,6 +34842,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["sucrase", [
+        ["npm:3.17.1", {
+          "packageLocation": "./.yarn/cache/sucrase-npm-3.17.1-f7278527de-7e0bf20b1e.zip/node_modules/sucrase/",
+          "packageDependencies": [
+            ["sucrase", "npm:3.17.1"],
+            ["commander", "npm:4.1.1"],
+            ["glob", "npm:7.1.6"],
+            ["lines-and-columns", "npm:1.1.6"],
+            ["mz", "npm:2.7.0"],
+            ["pirates", "npm:4.0.1"],
+            ["ts-interface-checker", "npm:0.1.13"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["sudo-prompt", [
         ["npm:8.2.5", {
           "packageLocation": "./.yarn/cache/sudo-prompt-npm-8.2.5-b17ae60552-65ec59be02.zip/node_modules/sudo-prompt/",
@@ -35385,6 +35413,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["thenify", [
+        ["npm:3.3.1", {
+          "packageLocation": "./.yarn/cache/thenify-npm-3.3.1-030bedb22c-c3cbda4f5f.zip/node_modules/thenify/",
+          "packageDependencies": [
+            ["thenify", "npm:3.3.1"],
+            ["any-promise", "npm:1.3.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["thenify-all", [
+        ["npm:1.6.0", {
+          "packageLocation": "./.yarn/cache/thenify-all-npm-1.6.0-96309bbc8b-22775c13a1.zip/node_modules/thenify-all/",
+          "packageDependencies": [
+            ["thenify-all", "npm:1.6.0"],
+            ["thenify", "npm:3.3.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["throat", [
         ["npm:5.0.0", {
           "packageLocation": "./.yarn/cache/throat-npm-5.0.0-288ce6540a-2fa41c09cc.zip/node_modules/throat/",
@@ -35793,6 +35841,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/true-case-path-npm-2.2.1-0454edfb3a-9633164369.zip/node_modules/true-case-path/",
           "packageDependencies": [
             ["true-case-path", "npm:2.2.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["ts-interface-checker", [
+        ["npm:0.1.13", {
+          "packageLocation": "./.yarn/cache/ts-interface-checker-npm-0.1.13-0c7b064494-df3e240963.zip/node_modules/ts-interface-checker/",
+          "packageDependencies": [
+            ["ts-interface-checker", "npm:0.1.13"]
           ],
           "linkType": "HARD",
         }]

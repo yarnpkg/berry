@@ -7,6 +7,8 @@ import {UsageError}                                                             
 import pLimit, {Limit}                                                                                  from 'p-limit';
 import semver                                                                                           from 'semver';
 import {PassThrough, Writable}                                                                          from 'stream';
+import {transform as sucrase}                                                                           from 'sucrase';
+import {runInNewContext}                                                                                from 'vm';
 
 import {CorePlugin}                                                                                     from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
@@ -995,8 +997,26 @@ export class Configuration {
         return object.default || object;
       };
 
+      const loadTsFile = (file: PortablePath) => {
+        const name = ppath.basename(file).replace(/\..*$/, ``);
+        const source = xfs.readFileSync(file, `utf8`);
+        const compiled = sucrase(source, {transforms: [`typescript`, `imports`]});
+
+        const prefix = `({name: ${JSON.stringify(name)}, factory: require => {const exports = {}, module = {exports}; (() => {`;
+        const suffix = `})(); return module.exports.default;}})`;
+
+        try {
+          const final = prefix + compiled.code + suffix;
+          return runInNewContext(final, {});
+        } catch {
+          throw new Error(`Failed to evaluate the plugin located at ${file}`);
+        }
+      };
+
       const importPlugin = (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+        const {factory, name} = pluginPath.endsWith(`.ts`)
+          ? loadTsFile(pluginPath)
+          : miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
