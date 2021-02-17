@@ -27,6 +27,7 @@
 never modifies files inside target portal directories due to security reasons. For this reason the
 portal dependencies must not have dependencies with different versions from their parent, the linker will
 produce an error and abandon install if the conflict with parent dependencies is detected.
+
 ### Bugfixes
 
 - The patched fs now supports file URLs.
