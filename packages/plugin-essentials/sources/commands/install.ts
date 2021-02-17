@@ -2,7 +2,6 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                                               from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
-import {TRAVIS}                                                                             from 'ci-info';
 import {Command, Option, Usage}                                                             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
