@@ -25,7 +25,9 @@
 
 - The patched fs now supports file URLs.
 - The node-modules linker now ensures that hoisting result is terminal, by doing several hoisting rounds when needed
+- The node-modules linker now tolerates if node_modules is a symbolic link and does not recreates it
 - Prettier SDK does not use in memory node_modules anymore, instead it relies on prettier plugins to be specified in `plugins` prettier config property.
+
 ### Settings
 
 - Various `initFields` edge cases have been fixed.
