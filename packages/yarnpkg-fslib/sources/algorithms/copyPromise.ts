@@ -157,7 +157,7 @@ function makeCloneLinkOperation<P extends Path>(opFs: FakeFS<P>, destination: P,
         await opFs.copyFilePromise(source, destination, fs.constants.COPYFILE_FICLONE_FORCE);
         isCloneSupportedCache.set(opFs, true);
       } catch (err) {
-        if (err.code === `ENOSYS` || err.code === `ENOSUP`) {
+        if (err.code === `ENOSYS` || err.code === `ENOTSUP`) {
           isCloneSupportedCache.set(opFs, false);
           await makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy)();
         } else {
