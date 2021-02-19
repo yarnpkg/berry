@@ -7,13 +7,12 @@ import {Path, convertPath} from '../path';
 const defaultTime = new Date(315532800 * 1000);
 
 export enum LinkStrategy {
-  None,
-  Allow,
-  ReadOnly,
+  Allow = `allow`,
+  ReadOnly = `readOnly`,
 }
 
 export type CopyOptions = {
-  linkStrategy: LinkStrategy,
+  linkStrategy: LinkStrategy | null,
   stableTime: boolean,
   stableSort: boolean,
   overwrite: boolean,
@@ -186,13 +185,13 @@ async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations,
   }
 
   const linkStrategy = opts.linkStrategy
-    ?? LinkStrategy.None;
+    ?? null;
 
   const op = destinationFs as any === sourceFs as any
-    ? linkStrategy !== LinkStrategy.None
+    ? linkStrategy !== null
       ? makeCloneLinkOperation(destinationFs, destination, source as any as P1, sourceStat, linkStrategy)
       : async () => destinationFs.copyFilePromise(source as any as P1, destination, fs.constants.COPYFILE_FICLONE)
-    : linkStrategy !== LinkStrategy.None
+    : linkStrategy !== null
       ? makeLinkOperation(destinationFs, destination, source as any as P1, sourceStat, linkStrategy)
       : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
 
