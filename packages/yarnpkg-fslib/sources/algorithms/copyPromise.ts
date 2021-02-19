@@ -6,7 +6,14 @@ import {Path, convertPath} from '../path';
 // 1980-01-01, like Fedora
 const defaultTime = new Date(315532800 * 1000);
 
+export enum LinkStrategy {
+  None,
+  Allow,
+  ReadOnly,
+}
+
 export type CopyOptions = {
+  linkStrategy: LinkStrategy,
   stableTime: boolean,
   stableSort: boolean,
   overwrite: boolean,
@@ -127,6 +134,47 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
   return updated;
 }
 
+const isCloneSupportedCache = new WeakMap();
+
+function makeLinkOperation<P extends Path>(opFs: FakeFS<P>, destination: P, source: P, sourceStat: Stats, linkStrategy: LinkStrategy) {
+  return async () => {
+    await opFs.linkPromise(source, destination);
+
+    if (linkStrategy === LinkStrategy.ReadOnly) {
+      // We mutate the stat, otherwise it'll be reset by copyImpl
+      sourceStat.mode &= ~0o222;
+
+      await opFs.chmodPromise(source, sourceStat.mode);
+    }
+  };
+}
+
+function makeCloneLinkOperation<P extends Path>(opFs: FakeFS<P>, destination: P, source: P, sourceStat: Stats, linkStrategy: LinkStrategy) {
+  const isCloneSupported = isCloneSupportedCache.get(opFs);
+
+  if (typeof isCloneSupported === `undefined`) {
+    return async () => {
+      try {
+        await opFs.copyFilePromise(source, destination, fs.constants.COPYFILE_FICLONE_FORCE);
+        isCloneSupportedCache.set(opFs, true);
+      } catch (err) {
+        if (err.code === `ENOSYS`) {
+          isCloneSupportedCache.set(opFs, false);
+          await makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy)();
+        } else {
+          throw err;
+        }
+      }
+    };
+  } else {
+    if (isCloneSupported) {
+      return async () => opFs.copyFilePromise(source, destination, fs.constants.COPYFILE_FICLONE_FORCE);
+    } else {
+      return makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy);
+    }
+  }
+}
+
 async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
@@ -137,9 +185,16 @@ async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations,
     }
   }
 
+  const linkStrategy = opts.linkStrategy
+    ?? LinkStrategy.None;
+
   const op = destinationFs as any === sourceFs as any
-    ? async () => destinationFs.copyFilePromise(source as any as P1, destination, fs.constants.COPYFILE_FICLONE)
-    : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
+    ? linkStrategy !== LinkStrategy.None
+      ? makeCloneLinkOperation(destinationFs, destination, source as any as P1, sourceStat, linkStrategy)
+      : async () => destinationFs.copyFilePromise(source as any as P1, destination, fs.constants.COPYFILE_FICLONE)
+    : linkStrategy !== LinkStrategy.None
+      ? makeLinkOperation(destinationFs, destination, source as any as P1, sourceStat, linkStrategy)
+      : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
 
   prelayout.push(async () => op());
   return true;
