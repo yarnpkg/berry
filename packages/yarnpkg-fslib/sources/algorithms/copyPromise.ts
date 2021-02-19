@@ -143,7 +143,7 @@ function makeLinkOperation<P extends Path>(opFs: FakeFS<P>, destination: P, sour
       // We mutate the stat, otherwise it'll be reset by copyImpl
       sourceStat.mode &= ~0o222;
 
-      await opFs.chmodPromise(source, sourceStat.mode);
+      await opFs.chmodPromise(destination, sourceStat.mode);
     }
   };
 }
