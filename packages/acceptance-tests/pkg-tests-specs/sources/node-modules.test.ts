@@ -844,7 +844,7 @@ describe(`Node_Modules`, () => {
     `should not warn when depending on workspaces with postinstall`,
     makeTemporaryEnv(
       {
-        workspaces: ['dep'],
+        workspaces: [`dep`],
         dependencies: {
           dep: `workspace:*`,
         },
@@ -852,18 +852,18 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({ path, run }) => {
+      async ({path, run}) => {
         await writeJson(`${path}/dep/package.json`, {
           name: `dep`,
           scripts: {
             postinstall: `echo 'dep'`,
           },
         });
-  
+
         const {stdout} = await run(`install`);
-  
+
         expect(stdout).not.toContain(`YN0006`);
       }
     )
-  );  
+  );
 });
