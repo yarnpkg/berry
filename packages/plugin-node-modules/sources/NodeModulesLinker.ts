@@ -296,6 +296,10 @@ class NodeModulesInstaller implements Installer {
       if (typeof slot === `undefined`)
         throw new Error(`Assertion failed: Expected the slot to exist`);
 
+      // Workspaces are built by the core
+      if (this.opts.project.tryWorkspaceByLocator(slot.pkg))
+        continue;
+
       const buildScripts = jsInstallUtils.extractBuildScripts(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
       if (buildScripts.length === 0)
         continue;
