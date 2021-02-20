@@ -225,4 +225,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       protobufjs: `^6.8.6`,
     },
   }],
+  // https://github.com/nextauthjs/next-auth/pull/1034
+  [`next-auth@*`, {
+    dependencies: {
+      process: `^0.11.10`,
+    },
+  }],
 ];
