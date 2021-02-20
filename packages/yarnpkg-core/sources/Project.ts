@@ -942,7 +942,8 @@ export class Project {
         const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
         packageLocations.set(pkg.locatorHash, location);
 
-        if (buildScripts.length > 0) {
+        // Virtual workspaces shouldn't be built as they don't really exist
+        if (!structUtils.isVirtualLocator(pkg) && buildScripts.length > 0) {
           packageBuildDirectives.set(pkg.locatorHash, {
             directives: buildScripts,
             buildLocations: [location],
