@@ -472,4 +472,49 @@ describe(`hoist`, () => {
     ]);
     expect(getTreeHeight(hoist(toTree(tree), {check: true, hoistingLimits}))).toEqual(3);
   });
+
+  it(`should hoist a tree which requires multiple passes to get terminal result`, () => {
+    // . -> A -> D@X -> F@X -> E@X -> B@Y -> C@Z
+    //                             -> C@X
+    //                      -> C@Z
+    //               -> C@X
+    //   -> B@X
+    //   -> C@Z
+    //   -> D@Y
+    //   -> E@Y
+    //   -> F@Y
+    // We try to hoist everything we can to the `.` node first, we cannot hoist anything
+    // Then we try to hoist everything we can to `A` (`C@Z` has a priority, because its more popular), we have:
+    // . -> A -> D@X -> C@X
+    //        -> F@X
+    //        -> E@X -> C@X
+    //        -> B@Y
+    //        -> C@Z
+    //   -> B@X
+    //   -> C@Z
+    //   -> D@Y
+    //   -> E@Y
+    //   -> F@Y
+    // And now we can hoist `C@Z` from `A`, but we need another pass to do it and the final result will be:
+    // . -> A -> D@X -> C@X
+    //        -> F@X
+    //        -> E@X -> C@X
+    //        -> B@Y
+    //   -> B@X
+    //   -> C@Z
+    //   -> D@Y
+    //   -> E@Y
+    //   -> F@Y
+    const tree = {
+      '.': {dependencies: [`A`, `B@X`, `C@Z`, `D@Y`, `E@Y`, `F@Y`]},
+      A: {dependencies: [`D@X`]},
+      'D@X': {dependencies: [`F@X`, `C@X`]},
+      'F@X': {dependencies: [`E@X`, `C@Z`]},
+      'E@X': {dependencies: [`B@Y`, `C@X`]},
+      'B@Y': {dependencies: [`C@Z`]},
+    };
+    const hoistedTree = hoist(toTree(tree), {check: true});
+    const AC = Array.from(Array.from(hoistedTree.dependencies).filter(x => x.name === `A`)[0].dependencies).filter(x => x.name === `C`);
+    expect(AC).toEqual([]);
+  });
 });

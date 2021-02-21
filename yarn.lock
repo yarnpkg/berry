@@ -5420,7 +5420,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     esbuild-wasm: ^0.8.36
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
@@ -5470,7 +5470,8 @@ __metadata:
     "@yarnpkg/shell": "workspace:^2.4.1"
     chalk: ^3.0.0
     ci-info: ^2.0.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
+    fromentries: ^1.2.0
     micromatch: ^4.0.2
     semver: ^7.1.2
     string.prototype.replaceall: ^1.0.4
@@ -5510,7 +5511,7 @@ __metadata:
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^2.0.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
     diff: ^4.0.1
     globby: ^11.0.1
@@ -5541,7 +5542,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     globby: ^11.0.1
     micromatch: ^4.0.2
     p-limit: ^2.2.0
@@ -5750,7 +5751,7 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:^0.2.0"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     babel-jest: ^26.0.1
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     eslint: ^6.8.0
     eslint-plugin-arca: ^0.10.0
     eslint-plugin-react: ^7.20.0
@@ -5806,6 +5807,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^2.4.0"
     "@yarnpkg/plugin-patch": "workspace:^2.1.2"
     resolve: ^1.17.0
+    semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/core": ^2.4.0
     "@yarnpkg/plugin-patch": ^2.1.2
@@ -5821,7 +5823,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
@@ -5841,7 +5843,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
@@ -5864,7 +5866,7 @@ __metadata:
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
     "@yarnpkg/parsers": "workspace:^2.3.0"
     ci-info: ^2.0.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     enquirer: ^2.3.6
     lodash: ^4.17.15
     micromatch: ^4.0.2
@@ -5952,7 +5954,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     lodash: ^4.17.15
     tslib: ^1.13.0
   peerDependencies:
@@ -5974,7 +5976,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.1.1"
     "@yarnpkg/plugin-essentials": "workspace:^2.4.0"
     algoliasearch: ^4.2.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     diff: ^4.0.1
     ink: ^3.0.7
     ink-text-input: ^4.0.1
@@ -6016,7 +6018,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^2.3.2"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     "@zkochan/cmd-shim": ^4.3.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     tslib: ^1.13.0
   peerDependencies:
@@ -6036,7 +6038,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-npm": "workspace:^2.4.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     enquirer: ^2.3.6
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6078,7 +6080,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-stage": "workspace:^2.1.2"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
     tslib: ^1.13.0
@@ -6096,7 +6098,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
@@ -6115,7 +6117,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-stage": "workspace:^2.1.2"
     "@yarnpkg/pnp": "workspace:^2.3.2"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6133,7 +6135,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
     typescript: 4.1.0-beta
   peerDependencies:
@@ -6177,7 +6179,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.1.1"
     "@yarnpkg/parsers": "workspace:^2.3.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     ink: ^3.0.7
     react: ^16.13.1
     semver: ^7.1.2
@@ -6199,7 +6201,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
@@ -6239,7 +6241,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.3.0"
     "@yarnpkg/pnp": "workspace:^2.3.2"
     chalk: ^3.0.0
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     comment-json: ^2.2.0
     eslint: ^6.8.0
     lodash: ^4.17.15
@@ -6267,7 +6269,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.3.0"
-    clipanion: ^3.0.0-rc.6
+    clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
@@ -8798,14 +8800,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^3.0.0-rc.6":
-  version: 3.0.0-rc.6
-  resolution: "clipanion@npm:3.0.0-rc.6"
+"clipanion@npm:^3.0.0-rc.10":
+  version: 3.0.0-rc.10
+  resolution: "clipanion@npm:3.0.0-rc.10"
   dependencies:
     typanion: ^3.3.0
   peerDependencies:
     typanion: "*"
-  checksum: b0f9dc32a3f926d9d411bdf539a843162307f2cba07f604c15d49b4a96aab92874df9044fac6fb4c25518b489a8d6b9a34bfdcd1f33b389f969258abd7810e6d
+  checksum: 23f317cb94dd7d4d2f573ed54e5dfc78b05ce22233b80d64a3cbb152110f907dcc5c9d0bbab930cb1d11fffb1fbb82c156f28678eb70a27a6e26b39a622e9e2d
   languageName: node
   linkType: hard
 
@@ -12727,6 +12729,13 @@ __metadata:
     inherits: ^2.0.1
     readable-stream: ^2.0.0
   checksum: 5f1a9bbff02d30cf5b4f12cfef20b47455876f8318b92d275ca39e3c5adf0636d3a0d8f4821a1c245339c47e79a551dce9ce5c7d9236c16347b934dc13d1d408
+  languageName: node
+  linkType: hard
+
+"fromentries@npm:^1.2.0":
+  version: 1.3.2
+  resolution: "fromentries@npm:1.3.2"
+  checksum: 5cc722e4e3fd333ba75f31dd3ef80b4a6c405d8814e86e343b4676c1483c00f4f29b39aca462d268e918b3316a4fb03cea8022458fd8ad965f251362a129783f
   languageName: node
   linkType: hard
 
@@ -26665,31 +26674,31 @@ typescript@4.1.0-beta:
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: cf3413606dfe8a8c8e08392afe1f52975541b900ad407bc072279ad27b57ce4939eac389e74477bb0f8747122cf3442b944023ddfd87143d3b9ea3122fff40ad
+  checksum: cc7bbd5b746a427c19b2f91eeef23fa1367bf7a327a5c78423fe2b8610b0c2346bd427594b222373f71609622ac51c562c31b014fdede75da9439bbb6ec0f11c
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@4.1.0-beta#builtin<compat/typescript>":
   version: 4.1.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2537751eed5f4b407c0f07f52917a2cc62dccbb9119d1be14e11a4171ab9cb841910c06f11d88651f9dc5ff25915c845495b70cc3992ec6518f54a165a1f2738
+  checksum: 8f8f9508d07a655f8a9381329a0ace866a9c4923837892722f8cecbc6763df83e952dd0e1be9f6baaa0dd28291251506e97837e6b159b6b64843571abea26110
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 452cdd20d801630727433a990652c1e65f5eb5586383dda60f178b4fbda5c7951256f9aa31327c73722af9b1b664e3a53d724aabfd8a68866e9b1631818f004c
+  checksum: 251df026e882c7d31165ad6f5a2aa8a24b43655766d1f008f4548ccb6944188a251e7d359763e3d330999c200506ab7322b703cf33429c9482cb7013e9a1fdd7
   languageName: node
   linkType: hard
 

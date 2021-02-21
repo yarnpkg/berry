@@ -30,5 +30,8 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
+
+        echo '{"useTaobaoRegistry": false}' | tee ~/.vuerc
+
         yarn dlx -p @vue/cli vue create -d my-vue && cd my-vue
         yarn build

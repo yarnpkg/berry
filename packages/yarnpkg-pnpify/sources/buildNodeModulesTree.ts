@@ -33,6 +33,7 @@ export type NodeModulesPackageNode = {
   linkType: LinkType,
   // Contains ["node_modules"] if there's nested n_m entries
   dirList?: undefined,
+  nodePath: string,
   aliases: Array<string>,
 };
 
@@ -352,11 +353,12 @@ function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, opti
 const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, options: NodeModulesTreeOptions): NodeModulesTree => {
   const tree: NodeModulesTree = new Map();
 
-  const makeLeafNode = (locator: PhysicalPackageLocator, aliases: Array<string>): {locator: LocatorKey, target: PortablePath, linkType: LinkType, aliases: Array<string>} => {
+  const makeLeafNode = (locator: PhysicalPackageLocator, nodePath: string, aliases: Array<string>): {locator: LocatorKey, nodePath: string, target: PortablePath, linkType: LinkType, aliases: Array<string>} => {
     const {linkType, target} = getTargetLocatorPath(locator, pnp, options);
 
     return {
       locator: stringifyLocator(locator),
+      nodePath,
       target,
       linkType,
       aliases,
@@ -376,7 +378,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
   };
 
   const seenNodes = new Set<HoisterResult>();
-  const buildTree = (pkg: HoisterResult, locationPrefix: PortablePath) => {
+  const buildTree = (pkg: HoisterResult, locationPrefix: PortablePath, parentNodePath: string) => {
     if (seenNodes.has(pkg))
       return;
 
@@ -397,7 +399,8 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       const nodeModulesDirPath = ppath.join(locationPrefix, NODE_MODULES);
       const nodeModulesLocation = ppath.join(nodeModulesDirPath, ...packageNameParts);
 
-      const leafNode = makeLeafNode(locator, references.slice(1));
+      const nodePath = `${parentNodePath}/${locator.name}`;
+      const leafNode = makeLeafNode(locator, parentNodePath, references.slice(1));
       if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX)) {
         const prevNode = tree.get(nodeModulesLocation);
         if (prevNode) {
@@ -408,9 +411,9 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
             const locator2 = structUtils.parseLocator(leafNode.locator);
 
             if (prevNode.linkType !== leafNode.linkType)
-              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different link types`);
+              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different link types ${prevNode.nodePath}/${structUtils.stringifyLocator(locator1)} and ${parentNodePath}/${structUtils.stringifyLocator(locator2)}`);
             else if (locator1.identHash !== locator2.identHash)
-              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different idents ${structUtils.stringifyLocator(locator1)} and ${structUtils.stringifyLocator(locator2)}`);
+              throw new Error(`Assertion failed: ${nodeModulesLocation} cannot merge nodes with different idents ${prevNode.nodePath}/${structUtils.stringifyLocator(locator1)} and ${parentNodePath}/s${structUtils.stringifyLocator(locator2)}`);
 
             leafNode.aliases = [...leafNode.aliases, ...prevNode.aliases, structUtils.parseLocator(prevNode.locator).reference];
           }
@@ -441,14 +444,14 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         }
       }
 
-      buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target : nodeModulesLocation);
+      buildTree(dep, leafNode.linkType === LinkType.SOFT ? leafNode.target : nodeModulesLocation, nodePath);
     }
   };
 
-  const rootNode = makeLeafNode({name: hoistedTree.name, reference: Array.from(hoistedTree.references)[0] as string}, []);
+  const rootNode = makeLeafNode({name: hoistedTree.name, reference: Array.from(hoistedTree.references)[0] as string}, ``, []);
   const rootPath = rootNode.target;
   tree.set(rootPath, rootNode);
-  buildTree(hoistedTree, rootPath);
+  buildTree(hoistedTree, rootPath, ``);
 
   return tree;
 };

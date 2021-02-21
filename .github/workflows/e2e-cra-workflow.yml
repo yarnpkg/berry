@@ -31,10 +31,12 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra && cd my-cra
+        yarn add -D eslint-config-react-app
         yarn build
 
     - name: 'Running the TypeScript integration test'
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
+        yarn add -D eslint-config-react-app
         yarn build

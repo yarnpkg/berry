@@ -146,7 +146,7 @@ export class NpmSemverResolver implements Resolver {
 
     // Show deprecation warnings
     if (typeof manifest.raw.deprecated === `string`)
-      opts.report.reportWarning(MessageName.DEPRECATED_PACKAGE, `${structUtils.prettyLocator(opts.project.configuration, locator)} is deprecated: ${manifest.raw.deprecated}`);
+      opts.report.reportWarningOnce(MessageName.DEPRECATED_PACKAGE, `${structUtils.prettyLocator(opts.project.configuration, locator)} is deprecated: ${manifest.raw.deprecated}`);
 
     return {
       ...locator,

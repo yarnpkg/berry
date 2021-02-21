@@ -125,10 +125,10 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
       },
 
       onRelative: async () => {
-        if (parentFetch === null)
+        if (effectiveParentFetch === null)
           throw new Error(`Assertion failed: The parent locator should have been fetched`);
 
-        return await parentFetch.packageFs.readFilePromise(patchPath, `utf8`);
+        return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
       },
 
       onBuiltin: async name => {

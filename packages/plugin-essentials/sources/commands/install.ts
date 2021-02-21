@@ -1,8 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils} from '@yarnpkg/core';
-import {xfs, ppath}                                                                         from '@yarnpkg/fslib';
+import {xfs, ppath, Filename}                                                               from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
-import {TRAVIS}                                                                             from 'ci-info';
 import {Command, Option, Usage}                                                             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -193,13 +192,11 @@ export default class YarnCommand extends BaseCommand {
     // Note: it's been deprecated because we're now locking more than just the
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: !isGCP && !TRAVIS,
+      await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
+        error: false,
       });
 
-      if (exitCode !== null) {
-        return exitCode;
-      }
+      this.immutable = this.frozenLockfile;
     }
 
     // We also want to prevent them from using --cache-folder
@@ -235,6 +232,39 @@ export default class YarnCommand extends BaseCommand {
 
       if (fixReport.hasErrors()) {
         return fixReport.exitCode();
+      }
+    }
+
+    if (configuration.projectCwd !== null && typeof configuration.sources.get(`nodeLinker`) === `undefined`) {
+      const projectCwd = configuration.projectCwd;
+
+      let content;
+      try {
+        content = await xfs.readFilePromise(ppath.join(projectCwd, Filename.lockfile), `utf8`);
+      } catch {}
+
+      // If migrating from a v1 install, we automatically enable the node-modules linker,
+      // since that's likely what the author intended to do.
+      if (content?.includes(`yarn lockfile v1`)) {
+        const nmReport = await StreamReport.start({
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+          includeFooter: false,
+        }, async report => {
+          report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
+          report.reportSeparator();
+
+          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
+
+          await Configuration.updateConfiguration(projectCwd, {
+            nodeLinker: `node-modules`,
+          });
+        });
+
+        if (nmReport.hasErrors()) {
+          return nmReport.exitCode();
+        }
       }
     }
 
