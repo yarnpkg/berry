@@ -32,6 +32,6 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra && cd my-cra
-        yarn dlx -p @storybook/cli sb init --yes
+        yarn dlx -p @storybook/cli@next sb init --yes
         yarn build-storybook
 
