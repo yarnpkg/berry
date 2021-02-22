@@ -429,7 +429,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
   return {anotherRoundNeeded, isGraphChanged};
 };
 
-const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason}: {outputReason: boolean}): HoistInfo => {
+const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason}: {outputReason: boolean}): HoistInfo => {
   let reasonRoot;
   let reason: string | null = null;
   let dependsOn: Set<HoisterWorkTree> | null = new Set();
@@ -489,7 +489,7 @@ const getNodeHoistInfo = (rootNodePathLocators: Set<Locator>, nodePath: Array<Ho
           continue;
 
         const parentDepNode = parent.dependencies.get(name);
-        if (parentDepNode) {
+        if (parentDepNode && rootNode.dependencies.get(name) !== parentDepNode) {
           if (idx === nodePath.length - 1) {
             dependsOn!.add(parentDepNode);
           } else {
@@ -539,7 +539,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     const dependantTree = new Map<PackageName, Set<PackageName>>();
     const hoistInfos = new Map<HoisterWorkTree, HoistInfo>();
     for (const subDependency of getSortedRegularDependencies(parentNode)) {
-      const hoistInfo = getNodeHoistInfo(rootNodePathLocators, [rootNode, ...nodePath, parentNode], subDependency, usedDependencies, hoistIdents, hoistIdentMap, shadowedNodes, {outputReason: options.debugLevel >= DebugLevel.REASONS});
+      const hoistInfo = getNodeHoistInfo(rootNode, rootNodePathLocators, [rootNode, ...nodePath, parentNode], subDependency, usedDependencies, hoistIdents, hoistIdentMap, shadowedNodes, {outputReason: options.debugLevel >= DebugLevel.REASONS});
 
       hoistInfos.set(subDependency, hoistInfo);
       if (hoistInfo.isHoistable === Hoistable.DEPENDS) {
