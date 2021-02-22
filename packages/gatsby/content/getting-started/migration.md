@@ -108,7 +108,7 @@ Now you should have a working Yarn Plug'n'Play setup, but your repository might 
 
 All of this and more is documented in the following sections. In general, we advise you at this point to try to run your application and see what breaks, then check here to find out tips on how to correct your install.
 
-## General Advices
+## General Advice
 
 ### Upgrade to Node 10.19 or newer
 
