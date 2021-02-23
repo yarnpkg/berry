@@ -6,11 +6,12 @@ export function backportClipanionCompatibility(clipanion: any) {
 
   for (const fn of [`Array`, `Boolean`, `String`]) {
     clipanion.Command[fn] = (...args: Array<any>) => (instance: any, propertyName: any) => {
-      Object.defineProperty(instance, propertyName, {
+      const value = clipanion.Option[fn](...args);
+      Object.defineProperty(instance, `__${propertyName}`, {
         configurable: false,
         enumerable: true,
-        value: clipanion.Option[fn](...args),
-        writable: true,
+        get() { return value; },
+        set(value) { this[propertyName] = value; },
       });
     };
   }
