@@ -44,7 +44,7 @@ describe(`Commands`, () => {
         const fileUser = fileSource.replace(`require(dep)`, `42`);
         await xfs.writeFilePromise(updateFile, fileUser);
 
-        await run(`patch-commit`, `-s`, updateFolder);
+        await run(`patch-commit`, `-s`, npath.fromPortablePath(updateFolder));
         await run(`install`);
 
         await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
