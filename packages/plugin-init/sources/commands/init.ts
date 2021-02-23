@@ -183,8 +183,9 @@ export default class InitCommand extends BaseCommand {
 
       const gitignoreLines = [
         `/.yarn/*`,
-        `!/.yarn/releases`,
+        `!/.yarn/patches`,
         `!/.yarn/plugins`,
+        `!/.yarn/releases`,
         `!/.yarn/sdks`,
         ``,
         `# Swap the comments on the following lines if you don't wish to use zero-installs`,

@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": minor
   "@yarnpkg/core": minor
+  "@yarnpkg/plugin-init": minor
   "@yarnpkg/plugin-patch": major
 
 declined:
@@ -13,7 +14,6 @@ declined:
   - "@yarnpkg/plugin-git"
   - "@yarnpkg/plugin-github"
   - "@yarnpkg/plugin-http"
-  - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-node-modules"
