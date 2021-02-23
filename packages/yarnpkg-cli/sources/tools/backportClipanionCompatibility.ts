@@ -10,8 +10,12 @@ export function backportClipanionCompatibility(clipanion: any) {
       Object.defineProperty(instance, `__${propertyName}`, {
         configurable: false,
         enumerable: true,
-        get() { return value; },
-        set(value) { this[propertyName] = value; },
+        get() {
+          return value;
+        },
+        set(value) {
+          this[propertyName] = value;
+        },
       });
     };
   }
