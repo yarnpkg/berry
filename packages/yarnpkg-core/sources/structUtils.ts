@@ -615,7 +615,7 @@ export function slugifyIdent(ident: Ident) {
 /**
  * Returns a string from a locator, formatted as a slug (eg. `@types-lodash-npm-1.0.0-abcdef1234`).
  */
-export function slugifyLocator(locator: Locator) {
+export function slugifyLocator(locator: Locator, ext: string = ``) {
   const {protocol, selector} = parseRange(locator.reference);
 
   const humanProtocol = protocol !== null
@@ -642,7 +642,7 @@ export function slugifyLocator(locator: Locator) {
     ? `${slugifyIdent(locator)}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
     : `${slugifyIdent(locator)}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
 
-  return toFilename(slug);
+  return toFilename(`${slug}${ext}`);
 }
 
 /**
