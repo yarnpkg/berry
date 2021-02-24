@@ -152,6 +152,10 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
 }
 
 export async function extractPackageToDisk(locator: Locator, {cache, project}: {cache: Cache, project: Project}) {
+  const pkg = project.storedPackages.get(locator.locatorHash);
+  if (typeof pkg === `undefined`)
+    throw new Error(`Assertion failed: Expected the package to be registered`);
+
   const checksums = project.storedChecksums;
   const report = new ThrowReport();
 
@@ -160,23 +164,32 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 
   const temp = await xfs.mktempPromise();
 
-  await xfs.copyPromise(temp, fetchResult.prefixPath, {
-    baseFs: fetchResult.packageFs,
-  });
+  const sourcePath = ppath.join(temp, `source` as Filename);
+  const userPath = ppath.join(temp, `user` as Filename);
+  const metaPath = ppath.join(temp, `.yarn-patch.json` as Filename);
 
-  await xfs.writeJsonPromise(ppath.join(temp, `.yarn-patch.json` as Filename), {
-    locator: structUtils.stringifyLocator(locator),
-  });
+  await Promise.all([
+    xfs.copyPromise(sourcePath, fetchResult.prefixPath, {
+      baseFs: fetchResult.packageFs,
+    }),
+    xfs.copyPromise(userPath, fetchResult.prefixPath, {
+      baseFs: fetchResult.packageFs,
+    }),
+    xfs.writeJsonPromise(metaPath, {
+      locator: structUtils.stringifyLocator(locator),
+      version: pkg.version,
+    }),
+  ]);
 
   xfs.detachTemp(temp);
-  return temp;
+  return userPath;
 }
 
 export async function diffFolders(folderA: PortablePath, folderB: PortablePath) {
   const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
 
-  const {stdout, stderr} = await execUtils.execvp(`git`, [`diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
+  const {stdout, stderr} = await execUtils.execvp(`git`, [`-c`, `core.safecrlf=false`, `diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, `--text`, folderAN, folderBN], {
     cwd: npath.toPortablePath(process.cwd()),
   });
 
