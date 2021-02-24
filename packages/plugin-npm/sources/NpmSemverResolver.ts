@@ -97,7 +97,8 @@ export class NpmSemverResolver implements Resolver {
     return references
       .map(reference => {
         try {
-          return new semverUtils.SemVer(reference.slice(PROTOCOL.length));
+          const {selector} = structUtils.parseRange(reference, {requireProtocol: PROTOCOL});
+          return new semverUtils.SemVer(selector);
         } catch {
           return null;
         }
