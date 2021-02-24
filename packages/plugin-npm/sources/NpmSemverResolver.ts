@@ -99,13 +99,12 @@ export class NpmSemverResolver implements Resolver {
         const {selector} = structUtils.parseRange(reference, {requireProtocol: PROTOCOL});
         const version = new semverUtils.SemVer(selector);
 
-        if (!range.test(version))
-          return miscUtils.mapAndFilter.skip;
+        if (range.test(version)) {
+          return {reference, version};
+        }
+      } catch { }
 
-        return {reference, version};
-      } catch {
-        return miscUtils.mapAndFilter.skip;
-      }
+      return miscUtils.mapAndFilter.skip;
     })
       .sort((a, b) => -a.version.compare(b.version))
       .map(({reference}) => structUtils.makeLocator(descriptor, reference));
