@@ -832,7 +832,7 @@ describe(`"exports" field`, () => {
   );
 
   test(
-    `pnpIgnorePatterns with exports`,
+    `pnpIgnorePatterns with exports (issuer ignored)`,
     makeTemporaryEnv(
       {},
       {
@@ -868,5 +868,13 @@ describe(`"exports" field`, () => {
         await expect(source(`require('./foo/node-resolution')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/node_modules/dep/main.js`));
       },
     ),
+  );
+
+  // TODO: write a better, self-contained test
+  test(
+    `pnpIgnorePatterns with exports (subpath ignored)`,
+    async () => {
+      expect(require.resolve(`@yarnpkg/monorepo/.yarn/sdks/typescript/lib/tsserver.js`)).toStrictEqual(npath.join(__dirname, `../../../../.yarn/sdks/typescript/lib/tsserver.js`));
+    },
   );
 });
