@@ -44535,10 +44535,7 @@ function makeApi(runtimeState, opts) {
    */
 
 
-  function applyNodeExportsResolution(unqualifiedPath, {
-    conditions = [],
-    require = true
-  } = {}) {
+  function applyNodeExportsResolution(unqualifiedPath) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       resolveIgnored: true,
       includeDiscardFromLookup: true
@@ -44563,10 +44560,10 @@ function makeApi(runtimeState, opts) {
     if (!isRelativeRegexp.test(subpath)) subpath = `./${subpath}`;
     const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
       browser: false,
-      require,
+      require: true,
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions
+      conditions: []
     });
     if (typeof resolvedExport === `string`) return ppath.join(packageLocation, resolvedExport);
     return null;
@@ -45095,10 +45092,10 @@ function makeApi(runtimeState, opts) {
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request, unqualifiedPath, opts) {
+  function resolveUnqualifiedExport(request, unqualifiedPath) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request)) return unqualifiedPath;
-    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, opts);
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
 
     if (unqualifiedExportPath) {
       return ppath.normalize(unqualifiedExportPath);
@@ -45140,9 +45137,7 @@ function makeApi(runtimeState, opts) {
 
   function resolveRequest(request, issuer, {
     considerBuiltins,
-    extensions,
-    conditions,
-    require
+    extensions
   } = {}) {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {
       considerBuiltins
@@ -45151,10 +45146,7 @@ function makeApi(runtimeState, opts) {
 
     const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
 
-    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath, {
-      conditions,
-      require
-    }) : unqualifiedPath;
+    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath) : unqualifiedPath;
 
     try {
       return resolveUnqualified(remappedPath, {
@@ -45223,9 +45215,6 @@ function makeApi(runtimeState, opts) {
       const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null) return null;
       return npath.fromPortablePath(resolution);
-    }),
-    resolveUnqualifiedExport: maybeLog(`resolveUnqualifiedExport`, (request, unqualifiedPath) => {
-      return npath.fromPortablePath(resolveUnqualifiedExport(npath.toPortablePath(request), npath.toPortablePath(unqualifiedPath)));
     }),
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath, opts) => {
       return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
