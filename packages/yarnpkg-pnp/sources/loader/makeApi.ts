@@ -1,12 +1,12 @@
-import {ppath, Filename}                                                                                                                                                                                                    from '@yarnpkg/fslib';
-import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                                                 from '@yarnpkg/fslib';
-import {Module}                                                                                                                                                                                                             from 'module';
-import {resolve as resolveExport}                                                                                                                                                                                           from 'resolve.exports';
-import {inspect}                                                                                                                                                                                                            from 'util';
+import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
+import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
+import {Module}                                                                                                                                                                            from 'module';
+import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
+import {inspect}                                                                                                                                                                           from 'util';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions, ResolveUnqualifiedExportOptions} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
-import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                                                            from './internalTools';
+import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -199,7 +199,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    *
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
-  function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {
       resolveIgnored: true,
       includeDiscardFromLookup: true,
@@ -232,10 +232,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
       browser: false,
-      require,
+      require: true,
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions,
+      conditions: [],
     });
 
     if (typeof resolvedExport === `string`)
@@ -812,12 +812,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, opts?: ResolveUnqualifiedExportOptions) {
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request))
       return unqualifiedPath;
 
-    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, opts);
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
     if (unqualifiedExportPath) {
       return ppath.normalize(unqualifiedExportPath);
     } else {
@@ -854,7 +854,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions, require}: ResolveRequestOptions = {}): PortablePath | null {
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
     if (unqualifiedPath === null)
       return null;
@@ -865,7 +865,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         : false;
 
     const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored()
-      ? resolveUnqualifiedExport(request, unqualifiedPath, {conditions, require})
+      ? resolveUnqualifiedExport(request, unqualifiedPath)
       : unqualifiedPath;
 
     try {
@@ -936,10 +936,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         return null;
 
       return npath.fromPortablePath(resolution);
-    }),
-
-    resolveUnqualifiedExport: maybeLog(`resolveUnqualifiedExport`, (request: NativePath, unqualifiedPath: NativePath) => {
-      return npath.fromPortablePath(resolveUnqualifiedExport(npath.toPortablePath(request), npath.toPortablePath(unqualifiedPath)));
     }),
 
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {

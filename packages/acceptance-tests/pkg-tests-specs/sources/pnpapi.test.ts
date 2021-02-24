@@ -69,15 +69,6 @@ describe(`Plug'n'Play API`, () => {
     );
 
     test(
-      `it should expose resolveUnqualifiedExport`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await run(`install`);
-
-        await expect(source(`typeof require('pnpapi').resolveUnqualifiedExport`)).resolves.toEqual(`function`);
-      }),
-    );
-
-    test(
       `it should expose resolveRequest`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);

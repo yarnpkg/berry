@@ -256,9 +256,6 @@ class NodeModulesInstaller implements Installer {
       resolveToUnqualified: () => {
         throw new Error(`Assertion failed: Unimplemented`);
       },
-      resolveUnqualifiedExport: () => {
-        throw new Error(`Assertion failed: Unimplemented`);
-      },
       resolveUnqualified: () => {
         throw new Error(`Assertion failed: Unimplemented`);
       },

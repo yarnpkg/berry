@@ -99,24 +99,12 @@ export type ResolveToUnqualifiedOptions = {
   considerBuiltins?: boolean,
 };
 
-export type ResolveUnqualifiedExportOptions = {
-  /**
-   * A list of extra conditions that should be accepted when found.
-   */
-  conditions?: Array<string>,
-  /**
-   * Whether to add "require" or "import" to the list of default conditions.
-   */
-  require?: boolean;
-};
-
 export type ResolveUnqualifiedOptions = {
   extensions?: Array<string>,
 };
 
 export type ResolveRequestOptions =
   ResolveToUnqualifiedOptions &
-  ResolveUnqualifiedExportOptions &
   ResolveUnqualifiedOptions;
 
 export type PnpApi = {
@@ -130,7 +118,6 @@ export type PnpApi = {
   findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null,
 
   resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => NativePath | null,
-  resolveUnqualifiedExport: (request: string, unqualified: NativePath, opts?: ResolveUnqualifiedExportOptions) => NativePath,
   resolveUnqualified: (unqualified: NativePath, opts?: ResolveUnqualifiedOptions) => NativePath,
   resolveRequest: (request: string, issuer: NativePath | null, opts?: ResolveRequestOptions) => NativePath | null,
 
