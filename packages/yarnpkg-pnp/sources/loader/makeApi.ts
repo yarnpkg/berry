@@ -200,11 +200,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
   function applyNodeExportsResolution(unqualifiedPath: PortablePath, {conditions = [], require = true}: ResolveUnqualifiedExportOptions = {}) {
-    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {includeDiscardFromLookup: true});
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {
+      resolveIgnored: true,
+      includeDiscardFromLookup: true,
+    });
     if (locator === null) {
       throw makeError(
-        ErrorCode.API_ERROR,
-        `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`,
+        ErrorCode.INTERNAL,
+        `The locator that owns the "${unqualifiedPath}" path can't be found inside the dependency tree (this is probably an internal error)`,
       );
     }
 
@@ -482,8 +485,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: PortablePath, {includeDiscardFromLookup = false}: {includeDiscardFromLookup?: boolean} = {}): PhysicalPackageLocator | null {
-    if (isPathIgnored(location))
+  function findPackageLocator(location: PortablePath, {resolveIgnored = false, includeDiscardFromLookup = false}: {resolveIgnored?: boolean, includeDiscardFromLookup?: boolean} = {}): PhysicalPackageLocator | null {
+    if (isPathIgnored(location) && !resolveIgnored)
       return null;
 
     let relativeLocation = ppath.relative(runtimeState.basePath, location);

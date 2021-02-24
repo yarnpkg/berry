@@ -44540,11 +44540,12 @@ function makeApi(runtimeState, opts) {
     require = true
   } = {}) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
+      resolveIgnored: true,
       includeDiscardFromLookup: true
     });
 
     if (locator === null) {
-      throw internalTools_makeError(ErrorCode.API_ERROR, `The resolveUnqualifiedExport function must be called with a valid unqualifiedPath`);
+      throw internalTools_makeError(ErrorCode.INTERNAL, `The locator that owns the "${unqualifiedPath}" path can't be found inside the dependency tree (this is probably an internal error)`);
     }
 
     const {
@@ -44801,9 +44802,10 @@ function makeApi(runtimeState, opts) {
 
 
   function findPackageLocator(location, {
+    resolveIgnored = false,
     includeDiscardFromLookup = false
   } = {}) {
-    if (isPathIgnored(location)) return null;
+    if (isPathIgnored(location) && !resolveIgnored) return null;
     let relativeLocation = ppath.relative(runtimeState.basePath, location);
     if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}`;
     if (!relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/`;
