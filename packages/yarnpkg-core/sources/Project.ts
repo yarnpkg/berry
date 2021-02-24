@@ -379,7 +379,7 @@ export class Project {
 
     const dup = this.workspacesByIdent.get(workspace.locator.identHash);
     if (typeof dup !== `undefined`)
-      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${workspaceCwd} conflicts with ${dup.cwd}`);
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${npath.fromPortablePath(workspaceCwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
 
     this.workspaces.push(workspace);
 
@@ -507,7 +507,7 @@ export class Project {
     for (const workspace of this.workspaces) {
       const pkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
       if (!pkg)
-        throw new Error(`Assertion failed: Expected workspace to have been resolved`);
+        throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.configuration, workspace)} (${formatUtils.pretty(this.configuration, ppath.join(workspace.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
 
       workspace.dependencies = new Map(pkg.dependencies);
     }
