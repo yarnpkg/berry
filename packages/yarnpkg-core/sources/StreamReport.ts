@@ -78,6 +78,9 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
 })) || `default`;
 
 export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  if (!configuration.get(`enableMessageNames`))
+    return ``;
+
   const num = name === null ? 0 : name;
   const label = stringifyMessageName(num);
 
@@ -90,6 +93,8 @@ export function formatName(name: MessageName | null, {configuration, json}: {con
 
 export function formatNameWithHyperlink(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
   const code = formatName(name, {configuration, json});
+  if (!code)
+    return code;
 
   // Only print hyperlinks if allowed per configuration
   if (!configuration.get(`enableHyperlinks`))
@@ -360,7 +365,10 @@ export class StreamReport extends Report {
 
     this.commit();
 
-    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
+    const formattedName = this.formatNameWithHyperlink(name);
+    const prefix = formattedName ? `${formattedName}: ` : ``;
+
+    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${this.formatIndent()}${text}`;
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
@@ -389,8 +397,11 @@ export class StreamReport extends Report {
 
     this.commit();
 
+    const formattedName = this.formatNameWithHyperlink(name);
+    const prefix = formattedName ? `${formattedName}: ` : ``;
+
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${prefix}${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -401,8 +412,11 @@ export class StreamReport extends Report {
 
     this.commit();
 
+    const formattedName = this.formatNameWithHyperlink(name);
+    const prefix = formattedName ? `${formattedName}: ` : ``;
+
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
+      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${prefix}${this.formatIndent()}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -584,7 +598,10 @@ export class StreamReport extends Report {
       const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
       const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
 
-      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
+      const formattedName = this.formatName(null);
+      const prefix = formattedName ? `${formattedName}: ` : ``;
+
+      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${spinner} ${ok}${ko}\n`);
     }
 
     this.progressTimeout = setTimeout(() => {

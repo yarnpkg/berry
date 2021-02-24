@@ -236,6 +236,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: isCI,
     defaultText: `<dynamic>`,
   },
+  enableMessageNames: {
+    description: `If true, the CLI will prefix most messages with codes suitable for search engines`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
