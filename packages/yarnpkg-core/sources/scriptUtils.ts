@@ -157,7 +157,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const logFile = ppath.join(logDir, `pack.log` as Filename);
 
       const stdin = null;
-      const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
+      const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: npath.fromPortablePath(cwd), report});
 
       const devirtualizedLocator = locator && structUtils.isVirtualLocator(locator)
         ? structUtils.devirtualizeLocator(locator)

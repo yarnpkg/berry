@@ -19,7 +19,7 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
 
   await wrapper.writeManifest();
 
-  await wrapper.writeBinary(`index.js` as PortablePath, {usePnpify: true});
+  await wrapper.writeBinary(`index.js` as PortablePath);
 
   return wrapper;
 };

@@ -194,14 +194,14 @@ export class Cache {
         const zipFs = await loader!();
         const realPath = zipFs.getRealPath();
         zipFs.saveAndClose();
-        return realPath;
+        return {source: `loader`, path: realPath} as const;
       }
 
       const tempDir = await xfs.mktempPromise();
       const tempPath = ppath.join(tempDir, this.getVersionFilename(locator));
 
       await xfs.copyFilePromise(mirrorPath, tempPath, fs.constants.COPYFILE_FICLONE);
-      return tempPath;
+      return {source: `mirror`, path: tempPath} as const;
     };
 
     const loadPackage = async () => {
@@ -210,7 +210,7 @@ export class Cache {
       if (this.immutable)
         throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
-      const originalPath = await loadPackageThroughMirror();
+      const {path: originalPath, source: packageSource} = await loadPackageThroughMirror();
 
       await xfs.chmodPromise(originalPath, 0o644);
 
@@ -222,11 +222,11 @@ export class Cache {
         throw new Error(`Assertion failed: Expected the cache path to be available`);
 
       return await this.writeFileWithLock(cachePath, async () => {
-        return await this.writeFileWithLock(mirrorPath, async () => {
+        return await this.writeFileWithLock(packageSource === `mirror` ? null : mirrorPath, async () => {
           // Doing a move is important to ensure atomic writes (todo: cross-drive?)
           await xfs.movePromise(originalPath, cachePath);
 
-          if (mirrorPath !== null)
+          if (packageSource !== `mirror` && mirrorPath !== null)
             await xfs.copyFilePromise(cachePath, mirrorPath, fs.constants.COPYFILE_FICLONE);
 
           return [cachePath, checksum] as const;

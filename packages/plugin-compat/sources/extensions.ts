@@ -219,4 +219,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'read-file-relative': `^1.2.0`,
     },
   }],
+  // https://github.com/googleapis/nodejs-firestore/pull/1425
+  [`@google-cloud/firestore@<=4.9.3`, {
+    dependencies: {
+      protobufjs: `^6.8.6`,
+    },
+  }],
 ];

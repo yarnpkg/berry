@@ -12,9 +12,14 @@ export default class PatchCommand extends BaseCommand {
   ];
 
   static usage: Usage = Command.Usage({
-    description: `
+    description: `prepare a package for patching`,
+    details: `
       This command will cause a package to be extracted in a temporary directory (under a folder named "patch-workdir"). This folder will be editable at will; running \`yarn patch\` inside it will then cause Yarn to generate a patchfile and register it into your top-level manifest (cf the \`patch:\` protocol).
     `,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
   });
 
   package = Option.String();
@@ -55,9 +60,15 @@ export default class PatchCommand extends BaseCommand {
 
     await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       const temp = await patchUtils.extractPackageToDisk(locator, {cache, project});
+
+      report.reportJson({
+        locator: structUtils.stringifyLocator(locator),
+        path: npath.fromPortablePath(temp),
+      });
 
       report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, locator)} got extracted with success!`);
       report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);

@@ -839,4 +839,31 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  test(
+    `should not warn when depending on workspaces with postinstall`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`dep`],
+        dependencies: {
+          dep: `workspace:*`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await writeJson(`${path}/dep/package.json`, {
+          name: `dep`,
+          scripts: {
+            postinstall: `echo 'dep'`,
+          },
+        });
+
+        const {stdout} = await run(`install`);
+
+        expect(stdout).not.toContain(`YN0006`);
+      }
+    )
+  );
 });
