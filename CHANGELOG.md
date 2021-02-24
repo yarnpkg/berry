@@ -26,6 +26,7 @@
 - The patched fs now supports file URLs.
 - The node-modules linker now ensures that hoisting result is terminal, by doing several hoisting rounds when needed
 - The node-modules linker no longer prints warnings about postinstall scripts when a workspace depends on another workspace with install scripts
+- The dependencies peer depending on their own parent are now properly hoisted by node-modules linker
 - Prettier SDK does not use in memory node_modules anymore, instead it relies on prettier plugins to be specified in `plugins` prettier config property.
 ### Settings
 
