@@ -222,6 +222,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
         try {
+          if (this.verbose)
+            report.reportInfo(null, `${prefix} Process started`);
+
           const exitCode = (await this.cli.run([this.commandName, ...this.args], {
             cwd: workspace.cwd,
             stdout,
@@ -231,11 +234,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           stdout.end();
           stderr.end();
 
-          const emptyStdout = await stdoutEnd;
-          const emptyStderr = await stderrEnd;
+          await stdoutEnd;
+          await stderrEnd;
 
-          if (this.verbose && emptyStdout && emptyStderr)
-            report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+          if (this.verbose)
+            report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})`);
 
           if (exitCode === 130) {
             // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
