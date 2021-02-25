@@ -36,14 +36,14 @@ export default class NewPluginCommand extends Command {
 
     await xfs.writeFilePromise(ppath.join(target, `sources/index.ts` as Filename), [
       `import {CommandContext, Plugin} from '@yarnpkg/core';\n`,
-      `import {Command} from 'clipanion';\n`,
+      `import {Command, Option} from 'clipanion';\n`,
       `\n`,
       `class HelloWorldCommand extends Command<CommandContext> {\n`,
       `  static paths = [\n`,
       `    [\`hello\`, \`world\`],\n`,
       `  ];\n`,
       `\n`,
-      `  name = Command.String(\`--name\`, \`John Doe\`, {\n`,
+      `  name = Option.String(\`--name\`, \`John Doe\`, {\n`,
       `    description: \`Your name\`,\n`,
       `  });\n`,
       `\n`,
