@@ -434,7 +434,7 @@ describe(`Plug'n'Play API`, () => {
 
           expect(typeof physicalPath).toEqual(`string`);
           expect(physicalPath).not.toEqual(virtualPath);
-          expect(xfs.existsSync(physicalPath as any)).toEqual(true);
+          expect(xfs.existsSync(physicalPath as PortablePath)).toEqual(true);
         }),
       );
     });
