@@ -18,7 +18,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   /**
-   * The cache that will be used for all accesses occuring outside of a PnP context.
+   * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
   const defaultCache: NodeJS.NodeRequireCache = {};
