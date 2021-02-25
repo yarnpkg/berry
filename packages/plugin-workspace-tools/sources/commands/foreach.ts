@@ -225,6 +225,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           if (this.verbose)
             report.reportInfo(null, `${prefix} Process started`);
 
+          const start = Date.now();
+
           const exitCode = (await this.cli.run([this.commandName, ...this.args], {
             cwd: workspace.cwd,
             stdout,
@@ -237,8 +239,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           await stdoutEnd;
           await stderrEnd;
 
-          if (this.verbose)
-            report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})`);
+          const end = Date.now();
+          if (this.verbose) {
+            const timerMessage = configuration.get(`enableTimers`) ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}` : ``;
+            report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})${timerMessage}`);
+          }
 
           if (exitCode === 130) {
             // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
