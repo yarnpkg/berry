@@ -10054,6 +10054,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@webpack-cli/package-utils", "npm:1.0.1-alpha.4"],
             ["@webpack-cli/logger", "virtual:7aee127304dc95be1013a5768dcb7a1de9d65fbb71e5cb99aeb6bd050f1c61c7495836b797b34aab4877eda17c41626b72153fb7c7fb2142098b8521bda15f4b#npm:1.0.1-alpha.4"],
             ["chalk", "npm:3.0.0"],
+            ["cross-spawn", "npm:7.0.3"],
             ["enquirer", "npm:2.3.6"],
             ["execa", "npm:4.0.2"]
           ],
@@ -43878,7 +43879,7 @@ function applyPatch(pnpapi, opts) {
   // @ts-expect-error
   const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
   /**
-   * The cache that will be used for all accesses occuring outside of a PnP context.
+   * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
   const defaultCache = {};
