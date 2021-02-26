@@ -48334,14 +48334,14 @@ function makeApi(runtimeState, opts) {
   }
 
   function trace(entry) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
 
-    const colors = (_b = (_a = process.stderr) === null || _a === void 0 ? void 0 : _a.hasColors()) !== null && _b !== void 0 ? _b : process.stdout.isTTY;
+    const colors = (_c = (_b = (_a = process.stderr) === null || _a === void 0 ? void 0 : _a.hasColors) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : process.stdout.isTTY;
 
     const c = (n, str) => `\u001b[${n}m${str}\u001b[0m`;
 
     const error = entry.error;
-    if (error) console.error(c(`31;1`, `✖ ${(_c = entry.error) === null || _c === void 0 ? void 0 : _c.message.replace(/\n.*/s, ``)}`));else console.error(c(`33;1`, `‼ Resolution`));
+    if (error) console.error(c(`31;1`, `✖ ${(_d = entry.error) === null || _d === void 0 ? void 0 : _d.message.replace(/\n.*/s, ``)}`));else console.error(c(`33;1`, `‼ Resolution`));
     if (entry.args.length > 0) console.error();
 
     for (const arg of entry.args) console.error(`  ${c(`37;1`, `In ←`)} ${(0,external_util_namespaceObject.inspect)(arg, {
@@ -48357,7 +48357,7 @@ function makeApi(runtimeState, opts) {
       })}`);
     }
 
-    const stack = (_e = (_d = new Error().stack.match(/(?<=^ +)at.*/gm)) === null || _d === void 0 ? void 0 : _d.slice(2)) !== null && _e !== void 0 ? _e : [];
+    const stack = (_f = (_e = new Error().stack.match(/(?<=^ +)at.*/gm)) === null || _e === void 0 ? void 0 : _e.slice(2)) !== null && _f !== void 0 ? _f : [];
 
     if (stack.length > 0) {
       console.error();

@@ -100,7 +100,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   function trace(entry: ReturnType<typeof makeLogEntry>) {
-    const colors = process.stderr?.hasColors() ?? process.stdout.isTTY;
+    const colors = process.stderr?.hasColors?.() ?? process.stdout.isTTY;
     const c = (n: number | string, str: string) => `\u001b[${n}m${str}\u001b[0m`;
 
     const error = entry.error;
