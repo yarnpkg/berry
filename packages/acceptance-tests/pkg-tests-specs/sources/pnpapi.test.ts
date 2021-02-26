@@ -1,12 +1,8 @@
-import {ppath, npath, xfs} from '@yarnpkg/fslib';
+import {ppath, npath, xfs, PortablePath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
 } = require(`pkg-tests-core`);
-
-const skipIfNode10 = process.version.startsWith(`v10.`)
-  ? test.skip
-  : test;
 
 describe(`Plug'n'Play API`, () => {
   test(
@@ -37,7 +33,7 @@ describe(`Plug'n'Play API`, () => {
       }),
     );
 
-    skipIfNode10(
+    test(
       `it shouldn't mess up when using createRequire on virtual files`,
       makeTemporaryEnv({
         private: true,
@@ -49,8 +45,8 @@ describe(`Plug'n'Play API`, () => {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        await xfs.mkdirpPromise(`${path}/workspace`);
-        await xfs.writeJsonPromise(`${path}/workspace/package.json`, {
+        await xfs.mkdirpPromise(`${path}/workspace` as PortablePath);
+        await xfs.writeJsonPromise(`${path}/workspace/package.json` as PortablePath, {
           name: `workspace`,
           peerDependencies: {
             [`no-deps`]: `*`,
@@ -64,7 +60,7 @@ describe(`Plug'n'Play API`, () => {
     );
 
     test(
-      `it should expose resolveToUnqualified`,
+      `it should expose resolveUnqualified`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
@@ -143,8 +139,8 @@ describe(`Plug'n'Play API`, () => {
             `packages/*`,
           ],
         }, async ({path, run, source}) => {
-          await xfs.mkdirpPromise(ppath.join(path, `packages/foo`));
-          await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json`), {
+          await xfs.mkdirpPromise(ppath.join(path, `packages/foo` as PortablePath));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json` as PortablePath), {
             name: `foo`,
             dependencies: {
               [`bar`]: `workspace:*`,
@@ -152,8 +148,8 @@ describe(`Plug'n'Play API`, () => {
             },
           });
 
-          await xfs.mkdirpPromise(ppath.join(path, `packages/bar`));
-          await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json`), {
+          await xfs.mkdirpPromise(ppath.join(path, `packages/bar` as PortablePath));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json` as PortablePath), {
             name: `bar`,
             peerDependencies: {
               [`no-deps`]: `1.0.0`,
@@ -186,8 +182,8 @@ describe(`Plug'n'Play API`, () => {
             `packages/*`,
           ],
         }, async ({path, run, source}) => {
-          await xfs.mkdirpPromise(ppath.join(path, `packages/foo`));
-          await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json`), {
+          await xfs.mkdirpPromise(ppath.join(path, `packages/foo` as PortablePath));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json` as PortablePath), {
             name: `foo`,
             dependencies: {
               [`bar`]: `workspace:*`,
@@ -195,8 +191,8 @@ describe(`Plug'n'Play API`, () => {
             },
           });
 
-          await xfs.mkdirpPromise(ppath.join(path, `packages/bar`));
-          await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json`), {
+          await xfs.mkdirpPromise(ppath.join(path, `packages/bar` as PortablePath));
+          await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json` as PortablePath), {
             name: `bar`,
             peerDependencies: {
               [`no-deps`]: `1.0.0`,
@@ -383,11 +379,11 @@ describe(`Plug'n'Play API`, () => {
           private: true,
           workspaces: [`packages/*`],
         }, async ({path, run, source}) => {
-          await xfs.mkdirpPromise(`${path}/packages/workspace-a`);
-          await xfs.writeJsonPromise(`${path}/packages/workspace-a/package.json`, {name: `workspace-a`});
+          await xfs.mkdirpPromise(`${path}/packages/workspace-a` as PortablePath);
+          await xfs.writeJsonPromise(`${path}/packages/workspace-a/package.json` as PortablePath, {name: `workspace-a`});
 
-          await xfs.mkdirpPromise(`${path}/packages/workspace-b`);
-          await xfs.writeJsonPromise(`${path}/packages/workspace-b/package.json`, {name: `workspace-b`});
+          await xfs.mkdirpPromise(`${path}/packages/workspace-b` as PortablePath);
+          await xfs.writeJsonPromise(`${path}/packages/workspace-b/package.json` as PortablePath, {name: `workspace-b`});
 
           await run(`install`);
 
@@ -438,7 +434,7 @@ describe(`Plug'n'Play API`, () => {
 
           expect(typeof physicalPath).toEqual(`string`);
           expect(physicalPath).not.toEqual(virtualPath);
-          expect(xfs.existsSync(physicalPath)).toEqual(true);
+          expect(xfs.existsSync(physicalPath as PortablePath)).toEqual(true);
         }),
       );
     });

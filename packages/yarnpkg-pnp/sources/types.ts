@@ -56,7 +56,7 @@ export type RuntimeState = {
   fallbackPool: Map<string, DependencyTarget>,
   ignorePattern: RegExp | null,
   packageLocationLengths: Array<number>,
-  packageLocatorsByLocations: Map<PortablePath, PhysicalPackageLocator | null>;
+  packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean} | null>;
   packageRegistry: PackageRegistry,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
@@ -95,6 +95,18 @@ export type PnpSettings = {
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
 
+export type ResolveToUnqualifiedOptions = {
+  considerBuiltins?: boolean,
+};
+
+export type ResolveUnqualifiedOptions = {
+  extensions?: Array<string>,
+};
+
+export type ResolveRequestOptions =
+  ResolveToUnqualifiedOptions &
+  ResolveUnqualifiedOptions;
+
 export type PnpApi = {
   VERSIONS: {std: number, [key: string]: number},
 
@@ -105,9 +117,9 @@ export type PnpApi = {
   getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null,
   findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null,
 
-  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean}) => NativePath | null,
-  resolveUnqualified: (unqualified: NativePath, opts?: {extensions?: Array<string>}) => NativePath,
-  resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => NativePath | null,
+  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => NativePath | null,
+  resolveUnqualified: (unqualified: NativePath, opts?: ResolveUnqualifiedOptions) => NativePath,
+  resolveRequest: (request: string, issuer: NativePath | null, opts?: ResolveRequestOptions) => NativePath | null,
 
   // Extension methods
   resolveVirtual?: (p: NativePath) => NativePath | null,

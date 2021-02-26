@@ -6221,6 +6221,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     "@yarnpkg/monorepo": "workspace:0.0.0"
+    resolve.exports: ^1.0.2
     tslib: ^1.13.0
     typescript: 4.1.0-beta
     webpack: ^5.1.1
@@ -23476,6 +23477,13 @@ fsevents@^1.2.7:
   version: 0.2.1
   resolution: "resolve-url@npm:0.2.1"
   checksum: 9e1cd0028d0f2e157a889a02653637c1c1d7f133aa47b75261b4590e84105e63fae3b6be31bad50d5b94e01898d9dbe6b95abe28db7eab46e22321f7cbf00273
+  languageName: node
+  linkType: hard
+
+"resolve.exports@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "resolve.exports@npm:1.0.2"
+  checksum: 012a46e3ae41c53762abf5b50ea1b4adf2de617bbea1dbc7bf6e609c1ceaedee7782acbc92d443951d5dd0c3a8fb1090ce73285a9ccc24b530e33b5e09ae196f
   languageName: node
   linkType: hard
 
