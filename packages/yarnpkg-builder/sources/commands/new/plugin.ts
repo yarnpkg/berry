@@ -35,15 +35,16 @@ export default class NewPluginCommand extends Command {
     await xfs.mkdirPromise(ppath.join(target, `sources` as Filename), {recursive: true});
 
     await xfs.writeFilePromise(ppath.join(target, `sources/index.ts` as Filename), [
-      `import {CommandContext, Plugin} from '@yarnpkg/core';\n`,
-      `import {Command} from 'clipanion';\n`,
+      `import {Plugin} from '@yarnpkg/core';\n`,
+      `import {BaseCommand} from '@yarnpkg/cli';\n`,
+      `import {Option} from 'clipanion';\n`,
       `\n`,
-      `class HelloWorldCommand extends Command<CommandContext> {\n`,
+      `class HelloWorldCommand extends BaseCommand {\n`,
       `  static paths = [\n`,
       `    [\`hello\`, \`world\`],\n`,
       `  ];\n`,
       `\n`,
-      `  name = Command.String(\`--name\`, \`John Doe\`, {\n`,
+      `  name = Option.String(\`--name\`, \`John Doe\`, {\n`,
       `    description: \`Your name\`,\n`,
       `  });\n`,
       `\n`,
@@ -71,6 +72,7 @@ export default class NewPluginCommand extends Command {
       main: `./sources/index.ts`,
       dependencies: {
         [`@yarnpkg/core`]: require(`@yarnpkg/builder/package.json`).dependencies[`@yarnpkg/core`],
+        [`@yarnpkg/cli`]: require(`@yarnpkg/builder/package.json`).dependencies[`@yarnpkg/cli`],
         [`@yarnpkg/builder`]: `^${require(`@yarnpkg/builder/package.json`).version}`,
         [`@types/node`]: `^${process.versions.node.split(`.`)[0]}.0.0`,
         [`clipanion`]: require(`@yarnpkg/builder/package.json`).dependencies.clipanion,
