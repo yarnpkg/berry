@@ -16444,6 +16444,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["npm:4.3.2", {
+          "packageLocation": "./.yarn/cache/debug-npm-4.3.2-f0148b6afe-5543570879.zip/node_modules/debug/",
+          "packageDependencies": [
+            ["debug", "npm:4.3.2"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["virtual:143147eb8dbdf7b460518a198f0ef110efa1d9c4edb6fcd3fa752efab8ea7be55bc17f11941eaf524b176ccca5dde77c8fef086126cf6c1b9b4da0734ce3fc62#npm:3.2.6", {
           "packageLocation": "./.yarn/$$virtual/debug-virtual-3b2bd64e52/0/cache/debug-npm-3.2.6-6214e40f12-619feb53b1.zip/node_modules/debug/",
           "packageDependencies": [
@@ -16461,6 +16468,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["debug", "virtual:2bcc47d217f870e3d52f0e55493dc34fd3da852877f7db32fa2940cc320151746026495daf6a34a974488cf5a949d93be1e2dc1ffba036faf081a9b15fcd2252#npm:2.6.9"],
             ["ms", "npm:2.0.0"],
+            ["supports-color", null]
+          ],
+          "packagePeers": [
+            "supports-color"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:460d9444915add735f87609474ac8cc53761acf2af668a7996b800b8378043218935fedd7557d2817bf8a9793a22d442589b43786dd84c67879d18507262fa4b#npm:4.3.2", {
+          "packageLocation": "./.yarn/$$virtual/debug-virtual-38dd63acae/0/cache/debug-npm-4.3.2-f0148b6afe-5543570879.zip/node_modules/debug/",
+          "packageDependencies": [
+            ["debug", "virtual:460d9444915add735f87609474ac8cc53761acf2af668a7996b800b8378043218935fedd7557d2817bf8a9793a22d442589b43786dd84c67879d18507262fa4b#npm:4.3.2"],
+            ["ms", "npm:2.1.2"],
             ["supports-color", null]
           ],
           "packagePeers": [
@@ -19344,6 +19363,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.10.1"],
             ["@types/eslint", null],
             ["@types/typescript", null],
+            ["@types/vue-template-compiler", null],
             ["@types/webpack", null],
             ["chalk", "npm:2.4.2"],
             ["cosmiconfig", "npm:6.0.0"],
@@ -19356,14 +19376,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"],
             ["tapable", "npm:1.1.3"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"],
+            ["vue-template-compiler", null],
             ["webpack", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.1.1"]
           ],
           "packagePeers": [
             "@types/eslint",
             "@types/typescript",
+            "@types/vue-template-compiler",
             "@types/webpack",
             "eslint",
             "typescript",
+            "vue-template-compiler",
             "webpack"
           ],
           "linkType": "HARD",
@@ -20462,17 +20485,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gatsby-plugin-favicon", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.6"],
             ["@types/gatsby", null],
             ["@types/react", "npm:16.9.2"],
+            ["@types/webpack", null],
             ["favicons-webpack-plugin", "virtual:856cbc387bd6a5b328b655b857152baf75a21c4d4cb561b33a64930a7961ad177fffb3c809e7488d3d722ed1be70afbfffaf1fa75358744f15f8fb208e6f28f3#https://github.com/Creatiwity/favicons-webpack-plugin.git#commit=0872de414061baaad0a2853c77ae75bc38b8bbbf"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
             ["html-react-parser", "virtual:856cbc387bd6a5b328b655b857152baf75a21c4d4cb561b33a64930a7961ad177fffb3c809e7488d3d722ed1be70afbfffaf1fa75358744f15f8fb208e6f28f3#npm:0.6.4"],
             ["lodash", "npm:4.17.15"],
-            ["react", "npm:16.13.1"]
+            ["react", "npm:16.13.1"],
+            ["webpack", null]
           ],
           "packagePeers": [
             "@types/gatsby",
             "@types/react",
+            "@types/webpack",
             "gatsby",
-            "react"
+            "react",
+            "webpack"
           ],
           "linkType": "HARD",
         }]
@@ -20647,6 +20674,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/gatsby", null],
             ["async", "npm:2.6.3"],
             ["bluebird", "npm:3.7.2"],
+            ["debug", "virtual:460d9444915add735f87609474ac8cc53761acf2af668a7996b800b8378043218935fedd7557d2817bf8a9793a22d442589b43786dd84c67879d18507262fa4b#npm:4.3.2"],
             ["fs-extra", "npm:8.1.0"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
             ["gatsby-core-utils", "npm:1.3.5"],
@@ -20705,6 +20733,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/reach__router", null],
             ["@types/react", "npm:16.9.2"],
             ["@types/react-dom", null],
+            ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.13.1"],
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],
             ["scroll-behavior", "npm:0.9.12"],
@@ -20729,6 +20758,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/reach__router", null],
             ["@types/react", null],
             ["@types/react-dom", null],
+            ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.13.1"],
             ["react-dom", "virtual:e721af34745e2aded5d4d499d50f62b576dd2080eb1f2bb52977c4bfa58f87cba61c1a822a17998b163819d9d9ffb45f4e1cfaad85154aa3bbe0834010be88eb#npm:16.13.1"],
             ["scroll-behavior", "npm:0.9.12"],
@@ -27370,6 +27400,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ms-npm-2.1.1-5b4fd72c86-81ad38c74d.zip/node_modules/ms/",
           "packageDependencies": [
             ["ms", "npm:2.1.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.1.2", {
+          "packageLocation": "./.yarn/cache/ms-npm-2.1.2-ec0c1512ff-9b65fb709b.zip/node_modules/ms/",
+          "packageDependencies": [
+            ["ms", "npm:2.1.2"]
           ],
           "linkType": "HARD",
         }]
@@ -39012,7 +39049,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 807:
+/***/ 289:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44127,24 +44164,37 @@ function hydrateRuntimeState(data, {
   const packageLocationLengths = new Set();
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
-      if (packageName === null !== (packageReference === null)) throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
+      var _a;
 
-      if (!packageInformationData.discardFromLookup) {
-        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-        const packageLocator = {
-          name: packageName,
-          reference: packageReference
-        };
-        packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
-        packageLocationLengths.add(packageInformationData.packageLocation.length);
+      if (packageName === null !== (packageReference === null)) throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
+      const discardFromLookup = (_a = packageInformationData.discardFromLookup) !== null && _a !== void 0 ? _a : false; // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
+
+      const packageLocator = {
+        name: packageName,
+        reference: packageReference
+      };
+      const entry = packageLocatorsByLocations.get(packageInformationData.packageLocation);
+
+      if (!entry) {
+        packageLocatorsByLocations.set(packageInformationData.packageLocation, {
+          locator: packageLocator,
+          discardFromLookup
+        });
+      } else {
+        entry.discardFromLookup = entry.discardFromLookup && discardFromLookup;
+
+        if (!discardFromLookup) {
+          entry.locator = packageLocator;
+        }
       }
 
+      packageLocationLengths.add(packageInformationData.packageLocation.length);
       let resolvedPackageLocation = null;
       return [packageReference, {
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
-        discardFromLookup: packageInformationData.discardFromLookup || false,
+        discardFromLookup,
 
         // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
@@ -44179,7 +44229,155 @@ function hydrateRuntimeState(data, {
     packageRegistry
   };
 }
+// CONCATENATED MODULE: ../../.yarn/cache/resolve.exports-npm-1.0.2-bbb8d62ef6-012a46e3ae.zip/node_modules/resolve.exports/dist/index.mjs
+/**
+ * @param {object} exports
+ * @param {Set<string>} keys
+ */
+function loop(exports, keys) {
+	if (typeof exports === 'string') {
+		return exports;
+	}
+
+	if (exports) {
+		let idx, tmp;
+		if (Array.isArray(exports)) {
+			for (idx=0; idx < exports.length; idx++) {
+				if (tmp = loop(exports[idx], keys)) return tmp;
+			}
+		} else {
+			for (idx in exports) {
+				if (keys.has(idx)) {
+					return loop(exports[idx], keys);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * @param {string} name The package name
+ * @param {string} entry The target entry, eg "."
+ * @param {number} [condition] Unmatched condition?
+ */
+function bail(name, entry, condition) {
+	throw new Error(
+		condition
+		? `No known conditions for "${entry}" entry in "${name}" package`
+		: `Missing "${entry}" export in "${name}" package`
+	);
+}
+
+/**
+ * @param {string} name the package name
+ * @param {string} entry the target path/import
+ */
+function toName(name, entry) {
+	return entry === name ? '.'
+		: entry[0] === '.' ? entry
+		: entry.replace(new RegExp('^' + name + '\/'), './');
+}
+
+/**
+ * @param {object} pkg package.json contents
+ * @param {string} [entry] entry name or import path
+ * @param {object} [options]
+ * @param {boolean} [options.browser]
+ * @param {boolean} [options.require]
+ * @param {string[]} [options.conditions]
+ */
+function resolve(pkg, entry='.', options={}) {
+	let { name, exports } = pkg;
+
+	if (exports) {
+		let { browser, require, conditions=[] } = options;
+
+		let target = toName(name, entry);
+		if (target[0] !== '.') target = './' + target;
+
+		if (typeof exports === 'string') {
+			return target === '.' ? exports : bail(name, target);
+		}
+
+		let allows = new Set(['default', ...conditions]);
+		allows.add(require ? 'require' : 'import');
+		allows.add(browser ? 'browser' : 'node');
+
+		let key, tmp, isSingle=false;
+
+		for (key in exports) {
+			isSingle = key[0] !== '.';
+			break;
+		}
+
+		if (isSingle) {
+			return target === '.'
+				? loop(exports, allows) || bail(name, target, 1)
+				: bail(name, target);
+		}
+
+		if (tmp = exports[target]) {
+			return loop(tmp, allows) || bail(name, target, 1);
+		}
+
+		for (key in exports) {
+			tmp = key[key.length - 1];
+			if (tmp === '/' && target.startsWith(key)) {
+				return (tmp = loop(exports[key], allows))
+					? (tmp + target.substring(key.length))
+					: bail(name, target, 1);
+			}
+			if (tmp === '*' && target.startsWith(key.slice(0, -1))) {
+				// do not trigger if no *content* to inject
+				if (target.substring(key.length - 1).length > 0) {
+					return (tmp = loop(exports[key], allows))
+						? tmp.replace('*', target.substring(key.length - 1))
+						: bail(name, target, 1);
+				}
+			}
+		}
+
+		return bail(name, target);
+	}
+}
+
+/**
+ * @param {object} pkg
+ * @param {object} [options]
+ * @param {string|boolean} [options.browser]
+ * @param {string[]} [options.fields]
+ */
+function legacy(pkg, options={}) {
+	let i=0, value,
+		browser = options.browser,
+		fields = options.fields || ['module', 'main'];
+
+	if (browser && !fields.includes('browser')) {
+		fields.unshift('browser');
+	}
+
+	for (; i < fields.length; i++) {
+		if (value = pkg[fields[i]]) {
+			if (typeof value == 'string') {
+				//
+			} else if (typeof value == 'object' && fields[i] == 'browser') {
+				if (typeof browser == 'string') {
+					value = value[browser=toName(pkg.name, browser)];
+					if (value == null) return browser;
+				}
+			} else {
+				continue;
+			}
+
+			return typeof value == 'string'
+				? ('./' + value.replace(/^\.?\//, ''))
+				: value;
+		}
+	}
+}
+
 // CONCATENATED MODULE: ./sources/loader/makeApi.ts
+
 
 
 
@@ -44196,7 +44394,9 @@ function makeApi(runtimeState, opts) {
 
   const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/; // Matches if the path must point to a directory (ie ends with /)
 
-  const isDirRegExp = /\/$/; // We only instantiate one of those so that we can use strict-equal comparisons
+  const isDirRegExp = /\/$/; // Matches if the path starts with a relative path qualifier (./, ../)
+
+  const isRelativeRegexp = /^\.{0,2}\//; // We only instantiate one of those so that we can use strict-equal comparisons
 
   const topLevelLocator = {
     name: null,
@@ -44357,6 +44557,46 @@ function makeApi(runtimeState, opts) {
     return false;
   }
   /**
+   * Implements the node resolution for the "exports" field
+   *
+   * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
+   */
+
+
+  function applyNodeExportsResolution(unqualifiedPath) {
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
+      resolveIgnored: true,
+      includeDiscardFromLookup: true
+    });
+
+    if (locator === null) {
+      throw internalTools_makeError(ErrorCode.INTERNAL, `The locator that owns the "${unqualifiedPath}" path can't be found inside the dependency tree (this is probably an internal error)`);
+    }
+
+    const {
+      packageLocation
+    } = getPackageInformationSafe(locator);
+    const manifestPath = ppath.join(packageLocation, Filename.manifest);
+    if (!opts.fakeFs.existsSync(manifestPath)) return null;
+    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(manifestPath, `utf8`));
+    let subpath = ppath.contains(packageLocation, unqualifiedPath);
+
+    if (subpath === null) {
+      throw internalTools_makeError(ErrorCode.INTERNAL, `unqualifiedPath doesn't contain the packageLocation (this is probably an internal error)`);
+    }
+
+    if (!isRelativeRegexp.test(subpath)) subpath = `./${subpath}`;
+    const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
+      browser: false,
+      require: true,
+      // TODO: implement support for the --conditions flag
+      // Waiting on https://github.com/nodejs/node/issues/36935
+      conditions: []
+    });
+    if (typeof resolvedExport === `string`) return ppath.join(packageLocation, resolvedExport);
+    return null;
+  }
+  /**
    * Implements the node resolution for folder access and extension selection
    */
 
@@ -44378,7 +44618,7 @@ function makeApi(runtimeState, opts) {
       let pkgJson;
 
       try {
-        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, `package.json`), `utf8`));
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, Filename.manifest), `utf8`));
       } catch (error) {}
 
       let nextUnqualifiedPath;
@@ -44586,8 +44826,11 @@ function makeApi(runtimeState, opts) {
    */
 
 
-  function findPackageLocator(location) {
-    if (isPathIgnored(location)) return null;
+  function findPackageLocator(location, {
+    resolveIgnored = false,
+    includeDiscardFromLookup = false
+  } = {}) {
+    if (isPathIgnored(location) && !resolveIgnored) return null;
     let relativeLocation = ppath.relative(runtimeState.basePath, location);
     if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}`;
     if (!relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/`;
@@ -44596,8 +44839,8 @@ function makeApi(runtimeState, opts) {
     while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length) from += 1;
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
-      const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
-      if (typeof locator === `undefined`) continue; // Ensures that the returned locator isn't a blacklisted one.
+      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]));
+      if (typeof entry === `undefined`) continue; // Ensures that the returned locator isn't a blacklisted one.
       //
       // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
       // happens with peer dependencies, which effectively have different sets of dependencies depending on their
@@ -44613,14 +44856,15 @@ function makeApi(runtimeState, opts) {
       // paths, we're able to print a more helpful error message that points out that a third-party package is doing
       // something incompatible!
 
-      if (locator === null) {
+      if (entry === null) {
         const locationForDisplay = getPathForDisplay(location);
         throw internalTools_makeError(ErrorCode.BLACKLISTED, `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`, {
           location: locationForDisplay
         });
       }
 
-      return locator;
+      if (entry.discardFromLookup && !includeDiscardFromLookup) continue;
+      return entry.locator;
     }
 
     return null;
@@ -44875,6 +45119,18 @@ function makeApi(runtimeState, opts) {
 
     return ppath.normalize(unqualifiedPath);
   }
+
+  function resolveUnqualifiedExport(request, unqualifiedPath) {
+    // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
+    if (isStrictRegExp.test(request)) return unqualifiedPath;
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
+
+    if (unqualifiedExportPath) {
+      return ppath.normalize(unqualifiedExportPath);
+    } else {
+      return unqualifiedPath;
+    }
+  }
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
@@ -44916,8 +45172,12 @@ function makeApi(runtimeState, opts) {
     });
     if (unqualifiedPath === null) return null;
 
+    const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
+
+    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath) : unqualifiedPath;
+
     try {
-      return resolveUnqualified(unqualifiedPath, {
+      return resolveUnqualified(remappedPath, {
         extensions
       });
     } catch (resolutionError) {
@@ -49859,7 +50119,7 @@ module.exports = require("path");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(807);
+/******/ 	return __webpack_require__(289);
 /******/ })()
 .default;
 });
