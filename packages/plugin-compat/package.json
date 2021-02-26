@@ -27,7 +27,7 @@
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\"",
     "test:plugin-compat": "run test:unit --config \"$(pwd)/jest.config.js\"",
-    "debug-patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
+    "debug:patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
   },
   "publishConfig": {
     "main": "./lib/index.js",
