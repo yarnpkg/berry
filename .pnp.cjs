@@ -10054,7 +10054,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@webpack-cli/package-utils", "npm:1.0.1-alpha.4"],
             ["@webpack-cli/logger", "virtual:7aee127304dc95be1013a5768dcb7a1de9d65fbb71e5cb99aeb6bd050f1c61c7495836b797b34aab4877eda17c41626b72153fb7c7fb2142098b8521bda15f4b#npm:1.0.1-alpha.4"],
             ["chalk", "npm:3.0.0"],
-            ["cross-spawn", "npm:7.0.3"],
             ["enquirer", "npm:2.3.6"],
             ["execa", "npm:4.0.2"]
           ],
@@ -16444,6 +16443,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["npm:4.3.2", {
+          "packageLocation": "./.yarn/cache/debug-npm-4.3.2-f0148b6afe-5543570879.zip/node_modules/debug/",
+          "packageDependencies": [
+            ["debug", "npm:4.3.2"]
+          ],
+          "linkType": "SOFT",
+        }],
         ["virtual:143147eb8dbdf7b460518a198f0ef110efa1d9c4edb6fcd3fa752efab8ea7be55bc17f11941eaf524b176ccca5dde77c8fef086126cf6c1b9b4da0734ce3fc62#npm:3.2.6", {
           "packageLocation": "./.yarn/$$virtual/debug-virtual-3b2bd64e52/0/cache/debug-npm-3.2.6-6214e40f12-619feb53b1.zip/node_modules/debug/",
           "packageDependencies": [
@@ -16461,6 +16467,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["debug", "virtual:2bcc47d217f870e3d52f0e55493dc34fd3da852877f7db32fa2940cc320151746026495daf6a34a974488cf5a949d93be1e2dc1ffba036faf081a9b15fcd2252#npm:2.6.9"],
             ["ms", "npm:2.0.0"],
+            ["supports-color", null]
+          ],
+          "packagePeers": [
+            "supports-color"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:460d9444915add735f87609474ac8cc53761acf2af668a7996b800b8378043218935fedd7557d2817bf8a9793a22d442589b43786dd84c67879d18507262fa4b#npm:4.3.2", {
+          "packageLocation": "./.yarn/$$virtual/debug-virtual-38dd63acae/0/cache/debug-npm-4.3.2-f0148b6afe-5543570879.zip/node_modules/debug/",
+          "packageDependencies": [
+            ["debug", "virtual:460d9444915add735f87609474ac8cc53761acf2af668a7996b800b8378043218935fedd7557d2817bf8a9793a22d442589b43786dd84c67879d18507262fa4b#npm:4.3.2"],
+            ["ms", "npm:2.1.2"],
             ["supports-color", null]
           ],
           "packagePeers": [
@@ -19344,6 +19362,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.10.1"],
             ["@types/eslint", null],
             ["@types/typescript", null],
+            ["@types/vue-template-compiler", null],
             ["@types/webpack", null],
             ["chalk", "npm:2.4.2"],
             ["cosmiconfig", "npm:6.0.0"],
@@ -19356,14 +19375,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:5.6.0"],
             ["tapable", "npm:1.1.3"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"],
+            ["vue-template-compiler", null],
             ["webpack", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.1.1"]
           ],
           "packagePeers": [
             "@types/eslint",
             "@types/typescript",
+            "@types/vue-template-compiler",
             "@types/webpack",
             "eslint",
             "typescript",
+            "vue-template-compiler",
             "webpack"
           ],
           "linkType": "HARD",
@@ -20651,7 +20673,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/gatsby", null],
             ["async", "npm:2.6.3"],
             ["bluebird", "npm:3.7.2"],
-            ["debug", "virtual:2bcc47d217f870e3d52f0e55493dc34fd3da852877f7db32fa2940cc320151746026495daf6a34a974488cf5a949d93be1e2dc1ffba036faf081a9b15fcd2252#npm:2.6.9"],
+            ["debug", "virtual:460d9444915add735f87609474ac8cc53761acf2af668a7996b800b8378043218935fedd7557d2817bf8a9793a22d442589b43786dd84c67879d18507262fa4b#npm:4.3.2"],
             ["fs-extra", "npm:8.1.0"],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
             ["gatsby-core-utils", "npm:1.3.5"],
@@ -20984,7 +21006,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/gatsby", null],
             ["@types/prismjs", null],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
-            ["lodash", "npm:4.17.15"],
             ["parse-numeric-range", "npm:0.0.2"],
             ["prismjs", "npm:1.16.0"],
             ["unist-util-visit", "npm:1.4.1"]
@@ -27378,6 +27399,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ms-npm-2.1.1-5b4fd72c86-81ad38c74d.zip/node_modules/ms/",
           "packageDependencies": [
             ["ms", "npm:2.1.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.1.2", {
+          "packageLocation": "./.yarn/cache/ms-npm-2.1.2-ec0c1512ff-9b65fb709b.zip/node_modules/ms/",
+          "packageDependencies": [
+            ["ms", "npm:2.1.2"]
           ],
           "linkType": "HARD",
         }]
