@@ -135,7 +135,7 @@
     },
     "enableImmutableInstalls": {
       "_package": "@yarnpkg/plugin-essentials",
-      "description": "If true, Yarn will refuse to change the installation artifacts (apart the cache) when running an install. This flag is quite intrusive, you typically should only set it on your CI by manually passing the `--immutable` flag to `yarn install`.",
+      "description": "If true (the default on CI), Yarn will refuse to change the installation artifacts (apart from the cache) when running an install. This flag is quite intrusive, you typically should only set it on your CI by manually passing the `--immutable` flag to `yarn install`.",
       "type": "boolean",
       "default": false
     },

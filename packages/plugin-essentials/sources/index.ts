@@ -85,7 +85,7 @@ declare module '@yarnpkg/core' {
 const plugin: Plugin = {
   configuration: {
     enableImmutableInstalls: {
-      description: `If true, prevents the install command from modifying the lockfile`,
+      description: `If true (the default on CI), prevents the install command from modifying the lockfile`,
       type: SettingsType.BOOLEAN,
       default: isCI,
     },
