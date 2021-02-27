@@ -312,6 +312,15 @@ async function main() {
 
   const jsPatchFile = path.join(__dirname, `../../sources/patches/typescript.patch.ts`);
   await execFile(`node`, [path.join(__dirname, `../createPatch.js`), aggregatePatchFile, jsPatchFile]);
+
+  // Remove old patches
+  const patchFilesSet = new Set(patchFiles);
+  for await (const {name: patchName} of await fs.promises.opendir(__dirname)) {
+    if (patchName.endsWith(`.diff`) && !patchFilesSet.has(path.join(__dirname, patchName))) {
+      console.log(`Cleanup; file ${patchName} not in use`);
+      await fs.promises.unlink(path.join(__dirname, patchName));
+    }
+  }
 }
 
 main().catch(err => {
