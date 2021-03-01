@@ -80,6 +80,10 @@ type VisitPatchPathOptions<T> = {
 };
 
 function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOptions<T>, patchPath: PortablePath) {
+  const optional = patchPath.startsWith(`~`);
+  if (optional)
+    patchPath = patchPath.slice(1) as PortablePath;
+
   const builtinMatch = patchPath.match(BUILTIN_REGEXP);
   if (builtinMatch !== null)
     return onBuiltin(builtinMatch[1]);
@@ -89,6 +93,14 @@ function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOp
   } else {
     return onRelative(patchPath);
   }
+}
+
+export function extractPatchFlags(patchPath: PortablePath) {
+  const optional = patchPath.startsWith(`~`);
+  if (optional)
+    patchPath = patchPath.slice(1) as PortablePath;
+
+  return {optional};
 }
 
 export function isParentRequired(patchPath: PortablePath) {
@@ -119,36 +131,40 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
   // First we obtain the specification for all the patches that we'll have to
   // apply to the original package.
   const patchFiles = await miscUtils.releaseAfterUseAsync(async () => {
-    return await Promise.all(patchPaths.map(async patchPath => visitPatchPath({
-      onAbsolute: async () => {
-        return await xfs.readFilePromise(patchPath, `utf8`);
-      },
+    return await Promise.all(patchPaths.map(async patchPath => {
+      const flags = extractPatchFlags(patchPath);
 
-      onRelative: async () => {
-        if (effectiveParentFetch === null)
-          throw new Error(`Assertion failed: The parent locator should have been fetched`);
+      const source = await visitPatchPath({
+        onAbsolute: async () => {
+          return await xfs.readFilePromise(patchPath, `utf8`);
+        },
 
-        return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
-      },
+        onRelative: async () => {
+          if (effectiveParentFetch === null)
+            throw new Error(`Assertion failed: The parent locator should have been fetched`);
 
-      onBuiltin: async name => {
-        return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
-          return hooks.getBuiltinPatch;
-        }, opts.project, name);
-      },
-    }, patchPath)));
+          return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
+        },
+
+        onBuiltin: async name => {
+          return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
+            return hooks.getBuiltinPatch;
+          }, opts.project, name);
+        },
+      }, patchPath);
+
+      return {...flags, source};
+    }));
   });
 
   // Normalizes the line endings to prevent mismatches when cloning a
   // repository on Windows systems (the default settings for Git are to
   // convert newlines back and forth, which would mess with the checksum)
-  return patchFiles.map(definition => {
-    if (typeof definition === `string`) {
-      return definition.replace(/\r\n?/g, `\n`);
-    } else {
-      return definition;
-    }
-  });
+  for (const spec of patchFiles)
+    if (typeof spec.source === `string`)
+      spec.source = spec.source.replace(/\r\n?/g, `\n`);
+
+  return patchFiles;
 }
 
 export async function extractPackageToDisk(locator: Locator, {cache, project}: {cache: Cache, project: Project}) {

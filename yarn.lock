@@ -3838,7 +3838,7 @@ __metadata:
 
 "@strictsoftware/typedoc-plugin-monorepo@patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby":
   version: 0.2.2
-  resolution: "@strictsoftware/typedoc-plugin-monorepo@patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=3cb6af&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
+  resolution: "@strictsoftware/typedoc-plugin-monorepo@patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=c53b58&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
   dependencies:
     highlight.js: ^9.15.6
     marked: ^0.8.0
@@ -12885,9 +12885,9 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@^1.2.7#builtin<compat/fsevents>":
+"fsevents@patch:fsevents@^1.2.7#~builtin<compat/fsevents>":
   version: 1.2.7
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#builtin<compat/fsevents>::version=1.2.7&hash=11e9ea"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.7#~builtin<compat/fsevents>::version=1.2.7&hash=1cc4b2"
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
@@ -12895,9 +12895,9 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@^2.1.2#builtin<compat/fsevents>, fsevents@patch:fsevents@~2.1.2#builtin<compat/fsevents>":
+"fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.1.2#~builtin<compat/fsevents>":
   version: 2.1.3
-  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#builtin<compat/fsevents>::version=2.1.3&hash=11e9ea"
+  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#~builtin<compat/fsevents>::version=2.1.3&hash=1cc4b2"
   dependencies:
     node-gyp: latest
   checksum: e2b8c379340e21a786d32c653854c8876f94eb1202dd5be378fd42c062bc123aab5051c32bf0011865257c85982c41ded203f9fe8c9f9c8f8c84dc4672abc0e0
@@ -23522,27 +23522,27 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@1.9.0#builtin<compat/resolve>":
+"resolve@patch:resolve@1.9.0#~builtin<compat/resolve>":
   version: 1.9.0
-  resolution: "resolve@patch:resolve@npm%3A1.9.0#builtin<compat/resolve>::version=1.9.0&hash=3388aa"
+  resolution: "resolve@patch:resolve@npm%3A1.9.0#~builtin<compat/resolve>::version=1.9.0&hash=00b1ff"
   dependencies:
     path-parse: ^1.0.6
   checksum: 1e933a982563a6e032c81b1cd211b299f1474e7e41c4c1d7a745d5cb70e46a668e7413f3ee90b6f9a6a9242e3026e8f975f82eb52d562db8ce49959e6f71c376
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@^1.1.6#builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#builtin<compat/resolve>, resolve@patch:resolve@^1.13.1#builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#builtin<compat/resolve>, resolve@patch:resolve@^1.8.1#builtin<compat/resolve>, resolve@patch:resolve@^1.9.0#builtin<compat/resolve>":
+"resolve@patch:resolve@^1.1.6#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.13.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.8.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.9.0#~builtin<compat/resolve>":
   version: 1.14.1
-  resolution: "resolve@patch:resolve@npm%3A1.14.1#builtin<compat/resolve>::version=1.14.1&hash=3388aa"
+  resolution: "resolve@patch:resolve@npm%3A1.14.1#~builtin<compat/resolve>::version=1.14.1&hash=00b1ff"
   dependencies:
     path-parse: ^1.0.6
   checksum: 3a0acfc6ccd4e0a401b0cf540bcdb5c9d9a30bf71343ee83b9a1aac66b14e05ff07ebcdf37924be24bcb7642d557b730371cbf6de774696cb92b5e8476518a66
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@^1.15.1#builtin<compat/resolve>, resolve@patch:resolve@^1.17.0#builtin<compat/resolve>":
+"resolve@patch:resolve@^1.15.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.17.0#~builtin<compat/resolve>":
   version: 1.17.0
-  resolution: "resolve@patch:resolve@npm%3A1.17.0#builtin<compat/resolve>::version=1.17.0&hash=3388aa"
+  resolution: "resolve@patch:resolve@npm%3A1.17.0#~builtin<compat/resolve>::version=1.17.0&hash=00b1ff"
   dependencies:
     path-parse: ^1.0.6
   checksum: 4bcfb568860d0c361fd16c26b6fce429711138ff0de7dd353bdd73fcb5c7eede2f4602d40ccfa08ff45ec7ef9830845eab2021a46036af0a6e5b58bab1ff6399
@@ -26586,9 +26586,9 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
+"typescript@patch:typescript@3.7.x#~builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=a45b0e"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=fadafe"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26596,9 +26596,9 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.1.0-beta#builtin<compat/typescript>":
+"typescript@patch:typescript@4.1.0-beta#~builtin<compat/typescript>":
   version: 4.1.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"
+  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#~builtin<compat/typescript>::version=4.1.0-beta&hash=fadafe"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26606,9 +26606,9 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
+"typescript@patch:typescript@^3.8.3#~builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#~builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=a45b0e"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=fadafe"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -28776,7 +28776,7 @@ yoga-layout-prebuilt@1.10.0:
 
 "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
   version: 1.10.0
-  resolution: "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=1b07e1&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
+  resolution: "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=f2f3a3&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
   dependencies:
     "@types/yoga-layout": 1.9.2
   checksum: 5aebe6c637ab4f63e08a87f11820d487dfed1850f658607891e04bac50f756c8b7fb2ec8606fd561dc96f63123ce99f5a97bd229c61a35910c0541f48b936216

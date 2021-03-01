@@ -1,13 +1,12 @@
-import {copyPackage}                                                          from '@yarnpkg/core/sources/structUtils';
-import {miscUtils, structUtils}                                               from '@yarnpkg/core';
-import {Locator}                                                              from '@yarnpkg/core';
-import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName} from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                     from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                     from '@yarnpkg/libzip';
+import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report} from '@yarnpkg/core';
+import {Locator}                                                                      from '@yarnpkg/core';
+import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                             from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                             from '@yarnpkg/libzip';
 
-import * as patchUtils                                                        from './patchUtils';
-import {UnmatchedHunkError}                                                   from './tools/UnmatchedHunkError';
-import {reportHunk}                                                           from './tools/format';
+import * as patchUtils                                                                from './patchUtils';
+import {UnmatchedHunkError}                                                           from './tools/UnmatchedHunkError';
+import {reportHunk}                                                                   from './tools/format';
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -45,38 +44,47 @@ export class PatchFetcher implements Fetcher {
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts);
 
     const tmpDir = await xfs.mktempPromise();
-    const tmpFile = ppath.join(tmpDir, `patched.zip` as Filename);
+    const currentFile = ppath.join(tmpDir, `current.zip` as Filename);
 
     const sourceFetch = await opts.fetcher.fetch(sourceLocator, opts);
     const prefixPath = structUtils.getIdentVendorPath(locator);
 
     const libzip = await getLibzipPromise();
 
-    const prepareCopy = async () => {
-      const copy = new ZipFS(tmpFile, {
+    // First we create a copy of the package that we'll be free to mutate
+    const initialCopy = new ZipFS(currentFile, {
+      libzip,
+      create: true,
+      level: opts.project.configuration.get(`compressionLevel`),
+    });
+
+    await initialCopy.mkdirpPromise(prefixPath);
+
+    await miscUtils.releaseAfterUseAsync(async () => {
+      await initialCopy.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
+    }, sourceFetch.releaseFs);
+
+    initialCopy.saveAndClose();
+
+    for (const {source, optional} of patchFiles) {
+      if (source === null)
+        continue;
+
+      // Then for each patchfile, we open this copy anew, and try to apply the
+      // changeset. We need to open it for each patchfile (rather than only a
+      // single time) because it lets us easily rollback when hitting errors
+      // on optional patches (we just need to call `discardAndClose`).
+      const patchedPackage = new ZipFS(currentFile, {
         libzip,
-        create: true,
         level: opts.project.configuration.get(`compressionLevel`),
       });
 
-      await copy.mkdirpPromise(prefixPath);
-
-      await miscUtils.releaseAfterUseAsync(async () => {
-        await copy.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
-      }, sourceFetch.releaseFs);
-
-      return copy;
-    };
-
-    const patchedPackage = await prepareCopy();
-    const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {baseFs: patchedPackage});
-
-    for (const patchFile of patchFiles) {
-      if (patchFile === null)
-        continue;
+      const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {
+        baseFs: patchedPackage,
+      });
 
       try {
-        await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
+        await patchUtils.applyPatchFile(patchUtils.parsePatchFile(source), {
           baseFs: patchFs,
           version: sourceVersion,
         });
@@ -85,29 +93,38 @@ export class PatchFetcher implements Fetcher {
           throw err;
 
         const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
-        const suggestion = !enableInlineHunks
+        const suggestion = !enableInlineHunks && !optional
           ? ` (set enableInlineHunks for details)`
           : ``;
 
-        opts.report.reportWarningOnce(MessageName.PATCH_HUNK_FAILED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: ${err.message}${suggestion}`, {
-          reportExtra: report => {
-            if (!enableInlineHunks)
-              return;
+        const message = `${structUtils.prettyLocator(opts.project.configuration, locator)}: ${err.message}${suggestion}`;
+        const reportExtra = (report: Report) => {
+          if (!enableInlineHunks)
+            return;
 
-            reportHunk(err.hunk, {
-              configuration: opts.project.configuration,
-              report,
-            });
-          },
-        });
+          reportHunk(err.hunk, {
+            configuration: opts.project.configuration,
+            report,
+          });
+        };
 
+        // By discarding the current changes, the next patch will start from
+        // where we were.
         patchedPackage.discardAndClose();
 
-        // If the patch cannot be cleanly applied, we fallback to the original sources
-        return await prepareCopy();
+        if (optional) {
+          opts.report.reportWarningOnce(MessageName.PATCH_HUNK_FAILED, message, {reportExtra});
+        } else {
+          throw new ReportError(MessageName.PATCH_HUNK_FAILED, message, reportExtra);
+        }
       }
+
+      patchedPackage.saveAndClose();
     }
 
-    return patchedPackage;
+    return new ZipFS(currentFile, {
+      libzip,
+      level: opts.project.configuration.get(`compressionLevel`),
+    });
   }
 }
