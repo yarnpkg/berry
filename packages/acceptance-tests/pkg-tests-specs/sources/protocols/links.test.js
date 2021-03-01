@@ -6,7 +6,7 @@ const {
 } = require(`pkg-tests-core`);
 
 describe(`Protocols`, () => {
-  describe(`portal:`, () => {
+  describe(`link:`, () => {
     test(
       `it should link a remote location into the current dependency tree`,
       makeTemporaryEnv({
