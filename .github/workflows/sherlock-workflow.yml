@@ -26,13 +26,13 @@ jobs:
         args: 'sherlock payload'
 
     - name: 'Sherlock Execution'
-      if: ${{steps.sherlock-payload.sherlock-outcome == 'success'}}
+      if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock exec'
 
     - name: 'Sherlock Reporting'
-      if: ${{steps.sherlock-payload.sherlock-outcome == 'success'}}
+      if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock report'
