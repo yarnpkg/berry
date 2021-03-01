@@ -43,18 +43,14 @@ export class PatchFetcher implements Fetcher {
     const {parentLocator, sourceLocator, sourceVersion, patchPaths} = patchUtils.parseLocator(locator);
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts);
 
-    const tmpDir = await xfs.mktempPromise();
-    const currentFile = ppath.join(tmpDir, `current.zip` as Filename);
-
     const sourceFetch = await opts.fetcher.fetch(sourceLocator, opts);
     const prefixPath = structUtils.getIdentVendorPath(locator);
 
     const libzip = await getLibzipPromise();
 
     // First we create a copy of the package that we'll be free to mutate
-    const initialCopy = new ZipFS(currentFile, {
+    const initialCopy = new ZipFS(null, {
       libzip,
-      create: true,
       level: opts.project.configuration.get(`compressionLevel`),
     });
 
@@ -64,7 +60,7 @@ export class PatchFetcher implements Fetcher {
       await initialCopy.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
     }, sourceFetch.releaseFs);
 
-    initialCopy.saveAndClose();
+    let lastBuffer = initialCopy.getBufferAndClose();
 
     for (const {source, optional} of patchFiles) {
       if (source === null)
@@ -74,7 +70,7 @@ export class PatchFetcher implements Fetcher {
       // changeset. We need to open it for each patchfile (rather than only a
       // single time) because it lets us easily rollback when hitting errors
       // on optional patches (we just need to call `discardAndClose`).
-      const patchedPackage = new ZipFS(currentFile, {
+      const patchedPackage = new ZipFS(lastBuffer, {
         libzip,
         level: opts.project.configuration.get(`compressionLevel`),
       });
@@ -119,10 +115,15 @@ export class PatchFetcher implements Fetcher {
         }
       }
 
-      patchedPackage.saveAndClose();
+      lastBuffer = patchedPackage.getBufferAndClose();
     }
 
-    return new ZipFS(currentFile, {
+    const tmpDir = await xfs.mktempPromise();
+    const tmpFile = ppath.join(tmpDir, `patched.zip` as Filename);
+
+    await xfs.writeFilePromise(tmpFile, lastBuffer);
+
+    return new ZipFS(tmpFile, {
       libzip,
       level: opts.project.configuration.get(`compressionLevel`),
     });
