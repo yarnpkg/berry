@@ -1,6 +1,7 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName} from '@yarnpkg/core';
-import {Locator}                                                              from '@yarnpkg/core';
+import {copyPackage}                                                          from '@yarnpkg/core/sources/structUtils';
 import {miscUtils, structUtils}                                               from '@yarnpkg/core';
+import {Locator}                                                              from '@yarnpkg/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName} from '@yarnpkg/core';
 import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                     from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                     from '@yarnpkg/libzip';
 
@@ -51,37 +52,45 @@ export class PatchFetcher implements Fetcher {
 
     const libzip = await getLibzipPromise();
 
-    const patchedPackage = new ZipFS(tmpFile, {
-      libzip,
-      create: true,
-      level: opts.project.configuration.get(`compressionLevel`),
-    });
+    const prepareCopy = async () => {
+      const copy = new ZipFS(tmpFile, {
+        libzip,
+        create: true,
+        level: opts.project.configuration.get(`compressionLevel`),
+      });
 
-    await patchedPackage.mkdirpPromise(prefixPath);
+      await copy.mkdirpPromise(prefixPath);
 
-    await miscUtils.releaseAfterUseAsync(async () => {
-      await patchedPackage.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
-    }, sourceFetch.releaseFs);
+      await miscUtils.releaseAfterUseAsync(async () => {
+        await copy.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
+      }, sourceFetch.releaseFs);
 
+      return copy;
+    };
+
+    const patchedPackage = await prepareCopy();
     const patchFs = new CwdFS(ppath.resolve(PortablePath.root, prefixPath), {baseFs: patchedPackage});
 
     for (const patchFile of patchFiles) {
-      if (patchFile !== null) {
-        try {
-          await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
-            baseFs: patchFs,
-            version: sourceVersion,
-          });
-        } catch (err) {
-          if (!(err instanceof UnmatchedHunkError))
-            throw err;
+      if (patchFile === null)
+        continue;
 
-          const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
-          const suggestion = !enableInlineHunks
-            ? ` (set enableInlineHunks for details)`
-            : ``;
+      try {
+        await patchUtils.applyPatchFile(patchUtils.parsePatchFile(patchFile), {
+          baseFs: patchFs,
+          version: sourceVersion,
+        });
+      } catch (err) {
+        if (!(err instanceof UnmatchedHunkError))
+          throw err;
 
-          throw new ReportError(MessageName.PATCH_HUNK_FAILED, err.message + suggestion, report => {
+        const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
+        const suggestion = !enableInlineHunks
+          ? ` (set enableInlineHunks for details)`
+          : ``;
+
+        opts.report.reportWarningOnce(MessageName.PATCH_HUNK_FAILED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: ${err.message}${suggestion}`, {
+          reportExtra: report => {
             if (!enableInlineHunks)
               return;
 
@@ -89,8 +98,13 @@ export class PatchFetcher implements Fetcher {
               configuration: opts.project.configuration,
               report,
             });
-          });
-        }
+          },
+        });
+
+        patchedPackage.discardAndClose();
+
+        // If the patch cannot be cleanly applied, we fallback to the original sources
+        return await prepareCopy();
       }
     }
 

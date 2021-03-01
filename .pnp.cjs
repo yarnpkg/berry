@@ -245,7 +245,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {
           "packageLocation": "./",
           "packageDependencies": [
-            ["@arcanis/sherlock", "npm:1.0.38"],
+            ["@arcanis/sherlock", "npm:2.0.2"],
             ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/core", "npm:7.10.2"],
             ["@babel/plugin-proposal-class-properties", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
@@ -281,6 +281,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"]
           ],
           "linkType": "SOFT",
+        }]
+      ]],
+      ["@actions/core", [
+        ["npm:1.2.6", {
+          "packageLocation": "./.yarn/cache/@actions-core-npm-1.2.6-f205abe96a-984c7d5ae9.zip/node_modules/@actions/core/",
+          "packageDependencies": [
+            ["@actions/core", "npm:1.2.6"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@algolia/cache-browser-local-storage", [
@@ -440,10 +449,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@arcanis/sherlock", [
-        ["npm:1.0.38", {
-          "packageLocation": "./.yarn/cache/@arcanis-sherlock-npm-1.0.38-d4f5e2dbf3-63f998598d.zip/node_modules/@arcanis/sherlock/",
+        ["npm:2.0.2", {
+          "packageLocation": "./.yarn/cache/@arcanis-sherlock-npm-2.0.2-91650a2501-b54f9a893b.zip/node_modules/@arcanis/sherlock/",
           "packageDependencies": [
-            ["@arcanis/sherlock", "npm:1.0.38"],
+            ["@arcanis/sherlock", "npm:2.0.2"],
+            ["@actions/core", "npm:1.2.6"],
             ["@octokit/rest", "npm:16.28.7"],
             ["clipanion", "npm:2.0.0-rc.16"],
             ["expect", "npm:24.8.0"],
@@ -10568,7 +10578,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",
           "packageDependencies": [
             ["@yarnpkg/monorepo", "workspace:."],
-            ["@arcanis/sherlock", "npm:1.0.38"],
+            ["@arcanis/sherlock", "npm:2.0.2"],
             ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
             ["@babel/core", "npm:7.10.2"],
             ["@babel/plugin-proposal-class-properties", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.10.1"],
