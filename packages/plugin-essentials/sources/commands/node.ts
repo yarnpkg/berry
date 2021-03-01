@@ -1,10 +1,11 @@
-import {BaseCommand}    from '@yarnpkg/cli';
-import {Command, Usage} from 'clipanion';
+import {BaseCommand}            from '@yarnpkg/cli';
+import {Command, Option, Usage} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NodeCommand extends BaseCommand {
-  @Command.Proxy()
-  args: Array<string> = [];
+  static paths = [
+    [`node`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `run node with the hook already setup`,
@@ -19,7 +20,8 @@ export default class NodeCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`node`)
+  args = Option.Proxy();
+
   async execute() {
     return this.cli.run([`exec`, `node`, ...this.args]);
   }

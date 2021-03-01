@@ -15,6 +15,10 @@ describe(`Commands`, () => {
       'is-number': `1.0.0`,
     },
     license: `MIT`,
+    scripts: {
+      echo: `echo`,
+    },
+    unparsedKey: `foo`,
   };
 
   describe(`constraints --fix`, () => {
@@ -69,6 +73,19 @@ describe(`Commands`, () => {
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
 
       expect(fixedManifest.workspaces.length).toBe(1);
+    }));
+
+    it(`should preserve the raw manifest data when applying a fix`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_dependency('.', 'is-number', null, dependencies).
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest.scripts).toMatchObject({echo: `echo`});
+      expect(fixedManifest.unparsedKey).toBe(`foo`);
     }));
   });
 });

@@ -1,10 +1,10 @@
-import {EventEmitter}                                                          from 'events';
-import {Dirent as NodeDirent, ReadStream, Stats, WriteStream, NoParamCallback} from 'fs';
-import {EOL}                                                                   from 'os';
+import {EventEmitter}                                                                       from 'events';
+import {Dirent as NodeDirent, ReadStream, Stats, WriteStream, NoParamCallback, BigIntStats} from 'fs';
+import {EOL}                                                                                from 'os';
 
-import {copyPromise}                                                           from './algorithms/copyPromise';
-import {FSPath, Path, PortablePath, PathUtils, Filename}                       from './path';
-import {convertPath, ppath}                                                    from './path';
+import {copyPromise}                                                                        from './algorithms/copyPromise';
+import {FSPath, Path, PortablePath, PathUtils, Filename}                                    from './path';
+import {convertPath, ppath}                                                                 from './path';
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
@@ -159,13 +159,25 @@ export abstract class FakeFS<P extends Path> {
   abstract accessSync(p: P, mode?: number): void;
 
   abstract statPromise(p: P): Promise<Stats>;
+  abstract statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   abstract statSync(p: P): Stats;
+  abstract statSync(p: P, opts: {bigint: true}): BigIntStats;
+  abstract statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract fstatPromise(fd: number): Promise<Stats>;
+  abstract fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   abstract fstatSync(fd: number): Stats;
+  abstract fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
+  abstract fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract lstatPromise(p: P): Promise<Stats>;
+  abstract lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract lstatPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   abstract lstatSync(p: P): Stats;
+  abstract lstatSync(p: P, opts: {bigint: true}): BigIntStats;
+  abstract lstatSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;

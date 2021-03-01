@@ -32,3 +32,23 @@ Depending on your use case, here's how you can avoid postinstall scripts:
 - Native packages can be built to [WebAssembly](https://webassembly.org), which is already supported in Node 12 and beyond. On top of being portable and fast, WebAssembly packages also have the benefit to make your libraries available not only to Node but also to your browser users. And since their compilation is made upfront, your users won't be impacted by slow compilation time problems.
 
 - Project sustainability is a big topic, but the gist is that we don't think postinstall scripts are a viable solution. We however are committed to providing a specific field in the package.json that would signal to the package managers that a project would like to communicate its existence with the user in an integrated and respectful way.
+
+## Environment variables
+
+When running scripts and binaries, some environment variables are usually made available:
+
+- `$INIT_CWD` represents the directory from which the script has been invoked. This isn't the same as the cwd, which for scripts is always equal to the closest package root.
+
+- `$PROJECT_CWD` is the root of the project on the filesystem.
+
+- `$npm_package_name` is the name of the package that lists the script being executed.
+
+- `$npm_package_version` is its version.
+
+- `$npm_execpath` is the path to the Yarn binary.
+
+- `$npm_node_execpath` is the path to the Node binary.
+
+- `$npm_config_user_agent` is a string defining the Yarn version currently in use.
+
+- `$npm_lifecycle_event` is the name of the script or lifecycle event, if relevant.

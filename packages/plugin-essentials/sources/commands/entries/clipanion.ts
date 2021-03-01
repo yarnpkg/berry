@@ -11,7 +11,10 @@ type ExtendedDefinition = ClipanionDefinition & {
 
 // eslint-disable-next-line arca/no-default-export
 export default class ClipanionCommand extends Command<CommandContext> {
-  @Command.Path(`--clipanion=definitions`)
+  static paths = [
+    [`--clipanion=definitions`],
+  ];
+
   async execute() {
     const {plugins} = await Configuration.find(this.context.cwd, this.context.plugins);
 

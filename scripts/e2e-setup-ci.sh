@@ -17,6 +17,9 @@ echo Yarn Version: $(yarn -v)
 # We want to see what fails (if anything fails)
 export YARN_ENABLE_INLINE_BUILDS=1
 
+# We want to allow installs to modify the lockfile
+export YARN_ENABLE_IMMUTABLE_INSTALLS=0
+
 # Otherwise git commit doesn't work, and some tools require it
 git config --global user.email "you@example.com"
 git config --global user.name "John Doe"

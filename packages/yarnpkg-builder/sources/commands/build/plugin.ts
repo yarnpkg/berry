@@ -1,6 +1,6 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
 import {npath}                                                              from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                         from 'clipanion';
+import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 import TerserPlugin                                                         from 'terser-webpack-plugin';
@@ -22,11 +22,9 @@ const getNormalizedName = (name: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildPluginCommand extends Command {
-  @Command.Boolean(`--no-minify`, {description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`})
-  noMinify: boolean = false;
-
-  @Command.Boolean(`--source-map`, {description: `Includes a source map in the bundle`})
-  sourceMap: boolean = false;
+  static paths = [
+    [`build`, `plugin`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `build a local plugin`,
@@ -42,7 +40,14 @@ export default class BuildPluginCommand extends Command {
     ]],
   });
 
-  @Command.Path(`build`, `plugin`)
+  noMinify = Option.Boolean(`--no-minify`, false, {
+    description: `Build a plugin for development, without optimizations (minifying, mangling, treeshaking)`,
+  });
+
+  sourceMap = Option.Boolean(`--source-map`, false, {
+    description: `Includes a source map in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
@@ -51,7 +56,7 @@ export default class BuildPluginCommand extends Command {
     const {name: rawName} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);
     const prettyName = structUtils.prettyIdent(configuration, structUtils.parseIdent(name));
-    const output = `${basedir}/bundles/${name}.js`;
+    const output = path.join(basedir, `bundles/${name}.js`);
 
     let buildErrors: string | null = null;
 
@@ -166,9 +171,11 @@ export default class BuildPluginCommand extends Command {
 
     const Mark = formatUtils.mark(configuration);
 
-    if (buildErrors !== null) {
-      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build ${prettyName}:`);
-      report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
+    if (report.hasErrors() || buildErrors !== null) {
+      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build ${prettyName}`);
+      if (buildErrors) {
+        report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
+      }
     } else {
       report.reportInfo(null, `${Mark.Check} Done building ${prettyName}!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);

@@ -1,19 +1,15 @@
-import {execUtils}         from '@yarnpkg/core';
-import {NativePath, npath} from '@yarnpkg/fslib';
-import {Command}           from 'clipanion';
+import {execUtils}       from '@yarnpkg/core';
+import {npath}           from '@yarnpkg/fslib';
+import {Command, Option} from 'clipanion';
 
-import {dynamicRequire}    from '../dynamicRequire';
+import {dynamicRequire}  from '../dynamicRequire';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends Command {
-  @Command.String()
-  commandName!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
-
-  @Command.String(`--cwd`, {description: `The directory to run the command in`})
-  cwd: NativePath = process.cwd();
+  static paths = [
+    [`run`],
+    Command.Default,
+  ];
 
   static usage = Command.Usage({
     description: `run a command with a virtual node_modules folder`,
@@ -28,8 +24,13 @@ export default class RunCommand extends Command {
     ]],
   });
 
-  @Command.Path()
-  @Command.Path(`run`)
+  cwd = Option.String(`--cwd`, process.cwd(), {
+    description: `The directory to run the command in`,
+  });
+
+  commandName = Option.String();
+  args = Option.Proxy();
+
   async execute() {
     let {NODE_OPTIONS} = process.env;
     NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${dynamicRequire.resolve(`@yarnpkg/pnpify`)}`.trim();

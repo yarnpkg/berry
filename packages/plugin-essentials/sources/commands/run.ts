@@ -1,39 +1,13 @@
-import {BaseCommand, pluginCommands}       from '@yarnpkg/cli';
-import {Configuration, Project, Workspace} from '@yarnpkg/core';
-import {scriptUtils, structUtils}          from '@yarnpkg/core';
-import {Command, Usage, UsageError}        from 'clipanion';
+import {BaseCommand, pluginCommands}        from '@yarnpkg/cli';
+import {Configuration, Project, Workspace}  from '@yarnpkg/core';
+import {scriptUtils, structUtils}           from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
-  @Command.String(`--inspect`, {tolerateBoolean: true, description: `Forwarded to the underlying Node process when executing a binary`})
-  inspect: string | boolean = false;
-
-  @Command.String(`--inspect-brk`, {tolerateBoolean: true, description: `Forwarded to the underlying Node process when executing a binary`})
-  inspectBrk: string | boolean = false;
-
-  // This flag is mostly used to give users a way to configure node-gyp. They
-  // just have to add it as a top-level workspace.
-  @Command.Boolean(`-T,--top-level`, {hidden: true})
-  topLevel: boolean = false;
-
-  // Some tools (for example text editors) want to call the real binaries, not
-  // what their users might have remapped them to in their `scripts` field.
-  @Command.Boolean(`-B,--binaries-only`, {hidden: true})
-  binariesOnly: boolean = false;
-
-  // The v1 used to print the Yarn version header when using "yarn run", which
-  // was messing with the output of things like `--version` & co. We don't do
-  // this anymore, but many workflows use `yarn run --silent` to make sure that
-  // they don't get this header, and it makes sense to support it as well (even
-  // if it's a no-op in our case).
-  @Command.Boolean(`--silent`, {hidden: true})
-  silent?: boolean;
-
-  @Command.String()
-  scriptName!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
+  static paths = [
+    [`run`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `run a script defined in the package.json`,
@@ -60,7 +34,34 @@ export default class RunCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`run`)
+  inspect = Option.String(`--inspect`, false, {
+    tolerateBoolean: true,
+    description: `Forwarded to the underlying Node process when executing a binary`,
+  });
+
+  inspectBrk = Option.String(`--inspect-brk`, false, {
+    tolerateBoolean: true,
+    description: `Forwarded to the underlying Node process when executing a binary`,
+  });
+
+  // This flag is mostly used to give users a way to configure node-gyp. They
+  // just have to add it as a top-level workspace.
+  topLevel = Option.Boolean(`-T,--top-level`, false, {hidden: true});
+
+  // Some tools (for example text editors) want to call the real binaries, not
+  // what their users might have remapped them to in their `scripts` field.
+  binariesOnly = Option.Boolean(`-B,--binaries-only`, false, {hidden: true});
+
+  // The v1 used to print the Yarn version header when using "yarn run", which
+  // was messing with the output of things like `--version` & co. We don't do
+  // this anymore, but many workflows use `yarn run --silent` to make sure that
+  // they don't get this header, and it makes sense to support it as well (even
+  // if it's a no-op in our case).
+  silent = Option.Boolean(`--silent`, {hidden: true});
+
+  scriptName = Option.String();
+  args = Option.Proxy();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);

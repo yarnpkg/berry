@@ -1,3 +1,5 @@
+import {Stats, BigIntStats}                                                                                                                                   from 'fs';
+
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
 import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
@@ -112,28 +114,46 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.accessPromise(this.mapToBase(p), mode);
   }
 
-  async statPromise(p: P) {
-    return this.baseFs.statPromise(this.mapToBase(p));
+  async statPromise(p: P): Promise<Stats>
+  async statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: P, opts?: {bigint: boolean}) {
+    return this.baseFs.statPromise(this.mapToBase(p), opts);
   }
 
-  statSync(p: P) {
-    return this.baseFs.statSync(this.mapToBase(p));
+  statSync(p: P): Stats
+  statSync(p: P, opts: {bigint: true}): BigIntStats
+  statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: P, opts?: {bigint: boolean}) {
+    return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
-  async fstatPromise(fd: number) {
-    return this.baseFs.fstatPromise(fd);
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+    return this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd: number) {
-    return this.baseFs.fstatSync(fd);
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
+    return this.baseFs.fstatSync(fd, opts);
   }
 
-  async lstatPromise(p: P) {
-    return this.baseFs.lstatPromise(this.mapToBase(p));
+  async lstatPromise(p: P): Promise<Stats>
+  async lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: P, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: P, opts?: { bigint: boolean }) {
+    return this.baseFs.lstatPromise(this.mapToBase(p), opts);
   }
 
-  lstatSync(p: P) {
-    return this.baseFs.lstatSync(this.mapToBase(p));
+  lstatSync(p: P): Stats;
+  lstatSync(p: P, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: P, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: P, opts?: { bigint: boolean }): BigIntStats | Stats {
+    return this.baseFs.lstatSync(this.mapToBase(p), opts);
   }
 
   async chmodPromise(p: P, mask: number) {

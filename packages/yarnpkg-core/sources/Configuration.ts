@@ -211,11 +211,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
-  enableAbsoluteVirtuals: {
-    description: `If true, the virtual symlinks will use absolute paths if required [non portable!!]`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
 
   // Settings related to the output style
   enableColors: {
@@ -235,6 +230,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: isCI,
     defaultText: `<dynamic>`,
+  },
+  enableMessageNames: {
+    description: `If true, the CLI will prefix most messages with codes suitable for search engines`,
+    type: SettingsType.BOOLEAN,
+    default: true,
   },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
@@ -496,7 +496,6 @@ export interface ConfigurationValueMap {
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
-  enableAbsoluteVirtuals: boolean;
 
   enableColors: boolean;
   enableHyperlinks: boolean;
@@ -985,7 +984,7 @@ export class Configuration {
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
-        requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
+        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
@@ -996,7 +995,7 @@ export class Configuration {
       };
 
       const importPlugin = (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+        const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.

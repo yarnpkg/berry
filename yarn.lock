@@ -4995,13 +4995,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yup@npm:0.26.12":
-  version: 0.26.12
-  resolution: "@types/yup@npm:0.26.12"
-  checksum: dabc157241c3aa85b7c823824e192ef0326224570df3026002d4408690930cf53ad844a0a33780c50862f5a555e40e42b71eeeb96d37b34bdac827776afc6482
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/eslint-plugin@npm:^2.24.0, @typescript-eslint/eslint-plugin@npm:^2.28.0":
   version: 2.29.0
   resolution: "@typescript-eslint/eslint-plugin@npm:2.29.0"
@@ -5421,12 +5414,14 @@ __metadata:
     "@types/webpack-merge": ^4.1.5
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
+    "@yarnpkg/esbuild-plugin-pnp": "workspace:packages/esbuild-plugin-pnp"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
+    esbuild-wasm: ^0.8.36
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
     semver: ^7.1.2
@@ -5449,7 +5444,7 @@ __metadata:
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
     "@types/ci-info": ^2
-    "@types/yup": 0.26.12
+    "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
@@ -5475,13 +5470,13 @@ __metadata:
     "@yarnpkg/shell": "workspace:^2.4.1"
     chalk: ^3.0.0
     ci-info: ^2.0.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     fromentries: ^1.2.0
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
+    typanion: ^3.3.0
     typescript: 4.1.0-beta
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/core": ^2.4.0
   languageName: unknown
@@ -5515,7 +5510,7 @@ __metadata:
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^2.0.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
     diff: ^4.0.1
     globby: ^11.0.1
@@ -5546,7 +5541,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     globby: ^11.0.1
     micromatch: ^4.0.2
     p-limit: ^2.2.0
@@ -5554,6 +5549,18 @@ __metadata:
     typescript: 4.1.0-beta
   bin:
     doctor: ./sources/boot-cli-dev.js
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
+  dependencies:
+    "@yarnpkg/pnp": "workspace:^2.3.2"
+    esbuild: "npm:esbuild-wasm@^0.8.36"
+    tslib: ^1.13.0
+  peerDependencies:
+    esbuild: ^0.8.36
   languageName: unknown
   linkType: soft
 
@@ -5743,7 +5750,7 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:^0.2.0"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     babel-jest: ^26.0.1
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     eslint: ^6.8.0
     eslint-plugin-arca: ^0.10.0
     eslint-plugin-react: ^7.20.0
@@ -5799,6 +5806,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^2.4.0"
     "@yarnpkg/plugin-patch": "workspace:^2.1.2"
     resolve: ^1.17.0
+    semver: ^7.1.2
   peerDependencies:
     "@yarnpkg/core": ^2.4.0
     "@yarnpkg/plugin-patch": ^2.1.2
@@ -5814,7 +5822,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
@@ -5834,7 +5842,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
@@ -5851,20 +5859,19 @@ __metadata:
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
     "@yarnpkg/parsers": "workspace:^2.3.0"
     ci-info: ^2.0.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     enquirer: ^2.3.6
     lodash: ^4.17.15
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
-    yup: ^0.27.0
+    typanion: ^3.3.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -5946,7 +5953,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     lodash: ^4.17.15
     tslib: ^1.13.0
   peerDependencies:
@@ -5968,7 +5975,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.1.1"
     "@yarnpkg/plugin-essentials": "workspace:^2.4.0"
     algoliasearch: ^4.2.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     diff: ^4.0.1
     ink: ^3.0.7
     ink-text-input: ^4.0.1
@@ -6010,7 +6017,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^2.3.2"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     "@zkochan/cmd-shim": ^4.3.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     tslib: ^1.13.0
   peerDependencies:
@@ -6025,17 +6032,16 @@ __metadata:
   dependencies:
     "@npm/types": ^1.0.1
     "@types/semver": ^7.1.0
-    "@types/yup": 0.26.12
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-npm": "workspace:^2.4.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     enquirer: ^2.3.6
     semver: ^7.1.2
     tslib: ^1.13.0
-    yup: ^0.27.0
+    typanion: ^3.3.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -6073,7 +6079,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-stage": "workspace:^2.1.2"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
     tslib: ^1.13.0
@@ -6091,7 +6097,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
@@ -6110,7 +6116,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-stage": "workspace:^2.1.2"
     "@yarnpkg/pnp": "workspace:^2.3.2"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6128,7 +6134,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
     typescript: 4.1.0-beta
   peerDependencies:
@@ -6165,7 +6171,6 @@ __metadata:
   dependencies:
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
-    "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
@@ -6173,13 +6178,12 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.1.1"
     "@yarnpkg/parsers": "workspace:^2.3.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     ink: ^3.0.7
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
     typescript: 4.1.0-beta
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -6192,17 +6196,16 @@ __metadata:
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
     "@types/micromatch": ^4.0.1
-    "@types/yup": 0.26.12
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
     "@yarnpkg/fslib": "workspace:^2.4.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
+    typanion: ^3.3.0
     typescript: 4.1.0-beta
-    yup: ^0.27.0
   peerDependencies:
     "@yarnpkg/cli": ^2.4.0
     "@yarnpkg/core": ^2.4.0
@@ -6218,6 +6221,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     "@yarnpkg/monorepo": "workspace:0.0.0"
+    resolve.exports: ^1.0.2
     tslib: ^1.13.0
     typescript: 4.1.0-beta
     webpack: ^5.1.1
@@ -6237,7 +6241,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.3.0"
     "@yarnpkg/pnp": "workspace:^2.3.2"
     chalk: ^3.0.0
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     comment-json: ^2.2.0
     eslint: ^6.8.0
     lodash: ^4.17.15
@@ -6265,7 +6269,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/monorepo": "workspace:0.0.0"
     "@yarnpkg/parsers": "workspace:^2.3.0"
-    clipanion: ^2.6.2
+    clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
@@ -8786,10 +8790,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^2.6.2":
-  version: 2.6.2
-  resolution: "clipanion@npm:2.6.2"
-  checksum: d162deedd0bd297f0881ef2814cf00409d2c67383589345cf8ae0ae6d9eee2e7235313b392dd3ec9df85490e4875dd52c085997e4161a6c8aa4ec0a2c78f8f36
+"clipanion@npm:^3.0.0-rc.10":
+  version: 3.0.0-rc.10
+  resolution: "clipanion@npm:3.0.0-rc.10"
+  dependencies:
+    typanion: ^3.3.0
+  peerDependencies:
+    typanion: "*"
+  checksum: 23f317cb94dd7d4d2f573ed54e5dfc78b05ce22233b80d64a3cbb152110f907dcc5c9d0bbab930cb1d11fffb1fbb82c156f28678eb70a27a6e26b39a622e9e2d
   languageName: node
   linkType: hard
 
@@ -9614,17 +9622,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:*, cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.0":
-  version: 7.0.3
-  resolution: "cross-spawn@npm:7.0.3"
-  dependencies:
-    path-key: ^3.1.0
-    shebang-command: ^2.0.0
-    which: ^2.0.1
-  checksum: 51f10036f5f1de781be98f4738d58b50c6d44f4f471069b8ab075b21605893ba1548654880f7310a29a732d6fc7cd481da6026169b9f0831cab0148a62fb397a
-  languageName: node
-  linkType: hard
-
 "cross-spawn@npm:5.1.0, cross-spawn@npm:^5.0.1":
   version: 5.1.0
   resolution: "cross-spawn@npm:5.1.0"
@@ -9633,6 +9630,17 @@ __metadata:
     shebang-command: ^1.2.0
     which: ^1.2.9
   checksum: 96018c42a94a2f69e27c11688db638c343109e4eda5cc6586a83a1d2f102ef2ef4d184919593036748d386ddb67cc3e66658fefec85a4659958cde792f1a9ddc
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.3":
+  version: 7.0.3
+  resolution: "cross-spawn@npm:7.0.3"
+  dependencies:
+    path-key: ^3.1.0
+    shebang-command: ^2.0.0
+    which: ^2.0.1
+  checksum: 51f10036f5f1de781be98f4738d58b50c6d44f4f471069b8ab075b21605893ba1548654880f7310a29a732d6fc7cd481da6026169b9f0831cab0148a62fb397a
   languageName: node
   linkType: hard
 
@@ -10078,7 +10086,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:*, debug@npm:2, debug@npm:2.6.9, debug@npm:^2.1.2, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.0, debug@npm:^2.6.6, debug@npm:^2.6.9":
+"debug@npm:2, debug@npm:2.6.9, debug@npm:^2.1.2, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.0, debug@npm:^2.6.6, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
   dependencies:
@@ -10111,6 +10119,18 @@ __metadata:
   dependencies:
     ms: ^2.1.1
   checksum: 3601a6ce96e4698ed3edf0ee6e67ef0317adfcdae2f66a43b23d1b14e8888b422337429b16dbbcba6801e7bfa6cbb8de3128fbacfb8ae1cd9bd7615ea6baf970
+  languageName: node
+  linkType: hard
+
+"debug@npm:^4.3.1":
+  version: 4.3.2
+  resolution: "debug@npm:4.3.2"
+  dependencies:
+    ms: 2.1.2
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 5543570879e2274f6725d4285a034d6e0822d35faefc6f55965933fb440e8c21eb3a0bef934e66f4b6b491f898ee2de37cab980e9d4fd61372136c19d3ce4527
   languageName: node
   linkType: hard
 
@@ -11217,6 +11237,16 @@ __metadata:
     d: ^1.0.1
     ext: ^1.1.2
   checksum: 0915d72de8760b56b69ca4360276123a4f61de5a3172fe340ce9288271cf48bcebe3ee46ca8ee0f2fd73206bbbefa7c4a40a6673d278a87c97d3a155de778931
+  languageName: node
+  linkType: hard
+
+"esbuild-wasm@npm:^0.8.36, esbuild@npm:esbuild-wasm@^0.8.36":
+  version: 0.8.36
+  resolution: "esbuild-wasm@npm:0.8.36"
+  bin:
+    esbuild: bin/esbuild
+    exit0.js: bin/exit0.js
+  checksum: 417584d4453569fa04d828248f4e8b1623950663d1d15b4de34d53e75ab7153db16cf77d62cf4bbb0e69389cb9faa0ac83bdb352e43b2e5e893beba81882c25e
   languageName: node
   linkType: hard
 
@@ -17974,7 +18004,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash@npm:*, lodash@npm:4.17.15, lodash@npm:^4.11.1, lodash@npm:^4.15.0, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.4, lodash@npm:^4.17.5, lodash@npm:^4.3.0":
+"lodash@npm:4.17.15, lodash@npm:^4.11.1, lodash@npm:^4.15.0, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.4, lodash@npm:^4.17.5, lodash@npm:^4.3.0":
   version: 4.17.15
   resolution: "lodash@npm:4.17.15"
   checksum: aec3fbb7570aa67bda500b8299b1b1821d60646bede87f76a74dfcc7666ab3445267d734ec71424d70809d52ad67a1356fab5ab694a3faa1908d68e9d48f00f5
@@ -19014,6 +19044,13 @@ fsevents@^1.2.7:
   version: 2.1.1
   resolution: "ms@npm:2.1.1"
   checksum: 81ad38c74df2473ce9fbed8bb71a00220c3d9e237ebd576306c9f6ca3221b251d602c7d199808944be1a3d7cda5883e72c77adb473734ba30f6e032165e05ebc
+  languageName: node
+  linkType: hard
+
+"ms@npm:2.1.2":
+  version: 2.1.2
+  resolution: "ms@npm:2.1.2"
+  checksum: 9b65fb709bc30c0c07289dcbdb61ca032acbb9ea5698b55fa62e2cebb04c5953f1876a1f3f7f4bc2e91d4bf4d86003f3e207c3bc6ee2f716f99827e62389cd0e
   languageName: node
   linkType: hard
 
@@ -21646,7 +21683,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prop-types@npm:*, prop-types@npm:15.x, prop-types@npm:^15.5.10, prop-types@npm:^15.5.6, prop-types@npm:^15.5.8, prop-types@npm:^15.6.0, prop-types@npm:^15.6.1, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:15.x, prop-types@npm:^15.5.10, prop-types@npm:^15.5.6, prop-types@npm:^15.5.8, prop-types@npm:^15.6.0, prop-types@npm:^15.6.1, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -23440,6 +23477,13 @@ fsevents@^1.2.7:
   version: 0.2.1
   resolution: "resolve-url@npm:0.2.1"
   checksum: 9e1cd0028d0f2e157a889a02653637c1c1d7f133aa47b75261b4590e84105e63fae3b6be31bad50d5b94e01898d9dbe6b95abe28db7eab46e22321f7cbf00273
+  languageName: node
+  linkType: hard
+
+"resolve.exports@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "resolve.exports@npm:1.0.2"
+  checksum: 012a46e3ae41c53762abf5b50ea1b4adf2de617bbea1dbc7bf6e609c1ceaedee7782acbc92d443951d5dd0c3a8fb1090ce73285a9ccc24b530e33b5e09ae196f
   languageName: node
   linkType: hard
 
@@ -26297,6 +26341,13 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
+"typanion@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "typanion@npm:3.3.0"
+  checksum: e31d9ee6e50bba9d066675a0efcc43df95c581176dcd02855c690bbf1936a160d56c8e3146d9e6870e982a4dc807221e9ede0f0d4603f82a074181ab1860d80d
+  languageName: node
+  linkType: hard
+
 "type-check@npm:~0.3.2":
   version: 0.3.2
   resolution: "type-check@npm:0.3.2"
@@ -26529,31 +26580,31 @@ typescript@4.1.0-beta:
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: cf3413606dfe8a8c8e08392afe1f52975541b900ad407bc072279ad27b57ce4939eac389e74477bb0f8747122cf3442b944023ddfd87143d3b9ea3122fff40ad
+  checksum: cc7bbd5b746a427c19b2f91eeef23fa1367bf7a327a5c78423fe2b8610b0c2346bd427594b222373f71609622ac51c562c31b014fdede75da9439bbb6ec0f11c
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@4.1.0-beta#builtin<compat/typescript>":
   version: 4.1.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2537751eed5f4b407c0f07f52917a2cc62dccbb9119d1be14e11a4171ab9cb841910c06f11d88651f9dc5ff25915c845495b70cc3992ec6518f54a165a1f2738
+  checksum: 8f8f9508d07a655f8a9381329a0ace866a9c4923837892722f8cecbc6763df83e952dd0e1be9f6baaa0dd28291251506e97837e6b159b6b64843571abea26110
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=cc6730"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 452cdd20d801630727433a990652c1e65f5eb5586383dda60f178b4fbda5c7951256f9aa31327c73722af9b1b664e3a53d724aabfd8a68866e9b1631818f004c
+  checksum: 251df026e882c7d31165ad6f5a2aa8a24b43655766d1f008f4548ccb6944188a251e7d359763e3d330999c200506ab7322b703cf33429c9482cb7013e9a1fdd7
   languageName: node
   linkType: hard
 

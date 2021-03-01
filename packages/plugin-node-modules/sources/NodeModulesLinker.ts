@@ -296,6 +296,10 @@ class NodeModulesInstaller implements Installer {
       if (typeof slot === `undefined`)
         throw new Error(`Assertion failed: Expected the slot to exist`);
 
+      // Workspaces are built by the core
+      if (this.opts.project.tryWorkspaceByLocator(slot.pkg))
+        continue;
+
       const buildScripts = jsInstallUtils.extractBuildScripts(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
       if (buildScripts.length === 0)
         continue;
@@ -604,15 +608,15 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
 
   try {
     if (process.platform === `win32`) {
-      stats = xfs.lstatSync(srcPath);
+      stats = await xfs.lstatPromise(srcPath);
     }
   } catch (e) {
   }
 
   if (process.platform == `win32` && (!stats || stats.isDirectory())) {
-    xfs.symlinkPromise(srcPath, dstPath, `junction`);
+    await xfs.symlinkPromise(srcPath, dstPath, `junction`);
   } else {
-    xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
+    await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
   }
 };
 

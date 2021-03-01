@@ -2,15 +2,13 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Project, Ident, structUtils, ReportError, MessageName, formatUtils, treeUtils, miscUtils} from '@yarnpkg/core';
 import {ppath, Filename}                                                                                         from '@yarnpkg/fslib';
 import {npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage}                                                                              from 'clipanion';
+import {Command, UsageError, Usage, Option}                                                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagListCommand extends BaseCommand {
-  @Command.String({required: false})
-  package?: string;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`npm`, `tag`, `list`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -26,7 +24,12 @@ export default class NpmTagListCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `tag`, `list`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  package = Option.String({required: false});
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

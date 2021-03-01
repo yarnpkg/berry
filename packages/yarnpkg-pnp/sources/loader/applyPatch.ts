@@ -1,12 +1,12 @@
-import {FakeFS, PosixFS, npath, patchFs, PortablePath, Filename, NativePath} from '@yarnpkg/fslib';
-import fs                                                                    from 'fs';
-import {Module}                                                              from 'module';
-import {URL, fileURLToPath}                                                  from 'url';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath} from '@yarnpkg/fslib';
+import fs                                                          from 'fs';
+import {Module}                                                    from 'module';
+import {URL, fileURLToPath}                                        from 'url';
 
-import {PnpApi}                                                              from '../types';
+import {PnpApi}                                                    from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}                               from './internalTools';
-import {Manager}                                                             from './makeManager';
+import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
+import {Manager}                                                   from './makeManager';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>,
@@ -18,7 +18,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   /**
-   * The cache that will be used for all accesses occuring outside of a PnP context.
+   * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
   const defaultCache: NodeJS.NodeRequireCache = {};
@@ -176,21 +176,26 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
     const issuer = getIssuerModule(module);
 
-    const issuerPath = issuer !== null
-      ? npath.dirname(issuer.filename)
-      : process.cwd();
+    if (issuer !== null) {
+      const path = npath.dirname(issuer.filename);
+      const apiPath = opts.manager.getApiPathFromParent(issuer);
 
-    return [{
-      apiPath: opts.manager.getApiPathFromParent(issuer),
-      path: issuerPath,
-      module,
-    }];
+      return [{apiPath, path, module}];
+    } else {
+      const path = process.cwd();
+
+      const apiPath =
+        opts.manager.findApiPathFor(npath.join(path, `[file]`)) ??
+        opts.manager.getApiPathFromParent(null);
+
+      return [{apiPath, path, module}];
+    }
   }
 
   function makeFakeParent(path: string) {
     const fakeParent = new Module(``);
 
-    const fakeFilePath = npath.join(path, `[file]` as Filename);
+    const fakeFilePath = npath.join(path, `[file]`);
     fakeParent.paths = Module._nodeModulePaths(fakeFilePath);
 
     return fakeParent;
@@ -310,6 +315,9 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (requireStack.length > 0)
       firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
+
+    if (typeof firstError.pnpCode === `string`)
+      Error.captureStackTrace(firstError);
 
     throw firstError;
   };

@@ -3,7 +3,7 @@
 import {getPluginConfiguration}                                                                                                                                                                            from '@yarnpkg/cli';
 import {Cache, Configuration, Project, Report, Workspace, structUtils, ProjectLookup, Manifest, Descriptor, HardDependencies, ThrowReport, StreamReport, MessageName, Ident, ResolveOptions, FetchOptions} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                                                                                                                                   from '@yarnpkg/fslib';
-import {Cli, Command}                                                                                                                                                                                      from 'clipanion';
+import {Cli, Command, Builtins, Option}                                                                                                                                                                    from 'clipanion';
 import globby                                                                                                                                                                                              from 'globby';
 import micromatch                                                                                                                                                                                          from 'micromatch';
 import {Module}                                                                                                                                                                                            from 'module';
@@ -312,11 +312,10 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
 }
 
 class EntryCommand extends Command {
-  @Command.String({required: false})
-  cwd: string = `.`;
+  cwd = Option.String({required: false});
 
   async execute() {
-    const cwd = npath.toPortablePath(npath.resolve(this.cwd));
+    const cwd = npath.toPortablePath(npath.resolve(this.cwd ?? `.`));
 
     const configuration = await Configuration.find(cwd, null, {strict: false});
 
@@ -359,7 +358,7 @@ class EntryCommand extends Command {
       return null;
     };
 
-    await StreamReport.start({
+    const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
@@ -411,6 +410,8 @@ class EntryCommand extends Command {
       report.reportSeparator();
       await reportedProgress;
     });
+
+    return report.exitCode();
   }
 }
 
@@ -421,7 +422,7 @@ const cli = new Cli({
 });
 
 cli.register(EntryCommand);
-cli.register(Command.Entries.Version);
+cli.register(Builtins.VersionCommand);
 
 cli.runExit(process.argv.slice(2), {
   stdin: process.stdin,

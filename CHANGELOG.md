@@ -8,6 +8,7 @@
 
 ### **Breaking Changes**
 
+- Node 10 isn't supported anymore.
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
 - Yarn will now generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
@@ -23,7 +24,10 @@
 ### Bugfixes
 
 - The patched fs now supports file URLs.
-
+- The node-modules linker now ensures that hoisting result is terminal, by doing several hoisting rounds when needed
+- The node-modules linker no longer prints warnings about postinstall scripts when a workspace depends on another workspace with install scripts
+- The dependencies peer depending on their own parent are now properly hoisted by node-modules linker
+- Prettier SDK does not use in memory node_modules anymore, instead it relies on prettier plugins to be specified in `plugins` prettier config property.
 ### Settings
 
 - Various `initFields` edge cases have been fixed.

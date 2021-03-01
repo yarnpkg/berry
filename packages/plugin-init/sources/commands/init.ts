@@ -2,29 +2,15 @@ import {BaseCommand}                         from '@yarnpkg/cli';
 import {Configuration, Manifest, Project}    from '@yarnpkg/core';
 import {execUtils, scriptUtils, structUtils} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}          from 'clipanion';
+import {Command, Option, Usage, UsageError}  from 'clipanion';
 import merge                                 from 'lodash/merge';
 import {inspect}                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
-  @Command.Boolean(`-2`, {hidden: true})
-  usev2: boolean = false;
-
-  @Command.Boolean(`--assume-fresh-project`, {hidden: true})
-  assumeFreshProject: boolean = false;
-
-  @Command.Boolean(`-y,--yes`, {hidden: true})
-  yes: boolean = false;
-
-  @Command.Boolean(`-p,--private`, {description: `Initialize a private package`})
-  private: boolean = false;
-
-  @Command.Boolean(`-w,--workspace`, {description: `Initialize a private workspace root with a \`packages/\` directory`})
-  workspace: boolean = false;
-
-  @Command.String(`-i,--install`, {tolerateBoolean: true, description: `Initialize a package with a specific bundle that will be locked in the project`})
-  install: string | boolean = false;
+  static paths = [
+    [`init`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `create a new package`,
@@ -54,7 +40,26 @@ export default class InitCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`init`)
+  private = Option.Boolean(`-p,--private`, false, {
+    description: `Initialize a private package`,
+  });
+
+  workspace = Option.Boolean(`-w,--workspace`, false, {
+    description: `Initialize a workspace root with a \`packages/\` directory`,
+  });
+
+  install = Option.String(`-i,--install`, false, {
+    tolerateBoolean: true,
+    description: `Initialize a package with a specific bundle that will be locked in the project`,
+  });
+
+  // Options that only mattered on v1
+  usev2 = Option.Boolean(`-2`, false, {hidden: true});
+  yes = Option.Boolean(`-y,--yes`, {hidden: true});
+
+  // Used internally to avoid issues when using `-i`
+  assumeFreshProject = Option.Boolean(`--assume-fresh-project`, false, {hidden: true});
+
   async execute() {
     if (xfs.existsSync(ppath.join(this.context.cwd, Manifest.fileName)))
       throw new UsageError(`A package.json already exists in the specified directory`);
@@ -178,8 +183,9 @@ export default class InitCommand extends BaseCommand {
 
       const gitignoreLines = [
         `/.yarn/*`,
-        `!/.yarn/releases`,
+        `!/.yarn/patches`,
         `!/.yarn/plugins`,
+        `!/.yarn/releases`,
         `!/.yarn/sdks`,
         ``,
         `# Swap the comments on the following lines if you don't wish to use zero-installs`,
@@ -201,7 +207,7 @@ export default class InitCommand extends BaseCommand {
           endOfLine: `lf`,
           insertFinalNewline: true,
         },
-        [`*.{js,json,.yml}`]: {
+        [`*.{js,json,yml}`]: {
           charset: `utf-8`,
           indentStyle: `space`,
           indentSize: 2,

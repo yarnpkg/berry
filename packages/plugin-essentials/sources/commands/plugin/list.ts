@@ -1,7 +1,7 @@
 import {BaseCommand}                            from '@yarnpkg/cli';
 import {Configuration, StreamReport, httpUtils} from '@yarnpkg/core';
 import {parseSyml}                              from '@yarnpkg/parsers';
-import {Command, Usage}                         from 'clipanion';
+import {Command, Option, Usage}                 from 'clipanion';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
@@ -14,8 +14,9 @@ export async function getAvailablePlugins(configuration: Configuration) {
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginDlCommand extends BaseCommand {
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`plugin`, `list`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
@@ -29,7 +30,10 @@ export default class PluginDlCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`plugin`, `list`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

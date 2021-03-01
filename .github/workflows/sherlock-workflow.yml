@@ -9,10 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - name: 'Use Node.js 10.x'
+    - name: 'Install Node'
       uses: actions/setup-node@master
       with:
-        node-version: 10.x
+        node-version: 14.x
 
     - name: 'Always use the latest sherlock'
       run: |
@@ -20,16 +20,19 @@ jobs:
       shell: bash
 
     - name: 'Sherlock Payload'
+      id: sherlock-payload
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock payload'
 
     - name: 'Sherlock Execution'
+      if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock exec'
 
     - name: 'Sherlock Reporting'
+      if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock report'

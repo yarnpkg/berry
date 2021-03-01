@@ -6,7 +6,7 @@ import {ScrollableItems}                                                        
 import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
-import {Command, Usage, UsageError}                                                                             from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                                     from 'clipanion';
 import {Box, Text}                                                                                              from 'ink';
 import React, {useCallback, useState}                                                                           from 'react';
 import semver                                                                                                   from 'semver';
@@ -17,8 +17,9 @@ type Releases = Map<Workspace, Exclude<versionUtils.Decision, versionUtils.Decis
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCheckCommand extends Command<CommandContext> {
-  @Command.Boolean(`-i,--interactive`, {description: `Open an interactive interface used to set version bumps`})
-  interactive?: boolean;
+  static paths = [
+    [`version`, `check`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
@@ -38,7 +39,10 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     ]],
   });
 
-  @Command.Path(`version`, `check`)
+  interactive = Option.Boolean(`-i,--interactive`, {
+    description: `Open an interactive interface used to set version bumps`,
+  });
+
   async execute() {
     if (this.interactive) {
       return await this.executeInteractive();

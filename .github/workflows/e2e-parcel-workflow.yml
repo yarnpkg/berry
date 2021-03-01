@@ -54,7 +54,7 @@ jobs:
 
         # TypeScript (tsc)
 
-        yarn add -D @parcel/config-default @parcel/validator-typescript @types/lodash typescript
+        yarn add -D @parcel/config-default@nightly @parcel/validator-typescript@nightly @types/lodash typescript
 
         echo "{\"extends\": \"@parcel/config-default\", \"validators\": {\"*.{ts,tsx}\": [\"@parcel/validator-typescript\"]}}" | tee .parcelrc
 
@@ -69,7 +69,7 @@ jobs:
 
         # Less
 
-        yarn add -D bootstrap-less less
+        yarn add -D bootstrap-less less postcss @parcel/optimizer-cssnano@nightly @parcel/packager-css@nightly @parcel/transformer-css@nightly @parcel/transformer-less@nightly @parcel/transformer-postcss@nightly
 
         mkdir src
         echo "import './main.less';" | tee src/index.js
@@ -83,8 +83,8 @@ jobs:
         rm -rf dist src
 
         # Yaml
-        
-        yarn add js-yaml
+
+        yarn add @parcel/transformer-yaml@nightly
 
         echo "import data from './data.yaml';console.log(data.berry.works.with[0]);" | tee index.js
         echo "berry: {works: {with:  [Parcel]}}" | tee data.yaml
@@ -96,7 +96,7 @@ jobs:
 
         # MDX
 
-        yarn add react react-dom react-select @mdx-js/mdx @mdx-js/react
+        yarn add react react-dom react-select @mdx-js/mdx @mdx-js/react @parcel/transformer-mdx@nightly
 
         echo "import page from './page.mdx'; console.log('MDX Built');" | tee index.js
         cat > page.mdx <<EOT

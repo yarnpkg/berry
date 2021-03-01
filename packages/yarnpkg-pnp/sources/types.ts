@@ -32,7 +32,6 @@ export type PackageStoreData = Array<[string | null, PackageInformationData<Port
 export type PackageRegistry = Map<string | null, PackageStore>;
 export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
-export type LocationBlacklistData = Array<PortablePath>;
 export type LocationLengthData = Array<number>;
 
 // This is what is stored within the .pnp.meta.json file
@@ -43,7 +42,6 @@ export type SerializedState = {
   fallbackExclusionList: Array<[string, Array<string>]>,
   fallbackPool: Array<[string, DependencyTarget]>,
   ignorePatternData: string | null,
-  locationBlacklistData: LocationBlacklistData,
   packageRegistryData: PackageRegistryData,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
@@ -56,17 +54,13 @@ export type RuntimeState = {
   fallbackPool: Map<string, DependencyTarget>,
   ignorePattern: RegExp | null,
   packageLocationLengths: Array<number>,
-  packageLocatorsByLocations: Map<PortablePath, PhysicalPackageLocator | null>;
+  packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>;
   packageRegistry: PackageRegistry,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
 
 // This is what the generation functions take as parameter
 export type PnpSettings = {
-  // Some locations that are not allowed to make a require call, period
-  // (usually the realpath of virtual packages)
-  blacklistedLocations?: Iterable<PortablePath>,
-
   // Whether the top-level dependencies should be made available to all the
   // dependency tree as a fallback (default is true)
   enableTopLevelFallback?: boolean,
@@ -95,6 +89,18 @@ export type PnpSettings = {
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
 
+export type ResolveToUnqualifiedOptions = {
+  considerBuiltins?: boolean,
+};
+
+export type ResolveUnqualifiedOptions = {
+  extensions?: Array<string>,
+};
+
+export type ResolveRequestOptions =
+  ResolveToUnqualifiedOptions &
+  ResolveUnqualifiedOptions;
+
 export type PnpApi = {
   VERSIONS: {std: number, [key: string]: number},
 
@@ -105,9 +111,9 @@ export type PnpApi = {
   getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null,
   findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null,
 
-  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean}) => NativePath | null,
-  resolveUnqualified: (unqualified: NativePath, opts?: {extensions?: Array<string>}) => NativePath,
-  resolveRequest: (request: string, issuer: NativePath | null, opts?: {considerBuiltins?: boolean, extensions?: Array<string>}) => NativePath | null,
+  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => NativePath | null,
+  resolveUnqualified: (unqualified: NativePath, opts?: ResolveUnqualifiedOptions) => NativePath,
+  resolveRequest: (request: string, issuer: NativePath | null, opts?: ResolveRequestOptions) => NativePath | null,
 
   // Extension methods
   resolveVirtual?: (p: NativePath) => NativePath | null,

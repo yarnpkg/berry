@@ -25,7 +25,7 @@ The following protocols can be used by any dependency entry listed in the `depen
 | Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                   |
 | Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                     |
 | Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                   |
-| Workspace     | `workpace:*`                            | Creates a link to a package in another workspace                                                                                   |
+| Workspace     | `workspace:*`                           | Creates a link to a package in another workspace                                                                                   |
 | [Exec](#exec) | `exec:./my-generator-package`           | <sup>*Experimental & Plugin*</sup><br>Instructs Yarn to execute the specified Node script and use its output as package content |
 
 ## Details
@@ -76,7 +76,7 @@ Note that if you wish to update a transitive dependency (ie not directly yours),
 
 ### Workspace
 
-The `workspace:` protocol is meant to be used with [workspaces](/features/workspaces#workspace-ranges-workspace). While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartiment your code). 
+The `workspace:` protocol is meant to be used with [workspaces](/features/workspaces#workspace-ranges-workspace). While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartmentalize your code). 
 
 Our current recommendation is to use `workspace:*`, which will almost always do what you expect. See [the documentation of workspaces](/features/workspaces#workspace-ranges-workspace) for full details about this protocol.
 

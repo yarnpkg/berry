@@ -28,6 +28,15 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (empty project / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (empty project / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
@@ -121,6 +130,19 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0025: workspace-a has an extraneous dependency on no-deps (in dependencies)
+➤ YN0025: workspace-a has an extraneous dependency on no-deps (in devDependencies)
+➤ YN0025: workspace-b has an extraneous dependency on no-deps (in dependencies)
+➤ YN0025: workspace-b has an extraneous dependency on no-deps (in devDependencies)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
@@ -161,8 +183,8 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: workspace-a has an extraneous field dependencies set to null
-➤ YN0039: workspace-b has an extraneous field dependencies set to null
+  "stdout": "➤ YN0039: workspace-a has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+➤ YN0039: workspace-b has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -221,6 +243,15 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
@@ -255,7 +286,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to null
+  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -306,6 +337,15 @@ Object {
   "stderr": "",
   "stdout": "➤ YN0025: root-workspace-0b6124 has an extraneous dependency on no-deps (in devDependencies)
 ➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -398,6 +438,15 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
@@ -432,7 +481,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to null
+  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -488,6 +537,15 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible)) 1`] = `
 Object {
   "code": 1,
@@ -522,7 +580,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to null
+  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
 ➤ YN0000: Failed with errors
 ",
 }

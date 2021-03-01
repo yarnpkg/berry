@@ -1,16 +1,14 @@
 import {BaseCommand}                              from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
-import {Command, Usage, UsageError}               from 'clipanion';
+import {Command, Option, Usage, UsageError}       from 'clipanion';
 import cloneDeep                                  from 'lodash/cloneDeep';
 import unsetPath                                  from 'lodash/unset';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigUnsetCommand extends BaseCommand {
-  @Command.String()
-  name!: string;
-
-  @Command.Boolean(`-H,--home`, {description: `Update the home configuration instead of the project configuration`})
-  home: boolean = false;
+  static paths = [
+    [`config`, `unset`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `unset a configuration setting`,
@@ -29,7 +27,12 @@ export default class ConfigUnsetCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`config`, `unset`)
+  home = Option.Boolean(`-H,--home`, false, {
+    description: `Update the home configuration instead of the project configuration`,
+  });
+
+  name = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (!configuration.projectCwd)

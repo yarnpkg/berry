@@ -1,11 +1,12 @@
 import {BaseCommand}                 from '@yarnpkg/cli';
 import {Configuration, StreamReport} from '@yarnpkg/core';
-import {Command, Usage}              from 'clipanion';
+import {Command, Option, Usage}      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginListCommand extends BaseCommand {
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`plugin`, `runtime`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
@@ -19,7 +20,10 @@ export default class PluginListCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`plugin`, `runtime`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
