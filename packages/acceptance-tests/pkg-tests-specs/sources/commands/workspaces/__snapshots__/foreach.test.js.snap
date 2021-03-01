@@ -35,13 +35,21 @@ exports[`Commands workspace foreach should never run the scripts on workspaces t
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: [workspace-c]: Test Workspace C
+  "stdout": "➤ YN0000: [workspace-c]: Process started
+➤ YN0000: [workspace-c]: Test Workspace C
+➤ YN0000: [workspace-c]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-d]: Process started
 ➤ YN0000: [workspace-d]: Test Workspace D
+➤ YN0000: [workspace-d]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-e]: Process started
 ➤ YN0000: [workspace-e]: Test Workspace E
+➤ YN0000: [workspace-e]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-f]: Process started
 ➤ YN0000: [workspace-f]: Test Workspace F
+➤ YN0000: [workspace-f]: Process exited (exit code 0)
 ➤ YN0000: Done
 ",
 }
@@ -66,9 +74,13 @@ exports[`Commands workspace foreach should only run the scripts on workspaces th
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: [workspace-a]: Test Workspace A
+  "stdout": "➤ YN0000: [workspace-a]: Process started
+➤ YN0000: [workspace-a]: Test Workspace A
+➤ YN0000: [workspace-a]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-b]: Process started
 ➤ YN0000: [workspace-b]: Test Workspace B
+➤ YN0000: [workspace-b]: Process exited (exit code 0)
 ➤ YN0000: Done
 ",
 }
@@ -78,17 +90,29 @@ exports[`Commands workspace foreach should prefix the output with run with --ver
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: [workspace-a]: Test Workspace A
+  "stdout": "➤ YN0000: [workspace-a]: Process started
+➤ YN0000: [workspace-a]: Test Workspace A
+➤ YN0000: [workspace-a]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-b]: Process started
 ➤ YN0000: [workspace-b]: Test Workspace B
+➤ YN0000: [workspace-b]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-c]: Process started
 ➤ YN0000: [workspace-c]: Test Workspace C
+➤ YN0000: [workspace-c]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-d]: Process started
 ➤ YN0000: [workspace-d]: Test Workspace D
+➤ YN0000: [workspace-d]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-e]: Process started
 ➤ YN0000: [workspace-e]: Test Workspace E
+➤ YN0000: [workspace-e]: Process exited (exit code 0)
 
+➤ YN0000: [workspace-f]: Process started
 ➤ YN0000: [workspace-f]: Test Workspace F
+➤ YN0000: [workspace-f]: Process exited (exit code 0)
 ➤ YN0000: Done
 ",
 }
