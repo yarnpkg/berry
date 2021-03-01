@@ -211,11 +211,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
-  enableAbsoluteVirtuals: {
-    description: `If true, the virtual symlinks will use absolute paths if required [non portable!!]`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
 
   // Settings related to the output style
   enableColors: {
@@ -501,7 +496,6 @@ export interface ConfigurationValueMap {
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
-  enableAbsoluteVirtuals: boolean;
 
   enableColors: boolean;
   enableHyperlinks: boolean;

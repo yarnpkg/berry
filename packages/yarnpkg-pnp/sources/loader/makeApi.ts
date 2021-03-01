@@ -505,38 +505,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
       const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-      if (typeof entry === `undefined`)
-        continue;
 
-      // Ensures that the returned locator isn't a blacklisted one.
-      //
-      // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
-      // happens with peer dependencies, which effectively have different sets of dependencies depending on their
-      // parents.
-      //
-      // In order to deambiguate those different sets of dependencies, the Yarn implementation of PnP will generate a
-      // symlink for each combination of <package name>/<package version>/<dependent package> it will find, and will
-      // blacklist the target of those symlinks. By doing this, we ensure that files loaded through a specific path
-      // will always have the same set of dependencies, provided the symlinks are correctly preserved.
-      //
-      // Unfortunately, some tools do not preserve them, and when it happens PnP isn't able anymore to deduce the set of
-      // dependencies based on the path of the file that makes the require calls. But since we've blacklisted those
-      // paths, we're able to print a more helpful error message that points out that a third-party package is doing
-      // something incompatible!
+      if (typeof entry !== `undefined`) {
+        if (entry.discardFromLookup && !includeDiscardFromLookup)
+          continue;
 
-      if (entry === null) {
-        const locationForDisplay = getPathForDisplay(location);
-        throw makeError(
-          ErrorCode.BLACKLISTED,
-          `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`,
-          {location: locationForDisplay},
-        );
+        return entry.locator;
       }
-
-      if (entry.discardFromLookup && !includeDiscardFromLookup)
-        continue;
-
-      return entry.locator;
     }
 
     return null;
@@ -622,9 +597,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           unqualifiedPath = ppath.normalize(ppath.join(ppath.dirname(absoluteIssuer), request));
         }
       }
-
-      // No need to use the return value; we just want to check the blacklist status
-      findPackageLocator(unqualifiedPath);
     } else {
       // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
       // particular the exact version for the given location on the dependency tree
