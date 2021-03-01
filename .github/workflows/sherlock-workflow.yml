@@ -24,20 +24,15 @@ jobs:
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock payload'
-      
-    - name: Debug
-      run: |
-        echo ${{steps.sherlock-payload.outcome}}
-        echo ${{steps}}
 
     - name: 'Sherlock Execution'
-      if: ${{steps.sherlock-payload.outcome == 'success'}}
+      if: ${{steps.sherlock-payload.sherlock-outcome == 'success'}}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock exec'
 
     - name: 'Sherlock Reporting'
-      if: ${{steps.sherlock-payload.outcome == 'success'}}
+      if: ${{steps.sherlock-payload.sherlock-outcome == 'success'}}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock report'
