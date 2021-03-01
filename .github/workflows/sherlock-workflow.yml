@@ -20,16 +20,19 @@ jobs:
       shell: bash
 
     - name: 'Sherlock Payload'
+      id: sherlock-payload
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock payload'
 
     - name: 'Sherlock Execution'
+      if: ${{ steps.sherlock-payload.outcome == 'success' }}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock exec'
 
     - name: 'Sherlock Reporting'
+      if: ${{ steps.sherlock-payload.outcome == 'success' }}
       uses: ./scripts/actions/local-yarn-command
       with:
         args: 'sherlock report'
