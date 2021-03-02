@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -8,7 +8,7 @@
     "@yarnpkg/fslib": "workspace:^2.4.0",
     "@yarnpkg/libzip": "workspace:^2.2.1",
     "@yarnpkg/parsers": "workspace:^2.3.0",
-    "@yarnpkg/plugin-compat": "workspace:^2.2.0",
+    "@yarnpkg/plugin-compat": "workspace:^2.2.1",
     "@yarnpkg/plugin-dlx": "workspace:^2.1.4",
     "@yarnpkg/plugin-essentials": "workspace:^2.4.0",
     "@yarnpkg/plugin-file": "workspace:^2.2.0",
