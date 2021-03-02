@@ -25,7 +25,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
   // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
   [/^https:\/\/npm\.fontawesome\.com\/(?:@[^/]+)\/([^/]+)\/-\/([^/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
   // JFrog
-  [/^https?:\/\/(?:[^\\.]+)\.jfrog\.io\/.*\/(@[^/]+)\/([^/]+)\/-\/\1\/\2-(?:[.\d\w-]+)\.tgz(?:#|$)/, version => `npm:${version}`],
+  [/^https?:\/\/(?:[^\\.]+)\.jfrog\.io\/.*\/(@[^/]+)\/([^/]+)\/-\/\1\/\2-(?:[.\d\w-]+)\.tgz(?:#|$)/, (version, $0) => structUtils.makeRange({protocol: `npm:`, source: null, selector: version, params: {__archiveUrl: $0}})],
 
   // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
