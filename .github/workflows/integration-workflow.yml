@@ -2,6 +2,7 @@ on:
   push:
     branches:
     - master
+    - cherry-pick/*
   pull_request:
 
 name: 'Integration'
