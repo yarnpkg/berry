@@ -32,6 +32,12 @@
 
 - Various `initFields` edge cases have been fixed.
 
+## 2.4.1
+
+### Compatibility
+
+- The release of TypeScript 4.2 couldn't be installed due to patch conflicts. This is now fixed. This version only includes a fix specific to 4.2, but future Yarn releases starting from 3.0 will be more tolerant of this kind of situation and won't cause such errors.
+
 ## 2.4.0
 
 ### Installs
