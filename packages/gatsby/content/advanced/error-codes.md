@@ -323,3 +323,8 @@ A packageExtension is detected by Yarn as being unneeded, which means that the s
 ## YN0070 - `NM_CANT_INSTALL_PORTAL`
 
 A portal dependency cannot be installed, because incompatible version of a dependency exists in the parent package. This prevents portal representation for node_modules installs without a need to write files into portal's target directory, which is forbidden for security reasons.
+
+## YN0071 - `NM_PRESERVE_SYMLINKS_REQUIRED`
+
+A portal dependency with subdependencies is used in the project. `--preserve-symlinks` Node option must be used
+to start the application in order for portal dependency to find its subdependencies and peer dependencies.

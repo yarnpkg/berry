@@ -1,5 +1,5 @@
 import {areLocatorsEqual}                                                     from '@yarnpkg/core/sources/structUtils';
-import {structUtils, Project, Report, MessageName}                            from '@yarnpkg/core';
+import {structUtils, Project, MessageName}                                    from '@yarnpkg/core';
 import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
@@ -48,12 +48,12 @@ export type NodeModulesPackageNode = {
  * /home/user/project/node_modules/bar -> {target: '/home/user/project/packages/bar', linkType: 'SOFT'}
  */
 export type NodeModulesTree = Map<PortablePath, NodeModulesBaseNode | NodeModulesPackageNode>;
+export type NodeModulesTreeErrors = Array<{messageName: MessageName, text: string}>;
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
   hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
   project?: Project;
-  report?: Report;
 }
 
 /** node_modules path segment */
@@ -90,14 +90,17 @@ export const getArchivePath = (packagePath: PortablePath): PortablePath | null =
  *
  * @returns hoisted `node_modules` directories representation in-memory
  */
-export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): NodeModulesTree | null => {
-  const {packageTree, hoistingLimits, nonpersistableGraph} = buildPackageTree(pnp, options);
-  if (nonpersistableGraph)
-    return null;
+export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOptions): {tree: NodeModulesTree | null, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean} => {
+  const {packageTree, hoistingLimits, errors, preserveSymlinksRequired} = buildPackageTree(pnp, options);
 
-  const hoistedTree = hoist(packageTree, {hoistingLimits});
+  let tree: NodeModulesTree | null = null;
+  if (errors.length === 0) {
+    const hoistedTree = hoist(packageTree, {hoistingLimits});
 
-  return populateNodeModulesTree(pnp, hoistedTree, options);
+    tree = populateNodeModulesTree(pnp, hoistedTree, options);
+  }
+
+  return {tree, errors, preserveSymlinksRequired};
 };
 
 const stringifyLocator = (locator: PhysicalPackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
@@ -143,9 +146,10 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, nonpersistableGraph: boolean } => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
   const pnpRoots = pnp.getDependencyTreeRoots();
-  let nonpersistableGraph = false;
+  const errors: NodeModulesTreeErrors = [];
+  let preserveSymlinksRequired = false;
 
   const hoistingLimits = new Map<LocatorKey, Set<string>>();
   const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
@@ -231,15 +235,17 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (pkg.linkType === LinkType.SOFT && options.report && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
+    if (pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
+      if (pkg.packageDependencies.size > 0)
+        preserveSymlinksRequired = true;
+
       for (const [name, referencish] of pkg.packageDependencies) {
         const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
         const parentReferencish = parentDependencies.get(name);
         if (parentReferencish) {
           const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
           if (!areLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
-            options.report.reportError(MessageName.NM_CANT_INSTALL_PORTAL, `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`);
-            nonpersistableGraph = true;
+            errors.push({messageName: MessageName.NM_CANT_INSTALL_PORTAL, text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`});
           }
         }
       }
@@ -317,7 +323,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
-  return {packageTree, hoistingLimits, nonpersistableGraph};
+  return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {

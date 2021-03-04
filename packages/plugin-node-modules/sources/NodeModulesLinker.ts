@@ -1,7 +1,7 @@
 import {MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor, DependencyMeta} from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
 import {Locator, Package, FinalizeInstallStatus}                                               from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils}                                              from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, formatUtils}                                 from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                         from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                      from '@yarnpkg/libzip';
@@ -267,10 +267,14 @@ class NodeModulesInstaller implements Installer {
       },
     };
 
-    const nmTree = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project, report: this.opts.report});
-    if (!nmTree)
+    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
+    if (!tree) {
+      for (const {messageName, text} of errors)
+        this.opts.report.reportError(messageName, text);
+
       return undefined;
-    const locatorMap = buildLocatorMap(nmTree);
+    }
+    const locatorMap = buildLocatorMap(tree);
 
     await persistNodeModules(preinstallState, locatorMap, {
       baseFs: defaultFsLayer,
@@ -308,6 +312,9 @@ class NodeModulesInstaller implements Installer {
         buildDirective: buildScripts,
       });
     }
+
+    if (preserveSymlinksRequired)
+      this.opts.report.reportWarning(MessageName.NM_PRESERVE_SYMLINKS_REQUIRED, `The application uses portals and that's why ${formatUtils.pretty(this.opts.project.configuration, `--preserve-symlinks`, formatUtils.Type.CODE)} Node option is required for launching it`);
 
     return {
       customData: this.customData,

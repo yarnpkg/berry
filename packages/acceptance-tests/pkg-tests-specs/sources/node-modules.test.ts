@@ -863,7 +863,7 @@ describe(`Node_Modules`, () => {
             },
           });
 
-          await run(`install`);
+          const {stdout} = await run(`install`);
 
           await expect(readJson(`${path}/node_modules/portal/package.json` as PortablePath)).resolves.toMatchObject({
             name: `portal`,
@@ -871,6 +871,7 @@ describe(`Node_Modules`, () => {
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
             version: `1.0.0`,
           });
+          expect(stdout).toMatch(new RegExp(`--preserve-symlinks`));
           expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
           expect((await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode).toEqual(binScriptMode);
         });
