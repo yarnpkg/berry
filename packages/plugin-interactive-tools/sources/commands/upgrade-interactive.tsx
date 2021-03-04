@@ -4,12 +4,13 @@ import {ItemOptions}                                                            
 import {Pad}                                                                                                                            from '@yarnpkg/libui/sources/components/Pad';
 import {ScrollableItems}                                                                                                                from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
+import {useKeypress}                                                                                                                    from '@yarnpkg/libui/sources/hooks/useKeypress';
 import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import {Box, Text}                                                                                                                      from 'ink';
-import React, {useEffect, useRef, useState}                                                                                             from 'react';
+import React, {useCallback, useEffect, useRef, useState}                                                                                from 'react';
 import semver                                                                                                                           from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
@@ -143,6 +144,46 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       return suggestions;
     };
 
+    const formatAction = ({isIgnore, version}: {isIgnore: boolean; version: string}) => {
+      return `${isIgnore ? `ignore` : `update`}__${version}`;
+    };
+
+    const parseAction = (action: string) => {
+      const [command, version] = action.split(`__`);
+
+      return {
+        isIgnore: command === `ignore`,
+        version,
+      };
+    };
+
+    const readIgnoreList = () => {
+      return configuration.get(`upgradeInteractiveIgnoredVersions`).reduce((allVersions, versionString) => {
+        const [packageName, versionRange = `*`] = versionString.split(`:`);
+
+        if (!packageName) return allVersions;
+
+        return {
+          ...allVersions,
+          [packageName]: versionRange,
+        };
+      }, {} as Record<string, string>);
+    };
+
+    const writeIgnoreList = async (ignoredDependencyUpdates: Record<string, string>) => {
+      const currentList = readIgnoreList();
+
+      const newList = {
+        ...currentList,
+        ...ignoredDependencyUpdates,
+      };
+
+      await Configuration.updateConfiguration(configuration.startingCwd, {
+        upgradeInteractiveIgnoredVersions: Object.entries(newList)
+          .map(([packageName, versionRange]) => `${packageName}:${versionRange}`),
+      });
+    };
+
     const Prompt = () => {
       return (
         <Box flexDirection="row">
@@ -155,6 +196,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
             <Box marginLeft={1}>
               <Text>
                 Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select versions.
+              </Text>
+            </Box>
+            <Box marginLeft={1}>
+              <Text>
+                Press <Text bold color="cyanBright">{`<i>`}</Text> to toggle ignore mode.
               </Text>
             </Box>
           </Box>
@@ -191,9 +237,37 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const UpgradeEntry = ({active, descriptor, suggestions}: {active: boolean, descriptor: Descriptor, suggestions: Array<UpgradeSuggestion>}) => {
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
+      const [isIgnoreMode, setIgnoreMode] = useState(false);
 
       const packageIdentifier = structUtils.stringifyIdent(descriptor);
       const padLength = Math.max(0, 45 - packageIdentifier.length);
+
+      useKeypress({active}, (ch, key) => {
+        switch (key.name) {
+          case `i`:
+            setIgnoreMode(prevIsIgnore => {
+              const nextIsIgnore = !prevIsIgnore;
+
+              if (action !== null) {
+                const {version} = parseAction(action);
+                setAction(formatAction({isIgnore: nextIsIgnore, version}));
+              }
+
+              return nextIsIgnore;
+            });
+        }
+      }, [action, setAction, setIgnoreMode]);
+
+      const onItemChange = useCallback((newAction: string | null) => {
+        if (newAction === null) {
+          setAction(null);
+        } else {
+          setAction(formatAction({isIgnore: isIgnoreMode, version: newAction}));
+        }
+      }, [isIgnoreMode, setAction]);
+
+      const {version: value} = action ? parseAction(action) : {version: null};
+
       return <>
         <Box>
           <Box width={45}>
@@ -203,7 +277,15 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
             <Pad active={active} length={padLength}/>
           </Box>
           {suggestions !== null
-            ? <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
+            ? <ItemOptions
+              active={active}
+              gemColor={isIgnoreMode ? `red` : undefined /* use default */}
+              options={suggestions}
+              value={value}
+              skewer={true}
+              onChange={onItemChange}
+              sizes={[17, 17, 17]}
+            />
             : <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
           }
         </Box>
@@ -221,12 +303,28 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       });
 
       useEffect(() => {
+        const ignoreList = readIgnoreList();
+
         Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
           .then(allSuggestions => {
             const mappedToSuggestions = dependencies.map((descriptor, i) => {
               const suggestionsForDescriptor = allSuggestions[i];
               return [descriptor, suggestionsForDescriptor] as const;
-            }).filter(([_, suggestions]) => suggestions.length > 1);
+            }).filter(([_, suggestions]) => suggestions.length > 1)
+              .filter(([{scope, name}, suggestions]) => {
+                const ignoredVersionRange = ignoreList[scope ? `@${scope}/${name}` : name];
+
+                if (!ignoredVersionRange)
+                  return true;
+
+                // The latest version is always the last one in the array
+                const latestVersion = suggestions[suggestions.length - 1]?.value?.replace(`^`, ``);
+                if (!latestVersion)
+                  return true;
+
+                // If the latest version satisfies the ignore range, we filter out the dependency
+                return !semver.satisfies(latestVersion, ignoredVersionRange);
+              });
 
             if (mountedRef.current) {
               setSuggestions(mappedToSuggestions);
@@ -272,24 +370,38 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     if (typeof updateRequests === `undefined`)
       return 1;
 
-    let hasChanged = false;
+    let shouldInstall = false;
+    let shouldUpdateIgnoreList = false;
+
+    const ignoredDependencyUpdates: Record<string, string> = {};
 
     for (const workspace of project.workspaces) {
       for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>) {
         const dependencies = workspace.manifest[dependencyType];
 
         for (const descriptor of dependencies.values()) {
-          const newRange = updateRequests.get(descriptor.descriptorHash);
+          const action = updateRequests.get(descriptor.descriptorHash);
 
-          if (typeof newRange !== `undefined` && newRange !== null) {
-            dependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, newRange));
-            hasChanged = true;
+          if (typeof action !== `undefined` && action !== null) {
+            const {isIgnore, version: newRange} = parseAction(action);
+
+            if (isIgnore) {
+              const key = descriptor.scope ? `@${descriptor.scope}/${descriptor.name}` : descriptor.name;
+              ignoredDependencyUpdates[key] = newRange;
+              shouldUpdateIgnoreList = true;
+            } else {
+              dependencies.set(descriptor.identHash, structUtils.makeDescriptor(descriptor, newRange));
+              shouldInstall = true;
+            }
           }
         }
       }
     }
 
-    if (!hasChanged)
+    if (shouldUpdateIgnoreList)
+      await writeIgnoreList(ignoredDependencyUpdates);
+
+    if (!shouldInstall)
       return 0;
 
     const installReport = await StreamReport.start({
