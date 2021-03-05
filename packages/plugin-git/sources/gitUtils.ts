@@ -60,7 +60,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
       repo: url,
       treeish: {
         protocol: TreeishProtocols.Head,
-        request: `master`,
+        request: `HEAD`,
       },
       extra: {},
     };
@@ -89,7 +89,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
       request = extra[requestedProtocol]! as string;
     } else {
       protocol = TreeishProtocols.Head;
-      request = `master`;
+      request = `HEAD`;
     }
 
     for (const key of Object.values(TreeishProtocols))
@@ -176,7 +176,7 @@ export async function lsRemote(repo: string, configuration: Configuration) {
 
   let res: {stdout: string};
   try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, `--refs`, normalizedRepoUrl], {
+    res = await execUtils.execvp(`git`, [`ls-remote`, normalizedRepoUrl], {
       cwd: configuration.startingCwd,
       env: makeGitEnvironment(),
       strict: true,
@@ -188,7 +188,7 @@ export async function lsRemote(repo: string, configuration: Configuration) {
 
   const refs = new Map();
 
-  const matcher = /^([a-f0-9]{40})\t(refs\/[^\n]+)/gm;
+  const matcher = /^([a-f0-9]{40})\t([^\n]+)/gm;
   let match;
 
   while ((match = matcher.exec(res.stdout)) !== null)
@@ -214,7 +214,7 @@ export async function resolveUrl(url: string, configuration: Configuration) {
       }
 
       case TreeishProtocols.Head: {
-        const head = refs.get(`refs/heads/${request}`);
+        const head = refs.get(request === `HEAD` ? request : `refs/heads/${request}`);
         if (typeof head === `undefined`)
           throw new Error(`Unknown head ("${request}")`);
 

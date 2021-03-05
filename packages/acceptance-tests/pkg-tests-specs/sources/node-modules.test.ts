@@ -805,7 +805,7 @@ describe(`Node_Modules`, () => {
     )
   );
 
-  it(`should allow running binaries unrelated to incompatible package`,
+  test(`should allow running binaries unrelated to incompatible package`,
     makeTemporaryEnv(
       {
         private: true,
@@ -840,7 +840,7 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should install dependencies from portals without modifying portal directory`,
+  test(`should install dependencies from portals without modifying portal directory`,
     makeTemporaryEnv({},
       {
         nodeLinker: `node-modules`,
@@ -878,40 +878,66 @@ describe(`Node_Modules`, () => {
       })
   );
 
-  it(`should error out on external portal requiring a dependency that conflicts with parent package`,
+  test(`should error out on external portal requiring a dependency that conflicts with parent package`,
     makeTemporaryEnv({},
+    {
+      nodeLinker: `node-modules`,
+    },
+    async ({path, run}) => {
+      await xfs.mktempPromise(async portalTarget => {
+        await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+          dependencies: {
+            portal: `portal:${portalTarget}`,
+            'no-deps': `1.0.0`,
+          },
+        });
+
+        let stdout;
+        try {
+          await run(`install`);
+        } catch (e) {
+          stdout = e.stdout;
+        }
+
+        expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
+      });
+    })
+  );
+
+  test(
+    `should not warn when depending on workspaces with postinstall`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`dep`],
+        dependencies: {
+          dep: `workspace:*`,
+        },
+      },
       {
         nodeLinker: `node-modules`,
       },
       async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget => {
-          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
-            name: `portal`,
-            dependencies: {
-              [`no-deps`]: `2.0.0`,
-            },
-          });
-
-          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
-            dependencies: {
-              portal: `portal:${portalTarget}`,
-              'no-deps': `1.0.0`,
-            },
-          });
-
-          let stdout;
-          try {
-            await run(`install`);
-          } catch (e) {
-            stdout = e.stdout;
-          }
-
-          expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
+        await writeJson(`${path}/dep/package.json`, {
+          name: `dep`,
+          scripts: {
+            postinstall: `echo 'dep'`,
+          },
         });
-      })
-  );
 
-  it(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
+        const {stdout} = await run(`install`);
+
+        expect(stdout).not.toContain(`YN0006`);
+      })
+    );
+
+  test(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
     makeTemporaryEnv({
       dependencies: {
         portal: `portal:./portal`,

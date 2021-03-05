@@ -12,6 +12,15 @@ interface MakeArchiveFromDirectoryOptions {
   inMemory?: boolean,
 }
 
+// 1984-06-22T21:50:00.000Z
+//
+// It needs to be after 1980-01-01 because that's what Zip supports, and it
+// needs to have a slight offset to account for different timezones (because
+// zip assumes that all times are local to whoever writes the file, which is
+// really silly).
+//
+export const safeTime = 456789000;
+
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const libzip = await getLibzipPromise();
 
@@ -73,9 +82,6 @@ async function * parseTar(tgz: Buffer) {
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
-  // 1980-01-01, like Fedora
-  const defaultTime = 315532800;
-
   function ignore(entry: tar.ReadEntry) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
     if (entry.path[0] === `/`)
@@ -112,27 +118,27 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
 
     switch (entry.type) {
       case `Directory`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
 
         targetFs.mkdirSync(mappedPath);
         targetFs.chmodSync(mappedPath, mode);
-        targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
+        targetFs.utimesSync(mappedPath, safeTime, safeTime);
       } break;
 
       case `OldFile`:
       case `File`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
 
         targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable));
         targetFs.chmodSync(mappedPath, mode);
-        targetFs.utimesSync(mappedPath, defaultTime, defaultTime);
+        targetFs.utimesSync(mappedPath, safeTime, safeTime);
       } break;
 
       case `SymbolicLink`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [defaultTime, defaultTime]});
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
 
         targetFs.symlinkSync((entry as any).linkpath, mappedPath);
-        targetFs.lutimesSync?.(mappedPath, defaultTime, defaultTime);
+        targetFs.lutimesSync?.(mappedPath, safeTime, safeTime);
       } break;
     }
   }

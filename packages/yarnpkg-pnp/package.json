@@ -6,6 +6,7 @@
   "dependencies": {
     "@types/node": "^13.7.0",
     "@yarnpkg/fslib": "workspace:^2.4.0",
+    "resolve.exports": "^1.0.2",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
@@ -18,6 +19,7 @@
   },
   "scripts": {
     "build:pnp:hook": "webpack-cli --config webpack.config.hook.js",
+    "update:pnp:hook": "run build:pnp:hook && yarn install",
     "build:pnp": "webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",

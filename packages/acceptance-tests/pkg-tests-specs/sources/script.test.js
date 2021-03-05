@@ -524,4 +524,25 @@ describe(`Scripts tests`, () => {
       });
     })
   );
+
+  test(
+    `it should be able to spawn binaries with a utf-8 path`,
+    makeTemporaryEnv(
+      {
+        name: `testbin`,
+        bin: `å.js`,
+        scripts: {
+          [`test`]: `testbin`,
+        },
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/å.js`, `console.log('ok')`);
+        await run(`install`);
+
+        await expect(run(`test`)).resolves.toMatchObject({
+          stdout: `ok\n`,
+        });
+      }
+    )
+  );
 });

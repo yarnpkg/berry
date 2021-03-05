@@ -18,6 +18,10 @@ export default class PatchCommand extends BaseCommand {
     `,
   });
 
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
   package = Option.String();
 
   async execute() {
@@ -56,9 +60,15 @@ export default class PatchCommand extends BaseCommand {
 
     await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       const temp = await patchUtils.extractPackageToDisk(locator, {cache, project});
+
+      report.reportJson({
+        locator: structUtils.stringifyLocator(locator),
+        path: npath.fromPortablePath(temp),
+      });
 
       report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, locator)} got extracted with success!`);
       report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);

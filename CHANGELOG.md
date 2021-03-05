@@ -2,7 +2,7 @@
 
 ## Master
 
-**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
+**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn plugin import from sources <name>`).
 
 **Important:** Development of the next major version (3.x) is happening on the master branch. A list of breaking changes can be found below.
 
@@ -32,10 +32,18 @@ produce an error and abandon install if the conflict with parent dependencies is
 
 - The patched fs now supports file URLs.
 - The node-modules linker now ensures that hoisting result is terminal, by doing several hoisting rounds when needed
-
+- The node-modules linker no longer prints warnings about postinstall scripts when a workspace depends on another workspace with install scripts
+- The dependencies peer depending on their own parent are now properly hoisted by node-modules linker
+- Prettier SDK does not use in memory node_modules anymore, instead it relies on prettier plugins to be specified in `plugins` prettier config property.
 ### Settings
 
 - Various `initFields` edge cases have been fixed.
+
+## 2.4.1
+
+### Compatibility
+
+- The release of TypeScript 4.2 couldn't be installed due to patch conflicts. This is now fixed. This version only includes a fix specific to 4.2, but future Yarn releases starting from 3.0 will be more tolerant of this kind of situation and won't cause such errors.
 
 ## 2.4.0
 

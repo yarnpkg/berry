@@ -94,7 +94,7 @@ Object {
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "head",
-    "request": "master",
+    "request": "HEAD",
   },
 }
 `;
@@ -164,7 +164,7 @@ Object {
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "head",
-    "request": "master",
+    "request": "HEAD",
   },
 }
 `;
@@ -175,7 +175,7 @@ Object {
   "repo": "https://github.com/GitHubOrg/foo2bar.js.git",
   "treeish": Object {
     "protocol": "head",
-    "request": "master",
+    "request": "HEAD",
   },
 }
 `;
@@ -241,7 +241,7 @@ Object {
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
   "treeish": Object {
     "protocol": "head",
-    "request": "master",
+    "request": "HEAD",
   },
 }
 `;

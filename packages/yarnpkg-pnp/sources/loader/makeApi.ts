@@ -1,11 +1,12 @@
-import {ppath, Filename}                                                                                    from '@yarnpkg/fslib';
-import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                 from '@yarnpkg/fslib';
-import {Module}                                                                                             from 'module';
-import {inspect}                                                                                            from 'util';
+import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
+import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
+import {Module}                                                                                                                                                                            from 'module';
+import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
+import {inspect}                                                                                                                                                                           from 'util';
 
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget} from '../types';
+import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
-import {ErrorCode, makeError, getPathForDisplay}                                                            from './internalTools';
+import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
 
 export type MakeApiOptions = {
   allowDebug?: boolean,
@@ -13,18 +14,6 @@ export type MakeApiOptions = {
   fakeFs: FakeFS<PortablePath>,
   pnpapiResolution: NativePath,
 };
-
-export type ResolveToUnqualifiedOptions = {
-  considerBuiltins?: boolean,
-};
-
-export type ResolveUnqualifiedOptions = {
-  extensions?: Array<string>,
-};
-
-export type ResolveRequestOptions =
-  ResolveToUnqualifiedOptions &
-  ResolveUnqualifiedOptions;
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
@@ -42,6 +31,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   // Matches if the path must point to a directory (ie ends with /)
   const isDirRegExp = /\/$/;
+
+  // Matches if the path starts with a relative path qualifier (./, ../)
+  const isRelativeRegexp = /^\.{0,2}\//;
 
   // We only instantiate one of those so that we can use strict-equal comparisons
   const topLevelLocator = {name: null, reference: null};
@@ -203,9 +195,58 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   /**
+   * Implements the node resolution for the "exports" field
+   *
+   * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
+   */
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath) {
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {
+      resolveIgnored: true,
+      includeDiscardFromLookup: true,
+    });
+    if (locator === null) {
+      throw makeError(
+        ErrorCode.INTERNAL,
+        `The locator that owns the "${unqualifiedPath}" path can't be found inside the dependency tree (this is probably an internal error)`,
+      );
+    }
+
+    const {packageLocation} = getPackageInformationSafe(locator);
+
+    const manifestPath = ppath.join(packageLocation, Filename.manifest);
+    if (!opts.fakeFs.existsSync(manifestPath))
+      return null;
+
+    const pkgJson = JSON.parse(opts.fakeFs.readFileSync(manifestPath, `utf8`));
+
+    let subpath = ppath.contains(packageLocation, unqualifiedPath);
+    if (subpath === null) {
+      throw makeError(
+        ErrorCode.INTERNAL,
+        `unqualifiedPath doesn't contain the packageLocation (this is probably an internal error)`,
+      );
+    }
+
+    if (!isRelativeRegexp.test(subpath))
+      subpath = `./${subpath}` as PortablePath;
+
+    const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
+      browser: false,
+      require: true,
+      // TODO: implement support for the --conditions flag
+      // Waiting on https://github.com/nodejs/node/issues/36935
+      conditions: [],
+    });
+
+    if (typeof resolvedExport === `string`)
+      return ppath.join(packageLocation, resolvedExport as PortablePath);
+
+    return null;
+  }
+
+  /**
    * Implements the node resolution for folder access and extension selection
    */
-
   function applyNodeExtensionResolution(unqualifiedPath: PortablePath, candidates: Array<PortablePath>, {extensions}: {extensions: Array<string>}): PortablePath | null {
     let stat;
 
@@ -225,7 +266,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       let pkgJson;
 
       try {
-        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, `package.json` as Filename), `utf8`));
+        pkgJson = JSON.parse(opts.fakeFs.readFileSync(ppath.join(unqualifiedPath, Filename.manifest), `utf8`));
       } catch (error) {}
 
       let nextUnqualifiedPath;
@@ -444,8 +485,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: PortablePath): PhysicalPackageLocator | null {
-    if (isPathIgnored(location))
+  function findPackageLocator(location: PortablePath, {resolveIgnored = false, includeDiscardFromLookup = false}: {resolveIgnored?: boolean, includeDiscardFromLookup?: boolean} = {}): PhysicalPackageLocator | null {
+    if (isPathIgnored(location) && !resolveIgnored)
       return null;
 
     let relativeLocation = ppath.relative(runtimeState.basePath, location);
@@ -463,36 +504,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       from += 1;
 
     for (let t = from; t < packageLocationLengths.length; ++t) {
-      const locator = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-      if (typeof locator === `undefined`)
-        continue;
+      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
 
-      // Ensures that the returned locator isn't a blacklisted one.
-      //
-      // Blacklisted packages are packages that cannot be used because their dependencies cannot be deduced. This only
-      // happens with peer dependencies, which effectively have different sets of dependencies depending on their
-      // parents.
-      //
-      // In order to deambiguate those different sets of dependencies, the Yarn implementation of PnP will generate a
-      // symlink for each combination of <package name>/<package version>/<dependent package> it will find, and will
-      // blacklist the target of those symlinks. By doing this, we ensure that files loaded through a specific path
-      // will always have the same set of dependencies, provided the symlinks are correctly preserved.
-      //
-      // Unfortunately, some tools do not preserve them, and when it happens PnP isn't able anymore to deduce the set of
-      // dependencies based on the path of the file that makes the require calls. But since we've blacklisted those
-      // paths, we're able to print a more helpful error message that points out that a third-party package is doing
-      // something incompatible!
+      if (typeof entry !== `undefined`) {
+        if (entry.discardFromLookup && !includeDiscardFromLookup)
+          continue;
 
-      if (locator === null) {
-        const locationForDisplay = getPathForDisplay(location);
-        throw makeError(
-          ErrorCode.BLACKLISTED,
-          `A forbidden path has been used in the package resolution process - this is usually caused by one of your tools calling 'fs.realpath' on the return value of 'require.resolve'. Since we need to use symlinks to simultaneously provide valid filesystem paths and disambiguate peer dependencies, they must be passed untransformed to 'require'.\n\nForbidden path: ${locationForDisplay}`,
-          {location: locationForDisplay},
-        );
+        return entry.locator;
       }
-
-      return locator;
     }
 
     return null;
@@ -512,12 +531,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function resolveToUnqualified(request: PortablePath, issuer: PortablePath | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): PortablePath | null {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
-
     if (request === `pnpapi`)
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-
     if (considerBuiltins && builtinModules.has(request))
       return null;
 
@@ -557,7 +574,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     // If the request is a relative or absolute path, we just return it normalized
 
     const dependencyNameMatch = request.match(pathRegExp);
-
     if (!dependencyNameMatch) {
       if (ppath.isAbsolute(request)) {
         unqualifiedPath = ppath.normalize(request);
@@ -581,9 +597,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           unqualifiedPath = ppath.normalize(ppath.join(ppath.dirname(absoluteIssuer), request));
         }
       }
-
-      // No need to use the return value; we just want to check the blacklist status
-      findPackageLocator(unqualifiedPath);
     } else {
       // Things are more hairy if it's a package require - we then need to figure out which package is needed, and in
       // particular the exact version for the given location on the dependency tree
@@ -771,6 +784,19 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath) {
+    // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
+    if (isStrictRegExp.test(request))
+      return unqualifiedPath;
+
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
+    if (unqualifiedExportPath) {
+      return ppath.normalize(unqualifiedExportPath);
+    } else {
+      return unqualifiedPath;
+    }
+  }
+
   /**
    * Transforms an unqualified path into a qualified path by using the Node resolution algorithm (which automatically
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
@@ -802,12 +828,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
-
     if (unqualifiedPath === null)
       return null;
 
+    const isIssuerIgnored = () =>
+      issuer !== null
+        ? isPathIgnored(issuer)
+        : false;
+
+    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored()
+      ? resolveUnqualifiedExport(request, unqualifiedPath)
+      : unqualifiedPath;
+
     try {
-      return resolveUnqualified(unqualifiedPath, {extensions});
+      return resolveUnqualified(remappedPath, {extensions});
     } catch (resolutionError) {
       if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`)
         Object.assign(resolutionError.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});

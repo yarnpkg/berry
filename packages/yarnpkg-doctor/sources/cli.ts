@@ -358,7 +358,7 @@ class EntryCommand extends Command {
       return null;
     };
 
-    await StreamReport.start({
+    const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
@@ -410,6 +410,8 @@ class EntryCommand extends Command {
       report.reportSeparator();
       await reportedProgress;
     });
+
+    return report.exitCode();
   }
 }
 
