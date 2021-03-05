@@ -1774,18 +1774,18 @@ function applyVirtualResolutionMutations({
     return pkg;
   };
 
-  const resolvePeerDependencies = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {first, optional}: {first: boolean, optional: boolean}) => {
+  const resolvePeerDependencies = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
     if (resolutionStack.length > 1000)
       reportStackOverflow();
 
     resolutionStack.push(parentLocator);
-    const result = resolvePeerDependenciesImpl(parentLocator, peerSlots, {first, optional});
+    const result = resolvePeerDependenciesImpl(parentLocator, peerSlots, {top, optional});
     resolutionStack.pop();
 
     return result;
   };
 
-  const resolvePeerDependenciesImpl = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {first, optional}: {first: boolean, optional: boolean}) => {
+  const resolvePeerDependenciesImpl = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
 
@@ -1819,7 +1819,7 @@ function applyVirtualResolutionMutations({
       // We shouldn't virtualize the package if it was obtained through a peer
       // dependency (which can't be the case for workspaces when resolved
       // through their top-level)
-      if (parentPackage.peerDependencies.has(descriptor.identHash) && !first)
+      if (parentPackage.peerDependencies.has(descriptor.identHash) && parentPackage.locatorHash !== top)
         continue;
 
       // We had some issues where virtual packages were incorrectly set inside
@@ -1861,7 +1861,7 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       if (pkg.peerDependencies.size === 0) {
-        resolvePeerDependencies(pkg, new Map(), {first: false, optional: isOptional});
+        resolvePeerDependencies(pkg, new Map(), {top, optional: isOptional});
         continue;
       }
 
@@ -1949,7 +1949,7 @@ function applyVirtualResolutionMutations({
         const next = typeof current !== `undefined` ? current + 1 : 1;
 
         virtualStack.set(pkg.locatorHash, next);
-        resolvePeerDependencies(virtualizedPackage, nextPeerSlots, {first: false, optional: isOptional});
+        resolvePeerDependencies(virtualizedPackage, nextPeerSlots, {top, optional: isOptional});
         virtualStack.set(pkg.locatorHash, next - 1);
       });
 
@@ -2010,7 +2010,7 @@ function applyVirtualResolutionMutations({
             if (typeof resolution === `undefined`)
               throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
 
-            return resolution;
+            return resolution === top ? `${resolution} (top)` : resolution;
           }),
           // We use the identHash to disambiguate between virtual descriptors
           // with different base idents being resolved to the same virtual package.
@@ -2061,8 +2061,10 @@ function applyVirtualResolutionMutations({
   };
 
   for (const workspace of project.workspaces) {
+    const locator = workspace.anchoredLocator;
+
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
-    resolvePeerDependencies(workspace.anchoredLocator, new Map(), {first: true, optional: false});
+    resolvePeerDependencies(locator, new Map(), {top: locator.locatorHash, optional: false});
   }
 
   enum WarningType {
