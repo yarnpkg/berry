@@ -542,7 +542,7 @@ describe(`Dragon tests`, () => {
 
         // The virtual descriptors should be different but the virtual package should be the same
         const cPath = npath.fromPortablePath(ppath.join(path, `packages/c/package.json`));
-        await expect(source(`(createRequire = require('module').createRequire, createRequire(createRequire('${cPath}').resolve('b/package.json')).resolve('c/package.json'))`)).resolves.toEqual(cPath);
+        await expect(source(`(createRequire = require('module').createRequire, createRequire(createRequire(${JSON.stringify(cPath)}).resolve('b/package.json')).resolve('c/package.json'))`)).resolves.toEqual(cPath);
       }
     ),
   );
