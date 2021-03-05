@@ -880,35 +880,35 @@ describe(`Node_Modules`, () => {
 
   test(`should error out on external portal requiring a dependency that conflicts with parent package`,
     makeTemporaryEnv({},
-    {
-      nodeLinker: `node-modules`,
-    },
-    async ({path, run}) => {
-      await xfs.mktempPromise(async portalTarget => {
-        await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
-          name: `portal`,
-          dependencies: {
-            [`no-deps`]: `2.0.0`,
-          },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              [`no-deps`]: `2.0.0`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+              'no-deps': `1.0.0`,
+            },
+          });
+
+          let stdout;
+          try {
+            await run(`install`);
+          } catch (e) {
+            stdout = e.stdout;
+          }
+
+          expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
         });
-
-        await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
-          dependencies: {
-            portal: `portal:${portalTarget}`,
-            'no-deps': `1.0.0`,
-          },
-        });
-
-        let stdout;
-        try {
-          await run(`install`);
-        } catch (e) {
-          stdout = e.stdout;
-        }
-
-        expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
-      });
-    })
+      })
   );
 
   test(
@@ -935,7 +935,7 @@ describe(`Node_Modules`, () => {
 
         expect(stdout).not.toContain(`YN0006`);
       })
-    );
+  );
 
   test(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
     makeTemporaryEnv({
