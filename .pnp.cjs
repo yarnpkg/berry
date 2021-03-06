@@ -9305,10 +9305,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@types/vscode", [
-        ["npm:1.46.0", {
-          "packageLocation": "./.yarn/cache/@types-vscode-npm-1.46.0-a37250af62-b980b2078c.zip/node_modules/@types/vscode/",
+        ["npm:1.54.0", {
+          "packageLocation": "./.yarn/cache/@types-vscode-npm-1.54.0-e81474221a-719a85e0b2.zip/node_modules/@types/vscode/",
           "packageDependencies": [
-            ["@types/vscode", "npm:1.46.0"]
+            ["@types/vscode", "npm:1.54.0"]
           ],
           "linkType": "HARD",
         }]
@@ -19015,6 +19015,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/commander-npm-4.1.1-22a0fe921b-d7b9913ff9.zip/node_modules/commander/",
           "packageDependencies": [
             ["commander", "npm:4.1.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:6.2.1", {
+          "packageLocation": "./.yarn/cache/commander-npm-6.2.1-d5b635f237-d7090410c0.zip/node_modules/commander/",
+          "packageDependencies": [
+            ["commander", "npm:6.2.1"]
           ],
           "linkType": "HARD",
         }]
@@ -41162,14 +41169,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["vsce", [
-        ["npm:1.76.1", {
-          "packageLocation": "./.yarn/cache/vsce-npm-1.76.1-e8f997417c-b810bb994b.zip/node_modules/vsce/",
+        ["npm:1.85.1", {
+          "packageLocation": "./.yarn/cache/vsce-npm-1.85.1-e56cc0d78a-aba0181b47.zip/node_modules/vsce/",
           "packageDependencies": [
-            ["vsce", "npm:1.76.1"],
+            ["vsce", "npm:1.85.1"],
             ["azure-devops-node-api", "npm:7.2.0"],
             ["chalk", "npm:2.4.2"],
             ["cheerio", "npm:1.0.0-rc.2"],
-            ["commander", "npm:2.20.0"],
+            ["commander", "npm:6.2.1"],
             ["denodeify", "npm:1.2.1"],
             ["glob", "npm:7.1.3"],
             ["leven", "npm:3.1.0"],
@@ -41195,14 +41202,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/vscode-zipfs/",
           "packageDependencies": [
             ["vscode-zipfs", "workspace:packages/vscode-zipfs"],
-            ["@types/vscode", "npm:1.46.0"],
+            ["@types/vscode", "npm:1.54.0"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/pnpify", "virtual:c44c4b6360dc34d25da6d32e39622e7e40f36f37b99dc66b6ebbd615fdd49465f496bf10f81b6fa5f71b95443fda61174ad51d2799fc7ca433af9a9666cd0f37#workspace:packages/yarnpkg-pnpify"],
             ["ts-loader", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:7.0.5"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=a45b0e"],
-            ["vsce", "npm:1.76.1"],
+            ["vsce", "npm:1.85.1"],
             ["webpack", "virtual:4bb0e72ae00ec402a28e80560124ee13357b1a5221665b7175877ddc6b8b2b98eebe4584a111245801ecf7cecb9de577d076505c0dbcf9292aaff35440a2302f#npm:5.1.1"],
             ["webpack-cli", "virtual:4bb0e72ae00ec402a28e80560124ee13357b1a5221665b7175877ddc6b8b2b98eebe4584a111245801ecf7cecb9de577d076505c0dbcf9292aaff35440a2302f#npm:4.0.0-beta.8"]
           ],
