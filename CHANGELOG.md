@@ -13,6 +13,7 @@
 - Yarn will now generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
+- The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 
 ### API
 
@@ -20,6 +21,7 @@
 - `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
 - `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
+- `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`
 
 ### Bugfixes
 

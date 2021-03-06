@@ -194,9 +194,7 @@ class NodeModulesInstaller implements Installer {
 
     // Remove build state as well, to force rebuild of all the packages
     if (preinstallState === null) {
-      const bstatePath = this.opts.project.configuration.get(`bstatePath`);
-      if (await xfs.existsPromise(bstatePath))
-        await xfs.unlinkPromise(bstatePath);
+      this.opts.project.storedBuildState.clear();
 
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map()};
     }
