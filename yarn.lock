@@ -4918,10 +4918,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/vscode@npm:^1.46.0":
-  version: 1.46.0
-  resolution: "@types/vscode@npm:1.46.0"
-  checksum: b980b2078cd1fe209f9aaaee447f7276d09bc6f4b5c2c2e8d65e5a9dddc757a285eba3bc917c9ac7125a1b47157702b7738c7f208eea46c56154fbcbfdc171aa
+"@types/vscode@npm:^1.54.0":
+  version: 1.54.0
+  resolution: "@types/vscode@npm:1.54.0"
+  checksum: 719a85e0b25c088c3616dcf5273248e11b6eba501a8be15606d3e6df22ee1ad3504fffe038658af05be2c067eb60f8111009d04b097ca44490094af6eb6e3189
   languageName: node
   linkType: hard
 
@@ -9079,7 +9079,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^2.11.0, commander@npm:^2.20.0, commander@npm:^2.8.1, commander@npm:^2.9.0":
+"commander@npm:^2.11.0, commander@npm:^2.20.0, commander@npm:^2.9.0":
   version: 2.20.0
   resolution: "commander@npm:2.20.0"
   checksum: 7f7ad57277e7a42e6931c0016e57ee1c14c3d2cf88aeff53c0c4d995a1a90ba33aa8bbff1cde1f92578b495e85c23aac7964c8f06322b9667b8b6e9ff9ceeca8
@@ -9090,6 +9090,13 @@ __metadata:
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
   checksum: d7b9913ff92cae20cb577a4ac6fcc121bd6223319e54a40f51a14740a681ad5c574fd29a57da478a5f234a6fa6c52cbf0b7c641353e03c648b1ae85ba670b977
+  languageName: node
+  linkType: hard
+
+"commander@npm:^6.1.0":
+  version: 6.2.1
+  resolution: "commander@npm:6.2.1"
+  checksum: d7090410c0de6bc5c67d3ca41c41760d6d268f3c799e530aafb73b7437d1826bbf0d2a3edac33f8b57cc9887b4a986dce307fa5557e109be40eadb7c43b21742
   languageName: node
   linkType: hard
 
@@ -27524,14 +27531,14 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"vsce@npm:^1.76.1":
-  version: 1.76.1
-  resolution: "vsce@npm:1.76.1"
+"vsce@npm:^1.85.1":
+  version: 1.85.1
+  resolution: "vsce@npm:1.85.1"
   dependencies:
     azure-devops-node-api: ^7.2.0
     chalk: ^2.4.2
     cheerio: ^1.0.0-rc.1
-    commander: ^2.8.1
+    commander: ^6.1.0
     denodeify: ^1.2.1
     glob: ^7.0.6
     leven: ^3.1.0
@@ -27550,7 +27557,7 @@ typescript@4.1.0-beta:
     yazl: ^2.2.2
   bin:
     vsce: out/vsce
-  checksum: b810bb994ba0837efde33ba9ae354d41554a0d79ceb41fbd2f43a1cbc6784eabb0552ea36611a5ccd4e2ef70ee341cf701ac4d5222913e2dc1fb5036d9f7e191
+  checksum: aba0181b477452e84f75eb6ca21edd0c9ab2fccc0407f60b23d9d853aef85bb7640a13026c84406cc4408fc509ecb6ad77886bc76f8e056cafa054168d59a1e8
   languageName: node
   linkType: hard
 
@@ -27558,14 +27565,14 @@ typescript@4.1.0-beta:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@types/vscode": ^1.46.0
+    "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     ts-loader: ^7.0.5
     tslib: ^1.13.0
     typescript: 4.1.0-beta
-    vsce: ^1.76.1
+    vsce: ^1.85.1
     webpack: ^5.1.1
     webpack-cli: ^4.0.0-beta.8
   languageName: unknown

@@ -1,7 +1,8 @@
-import {npath}         from '@yarnpkg/fslib';
-import * as vscode     from 'vscode';
+import {npath}                        from '@yarnpkg/fslib';
+import * as vscode                    from 'vscode';
 
-import {ZipFSProvider} from './ZipFSProvider';
+import {registerTerminalLinkProvider} from './TerminalLinkProvider';
+import {ZipFSProvider}                from './ZipFSProvider';
 
 function mount(uri: vscode.Uri) {
   const zipUri = vscode.Uri.parse(`zip:${uri.fsPath}`);
@@ -15,6 +16,8 @@ function mount(uri: vscode.Uri) {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  registerTerminalLinkProvider();
+
   context.subscriptions.push(vscode.workspace.registerFileSystemProvider(`zip`, new ZipFSProvider(), {
     isCaseSensitive: true,
   }));
