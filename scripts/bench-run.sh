@@ -33,6 +33,8 @@ setup-yarn2() {
     "globalFolder: '${BENCH_DIR}/.yarn-global'"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "enableImmutableInstalls: false"
 }
 
 setup-yarn2-nm() {

@@ -18,7 +18,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
   /**
-   * The cache that will be used for all accesses occuring outside of a PnP context.
+   * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
   const defaultCache: NodeJS.NodeRequireCache = {};
@@ -174,6 +174,14 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   }
 
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
+    if (module && !module.parent && !module.filename && module.paths.length > 0) {
+      return [{
+        apiPath: opts.manager.findApiPathFor(module.paths[0]),
+        path: module.paths[0],
+        module,
+      }];
+    }
+
     const issuer = getIssuerModule(module);
 
     if (issuer !== null) {

@@ -1,4 +1,4 @@
-import {LocationBlacklistData, PackageRegistryData}     from './types';
+import {PackageRegistryData}                            from './types';
 import {PackageStoreData, PnpSettings, SerializedState} from './types';
 
 // Keep this function is sync with its implementation in:
@@ -96,10 +96,6 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
   return packageRegistryData;
 }
 
-function generateLocationBlacklistData(settings: PnpSettings): LocationBlacklistData {
-  return sortMap(settings.blacklistedLocations || [], location => location);
-}
-
 export function generateSerializedState(settings: PnpSettings): SerializedState {
   return {
     // @eslint-ignore-next-line @typescript-eslint/naming-convention
@@ -116,7 +112,6 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
 
     fallbackExclusionList: generateFallbackExclusionList(settings),
     fallbackPool: generateFallbackPoolData(settings),
-    locationBlacklistData: generateLocationBlacklistData(settings),
     packageRegistryData: generatePackageRegistryData(settings),
   };
 }

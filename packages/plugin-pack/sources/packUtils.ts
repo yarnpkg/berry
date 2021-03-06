@@ -1,4 +1,4 @@
-import {Report, Workspace, scriptUtils}                            from '@yarnpkg/core';
+import {Report, Workspace, scriptUtils, tgzUtils}                  from '@yarnpkg/core';
 import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath} from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                       from '@yarnpkg/plugin-stage';
 import mm                                                          from 'micromatch';
@@ -83,7 +83,12 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
-      const opts = {name: dest, mtime: new Date(315532800000)};
+
+      const opts = {
+        name: dest,
+        // 1984-06-22T21:50:00.000Z
+        mtime: new Date(tgzUtils.safeTime * 1000),
+      };
 
       const mode = executableFiles.has(file)
         ? 0o755

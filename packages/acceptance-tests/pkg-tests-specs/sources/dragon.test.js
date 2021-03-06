@@ -1,4 +1,4 @@
-import {xfs, npath} from '@yarnpkg/fslib';
+import {xfs, npath, ppath} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
@@ -485,6 +485,64 @@ describe(`Dragon tests`, () => {
 
         // The virtual descriptors should be different but the virtual package should be the same
         await expect(source(`require('first') === require('second')`)).resolves.toEqual(true);
+      }
+    ),
+  );
+
+  test(`it should pass the dragon test 10`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // We've hit an interesting pattern - while the parameters aren't
+        // entirely understood, the gist is that because workspaces have
+        // multiple 'perspectives' (depending on whether they are accessed
+        // via their top-level or as dependencies of another workspace), their
+        // dependencies that peer-depend on them cannot be deduped as easily as
+        // others (otherwise we end up overwriting the resolution in some very
+        // weird ways).
+
+        // PR: https://github.com/yarnpkg/berry/pull/2568
+
+        await xfs.mkdirpPromise(`${path}/packages/a`);
+        await xfs.writeJsonPromise(`${path}/packages/a/package.json`, {
+          name: `a`,
+          devDependencies: {
+            [`b`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/b`);
+        await xfs.writeJsonPromise(`${path}/packages/b/package.json`, {
+          name: `b`,
+          peerDependencies: {
+            [`c`]: `*`,
+          },
+          devDependencies: {
+            [`c`]: `workspace:*`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/packages/c`);
+        await xfs.writeJsonPromise(`${path}/packages/c/package.json`, {
+          name: `c`,
+          peerDependencies: {
+            [`anything`]: `*`,
+          },
+          dependencies: {
+            [`b`]: `workspace:*`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        // The virtual descriptors should be different but the virtual package should be the same
+        const cPath = npath.fromPortablePath(ppath.join(path, `packages/c/package.json`));
+        await expect(source(`(createRequire = require('module').createRequire, createRequire(createRequire(${JSON.stringify(cPath)}).resolve('b/package.json')).resolve('c/package.json'))`)).resolves.toEqual(cPath);
       }
     ),
   );

@@ -35,7 +35,7 @@ interface PackageManagerSelection {
 async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
   if (process.platform === `win32`) {
     // https://github.com/microsoft/terminal/issues/217#issuecomment-737594785
-    const cmdScript = `@goto #_undefined_# 2>NUL || @title %COMSPEC% & @"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*`;
+    const cmdScript = `@goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*`;
     await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
   }
 
@@ -157,7 +157,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const logFile = ppath.join(logDir, `pack.log` as Filename);
 
       const stdin = null;
-      const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: cwd, report});
+      const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: npath.fromPortablePath(cwd), report});
 
       const devirtualizedLocator = locator && structUtils.isVirtualLocator(locator)
         ? structUtils.devirtualizeLocator(locator)

@@ -45,8 +45,6 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_TELEMETRY`]: `0`,
         // Otherwise snapshots relying on this would break each time it's bumped
         [`YARN_CACHE_KEY_OVERRIDE`]: `0`,
-        // Otherwise the tests would break when C:\tmp is on a different drive than the repo
-        [`YARN_ENABLE_ABSOLUTE_VIRTUALS`]: `true`,
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
         [`YARN_ENABLE_PROGRESS_BARS`]: `false`,

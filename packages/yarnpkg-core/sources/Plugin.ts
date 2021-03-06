@@ -129,7 +129,7 @@ export type Hooks = {
   ) => void;
 
   /**
-   * Used to notify the core of all the potential artifacts of the availabe linkers.
+   * Used to notify the core of all the potential artifacts of the available linkers.
    */
   populateYarnPaths?: (
     project: Project,

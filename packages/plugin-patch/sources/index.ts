@@ -1,4 +1,5 @@
 import {Plugin, Project, SettingsType} from '@yarnpkg/core';
+import {PortablePath}                  from '@yarnpkg/fslib';
 
 import {PatchFetcher}                  from './PatchFetcher';
 import {PatchResolver}                 from './PatchResolver';
@@ -18,6 +19,7 @@ export interface Hooks {
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     enableInlineHunks: boolean;
+    patchFolder: PortablePath;
   }
 }
 
@@ -27,6 +29,11 @@ const plugin: Plugin = {
       description: `If true, the installs will print unmatched patch hunks`,
       type: SettingsType.BOOLEAN,
       default: false,
+    },
+    patchFolder: {
+      description: `Folder where the patch files must be written`,
+      type: SettingsType.ABSOLUTE_PATH,
+      default: `./.yarn/patches`,
     },
   },
   commands: [

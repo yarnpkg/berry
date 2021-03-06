@@ -517,4 +517,19 @@ describe(`hoist`, () => {
     const AC = Array.from(Array.from(hoistedTree.dependencies).filter(x => x.name === `A`)[0].dependencies).filter(x => x.name === `C`);
     expect(AC).toEqual([]);
   });
+
+  it(`should hoist dependencies that peer dependent on their parent`, () => {
+    // . -> C -> A -> B --> A
+    // should be hoisted to:
+    // . -> A
+    //   -> B
+    //   -> C
+    const tree = {
+      '.': {dependencies: [`C`]},
+      C: {dependencies: [`A`]},
+      A: {dependencies: [`A`, `B`]},
+      B: {dependencies: [`A`], peerNames: [`A`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true, debugLevel: 2}))).toEqual(2);
+  });
 });
