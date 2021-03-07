@@ -471,6 +471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-plugin-utils@npm:^7.10.4, @babel/helper-plugin-utils@npm:^7.13.0":
+  version: 7.13.0
+  resolution: "@babel/helper-plugin-utils@npm:7.13.0"
+  checksum: 24f7a44e94662a5dc8bd98ab12625ccd96b11e789ef3f9efd4f6f0eeaf01a13b051a148e709fb1c4e1cacdb536987ea75f4b78509567a0117246ea917195a86b
+  languageName: node
+  linkType: hard
+
 "@babel/helper-regex@npm:^7.10.1":
   version: 7.10.1
   resolution: "@babel/helper-regex@npm:7.10.1"
@@ -633,6 +640,18 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: aa7f36bb7cac2e81b4ac93bae1286c65e1021fde4de0ef1e3bb140913bae6b47242fda83b07f7458623365aa29202ffd924936911f857af1982d326aeee521e1
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-proposal-logical-assignment-operators@npm:^7.13.8":
+  version: 7.13.8
+  resolution: "@babel/plugin-proposal-logical-assignment-operators@npm:7.13.8"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.13.0
+    "@babel/plugin-syntax-logical-assignment-operators": ^7.10.4
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: b5cf7b2e8d0a5e7f874a922db6062f3a80748fe06e4327df53b9d89fa24bc8ccf1e6ba591a93231dd364b57e5ea6415d16476b1cee986b886356e78329eedf0b
   languageName: node
   linkType: hard
 
@@ -841,6 +860,17 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: b9fd86ab3ed18ae9412dca029b480ab6e2fad697fe16b9ba365c362b34a970d56e52e79523a0554a1a938f021bcb1c2e71a599ca506c0d1a720a18701d95a102
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-syntax-logical-assignment-operators@npm:^7.10.4":
+  version: 7.10.4
+  resolution: "@babel/plugin-syntax-logical-assignment-operators@npm:7.10.4"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.10.4
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: aff33577037e34e515911255cdbb1fd39efee33658aa00b8a5fd3a4b903585112d037cce1cc9e4632f0487dc554486106b79ccd5ea63a2e00df4363f6d4ff886
   languageName: node
   linkType: hard
 
@@ -5733,6 +5763,7 @@ __metadata:
     "@babel/plugin-proposal-class-properties": ^7.10.1
     "@babel/plugin-proposal-decorators": ^7.10.1
     "@babel/plugin-proposal-dynamic-import": ^7.10.1
+    "@babel/plugin-proposal-logical-assignment-operators": ^7.13.8
     "@babel/plugin-proposal-nullish-coalescing-operator": ^7.10.1
     "@babel/plugin-proposal-optional-chaining": ^7.10.1
     "@babel/plugin-transform-modules-commonjs": ^7.10.1
