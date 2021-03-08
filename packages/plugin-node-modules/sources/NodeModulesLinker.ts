@@ -24,6 +24,8 @@ type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, 'bin'>>;
 
 export class NodeModulesLinker implements Linker {
+  private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
   }
@@ -33,7 +35,10 @@ export class NodeModulesLinker implements Linker {
     if (workspace)
       return workspace.cwd;
 
-    const installState = await findInstallState(opts.project, {unrollAliases: true});
+    const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
+      return await findInstallState(opts.project, {unrollAliases: true});
+    });
+
     if (installState === null)
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
 
@@ -48,7 +53,10 @@ export class NodeModulesLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    const installState = await findInstallState(opts.project, {unrollAliases: true});
+    const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
+      return await findInstallState(opts.project, {unrollAliases: true});
+    });
+
     if (installState === null)
       return null;
 
