@@ -274,8 +274,7 @@ export abstract class FakeFS<P extends Path> {
 
     if (stat.isDirectory()) {
       if (recursive)
-        for (const entry of await this.readdirPromise(p))
-          await this.removePromise(this.pathUtils.resolve(p, entry));
+        await Promise.all((await this.readdirPromise(p)).map(entry => this.removePromise(this.pathUtils.resolve(p, entry))));
 
       // 5 gives 1s worth of retries at worst
       let t = 0;
