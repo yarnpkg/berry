@@ -19,13 +19,6 @@
   ],
   "type": "object",
   "properties": {
-    "bstatePath": {
-      "_package": "@yarnpkg/core",
-      "description": "This setting defines the location where the bstate file will be stored. The bstate file contains the current build state of each package that has build requirements in your dependencies. Removing the bstate file is safe, but will cause all your packages to be rebuilt.",
-      "type": "string",
-      "format": "uri-reference",
-      "default": "./.yarn/build-state.yml"
-    },
     "cacheFolder": {
       "_package": "@yarnpkg/core",
       "description": "The path where the downloaded packages are stored on your system. They'll be normalized, compressed, and saved under the form of zip archives with standardized names. The cache is deemed to be relatively safe to be shared by multiple projects, even when multiple Yarn instances run at the same time on different projects. For setting a global cache folder, you should use `enableGlobalCache` instead.",

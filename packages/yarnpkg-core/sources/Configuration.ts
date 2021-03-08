@@ -180,11 +180,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/$$virtual`,
   },
-  bstatePath: {
-    description: `Path of the file where the current state of the built packages must be stored`,
-    type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/build-state.yml`,
-  },
   lockfileFilename: {
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
     type: SettingsType.STRING,
@@ -490,7 +485,6 @@ export interface ConfigurationValueMap {
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   virtualFolder: PortablePath;
-  bstatePath: PortablePath;
   lockfileFilename: Filename;
   installStatePath: PortablePath;
   immutablePatterns: Array<string>;
