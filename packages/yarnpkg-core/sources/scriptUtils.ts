@@ -573,6 +573,7 @@ type ExecutePackageAccessibleBinaryOptions = {
   stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
+  /** @internal */
   packageAccessibleBinaries?: PackageAccessibleBinaries,
 };
 
@@ -621,6 +622,7 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
   stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
+  /** @internal */
   packageAccessibleBinaries?: PackageAccessibleBinaries,
 };
 
