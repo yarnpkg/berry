@@ -38,6 +38,7 @@ export class NodeModulesLinker implements Linker {
     const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
       return await findInstallState(opts.project, {unrollAliases: true});
     });
+
     if (installState === null)
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
 
@@ -55,6 +56,7 @@ export class NodeModulesLinker implements Linker {
     const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
       return await findInstallState(opts.project, {unrollAliases: true});
     });
+
     if (installState === null)
       return null;
 
