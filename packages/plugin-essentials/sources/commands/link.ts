@@ -13,8 +13,6 @@ export default class LinkCommand extends BaseCommand {
     description: `connect the local project to another one`,
     details: `
       This command will set a new \`resolutions\` field in the project-level manifest and point it to the workspace at the specified location (even if part of another project).
-
-      There is no \`yarn unlink\` command. To unlink the workspaces from the current project one must revert the changes made to the \`resolutions\` field.
     `,
     examples: [[
       `Register a remote workspace for use in the current project`,
