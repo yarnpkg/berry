@@ -21,7 +21,7 @@ const SELECTOR_PATTERNS = [
 ];
 
 const COMBINED_SELECTORS = SELECTOR_PATTERNS.map(selector => `(${selector.source})`).join(`|`);
-const FILEPATH_MATCHER = /(([A-Za-z]:)?\/.*((\$\$virtual)|(\.zip)).*\.[\w:]+)/.source;
+const FILEPATH_MATCHER = /(([A-Za-z]:)?\/.*((__virtual__)|(\$\$virtual)|(\.zip)).*\.[\w:]+)/.source;
 
 const FILE_SELECTOR_MATCHER = `(${FILEPATH_MATCHER})(${COMBINED_SELECTORS})?`;
 

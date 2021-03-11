@@ -648,11 +648,11 @@
     },
     "virtualFolder": {
       "_package": "@yarnpkg/core",
-      "description": "Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be `$$virtual`.",
+      "description": "Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be `__virtual__`.",
       "type": "string",
       "format": "uri-reference",
-      "pattern": "^.*\\$\\$virtual$",
-      "default": "./.yarn/$$virtual"
+      "pattern": "^.*__virtual__$",
+      "default": "./.yarn/__virtual__"
     },
     "yarnPath": {
       "_package": "@yarnpkg/core",
