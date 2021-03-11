@@ -35,7 +35,7 @@ Generally, a few main things will need to be taken care of:
 
 4. Some tools (mostly React Native and Flow) will require to downgrade to the `node_modules` install strategy by setting the [`nodeLinker`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) setting to `node-modules`. TypeScript doesn't have this problem.
 
-Most projects will only face those three problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/getting-started/migration).
+Most projects will only face those four problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/getting-started/migration).
 
 ## Which files should be gitignored?
 
