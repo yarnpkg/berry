@@ -74,7 +74,7 @@ Object {
   "stdout": "➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No packages were cached - one package had to be fetched
+➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0007: │ foo@workspace:workspace must be built because it never did before or the last one failed
