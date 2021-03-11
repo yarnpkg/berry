@@ -36,10 +36,6 @@ export type FSPath<T extends Path> = T | number;
 export const npath: PathUtils<NativePath> & ConvertUtils = Object.create(path) as any;
 export const ppath: PathUtils<PortablePath> = Object.create(path.posix) as any;
 
-export function f<T extends string>(x: T) {
-
-}
-
 npath.cwd = () => process.cwd();
 ppath.cwd = () => toPortablePath(process.cwd());
 
