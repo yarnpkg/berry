@@ -2,7 +2,7 @@
 
 ## Master
 
-**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn import plugin from sources <name>`).
+**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn plugin import from sources <name>`).
 
 **Important:** Development of the next major version (3.x) is happening on the master branch. A list of breaking changes can be found below.
 
@@ -13,6 +13,7 @@
 - Yarn will now generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
+- The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 
 ### API
 
@@ -20,6 +21,7 @@
 - `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
 - `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
+- `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`
 
 ### Bugfixes
 
@@ -31,6 +33,12 @@
 ### Settings
 
 - Various `initFields` edge cases have been fixed.
+
+## 2.4.1
+
+### Compatibility
+
+- The release of TypeScript 4.2 couldn't be installed due to patch conflicts. This is now fixed. This version only includes a fix specific to 4.2, but future Yarn releases starting from 3.0 will be more tolerant of this kind of situation and won't cause such errors.
 
 ## 2.4.0
 

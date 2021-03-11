@@ -21,6 +21,7 @@ export const Filename = {
   nodeModules: `node_modules` as Filename,
   manifest: `package.json` as Filename,
   lockfile: `yarn.lock` as Filename,
+  virtual: `__virtual__` as Filename,
   /**
    * @deprecated
    */

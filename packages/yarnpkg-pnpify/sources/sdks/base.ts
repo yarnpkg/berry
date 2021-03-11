@@ -50,7 +50,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function toEditorPath(str) {
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
-        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\$\\$virtual\\//))) {
+        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\/(\\$\\$virtual|__virtual__)\\//))) {
           // We also take the opportunity to turn virtual paths into physical ones;
           // this makes is much easier to work with workspaces that list peer
           // dependencies, since otherwise Ctrl+Click would bring us to the virtual

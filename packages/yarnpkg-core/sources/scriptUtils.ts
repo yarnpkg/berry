@@ -84,14 +84,15 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
-  await makePathWrapper(binFolder, `node` as Filename, process.execPath);
-
-  if (YarnVersion !== null) {
-    await makePathWrapper(binFolder, `run` as Filename, process.execPath, [process.argv[1], `run`]);
-    await makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [process.argv[1]]);
-    await makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [process.argv[1]]);
-    await makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]);
-  }
+  await Promise.all([
+    makePathWrapper(binFolder, `node` as Filename, process.execPath),
+    ...YarnVersion !== null ? [
+      makePathWrapper(binFolder, `run` as Filename, process.execPath, [process.argv[1], `run`]),
+      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [process.argv[1]]),
+      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [process.argv[1]]),
+      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]),
+    ] : [],
+  ]);
 
   if (project) {
     scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
@@ -299,6 +300,11 @@ type HasPackageScriptOption = {
 };
 
 export async function hasPackageScript(locator: Locator, scriptName: string, {project}: HasPackageScriptOption) {
+  // We can avoid using the linkers if the locator is a workspace
+  const workspace = project.tryWorkspaceByLocator(locator);
+  if (workspace !== null)
+    return hasWorkspaceScript(workspace, scriptName);
+
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -361,7 +367,24 @@ export async function executePackageShellcode(locator: Locator, command: string,
   });
 }
 
+async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, cwd, lifecycleScript}: {binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
+  const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript});
+
+  await Promise.all(
+    Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
+      makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath])
+    )
+  );
+
+  return {manifest: workspace.manifest, binFolder, env, cwd: cwd ?? workspace.cwd};
+}
+
 async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
+  // We can avoid using the linkers if the locator is a workspace
+  const workspace = project.tryWorkspaceByLocator(locator);
+  if (workspace !== null)
+    return initializeWorkspaceEnvironment(workspace, {binFolder, cwd, lifecycleScript});
+
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
     throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
@@ -457,6 +480,9 @@ type GetPackageAccessibleBinariesOptions = {
   project: Project,
 };
 
+type Binary = [Locator, NativePath];
+type PackageAccessibleBinaries = Map<string, Binary>;
+
 /**
  * Return the binaries that can be accessed by the specified package
  *
@@ -464,9 +490,9 @@ type GetPackageAccessibleBinariesOptions = {
  * @param project The project owning the package
  */
 
-export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions) {
+export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions): Promise<PackageAccessibleBinaries> {
   const configuration = project.configuration;
-  const binaries: Map<string, [Locator, NativePath]> = new Map();
+  const binaries: PackageAccessibleBinaries = new Map();
 
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
@@ -487,17 +513,17 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     visibleLocators.add(resolution);
   }
 
-  for (const locatorHash of visibleLocators) {
+  const dependenciesWithBinaries = await Promise.all(Array.from(visibleLocators, async locatorHash => {
     const dependency = project.storedPackages.get(locatorHash);
     if (!dependency)
       throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
 
     if (dependency.bin.size === 0)
-      continue;
+      return miscUtils.mapAndFilter.skip;
 
     const linker = linkers.find(linker => linker.supportsPackage(dependency, linkerOptions));
     if (!linker)
-      continue;
+      return miscUtils.mapAndFilter.skip;
 
     let packageLocation: PortablePath | null = null;
     try {
@@ -506,11 +532,21 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
       // Some packages may not be installed when they are incompatible
       // with the current system.
       if (err.code === `LOCATOR_NOT_INSTALLED`) {
-        continue;
+        return miscUtils.mapAndFilter.skip;
       } else {
         throw err;
       }
     }
+
+    return {dependency, packageLocation};
+  }));
+
+  // The order in which binaries overwrite each other must be stable
+  for (const candidate of dependenciesWithBinaries) {
+    if (candidate === miscUtils.mapAndFilter.skip)
+      continue;
+
+    const {dependency, packageLocation} = candidate;
 
     for (const [name, target] of dependency.bin) {
       binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(packageLocation, target))]);
@@ -537,6 +573,8 @@ type ExecutePackageAccessibleBinaryOptions = {
   stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
+  /** @internal */
+  packageAccessibleBinaries?: PackageAccessibleBinaries,
 };
 
 /**
@@ -551,8 +589,8 @@ type ExecutePackageAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = []}: ExecutePackageAccessibleBinaryOptions) {
-  const packageAccessibleBinaries = await getPackageAccessibleBinaries(locator, {project});
+export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = [], packageAccessibleBinaries}: ExecutePackageAccessibleBinaryOptions) {
+  packageAccessibleBinaries ??= await getPackageAccessibleBinaries(locator, {project});
 
   const binary = packageAccessibleBinaries.get(binaryName);
   if (!binary)
@@ -563,7 +601,7 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
     const env = await makeScriptEnv({project, locator, binFolder});
 
     await Promise.all(
-      Array.from(packageAccessibleBinaries, ([binaryName, [, binaryPath]]) =>
+      Array.from(packageAccessibleBinaries!, ([binaryName, [, binaryPath]]) =>
         makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath])
       )
     );
@@ -584,6 +622,8 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
   stdin: Readable | null,
   stdout: Writable,
   stderr: Writable,
+  /** @internal */
+  packageAccessibleBinaries?: PackageAccessibleBinaries,
 };
 
 /**
@@ -594,6 +634,6 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceAccessibleBinaryOptions) {
-  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr});
+export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr, packageAccessibleBinaries}: ExecuteWorkspaceAccessibleBinaryOptions) {
+  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr, packageAccessibleBinaries});
 }

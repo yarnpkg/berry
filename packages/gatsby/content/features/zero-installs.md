@@ -31,7 +31,7 @@ In order to make a project zero-install, you must be able to use it as soon as y
 
 - When running `yarn install`, Yarn will generate a `.pnp.cjs` file. Add it to your repository as well - it contains the dependency tree that Node will use to load your packages.
 
-- Depending on whether your dependencies have install scripts or not (we advise you to avoid it if you can and prefer wasm-powered alternatives) you may also want to add the `.yarn/unplugged` and `.yarn/build-state.yml` entries.
+- Depending on whether your dependencies have install scripts or not (we advise you to avoid it if you can and prefer wasm-powered alternatives) you may also want to add the `.yarn/unplugged` entries.
 
 And that's it! Push your changes to your repository, checkout a new one somewhere, and check whether running `yarn start` (or whatever other script you'd normally use) works.
 

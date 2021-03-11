@@ -2,7 +2,7 @@ import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}           
 import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
 import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                         from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpSettings}                            from '@yarnpkg/pnp';
+import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings}                    from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
 import {getPnpPath}                                                                                          from './index';
@@ -22,6 +22,8 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
+  private pnpCache: Map<string, PnpApi> = new Map();
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
       return false;
@@ -37,7 +39,9 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
-    const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
+    const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
+      return miscUtils.dynamicRequireNoCache(pnpPath);
+    });
 
     const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
@@ -53,7 +57,10 @@ export class PnpLinker implements Linker {
     if (!xfs.existsSync(pnpPath))
       return null;
 
-    const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
+    const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
+      return miscUtils.dynamicRequireNoCache(pnpPath);
+    });
+
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
     if (!locator)
       return null;

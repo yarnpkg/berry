@@ -103,7 +103,15 @@ export default class RunCommand extends BaseCommand {
         }
       }
 
-      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {cwd: this.context.cwd, project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, nodeArgs});
+      return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {
+        cwd: this.context.cwd,
+        project,
+        stdin: this.context.stdin,
+        stdout: this.context.stdout,
+        stderr: this.context.stderr,
+        nodeArgs,
+        packageAccessibleBinaries: binaries,
+      });
     }
 
     // When it fails, we try to check whether it's a global script (ie we look
