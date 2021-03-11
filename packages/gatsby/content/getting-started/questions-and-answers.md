@@ -11,7 +11,7 @@ description: A list of answers to commonly asked questions.
 
 ## Why should you upgrade to Yarn Modern?
 
-While the Yarn Classic line (1.x) remains a pilar of the JavaScript ecosystem, we recommend upgrading if possible. Why's that?
+While the Yarn Classic line (1.x) remains a pillar of the JavaScript ecosystem, we recommend upgrading if possible. Why's that?
 
 1. New features: On top of the classic features you're already used to, on top of the new ones you'll discover ([`yarn dlx`](/cli/dlx), [builtin `patch:` protocol](https://github.com/yarnpkg/berry/tree/master/packages/plugin-patch), ...), Modern offers plugins extending Yarn's featureset with [changesets](/features/release-workflow), [constraints](/features/constraints), [workspaces](/cli/workspaces/foreach), ...
 
@@ -35,7 +35,7 @@ Generally, a few main things will need to be taken care of:
 
 4. Some tools (mostly React Native and Flow) will require to downgrade to the `node_modules` install strategy by setting the [`nodeLinker`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) setting to `node-modules`. TypeScript doesn't have this problem.
 
-Most projects will only face those three problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/getting-started/migration).
+Most projects will only face those four problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/getting-started/migration).
 
 ## Which files should be gitignored?
 
