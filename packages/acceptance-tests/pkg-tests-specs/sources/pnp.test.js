@@ -1867,4 +1867,20 @@ describe(`Plug'n'Play`, () => {
       await expect(source(`require('./index.js')`)).resolves.toMatch(/no-deps(\\|\/)index.js/);
     })
   );
+
+  test(
+    `it should respect pnpIgnorePatterns when using findPnpApi`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpIgnorePatterns: `ignored/**`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/ignored`);
+        await run(`install`);
+
+        await expect(source(`require('module').findPnpApi(require('path').resolve('ignored'))`)).resolves.toBe(null);
+      }
+    )
+  );
 });
