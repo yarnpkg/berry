@@ -174,7 +174,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   }
 
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
-    if (module && !module.parent && !module.filename && module.paths.length > 0) {
+    if (module && module.id !== `<repl>` && !module.parent && !module.filename && module.paths.length > 0) {
       return [{
         apiPath: opts.manager.findApiPathFor(module.paths[0]),
         path: module.paths[0],

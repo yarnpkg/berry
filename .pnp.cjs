@@ -43210,7 +43210,13 @@ class FakeFS {
     }
 
     if (stat.isDirectory()) {
-      if (recursive) for (const entry of await this.readdirPromise(p)) await this.removePromise(this.pathUtils.resolve(p, entry)); // 5 gives 1s worth of retries at worst
+      if (recursive) {
+        const entries = await this.readdirPromise(p);
+        await Promise.all(entries.map(entry => {
+          return this.removePromise(this.pathUtils.resolve(p, entry));
+        }));
+      } // 5 gives 1s worth of retries at worst
+
 
       let t = 0;
 
@@ -47842,7 +47848,7 @@ function applyPatch(pnpapi, opts) {
   function getIssuerSpecsFromModule(module) {
     var _a;
 
-    if (module && !module.parent && !module.filename && module.paths.length > 0) {
+    if (module && module.id !== `<repl>` && !module.parent && !module.filename && module.paths.length > 0) {
       return [{
         apiPath: opts.manager.findApiPathFor(module.paths[0]),
         path: module.paths[0],
