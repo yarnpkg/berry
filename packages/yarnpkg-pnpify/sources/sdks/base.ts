@@ -62,15 +62,13 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // errors on react).
           //
           const resolved = pnpApi.resolveVirtual(str);
+          const normalize = str => str.replace(/\\\\/g, \`/\`).replace(/^\\/?/, \`/\`);
           if (resolved) {
             const locator = pnpApi.findPackageLocator(resolved);
             if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`)) {
-             str = resolved;
+             str = normalize(resolved);
             }
           }
-
-          str = str.replace(/\\\\/g, \`/\`)
-          str = str.replace(/^\\/?/, \`/\`);
 
           if (str.match(/\\.zip\\//)) {
             swtich (hostInfo) {
@@ -88,9 +86,9 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               // resolve the actual file system path from virtual path
               // and convert to scheme supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
               case \`coc-nvim\`:
-                str = str.replace(/\\$\\$virtual\\/([\\-\\w\\/]+)\\/cache/, \`cache\`);
-                str = str.replace(/\\.zip\\//, \`.zip::\`);
+                str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
                 str = resolve(\`zipfile:\${str}\`);
+                break;
 
               default:
                 str = \`zip:\${str}\`; break;
