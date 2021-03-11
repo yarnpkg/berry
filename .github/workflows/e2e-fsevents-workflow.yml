@@ -102,7 +102,7 @@ jobs:
 
           Promise.resolve().then(async () => {
             await registerTest(rootDir, 'hello', [rootDir + '/hello']);
-            await registerTest(rootDir + '/\$\$virtual/1234/0', 'world', [rootDir + '/\$\$virtual/1234/0/world']);
+            await registerTest(rootDir + '/__virtual__/1234/0', 'world', [rootDir + '/__virtual__/1234/0/world']);
             await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
           });
         EOT
@@ -181,7 +181,7 @@ jobs:
 
           Promise.resolve().then(async () => {
             await registerTest(rootDir, 'hello', [rootDir + '/hello']);
-            await registerTest(rootDir + '/\$\$virtual/1234/0', 'world', [rootDir + '/\$\$virtual/1234/0/world']);
+            await registerTest(rootDir + '/__virtual__/1234/0', 'world', [rootDir + '/__virtual__/1234/0/world']);
             await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
           });
         EOT

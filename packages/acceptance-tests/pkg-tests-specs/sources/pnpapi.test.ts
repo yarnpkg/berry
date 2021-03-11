@@ -428,7 +428,7 @@ describe(`Plug'n'Play API`, () => {
           const virtualPath = await source(`require.resolve('peer-deps')`);
 
           // Sanity check: to ensure that the test actually tests something :)
-          expect(virtualPath).toMatch(`${npath.sep}$$virtual${npath.sep}`);
+          expect(virtualPath).toMatch(`${npath.sep}__virtual__${npath.sep}`);
 
           const physicalPath = await source(`require('pnpapi').resolveVirtual(require.resolve('peer-deps'))`);
 

@@ -176,9 +176,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
-    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
+    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named __virtual__)`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/$$virtual`,
+    default: `./.yarn/__virtual__`,
   },
   lockfileFilename: {
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
