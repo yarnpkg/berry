@@ -235,5 +235,32 @@ describe(`Commands`, () => {
         }
       )
     );
+
+    test(
+      `should not build virtual workspaces`,
+      makeTemporaryEnv(
+        {
+          workspaces: [`workspace`],
+          dependencies: {
+            foo: `workspace:*`,
+            'no-deps': `*`,
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.mkdirPromise(`${path}/workspace`);
+          await xfs.writeJsonPromise(`${path}/workspace/package.json`, {
+            name: `foo`,
+            scripts: {
+              postinstall: `echo "foo"`,
+            },
+            peerDependencies: {
+              'no-deps': `*`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.toMatchSnapshot();
+        }
+      )
+    );
   });
 });
