@@ -42898,7 +42898,6 @@ const Filename = {
 };
 const npath = Object.create((external_path_default()));
 const ppath = Object.create((external_path_default()).posix);
-function f(x) {}
 
 npath.cwd = () => process.cwd();
 
