@@ -72,15 +72,29 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           str = str.replace(/\\\\/g, \`/\`)
           str = str.replace(/^\\/?/, \`/\`);
 
-          // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
-          // VSCode only adds it automatically for supported schemes,
-          // so we have to do it manually for the \`zip\` scheme.
-          // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
-          //
-          // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-          //
           if (str.match(/\\.zip\\//)) {
-            str = \`\${isVSCode ? \`^\` : \`\`}zip:\${str}\`;
+            swtich (hostInfo) {
+              // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
+              // VSCode only adds it automatically for supported schemes,
+              // so we have to do it manually for the \`zip\` scheme.
+              // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
+              //
+              // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
+              //
+              case \`vscode\`:
+                str = \`^zip:\${str}\`; break;
+
+              // To make "go to definition work",
+              // resolve the actual file system path from virtual path
+              // and convert to scheme supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
+              case \`coc-nvim\`:
+                str = str.replace(/\\$\\$virtual\\/([\\-\\w\\/]+)\\/cache/, \`cache\`);
+                str = str.replace(/\\.zip\\//, \`.zip::\`);
+                str = resolve(\`zipfile:\${str}\`);
+
+              default:
+                str = \`zip:\${str}\`; break;
+            }
           }
         }
 
@@ -113,7 +127,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       const Session = tsserver.server.Session;
       const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
-      let isVSCode = false;
+      let hostInfo = \`unknown\`;
 
       return Object.assign(Session.prototype, {
         onMessage(/** @type {string} */ message) {
@@ -123,9 +137,9 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             parsedMessage != null &&
             typeof parsedMessage === \`object\` &&
             parsedMessage.arguments &&
-            parsedMessage.arguments.hostInfo === \`vscode\`
+            typeof parsedMessage.arguments.hostInfo === \`string\`
           ) {
-            isVSCode = true;
+            hostInfo = parsedMessage.arguments.hostInfo;
           }
 
           return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
