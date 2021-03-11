@@ -45,7 +45,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       return null;
 
     const apiEntry = opts.manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
+    // Check if the path is ignored
+    return apiEntry.instance.findPackageLocator(lookupPath) ? apiEntry.instance : null;
   };
 
   function getRequireStack(parent: Module | null | undefined) {

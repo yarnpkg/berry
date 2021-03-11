@@ -47753,8 +47753,9 @@ function applyPatch(pnpapi, opts) {
     const lookupPath = lookupSource instanceof external_url_namespaceObject.URL ? (0,external_url_namespaceObject.fileURLToPath)(lookupSource) : lookupSource;
     const apiPath = opts.manager.findApiPathFor(lookupPath);
     if (apiPath === null) return null;
-    const apiEntry = opts.manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
+    const apiEntry = opts.manager.getApiEntry(apiPath, true); // Check if the path is ignored
+
+    return apiEntry.instance.findPackageLocator(lookupPath) ? apiEntry.instance : null;
   };
 
   function getRequireStack(parent) {
