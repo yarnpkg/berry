@@ -71,7 +71,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           }
 
           if (str.match(/\\.zip\\//)) {
-            swtich (hostInfo) {
+            switch (hostInfo) {
               // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
               // VSCode only adds it automatically for supported schemes,
               // so we have to do it manually for the \`zip\` scheme.
@@ -79,19 +79,21 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               //
               // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
               //
-              case \`vscode\`:
-                str = \`^zip:\${str}\`; break;
+              case \`vscode\`: {
+                str = \`^zip:\${str}\`;
+              } break;
 
               // To make "go to definition work",
               // resolve the actual file system path from virtual path
               // and convert to scheme supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
-              case \`coc-nvim\`:
+              case \`coc-nvim\`: {
                 str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
                 str = resolve(\`zipfile:\${str}\`);
-                break;
+              } break;
 
-              default:
-                str = \`zip:\${str}\`; break;
+              default: {
+                str = \`zip:\${str}\`;
+              } break;
             }
           }
         }
