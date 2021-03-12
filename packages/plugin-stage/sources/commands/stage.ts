@@ -61,7 +61,6 @@ export default class StageCommand extends BaseCommand {
     const {driver, root} = await findDriver(project.cwd);
 
     const basePaths: Array<PortablePath | null> = [
-      configuration.get(`bstatePath`),
       configuration.get(`cacheFolder`),
       configuration.get(`globalFolder`),
       configuration.get(`virtualFolder`),

@@ -18,7 +18,7 @@ exports.YarnPlugin = class YarnPlugin extends ConverterComponent {
 
   onDeclarationBegin(context, reflection) {
     // Remove unnecessary reflections generated from virtual files
-    if (reflection.sources && reflection.sources[0].fileName.includes(`.yarn/$$virtual/`))
+    if (reflection.sources && reflection.sources[0].fileName.includes(`.yarn/__virtual__/`))
       CommentPlugin.removeReflection(context.project, reflection);
 
     // Remove unnecessary reference reflections

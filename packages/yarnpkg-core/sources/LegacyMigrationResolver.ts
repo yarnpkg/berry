@@ -84,8 +84,18 @@ export class LegacyMigrationResolver implements Resolver {
         continue;
       }
 
-      const resolution = structUtils.makeLocator(descriptor, reference);
-      resolutions.set(descriptor.descriptorHash, resolution);
+      // If the range is a valid descriptor we're dealing with an alias ("foo": "npm:lodash@*")
+      // and need to make the locator from that instead of the original descriptor
+      let actualDescriptor = descriptor;
+      try {
+        const parsedRange = structUtils.parseRange(descriptor.range);
+        const potentialDescriptor = structUtils.tryParseDescriptor(parsedRange.selector, true);
+        if (potentialDescriptor) {
+          actualDescriptor = potentialDescriptor;
+        }
+      } catch { }
+
+      resolutions.set(descriptor.descriptorHash, structUtils.makeLocator(actualDescriptor, reference));
     }
   }
 

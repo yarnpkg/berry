@@ -1,0 +1,25 @@
+releases:
+  "@yarnpkg/cli": patch
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/pnp": patch
+
+declined:
+  - "@yarnpkg/esbuild-plugin-pnp"
+  - "@yarnpkg/plugin-compat"
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-dlx"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-pack"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/plugin-workspace-tools"
+  - "@yarnpkg/builder"
+  - "@yarnpkg/core"
+  - "@yarnpkg/doctor"
+  - "@yarnpkg/pnpify"

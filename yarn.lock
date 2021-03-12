@@ -471,6 +471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-plugin-utils@npm:^7.10.4, @babel/helper-plugin-utils@npm:^7.13.0":
+  version: 7.13.0
+  resolution: "@babel/helper-plugin-utils@npm:7.13.0"
+  checksum: 24f7a44e94662a5dc8bd98ab12625ccd96b11e789ef3f9efd4f6f0eeaf01a13b051a148e709fb1c4e1cacdb536987ea75f4b78509567a0117246ea917195a86b
+  languageName: node
+  linkType: hard
+
 "@babel/helper-regex@npm:^7.10.1":
   version: 7.10.1
   resolution: "@babel/helper-regex@npm:7.10.1"
@@ -633,6 +640,18 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: aa7f36bb7cac2e81b4ac93bae1286c65e1021fde4de0ef1e3bb140913bae6b47242fda83b07f7458623365aa29202ffd924936911f857af1982d326aeee521e1
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-proposal-logical-assignment-operators@npm:^7.13.8":
+  version: 7.13.8
+  resolution: "@babel/plugin-proposal-logical-assignment-operators@npm:7.13.8"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.13.0
+    "@babel/plugin-syntax-logical-assignment-operators": ^7.10.4
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: b5cf7b2e8d0a5e7f874a922db6062f3a80748fe06e4327df53b9d89fa24bc8ccf1e6ba591a93231dd364b57e5ea6415d16476b1cee986b886356e78329eedf0b
   languageName: node
   linkType: hard
 
@@ -841,6 +860,17 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: b9fd86ab3ed18ae9412dca029b480ab6e2fad697fe16b9ba365c362b34a970d56e52e79523a0554a1a938f021bcb1c2e71a599ca506c0d1a720a18701d95a102
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-syntax-logical-assignment-operators@npm:^7.10.4":
+  version: 7.10.4
+  resolution: "@babel/plugin-syntax-logical-assignment-operators@npm:7.10.4"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.10.4
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: aff33577037e34e515911255cdbb1fd39efee33658aa00b8a5fd3a4b903585112d037cce1cc9e4632f0487dc554486106b79ccd5ea63a2e00df4363f6d4ff886
   languageName: node
   linkType: hard
 
@@ -4918,10 +4948,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/vscode@npm:^1.46.0":
-  version: 1.46.0
-  resolution: "@types/vscode@npm:1.46.0"
-  checksum: b980b2078cd1fe209f9aaaee447f7276d09bc6f4b5c2c2e8d65e5a9dddc757a285eba3bc917c9ac7125a1b47157702b7738c7f208eea46c56154fbcbfdc171aa
+"@types/vscode@npm:^1.54.0":
+  version: 1.54.0
+  resolution: "@types/vscode@npm:1.54.0"
+  checksum: 719a85e0b25c088c3616dcf5273248e11b6eba501a8be15606d3e6df22ee1ad3504fffe038658af05be2c067eb60f8111009d04b097ca44490094af6eb6e3189
   languageName: node
   linkType: hard
 
@@ -5733,6 +5763,7 @@ __metadata:
     "@babel/plugin-proposal-class-properties": ^7.10.1
     "@babel/plugin-proposal-decorators": ^7.10.1
     "@babel/plugin-proposal-dynamic-import": ^7.10.1
+    "@babel/plugin-proposal-logical-assignment-operators": ^7.13.8
     "@babel/plugin-proposal-nullish-coalescing-operator": ^7.10.1
     "@babel/plugin-proposal-optional-chaining": ^7.10.1
     "@babel/plugin-transform-modules-commonjs": ^7.10.1
@@ -9079,7 +9110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^2.11.0, commander@npm:^2.20.0, commander@npm:^2.8.1, commander@npm:^2.9.0":
+"commander@npm:^2.11.0, commander@npm:^2.20.0, commander@npm:^2.9.0":
   version: 2.20.0
   resolution: "commander@npm:2.20.0"
   checksum: 7f7ad57277e7a42e6931c0016e57ee1c14c3d2cf88aeff53c0c4d995a1a90ba33aa8bbff1cde1f92578b495e85c23aac7964c8f06322b9667b8b6e9ff9ceeca8
@@ -9090,6 +9121,13 @@ __metadata:
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
   checksum: d7b9913ff92cae20cb577a4ac6fcc121bd6223319e54a40f51a14740a681ad5c574fd29a57da478a5f234a6fa6c52cbf0b7c641353e03c648b1ae85ba670b977
+  languageName: node
+  linkType: hard
+
+"commander@npm:^6.1.0":
+  version: 6.2.1
+  resolution: "commander@npm:6.2.1"
+  checksum: d7090410c0de6bc5c67d3ca41c41760d6d268f3c799e530aafb73b7437d1826bbf0d2a3edac33f8b57cc9887b4a986dce307fa5557e109be40eadb7c43b21742
   languageName: node
   linkType: hard
 
@@ -27524,14 +27562,14 @@ typescript@4.1.0-beta:
   languageName: node
   linkType: hard
 
-"vsce@npm:^1.76.1":
-  version: 1.76.1
-  resolution: "vsce@npm:1.76.1"
+"vsce@npm:^1.85.1":
+  version: 1.85.1
+  resolution: "vsce@npm:1.85.1"
   dependencies:
     azure-devops-node-api: ^7.2.0
     chalk: ^2.4.2
     cheerio: ^1.0.0-rc.1
-    commander: ^2.8.1
+    commander: ^6.1.0
     denodeify: ^1.2.1
     glob: ^7.0.6
     leven: ^3.1.0
@@ -27550,7 +27588,7 @@ typescript@4.1.0-beta:
     yazl: ^2.2.2
   bin:
     vsce: out/vsce
-  checksum: b810bb994ba0837efde33ba9ae354d41554a0d79ceb41fbd2f43a1cbc6784eabb0552ea36611a5ccd4e2ef70ee341cf701ac4d5222913e2dc1fb5036d9f7e191
+  checksum: aba0181b477452e84f75eb6ca21edd0c9ab2fccc0407f60b23d9d853aef85bb7640a13026c84406cc4408fc509ecb6ad77886bc76f8e056cafa054168d59a1e8
   languageName: node
   linkType: hard
 
@@ -27558,14 +27596,14 @@ typescript@4.1.0-beta:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@types/vscode": ^1.46.0
+    "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     "@yarnpkg/pnpify": "workspace:^2.4.0"
     ts-loader: ^7.0.5
     tslib: ^1.13.0
     typescript: 4.1.0-beta
-    vsce: ^1.76.1
+    vsce: ^1.85.1
     webpack: ^5.1.1
     webpack-cli: ^4.0.0-beta.8
   languageName: unknown

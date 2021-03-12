@@ -1,6 +1,7 @@
 import * as statUtils from './statUtils';
 
-export {opendir} from './algorithms/opendir';
+export {LinkStrategy} from './algorithms/copyPromise';
+export {opendir}      from './algorithms/opendir';
 
 export {statUtils};
 
