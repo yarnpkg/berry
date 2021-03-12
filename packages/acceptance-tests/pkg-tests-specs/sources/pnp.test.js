@@ -1883,4 +1883,20 @@ describe(`Plug'n'Play`, () => {
       }
     )
   );
+
+  test(
+    `it shouldn't match on dot files with pnpIgnorePatterns`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpIgnorePatterns: `ignored/**`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/ignored/node_modules/.cache`, {recursive: true});
+        await run(`install`);
+
+        await expect(source(`require('module').findPnpApi(require('path').resolve('ignored/node_modules/.cache'))`)).resolves.toBe(null);
+      }
+    )
+  );
 });
