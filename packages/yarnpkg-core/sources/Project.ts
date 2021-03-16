@@ -1579,6 +1579,11 @@ export class Project {
       if (typeof installState.installersCustomData !== `undefined`)
         this.installersCustomData = installState.installersCustomData;
 
+    if (restoreBuildState)
+      Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
+
+    // Resolutions needs to be restored last otherwise applyLightResolution will persist a new state
+    // before the rest is restored
     if (restoreResolutions) {
       if (installState.lockFileChecksum === this.lockFileChecksum) {
         Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
@@ -1586,10 +1591,6 @@ export class Project {
       } else {
         await this.applyLightResolution();
       }
-    }
-
-    if (restoreBuildState) {
-      Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
     }
   }
 
