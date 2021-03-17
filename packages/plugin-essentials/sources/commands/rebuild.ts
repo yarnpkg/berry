@@ -41,7 +41,9 @@ export default class RunCommand extends BaseCommand {
     for (const identStr of this.idents)
       filteredIdents.add(structUtils.parseIdent(identStr).identHash);
 
-    await project.restoreInstallState();
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
 
     await project.resolveEverything({
       cache,

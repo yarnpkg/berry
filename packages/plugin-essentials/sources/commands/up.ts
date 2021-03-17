@@ -96,6 +96,10 @@ export default class UpCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     const allDescriptors = [...project.storedDescriptors.values()];
 
     const stringifiedIdents = allDescriptors.map(descriptor => {
@@ -139,6 +143,10 @@ export default class UpCommand extends BaseCommand {
 
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
 
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
