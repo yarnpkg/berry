@@ -88,6 +88,10 @@ export default class DedupeCommand extends BaseCommand {
     const {project} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     let dedupedPackageCount: number = 0;
     const dedupeReport = await StreamReport.start({
       configuration,

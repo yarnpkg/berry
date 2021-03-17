@@ -44,6 +44,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
       let str = ``;

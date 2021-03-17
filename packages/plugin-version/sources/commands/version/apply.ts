@@ -44,6 +44,10 @@ export default class VersionApplyCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     const applyReport = await StreamReport.start({
       configuration,
       json: this.json,
