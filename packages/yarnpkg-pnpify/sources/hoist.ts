@@ -444,6 +444,13 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     reason = `- self-reference`;
 
   if (isHoistable) {
+    isHoistable = !rootNode.peerNames.has(node.name);
+    if (outputReason && !isHoistable) {
+      reason = `- cannot shadow peer: ${prettyPrintLocator(rootNode.originalDependencies.get(node.name)!.locator)} at ${reasonRoot}`;
+    }
+  }
+
+  if (isHoistable) {
     let isNameAvailable = false;
     const usedDep = usedDependencies.get(node.name);
     isNameAvailable = (!usedDep || usedDep.ident === node.ident);
