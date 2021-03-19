@@ -168,7 +168,7 @@
           "type": "object",
           "properties": {
             "built": {
-              "description": "If false, the package will never be built. When the global settings `enableScripts` is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.",
+              "description": "If false, the package will never be built (deny-list). This behavior is reversed when the `enableScripts` yarnrc setting is toggled off - when that happens, only packages with `built` explicitly set to `true` will be executed (allow-list), and those with `built` explicitly set to `false` will simply see their build script warnings downgraded into simple notices.",
               "type": "boolean",
               "examples": [false]
             },
