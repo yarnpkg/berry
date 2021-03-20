@@ -212,7 +212,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   const versionFiles = changedFiles.filter(p => ppath.contains(deferredVersionFolder, p) !== null);
 
   if (versionFiles.length > 1)
-    throw new UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.join(`\n- `)}`);
+    throw new UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.map(file => npath.fromPortablePath(file)).join(`\n- `)}`);
 
   const changedWorkspaces: Set<Workspace> = new Set(miscUtils.mapAndFilter(changedFiles, file => {
     const workspace = project.tryWorkspaceByFilePath(file);
