@@ -161,6 +161,7 @@ The following tools unfortunately cannot be used with pure Plug'n'Play install (
 | React Native | Follow [react-native-community/cli#27](https://github.com/react-native-community/cli/issues/27) |
 | Pulumi | Follow [pulumi/pulumi#3586](https://github.com/pulumi/pulumi/issues/3586) |
 | VSCode Extension Manager (vsce) | Use the [vsce-yarn-patch](https://www.npmjs.com/package/vsce-yarn-patch) fork with the `node-modules` plugin enabled. The fork is required until [microsoft/vscode-vsce#493](https://github.com/microsoft/vscode-vsce/pull/493) is merged, as `vsce` currently uses the removed `yarn list` command |
+| Hugo | Hugo pipes expect a `node-modules` dir. Enable the `node-modules` plugin |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
 
