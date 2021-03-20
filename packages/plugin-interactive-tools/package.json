@@ -8,7 +8,7 @@
     "algoliasearch": "^4.2.0",
     "clipanion": "^3.0.0-rc.10",
     "diff": "^4.0.1",
-    "ink": "^3.0.7",
+    "ink": "^3.0.8",
     "ink-text-input": "^4.0.1",
     "react": "^16.13.1",
     "semver": "^7.1.2",

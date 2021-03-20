@@ -5732,7 +5732,7 @@ __metadata:
   dependencies:
     "@types/react": ^16.8.0
     chalk: ^3.0.0
-    ink: ^3.0.7
+    ink: ^3.0.8
     react: ^16.13.1
     redux: ^4.0.0
     tslib: ^1.13.0
@@ -6008,7 +6008,7 @@ __metadata:
     algoliasearch: ^4.2.0
     clipanion: ^3.0.0-rc.10
     diff: ^4.0.1
-    ink: ^3.0.7
+    ink: ^3.0.8
     ink-text-input: ^4.0.1
     react: ^16.13.1
     semver: ^7.1.2
@@ -6210,7 +6210,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.3.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
     clipanion: ^3.0.0-rc.10
-    ink: ^3.0.7
+    ink: ^3.0.8
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -15565,9 +15565,9 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"ink@npm:^3.0.7":
-  version: 3.0.7
-  resolution: "ink@npm:3.0.7"
+"ink@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "ink@npm:3.0.8"
   dependencies:
     ansi-escapes: ^4.2.1
     auto-bind: 4.0.0
@@ -15598,7 +15598,7 @@ fsevents@^1.2.7:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 260023c9f70f483410d0436d14992e5425e2f09c367306e9dd79491968e817fbac491050e4d0bb7bceb47dbd4aa46169c3d6f1bed41decedbb749dba0fce6809
+  checksum: 8ec8fac1893e82e1e65d6db4d81b130be631bc5f5fe74effb0a3fdf704ec4cd875cd826054262d78d15caf7ae55196739637257689f44ac274a5bf2ff6e7d61e
   languageName: node
   linkType: hard
 
