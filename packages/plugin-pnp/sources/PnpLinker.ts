@@ -1,13 +1,13 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                        from '@yarnpkg/core';
-import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
-import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                         from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings}                    from '@yarnpkg/pnp';
-import {UsageError}                                                                                          from 'clipanion';
+import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                           from '@yarnpkg/core';
+import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
+import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                            from '@yarnpkg/fslib';
+import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
+import {UsageError}                                                                                             from 'clipanion';
 
-import {getPnpPath}                                                                                          from './index';
-import * as jsInstallUtils                                                                                   from './jsInstallUtils';
-import * as pnpUtils                                                                                         from './pnpUtils';
+import {getPnpPath}                                                                                             from './index';
+import * as jsInstallUtils                                                                                      from './jsInstallUtils';
+import * as pnpUtils                                                                                            from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -229,9 +229,13 @@ export class PnpInstaller implements Installer {
       await xfs.removePromise(pnpPath.cjsLegacy);
     }
 
+    if (this.opts.project.configuration.get(`enableExperimentalESMLoader`) !== true && this.opts.project.topLevelWorkspace.manifest.type !== `module`)
+      await xfs.removePromise(pnpPath.esmLoader);
+
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
       await xfs.removePromise(pnpPath.cjs);
       await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+      await xfs.removePromise(pnpPath.esmLoader);
 
       return undefined;
     }
@@ -321,6 +325,9 @@ export class PnpInstaller implements Installer {
         mode: 0o644,
       });
     }
+
+    if (this.opts.project.configuration.get(`enableExperimentalESMLoader`) === true || this.opts.project.topLevelWorkspace.manifest.type === `module`)
+      await xfs.writeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate());
 
     const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
     if (this.unpluggedPaths.size === 0) {

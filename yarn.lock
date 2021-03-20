@@ -6047,12 +6047,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
+    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-node-resolve": ^11.0.1
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.6.0-rc.2"
     "@yarnpkg/libzip": "workspace:*"
     "@yarnpkg/monorepo": "workspace:*"
+    cjs-module-lexer: ^1.2.1
+    esbuild: "npm:esbuild-wasm@^0.11.20"
     resolve.exports: ^1.0.2
+    rollup: ^2.43.0
+    rollup-plugin-esbuild: ^3.0.2
     tslib: ^1.13.0
     typescript: ^4.4.2
     webpack: ^5.1.1
@@ -8331,6 +8337,13 @@ __metadata:
     inherits: ^2.0.1
     safe-buffer: ^5.0.1
   checksum: 47d3568dbc17431a339bad1fe7dff83ac0891be8206911ace3d3b818fc695f376df809bea406e759cdea07fff4b454fa25f1013e648851bec790c1d75763032e
+  languageName: node
+  linkType: hard
+
+"cjs-module-lexer@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "cjs-module-lexer@npm:1.2.1"
+  checksum: 9e9905e3f5b8b1f262d10ebb0d33407d25a48d0341acd3215ed402f9284188183f14d577340a171f75fd137b7654a780bcb6008dee9e9bd12957174f6c0e4661
   languageName: node
   linkType: hard
 
