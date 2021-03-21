@@ -262,5 +262,23 @@ describe(`Commands`, () => {
         }
       )
     );
+
+    test(
+      `should not continue running build scripts if one of them fails`,
+      makeTemporaryEnv(
+        {
+          scripts: {
+            preinstall: `exit 1`,
+            postinstall: `echo 'foo'`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, `--inline-builds`)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.not.stringContaining(`foo`),
+          });
+        }
+      )
+    );
   });
 });
