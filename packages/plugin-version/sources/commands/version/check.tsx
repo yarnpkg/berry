@@ -1,6 +1,6 @@
 import {WorkspaceRequiredError}                                                                                 from '@yarnpkg/cli';
 import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils} from '@yarnpkg/core';
-import {ppath}                                                                                                  from '@yarnpkg/fslib';
+import {npath}                                                                                                  from '@yarnpkg/fslib';
 import {Gem}                                                                                                    from '@yarnpkg/libui/sources/components/Gem';
 import {ScrollableItems}                                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
@@ -264,7 +264,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
             {[...versionFile.changedFiles].map(file => (
               <Box key={file}>
                 <Text>
-                  <Text color="grey">{versionFile.root}</Text>/{ppath.relative(versionFile.root, file)}
+                  <Text color="grey">{npath.fromPortablePath(versionFile.root)}</Text>{npath.sep}{npath.relative(npath.fromPortablePath(versionFile.root), npath.fromPortablePath(file))}
                 </Text>
               </Box>
             ))}
@@ -357,7 +357,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
         report.reportSeparator();
 
         for (const file of versionFile.changedFiles) {
-          report.reportInfo(null, `${formatUtils.pretty(configuration, versionFile.root, `gray`)}/${ppath.relative(versionFile.root, file)}`);
+          report.reportInfo(null, `${formatUtils.pretty(configuration, npath.fromPortablePath(versionFile.root), `gray`)}${npath.sep}${npath.relative(npath.fromPortablePath(versionFile.root), npath.fromPortablePath(file))}`);
         }
       }
 

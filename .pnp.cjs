@@ -11158,7 +11158,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/ink", null],
             ["@types/react", "npm:16.9.2"],
             ["chalk", "npm:3.0.0"],
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["react", "npm:16.13.1"],
             ["redux", "npm:4.0.5"],
             ["tslib", "npm:1.13.0"]
@@ -11177,7 +11177,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/libui", "workspace:packages/yarnpkg-libui"],
             ["@types/react", "npm:16.9.2"],
             ["chalk", "npm:3.0.0"],
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["react", "npm:16.13.1"],
             ["redux", "npm:4.0.5"],
             ["tslib", "npm:1.13.0"]
@@ -12800,7 +12800,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["algoliasearch", "npm:4.2.0"],
             ["clipanion", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:3.0.0-rc.10"],
             ["diff", "npm:4.0.1"],
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["ink-text-input", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:4.0.1"],
             ["react", "npm:16.13.1"],
             ["semver", "npm:7.3.2"],
@@ -15414,7 +15414,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pack", "virtual:c44c4b6360dc34d25da6d32e39622e7e40f36f37b99dc66b6ebbd615fdd49465f496bf10f81b6fa5f71b95443fda61174ad51d2799fc7ca433af9a9666cd0f37#workspace:packages/plugin-pack"],
             ["clipanion", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:3.0.0-rc.10"],
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["react", "npm:16.13.1"],
             ["semver", "npm:7.3.2"],
             ["tslib", "npm:1.13.0"],
@@ -27035,17 +27035,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["npm:3.0.7", {
-          "packageLocation": "./.yarn/cache/ink-npm-3.0.7-6985d5fd56-260023c9f7.zip/node_modules/ink/",
+        ["npm:3.0.8", {
+          "packageLocation": "./.yarn/cache/ink-npm-3.0.8-3a8005f59f-8ec8fac189.zip/node_modules/ink/",
           "packageDependencies": [
-            ["ink", "npm:3.0.7"]
+            ["ink", "npm:3.0.8"]
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7", {
-          "packageLocation": "./.yarn/__virtual__/ink-virtual-22d38985e5/0/cache/ink-npm-3.0.7-6985d5fd56-260023c9f7.zip/node_modules/ink/",
+        ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8", {
+          "packageLocation": "./.yarn/__virtual__/ink-virtual-dceb36bd5f/0/cache/ink-npm-3.0.8-3a8005f59f-8ec8fac189.zip/node_modules/ink/",
           "packageDependencies": [
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["@types/react", "npm:16.9.2"],
             ["ansi-escapes", "npm:4.3.1"],
             ["auto-bind", "npm:4.0.0"],
@@ -27348,7 +27348,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/ink", null],
             ["@types/react", "npm:16.9.2"],
             ["chalk", "npm:4.1.0"],
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.7"],
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["react", "npm:16.13.1"],
             ["type-fest", "npm:0.15.1"]
           ],
