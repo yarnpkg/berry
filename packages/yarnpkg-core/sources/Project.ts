@@ -1228,7 +1228,7 @@ export class Project {
 
               const stdin = null;
 
-              await xfs.mktempPromise(async logDir => {
+              const wasBuildSuccessful = await xfs.mktempPromise(async logDir => {
                 const logFile = ppath.join(logDir, `build.log` as PortablePath);
 
                 const {stdout, stderr} = this.configuration.getSubprocessStreams(logFile, {
@@ -1273,6 +1273,10 @@ export class Project {
                 report.reportError(MessageName.BUILD_FAILED, buildMessage);
                 return false;
               });
+
+              if (!wasBuildSuccessful) {
+                return;
+              }
             }
           })());
         }
