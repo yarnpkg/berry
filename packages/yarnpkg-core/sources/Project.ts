@@ -1263,15 +1263,15 @@ export class Project {
                 xfs.detachTemp(logDir);
 
                 const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
-                report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
 
                 if (this.optionalBuilds.has(pkg.locatorHash)) {
+                  report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
                   nextBState.set(pkg.locatorHash, buildHash);
                   return true;
+                } else {
+                  report.reportError(MessageName.BUILD_FAILED, buildMessage);
+                  return false;
                 }
-
-                report.reportError(MessageName.BUILD_FAILED, buildMessage);
-                return false;
               });
 
               if (!wasBuildSuccessful) {

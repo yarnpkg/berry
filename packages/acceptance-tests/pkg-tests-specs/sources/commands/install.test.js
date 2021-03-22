@@ -264,6 +264,30 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should only print one error message for failed builds`,
+      makeTemporaryEnv(
+        {
+          scripts: {
+            postinstall: `exit 1`,
+          },
+        },
+        async ({path, run, source}) => {
+          let code;
+          let stdout;
+
+          try {
+            ({code, stdout} = await run(`install`));
+          } catch (error) {
+            ({code, stdout} = error);
+          }
+
+          expect(code).toEqual(1);
+          expect(stdout.match(/YN0009/g).length).toEqual(1);
+        }
+      )
+    );
+
+    test(
       `should not continue running build scripts if one of them fails`,
       makeTemporaryEnv(
         {
