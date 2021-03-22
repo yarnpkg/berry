@@ -48,7 +48,8 @@ export class TelemetryManager {
   }
 
   reportVersion(value: string) {
-    this.reportValue(MetricName.VERSION, value);
+    // We don't really care about the exact commit they're using
+    this.reportValue(MetricName.VERSION, value.replace(/-git\..*/, `-git`));
   }
 
   reportCommandName(value: string) {
@@ -131,23 +132,43 @@ export class TelemetryManager {
     if (!content.blocks)
       return;
 
+    const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
+    const sendPayload = (payload: any) => httpUtils.post(rawUrl, payload, {
+      configuration: this.configuration,
+    }).catch(() => {
+      // Nothing we can do
+    });
+
     for (const [userId, block] of Object.entries(content.blocks ?? {})) {
       if (Object.keys(block).length === 0)
         continue;
 
       const upload: any = block;
       upload.userId = userId;
+      upload.reportType = `primary`;
 
       for (const key of Object.keys(upload.enumerators ?? {}))
         upload.enumerators[key] = upload.enumerators[key].length;
 
-      const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
+      sendPayload(upload);
 
-      httpUtils.post(rawUrl, upload, {
-        configuration: this.configuration,
-      }).catch(() => {
-        // Nothing we can do
-      });
+      // Datadog doesn't support well sending multiple tags in a single
+      // payload, so we instead send one query for each of them.
+      for (const type of [`values`, `enumerators`] as const) {
+        for (const [metricName, values] of Object.entries(upload[type])) {
+          // Something likely went weird, discard the metric altogether
+          if (values.length > 10)
+            continue;
+
+          for (const value of values) {
+            sendPayload({
+              userId,
+              reportType: `secondary`,
+              metric: {[metricName]: value},
+            });
+          }
+        }
+      }
     }
   }
 
