@@ -48,7 +48,8 @@ export class TelemetryManager {
   }
 
   reportVersion(value: string) {
-    this.reportValue(MetricName.VERSION, value);
+    // We don't really care about the exact commit they're using
+    this.reportValue(MetricName.VERSION, value.replace(/-git\..*/, `-git`));
   }
 
   reportCommandName(value: string) {
@@ -131,23 +132,53 @@ export class TelemetryManager {
     if (!content.blocks)
       return;
 
+    const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
+    const sendPayload = (payload: any) => httpUtils.post(rawUrl, payload, {
+      configuration: this.configuration,
+    }).catch(() => {
+      // Nothing we can do
+    });
+
     for (const [userId, block] of Object.entries(content.blocks ?? {})) {
       if (Object.keys(block).length === 0)
         continue;
 
       const upload: any = block;
       upload.userId = userId;
+      upload.reportType = `primary`;
 
       for (const key of Object.keys(upload.enumerators ?? {}))
         upload.enumerators[key] = upload.enumerators[key].length;
 
-      const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
+      sendPayload(upload);
 
-      httpUtils.post(rawUrl, upload, {
-        configuration: this.configuration,
-      }).catch(() => {
-        // Nothing we can do
-      });
+      // Datadog doesn't support well sending multiple tags in a single
+      // payload, so we instead send them separately, at most one value
+      // per query (we still aggregate different tags together).
+      const toSend = new Map();
+
+      // Also the max amount of queries (at worst once a week, remember)
+      const maxValues = 20;
+
+      for (const [metricName, values] of Object.entries<any>(upload.values))
+        if (values.length > 0)
+          toSend.set(metricName, values.slice(0, maxValues));
+
+      while (toSend.size > 0) {
+        const upload: any = {};
+        upload.userId = userId;
+        upload.reportType = `secondary`;
+        upload.metrics = {};
+
+        for (const [metricName, values] of toSend) {
+          upload.metrics[metricName] = values.shift();
+          if (values.length === 0) {
+            toSend.delete(metricName);
+          }
+        }
+
+        sendPayload(upload);
+      }
     }
   }
 
