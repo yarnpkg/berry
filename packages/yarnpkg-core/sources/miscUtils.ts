@@ -314,6 +314,7 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   return ignorePatterns.map(pattern => {
     return `(${micromatch.makeRe(pattern, {
       windows: false,
+      dot: true,
     }).source})`;
   }).join(`|`);
 }
