@@ -609,15 +609,15 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     return value;
 
   const interpretValue = () => {
-    if (definition.type === SettingsType.BOOLEAN)
-      return miscUtils.parseBoolean(value);
-
-    if (typeof value !== `string`)
-      throw new Error(`Expected value (${value}) to be a string`);
-
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
       env: process.env,
     });
+
+    if (definition.type === SettingsType.BOOLEAN)
+      return miscUtils.parseBoolean(valueWithReplacedVariables);
+
+    if (typeof valueWithReplacedVariables !== `string`)
+      throw new Error(`Expected value (${valueWithReplacedVariables}) to be a string`);
 
     switch (definition.type) {
       case SettingsType.ABSOLUTE_PATH:

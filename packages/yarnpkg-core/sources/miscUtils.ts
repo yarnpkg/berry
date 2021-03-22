@@ -319,7 +319,8 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   }).join(`|`);
 }
 
-export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
+export function replaceEnvVariables(value: unknown, {env}: {env: {[key: string]: string | undefined}}) {
+  if (typeof value !== `string`) return value;
   const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
 
   return value.replace(regex, (...args) => {

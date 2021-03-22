@@ -43,6 +43,8 @@ describe(`Configuration`, () => {
     it(`should replace env variables`, async () => {
       process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
       process.env.EMPTY_VARIABLE = ``;
+      process.env.TRUE_VARIABLE = `true`;
+      process.env.FALSE_VARIABLE = `false`;
 
       await initializeConfiguration({
         npmScopes: {
@@ -73,6 +75,21 @@ describe(`Configuration`, () => {
           emptyEnvWithEmptyFallback: {
             npmAuthToken: `\${EMPTY_VARIABLE:-}`,
           },
+          booleanOnlyEnvTrue: {
+            npmAlwaysAuth: `\${TRUE_VARIABLE}`,
+          },
+          booleanOnlyEnvFalse: {
+            npmAlwaysAuth: `\${FALSE_VARIABLE}`,
+          },
+          booleanEnvFalseWithFallbackToTrue: {
+            npmAlwaysAuth: `\${FALSE_VARIABLE-true}`,
+          },
+          booleanUnsetEnvWithStrictFallbackToTrue: {
+            npmAlwaysAuth: `\${NOT_EXISTING_ENV-true}`,
+          },
+          booleanEmtpyEnvWithFallbackToTrue: {
+            npmAlwaysAuth: `\${EMPTY_VARIABLE:-true}`,
+          },
         },
       }, async dir => {
         const configuration = await Configuration.find(dir, {
@@ -81,6 +98,7 @@ describe(`Configuration`, () => {
         });
 
         const getToken = (scope: string) => configuration.get(`npmScopes`).get(scope)!.get(`npmAuthToken`);
+        const getAlwaysAuth = (scope: string) => configuration.get(`npmScopes`).get(scope)!.get(`npmAlwaysAuth`);
 
         const onlyEnv = getToken(`onlyEnv`);
         const multipleEnvs = getToken(`multipleEnvs`);
@@ -92,6 +110,12 @@ describe(`Configuration`, () => {
         const emptyEnvWithFallback = getToken(`emptyEnvWithFallback`);
         const emptyEnvWithEmptyFallback = getToken(`emptyEnvWithEmptyFallback`);
 
+        const booleanOnlyEnvTrue = getAlwaysAuth(`booleanOnlyEnvTrue`);
+        const booleanOnlyEnvFalse = getAlwaysAuth(`booleanOnlyEnvFalse`);
+        const booleanEnvFalseWithFallbackToTrue = getAlwaysAuth(`booleanEnvFalseWithFallbackToTrue`);
+        const booleanUnsetEnvWithStrictFallbackToTrue = getAlwaysAuth(`booleanUnsetEnvWithStrictFallbackToTrue`);
+        const booleanEmtpyEnvWithFallbackToTrue = getAlwaysAuth(`booleanEmtpyEnvWithFallbackToTrue`);
+
         expect(onlyEnv).toEqual(`AAA-BBB-CCC`);
         expect(multipleEnvs).toEqual(`AAA-BBB-CCC-separator-AAA-BBB-CCC`);
         expect(envInString).toEqual(`beforeEnv-AAA-BBB-CCC-after-env`);
@@ -101,6 +125,12 @@ describe(`Configuration`, () => {
         expect(emptyEnvWithStrictFallback).toEqual(``);
         expect(emptyEnvWithFallback).toEqual(`fallback-for-empty-value`);
         expect(emptyEnvWithEmptyFallback).toEqual(``);
+
+        expect(booleanOnlyEnvTrue).toEqual(true);
+        expect(booleanOnlyEnvFalse).toEqual(false);
+        expect(booleanEnvFalseWithFallbackToTrue).toEqual(false);
+        expect(booleanUnsetEnvWithStrictFallbackToTrue).toEqual(true);
+        expect(booleanEmtpyEnvWithFallbackToTrue).toEqual(true);
       });
     });
 
