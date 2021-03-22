@@ -153,21 +153,31 @@ export class TelemetryManager {
       sendPayload(upload);
 
       // Datadog doesn't support well sending multiple tags in a single
-      // payload, so we instead send one query for each of them.
-      for (const type of [`values`, `enumerators`] as const) {
-        for (const [metricName, values] of Object.entries(upload[type])) {
-          const asArray = Array.isArray(values)
-            ? values
-            : [values];
+      // payload, so we instead send them separately, at most one value
+      // per query (we still aggregate different tags together).
+      const toSend = new Map();
 
-          for (const value of asArray) {
-            sendPayload({
-              userId,
-              reportType: `secondary`,
-              metric: {[metricName]: value},
-            });
+      // Also the max amount of queries (at worst once a week, remember)
+      const maxValues = 20;
+
+      for (const [metricName, values] of Object.entries(upload.values))
+        if (values.length > 0)
+          toSend.set(metricName, values.slice(0, maxValues));
+
+      while (toSend.size > 0) {
+        const upload: any = {};
+        upload.userId = userId;
+        upload.reportType = `secondary`;
+        upload.metrics = {};
+
+        for (const [metricName, values] of toSend) {
+          upload.metrics[metricName] = values.shift();
+          if (values.length === 0) {
+            toSend.delete(metricName);
           }
         }
+
+        sendPayload(upload);
       }
     }
   }
