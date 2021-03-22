@@ -160,7 +160,7 @@ export class TelemetryManager {
       // Also the max amount of queries (at worst once a week, remember)
       const maxValues = 20;
 
-      for (const [metricName, values] of Object.entries(upload.values))
+      for (const [metricName, values] of Object.entries<any>(upload.values))
         if (values.length > 0)
           toSend.set(metricName, values.slice(0, maxValues));
 
