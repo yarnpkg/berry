@@ -156,11 +156,11 @@ export class TelemetryManager {
       // payload, so we instead send one query for each of them.
       for (const type of [`values`, `enumerators`] as const) {
         for (const [metricName, values] of Object.entries(upload[type])) {
-          // Something likely went weird, discard the metric altogether
-          if (values.length > 10)
-            continue;
+          const asArray = Array.isArray(values)
+            ? values
+            : [values];
 
-          for (const value of values) {
+          for (const value of asArray) {
             sendPayload({
               userId,
               reportType: `secondary`,
