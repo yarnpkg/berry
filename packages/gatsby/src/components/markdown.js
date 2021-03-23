@@ -175,7 +175,7 @@ const Content = styled.div`
 
 export const PrerenderedMarkdown = ({title, children, editUrl}) => <>
   <Container>
-    <Title>
+    <Title title={title}>
       {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
       {editUrl && <EditLink target="_blank" href={editUrl}>Edit this page on GitHub</EditLink>}
     </Title>
