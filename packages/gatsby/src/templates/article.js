@@ -15,6 +15,7 @@ const GIT_URL_EDIT_PREFIX = `https://github.com/yarnpkg/berry/tree/master/packag
 const CONTENT_DIR = `/content/`;
 
 function getGitPageUrl(postAbsolutePath) {
+  if (!postAbsolutePath) return undefined;
   const pathIndex =
     postAbsolutePath.indexOf(CONTENT_DIR) + CONTENT_DIR.length;
   const relativePath = postAbsolutePath.slice(pathIndex);
