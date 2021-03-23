@@ -161,11 +161,12 @@ const Content = styled.div`
   }
 `;
 
-export const PrerenderedMarkdown = ({title, children}) => <>
+export const PrerenderedMarkdown = ({title, children, editUrl}) => <>
   <Container>
     <Title>
       {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
     </Title>
+    {editUrl && <a target="_blank" href={editUrl}>Edit this page on GitHub</a>}
     <Content dangerouslySetInnerHTML={{__html: children}} />
   </Container>
 </>;
