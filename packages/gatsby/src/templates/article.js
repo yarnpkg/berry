@@ -11,8 +11,8 @@ const GlobalStyleOverrides = css`
   --header-border-bottom: 1px solid #cfdee9;
 }
 `;
-const GIT_URL_EDIT_PREFIX = "https://github.com/yarnpkg/berry/tree/master/packages/gatsby/content"
-const CONTENT_DIR = "/content/"
+const GIT_URL_EDIT_PREFIX = `https://github.com/yarnpkg/berry/tree/master/packages/gatsby/content`;
+const CONTENT_DIR = `/content/`;
 
 function getGitPageUrl(postAbsolutePath) {
   const pathIndex =
