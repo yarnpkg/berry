@@ -8,7 +8,7 @@ __metadata:
 "@actions/core@npm:^1.2.6":
   version: 1.2.6
   resolution: "@actions/core@npm:1.2.6"
-  checksum: 984c7d5ae95c02f62f69549a9d5cfbc0db0b035f519775301b397c167791ceee269fb504cb622da541d1fa305ee4ad3fc30d017c6407045aa4eb6809eee4c549
+  checksum: f07d105cd5b1d309da8b5c55aad8c92a03915451455f267ac5b03220214d7f7e457b3ac6b874f592e856214491295ae8c106789b2fd5757bfcaf64fe7e0d0546
   languageName: node
   linkType: hard
 
