@@ -900,8 +900,24 @@ export class Configuration {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
-    const rcFiles = await Configuration.findRcFiles(startingCwd);
+    const rcFiles: Array<{
+      path: PortablePath;
+      cwd: PortablePath;
+      data: any;
+      strict?: boolean
+    }> = await Configuration.findRcFiles(startingCwd);
+
     const homeRcFile = await Configuration.findHomeRcFile();
+    if (homeRcFile) {
+      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+      // The home configuration is never strict because it improves support for
+      // multiple projects using different Yarn versions on the same machine
+      if (rcFile) {
+        rcFile.strict = false;
+      } else {
+        rcFiles.push({...homeRcFile, strict: false});
+      }
+    }
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
     // to not have to load the plugins if there's a `yarn-path` configured.
@@ -918,8 +934,6 @@ export class Configuration {
     configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
-    if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1047,13 +1061,8 @@ export class Configuration {
       configuration.activatePlugin(name, plugin);
 
     configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
-
-    // The home configuration is never strict because it improves support for
-    // multiple projects using different Yarn versions on the same machine
-    if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
