@@ -1228,7 +1228,7 @@ export class Project {
 
               const stdin = null;
 
-              await xfs.mktempPromise(async logDir => {
+              const wasBuildSuccessful = await xfs.mktempPromise(async logDir => {
                 const logFile = ppath.join(logDir, `build.log` as PortablePath);
 
                 const {stdout, stderr} = this.configuration.getSubprocessStreams(logFile, {
@@ -1263,16 +1263,20 @@ export class Project {
                 xfs.detachTemp(logDir);
 
                 const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
-                report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
 
                 if (this.optionalBuilds.has(pkg.locatorHash)) {
+                  report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
                   nextBState.set(pkg.locatorHash, buildHash);
                   return true;
+                } else {
+                  report.reportError(MessageName.BUILD_FAILED, buildMessage);
+                  return false;
                 }
-
-                report.reportError(MessageName.BUILD_FAILED, buildMessage);
-                return false;
               });
+
+              if (!wasBuildSuccessful) {
+                return;
+              }
             }
           })());
         }
@@ -1580,6 +1584,11 @@ export class Project {
       if (typeof installState.installersCustomData !== `undefined`)
         this.installersCustomData = installState.installersCustomData;
 
+    if (restoreBuildState)
+      Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
+
+    // Resolutions needs to be restored last otherwise applyLightResolution will persist a new state
+    // before the rest is restored
     if (restoreResolutions) {
       if (installState.lockFileChecksum === this.lockFileChecksum) {
         Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
@@ -1587,10 +1596,6 @@ export class Project {
       } else {
         await this.applyLightResolution();
       }
-    }
-
-    if (restoreBuildState) {
-      Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
     }
   }
 

@@ -47,6 +47,10 @@ export default class LinkCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
 
     const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins);

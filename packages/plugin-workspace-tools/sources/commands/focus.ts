@@ -40,6 +40,10 @@ export default class WorkspacesFocus extends BaseCommand {
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     let requiredWorkspaces: Set<Workspace>;
     if (this.all) {
       requiredWorkspaces = new Set(project.workspaces);

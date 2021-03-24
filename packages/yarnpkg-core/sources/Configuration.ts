@@ -609,7 +609,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     return value;
 
   const interpretValue = () => {
-    if (definition.type === SettingsType.BOOLEAN)
+    if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
@@ -628,6 +628,8 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
         return parseInt(valueWithReplacedVariables);
       case SettingsType.LOCATOR:
         return structUtils.parseLocator(valueWithReplacedVariables);
+      case SettingsType.BOOLEAN:
+        return miscUtils.parseBoolean(valueWithReplacedVariables);
       default:
         return valueWithReplacedVariables;
     }

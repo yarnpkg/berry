@@ -43,16 +43,15 @@ export function pnpPlugin({
         return;
 
       build.onResolve({filter}, args => {
-        // In theory we should delegate to the real resolution, but ESBuild
-        // doesn't currently offer any way to do that.
-        const pnpApi = findPnpApi(args.importer) as PnpApi | null;
-        if (!pnpApi)
-          throw new Error(`Path is external to the project`);
-
         // The entry point resolution uses an empty string
         const effectiveImporter = args.importer
           ? args.importer
           : `${baseDir}/`;
+
+        const pnpApi = findPnpApi(effectiveImporter) as PnpApi | null;
+        if (!pnpApi)
+          // Path isn't controlled by PnP so delegate to the next resolver in the chain
+          return undefined;
 
         const path = pnpApi.resolveRequest(args.path, effectiveImporter, {
           considerBuiltins: true,

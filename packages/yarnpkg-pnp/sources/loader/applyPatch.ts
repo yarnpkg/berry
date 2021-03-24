@@ -45,7 +45,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       return null;
 
     const apiEntry = opts.manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
+    // Check if the path is ignored
+    return apiEntry.instance.findPackageLocator(lookupPath) ? apiEntry.instance : null;
   };
 
   function getRequireStack(parent: Module | null | undefined) {
@@ -174,7 +175,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   }
 
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
-    if (module && !module.parent && !module.filename && module.paths.length > 0) {
+    if (module && module.id !== `<repl>` && !module.parent && !module.filename && module.paths.length > 0) {
       return [{
         apiPath: opts.manager.findApiPathFor(module.paths[0]),
         path: module.paths[0],

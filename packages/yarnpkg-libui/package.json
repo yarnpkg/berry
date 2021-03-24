@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
-    "ink": "^3.0.7",
+    "ink": "^3.0.8",
     "react": "^16.13.1"
   },
   "repository": {
