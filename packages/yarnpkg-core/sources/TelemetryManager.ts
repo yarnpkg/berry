@@ -1,6 +1,7 @@
 import {Filename, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 
 import {Configuration}                      from './Configuration';
+import * as hashUtils                       from './hashUtils';
 import * as httpUtils                       from './httpUtils';
 import * as miscUtils                       from './miscUtils';
 
@@ -85,7 +86,7 @@ export class TelemetryManager {
   }
 
   private reportEnumerator(metric: MetricName, value: string) {
-    miscUtils.getSetWithDefault(this.enumerators, metric).add(value);
+    miscUtils.getSetWithDefault(this.enumerators, metric).add(hashUtils.makeHash(value));
   }
 
   private reportHit(metric: MetricName, extra: string = `*`) {
