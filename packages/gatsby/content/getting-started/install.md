@@ -26,9 +26,9 @@ Note that once you've followed the instructions, running `yarn --version` from y
 
 > One perk of this system is that projects configured for Yarn 1 will keep working just like before. We wouldn't have had to do this if Yarn had been "project locked" from the beginning, but [hindsight is 20/20](https://en.wiktionary.org/wiki/hindsight_is_20/20) 😉
 
-> **Migrating from Yarn 1**
+## Migrating from Yarn 1
 
-In order to migrate an existing Yarn 1 project to Yarn 2, run `yarn set version berry`
+TLDR: In order to migrate an existing Yarn 1 project to Yarn 2, run `yarn set version berry` in the project's root.
 
 > We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/getting-started/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/getting-started/migration#if-required-enable-the-node-modules-plugin) if required!
 
