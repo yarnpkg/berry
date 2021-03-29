@@ -1,11 +1,11 @@
 import sliceAnsi                                  from '@arcanis/slice-ansi';
-import {structUtils}                              from '@yarnpkg/core';
 import {Writable}                                 from 'stream';
 
 import {Configuration}                            from './Configuration';
 import {MessageName, stringifyMessageName}        from './MessageName';
 import {ProgressDefinition, Report, TimerOptions} from './Report';
 import * as formatUtils                           from './formatUtils';
+import * as structUtils                           from './structUtils';
 import {Locator}                                  from './types';
 
 export type StreamReportOptions = {
