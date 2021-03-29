@@ -231,10 +231,10 @@ export class Cache {
       return await this.writeFileWithLock(cachePath, async () => {
         return await this.writeFileWithLock(packageSource === `mirror` ? null : mirrorPath, async () => {
           // Doing a move is important to ensure atomic writes (todo: cross-drive?)
-          await Promise.all([
-            xfs.movePromise(cachePathTemp, cachePath),
-            mirrorPathTemp && mirrorPath && xfs.movePromise(mirrorPathTemp, mirrorPath),
-          ]);
+          await xfs.movePromise(cachePathTemp, cachePath);
+
+          if (mirrorPathTemp && mirrorPath)
+            await xfs.movePromise(mirrorPathTemp, mirrorPath);
 
           return [cachePath, checksum] as const;
         });
