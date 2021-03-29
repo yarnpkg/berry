@@ -2,7 +2,7 @@
 
 ## Master
 
-**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (plus any relevant plugin by running `yarn plugin import from sources <name>`).
+**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
 **Important:** Development of the next major version (3.x) is happening on the master branch. A list of breaking changes can be found below.
 
