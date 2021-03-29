@@ -5,6 +5,7 @@ import {Configuration}                            from './Configuration';
 import {MessageName, stringifyMessageName}        from './MessageName';
 import {ProgressDefinition, Report, TimerOptions} from './Report';
 import * as formatUtils                           from './formatUtils';
+import * as structUtils                           from './structUtils';
 import {Locator}                                  from './types';
 
 export type StreamReportOptions = {
@@ -160,6 +161,7 @@ export class StreamReport extends Report {
 
   private cacheHitCount: number = 0;
   private cacheMissCount: number = 0;
+  private lastCacheMiss: Locator | null = null;
 
   private warningCount: number = 0;
   private errorCount: number = 0;
@@ -231,6 +233,7 @@ export class StreamReport extends Report {
   }
 
   reportCacheMiss(locator: Locator, message?: string) {
+    this.lastCacheMiss = locator;
     this.cacheMissCount += 1;
 
     if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
@@ -538,13 +541,13 @@ export class StreamReport extends Report {
       if (this.cacheMissCount > 1) {
         fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
       } else if (this.cacheMissCount === 1) {
-        fetchStatus += `, one had to be fetched`;
+        fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
       }
     } else {
       if (this.cacheMissCount > 1) {
         fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
       } else if (this.cacheMissCount === 1) {
-        fetchStatus += ` - one package had to be fetched`;
+        fetchStatus += ` - one package had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
       }
     }
 

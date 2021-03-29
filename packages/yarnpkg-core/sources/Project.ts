@@ -1621,11 +1621,16 @@ export class Project {
       `.gitignore`,
     ]);
 
-    if (!xfs.existsSync(cache.cwd))
-      return;
-
     if (!isFolderInside(cache.cwd, this.cwd))
       return;
+
+    if (!(await xfs.existsPromise(cache.cwd)))
+      return;
+
+    const preferAggregateCacheInfo = this.configuration.get(`preferAggregateCacheInfo`);
+
+    let entriesRemoved = 0;
+    let lastEntryRemoved = null;
 
     for (const entry of await xfs.readdirPromise(cache.cwd)) {
       if (PRESERVED_FILES.has(entry))
@@ -1635,12 +1640,27 @@ export class Project {
       if (cache.markedFiles.has(entryPath))
         continue;
 
+      lastEntryRemoved = entry;
+
       if (cache.immutable) {
-        report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would marked for deletion, but the cache is immutable`);
+        report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would be marked for deletion, but the cache is immutable`);
       } else {
-        report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
+        if (preferAggregateCacheInfo)
+          entriesRemoved += 1;
+        else
+          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
+
         await xfs.removePromise(entryPath);
       }
+    }
+
+    if (preferAggregateCacheInfo && entriesRemoved !== 0) {
+      report.reportInfo(
+        MessageName.UNUSED_CACHE_ENTRY,
+        entriesRemoved > 1
+          ? `${entriesRemoved} packages appeared to be unused and were removed`
+          : `${lastEntryRemoved} appeared to be unused and was removed`
+      );
     }
 
     cache.markedFiles.clear();
