@@ -1628,7 +1628,9 @@ export class Project {
       return;
 
     const preferAggregateCacheInfo = this.configuration.get(`preferAggregateCacheInfo`);
+
     let entriesRemoved = 0;
+    let lastEntryRemoved = null;
 
     for (const entry of await xfs.readdirPromise(cache.cwd)) {
       if (PRESERVED_FILES.has(entry))
@@ -1637,6 +1639,8 @@ export class Project {
       const entryPath = ppath.resolve(cache.cwd, entry);
       if (cache.markedFiles.has(entryPath))
         continue;
+
+      lastEntryRemoved = entry;
 
       if (cache.immutable) {
         report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would be marked for deletion, but the cache is immutable`);
@@ -1655,7 +1659,7 @@ export class Project {
         MessageName.UNUSED_CACHE_ENTRY,
         entriesRemoved > 1
           ? `${entriesRemoved} packages appeared to be unused and were removed`
-          : `one package appeared to be unused and was removed`
+          : `${lastEntryRemoved} appeared to be unused and was removed`
       );
     }
 
