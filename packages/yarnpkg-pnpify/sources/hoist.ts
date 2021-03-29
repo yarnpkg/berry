@@ -128,8 +128,6 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   let anotherRoundNeeded = false;
   let round = 0;
   do {
-    if (round !== 0)
-      resetReasons(treeCopy);
     anotherRoundNeeded = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options).anotherRoundNeeded;
     options.fastLookupPossible = false;
     round++;
@@ -153,26 +151,6 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
     console.log(dumpDepTree(treeCopy));
 
   return shrinkTree(treeCopy);
-};
-
-const resetReasons = (tree: HoisterWorkTree) => {
-  const seenNodes = new Set<HoisterWorkTree>();
-
-  const resetNode = (node: HoisterWorkTree) => {
-    if (seenNodes.has(node))
-      return;
-
-    node.reasons.clear();
-
-    seenNodes.add(node);
-    for (const dep of node.dependencies.values()) {
-      if (!tree.peerNames.has(dep.name)) {
-        resetNode(dep);
-      }
-    }
-  };
-
-  resetNode(tree);
 };
 
 const getZeroRoundUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageName, HoisterWorkTree> => {
