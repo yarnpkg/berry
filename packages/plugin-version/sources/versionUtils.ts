@@ -103,8 +103,8 @@ export type VersionFile = {
   baseTitle: null,
 });
 
-export async function resolveVersionFiles(project: Project) {
-  const candidateReleases = new Map<Workspace, string>();
+export async function resolveVersionFiles(project: Project, {prerelease = null}: {prerelease?: string | null} = {}) {
+  let candidateReleases = new Map<Workspace, string>();
 
   const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
@@ -130,11 +130,16 @@ export async function resolveVersionFiles(project: Project) {
       if (workspace.manifest.version === null)
         throw new Error(`Assertion failed: Expected the workspace to have a version (${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
 
+      // If there's a `stableVersion` field, then we assume that `version`
+      // contains a prerelease version and that we need to base the version
+      // bump relative to the latest stable instead.
+      const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
+
       const candidateRelease = candidateReleases.get(workspace);
-      const suggestedRelease = applyStrategy(workspace.manifest.version, decision as any);
+      const suggestedRelease = applyStrategy(baseVersion, decision as any);
 
       if (suggestedRelease === null)
-        throw new Error(`Assertion failed: Expected ${workspace.manifest.version} to support being bumped via strategy ${decision}`);
+        throw new Error(`Assertion failed: Expected ${baseVersion} to support being bumped via strategy ${decision}`);
 
       const bestRelease = typeof candidateRelease !== `undefined`
         ? semver.gt(suggestedRelease, candidateRelease) ? suggestedRelease : candidateRelease
@@ -142,6 +147,12 @@ export async function resolveVersionFiles(project: Project) {
 
       candidateReleases.set(workspace, bestRelease);
     }
+  }
+
+  if (prerelease) {
+    candidateReleases = new Map([...candidateReleases].map(([workspace, release]) => {
+      return [workspace, applyPrerelease(release, {current: workspace.manifest.version!, prerelease})];
+    }));
   }
 
   return candidateReleases;
@@ -455,6 +466,11 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
     const oldVersion = workspace.manifest.version;
     workspace.manifest.version = newVersion;
 
+    if (semver.prerelease(newVersion) === null)
+      delete workspace.manifest.raw.stableVersion;
+    else if (!workspace.manifest.raw.stableVersion)
+      workspace.manifest.raw.stableVersion = oldVersion;
+
     const identString = workspace.manifest.name !== null
       ? structUtils.stringifyIdent(workspace.manifest.name)
       : null;
@@ -499,4 +515,70 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
       dependent.manifest[set].set(identHash, newDescriptor);
     }
   }
+}
+
+const placeholders: Map<string, {
+  extract: (parts: Array<string | number>) => [string | number, Array<string | number>] | null,
+  generate: (previous?: number) => string,
+}> = new Map([
+  [`%n`, {
+    extract: parts => {
+      if (parts.length >= 1) {
+        return [parts[0], parts.slice(1)];
+      } else {
+        return null;
+      }
+    },
+    generate: (previous = 0) => {
+      return `${previous + 1}`;
+    },
+  }],
+]);
+
+export function applyPrerelease(version: string, {current, prerelease}: {current: string, prerelease: string}) {
+  const currentVersion = new semver.SemVer(current);
+
+  let currentPreParts = currentVersion.prerelease.slice();
+  const nextPreParts = [];
+
+  currentVersion.prerelease = [];
+
+  // If the version we have in mind has nothing in common with the one we want,
+  // we don't want to reuse its prerelease identifiers (1.0.0-rc.5 -> 1.1.0->rc.1)
+  if (currentVersion.format() !== version)
+    currentPreParts.length = 0;
+
+  let patternMatched = true;
+
+  const patternParts = prerelease.split(/\./g);
+  for (const part of patternParts) {
+    const placeholder = placeholders.get(part);
+
+    if (typeof placeholder === `undefined`) {
+      nextPreParts.push(part);
+
+      if (currentPreParts[0] === part) {
+        currentPreParts.shift();
+      } else {
+        patternMatched = false;
+      }
+    } else {
+      const res = patternMatched
+        ? placeholder.extract(currentPreParts)
+        : null;
+
+      if (res !== null && typeof res[0] === `number`) {
+        nextPreParts.push(placeholder.generate(res[0]));
+        currentPreParts = res[1];
+      } else {
+        nextPreParts.push(placeholder.generate());
+        patternMatched = false;
+      }
+    }
+  }
+
+  if (currentVersion.prerelease)
+    currentVersion.prerelease = [];
+
+  return `${version}-${nextPreParts.join(`.`)}`;
 }

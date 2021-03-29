@@ -103,9 +103,16 @@ export default class VersionCheckCommand extends Command<CommandContext> {
       if (currentVersion === null)
         throw new Error(`Assertion failed: The version should have been set (${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
 
-      const strategies: Array<versionUtils.Decision> = semver.prerelease(currentVersion) === null
-        ? [versionUtils.Decision.UNDECIDED, versionUtils.Decision.DECLINE, versionUtils.Decision.PATCH, versionUtils.Decision.MINOR, versionUtils.Decision.MAJOR, versionUtils.Decision.PRERELEASE]
-        : [versionUtils.Decision.UNDECIDED, versionUtils.Decision.DECLINE, versionUtils.Decision.PRERELEASE, versionUtils.Decision.MAJOR];
+      if (semver.prerelease(currentVersion) !== null)
+        throw new Error(`Assertion failed: Prerelease identifiers shouldn't be found (${currentVersion})`);
+
+      const strategies: Array<versionUtils.Decision> = [
+        versionUtils.Decision.UNDECIDED,
+        versionUtils.Decision.DECLINE,
+        versionUtils.Decision.PATCH,
+        versionUtils.Decision.MINOR,
+        versionUtils.Decision.MAJOR,
+      ];
 
       useListInput(decision, strategies, {
         active: active!,
