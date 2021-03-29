@@ -114,6 +114,7 @@ export class PatchFetcher implements Fetcher {
 
         if (optional) {
           opts.report.reportWarningOnce(MessageName.PATCH_HUNK_FAILED, message, {reportExtra});
+          continue;
         } else {
           throw new ReportError(MessageName.PATCH_HUNK_FAILED, message, reportExtra);
         }
