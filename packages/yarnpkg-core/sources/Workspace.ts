@@ -2,7 +2,7 @@ import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
 import globby                                      from 'globby';
 import semver                                      from 'semver';
 
-import {Manifest}                                  from './Manifest';
+import {HardDependencies, Manifest}                from './Manifest';
 import {Project}                                   from './Project';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
 import * as hashUtils                              from './hashUtils';
@@ -122,6 +122,61 @@ export class Workspace {
     } else {
       return `${ppath.basename(this.cwd)}` || `unnamed-workspace`;
     }
+  }
+
+  /**
+   * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
+   *
+   * @param rootWorkspace root workspace
+   * @param project project
+   *
+   * @returns all the workspaces marked as dependencies
+   */
+  getRecursiveWorkspaceDependencies({dependencies = Manifest.hardDependencies}: {dependencies?: Array<HardDependencies>} = {}) {
+    const workspaceList = new Set<Workspace>();
+
+    const visitWorkspace = (workspace: Workspace) => {
+      for (const dependencyType of dependencies) {
+        // Quick note: it means that if we have, say, a workspace in
+        // dev dependencies but not in dependencies, this workspace will be
+        // traversed (even if dependencies traditionally override dev
+        // dependencies). It's not clearly which behaviour is better, but
+        // at least it's consistent.
+        for (const descriptor of workspace.manifest[dependencyType].values()) {
+          const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
+          if (foundWorkspace === null || workspaceList.has(foundWorkspace))
+            continue;
+
+          workspaceList.add(foundWorkspace);
+          visitWorkspace(foundWorkspace);
+        }
+      }
+    };
+
+    visitWorkspace(this);
+    return workspaceList;
+  }
+
+  /**
+   * Retrieves all the child workspaces of a given root workspace recursively
+   *
+   * @param rootWorkspace root workspace
+   * @param project project
+   *
+   * @returns all the child workspaces
+   */
+  getRecursiveWorkspaceChildren() {
+    const workspaceList: Array<Workspace> = [];
+
+    for (const childWorkspaceCwd of this.workspacesCwds) {
+      const childWorkspace = this.project.workspacesByCwd.get(childWorkspaceCwd);
+
+      if (childWorkspace) {
+        workspaceList.push(childWorkspace, ...childWorkspace.getRecursiveWorkspaceChildren());
+      }
+    }
+
+    return workspaceList;
   }
 
   async persistManifest() {

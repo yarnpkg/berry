@@ -1,5 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Cache, Configuration}                from '@yarnpkg/core';
+import {Cache, Configuration, MessageName}   from '@yarnpkg/core';
 import {Project, StreamReport}               from '@yarnpkg/core';
 import {Command, Option, Usage}              from 'clipanion';
 
@@ -40,8 +40,12 @@ export default class VersionApplyCommand extends BaseCommand {
   });
 
   prerelease = Option.String(`--prerelease`, {
-    description: `Optionally use a rc identifier when setting versions`,
+    description: `Add a prerelease identifier to new versions`,
     tolerateBoolean: true,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, {
+    description: `Release the transitive workspaces as well`,
   });
 
   json = Option.Boolean(`--json`, false, {
@@ -69,20 +73,34 @@ export default class VersionApplyCommand extends BaseCommand {
         ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`
         : null;
 
-      let releases = await versionUtils.resolveVersionFiles(project, {prerelease});
+      const allReleases = await versionUtils.resolveVersionFiles(project, {prerelease});
+      let filteredReleases: typeof allReleases = new Map();
 
-      if (!this.all) {
-        const release = releases.get(workspace);
-        if (typeof release === `undefined`)
-          return;
+      if (this.all) {
+        filteredReleases = allReleases;
+      } else {
+        const relevantWorkspaces = this.recursive
+          ? workspace.getRecursiveWorkspaceDependencies()
+          : [workspace];
 
-        releases = new Map([[
-          workspace,
-          release,
-        ]]);
+        for (const child of relevantWorkspaces) {
+          const release = allReleases.get(child);
+          if (typeof release !== `undefined`) {
+            filteredReleases.set(child, release);
+          }
+        }
       }
 
-      versionUtils.applyReleases(project, releases, {report, prerelease});
+      if (filteredReleases.size === 0) {
+        const protip = allReleases.size > 0
+          ? ` Did you want to add --all?`
+          : ``;
+
+        report.reportWarning(MessageName.UNNAMED, `The current workspace doesn't seem to require a version bump.${protip}`);
+        return;
+      }
+
+      versionUtils.applyReleases(project, filteredReleases, {report, prerelease});
 
       if (!prerelease) {
         if (this.all) {

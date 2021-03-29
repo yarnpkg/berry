@@ -9,51 +9,6 @@ import pLimit                                              from 'p-limit';
 import {Writable}                                          from 'stream';
 import * as t                                              from 'typanion';
 
-/**
- * Retrieves all the child workspaces of a given root workspace recursively
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the child workspaces
- */
-const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
-  const workspaceList = [];
-  for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
-    const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
-    if (childWorkspace) {
-      workspaceList.push(childWorkspace, ...getWorkspaceChildrenRecursive(childWorkspace, project));
-    }
-  }
-  return workspaceList;
-};
-
-/**
- * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the workspaces marked as dependencies
- */
-const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Set<Workspace> => {
-  const workspaceList = new Set<Workspace>();
-
-  const visitWorkspace = (workspace: Workspace) => {
-    const dependencies = new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]);
-    for (const descriptor of dependencies.values()) {
-      const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
-      if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
-        workspaceList.add(foundWorkspace);
-        visitWorkspace(foundWorkspace);
-      }
-    }
-  };
-
-  visitWorkspace(rootWorkspace);
-  return workspaceList;
-};
-
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
   static paths = [
@@ -162,8 +117,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       : cwdWorkspace!;
 
     const candidates = this.recursive
-      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
-      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+      ? [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceDependencies()]
+      : [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceChildren()];
 
     const workspaces: Array<Workspace> = [];
 
