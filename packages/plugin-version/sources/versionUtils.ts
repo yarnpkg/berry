@@ -426,7 +426,7 @@ export function applyStrategy(version: string | null, strategy: string) {
   return nextVersion;
 }
 
-export function applyReleases(project: Project, newVersions: Map<Workspace, string>, {report, prerelease}: {report: Report, prerelease: string | null}) {
+export function applyReleases(project: Project, newVersions: Map<Workspace, string>, {report}: {report: Report}) {
   const allDependents: Map<Workspace, Array<[
     Workspace,
     AllDependencies,

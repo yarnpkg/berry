@@ -39,6 +39,10 @@ export default class VersionApplyCommand extends BaseCommand {
     description: `Apply the deferred version changes on all workspaces`,
   });
 
+  dryRun = Option.Boolean(`--dry-run`, false, {
+    description: `Print the versions without actually generating the package archive`,
+  });
+
   prerelease = Option.String(`--prerelease`, {
     description: `Add a prerelease identifier to new versions`,
     tolerateBoolean: true,
@@ -100,19 +104,21 @@ export default class VersionApplyCommand extends BaseCommand {
         return;
       }
 
-      versionUtils.applyReleases(project, filteredReleases, {report, prerelease});
+      versionUtils.applyReleases(project, filteredReleases, {report});
 
-      if (!prerelease) {
-        if (this.all) {
-          await versionUtils.clearVersionFiles(project);
-        } else {
-          await versionUtils.updateVersionFiles(project);
+      if (!this.dryRun) {
+        if (!prerelease) {
+          if (this.all) {
+            await versionUtils.clearVersionFiles(project);
+          } else {
+            await versionUtils.updateVersionFiles(project);
+          }
         }
+
+        report.reportSeparator();
+
+        await project.install({cache, report});
       }
-
-      report.reportSeparator();
-
-      await project.install({cache, report});
     });
 
     return applyReport.exitCode();
