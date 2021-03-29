@@ -23,6 +23,13 @@
 - `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
 - `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`
 
+### Installs
+
+- The node-modules linker now supports portal protocol dependencies. The application that uses portal dependencies, which have subdependencies, must be run with `--preserve-symlinks` Node option. The linker
+never modifies files inside target portal directories due to security reasons. For this reason the
+portal dependencies must not have dependencies with different versions from their parent, the linker will
+produce an error and abandon install if the conflict with parent dependencies is detected.
+
 ### Bugfixes
 
 - The patched fs now supports file URLs.

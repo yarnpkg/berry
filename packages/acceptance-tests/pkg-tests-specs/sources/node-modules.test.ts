@@ -805,7 +805,7 @@ describe(`Node_Modules`, () => {
     )
   );
 
-  it(`should allow running binaries unrelated to incompatible package`,
+  test(`should allow running binaries unrelated to incompatible package`,
     makeTemporaryEnv(
       {
         private: true,
@@ -840,6 +840,77 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should install dependencies from portals without modifying portal directory`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            bin: `./index.js`,
+            dependencies: {
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+          await xfs.writeFilePromise(`${portalTarget}/index.js` as PortablePath, ``);
+          const binScriptMode = (await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode;
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              [`portal`]: `portal:${portalTarget}`,
+            },
+          });
+
+          const {stdout} = await run(`install`);
+
+          await expect(readJson(`${path}/node_modules/portal/package.json` as PortablePath)).resolves.toMatchObject({
+            name: `portal`,
+          });
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
+          expect(stdout).toMatch(new RegExp(`--preserve-symlinks`));
+          expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
+          expect((await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode).toEqual(binScriptMode);
+        });
+      })
+  );
+
+  test(`should error out on external portal requiring a dependency that conflicts with parent package`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              [`no-deps`]: `2.0.0`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+              'no-deps': `1.0.0`,
+            },
+          });
+
+          let stdout;
+          try {
+            await run(`install`);
+          } catch (e) {
+            stdout = e.stdout;
+          }
+
+          expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
+        });
+      })
+  );
+
   test(
     `should not warn when depending on workspaces with postinstall`,
     makeTemporaryEnv(
@@ -863,7 +934,28 @@ describe(`Node_Modules`, () => {
         const {stdout} = await run(`install`);
 
         expect(stdout).not.toContain(`YN0006`);
-      }
-    )
+      })
+  );
+
+  test(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
+    makeTemporaryEnv({
+      dependencies: {
+        portal: `portal:./portal`,
+        'no-deps': `1.0.0`,
+      },
+    },
+    {
+      nodeLinker: `node-modules`,
+    },
+    async ({path, run}) => {
+      await writeJson(`${path}/portal/package.json` as PortablePath, {
+        name: `portal`,
+        dependencies: {
+          [`no-deps`]: `2.0.0`,
+        },
+      });
+
+      await expect(async () => await run(`install`)).not.toThrow();
+    })
   );
 });

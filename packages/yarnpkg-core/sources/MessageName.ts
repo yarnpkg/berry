@@ -73,6 +73,8 @@ export enum MessageName {
   UNUSED_PACKAGE_EXTENSION = 68,
   REDUNDANT_PACKAGE_EXTENSION = 69,
   AUTO_NM_SUCCESS = 70,
+  NM_CANT_INSTALL_PORTAL = 71,
+  NM_PRESERVE_SYMLINKS_REQUIRED = 72,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

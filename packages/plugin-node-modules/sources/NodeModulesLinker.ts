@@ -1,7 +1,7 @@
 import {MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor, DependencyMeta} from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
 import {Locator, Package, FinalizeInstallStatus}                                               from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils}                                              from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, formatUtils}                                 from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                         from '@yarnpkg/fslib';
 import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                      from '@yarnpkg/libzip';
@@ -273,8 +273,14 @@ class NodeModulesInstaller implements Installer {
       },
     };
 
-    const nmTree = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
-    const locatorMap = buildLocatorMap(nmTree);
+    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
+    if (!tree) {
+      for (const {messageName, text} of errors)
+        this.opts.report.reportError(messageName, text);
+
+      return undefined;
+    }
+    const locatorMap = buildLocatorMap(tree);
 
     await persistNodeModules(preinstallState, locatorMap, {
       baseFs: defaultFsLayer,
@@ -316,6 +322,9 @@ class NodeModulesInstaller implements Installer {
         buildDirective: buildScripts,
       });
     }
+
+    if (preserveSymlinksRequired)
+      this.opts.report.reportWarning(MessageName.NM_PRESERVE_SYMLINKS_REQUIRED, `The application uses portals and that's why ${formatUtils.pretty(this.opts.project.configuration, `--preserve-symlinks`, formatUtils.Type.CODE)} Node option is required for launching it`);
 
     return {
       customData: this.customData,
@@ -1013,7 +1022,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
-    await persistBinSymlinks(prevBinSymlinks, binSymlinks);
+    await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd);
 
     await writeInstallState(project, installState, binSymlinks);
   } finally {
@@ -1021,9 +1030,11 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   }
 }
 
-async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap) {
+async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap, projectCwd: PortablePath) {
   // Delete outdated .bin folders
   for (const location of previousBinSymlinks.keys()) {
+    if (ppath.contains(projectCwd, location) === null)
+      throw new Error(`Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`);
     if (!binSymlinks.has(location)) {
       const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
       await xfs.removePromise(binDir);
@@ -1031,6 +1042,8 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
   }
 
   for (const [location, symlinks] of binSymlinks) {
+    if (ppath.contains(projectCwd, location) === null)
+      throw new Error(`Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`);
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
     await xfs.mkdirPromise(binDir, {recursive: true});
@@ -1056,7 +1069,9 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       } else {
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
-        await xfs.chmodPromise(target, 0o755);
+        if (ppath.contains(target, projectCwd) !== null) {
+          await xfs.chmodPromise(target, 0o755);
+        }
       }
     }
   }
