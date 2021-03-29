@@ -66,7 +66,7 @@ export default class VersionApplyCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, async report => {
       const prerelease = this.prerelease
-        ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%d`
+        ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`
         : null;
 
       let releases = await versionUtils.resolveVersionFiles(project, {prerelease});
@@ -84,13 +84,15 @@ export default class VersionApplyCommand extends BaseCommand {
 
       versionUtils.applyReleases(project, releases, {report, prerelease});
 
-      if (prerelease) {
+      if (!prerelease) {
         if (this.all) {
           await versionUtils.clearVersionFiles(project);
         } else {
           await versionUtils.updateVersionFiles(project);
         }
       }
+
+      report.reportSeparator();
 
       await project.install({cache, report});
     });

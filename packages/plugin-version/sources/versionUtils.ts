@@ -466,6 +466,11 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
     const oldVersion = workspace.manifest.version;
     workspace.manifest.version = newVersion;
 
+    if (semver.prerelease(newVersion) === null)
+      delete workspace.manifest.raw.stableVersion;
+    else if (!workspace.manifest.raw.stableVersion)
+      workspace.manifest.raw.stableVersion = oldVersion;
+
     const identString = workspace.manifest.name !== null
       ? structUtils.stringifyIdent(workspace.manifest.name)
       : null;
