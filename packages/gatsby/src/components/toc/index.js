@@ -189,7 +189,7 @@ export const Toc = ({ headingSelector, getTitle, getDepth, ...rest }) => {
       headingSelector || Array.from({ length: 6 }, (_, i) => `article h` + (i + 1))
     const nodes = Array.from(document.querySelectorAll(selector))
     const titles = nodes.map(node => ({
-      title: getTitle ? getTitle(node) : (node.title || node.innerText || node.textContent),
+      title: getTitle ? getTitle(node) : (node.innerText || node.textContent),
       depth: getDepth ? getDepth(node) : Number(node.nodeName[1]),
     }))
     // Compute the minimum heading depth. Will be subtracted from each heading's
