@@ -105,20 +105,12 @@ export default class AuditCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async () => {
-      try {
-        result = ((await npmHttpUtils.post(`/-/npm/v1/security/audits/quick`, body, {
-          authType: npmHttpUtils.AuthType.NO_AUTH,
-          configuration,
-          jsonResponse: true,
-          registry,
-        })) as unknown) as npmAuditTypes.AuditResponse;
-      } catch (err) {
-        if (err.name !== `HTTPError`) {
-          throw err;
-        } else {
-          throw new ReportError(MessageName.EXCEPTION, err.toString());
-        }
-      }
+      result = ((await npmHttpUtils.post(`/-/npm/v1/security/audits/quick`, body, {
+        authType: npmHttpUtils.AuthType.NO_AUTH,
+        configuration,
+        jsonResponse: true,
+        registry,
+      })) as unknown) as npmAuditTypes.AuditResponse;
     });
 
     if (httpReport.hasErrors())

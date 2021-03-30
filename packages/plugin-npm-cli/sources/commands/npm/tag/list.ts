@@ -74,13 +74,6 @@ export async function getDistTags(ident: Ident, configuration: Configuration): P
     configuration,
     ident,
     jsonResponse: true,
-  }).catch(err => {
-    if (err.name !== `HTTPError`) {
-      throw err;
-    } else if (err.response.statusCode === 404) {
-      throw new ReportError(MessageName.EXCEPTION, `Package not found`);
-    } else {
-      throw new ReportError(MessageName.EXCEPTION, err.toString());
-    }
+    customErrorMessage: npmHttpUtils.customPackageError,
   });
 }

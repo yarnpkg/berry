@@ -79,11 +79,9 @@ export default class NpmPublishCommand extends BaseCommand {
             report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
             return;
           }
-        } catch (error) {
-          if (error.name !== `HTTPError`) {
-            throw error;
-          } else if (error.response.statusCode !== 404) {
-            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
+        } catch (err) {
+          if (err.response?.statusCode !== 404) {
+            throw err;
           }
         }
       }
@@ -105,29 +103,15 @@ export default class NpmPublishCommand extends BaseCommand {
           registry,
         });
 
-        try {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            jsonResponse: true,
-          });
-        } catch (error) {
-          if (error.name !== `HTTPError`) {
-            throw error;
-          } else {
-            const message = error.response.body && error.response.body.error
-              ? error.response.body.error
-              : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
-
-            report.reportError(MessageName.NETWORK_ERROR, message);
-          }
-        }
+        await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+          configuration,
+          registry,
+          ident,
+          jsonResponse: true,
+        });
       });
 
-      if (!report.hasErrors()) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
-      }
+      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
     });
 
     return report.exitCode();

@@ -39,6 +39,10 @@ export async function handleInvalidAuthenticationError(error: any, {attemptedAs,
   }
 }
 
+export function customPackageError(error: httpUtils.RequestError) {
+  return error.response?.statusCode === 404 ? `Package not found` : null;
+}
+
 export function getIdentUrl(ident: Ident) {
   if (ident.scope) {
     return `/@${ident.scope}%2f${ident.name}`;
