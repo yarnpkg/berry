@@ -376,7 +376,7 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
     )
   );
 
-  return {manifest: workspace.manifest, binFolder, env, cwd: cwd ?? workspace.cwd};
+  return {manifest: workspace.manifest, binFolder, env, cwd: cwd ?? ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json` as Filename)))};
 }
 
 async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
