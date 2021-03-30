@@ -6,7 +6,6 @@ import {Cli, UsageError}                                                        
 import {realpathSync}                                                                      from 'fs';
 
 import {pluginCommands}                                                                    from './pluginCommands';
-import {WelcomeCommand}                                                                    from './tools/WelcomeCommand';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -44,8 +43,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       binaryName: `yarn`,
       binaryVersion,
     });
-
-    cli.register(WelcomeCommand);
 
     try {
       await exec(cli);
