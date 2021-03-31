@@ -5,6 +5,7 @@ export enum RegistryType {
   PUBLISH_REGISTRY = `npmPublishRegistry`,
 }
 
+
 export interface MapLike {
   get(key: string): any;
 }
