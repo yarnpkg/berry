@@ -45,41 +45,29 @@ We have a tutorial for this! Head over to [Plugin Tutorial](/advanced/plugin-tut
 
 ## Official plugins
 
-### [`constraints`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-constraints)
+```
+yarn plugin import <name>
+```
 
-Adds new commands to Yarn to enforce lint rules across workspaces.
+- [**constraints**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-constraints) - Adds new commands to Yarn to enforce lint rules across workspaces. See the [dedicated page](/features/constraints) for more information.
 
-See the [dedicated page](/features/constraints) for more information.
+- [**exec**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec) - Adds a new protocol to Yarn (`exec:`) that dynamically generates arbitrary packages rather than downloading them from a known location. See the plugin page for more information.
 
-### [`exec`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec)
+- [**interactive-tools**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-interactive-tools) - Adds various commands providing a more high-level control on your project using graphical terminal interfaces (for example [`yarn upgrade-interactive`](/cli/upgrade-interactive)).
 
-Adds a new protocol to Yarn (`exec:`) that dynamically generate packages instead of downloading them.
+- [**stage**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-stage) - Adds a new command to Yarn (`yarn stage`) to automatically stage & commit all changes to Yarn-related files in a single line.
 
-See the plugin page for more information.
+- [**typescript**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript) - Adds various utilities for a seamless TypeScript experience (for example by automatically adding `@types` packages as dependencies when needed). See the plugin page for more information.
 
-### [`interactive-tools`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-interactive-tools)
+- [**version**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-version) - Adds a new workflow to Yarn (`yarn version`) to efficiently manage releases in a monorepository. See the [dedicated page](/features/release-workflow) for more information.
 
-Adds various commands providing a more high-level control on your project using graphical terminal interfaces (for example [`yarn upgrade-interactive`](/cli/upgrade-interactive)).
-
-### [`stage`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-stage)
-
-Adds a new command to Yarn (`yarn stage`) to automatically stage & commit all Yarn-related files.
-
-### [`typescript`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript)
-
-Adds various utilities for a seamless TypeScript experience (for example by automatically adding `@types` packages as dependencies when needed).
-
-See the plugin page for more information.
-
-### [`version`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-version)
-
-Adds a new workflow to Yarn (`yarn version`) to efficiently manage releases in a monorepository.
-
-### [`workspace-tools`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-workspace-tools)
-
-Adds various commands that make working with workspaces a more pleasing experience (for example [`yarn workspaces foreach`](/cli/workspaces/foreach)).
+- [**workspace-tools**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-workspace-tools) - Adds various commands that make working with workspaces a more pleasing experience (for example [`yarn workspaces foreach`](/cli/workspaces/foreach)).
 
 ## Contrib plugins
+
+```
+yarn plugin import <bundle url>
+```
 
 This is just a centralized list of third-party plugins to make discovery easier. No guarantees are made as to plugin quality, compatibility, or lack of malicious code. As with all third-party dependencies, you should review them yourself before including them in your project.
 
