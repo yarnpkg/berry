@@ -27,18 +27,6 @@ As you can guess, this philosophy (coupled with the high number of external cont
 
   - **Plugins can be integrated with each other.** Each plugin has the ability to trigger special actions called hooks, and to register themselves to any defined hook. So for example, you could make a plugin that would execute an action each time a package is added as dependency of one of your workspaces!
 
-## Installing a plugin
-
-Use the [`yarn plugin import`](/cli/plugin/import) command:
-
-- If the plugin is an official one, you only need to know its name to import it
-- Otherwise, you can refer to them by their bundle URLs or file paths
-
-```
-yarn plugin import workspace-tools
-yarn plugin import https://example.org/yarn-plugin.js
-```
-
 ## How to write plugins?
 
 We have a tutorial for this! Head over to [Plugin Tutorial](/advanced/plugin-tutorial).
@@ -51,13 +39,13 @@ yarn plugin import <name>
 
 - [**constraints**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-constraints) - Adds new commands to Yarn to enforce lint rules across workspaces. See the [dedicated page](/features/constraints) for more information.
 
-- [**exec**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec) - Adds a new protocol to Yarn (`exec:`) that dynamically generates arbitrary packages rather than downloading them from a known location. See the plugin page for more information.
+- [**exec**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec) - Adds a new protocol to Yarn (`exec:`) that dynamically generates arbitrary packages rather than downloading them from a known location. See the [plugin page](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec) for more information.
 
 - [**interactive-tools**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-interactive-tools) - Adds various commands providing a more high-level control on your project using graphical terminal interfaces (for example [`yarn upgrade-interactive`](/cli/upgrade-interactive)).
 
 - [**stage**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-stage) - Adds a new command to Yarn (`yarn stage`) to automatically stage & commit all changes to Yarn-related files in a single line.
 
-- [**typescript**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript) - Adds various utilities for a seamless TypeScript experience (for example by automatically adding `@types` packages as dependencies when needed). See the plugin page for more information.
+- [**typescript**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript) - Improves the TypeScript experience (for example by automatically adding `@types` packages as dependencies when needed). See the [plugin page](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript) for more information.
 
 - [**version**](https://github.com/yarnpkg/berry/tree/master/packages/plugin-version) - Adds a new workflow to Yarn (`yarn version`) to efficiently manage releases in a monorepository. See the [dedicated page](/features/release-workflow) for more information.
 
