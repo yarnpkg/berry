@@ -86,3 +86,5 @@ This is just a centralized list of third-party plugins to make discovery easier.
 - [**plugin-installs**](https://gitlab.com/Larry1123/yarn-contrib/-/blob/master/packages/plugin-production-install/README.md) by [**Larry1123**](https://gitlab.com/Larry1123) - create minimal yarn installs after removing development dependencies, unrelated workspaces, `@types` packages, etc
 
 - [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - run build commands across workspaces after detecting the ones which changed, and bundle them up into deployable AWS apps.
+
+If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
