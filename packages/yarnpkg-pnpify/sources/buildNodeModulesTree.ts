@@ -1,5 +1,4 @@
-import {areLocatorsEqual}                                                     from '@yarnpkg/core/sources/structUtils';
-import {structUtils, Project, MessageName}                                    from '@yarnpkg/core';
+import {structUtils, Project, MessageName, Locator}                           from '@yarnpkg/core';
 import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
@@ -139,6 +138,12 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
   return map;
 };
 
+const areRealLocatorsEqual = (a: Locator, b: Locator) => {
+  const realA = structUtils.isVirtualLocator(a) ? structUtils.devirtualizeLocator(a) : a;
+  const realB = structUtils.isVirtualLocator(b) ? structUtils.devirtualizeLocator(b) : b;
+  return structUtils.areLocatorsEqual(realA, realB);
+};
+
 /**
  * Traverses PnP tree and produces input for the `RawHoister`
  *
@@ -246,7 +251,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           const parentReferencish = parentDependencies.get(name);
           if (parentReferencish) {
             const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
-            if (!areLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
+            if (!areRealLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
               errors.push({messageName: MessageName.NM_CANT_INSTALL_PORTAL, text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`});
             }
           }
