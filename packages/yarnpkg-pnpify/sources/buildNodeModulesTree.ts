@@ -235,7 +235,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
+    if (pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pnp.resolveVirtual!(pkg.packageLocation)!)) === null) {
       if (pkg.packageDependencies.size > 0)
         preserveSymlinksRequired = true;
 
