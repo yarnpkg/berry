@@ -958,4 +958,40 @@ describe(`Node_Modules`, () => {
       await expect(async () => await run(`install`)).not.toThrow();
     })
   );
+
+  test(
+    `should not hoist dependencies in nested workspaces when using nmHoistingLimits`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`workspace-a`],
+        dependencies: {
+          [`no-deps`]: `*`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        await writeJson(`${path}/workspace-a/package.json`, {
+          workspaces: [`workspace-b`],
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await writeJson(`${path}/workspace-a/workspace-b/package.json`, {
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/workspace-a/workspace-b/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
+      }
+    )
+  );
 });
