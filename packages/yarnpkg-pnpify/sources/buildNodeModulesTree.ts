@@ -240,19 +240,24 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pnp.resolveVirtual!(pkg.packageLocation)!)) === null) {
-      if (pkg.packageDependencies.size > 0)
-        preserveSymlinksRequired = true;
+    if (pkg.linkType === LinkType.SOFT && options.project) {
+      const isExternalLocation = ppath.contains(options.project.cwd, npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation)) === null;
+      if (isExternalLocation) {
+        {
+          if (pkg.packageDependencies.size > 0)
+            preserveSymlinksRequired = true;
 
-      for (const [name, referencish] of pkg.packageDependencies) {
-        const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
-        // Ignore self-references during compatibbility check
-        if (stringifyLocator(dependencyLocator) !== stringifyLocator(locator)) {
-          const parentReferencish = parentDependencies.get(name);
-          if (parentReferencish) {
-            const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
-            if (!areRealLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
-              errors.push({messageName: MessageName.NM_CANT_INSTALL_PORTAL, text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`});
+          for (const [name, referencish] of pkg.packageDependencies) {
+            const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
+            // Ignore self-references during compatibbility check
+            if (stringifyLocator(dependencyLocator) !== stringifyLocator(locator)) {
+              const parentReferencish = parentDependencies.get(name);
+              if (parentReferencish) {
+                const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
+                if (!areRealLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
+                  errors.push({messageName: MessageName.NM_CANT_INSTALL_PORTAL, text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`});
+                }
+              }
             }
           }
         }
