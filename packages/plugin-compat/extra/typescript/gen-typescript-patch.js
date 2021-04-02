@@ -53,7 +53,12 @@ const SLICES = [{
   from: `8e0e870`,
   to: `b8cb0762f776cae4fed710b9628a3df2e7b58fec`,
   onto: `bfc55b5`,
-  range: `>=4.2`,
+  range: `>=4.2 <4.3`,
+}, {
+  from: `320a959`,
+  to: `320a959`,
+  onto: `f9b35cd`,
+  range: `>=4.3`,
 }];
 
 async function fetch(url) {
