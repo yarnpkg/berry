@@ -1,6 +1,6 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
 index 7f46cc9d8..cdb2b5407 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
 @@ -4622,6 +4622,9 @@ var ts;
@@ -300,7 +300,7 @@ semver exclusivity >=4.2
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
 index a1d0a7a17..ea36199e7 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -7249,6 +7249,11 @@ var ts;
@@ -895,7 +895,7 @@ semver exclusivity >=4.2
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/tsserverlibrary.d.ts b/lib/tsserverlibrary.d.ts
 index 70e326c4c..1fd3a2193 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/tsserverlibrary.d.ts
 +++ b/lib/tsserverlibrary.d.ts
 @@ -4646,6 +4646,7 @@ declare namespace ts {
@@ -908,7 +908,7 @@ semver exclusivity >=4.2
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
 index e8537e466..3a5db7fbb 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
 @@ -7443,6 +7443,11 @@ var ts;
@@ -1503,7 +1503,7 @@ semver exclusivity >=4.2
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
 index 5c9fcf765..e0cca011b 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
 @@ -4646,6 +4646,7 @@ declare namespace ts {
@@ -1516,7 +1516,7 @@ semver exclusivity >=4.2
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/typescript.js b/lib/typescript.js
 index 8539f89fd..57ad1b5d9 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
 @@ -7443,6 +7443,11 @@ var ts;
@@ -2012,7 +2012,7 @@ semver exclusivity >=4.2
              });
 diff --git a/lib/typescriptServices.d.ts b/lib/typescriptServices.d.ts
 index 3a51aada6..62093708e 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/typescriptServices.d.ts
 +++ b/lib/typescriptServices.d.ts
 @@ -4646,6 +4646,7 @@ declare namespace ts {
@@ -2025,7 +2025,7 @@ semver exclusivity >=4.2
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
 index 6b08bfe23..2db549ffc 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
 @@ -7443,6 +7443,11 @@ var ts;
@@ -2521,7 +2521,7 @@ semver exclusivity >=4.2
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
 index 9fa096358..02a860394 100644
-semver exclusivity >=4.2
+semver exclusivity >=4.2 <4.3
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
 @@ -7238,6 +7238,11 @@ var ts;
