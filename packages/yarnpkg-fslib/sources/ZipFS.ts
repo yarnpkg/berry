@@ -1342,9 +1342,6 @@ export class ZipFS extends BasePortableFakeFS {
   private readFileBuffer(p: PortablePath, opts: {asyncDecompress: true}): Promise<Buffer>
   private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
   private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
-    if (typeof p !== `string`)
-      throw errors.EBADF(`read`);
-
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`open '${p}'`);

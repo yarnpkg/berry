@@ -5,7 +5,7 @@ import {Dirent, SymlinkType}                                                    
 import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
 import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
 import {ENOSYS}                                                                                                                   from './errors';
-import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                 from './path';
+import {FSPath, PortablePath, Filename, ppath, npath}                                                                             from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -45,7 +45,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
-    return await new Promise<Dir<NativePath>>((resolve, reject) => {
+    return await new Promise<Dir<PortablePath>>((resolve, reject) => {
       if (typeof opts !== `undefined`) {
         this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject) as any);
       } else {
@@ -56,10 +56,10 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
+  opendirSync(p: PortablePath, opts?: OpendirOptions) {
     const dir = typeof opts !== `undefined`
-      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<NativePath>
-      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<NativePath>;
+      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<PortablePath>
+      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<PortablePath>;
 
     return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
   }
