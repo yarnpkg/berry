@@ -56,6 +56,7 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
 ### Commands
 
 - `yarn set version from sources` will now upgrade the builtin plugins as well unless `--skip-plugins` is set.
+- `yarn version apply` now support a new `--prerelease` flag which replaces how prerelease were previously handled.
 - `yarn run` should be significantly faster to boot on large projects.
 - `yarn workspaces foreach --verbose` will now print when processes start and end, even if they don't have an output.
 - `yarn patch-commit` can now be used as many times as you want on the same patch folder.
