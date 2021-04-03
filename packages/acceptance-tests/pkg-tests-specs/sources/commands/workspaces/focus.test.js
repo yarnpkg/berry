@@ -94,11 +94,6 @@ describe(`Commands`, () => {
         async ({path, run}) => {
           await setupProject(path);
 
-          await run(`install`);
-
-          const cacheFolder = ppath.join(path, `.yarn/cache`);
-          await xfs.removePromise(cacheFolder);
-
           await run(`workspaces`, `focus`, {
             cwd: ppath.join(path, `packages/quux`),
           });
