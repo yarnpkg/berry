@@ -2,8 +2,6 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Cache, Configuration, Manifest, HardDependencies, Project, StreamReport, Workspace} from '@yarnpkg/core';
 import {structUtils}                                                                        from '@yarnpkg/core';
 import {Command, Option, Usage}                                                             from 'clipanion';
-import {convertMapsToIndexableObjects}                                                      from 'packages/yarnpkg-core/sources/miscUtils';
-import {makeProcess}                                                                        from 'packages/yarnpkg-shell/sources/pipe';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocus extends BaseCommand {
