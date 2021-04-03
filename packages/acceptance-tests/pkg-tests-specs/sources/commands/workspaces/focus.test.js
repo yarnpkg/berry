@@ -98,6 +98,7 @@ describe(`Commands`, () => {
             cwd: ppath.join(path, `packages/quux`),
           });
 
+          const cacheFolder = ppath.join(path, `.yarn/cache`);
           await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
             `.gitignore`,
             expect.stringContaining(`no-deps-npm-1.0.0-`),
@@ -121,6 +122,7 @@ describe(`Commands`, () => {
             cwd: path,
           });
 
+          const cacheFolder = ppath.join(path, `.yarn/cache`);
           await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
             `.gitignore`,
             expect.stringContaining(`no-deps-npm-1.0.0-`),
