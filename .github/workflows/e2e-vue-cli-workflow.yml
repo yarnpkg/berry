@@ -33,5 +33,5 @@ jobs:
 
         echo '{"useTaobaoRegistry": false}' | tee ~/.vuerc
 
-        yarn dlx -p @vue/cli vue create -d my-vue && cd my-vue
+        yarn dlx @vue/cli create -d my-vue && cd my-vue
         yarn build
