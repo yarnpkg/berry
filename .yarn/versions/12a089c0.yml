@@ -1,2 +1,2 @@
 releases:
-  "@yarnpkg/plugin-workspace-tools": minor
+  "@yarnpkg/plugin-workspace-tools": patch
