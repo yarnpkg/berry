@@ -1,7 +1,9 @@
 import {BaseCommand, WorkspaceRequiredError}                              from '@yarnpkg/cli';
-import {Cache, Configuration, Manifest, Project, StreamReport, Workspace} from '@yarnpkg/core';
+import {Cache, Configuration, Manifest, HardDependencies, Project, StreamReport, Workspace} from '@yarnpkg/core';
 import {structUtils}                                                      from '@yarnpkg/core';
 import {Command, Option, Usage}                                           from 'clipanion';
+import { convertMapsToIndexableObjects } from 'packages/yarnpkg-core/sources/miscUtils';
+import { makeProcess } from 'packages/yarnpkg-shell/sources/pipe';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocus extends BaseCommand {
@@ -64,8 +66,9 @@ export default class WorkspacesFocus extends BaseCommand {
     // Note: remember that new elements can be added in a set even while
     // iterating over it (because they're added at the end)
 
+    const dependencyTypes: HardDependencies[] = this.production ? ['dependencies'] : Manifest.hardDependencies;
     for (const workspace of requiredWorkspaces) {
-      for (const dependencyType of Manifest.hardDependencies) {
+      for (const dependencyType of dependencyTypes) {
         for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
           const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
