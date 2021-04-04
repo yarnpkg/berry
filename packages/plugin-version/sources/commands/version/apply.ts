@@ -24,7 +24,7 @@ export default class VersionApplyCommand extends BaseCommand {
       - \`--recursive\` to also apply the version bump on its dependencies
       - \`--all\` to apply the version bump on all packages in the repository
 
-      Note that this command will also update the \`workspace:\` references across all your local workspaces, thus ensuring that they keep refering to the same workspaces even after the version bump.
+      Note that this command will also update the \`workspace:\` references across all your local workspaces, thus ensuring that they keep referring to the same workspaces even after the version bump.
     `,
     examples: [[
       `Apply the version change to the local workspace`,
