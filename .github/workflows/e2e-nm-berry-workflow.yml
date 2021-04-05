@@ -1,4 +1,4 @@
-on:
+on:!1$#@!./&a0000
   schedule:
   - cron: '0 */4 * * *'
   push:
