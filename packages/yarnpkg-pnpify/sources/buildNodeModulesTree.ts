@@ -224,6 +224,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
+  const isExternalSoftLink = (pkg: PackageInformation<NativePath>) => pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null;
 
   const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);
@@ -235,7 +236,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
+    if (options.project && isExternalSoftLink(pkg)) {
       if (pkg.packageDependencies.size > 0)
         preserveSymlinksRequired = true;
 
@@ -263,7 +264,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, node);
     }
 
-    if (isHoistBorder) {
+    if (isHoistBorder && !isExternalSoftLink(pkg)) {
       const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
       const dependencyBorders = hoistingLimits.get(parentLocatorKey) || new Set();
       hoistingLimits.set(parentLocatorKey, dependencyBorders);
@@ -309,7 +310,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             throw new Error(`Assertion failed: Expected the package to have been registered`);
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
-          const relativeDepCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const relativeDepCwd = isExternalSoftLink(depPkg) ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
           const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
           const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
