@@ -7,13 +7,14 @@ import {PnpLooseLinker}            from './PnpLooseLinker';
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;
+    nmHardlinks: boolean;
   }
 }
 
 const plugin: Plugin = {
   configuration: {
     nmHoistingLimits: {
-      description: `Prevent packages can be hoisted past specific levels`,
+      description: `Prevent packages to be hoisted past specific levels`,
       type: SettingsType.STRING,
       values: [
         NodeModulesHoistingLimits.WORKSPACES,
@@ -21,6 +22,11 @@ const plugin: Plugin = {
         NodeModulesHoistingLimits.NONE,
       ],
       default: `none`,
+    },
+    nmHardlinks: {
+      description: `Use hardlinks to reduce disk size usage by node_modules installs`,
+      type: SettingsType.BOOLEAN,
+      default: false,
     },
   },
   linkers: [
