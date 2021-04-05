@@ -24,7 +24,7 @@ const plugin: Plugin = {
       default: `none`,
     },
     nmHardlinks: {
-      description: `Use hardlinks to reduce disk size usage by node_modules installs`,
+      description: `Use hardlinks to reduce disk space consumption by node_modules installs`,
       type: SettingsType.BOOLEAN,
       default: false,
     },

@@ -1,4 +1,5 @@
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
+import {readFile}                                  from 'pkg-tests-core/sources/utils/fs';
 
 const {
   fs: {readJson, writeFile, writeJson},
@@ -991,6 +992,52 @@ describe(`Node_Modules`, () => {
         await expect(xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-a/workspace-b/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
+      }
+    )
+  );
+
+
+  test(`should honor transparently nmHardlinks option during subsequent installs`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`, `ws3`],
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run}) => {
+        await writeJson(`${path}/ws1/package.json`, {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/ws2/package.json`, {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/ws3/package.json`, {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmHardlinks: true\n`);
+        await run(`install`);
+
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
+
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmHardlinks: false\n`);
+        await run(`install`);
+
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 1});
+
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmHardlinks: true\n`);
+        await run(`install`);
+
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
       }
     )
   );

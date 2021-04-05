@@ -793,9 +793,27 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
-  const refinedState = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);
-  let prevLocationTree = refinedState.locationTree;
+  // Clean up duplicate locations if hardlink usage changed, to further recreate duplicates either with hardlinks or without them
+  const prevHardlinks = preinstallState.hardlinks;
+  const useHardlinks = project.configuration.get(`nmHardlinks`);
+  const persistedLocations = new Map<PortablePath, PortablePath>();
+
+  let prevLocationTree = preinstallState.locationTree;
+
+  if (useHardlinks !== prevHardlinks) {
+    for (const {locations} of preinstallState.locatorMap.values()) {
+      for (const location of locations.slice(1))
+        await removeDir(location, {contentsOnly: false});
+
+      locations.length = 1;
+    }
+
+    prevLocationTree = buildLocationTree(preinstallState.locatorMap, {skipPrefix: project.cwd});
+  }
+
+  const refinedState = refineNodeModulesRoots(prevLocationTree, preinstallState.binSymlinks);
   const prevBinSymlinks = refinedState.binSymlinks;
+  prevLocationTree = refinedState.locationTree;
 
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
@@ -883,23 +901,6 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       }
     }
   };
-
-  // Clean up duplicate locations if hardlink usage changed, to further recreate duplicates either with hardlinks or without them
-  const prevHardlinks = preinstallState.hardlinks;
-  const useHardlinks = project.configuration.get(`nmHardlinks`);
-  const persistedLocations = new Map<PortablePath, PortablePath>();
-
-  if (useHardlinks !== prevHardlinks) {
-    for (const {locations} of preinstallState.locatorMap.values()) {
-      for (const location of locations.slice(1))
-        await removeDir(location, {contentsOnly: false});
-
-      locations.length = 1;
-    }
-
-    const updatedLocationTree = buildLocationTree(preinstallState.locatorMap, {skipPrefix: project.cwd});
-    prevLocationTree = refineNodeModulesRoots(updatedLocationTree, preinstallState.binSymlinks).locationTree;
-  }
 
   // Find locations that existed previously, but no longer exist
   for (const [location, prevNode] of prevLocationTree) {

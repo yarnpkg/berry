@@ -354,6 +354,12 @@
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
+    "nmHardlinks": {
+      "_package": "@yarnpkg/plugin-node-modules",
+      "description": "Instructs to use hardlinks to reduce disk space consumption by node-modules linker",
+      "type": "boolean",
+      "default": false
+    },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
