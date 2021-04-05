@@ -1,5 +1,4 @@
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
-import {readFile}                                  from 'pkg-tests-core/sources/utils/fs';
 
 const {
   fs: {readJson, writeFile, writeJson},
