@@ -888,7 +888,10 @@ describe(`Node_Modules`, () => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             dependencies: {
-              [`no-deps`]: `2.0.0`,
+              'no-deps': `2.0.0`,
+            },
+            peerDependencies: {
+              'no-deps-bins': `1.0.0`,
             },
           });
 
@@ -896,6 +899,7 @@ describe(`Node_Modules`, () => {
             dependencies: {
               portal: `portal:${portalTarget}`,
               'no-deps': `1.0.0`,
+              'no-deps-bins': `1.0.0`,
             },
           });
 
