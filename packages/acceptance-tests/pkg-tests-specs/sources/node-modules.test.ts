@@ -1002,6 +1002,11 @@ describe(`Node_Modules`, () => {
         dependencies: {
           [`node-modules-path`]: `1.0.0`,
         },
+        scripts: {
+          wa: `yarn ./workspace-a get-node-modules-path`,
+          wb: `yarn ./workspace-b get-node-modules-path`,
+          wc: `yarn ./workspace-c get-node-modules-path`,
+        },
       },
       {
         nodeLinker: `node-modules`,
@@ -1034,9 +1039,9 @@ describe(`Node_Modules`, () => {
         await expect(xfs.existsPromise(`${path}/workspace-b/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-c/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
 
-        expect((await run(`run`, `--cwd`, `${path}/workspace-b`, `get-node-modules-path`)).stdout.trim()).toEqual(`${path}/workspace-b/node_modules/node-modules-path`);
-        expect((await run(`run`, `--cwd`, `${path}/workspace-a`, `get-node-modules-path`)).stdout.trim()).toEqual(`${path}/workspace-a/node_modules/node-modules-path`);
-        expect((await run(`run`, `--cwd`, `${path}/workspace-c`, `get-node-modules-path`)).stdout.trim()).toEqual(`${path}/workspace-c/node_modules/node-modules-path`);
+        expect((await run(`run`, `wb`)).stdout.trim()).toContain(`workspace-b`);
+        expect((await run(`run`, `wa`)).stdout.trim()).toContain(`workspace-a`);
+        expect((await run(`run`, `wc`)).stdout.trim()).toContain(`workspace-c`);
       }
     )
   );
