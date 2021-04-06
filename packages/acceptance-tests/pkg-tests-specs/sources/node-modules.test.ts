@@ -878,6 +878,38 @@ describe(`Node_Modules`, () => {
       })
   );
 
+  test(`should still hoist direct dependencies from portal target to parent with nmHoistingLimits: dependencies`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `dependencies`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              [`one-fixed-dep`]: `1.0.0`,
+            },
+          });
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              [`portal`]: `portal:${portalTarget}`,
+            },
+          });
+
+          const {stdout} = await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
+          expect(stdout).toMatch(new RegExp(`--preserve-symlinks`));
+          expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
+          expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toBeFalsy();
+        });
+      })
+  );
+
   test(`should error out on external portal requiring a dependency that conflicts with parent package`,
     makeTemporaryEnv({},
       {
