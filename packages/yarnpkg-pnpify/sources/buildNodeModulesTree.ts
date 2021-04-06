@@ -343,7 +343,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           }
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
-          const relativeDepCwd = isExternalSoftLink(depPkg, depLocator) ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const relativeDepCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
           const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
           const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES

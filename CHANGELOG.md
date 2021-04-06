@@ -33,7 +33,9 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
 - The node-modules linker now does its best to support the `portal:` protocol. This support comes with two important limitations:
   - Projects that make use of such dependencies will have to be run with the `--preserve-symlinks` Node option if they wish to access their dependencies.
   - Because Yarn installs will never modify files outside of the project due to security reasons, sub-dependencies of packages with `portal:` must be hoisted outside of the portal. Failing that (for example if the portal package depends on something incompatible with the version hoisted via another package), the linker will produce an error and abandon the install.
-- A new setting called `nmHardlinks` has appeared. `nmHardlinks: true` makes node-modules linker utilize hardlinks for duplicate module locations inside single project and thus reduce disk space consumption.
+
+- The node-modules linker can now utilize hardlinks for duplicate packages inside `node_modules` to reduce disk space consumption, when `nmHardlinks: true` setting is used.
+
 ### Bugfixes
 
 - Yarn now has a proper [governance model](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md).
