@@ -947,6 +947,47 @@ describe(`Node_Modules`, () => {
       })
   );
 
+  test(`should error out if two same-parent portals have conflict between their direct dependencies`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget1 => {
+          await xfs.mktempPromise(async portalTarget2 => {
+            await xfs.writeJsonPromise(`${portalTarget1}/package.json` as PortablePath, {
+              name: `portal1`,
+              dependencies: {
+                'no-deps': `2.0.0`,
+              },
+            });
+            await xfs.writeJsonPromise(`${portalTarget2}/package.json` as PortablePath, {
+              name: `portal2`,
+              dependencies: {
+                'no-deps': `1.0.0`,
+              },
+            });
+
+            await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+              dependencies: {
+                portal1: `portal:${portalTarget1}`,
+                portal2: `portal:${portalTarget2}`,
+              },
+            });
+
+            let stdout;
+            try {
+              await run(`install`);
+            } catch (e) {
+              stdout = e.stdout;
+            }
+
+            expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:1.0.0 conflicts with dependency no-deps@npm:2.0.0 from sibling portal portal1`));
+          });
+        });
+      })
+  );
+
   test(
     `should not warn when depending on workspaces with postinstall`,
     makeTemporaryEnv(

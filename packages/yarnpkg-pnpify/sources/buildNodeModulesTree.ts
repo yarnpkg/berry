@@ -241,25 +241,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    if (options.project && isExternalSoftLink(pkg, locator)) {
-      if (pkg.packageDependencies.size > 0)
-        preserveSymlinksRequired = true;
-
-      for (const [name, referencish] of pkg.packageDependencies) {
-        const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
-        // Ignore self-references during compatibbility check
-        if (stringifyLocator(dependencyLocator) !== stringifyLocator(locator)) {
-          const parentReferencish = parentDependencies.get(name);
-          if (parentReferencish) {
-            const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
-            if (!areRealLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
-              errors.push({messageName: MessageName.NM_CANT_INSTALL_PORTAL, text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`});
-            }
-          }
-        }
-      }
-    }
-
     if (!node) {
       node = {
         name,
@@ -308,6 +289,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     parent.dependencies.add(node);
 
     if (!isSeen) {
+      const siblingPortalDependencyMap = new Map<string, {target: DependencyTarget, portal: PhysicalPackageLocator}>();
       for (const [depName, referencish] of allDependencies) {
         if (referencish !== null) {
           const depLocator = pnp.getLocator(depName, referencish);
@@ -316,6 +298,49 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
+
+          if (options.project && isExternalSoftLink(depPkg, depLocator)) {
+            if (depPkg.packageDependencies.size > 0)
+              preserveSymlinksRequired = true;
+
+            for (const [name, referencish] of depPkg.packageDependencies) {
+              const portalDependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
+              // Ignore self-references during portal hoistability check
+              if (stringifyLocator(portalDependencyLocator) !== stringifyLocator(depLocator)) {
+                const parentDependencyReferencish = allDependencies.get(name);
+                if (parentDependencyReferencish) {
+                  const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentDependencyReferencish) ? `${parentDependencyReferencish[0]}@${parentDependencyReferencish[1]}` : `${name}@${parentDependencyReferencish}`);
+                  if (!areRealLocatorsEqual(parentDependencyLocator, portalDependencyLocator)) {
+                    errors.push({
+                      messageName: MessageName.NM_CANT_INSTALL_PORTAL,
+                      text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
+                      `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
+                      `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
+                      `conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`,
+                    });
+                  }
+                } else {
+                  const siblingPortalDependency = siblingPortalDependencyMap.get(name);
+                  if (siblingPortalDependency) {
+                    const siblingReferncish = siblingPortalDependency.target;
+                    const siblingPortalDependencyLocator = structUtils.parseLocator(Array.isArray(siblingReferncish) ? `${siblingReferncish[0]}@${siblingReferncish[1]}` : `${name}@${siblingReferncish}`);
+                    if (!areRealLocatorsEqual(siblingPortalDependencyLocator, portalDependencyLocator)) {
+                      errors.push({
+                        messageName: MessageName.NM_CANT_INSTALL_PORTAL,
+                        text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
+                        `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
+                        `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
+                        `conflicts with dependency ${structUtils.prettyLocator(options.project.configuration, siblingPortalDependencyLocator)} ` +
+                        `from sibling portal ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(siblingPortalDependency.portal.name))}`,
+                      });
+                    }
+                  } else {
+                    siblingPortalDependencyMap.set(name, {target: portalDependencyLocator.reference, portal: depLocator});
+                  }
+                }
+              }
+            }
+          }
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
           const relativeDepCwd = isExternalSoftLink(depPkg, depLocator) ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;

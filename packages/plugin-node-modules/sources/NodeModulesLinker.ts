@@ -557,7 +557,7 @@ type LocationTree = Map<LocationRoot, LocationNode>;
 const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: PortablePath}): {locationRoot: PortablePath, segments: Array<Filename>} => {
   const projectRelativePath = ppath.contains(skipPrefix, location);
   if (projectRelativePath === null)
-    throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
+    throw new Error(`Assertion failed: Writing attempt prevented to ${location} which is outside project root: ${skipPrefix}`);
 
   const allSegments = projectRelativePath
     .split(ppath.sep)
