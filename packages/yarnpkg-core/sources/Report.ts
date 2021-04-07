@@ -6,6 +6,7 @@ import {Locator}       from './types';
 
 export class ReportError extends Error {
   public reportCode: MessageName;
+  public originalError?: Error;
 
   constructor(code: MessageName, message: string, public reportExtra?: (report: Report) => void) {
     super(message);

@@ -97,10 +97,6 @@ export function formatNameWithHyperlink(name: MessageName | null, {configuration
   if (!code)
     return code;
 
-  // Only print hyperlinks if allowed per configuration
-  if (!configuration.get(`enableHyperlinks`))
-    return code;
-
   // Don't print hyperlinks for the generic messages
   if (name === null || name === MessageName.UNNAMED)
     return code;
@@ -108,11 +104,7 @@ export function formatNameWithHyperlink(name: MessageName | null, {configuration
   const desc = MessageName[name];
   const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
 
-  // We use BELL as ST because it seems that iTerm doesn't properly support
-  // the \x1b\\ sequence described in the reference document
-  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
-
-  return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+  return formatUtils.applyHyperlink(configuration, code, href);
 }
 
 export class StreamReport extends Report {

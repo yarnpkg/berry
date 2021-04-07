@@ -111,6 +111,7 @@ export class LightReport extends Report {
 
   async finalize() {
     if (this.errorCount > 0) {
+      this.stdout.write(`\n`);
       this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);
 
       if (this.suggestInstall) {

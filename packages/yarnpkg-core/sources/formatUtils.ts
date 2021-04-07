@@ -2,7 +2,7 @@ import {npath}                                                              from
 import chalk                                                                from 'chalk';
 import stripAnsi                                                            from 'strip-ansi';
 
-import {Configuration}                                                      from './Configuration';
+import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
 import {Report}                                                             from './Report';
 import * as miscUtils                                                       from './miscUtils';
@@ -41,6 +41,7 @@ export const Type = {
   RESOLUTION: `RESOLUTION`,
   DEPENDENT: `DEPENDENT`,
   PACKAGE_EXTENSION: `PACKAGE_EXTENSION`,
+  SETTING: `SETTING`,
 } as const;
 
 export type Type = keyof typeof Type;
@@ -185,6 +186,18 @@ const transforms = {
     },
   }),
 
+  [Type.SETTING]: validateTransform({
+    pretty: (configuration: Configuration, settingName: keyof ConfigurationValueMap) => {
+      // Asserts that the setting is valid
+      configuration.get(settingName);
+
+      return applyHyperlink(configuration, applyColor(configuration, settingName, Type.CODE), `https://yarnpkg.com/configuration/yarnrc#${settingName}`);
+    },
+    json: (settingName: string) => {
+      return settingName;
+    },
+  }),
+
   [Type.DURATION]: validateTransform({
     pretty: (configuration: Configuration, duration: number) => {
       if (duration > 1000 * 60) {
@@ -239,6 +252,11 @@ export type Source<T> = T extends keyof AllTransforms
 export type Tuple<T extends Type = Type> =
   readonly [Source<T>, T];
 
+export type Field = {
+  label: string;
+  value: Tuple<any>;
+};
+
 export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T> {
   return [value, formatType];
 }
@@ -277,6 +295,17 @@ export function applyColor(configuration: Configuration, value: string, formatTy
     throw new Error(`Invalid format type ${color}`);
 
   return fn(value);
+}
+
+export function applyHyperlink(configuration: Configuration, text: string, href: string) {
+  // Only print hyperlinks if allowed per configuration
+  if (!configuration.get(`enableHyperlinks`))
+    return text;
+
+  // We use BELL as ST because it seems that iTerm doesn't properly support
+  // the \x1b\\ sequence described in the reference document
+  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+  return `\u001b]8;;${href}\u0007${text}\u001b]8;;\u0007`;
 }
 
 export function pretty<T extends Type>(configuration: Configuration, value: Source<T>, formatType: T | string): string {
@@ -320,6 +349,10 @@ export function mark(configuration: Configuration) {
     Cross: applyColor(configuration, `✘`, `red`),
     Question: applyColor(configuration, `?`, `cyan`),
   };
+}
+
+export function prettyField(configuration: Configuration, {label, value: [value, formatType]}: Field) {
+  return `${pretty(configuration, label, Type.CODE)}: ${pretty(configuration, value, formatType)}`;
 }
 
 export enum LogLevel {
