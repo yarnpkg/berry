@@ -1417,18 +1417,18 @@ export class Project {
       }
     });
 
+    const immutablePatterns = opts.immutable
+      ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
+      : [];
+
+    const before = await Promise.all(immutablePatterns.map(async pattern => {
+      return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
+    }));
+
     if (typeof opts.persistProject === `undefined` || opts.persistProject)
       await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
-      const immutablePatterns = opts.immutable
-        ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
-        : [];
-
-      const before = await Promise.all(immutablePatterns.map(async pattern => {
-        return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
-      }));
-
       await this.linkEverything(opts);
 
       const after = await Promise.all(immutablePatterns.map(async pattern => {
