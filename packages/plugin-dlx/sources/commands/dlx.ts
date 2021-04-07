@@ -94,9 +94,7 @@ export default class DlxCommand extends BaseCommand {
         await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: ${enableGlobalCache}\nenableTelemetry: false\n`);
       }
 
-      const pkgs = typeof this.packages !== `undefined`
-        ? [...this.packages]
-        : [this.command];
+      const pkgs = this.packages ?? [this.command];
 
       const command = structUtils.parseDescriptor(this.command).name;
 
