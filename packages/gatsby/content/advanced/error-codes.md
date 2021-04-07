@@ -72,9 +72,9 @@ There's already good documentation online explaining how to get rid of cyclic de
 
 A package has build scripts, but they've been disabled across the project.
 
-Build scripts can be disabled on a global basis through the use of the `enable-scripts` settings. When it happens, a warning is still emitted to let you know that the installation might not be complete.
+Build scripts can be disabled on a global basis through the use of the `enableScripts` settings. When it happens, a warning is still emitted to let you know that the installation might not be complete.
 
-The safest way to downgrade the warning into a notification is to explicitly disable build scripts for the affected packages through the use of the `dependenciesMeta[].build` key.
+The safest way to downgrade the warning into a notification is to explicitly disable build scripts for the affected packages through the use of the `dependenciesMeta[].built` key.
 
 ## YN0005 - `BUILD_DISABLED`
 
