@@ -25,8 +25,8 @@ export default class DlxCommand extends BaseCommand {
     ]],
   });
 
-  pkg = Option.String(`-p,--package`, {
-    description: `The package to run the provided command from`,
+  packages = Option.Array(`-p,--package`, {
+    description: `The package(s) to install before running the command`,
   });
 
   quiet = Option.Boolean(`-q,--quiet`, false, {
@@ -94,9 +94,7 @@ export default class DlxCommand extends BaseCommand {
         await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: ${enableGlobalCache}\nenableTelemetry: false\n`);
       }
 
-      const pkgs = typeof this.pkg !== `undefined`
-        ? [this.pkg]
-        : [this.command];
+      const pkgs = this.packages ?? [this.command];
 
       const command = structUtils.parseDescriptor(this.command).name;
 
