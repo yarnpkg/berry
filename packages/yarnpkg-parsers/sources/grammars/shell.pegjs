@@ -127,6 +127,7 @@ Subshell
 Variable
   = '${' name:Identifier ':-' arg:CommandString '}' { return { name, defaultValue: arg } }
   / '${' name:Identifier ':-}' { return { name, defaultValue: [] } }
+  / '${' name:Identifier '[' from:Integer ',' from:Integer '}' { return { name, defaultValue: [] } }
   / '${' name:Identifier '}' { return { name } }
   / '$' name:Identifier { return { name } }
 
