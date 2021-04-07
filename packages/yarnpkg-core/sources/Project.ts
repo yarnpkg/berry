@@ -445,6 +445,9 @@ export class Project {
   }
 
   tryWorkspaceByDescriptor(descriptor: Descriptor) {
+    if (structUtils.isVirtualDescriptor(descriptor))
+      descriptor = structUtils.devirtualizeDescriptor(descriptor);
+
     const workspace = this.tryWorkspaceByIdent(descriptor);
 
     if (workspace === null || !workspace.accepts(descriptor.range))

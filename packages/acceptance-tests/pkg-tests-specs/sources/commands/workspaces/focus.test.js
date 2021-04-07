@@ -85,6 +85,53 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should follow local workspace devDependencies`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupProject(path);
+
+          await run(`workspaces`, `focus`, {
+            cwd: ppath.join(path, `packages/quux`),
+          });
+
+          const cacheFolder = ppath.join(path, `.yarn/cache`);
+          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
+            `.gitignore`,
+            expect.stringContaining(`no-deps-npm-1.0.0-`),
+            expect.stringContaining(`no-deps-npm-2.0.0-`),
+          ]);
+        }
+      )
+    );
+
+    test(
+      `should not follow local workspace devDependencies for production installs`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupProject(path);
+
+          await run(`workspaces`, `focus`, `quux`, `--production`, {
+            cwd: path,
+          });
+
+          const cacheFolder = ppath.join(path, `.yarn/cache`);
+          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
+            `.gitignore`,
+            expect.stringContaining(`no-deps-npm-1.0.0-`),
+          ]);
+        }
+      )
+    );
+
+    test(
       `should install development dependencies by default`,
       makeTemporaryEnv(
         {
@@ -173,4 +220,5 @@ async function setupProject(path) {
   await pkg(`bar`, {[`no-deps`]: `2.0.0`});
   await pkg(`baz`, {[`bar`]: `workspace:*`});
   await pkg(`qux`, {[`no-deps`]: `1.0.0`}, {[`no-deps-bins`]: `1.0.0`}, {postinstall: `echo 'postinstall' > postinstall.log`});
+  await pkg(`quux`, {[`no-deps`]: `1.0.0`}, {[`bar`]: `workspace:*`});
 }

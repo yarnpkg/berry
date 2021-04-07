@@ -53,7 +53,6 @@ export type RuntimeState = {
   fallbackExclusionList: Map<string, Set<string>>,
   fallbackPool: Map<string, DependencyTarget>,
   ignorePattern: RegExp | null,
-  packageLocationLengths: Array<number>,
   packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>;
   packageRegistry: PackageRegistry,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,

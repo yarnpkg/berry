@@ -49,7 +49,8 @@ export class NodeModulesLinker implements Linker {
       throw err;
     }
 
-    return locatorInfo.locations[0];
+    const startingCwd = opts.project.configuration.startingCwd;
+    return locatorInfo.locations.find(location => ppath.contains(startingCwd, location)) || locatorInfo.locations[0];
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {

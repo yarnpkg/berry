@@ -65,7 +65,7 @@ export default class WorkspacesFocus extends BaseCommand {
     // iterating over it (because they're added at the end)
 
     for (const workspace of requiredWorkspaces) {
-      for (const dependencyType of Manifest.hardDependencies) {
+      for (const dependencyType of this.production ? [`dependencies`] : Manifest.hardDependencies) {
         for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
           const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
