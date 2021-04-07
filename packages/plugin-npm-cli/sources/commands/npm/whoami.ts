@@ -54,25 +54,25 @@ export default class NpmWhoamiCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
+      let response;
       try {
-        const response = await npmHttpUtils.get(`/-/whoami`, {
+        response = await npmHttpUtils.get(`/-/whoami`, {
           configuration,
           registry,
           authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
           jsonResponse: true,
           ident: this.scope ? structUtils.makeIdent(this.scope, ``) : undefined,
         });
-
-        report.reportInfo(MessageName.UNNAMED, response.username);
       } catch (err) {
-        if (err.name !== `HTTPError`) {
-          throw err;
-        } else if (err.response.statusCode === 401 || err.response.statusCode === 403) {
+        if (err.response?.statusCode === 401 || err.response?.statusCode === 403) {
           report.reportError(MessageName.AUTHENTICATION_INVALID, `Authentication failed - your credentials may have expired`);
+          return;
         } else {
-          report.reportError(MessageName.AUTHENTICATION_INVALID, err.toString());
+          throw err;
         }
       }
+
+      report.reportInfo(MessageName.UNNAMED, response.username);
     });
 
     return report.exitCode();

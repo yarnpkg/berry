@@ -164,13 +164,13 @@ export default class AddCommand extends BaseCommand {
           if (typeof firstError === `undefined`)
             throw new Error(`Assertion failed: Expected an error to have been set`);
 
-          const prettyError = this.cli.error(firstError);
+          if (!project.configuration.get(`enableNetwork`))
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+          else
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
 
-          if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled):\n\n${prettyError}`);
-          } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range:\n\n${prettyError}`);
-          }
+          report.reportSeparator();
+          report.reportExceptionOnce(firstError);
         }
       }
     });

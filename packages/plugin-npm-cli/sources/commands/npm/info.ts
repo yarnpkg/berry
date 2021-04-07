@@ -1,12 +1,12 @@
-import * as npm                                                       from '@npm/types';
-import {BaseCommand}                                                  from '@yarnpkg/cli';
-import {Project, Configuration, structUtils, ReportError, Descriptor} from '@yarnpkg/core';
-import {StreamReport, MessageName}                                    from '@yarnpkg/core';
-import {npmHttpUtils}                                                 from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage, UsageError}                           from 'clipanion';
-import path                                                           from 'path';
-import semver                                                         from 'semver';
-import {inspect}                                                      from 'util';
+import * as npm                                          from '@npm/types';
+import {BaseCommand}                                     from '@yarnpkg/cli';
+import {Project, Configuration, structUtils, Descriptor} from '@yarnpkg/core';
+import {StreamReport, MessageName}                       from '@yarnpkg/core';
+import {npmHttpUtils}                                    from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage, UsageError}              from 'clipanion';
+import path                                              from 'path';
+import semver                                            from 'semver';
+import {inspect}                                         from 'util';
 
 declare module '@npm/types' {
   /*
@@ -114,23 +114,13 @@ export default class InfoCommand extends BaseCommand {
 
         const identUrl = npmHttpUtils.getIdentUrl(descriptor);
 
-        let result: npm.Packument;
-        try {
-          // The information from `registry.npmjs.org/<package>`
-          result = clean(await npmHttpUtils.get(identUrl, {
-            configuration,
-            ident: descriptor,
-            jsonResponse: true,
-          })) as npm.Packument;
-        } catch (err) {
-          if (err.name !== `HTTPError`) {
-            throw err;
-          } else if (err.response.statusCode === 404) {
-            throw new ReportError(MessageName.EXCEPTION, `Package not found`);
-          } else {
-            throw new ReportError(MessageName.EXCEPTION, err.toString());
-          }
-        }
+        // The information from `registry.npmjs.org/<package>`
+        const result: npm.Packument = clean(await npmHttpUtils.get(identUrl, {
+          configuration,
+          ident: descriptor,
+          jsonResponse: true,
+          customErrorMessage: npmHttpUtils.customPackageError,
+        })) as npm.Packument;
 
         const versions = Object.keys(result.versions).sort(semver.compareLoose);
         const fallbackVersion = result[`dist-tags`].latest || versions[versions.length - 1];
