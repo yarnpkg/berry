@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                             from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, Report, ReportError} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, Ident}                                         from '@yarnpkg/core';
-import {structUtils}                                                                     from '@yarnpkg/core';
-import {PortablePath}                                                                    from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                              from 'clipanion';
-import {prompt}                                                                          from 'enquirer';
+import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
+import {structUtils}                                                from '@yarnpkg/core';
+import {PortablePath}                                               from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                         from 'clipanion';
+import {prompt}                                                     from 'enquirer';
 
-import * as suggestUtils                                                                 from '../suggestUtils';
-import {Hooks}                                                                           from '..';
+import * as suggestUtils                                            from '../suggestUtils';
+import {Hooks}                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {

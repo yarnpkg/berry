@@ -67,7 +67,7 @@ async function prettyNetworkError(response: Promise<Response<any>>, {configurati
     if (err instanceof TimeoutError && err.event === `socket`)
       message += `(can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.SETTING)})`;
 
-    throw new ReportError(MessageName.NETWORK_ERROR, message, report => {
+    const networkError = new ReportError(MessageName.NETWORK_ERROR, message, report => {
       if (err.response) {
         report.reportError(MessageName.NETWORK_ERROR, `  ${formatUtils.prettyField(configuration, {
           label: `Response Code`,
@@ -101,6 +101,9 @@ async function prettyNetworkError(response: Promise<Response<any>>, {configurati
         })}`);
       }
     });
+
+    networkError.originalError = err;
+    throw networkError;
   }
 }
 
