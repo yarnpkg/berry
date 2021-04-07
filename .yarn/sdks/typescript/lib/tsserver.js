@@ -9,39 +9,6 @@ const relPnpApiPath = "../../../../.pnp.cjs";
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
-const {appendFileSync} = require(`fs`);
-const log = factory => {
-  appendFileSync(`/tmp/tmplog`, `${process.pid} | ${factory()}\n`);
-};
-
-process.stdin.on(`data`, (...args) => {
-  log(() => `> ${args.join(` `)}`);
-});
-
-const {PassThrough} = require(`stream`);
-const stdout = process.stdout;
-const x = new PassThrough();
-x.on(`data`, (...data) => {
-  log(() => `< ${data.join(` `)}`);
-  stdout.write(...data);
-});
-
-process.stdout = stdout;
-
-process.exit = () => {
-  log(() => `Forced exit`)
-};
-
-process.on('beforeExit', (code) => {
-  log(() => `Process beforeExit event with code: ${code}`);
-});
-
-process.on('exit', (code) => {
-  log(() => `Process exit event with code: ${code}`);
-});
-
-log(() => `Start process`);
-
 const moduleWrapper = tsserver => {
   const {isAbsolute} = require(`path`);
   const pnpApi = require(`pnpapi`);
@@ -134,25 +101,15 @@ const moduleWrapper = tsserver => {
         isVSCode = true;
       }
 
-      try {
-        return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
-          return typeof value === `string` ? fromEditorPath(value) : value;
-        }));
-      } catch (err) {
-        log(() => `X ${err.stack}`)
-        throw err;
-      }
+      return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
+        return typeof value === `string` ? fromEditorPath(value) : value;
+      }));
     },
 
     send(/** @type {any} */ msg) {
-      try {
-        return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
-          return typeof value === `string` ? toEditorPath(value) : value;
-        })));
-      } catch (err) {
-        log(() => `X ${err.stack}`);
-        throw err;
-      }
+      return originalSend.call(this, JSON.parse(JSON.stringify(msg, (key, value) => {
+        return typeof value === `string` ? toEditorPath(value) : value;
+      })));
     }
   });
 };
