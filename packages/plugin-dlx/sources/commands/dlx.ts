@@ -50,6 +50,12 @@ export default class DlxCommand extends BaseCommand {
       const targetYarnrc = ppath.join(tmpDir, `.yarnrc.yml` as Filename);
       const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
 
+      // We set enableGlobalCache to true for dlx calls to speed it up but only if the
+      // project it's run in has enableGlobalCache set to false, otherwise we risk running into
+      // `Unable to locate pnpapi ... is controlled by multiple pnpapi instances` errors when
+      // running something like `yarn dlx sb init`
+      const enableGlobalCache = !(await Configuration.find(this.context.cwd, null, {strict: false})).get(`enableGlobalCache`);
+
       const sourceYarnrc = projectCwd !== null
         ? ppath.join(projectCwd, `.yarnrc.yml` as Filename)
         : null;
@@ -60,7 +66,7 @@ export default class DlxCommand extends BaseCommand {
         await Configuration.updateConfiguration(tmpDir, current => {
           const nextConfiguration: {[key: string]: unknown} = {
             ...current,
-            enableGlobalCache: true,
+            enableGlobalCache,
             enableTelemetry: false,
           };
 
@@ -85,7 +91,7 @@ export default class DlxCommand extends BaseCommand {
           return nextConfiguration;
         });
       } else {
-        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\nenableTelemetry: false\n`);
+        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: ${enableGlobalCache}\nenableTelemetry: false\n`);
       }
 
       const pkgs = typeof this.pkg !== `undefined`
