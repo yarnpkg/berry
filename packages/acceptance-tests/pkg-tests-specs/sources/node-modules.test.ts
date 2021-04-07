@@ -994,4 +994,55 @@ describe(`Node_Modules`, () => {
       }
     )
   );
+  test(
+    `should prefer bin executables from the calling workspace`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`workspace-a`, `workspace-b`, `workspace-c`],
+        dependencies: {
+          [`node-modules-path`]: `1.0.0`,
+        },
+        scripts: {
+          wa: `yarn ./workspace-a get-node-modules-path`,
+          wb: `yarn ./workspace-b get-node-modules-path`,
+          wc: `yarn ./workspace-c get-node-modules-path`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await writeJson(`${path}/workspace-a/package.json`, {
+          name: `workspace-a`,
+          dependencies: {
+            [`node-modules-path`]: `2.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/workspace-b/package.json`, {
+          name: `workspace-b`,
+          dependencies: {
+            [`node-modules-path`]: `2.0.0`,
+          },
+        });
+        await writeJson(`${path}/workspace-c/package.json`, {
+          name: `workspace-c`,
+          dependencies: {
+            [`node-modules-path`]: `2.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(xfs.existsPromise(`${path}/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/workspace-b/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/workspace-c/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
+
+        expect((await run(`run`, `wb`)).stdout.trim()).toContain(`workspace-b`);
+        expect((await run(`run`, `wa`)).stdout.trim()).toContain(`workspace-a`);
+        expect((await run(`run`, `wc`)).stdout.trim()).toContain(`workspace-c`);
+      }
+    )
+  );
 });
