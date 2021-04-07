@@ -50,7 +50,7 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Record<stri
       ...propertySpec,
       value: data,
     },
-  });
+  }) as any;
 }
 
 /**
