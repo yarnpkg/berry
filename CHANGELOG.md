@@ -19,6 +19,7 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 - The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 - The cache files need to be regenerated. We had to change their timestamps in order to account for a flaw in the zip spec that was causing problems with some third-party tools.
+- `Project.tryWorkspaceByDescriptor` and `Project.getWorkspaceByDescriptor` now match on virtual descriptors
 
 ### API
 
