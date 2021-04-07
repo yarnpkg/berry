@@ -83,7 +83,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     ignorePattern,
     packageRegistry,
     packageLocatorsByLocations,
-    packageLocationLengths,
   } = runtimeState as RuntimeState;
 
   /**
@@ -497,22 +496,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (!relativeLocation.endsWith(`/`))
       relativeLocation = `${relativeLocation}/` as PortablePath;
 
-    let from = 0;
+    do {
+      const entry = packageLocatorsByLocations.get(relativeLocation);
 
-    // If someone wants to use a binary search to go from O(n) to O(log n), be my guest
-    while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length)
-      from += 1;
-
-    for (let t = from; t < packageLocationLengths.length; ++t) {
-      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-
-      if (typeof entry !== `undefined`) {
-        if (entry.discardFromLookup && !includeDiscardFromLookup)
-          continue;
-
-        return entry.locator;
+      if (typeof entry === `undefined` || (entry.discardFromLookup && !includeDiscardFromLookup)) {
+        relativeLocation = relativeLocation.substring(0, relativeLocation.lastIndexOf(`/`, relativeLocation.length - 2) + 1) as PortablePath;
+        continue;
       }
-    }
+
+      return entry.locator;
+    } while (relativeLocation !== ``);
 
     return null;
   }
