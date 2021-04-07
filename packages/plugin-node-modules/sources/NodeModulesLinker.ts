@@ -199,9 +199,10 @@ class NodeModulesInstaller implements Installer {
     });
 
     let preinstallState = await findInstallState(this.opts.project);
+    const useHardlinks = this.opts.project.configuration.get(`nmHardlinks`);
 
     // Remove build state as well, to force rebuild of all the packages
-    if (preinstallState === null) {
+    if (preinstallState === null || useHardlinks !== preinstallState.hardlinks) {
       this.opts.project.storedBuildState.clear();
 
       preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map(), hardlinks: false};
@@ -793,27 +794,7 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
-  // Clean up duplicate locations if hardlink usage changed, to further recreate duplicates either with hardlinks or without them
-  const prevHardlinks = preinstallState.hardlinks;
-  const useHardlinks = project.configuration.get(`nmHardlinks`);
-  const persistedLocations = new Map<PortablePath, PortablePath>();
-
-  let prevLocationTree = preinstallState.locationTree;
-
-  if (useHardlinks !== prevHardlinks) {
-    for (const {locations} of preinstallState.locatorMap.values()) {
-      for (const location of locations.slice(1))
-        await removeDir(location, {contentsOnly: false});
-
-      locations.length = 1;
-    }
-
-    prevLocationTree = buildLocationTree(preinstallState.locatorMap, {skipPrefix: project.cwd});
-  }
-
-  const refinedState = refineNodeModulesRoots(prevLocationTree, preinstallState.binSymlinks);
-  const prevBinSymlinks = refinedState.binSymlinks;
-  prevLocationTree = refinedState.locationTree;
+  const {locationTree: prevLocationTree, binSymlinks: prevBinSymlinks} = refineNodeModulesRoots(preinstallState.locationTree, preinstallState.binSymlinks);
 
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
@@ -949,6 +930,8 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   }
 
+  const persistedLocations = new Map<PortablePath, PortablePath>();
+
   // Update changed locations
   const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType}> = [];
   for (const [prevLocator, {locations}] of preinstallState.locatorMap.entries()) {
@@ -1025,6 +1008,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
   const progress = Report.progressViaCounter(addList.length);
   const reportedProgress = report.reportProgress(progress);
+  const useHardlinks = project.configuration.get(`nmHardlinks`);
 
   try {
     // For the first pass we'll only want to install a single copy for each
