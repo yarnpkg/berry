@@ -13,7 +13,7 @@ export type LightReportOptions = {
   suggestInstall?: boolean,
 };
 
-export class  LightReport extends Report {
+export class LightReport extends Report {
   static async start(opts: LightReportOptions, cb: (report: LightReport) => Promise<void>) {
     const report = new this(opts);
 

@@ -1,4 +1,3 @@
-import {ConfigurationValueMap, ReportError}                  from '@yarnpkg/core';
 import {PortablePath, xfs}                                   from '@yarnpkg/fslib';
 import {ExtendOptions, RequestError, Response, TimeoutError} from 'got';
 import {Agent as HttpsAgent}                                 from 'https';
@@ -7,11 +6,12 @@ import micromatch                                            from 'micromatch';
 import tunnel, {ProxyOptions}                                from 'tunnel';
 import {URL}                                                 from 'url';
 
-import {Configuration}                                       from './Configuration';
+import {ConfigurationValueMap, Configuration}                from './Configuration';
 import {MessageName}                                         from './MessageName';
+import {ReportError}                                         from './Report';
 import * as formatUtils                                      from './formatUtils';
-import * as miscUtils                                        from './miscUtils';
 import {MapValue, MapValueToObjectValue}                     from './miscUtils';
+import * as miscUtils                                        from './miscUtils';
 
 export {RequestError} from 'got';
 
