@@ -1072,51 +1072,6 @@ describe(`Node_Modules`, () => {
     )
   );
 
-
-  test(`should honor transparently nmHardlinks option during subsequent installs`,
-    makeTemporaryEnv(
-      {
-        workspaces: [`ws1`, `ws2`, `ws3`],
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
-        },
-      },
-      async ({path, run}) => {
-        await writeJson(`${path}/ws1/package.json`, {
-          dependencies: {
-            [`no-deps`]: `1.0.0`,
-          },
-        });
-
-        await writeJson(`${path}/ws2/package.json`, {
-          dependencies: {
-            [`no-deps`]: `2.0.0`,
-          },
-        });
-
-        await writeJson(`${path}/ws3/package.json`, {
-          dependencies: {
-            [`no-deps`]: `2.0.0`,
-          },
-        });
-
-        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmHardlinks: true\n`);
-        await run(`install`);
-
-        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
-
-        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmHardlinks: false\n`);
-        await run(`install`);
-
-        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 1});
-
-        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmHardlinks: true\n`);
-        await run(`install`);
-
-        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
-      }
-    )
-  );
   test(
     `should prefer bin executables from the calling workspace`,
     makeTemporaryEnv(
