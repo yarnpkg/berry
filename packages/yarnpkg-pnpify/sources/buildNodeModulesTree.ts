@@ -229,7 +229,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
-  const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator) => options.project && pkg.linkType === LinkType.SOFT && ppath.contains(options.project.cwd, npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation)) === null;
+  const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator) => {
+    if (pkg.linkType !== LinkType.SOFT || !options.project)
+      return false;
+
+    const realSoftLinkPath = npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation);
+    return ppath.contains(options.project.cwd, realSoftLinkPath) === null;
+  };
 
   const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);

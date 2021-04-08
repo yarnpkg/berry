@@ -35,7 +35,7 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
   - Projects that make use of such dependencies will have to be run with the `--preserve-symlinks` Node option if they wish to access their dependencies.
   - Because Yarn installs will never modify files outside of the project due to security reasons, sub-dependencies of packages with `portal:` must be hoisted outside of the portal. Failing that (for example if the portal package depends on something incompatible with the version hoisted via another package), the linker will produce an error and abandon the install.
 
-- The node-modules linker can now utilize hardlinks for duplicate packages inside `node_modules` to reduce disk space consumption, when `nmHardlinks: true` setting is used.
+- The node-modules linker can now utilize hardlinks for duplicate packages inside `node_modules` to reduce disk space consumption, when `nmMode: hardlinks` setting is used.
 
 ### Bugfixes
 

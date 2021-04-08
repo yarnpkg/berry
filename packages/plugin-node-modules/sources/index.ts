@@ -1,13 +1,13 @@
-import {Plugin, SettingsType}      from '@yarnpkg/core';
-import {NodeModulesHoistingLimits} from '@yarnpkg/pnpify';
+import {Plugin, SettingsType}               from '@yarnpkg/core';
+import {NodeModulesHoistingLimits}          from '@yarnpkg/pnpify';
 
-import {NodeModulesLinker}         from './NodeModulesLinker';
-import {PnpLooseLinker}            from './PnpLooseLinker';
+import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
+import {PnpLooseLinker}                     from './PnpLooseLinker';
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;
-    nmHardlinks: boolean;
+    nmMode: NodeModulesMode;
   }
 }
 
@@ -21,12 +21,16 @@ const plugin: Plugin = {
         NodeModulesHoistingLimits.DEPENDENCIES,
         NodeModulesHoistingLimits.NONE,
       ],
-      default: `none`,
+      default: NodeModulesHoistingLimits.NONE,
     },
-    nmHardlinks: {
-      description: `Use hardlinks to reduce disk space consumption by node_modules installs`,
-      type: SettingsType.BOOLEAN,
-      default: false,
+    nmMode: {
+      description: `If set to "hardlinks" Yarn will utilize hardlinks to reduce disk space consumption inside node_modules directories`,
+      type: SettingsType.STRING,
+      values: [
+        NodeModulesMode.CLASSIC,
+        NodeModulesMode.HARDLINKS,
+      ],
+      default: NodeModulesMode.CLASSIC,
     },
   },
   linkers: [

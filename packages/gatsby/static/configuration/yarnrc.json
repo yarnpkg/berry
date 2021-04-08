@@ -354,11 +354,12 @@
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
-    "nmHardlinks": {
+    "nmMode": {
       "_package": "@yarnpkg/plugin-node-modules",
-      "description": "Instructs to use hardlinks to reduce disk space consumption by node-modules linker",
-      "type": "boolean",
-      "default": false
+      "description": "If set to `hardlinks` Yarn will utilize hardlinks to reduce disk space consumption inside node_modules directories",
+      "type": "string",
+      "enum": ["classic", "hardlinks"],
+      "default": "classic"
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
