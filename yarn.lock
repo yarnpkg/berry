@@ -6191,6 +6191,7 @@ __metadata:
     "@yarnpkg/builder": "workspace:^2.1.3"
     "@yarnpkg/cli": "workspace:^2.4.0"
     "@yarnpkg/core": "workspace:^2.4.0"
+    "@yarnpkg/fslib": "workspace:^2.4.0"
     "@yarnpkg/plugin-essentials": "workspace:^2.4.0"
     "@yarnpkg/plugin-pack": "workspace:^2.2.3"
     algoliasearch: ^4.2.0
