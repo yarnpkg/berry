@@ -26,7 +26,10 @@ export class WorkerPool<TIn, TOut> {
 
   run(data: TIn) {
     return this.queue.add(() => {
-      const worker = this.pool.pop() ?? new Worker(this.source, {eval: true});
+      const worker = this.pool.pop() ?? new Worker(this.source, {
+        eval: true,
+        execArgv: [...process.execArgv, `--unhandled-rejections=strict`],
+      });
       worker.ref();
 
       return new Promise<TOut>((resolve, reject) => {

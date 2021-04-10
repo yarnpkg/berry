@@ -13,18 +13,13 @@ parentPort.on(`message`, async (data: ConvertToZipPayload) => {
   const {opts, tgz, tmpFile} = data;
   const {compressionLevel, ...bufferOpts} = opts;
 
-  try {
-    const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel});
+  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel});
 
-    // Buffers sent through Node are turned into regular Uint8Arrays
-    const tgzBuffer = Buffer.from(tgz);
-    await extractArchiveTo(tgzBuffer, zipFs, bufferOpts);
+  // Buffers sent through Node are turned into regular Uint8Arrays
+  const tgzBuffer = Buffer.from(tgz);
+  await extractArchiveTo(tgzBuffer, zipFs, bufferOpts);
 
-    zipfs.saveAndClose();
+  zipFs.saveAndClose();
 
-    parentPort!.postMessage(data.tmpFile);
-  } catch (err) {
-    console.error(err.stack);
-    process.exit(1);
-  }
+  parentPort!.postMessage(data.tmpFile);
 });
