@@ -96,7 +96,7 @@ export default class DlxCommand extends BaseCommand {
 
       const pkgs = this.packages ?? [this.command];
 
-      const command = structUtils.parseDescriptor(this.command).name;
+      let command = structUtils.parseDescriptor(this.command).name;
 
       const addExitCode = await this.cli.run([`add`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
       if (addExitCode !== 0)
@@ -113,7 +113,13 @@ export default class DlxCommand extends BaseCommand {
 
       await project.restoreInstallState();
 
+      const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
+
+      if (binaries.has(command) === false && binaries.size === 1 && typeof this.packages === `undefined`)
+        command = Array.from(binaries)[0][0];
+
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
+        packageAccessibleBinaries: binaries,
         cwd: this.context.cwd,
         stdin: this.context.stdin,
         stdout: this.context.stdout,
