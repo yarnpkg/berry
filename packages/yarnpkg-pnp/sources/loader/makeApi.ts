@@ -13,7 +13,6 @@ import * as nodeUtils                                                           
 
 export type MakeApiOptions = {
   allowDebug?: boolean;
-  compatibilityMode?: boolean;
   fakeFs: FakeFS<PortablePath>;
   pnpapiResolution: NativePath;
 };
@@ -46,33 +45,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   if (runtimeState.enableTopLevelFallback === true)
     fallbackLocators.push(topLevelLocator);
-
-  if (opts.compatibilityMode !== false) {
-    // ESLint currently doesn't have any portable way for shared configs to
-    // specify their own plugins that should be used (cf issue #10125). This
-    // will likely get fixed at some point but it'll take time, so in the
-    // meantime we'll just add additional fallback entries for common shared
-    // configs.
-
-    // Similarly, Gatsby generates files within the `public` folder located
-    // within the project, but doesn't pre-resolve the `require` calls to use
-    // its own dependencies. Meaning that when PnP see a file from the `public`
-    // folder making a require, it thinks that your project forgot to list one
-    // of your dependencies.
-
-    for (const name of [`react-scripts`, `gatsby`]) {
-      const packageStore = runtimeState.packageRegistry.get(name);
-      if (packageStore) {
-        for (const reference of packageStore.keys()) {
-          if (reference === null) {
-            throw new Error(`Assertion failed: This reference shouldn't be null`);
-          } else {
-            fallbackLocators.push({name, reference});
-          }
-        }
-      }
-    }
-  }
 
   /**
    * The setup code will be injected here. The tables listed below are guaranteed to be filled after the call to
