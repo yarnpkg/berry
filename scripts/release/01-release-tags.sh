@@ -11,7 +11,7 @@ if ! [[ -z $(git status --porcelain) ]]; then
 fi
 
 # Bump the packages, and store which ones have been bumped (and thus need to be re-released)
-RELEASE_DETAILS=$(node "$REPO_DIR"/scripts/run-yarn.js version apply --all --json)
+RELEASE_DETAILS=$(node "$REPO_DIR"/scripts/run-yarn.js version apply --all --json "$@")
 RELEASE_SIZE=$(wc -l <<< "$RELEASE_DETAILS")
 
 if [[ $RELEASE_SIZE -eq 0 ]]; then
