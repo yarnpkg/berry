@@ -1,20 +1,20 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "2.2.0",
+  "version": "3.0.0-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^2.4.0",
-    "@yarnpkg/plugin-patch": "^2.1.2"
+    "@yarnpkg/core": "^3.0.0-rc.1",
+    "@yarnpkg/plugin-patch": "^3.0.0-rc.1"
   },
   "devDependencies": {
     "@types/resolve": "^1.17.1",
-    "@yarnpkg/cli": "workspace:^2.4.0",
-    "@yarnpkg/core": "workspace:^2.4.0",
-    "@yarnpkg/fslib": "workspace:^2.4.0",
+    "@yarnpkg/cli": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/core": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.1",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/plugin-npm": "workspace:^2.4.0",
-    "@yarnpkg/plugin-patch": "workspace:^2.1.2",
+    "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.1",
+    "@yarnpkg/plugin-patch": "workspace:^3.0.0-rc.1",
     "resolve": "^1.17.0",
     "semver": "^7.1.2"
   },
@@ -38,5 +38,6 @@
   ],
   "engines": {
     "node": ">=10.19.0"
-  }
+  },
+  "stableVersion": "2.2.0"
 }

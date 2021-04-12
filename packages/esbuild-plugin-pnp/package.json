@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/esbuild-plugin-pnp",
-  "version": "0.0.1",
+  "version": "1.0.0-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -10,7 +10,7 @@
     "esbuild": "^0.8.36"
   },
   "devDependencies": {
-    "@yarnpkg/pnp": "workspace:^2.3.2",
+    "@yarnpkg/pnp": "workspace:^3.0.0-rc.1",
     "esbuild": "npm:esbuild-wasm@^0.8.36"
   },
   "scripts": {
@@ -33,5 +33,6 @@
   },
   "engines": {
     "node": ">=10.19.0"
-  }
+  },
+  "stableVersion": "0.0.1"
 }

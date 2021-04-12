@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/eslint-config",
-  "version": "0.2.0",
+  "version": "0.3.0-rc.1",
   "license": "BSD-2-Clause",
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
@@ -25,5 +25,6 @@
   },
   "engines": {
     "node": ">=10.19.0"
-  }
+  },
+  "stableVersion": "0.2.0"
 }

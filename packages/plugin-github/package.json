@@ -1,19 +1,19 @@
 {
   "name": "@yarnpkg/plugin-github",
-  "version": "2.1.2",
+  "version": "2.2.0-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.4.0",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.4.0",
-    "@yarnpkg/plugin-git": "^2.3.0"
+    "@yarnpkg/core": "^3.0.0-rc.1",
+    "@yarnpkg/plugin-git": "^2.4.0-rc.1"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.4.0",
-    "@yarnpkg/plugin-git": "workspace:^2.3.0"
+    "@yarnpkg/core": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/plugin-git": "workspace:^2.4.0-rc.1"
   },
   "scripts": {
     "test": "run test:unit packages/plugin-github",
@@ -34,5 +34,6 @@
   ],
   "engines": {
     "node": ">=10.19.0"
-  }
+  },
+  "stableVersion": "2.1.2"
 }
