@@ -8,7 +8,23 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+## 3.0.0-rc.2
+
+```
+yarn set version 3.0.0-rc.2
+```
+
+Few functional changes; mostly intended to fix distribution issues.
+
+- `yarn plugin import` can now install specific versions of the official plugins.
+- `yarn plugin import` will now download plugins compatible with the current CLI by default.
+- Fixed a bug in `yarn version check` when used with the `--prerelease` flag.
+
 ## 3.0.0-rc.1
+
+```
+yarn set version 3.0.0-rc.1
+```
 
 ### **Breaking Changes**
 
@@ -85,11 +101,19 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## 2.4.1
 
+```
+yarn set version 2.4.1
+```
+
 ### Compatibility
 
 - The release of TypeScript 4.2 couldn't be installed due to patch conflicts. This is now fixed. This version only includes a fix specific to 4.2, but future Yarn releases starting from 3.0 will be more tolerant of this kind of situation and won't cause such errors.
 
 ## 2.4.0
+
+```
+yarn set version 2.4.0
+```
 
 ### Installs
 
@@ -159,10 +183,18 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## 2.3.1
 
+```
+yarn set version 2.3.1
+```
+
 ### CLI
 - Take into account peer dependency defaults when inheriting workspace peer dependencies in the node_modules linker
 
 ## 2.3.0
+
+```
+yarn set version 2.3.0
+```
 
 ### CLI
 
@@ -214,6 +246,10 @@ The following changes only apply to the `node-modules` linker:
 
 ## 2.2.0
 
+```
+yarn set version 2.2.0
+```
+
 ### Ecosystem
 
 - Packages can now use the `publishConfig.executableFiles` field in their manifests to indicate which files should keep the executable flag once packed in the archive. This is important as for portability reasons Yarn strips the executable flag from all files during packing (otherwise `yarn pack` would yield different outputs when run on Posix vs Windows). Files listed in the `bin` field are assumed executable by default, so you don't need to explicitly list them in `executableFiles`.
@@ -258,9 +294,17 @@ The following changes only apply to the `node-modules` linker:
 
 ## 2.1.1
 
+```
+yarn set version 2.1.1
+```
+
 - Fixed hyperlink rendering on iTerm
 
 ## 2.1.0
+
+```
+yarn set version 2.1.0
+```
 
 ### Ecosystem
 
@@ -349,6 +393,10 @@ The following changes only apply to the `node-modules` linker:
 ---
 
 ## 2.0.0
+
+```
+yarn set version 2.0.0
+```
 
 Remember that a [migration guide](https://yarnpkg.com/getting-started/migration) is available to help you port your applications to Yarn 2.
 
