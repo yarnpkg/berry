@@ -13,7 +13,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### **Breaking Changes**
 
 - Node 10 isn't supported anymore.
+- Plugins can't access `yup` anymore (we migrated to [Typanion](https://github.com/arcanis/typanion) as part of [Clipanion v3](https://github.com/arcanis/clipanion)).
+  - To upgrade `workspace-tools`, remove it from your `.yarnrc.yml`, upgrade, then import it back.
 - The `enableImmutableInstalls` will now default to `true` on CI (we still recommend to explicitly use `--immutable` on the CLI).
+  - You can re-allow mutations by adding `YARN_ENABLE_IMMUTABLE_INSTALLS=false` in your environment variables. 
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
 - Yarn will now generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 - The virtual folder (used to disambiguate peer dependencies) got renamed from `$$virtual` into `__virtual__`.
@@ -21,7 +24,6 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 - The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 - The cache files need to be regenerated. We had to change their timestamps in order to account for a flaw in the zip spec that was causing problems with some third-party tools.
-- `Project.tryWorkspaceByDescriptor` and `Project.getWorkspaceByDescriptor` now match on virtual descriptors
 
 ### API
 
@@ -29,7 +31,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
 - `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
-- `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`
+- `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`.
+- `Project.tryWorkspaceByDescriptor` and `Project.getWorkspaceByDescriptor` now match on virtual descriptors.
 
 ### Installs
 
@@ -72,12 +75,13 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The patched filesystem now supports file URLs, `bigint`, and `fstat`.
 - An official ESBuild resolver is now provided under the name `@yarnpkg/esbuild-plugin-pnp`. We use it to bundle Yarn itself!
 - PnP projects can now use the Node [`exports` field](https://nodejs.org/api/packages.html#packages_package_entry_points) - regardless of the Node version.
-- The Prettier SDK does not use PnPify anymore since it was its only remaining use, and was fairly invasive; as a result, the Prettier plugins must be specified in `plugins` prettier config property.
-- Builtin patches that fail to apply will no longer cause an error. Remember that patches are a problem for our team too, and that we only do this because we have no other option at the current point it time - if you wish to help, consider [upvoting](https://github.com/microsoft/TypeScript/pull/35206) the relevant pull request in the TypeScript repository.
+- The Prettier SDK does not use PnPify anymore since it was its only remaining use, and was fairly invasive; as a result, the Prettier plugins must be specified in Prettier's `plugins` configuration property.
+- Builtin patches that fail to apply will no longer cause an error (they'll emit a warning and the original sources will be used instead).
+  - Remember that patches are a problem for our team too, and that we only do this because we don't have any other option available to us right now - if you wish to help, consider [upvoting](https://github.com/microsoft/TypeScript/pull/35206) the relevant pull request in the TypeScript repository or, if you work at Microsoft, perhaps mention to your TypeScript team next door that fixing this would benefit you.
 
 ### Miscellaneous
 
-- Reporting for HTTP errors has been improved, which should help you debug registry issues.
+- Reporting for HTTP errors has been improved, which should help you investigate registry issues.
 
 ## 2.4.1
 
