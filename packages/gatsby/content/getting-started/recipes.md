@@ -56,9 +56,3 @@ pnpIgnorePatterns:
   - ./nm-packages/**
 ```
 - You can now run `cd nm-package/myproj && yarn install` and the project will be isolated from your pnp root. 
-
-
-
-
-
-
