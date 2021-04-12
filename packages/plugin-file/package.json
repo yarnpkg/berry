@@ -1,17 +1,17 @@
 {
   "name": "@yarnpkg/plugin-file",
-  "version": "2.2.1-rc.1",
+  "version": "2.2.1-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.1",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^3.0.0-rc.1"
+    "@yarnpkg/core": "^3.0.0-rc.2"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^3.0.0-rc.1"
+    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
   },
   "repository": {
     "type": "git",

@@ -1,16 +1,16 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "3.0.0-rc.1",
+  "version": "3.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.1",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
     "resolve.exports": "^1.0.2",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
     "@yarnpkg/libzip": "workspace:^2.2.1",
     "@yarnpkg/monorepo": "workspace:0.0.0",
     "typescript": "beta",

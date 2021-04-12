@@ -4,23 +4,23 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.1",
-    "@yarnpkg/core": "^3.0.0-rc.1",
-    "@yarnpkg/plugin-essentials": "^3.0.0-rc.1"
+    "@yarnpkg/cli": "^3.0.0-rc.2",
+    "@yarnpkg/core": "^3.0.0-rc.2",
+    "@yarnpkg/plugin-essentials": "^3.0.0-rc.2"
   },
   "devDependencies": {
     "@algolia/requester-common": "4.0.0-beta.14",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.1",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.1",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.1",
-    "@yarnpkg/plugin-essentials": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/plugin-essentials": "workspace:^3.0.0-rc.2",
     "typescript": "beta"
   },
   "scripts": {
