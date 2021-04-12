@@ -9,7 +9,7 @@
     "@yarnpkg/core": "workspace:^3.0.0-rc.1",
     "@yarnpkg/esbuild-plugin-pnp": "workspace:packages/esbuild-plugin-pnp",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.1",
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2",
     "babel-loader": "^8.1.0",
     "chalk": "^3.0.0",
     "clipanion": "^3.0.0-rc.10",

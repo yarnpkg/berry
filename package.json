@@ -28,7 +28,7 @@
     "@yarnpkg/cli": "workspace:^3.0.0-rc.1",
     "@yarnpkg/core": "workspace:^3.0.0-rc.1",
     "@yarnpkg/eslint-config": "workspace:^0.3.0-rc.1",
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2",
     "babel-jest": "^26.0.1",
     "clipanion": "^3.0.0-rc.10",
     "eslint": "^6.8.0",

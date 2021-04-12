@@ -37,7 +37,7 @@
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^3.0.0-rc.1",
     "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1",
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2",
     "micromatch": "^4.0.2",
     "typescript": "beta"
   },

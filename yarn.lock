@@ -5455,7 +5455,7 @@ __metadata:
     "@yarnpkg/esbuild-plugin-pnp": "workspace:packages/esbuild-plugin-pnp"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.1"
     "@yarnpkg/monorepo": "workspace:0.0.0"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1"
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
     clipanion: ^3.0.0-rc.10
@@ -5504,7 +5504,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.1"
     "@yarnpkg/plugin-patch": "workspace:^3.0.0-rc.1"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.1"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1"
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2"
     "@yarnpkg/shell": "workspace:^3.0.0-rc.1"
     chalk: ^3.0.0
     ci-info: ^2.0.0
@@ -5787,7 +5787,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^3.0.0-rc.1"
     "@yarnpkg/core": "workspace:^3.0.0-rc.1"
     "@yarnpkg/eslint-config": "workspace:^0.3.0-rc.1"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1"
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2"
     babel-jest: ^26.0.1
     clipanion: ^3.0.0-rc.10
     eslint: ^6.8.0
@@ -6054,7 +6054,7 @@ __metadata:
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.1"
     "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.1"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.1"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1"
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2"
     "@zkochan/cmd-shim": ^4.3.0
     clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
@@ -6268,7 +6268,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/pnpify@workspace:^3.0.0-rc.1, @yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify":
+"@yarnpkg/pnpify@workspace:^3.0.0-rc.2, @yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
@@ -27607,7 +27607,7 @@ typescript@beta:
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.1"
     "@yarnpkg/libzip": "workspace:^2.2.1"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.1"
+    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.2"
     ts-loader: ^7.0.5
     tslib: ^1.13.0
     typescript: beta
