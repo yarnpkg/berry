@@ -1,12 +1,14 @@
 # Changelog
 
-## Master (will be 3.0-rc.1)
+## Sponsorship
+
+Yarn now accept sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
+
+## Master
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
-### Sponsorship
-
-Yarn now accept sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
+## 3.0.0-rc.1
 
 ### **Breaking Changes**
 
@@ -38,9 +40,9 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
 ### Bugfixes
 
 - Yarn now has a proper [governance model](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md).
-- The `node-modules` linker will now ensure that the generated install layouts are terminal by doing several rounds when needed.
-- The `node-modules` linker will no longer prints warnings about postinstall scripts when a workspace depends on another workspace with install scripts.
-- The peer dependencies depending on their own parent are now properly hoisted by node-modules linker.
+- The `node-modules` linker will now ensure that the generated install layouts are terminal, by doing several rounds when needed.
+- The `node-modules` linker will no longer prints warnings about postinstall scripts when a workspace depends on another workspace listing install scripts.
+- Peer dependencies depending on their own parent are now properly hoisted by the node-modules linker.
 - Boolean values will be properly interpreted when specified inside the configuration file via the `${ENV_VAR}` syntax.
 - Should any of `preinstall`, `install`, `postinstall` fail, the remaining scripts will be skipped.
 - The `git:` protocol will now default to fetching `HEAD` (rather than the hardcoded `master`).
@@ -52,7 +54,6 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
 - Various `initFields` edge cases have been fixed.
 - The `preferAggregateCacheInfo` flag will now also aggregate cleanup reports.
 - A new `enableMessageNames` flag can be set to `false` to exclude the `YNxxxx` from the output.
-- 
 
 ### Commands
 
@@ -68,16 +69,15 @@ Yarn now accept sponsorships! Please give a look at our [OpenCollective](https:/
 ### Compatibility
 
 - Running `yarn install` inside a Yarn v1 project will now automatically enable the `node-modules` linker. This should solve most of the problems people have had in their migrations. We still recommend to keep the default PnP for new projects, but the choice is yours.
-
 - The patched filesystem now supports file URLs, `bigint`, and `fstat`.
-
 - An official ESBuild resolver is now provided under the name `@yarnpkg/esbuild-plugin-pnp`. We use it to bundle Yarn itself!
-
 - PnP projects can now use the Node [`exports` field](https://nodejs.org/api/packages.html#packages_package_entry_points) - regardless of the Node version.
-
 - The Prettier SDK does not use PnPify anymore since it was its only remaining use, and was fairly invasive; as a result, the Prettier plugins must be specified in `plugins` prettier config property.
-
 - Builtin patches that fail to apply will no longer cause an error. Remember that patches are a problem for our team too, and that we only do this because we have no other option at the current point it time - if you wish to help, consider [upvoting](https://github.com/microsoft/TypeScript/pull/35206) the relevant pull request in the TypeScript repository.
+
+### Miscellaneous
+
+- Reporting for HTTP errors has been improved, which should help you debug registry issues.
 
 ## 2.4.1
 
