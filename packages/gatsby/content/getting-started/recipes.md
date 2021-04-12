@@ -23,6 +23,17 @@ yarn dlx @yarnpkg/pnpify --sdk vscode
 yarn plugin import typescript
 ```
 
+## Running a Yarn CLI command in the specified directory:
+
+- Starting a new library inside a monorepo directly, without manually creating directories for it.
+```sh
+yarn packages/my-new-lib init
+```
+- Running an arbitrary command inside a specific workspace:
+```sh
+yarn packages/app tsc --noEmit
+```
+
 ## Hybrid PnP + node_modules mono-repo:
 
 You may sometimes need to use `node_modules` on just part of your workspace (for example, if you use Angular or React-Native).
