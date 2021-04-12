@@ -1,10 +1,19 @@
-import {EventEmitter}                                                                       from 'events';
-import {Dirent as NodeDirent, ReadStream, Stats, WriteStream, NoParamCallback, BigIntStats} from 'fs';
-import {EOL}                                                                                from 'os';
+import {EventEmitter}                                    from 'events';
+import {Dirent as NodeDirent, ReadStream}                from 'fs';
+import {Stats as NodeStats, WriteStream}                 from 'fs';
+import {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
+import {EOL}                                             from 'os';
 
-import {copyPromise, LinkStrategy}                                                          from './algorithms/copyPromise';
-import {FSPath, Path, PortablePath, PathUtils, Filename}                                    from './path';
-import {convertPath, ppath}                                                                 from './path';
+import {copyPromise, LinkStrategy}                       from './algorithms/copyPromise';
+import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
+import {convertPath, ppath}                              from './path';
+
+export type Stats = NodeStats & {
+  crc?: number
+};
+export type BigIntStats = NodeBigIntStats & {
+  crc?: number
+};
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
