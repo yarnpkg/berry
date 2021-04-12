@@ -25,4 +25,4 @@ chmod +x "$TEMP_DIR"/bin/yarn.js
 cd "$TEMP_DIR"
 
 node "$TEMP_DIR"/bin/yarn.js
-node "$TEMP_DIR"/bin/yarn.js npm publish
+node "$TEMP_DIR"/bin/yarn.js npm publish --access=public
