@@ -236,7 +236,7 @@ When running `yarn add` without adding explicit ranges to the packages to add, Y
 
 Your lockfile would be modified if Yarn was to finish the install.
 
-When passing the `--frozen-lockfile` option to `yarn install`, Yarn will ensure that the lockfile isn't modified in the process and will instead throw an exception if this situation was to happen (for example if a newly added package was missing from the lockfile, or if the current Yarn release required some kind of migration before being able to work with the lockfile).
+When passing the `--immutable` option to `yarn install`, Yarn will ensure that the lockfile isn't modified in the process and will instead throw an exception if this situation was to happen (for example if a newly added package was missing from the lockfile, or if the current Yarn release required some kind of migration before being able to work with the lockfile).
 
 This option is typically meant to be used on your CI and production servers, and fixing this error should simply be a matter of running `yarn install` on your local development environment and submitting a PR containing the updated lockfile.
 
