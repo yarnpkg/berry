@@ -20,7 +20,7 @@ const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
-type ContentFingerprints = {uniqueChecksums: Map<number, PortablePath>, duplicateChecksums: Set<number>, hashes: Map<string, PortablePath>};
+type ContentFingerprints = {uniqueChecksums: Map<number, {srcPath: PortablePath, dstPath: PortablePath}>, duplicateChecksums: Set<number>, hashes: Map<string, PortablePath>};
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, contentFingerprints: ContentFingerprints, nmMode: NodeModulesMode};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, 'bin'>>;
@@ -418,24 +418,30 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
 
       if (contentFingerprints.uniqueChecksums.size > 0) {
         locatorState += `  uniqueChecksums:\n`;
-        for (const [checksum, dstPath] of contentFingerprints.uniqueChecksums) {
-          const internalPath = ppath.contains(project.cwd, dstPath);
-          if (internalPath === null)
-            throw new Error(`Assertion failed: Expected the path to be within the project (${dstPath})`);
-          locatorState += `  - [${checksum}, ${internalPath}]\n`;
+        const entries = Array.from(contentFingerprints.uniqueChecksums.entries()).sort((a, b) => a[1].dstPath.localeCompare(b[1].dstPath));
+        for (const [checksum, val] of entries) {
+          const internalSrcPath = ppath.contains(project.cwd, val.srcPath);
+          if (internalSrcPath === null)
+            throw new Error(`Assertion failed: Expected the path to be within the project (${val.srcPath})`);
+          const internalDstPath = ppath.contains(project.cwd, val.dstPath);
+          if (internalDstPath === null)
+            throw new Error(`Assertion failed: Expected the path to be within the project (${val.dstPath})`);
+          locatorState += `  - [${checksum}, {srcPath: ${internalSrcPath}, dstPath: ${internalDstPath}}]\n`;
         }
       }
 
       if (contentFingerprints.duplicateChecksums.size > 0) {
         locatorState += `  duplicateChecksums:\n`;
-        for (const checksum of contentFingerprints.duplicateChecksums) {
+        const checksums = Array.from(contentFingerprints.duplicateChecksums).sort();
+        for (const checksum of checksums) {
           locatorState += `  - ${checksum}\n`;
         }
       }
 
       if (contentFingerprints.hashes.size > 0) {
         locatorState += `  hashes:\n`;
-        for (const [hash, dstPath] of contentFingerprints.hashes) {
+        const entries = Array.from(contentFingerprints.hashes.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+        for (const [hash, dstPath] of entries) {
           const internalPath = ppath.contains(project.cwd, dstPath);
           if (internalPath === null)
             throw new Error(`Assertion failed: Expected the path to be within the project (${dstPath})`);
@@ -492,8 +498,8 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
     }
 
     if (installRecord.uniqueChecksums) {
-      for (const [checksum, relativeLocation] of installRecord.uniqueChecksums) {
-        contentFingerprints.uniqueChecksums.set(checksum, ppath.join(rootPath, npath.toPortablePath(relativeLocation)));
+      for (const [checksum, {srcPath, dstPath}] of installRecord.uniqueChecksums) {
+        contentFingerprints.uniqueChecksums.set(checksum, {srcPath: ppath.join(rootPath, npath.toPortablePath(srcPath)), dstPath: ppath.join(rootPath, npath.toPortablePath(dstPath))});
       }
     }
 
@@ -713,6 +719,13 @@ async function checksumFile(path: PortablePath) {
   });
 }
 
+const updateHash = ({hash, dstPath, contentFingerprints}: {hash: string, dstPath: PortablePath, contentFingerprints: ContentFingerprints}) => {
+  const existingDstPath = contentFingerprints.hashes.get(hash);
+  if (existingDstPath && dstPath.localeCompare(existingDstPath) < 0) {
+    contentFingerprints.hashes.set(hash, dstPath);
+  }
+};
+
 /**
  * Copies file. If `hardlinks` mode is requested files with the same content will be hardlinked on disk.
  * To check if files have the same content MD5 hashes of the files are compared. The MD5 hashes are computed
@@ -721,32 +734,26 @@ async function checksumFile(path: PortablePath) {
  */
 const copyFilePromise = async ({srcPath, dstPath, srcStat, baseFs, nmMode, contentFingerprints}: {srcPath: PortablePath, dstPath: PortablePath, baseFs: FakeFS<PortablePath>, srcStat: Stats, nmMode: NodeModulesMode, contentFingerprints: ContentFingerprints}) => {
   if (nmMode === NodeModulesMode.HARDLINKS && srcStat.crc) {
-    const existingChecksumPath = contentFingerprints.uniqueChecksums.get(srcStat.crc);
-    if (existingChecksumPath) {
-      const hash = await checksumFile(existingChecksumPath);
-      const srcHash = await checksumFile(srcPath);
-      if (srcHash === hash)
-        await baseFs.linkPromise(existingChecksumPath, dstPath);
-      else
-        await baseFs.copyFilePromise(srcPath, dstPath);
-
-      contentFingerprints.duplicateChecksums.add(srcStat.crc);
-      contentFingerprints.hashes.set(srcHash, dstPath);
+    const existingChecksum = contentFingerprints.uniqueChecksums.get(srcStat.crc);
+    if (existingChecksum) {
       contentFingerprints.uniqueChecksums.delete(srcStat.crc);
-      contentFingerprints.hashes.set(hash, existingChecksumPath);
-    } else if (contentFingerprints.duplicateChecksums.has(srcStat.crc)) {
-      const srcHash = await checksumFile(srcPath);
-      const existingHashPath = contentFingerprints.hashes.get(srcHash);
-      if (existingHashPath)
-        await baseFs.linkPromise(existingHashPath, dstPath);
-      else
+      contentFingerprints.duplicateChecksums.add(srcStat.crc);
+      const hash = await checksumFile(existingChecksum.srcPath);
+      updateHash({hash, dstPath: existingChecksum.dstPath, contentFingerprints});
+    }
+
+    if (contentFingerprints.duplicateChecksums.has(srcStat.crc)) {
+      const hash = await checksumFile(srcPath);
+      const existingDstPath = contentFingerprints.hashes.get(hash);
+      if (existingDstPath) {
+        await baseFs.linkPromise(existingDstPath, dstPath);
+        updateHash({hash, dstPath, contentFingerprints});
+      } else {
         await baseFs.copyFilePromise(srcPath, dstPath);
-
-      contentFingerprints.hashes.set(srcHash, dstPath);
+      }
     } else {
+      contentFingerprints.uniqueChecksums.set(srcStat.crc, {srcPath, dstPath});
       await baseFs.copyFilePromise(srcPath, dstPath);
-
-      contentFingerprints.uniqueChecksums.set(srcStat.crc, dstPath);
     }
   } else {
     await baseFs.copyFilePromise(srcPath, dstPath);
