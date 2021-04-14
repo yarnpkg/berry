@@ -32,6 +32,10 @@ export default class WorkspacesFocus extends BaseCommand {
   all = Option.Boolean(`-A,--all`, false, {
     description: `Install the entire project`,
   });
+  
+  immutable = Option.Boolean(`--immutable`, false, {
+    description: `Perform an immutable install`,
+  });
 
   workspaces = Option.Rest();
 
@@ -103,7 +107,7 @@ export default class WorkspacesFocus extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, persistProject: false});
+      await project.install({cache, report, persistProject: false, immutable: this.immutable });
     });
 
     return report.exitCode();
