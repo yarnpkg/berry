@@ -312,6 +312,14 @@ A package requests a peer dependency, but its parent in the dependency tree prov
 
 A package is marked as deprecated by the publisher. Avoid using it, use the alternative provided in the deprecation message instead.
 
+## YN0062 - `INCOMPATIBLE_OS`
+
+A package is incompatible with the operating system, as reported by [`process.platform`](https://nodejs.org/api/process.html#process_process_platform).  Its installation will be skipped.
+
+## YN0063 - `INCOMPATIBLE_CPU`
+
+A package is incompatible with the CPU architecture, as reported by [`process.arch`](https://nodejs.org/api/process.html#process_process_arch).  Its installation will be skipped.
+
 ## YN0068 - `UNUSED_PACKAGE_EXTENSION`
 
 A packageExtension is detected by Yarn as being unused, which means that the selector doesn't match any of the installed packages.
