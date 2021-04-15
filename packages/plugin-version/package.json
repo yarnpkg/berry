@@ -21,10 +21,10 @@
   "devDependencies": {
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/builder": "workspace:*",
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/plugin-pack": "workspace:*",
     "typescript": "beta"
   },
   "scripts": {

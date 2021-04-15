@@ -46,10 +46,10 @@
     "@types/node": "^13.7.0",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/plugin-link": "workspace:^2.1.2-rc.2",
-    "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.2",
-    "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/plugin-link": "workspace:*",
+    "@yarnpkg/plugin-npm": "workspace:*",
+    "@yarnpkg/plugin-pnp": "workspace:*"
   },
   "scripts": {
     "postpack": "rm -rf lib",

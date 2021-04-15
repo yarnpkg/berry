@@ -12,8 +12,8 @@
     "@yarnpkg/plugin-git": "^2.4.0-rc.2"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/plugin-git": "workspace:^2.4.0-rc.2"
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/plugin-git": "workspace:*"
   },
   "scripts": {
     "test": "run test:unit packages/plugin-github",
