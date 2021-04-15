@@ -721,7 +721,7 @@ async function checksumFile(path: PortablePath) {
 
 const updateHash = ({hash, dstPath, contentFingerprints}: {hash: string, dstPath: PortablePath, contentFingerprints: ContentFingerprints}) => {
   const existingDstPath = contentFingerprints.hashes.get(hash);
-  if (existingDstPath && dstPath.localeCompare(existingDstPath) < 0) {
+  if (!existingDstPath || dstPath.localeCompare(existingDstPath) < 0) {
     contentFingerprints.hashes.set(hash, dstPath);
   }
 };
