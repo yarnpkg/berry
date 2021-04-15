@@ -1,7 +1,7 @@
 import {Filename, xfs, ppath} from '@yarnpkg/fslib';
 
 const {
-  fs: {writeJson},
+  fs: {writeJson, writeFile},
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
@@ -303,6 +303,38 @@ describe(`Commands`, () => {
           });
         }
       )
+    );
+
+    test(
+      `it should print a warning when using \`enableScripts: false\``,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `enableScripts: false`);
+        const {stdout} = await run(`install`, `--inline-builds`);
+        expect(stdout).toMatch(/YN0004/g);
+      }),
+    );
+
+    test(
+      `it should print an info when \`dependenciesMeta[].built: false\`, even when using using \`enableScripts: false\``,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          'no-deps-scripted': {
+            built: false,
+          },
+        },
+      }, async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `enableScripts: false`);
+        const {stdout} = await run(`install`, `--inline-builds`);
+        expect(stdout).toMatch(/YN0005/g);
+        expect(stdout).not.toMatch(/YN0004/g);
+      }),
     );
   });
 });

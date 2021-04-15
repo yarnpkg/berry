@@ -40,11 +40,6 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
   if (buildScripts.length === 0)
     return [];
 
-  if (!configuration.get(`enableScripts`) && !dependencyMeta.built) {
-    report?.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
-    return [];
-  }
-
   if (pkg.linkType !== LinkType.HARD) {
     report?.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
     return [];
@@ -52,6 +47,11 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
 
   if (dependencyMeta && dependencyMeta.built === false) {
     report?.reportInfoOnce(MessageName.BUILD_DISABLED, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but its build has been explicitly disabled through configuration.`);
+    return [];
+  }
+
+  if (!configuration.get(`enableScripts`) && !dependencyMeta.built) {
+    report?.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
     return [];
   }
 
