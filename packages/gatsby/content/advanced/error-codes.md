@@ -236,7 +236,7 @@ When running `yarn add` without adding explicit ranges to the packages to add, Y
 
 Your lockfile would be modified if Yarn was to finish the install.
 
-When passing the `--frozen-lockfile` option to `yarn install`, Yarn will ensure that the lockfile isn't modified in the process and will instead throw an exception if this situation was to happen (for example if a newly added package was missing from the lockfile, or if the current Yarn release required some kind of migration before being able to work with the lockfile).
+When passing the `--immutable` option to `yarn install`, Yarn will ensure that the lockfile isn't modified in the process and will instead throw an exception if this situation was to happen (for example if a newly added package was missing from the lockfile, or if the current Yarn release required some kind of migration before being able to work with the lockfile).
 
 This option is typically meant to be used on your CI and production servers, and fixing this error should simply be a matter of running `yarn install` on your local development environment and submitting a PR containing the updated lockfile.
 
@@ -311,6 +311,14 @@ A package requests a peer dependency, but its parent in the dependency tree prov
 ## YN0061 - `DEPRECATED_PACKAGE`
 
 A package is marked as deprecated by the publisher. Avoid using it, use the alternative provided in the deprecation message instead.
+
+## YN0062 - `INCOMPATIBLE_OS`
+
+A package is incompatible with the operating system, as reported by [`process.platform`](https://nodejs.org/api/process.html#process_process_platform).  Its installation will be skipped.
+
+## YN0063 - `INCOMPATIBLE_CPU`
+
+A package is incompatible with the CPU architecture, as reported by [`process.arch`](https://nodejs.org/api/process.html#process_process_arch).  Its installation will be skipped.
 
 ## YN0068 - `UNUSED_PACKAGE_EXTENSION`
 

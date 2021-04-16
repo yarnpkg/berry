@@ -80,7 +80,7 @@ export default class NpmPublishCommand extends BaseCommand {
             return;
           }
         } catch (err) {
-          if (err.response?.statusCode !== 404) {
+          if (err.originalError?.response?.statusCode !== 404) {
             throw err;
           }
         }
