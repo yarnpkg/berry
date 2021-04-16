@@ -356,9 +356,9 @@
     },
     "nmMode": {
       "_package": "@yarnpkg/plugin-node-modules",
-      "description": "If set to `hardlinks` Yarn will utilize hardlinks to reduce disk space consumption inside node_modules directories",
+      "description": "If set to `hardlinks` Yarn will utilize hardlinks to reduce disk space consumption inside node_modules directories in a current project. With `cas` Yarn will use global content addressable storage to reduce node_modules size across projects that use `cas` option.",
       "type": "string",
-      "enum": ["classic", "hardlinks"],
+      "enum": ["classic", "hardlinks", "cas"],
       "default": "classic"
     },
     "nodeLinker": {

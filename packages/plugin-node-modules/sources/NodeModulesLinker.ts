@@ -1,17 +1,18 @@
-import {structUtils, Report, Manifest, miscUtils, formatUtils}                                 from '@yarnpkg/core';
-import {Locator, Package, FinalizeInstallStatus}                                               from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
 import {MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor, DependencyMeta} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                     from '@yarnpkg/core';
+import {Locator, Package, FinalizeInstallStatus}                                               from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, formatUtils}                                 from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                         from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}                                      from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                                      from '@yarnpkg/libzip';
 import {parseSyml}                                                                             from '@yarnpkg/parsers';
 import {jsInstallUtils}                                                                        from '@yarnpkg/plugin-pnp';
-import {buildNodeModulesTree}                                                                  from '@yarnpkg/pnpify';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}                     from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                                                  from '@yarnpkg/pnpify';
 import {PnpApi, PackageInformation}                                                            from '@yarnpkg/pnp';
 import cmdShim                                                                                 from '@zkochan/cmd-shim';
 import {UsageError}                                                                            from 'clipanion';
+import crypto                                                                                  from 'crypto';
 import fs                                                                                      from 'fs';
 
 const STATE_FILE_VERSION = 1;
@@ -26,6 +27,7 @@ type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Prom
 export enum NodeModulesMode {
   CLASSIC = `classic`,
   HARDLINKS = `hardlinks`,
+  CAS = `cas`,
 }
 
 export class NodeModulesLinker implements Linker {
@@ -645,18 +647,51 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
   }
 };
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, nmMode, innerLoop}: {baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, innerLoop?: boolean}) => {
+async function checksumFile(path: PortablePath) {
+  return await new Promise<string>((resolve, reject) => {
+    const hash = crypto.createHash(`md5`);
+    const stream = xfs.createReadStream(path);
+
+    stream.on(`data`, chunk => {
+      hash.update(chunk);
+    });
+
+    stream.on(`error`, error => {
+      reject(error);
+    });
+
+    stream.on(`end`, () => {
+      resolve(hash.digest(`hex`));
+    });
+  });
+}
+
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, casDir, nmMode, innerLoop}: {baseFs: FakeFS<PortablePath>, casDir: PortablePath | null, nmMode: NodeModulesMode, innerLoop?: boolean}) => {
   await xfs.mkdirPromise(dstDir, {recursive: true});
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
 
   const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent) => {
     if (srcType.isFile()) {
       const srcStat = await baseFs.lstatPromise(srcPath);
-      await baseFs.copyFilePromise(srcPath, dstPath);
-      const mode = srcStat.mode & 0o777;
-      // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
-      if (mode !== 0o644) {
-        await xfs.chmodPromise(dstPath, mode);
+      if (casDir && srcStat.crc) {
+        const hash = await checksumFile(srcPath);
+        const casDst = ppath.join(casDir, toFilename(`${hash}.dat`));
+        try {
+          if (!(await xfs.existsPromise(casDst))) {
+            await baseFs.copyFilePromise(srcPath, casDst, fs.constants.COPYFILE_EXCL);
+          }
+        } catch (e) {}
+        await xfs.linkPromise(casDst, dstPath);
+        if (nmMode === NodeModulesMode.CAS) {
+          await xfs.chmodPromise(dstPath, 0o444);
+        }
+      } else {
+        await baseFs.copyFilePromise(srcPath, dstPath);
+        const mode = srcStat.mode & 0o777;
+        // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
+        if (mode !== 0o644) {
+          await xfs.chmodPromise(dstPath, mode);
+        }
       }
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
@@ -671,7 +706,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
     const dstPath = ppath.join(dstDir, toFilename(entry.name));
     if (entry.isDirectory()) {
       if (entry.name !== NODE_MODULES || innerLoop) {
-        await copyPromise(dstPath, srcPath, {baseFs, nmMode, innerLoop: true});
+        await copyPromise(dstPath, srcPath, {baseFs, casDir, nmMode, innerLoop: true});
       }
     } else {
       await copy(dstPath, srcPath, entry);
@@ -797,6 +832,12 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
 
+function getCasDir(project: Project, nmMode: NodeModulesMode): PortablePath | null {
+  return nmMode === NodeModulesMode.CLASSIC ? null : (nmMode === NodeModulesMode.CAS ?
+    `${project.configuration.get(`globalFolder`)}/cas/v1` as PortablePath :
+    `${project.cwd}/node_modules/.cas/v1` as PortablePath);
+}
+
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
@@ -805,14 +846,14 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Array<Promise<void>> = [];
-  const addModule = async ({srcDir, dstDir, linkType, nmMode}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, nmMode: NodeModulesMode}) => {
+  const addModule = async ({srcDir, dstDir, linkType, casDir, nmMode}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, casDir: PortablePath | null, nmMode: NodeModulesMode}) => {
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
-          await copyPromise(dstDir, srcDir, {baseFs, nmMode});
+          await copyPromise(dstDir, srcDir, {baseFs, casDir, nmMode});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
@@ -848,7 +889,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
                 await cloneDir(src, dst, {...options, innerLoop: true});
               }
             } else {
-              if (nmMode === NodeModulesMode.HARDLINKS) {
+              if (nmMode === NodeModulesMode.HARDLINKS || nmMode === NodeModulesMode.CAS) {
                 await xfs.linkPromise(src, dst);
               } else {
                 await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
@@ -1021,10 +1062,13 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // source directory. We'll later use the resulting install directories for
     // the other instances of the same package (this will avoid us having to
     // crawl the zip archives for each package).
+    const casDir = getCasDir(project, nmMode);
+    if (casDir)
+      await xfs.mkdirpPromise(casDir);
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
         persistedLocations.set(entry.srcDir, entry.dstDir);
-        await addModule({...entry, nmMode});
+        await addModule({...entry, casDir, nmMode});
       }
     }
 
