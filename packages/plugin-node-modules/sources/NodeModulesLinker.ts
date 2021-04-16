@@ -833,9 +833,8 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
 };
 
 function getCasDir(project: Project, nmMode: NodeModulesMode): PortablePath | null {
-  return nmMode === NodeModulesMode.CLASSIC ? null : (nmMode === NodeModulesMode.CAS ?
-    `${project.configuration.get(`globalFolder`)}/cas/v1` as PortablePath :
-    `${project.cwd}/node_modules/.cas/v1` as PortablePath);
+  return nmMode === NodeModulesMode.CAS ?
+    `${project.configuration.get(`globalFolder`)}/cas/v1` as PortablePath : null;
 }
 
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest}) {
