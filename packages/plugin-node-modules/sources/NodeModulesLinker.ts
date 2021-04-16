@@ -649,7 +649,7 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
 
 async function checksumFile(path: PortablePath) {
   return await new Promise<string>((resolve, reject) => {
-    const hash = crypto.createHash(`md5`);
+    const hash = crypto.createHash(`sha1`);
     const stream = xfs.createReadStream(path);
 
     stream.on(`data`, chunk => {
