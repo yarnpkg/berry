@@ -83,9 +83,11 @@ export default class VersionApplyCommand extends BaseCommand {
       if (this.all) {
         filteredReleases = allReleases;
       } else {
-        const relevantWorkspaces = this.recursive
-          ? workspace.getRecursiveWorkspaceDependencies()
-          : [workspace];
+        const relevantWorkspaces = !this.recursive
+          ? [workspace]
+          : workspace.manifest.private && workspace.manifest.workspaceDefinitions.length
+            ? [workspace, ...workspace.getRecursiveWorkspaceChildren()]
+            : workspace.getRecursiveWorkspaceDependencies();
 
         for (const child of relevantWorkspaces) {
           const release = allReleases.get(child);
