@@ -675,13 +675,21 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       const srcStat = await baseFs.lstatPromise(srcPath);
       if (casDir && srcStat.crc) {
         const hash = await checksumFile(srcPath);
-        const casDst = ppath.join(casDir, toFilename(`${hash}.dat`));
-        try {
-          if (!(await xfs.existsPromise(casDst))) {
-            await baseFs.copyFilePromise(srcPath, casDst, fs.constants.COPYFILE_EXCL);
+        const casContentPath = ppath.join(casDir, toFilename(`${hash}.dat`));
+        const doesCasContentExist = await xfs.existsPromise(casContentPath);
+        if (!doesCasContentExist) {
+          const tmpPath = ppath.join(casDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+          try {
+            await baseFs.copyFilePromise(srcPath, tmpPath, fs.constants.COPYFILE_EXCL);
+            try {
+              await xfs.linkPromise(tmpPath, casContentPath);
+            } catch (e) {
+            }
+          } finally {
+            await xfs.unlinkPromise(tmpPath);
           }
-        } catch (e) {}
-        await xfs.linkPromise(casDst, dstPath);
+        }
+        await xfs.linkPromise(casContentPath, dstPath);
         if (nmMode === NodeModulesMode.CAS) {
           await xfs.chmodPromise(dstPath, 0o444);
         }
