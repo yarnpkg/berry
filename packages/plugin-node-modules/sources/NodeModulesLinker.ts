@@ -656,12 +656,14 @@ function makeHash(str: string): string {
   return crypto.createHash(`sha1`).update(str).digest(`hex`);
 }
 
-async function checksumFile(path: PortablePath) {
-  return await new Promise<string>((resolve, reject) => {
+async function checksumFile(path: PortablePath, baseFs: FakeFS<PortablePath>) {
+  const buffers: Array<Buffer> = [];
+  return await new Promise<{content: Buffer, digest: string}>((resolve, reject) => {
     const hash = crypto.createHash(`sha1`);
-    const stream = xfs.createReadStream(path);
+    const stream = baseFs.createReadStream(path);
 
     stream.on(`data`, chunk => {
+      buffers.push(chunk);
       hash.update(chunk);
     });
 
@@ -670,7 +672,7 @@ async function checksumFile(path: PortablePath) {
     });
 
     stream.on(`end`, () => {
-      resolve(hash.digest(`hex`));
+      resolve({content: Buffer.concat(buffers), digest: hash.digest(`hex`)});
     });
   });
 }
@@ -694,13 +696,13 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, relativeP
         }
 
         if (!doesNamePathExist) {
-          const hash = await checksumFile(srcPath);
-          const casContentPath = ppath.join(casDir, toFilename(`${hash}.dat`));
+          const {content, digest} = await checksumFile(srcPath, baseFs);
+          const casContentPath = ppath.join(casDir, toFilename(`${digest}.dat`));
           const doesCasContentExist = await xfs.existsPromise(casContentPath);
           if (!doesCasContentExist) {
             const tmpPath = ppath.join(casDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
             try {
-              await baseFs.copyFilePromise(srcPath, tmpPath, fs.constants.COPYFILE_EXCL);
+              await xfs.writeFilePromise(tmpPath, content);
               try {
                 await xfs.linkPromise(tmpPath, casContentPath);
               } catch (e) {
