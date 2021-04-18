@@ -1,4 +1,4 @@
-const {xfs} = require(`@yarnpkg/fslib`);
+const {npath} = require(`@yarnpkg/fslib`);
 
 describe(`Commands`, () => {
   describe(`exec`, () => {
@@ -14,15 +14,12 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should not expand glob patterns`,
+      `it should allow running shell scripts`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
-
-        await xfs.writeFilePromise(`${path}/echo.js`, `process.stdout.write(process.argv[2])`);
-
-        await expect(run(`exec`, `node`, `echo.js`, `*.js`)).resolves.toMatchObject({
+        await expect(run(`exec`, `echo $(pwd)/package.json`)).resolves.toMatchObject({
           code: 0,
-          stdout: expect.stringContaining(`*.js`),
+          stdout: `${npath.fromPortablePath(path)}/package.json\n`,
         });
       })
     );

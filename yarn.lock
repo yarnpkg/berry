@@ -5674,6 +5674,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.6"
     "@yarnpkg/json-proxy": "workspace:^2.1.1-rc.4"
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.4"
+    "@yarnpkg/shell": "workspace:^3.0.0-rc.6"
     ci-info: ^2.0.0
     clipanion: ^3.0.0-rc.10
     enquirer: ^2.3.6
