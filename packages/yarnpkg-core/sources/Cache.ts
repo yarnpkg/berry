@@ -122,12 +122,12 @@ export class Cache {
   async setup() {
     // mkdir may cause write operations even when directories exist. To ensure that the cache can be successfully used
     // on read-only filesystems, only run mkdir when not running in immutable mode.
-    if (this.immutable) {
-      if (!await xfs.existsPromise(this.cwd)) {
-        throw new Error(`Cache path does not exist.`);
-      }
-    } else {
-      if (!this.configuration.get(`enableGlobalCache`)) {
+    if (!this.configuration.get(`enableGlobalCache`)) {
+      if (this.immutable) {
+        if (!await xfs.existsPromise(this.cwd)) {
+          throw new Error(`Cache path does not exist.`);
+        }
+      } else {
         await xfs.mkdirPromise(this.cwd, {recursive: true});
 
         const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
