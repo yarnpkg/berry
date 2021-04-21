@@ -101,6 +101,8 @@ describe(`Commands`, () => {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
+        // Ensure the cache directory exists
+        await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
       })
     );
@@ -114,7 +116,9 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
+        // Empty, rather than remove the cache
         await xfs.removePromise(`${path}/.yarn/cache`);
+        await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
 
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
       })
