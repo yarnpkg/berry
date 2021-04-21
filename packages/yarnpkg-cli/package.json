@@ -35,9 +35,9 @@
   "devDependencies": {
     "@types/ci-info": "^2",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3",
+    "@yarnpkg/builder": "workspace:*",
+    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/pnpify": "workspace:*",
     "micromatch": "^4.0.2",
     "typescript": "beta"
   },

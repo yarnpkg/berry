@@ -9,12 +9,12 @@
   },
   "devDependencies": {
     "@types/resolve": "^1.17.1",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.2",
-    "@yarnpkg/plugin-patch": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/fslib": "workspace:*",
+    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/plugin-npm": "workspace:*",
+    "@yarnpkg/plugin-patch": "workspace:*",
     "resolve": "^1.17.0",
     "semver": "^7.1.2"
   },

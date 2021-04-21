@@ -17,8 +17,8 @@
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@types/ssri": "^6.0.1",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/plugin-pack": "workspace:*"
   },
   "repository": {
     "type": "git",

@@ -2,7 +2,7 @@ constraints_min_version(1).
 
 % This file is written in Prolog
 % It contains rules that the project must respect.
-% In order to see them in action, run `yarn constraints source`	
+% In order to see them in action, run `yarn constraints source`
 
 % This rule will enforce that a workspace MUST depend on the same version of a dependency as the one used by the other workspaces
 gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType) :-
@@ -12,7 +12,14 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, Depende
     workspace_has_dependency(OtherWorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType2),
   % Ignore peer dependencies
     DependencyType \= 'peerDependencies',
-    DependencyType2 \= 'peerDependencies'.
+    DependencyType2 \= 'peerDependencies',
+  % Ignore devDependencies on other workspaces
+    (
+      (DependencyType = 'devDependencies'; DependencyType2 = 'devDependencies') ->
+        \+ workspace_ident(DependencyCwd, DependencyIdent)
+      ;
+        true
+    ).
 
 % This rule will prevent workspaces from depending on non-workspace versions of available workspaces
 gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, DependencyType) :-
@@ -28,11 +35,20 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, Dependenc
     \+ project_workspaces_by_descriptor(DependencyIdent, DependencyRange, DependencyCwd),
   % Derive the expected range from the version
     (
-      DependencyType \= 'peerDependencies' ->
-        atom_concat('workspace:^', DependencyVersion, WorkspaceRange)
-      ;
+      DependencyType = 'peerDependencies' ->
         atom_concat('^', DependencyVersion, WorkspaceRange)
+      ;
+      DependencyType = 'devDependencies' ->
+        WorkspaceRange = 'workspace:*'
+      ;
+        atom_concat('workspace:^', DependencyVersion, WorkspaceRange)
     ).
+
+% This rule enforces that all workspaces must depend on other workspaces using `workspace:*` in devDependencies
+gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:*', 'devDependencies') :-
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, 'devDependencies'),
+  % Only consider those that target something that could be a workspace
+  workspace_ident(DependencyCwd, DependencyIdent).
 
 % This rule enforces that all packages must not depend on inquirer - we use enquirer instead
 gen_enforced_dependency(WorkspaceCwd, 'inquirer', null, DependencyType) :-

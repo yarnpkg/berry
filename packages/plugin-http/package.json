@@ -11,7 +11,7 @@
     "@yarnpkg/core": "^3.0.0-rc.2"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
   },
   "repository": {
     "type": "git",

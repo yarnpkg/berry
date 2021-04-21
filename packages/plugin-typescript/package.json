@@ -17,10 +17,10 @@
   "devDependencies": {
     "@algolia/requester-common": "4.0.0-beta.14",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/plugin-essentials": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/builder": "workspace:*",
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/plugin-essentials": "workspace:*",
     "typescript": "beta"
   },
   "scripts": {

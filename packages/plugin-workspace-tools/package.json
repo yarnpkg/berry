@@ -17,9 +17,9 @@
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/builder": "workspace:*",
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*",
     "typescript": "beta"
   },
   "scripts": {

@@ -5440,7 +5440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/builder@workspace:^3.0.0-rc.2, @yarnpkg/builder@workspace:packages/yarnpkg-builder":
+"@yarnpkg/builder@workspace:*, @yarnpkg/builder@workspace:^3.0.0-rc.2, @yarnpkg/builder@workspace:packages/yarnpkg-builder":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/builder@workspace:packages/yarnpkg-builder"
   dependencies:
@@ -5454,7 +5454,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^3.0.0-rc.2"
     "@yarnpkg/esbuild-plugin-pnp": "workspace:packages/esbuild-plugin-pnp"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
@@ -5477,17 +5477,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/cli@workspace:^3.0.0-rc.2, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
+"@yarnpkg/cli@workspace:*, @yarnpkg/cli@workspace:^3.0.0-rc.2, @yarnpkg/cli@workspace:packages/yarnpkg-cli":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
     "@types/ci-info": ^2
     "@types/semver": ^7.1.0
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/core": "workspace:^3.0.0-rc.2"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/libzip": "workspace:^2.2.1"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
     "@yarnpkg/plugin-compat": "workspace:^3.0.0-rc.2"
     "@yarnpkg/plugin-dlx": "workspace:^3.0.0-rc.2"
@@ -5504,7 +5504,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2"
     "@yarnpkg/plugin-patch": "workspace:^3.0.0-rc.2"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3"
+    "@yarnpkg/pnpify": "workspace:*"
     "@yarnpkg/shell": "workspace:^3.0.0-rc.2"
     chalk: ^3.0.0
     ci-info: ^2.0.0
@@ -5520,7 +5520,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/core@workspace:^3.0.0-rc.2, @yarnpkg/core@workspace:packages/yarnpkg-core":
+"@yarnpkg/core@workspace:*, @yarnpkg/core@workspace:^3.0.0-rc.2, @yarnpkg/core@workspace:packages/yarnpkg-core":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
@@ -5535,14 +5535,14 @@ __metadata:
     "@types/tar": ^4.0.4
     "@types/treeify": ^1.0.0
     "@types/tunnel": ^0.0.0
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
-    "@yarnpkg/plugin-link": "workspace:^2.1.2-rc.2"
-    "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-link": "workspace:*"
+    "@yarnpkg/plugin-npm": "workspace:*"
+    "@yarnpkg/plugin-pnp": "workspace:*"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.2"
     "@yarnpkg/shell": "workspace:^3.0.0-rc.2"
     camelcase: ^5.3.1
@@ -5578,7 +5578,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
     "@yarnpkg/core": "workspace:^3.0.0-rc.2"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:*"
     clipanion: ^3.0.0-rc.10
     globby: ^11.0.1
     micromatch: ^4.0.2
@@ -5594,7 +5594,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
   dependencies:
-    "@yarnpkg/pnp": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/pnp": "workspace:*"
     esbuild: "npm:esbuild-wasm@^0.8.36"
     tslib: ^1.13.0
   peerDependencies:
@@ -5602,7 +5602,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/eslint-config@workspace:^0.3.0-rc.2, @yarnpkg/eslint-config@workspace:packages/eslint-config":
+"@yarnpkg/eslint-config@workspace:*, @yarnpkg/eslint-config@workspace:packages/eslint-config":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/eslint-config@workspace:packages/eslint-config"
   peerDependencies:
@@ -5620,7 +5620,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/fslib@workspace:^2.5.0-rc.2, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
+"@yarnpkg/fslib@workspace:*, @yarnpkg/fslib@workspace:^2.5.0-rc.2, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
@@ -5750,7 +5750,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/libzip@workspace:^2.2.1, @yarnpkg/libzip@workspace:packages/yarnpkg-libzip":
+"@yarnpkg/libzip@workspace:*, @yarnpkg/libzip@workspace:^2.2.1, @yarnpkg/libzip@workspace:packages/yarnpkg-libzip":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
@@ -5761,7 +5761,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/monorepo@workspace:., @yarnpkg/monorepo@workspace:0.0.0":
+"@yarnpkg/monorepo@workspace:*, @yarnpkg/monorepo@workspace:., @yarnpkg/monorepo@workspace:0.0.0":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/monorepo@workspace:."
   dependencies:
@@ -5784,10 +5784,10 @@ __metadata:
     "@types/node": ^13.7.0
     "@typescript-eslint/eslint-plugin": ^4.11.1
     "@typescript-eslint/parser": ^4.11.1
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/eslint-config": "workspace:^0.3.0-rc.2"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/eslint-config": "workspace:*"
+    "@yarnpkg/pnpify": "workspace:*"
     babel-jest: ^26.0.1
     clipanion: ^3.0.0-rc.10
     eslint: ^6.8.0
@@ -5822,7 +5822,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/parsers@workspace:^2.3.1-rc.2, @yarnpkg/parsers@workspace:packages/yarnpkg-parsers":
+"@yarnpkg/parsers@workspace:*, @yarnpkg/parsers@workspace:^2.3.1-rc.2, @yarnpkg/parsers@workspace:packages/yarnpkg-parsers":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
@@ -5838,12 +5838,12 @@ __metadata:
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
     "@types/resolve": ^1.17.1
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
-    "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-patch": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/fslib": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/plugin-npm": "workspace:*"
+    "@yarnpkg/plugin-patch": "workspace:*"
     resolve: ^1.17.0
     semver: ^7.1.2
   peerDependencies:
@@ -5857,9 +5857,9 @@ __metadata:
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
     "@types/lodash": ^4.14.136
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     clipanion: ^3.0.0-rc.10
     lodash: ^4.17.15
@@ -5877,8 +5877,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
     clipanion: ^3.0.0-rc.10
@@ -5889,7 +5889,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-essentials@workspace:^3.0.0-rc.2, @yarnpkg/plugin-essentials@workspace:packages/plugin-essentials":
+"@yarnpkg/plugin-essentials@workspace:*, @yarnpkg/plugin-essentials@workspace:^3.0.0-rc.2, @yarnpkg/plugin-essentials@workspace:packages/plugin-essentials":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
@@ -5898,8 +5898,8 @@ __metadata:
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/json-proxy": "workspace:^2.1.0"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
@@ -5922,7 +5922,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
     "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     tslib: ^1.13.0
     typescript: beta
@@ -5935,7 +5935,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-file@workspace:packages/plugin-file"
   dependencies:
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     tslib: ^1.13.0
   peerDependencies:
@@ -5943,12 +5943,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-git@workspace:^2.4.0-rc.2, @yarnpkg/plugin-git@workspace:packages/plugin-git":
+"@yarnpkg/plugin-git@workspace:*, @yarnpkg/plugin-git@workspace:^2.4.0-rc.2, @yarnpkg/plugin-git@workspace:packages/plugin-git":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
     "@types/semver": ^7.1.0
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     git-url-parse: 11.1.2
     semver: ^7.1.2
@@ -5962,9 +5962,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-git": "workspace:^2.4.0-rc.2"
+    "@yarnpkg/plugin-git": "workspace:*"
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/core": ^3.0.0-rc.2
@@ -5976,7 +5976,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-http@workspace:packages/plugin-http"
   dependencies:
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     tslib: ^1.13.0
   peerDependencies:
@@ -5989,8 +5989,8 @@ __metadata:
   resolution: "@yarnpkg/plugin-init@workspace:packages/plugin-init"
   dependencies:
     "@types/lodash": ^4.14.136
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     clipanion: ^3.0.0-rc.10
     lodash: ^4.17.15
@@ -6008,11 +6008,11 @@ __metadata:
     "@types/diff": ^4.0.2
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/libui": "workspace:^2.1.2-rc.2"
-    "@yarnpkg/plugin-essentials": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-essentials": "workspace:*"
     algoliasearch: ^4.2.0
     clipanion: ^3.0.0-rc.10
     diff: ^4.0.1
@@ -6029,11 +6029,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-link@workspace:^2.1.2-rc.2, @yarnpkg/plugin-link@workspace:packages/plugin-link":
+"@yarnpkg/plugin-link@workspace:*, @yarnpkg/plugin-link@workspace:^2.1.2-rc.2, @yarnpkg/plugin-link@workspace:packages/plugin-link":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-link@workspace:packages/plugin-link"
   dependencies:
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     tslib: ^1.13.0
   peerDependencies:
@@ -6046,13 +6046,13 @@ __metadata:
   resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
   dependencies:
     "@types/micromatch": ^4.0.1
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-stage": "workspace:*"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.2"
     "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3"
     "@zkochan/cmd-shim": ^4.3.0
@@ -6071,11 +6071,11 @@ __metadata:
   dependencies:
     "@npm/types": ^1.0.1
     "@types/semver": ^7.1.0
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-npm": "workspace:*"
+    "@yarnpkg/plugin-pack": "workspace:*"
     clipanion: ^3.0.0-rc.10
     enquirer: ^2.3.6
     semver: ^7.1.2
@@ -6089,15 +6089,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-npm@workspace:^2.5.0-rc.2, @yarnpkg/plugin-npm@workspace:packages/plugin-npm":
+"@yarnpkg/plugin-npm@workspace:*, @yarnpkg/plugin-npm@workspace:^2.5.0-rc.2, @yarnpkg/plugin-npm@workspace:packages/plugin-npm":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-pack": "workspace:*"
     enquirer: ^2.3.6
     semver: ^7.1.2
     ssri: ^6.0.1
@@ -6108,16 +6108,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-pack@workspace:^3.0.0-rc.2, @yarnpkg/plugin-pack@workspace:packages/plugin-pack":
+"@yarnpkg/plugin-pack@workspace:*, @yarnpkg/plugin-pack@workspace:^3.0.0-rc.2, @yarnpkg/plugin-pack@workspace:packages/plugin-pack":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
     "@types/micromatch": ^4.0.1
     "@types/tar-stream": 1.6.0
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-stage": "workspace:*"
     clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
@@ -6128,12 +6128,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-patch@workspace:^3.0.0-rc.2, @yarnpkg/plugin-patch@workspace:packages/plugin-patch":
+"@yarnpkg/plugin-patch@workspace:*, @yarnpkg/plugin-patch@workspace:^3.0.0-rc.2, @yarnpkg/plugin-patch@workspace:packages/plugin-patch":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-patch@workspace:packages/plugin-patch"
   dependencies:
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/libzip": "workspace:^2.2.1"
     clipanion: ^3.0.0-rc.10
@@ -6144,14 +6144,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-pnp@workspace:^3.0.0-rc.2, @yarnpkg/plugin-pnp@workspace:packages/plugin-pnp":
+"@yarnpkg/plugin-pnp@workspace:*, @yarnpkg/plugin-pnp@workspace:^3.0.0-rc.2, @yarnpkg/plugin-pnp@workspace:packages/plugin-pnp":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.2"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.2"
@@ -6165,13 +6165,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-stage@workspace:^3.0.0-rc.2, @yarnpkg/plugin-stage@workspace:packages/plugin-stage":
+"@yarnpkg/plugin-stage@workspace:*, @yarnpkg/plugin-stage@workspace:^3.0.0-rc.2, @yarnpkg/plugin-stage@workspace:packages/plugin-stage":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-stage@workspace:packages/plugin-stage"
   dependencies:
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     clipanion: ^3.0.0-rc.10
     tslib: ^1.13.0
@@ -6188,10 +6188,10 @@ __metadata:
   dependencies:
     "@algolia/requester-common": 4.0.0-beta.14
     "@types/semver": ^7.1.0
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/plugin-essentials": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/plugin-essentials": "workspace:*"
     "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2"
     algoliasearch: ^4.2.0
     semver: ^7.1.2
@@ -6210,13 +6210,13 @@ __metadata:
   dependencies:
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/libui": "workspace:^2.1.2-rc.2"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
-    "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/plugin-pack": "workspace:*"
     clipanion: ^3.0.0-rc.10
     ink: ^3.0.8
     react: ^16.13.1
@@ -6235,9 +6235,9 @@ __metadata:
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
     "@types/micromatch": ^4.0.1
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
@@ -6251,15 +6251,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/pnp@workspace:^3.0.0-rc.2, @yarnpkg/pnp@workspace:packages/yarnpkg-pnp":
+"@yarnpkg/pnp@workspace:*, @yarnpkg/pnp@workspace:^3.0.0-rc.2, @yarnpkg/pnp@workspace:packages/yarnpkg-pnp":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
     "@types/node": ^13.7.0
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/libzip": "workspace:^2.2.1"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/libzip": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:*"
     resolve.exports: ^1.0.2
     tslib: ^1.13.0
     typescript: beta
@@ -6268,7 +6268,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/pnpify@workspace:^3.0.0-rc.3, @yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify":
+"@yarnpkg/pnpify@workspace:*, @yarnpkg/pnpify@workspace:^3.0.0-rc.3, @yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
@@ -6276,9 +6276,9 @@ __metadata:
     "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^3.0.0-rc.2"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
-    "@yarnpkg/pnp": "workspace:^3.0.0-rc.2"
+    "@yarnpkg/pnp": "workspace:*"
     chalk: ^3.0.0
     clipanion: ^3.0.0-rc.10
     comment-json: ^2.2.0
@@ -6306,7 +6306,7 @@ __metadata:
     "@types/cross-spawn": 6.0.0
     "@types/micromatch": ^4.0.1
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
     clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
@@ -6347,12 +6347,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
   dependencies:
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/fslib": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:*"
     is-wsl: ^2.1.1
-    pkg-tests-core: "workspace:0.0.0"
+    pkg-tests-core: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -20897,7 +20897,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"pkg-tests-core@workspace:0.0.0, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
+"pkg-tests-core@workspace:*, pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core":
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
@@ -20909,16 +20909,16 @@ fsevents@^1.2.7:
     "@types/semver": ^7.1.0
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/fslib": "workspace:*"
+    "@yarnpkg/parsers": "workspace:*"
     finalhandler: ^1.1.2
     invariant: ^2.2.4
     klaw: ^2.1.1
     minimatch: ^3.0.4
     pem: ^1.14.4
-    pkg-tests-fixtures: "workspace:0.0.0"
+    pkg-tests-fixtures: "workspace:*"
     semver: ^7.1.2
     serve-static: ^1.14.1
     super-resolve: ^1.0.0
@@ -20926,11 +20926,11 @@ fsevents@^1.2.7:
   languageName: unknown
   linkType: soft
 
-"pkg-tests-fixtures@workspace:0.0.0, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
+"pkg-tests-fixtures@workspace:*, pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures":
   version: 0.0.0-use.local
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
   dependencies:
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
+    "@yarnpkg/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -20940,14 +20940,14 @@ fsevents@^1.2.7:
   dependencies:
     "@types/lodash": ^4.14.136
     "@types/tar": ^4.0.4
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2"
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/monorepo": "workspace:0.0.0"
-    "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/fslib": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/parsers": "workspace:*"
     fs-extra: ^7.0.1
     lodash: ^4.17.15
-    pkg-tests-core: "workspace:0.0.0"
+    pkg-tests-core: "workspace:*"
     semver: ^7.1.2
     tar: ^6.0.5
   languageName: unknown
@@ -27605,9 +27605,9 @@ typescript@beta:
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
     "@types/vscode": ^1.54.0
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
-    "@yarnpkg/libzip": "workspace:^2.2.1"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3"
+    "@yarnpkg/fslib": "workspace:*"
+    "@yarnpkg/libzip": "workspace:*"
+    "@yarnpkg/pnpify": "workspace:*"
     ts-loader: ^7.0.5
     tslib: ^1.13.0
     typescript: beta

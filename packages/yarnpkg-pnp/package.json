@@ -10,9 +10,9 @@
     "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/libzip": "workspace:^2.2.1",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
+    "@yarnpkg/builder": "workspace:*",
+    "@yarnpkg/libzip": "workspace:*",
+    "@yarnpkg/monorepo": "workspace:*",
     "typescript": "beta",
     "webpack": "^5.1.1",
     "webpack-cli": "^4.0.0-beta.8"
