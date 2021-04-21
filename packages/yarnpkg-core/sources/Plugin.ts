@@ -135,6 +135,13 @@ export type Hooks = {
     project: Project,
     definePath: (path: PortablePath | null) => void,
   ) => Promise<void>,
+
+  /**
+   * Called when user requests to clean global cache
+   */
+  cleanGlobalArtifacts?: (
+    configuration: Configuration,
+  ) => Promise<void>;
 };
 
 export type Plugin<PluginHooks = any> = {

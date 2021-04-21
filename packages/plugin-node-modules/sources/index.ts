@@ -1,7 +1,9 @@
-import {Plugin, SettingsType}               from '@yarnpkg/core';
+import {Hooks, Plugin, SettingsType}        from '@yarnpkg/core';
+import {xfs}                                from '@yarnpkg/fslib';
 import {NodeModulesHoistingLimits}          from '@yarnpkg/pnpify';
 
 import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
+import {getCasDirectory}                    from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
 declare module '@yarnpkg/core' {
@@ -11,7 +13,13 @@ declare module '@yarnpkg/core' {
   }
 }
 
-const plugin: Plugin = {
+const plugin: Plugin<Hooks> = {
+  hooks: {
+    cleanGlobalArtifacts: async configuration => {
+      const casDirectory = getCasDirectory(configuration);
+      await xfs.removePromise(casDirectory);
+    },
+  },
   configuration: {
     nmHoistingLimits: {
       description: `Prevent packages to be hoisted past specific levels`,

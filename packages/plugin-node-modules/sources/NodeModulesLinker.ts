@@ -1,19 +1,19 @@
-import {MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor, DependencyMeta, IdentHash} from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                                from '@yarnpkg/core';
-import {Locator, Package, FinalizeInstallStatus}                                                          from '@yarnpkg/core';
-import {structUtils, Report, Manifest, miscUtils, formatUtils}                                            from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                                    from '@yarnpkg/fslib';
-import {PortablePath, npath, ppath, toFilename, Filename}                                                 from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                                 from '@yarnpkg/libzip';
-import {parseSyml}                                                                                        from '@yarnpkg/parsers';
-import {jsInstallUtils}                                                                                   from '@yarnpkg/plugin-pnp';
-import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}                                from '@yarnpkg/pnpify';
-import {buildNodeModulesTree}                                                                             from '@yarnpkg/pnpify';
-import {PnpApi, PackageInformation}                                                                       from '@yarnpkg/pnp';
-import cmdShim                                                                                            from '@zkochan/cmd-shim';
-import {UsageError}                                                                                       from 'clipanion';
-import crypto                                                                                             from 'crypto';
-import fs                                                                                                 from 'fs';
+import {MessageName, Project, FetchResult, Installer, LocatorHash, Descriptor, DependencyMeta, IdentHash, Configuration} from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                                                               from '@yarnpkg/core';
+import {Locator, Package, FinalizeInstallStatus}                                                                         from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, formatUtils}                                                           from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                                                                   from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, toFilename, Filename}                                                                from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                                                from '@yarnpkg/libzip';
+import {parseSyml}                                                                                                       from '@yarnpkg/parsers';
+import {jsInstallUtils}                                                                                                  from '@yarnpkg/plugin-pnp';
+import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}                                               from '@yarnpkg/pnpify';
+import {buildNodeModulesTree}                                                                                            from '@yarnpkg/pnpify';
+import {PnpApi, PackageInformation}                                                                                      from '@yarnpkg/pnp';
+import cmdShim                                                                                                           from '@zkochan/cmd-shim';
+import {UsageError}                                                                                                      from 'clipanion';
+import crypto                                                                                                            from 'crypto';
+import fs                                                                                                                from 'fs';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -869,9 +869,8 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
 
-function getCasDir(project: Project, nmMode: NodeModulesMode): PortablePath | null {
-  return nmMode === NodeModulesMode.CAS ?
-    `${project.configuration.get(`globalFolder`)}/cas/v1` as PortablePath : null;
+export function getCasDirectory(configuration: Configuration): PortablePath {
+  return `${configuration.get(`globalFolder`)}/cas` as PortablePath;
 }
 
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, identChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, identChecksums: Map<IdentHash, string | null>}) {
@@ -1099,13 +1098,13 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // source directory. We'll later use the resulting install directories for
     // the other instances of the same package (this will avoid us having to
     // crawl the zip archives for each package).
-    const casDir = getCasDir(project, nmMode);
-    if (casDir)
-      await xfs.mkdirpPromise(casDir);
+    const casDirectory = nmMode === NodeModulesMode.CAS ? `${getCasDirectory(project.configuration)}/v1` as PortablePath : null;
+    if (casDirectory)
+      await xfs.mkdirpPromise(casDirectory);
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
         persistedLocations.set(entry.srcDir, entry.dstDir);
-        await addModule({...entry, casDir, nmMode, packageChecksum: identChecksums.get(entry.identHash) || null});
+        await addModule({...entry, casDir: casDirectory, nmMode, packageChecksum: identChecksums.get(entry.identHash) || null});
       }
     }
 
