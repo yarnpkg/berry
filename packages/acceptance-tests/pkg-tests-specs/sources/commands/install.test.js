@@ -95,6 +95,15 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should refuse to create a cache when using --immutable-cache`,
+      makeTemporaryEnv({
+        dependencies: {},
+      }, async ({path, run, source}) => {
+        await expect(run(`install`, `--immutable-cache`)).rejects.toThrowError(/Cache path does not exist/);
+      })
+    );
+
+    test(
       `it should refuse to add files to the cache when using --immutable-cache`,
       makeTemporaryEnv({
         dependencies: {

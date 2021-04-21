@@ -125,7 +125,7 @@ export class Cache {
     if (!this.configuration.get(`enableGlobalCache`)) {
       if (this.immutable) {
         if (!await xfs.existsPromise(this.cwd)) {
-          throw new Error(`Cache path does not exist.`);
+          throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache path does not exist.`);
         }
       } else {
         await xfs.mkdirPromise(this.cwd, {recursive: true});
