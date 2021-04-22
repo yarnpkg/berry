@@ -3815,6 +3815,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rushstack/eslint-patch@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@rushstack/eslint-patch@npm:1.0.6"
+  checksum: fbecc15d7e95186622514d86f566082f1f6d04c30d93830bffe154fd699780f32120bbbce2efb919658696af01c58f0e02e580941ede8eee8cc9b007637b639c
+  languageName: node
+  linkType: hard
+
 "@sindresorhus/is@npm:^0.14.0":
   version: 0.14.0
   resolution: "@sindresorhus/is@npm:0.14.0"
@@ -5605,16 +5612,16 @@ __metadata:
 "@yarnpkg/eslint-config@workspace:*, @yarnpkg/eslint-config@workspace:packages/eslint-config":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/eslint-config@workspace:packages/eslint-config"
+  dependencies:
+    "@rushstack/eslint-patch": ^1.0.6
+    "@typescript-eslint/eslint-plugin": ^4.11.1
+    "@typescript-eslint/parser": ^4.11.1
+    eslint-plugin-arca: ^0.10.0
+    eslint-plugin-react: ^7.20.0
   peerDependencies:
-    "@typescript-eslint/eslint-plugin": "*"
-    "@typescript-eslint/parser": "*"
     eslint: "*"
-    eslint-plugin-arca: "*"
-    eslint-plugin-react: "*"
     typescript: "*"
   peerDependenciesMeta:
-    eslint-plugin-react:
-      optional: true
     typescript:
       optional: true
   languageName: unknown
@@ -5782,8 +5789,6 @@ __metadata:
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
     "@types/node": ^13.7.0
-    "@typescript-eslint/eslint-plugin": ^4.11.1
-    "@typescript-eslint/parser": ^4.11.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/eslint-config": "workspace:*"
@@ -5791,8 +5796,6 @@ __metadata:
     babel-jest: ^26.0.1
     clipanion: ^3.0.0-rc.10
     eslint: ^6.8.0
-    eslint-plugin-arca: ^0.10.0
-    eslint-plugin-react: ^7.20.0
     github-api: ^3.2.2
     jest: ^26.0.1
     jest-environment-node: ^26.0.1
