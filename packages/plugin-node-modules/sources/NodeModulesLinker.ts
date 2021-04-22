@@ -677,58 +677,60 @@ async function checksumFile(path: PortablePath, baseFs: FakeFS<PortablePath>) {
   });
 }
 
+async function copyFilePromise({srcPath, dstPath, relativePath, casDir, baseFs, nmMode, packageChecksum}: {srcPath: PortablePath, dstPath: PortablePath, relativePath: PortablePath, casDir: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, packageChecksum: string | null}) {
+  const srcStat = await baseFs.lstatPromise(srcPath);
+  if (nmMode === NodeModulesMode.CAS && casDir && packageChecksum) {
+    const casNamePath = ppath.join(casDir, makeHash(`${packageChecksum}/${relativePath}`) as Filename);
+
+    let doesNamePathExist;
+    try {
+      await xfs.linkPromise(casNamePath, dstPath);
+      doesNamePathExist = true;
+    } catch (e) {
+      doesNamePathExist = false;
+    }
+
+    if (!doesNamePathExist) {
+      const {content, digest} = await checksumFile(srcPath, baseFs);
+      const casContentPath = ppath.join(casDir, toFilename(`${digest}.dat`));
+      const doesCasContentExist = await xfs.existsPromise(casContentPath);
+      if (!doesCasContentExist) {
+        const tmpPath = ppath.join(casDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+        try {
+          await xfs.writeFilePromise(tmpPath, content);
+          try {
+            await xfs.linkPromise(tmpPath, casContentPath);
+          } catch (e) {
+          }
+        } finally {
+          await xfs.unlinkPromise(tmpPath);
+        }
+      }
+      try {
+        await xfs.linkPromise(casContentPath, casNamePath);
+      } catch (e) {
+      }
+      await xfs.linkPromise(casNamePath, dstPath);
+    }
+
+    await xfs.chmodPromise(dstPath, 0o444);
+  } else {
+    await baseFs.copyFilePromise(srcPath, dstPath);
+    const mode = srcStat.mode & 0o777;
+    // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
+    if (mode !== 0o644) {
+      await xfs.chmodPromise(dstPath, mode);
+    }
+  }
+}
+
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, relativePath: PortablePath, {baseFs, casDir, nmMode, packageChecksum, innerLoop}: {baseFs: FakeFS<PortablePath>, casDir: PortablePath | null, nmMode: NodeModulesMode, packageChecksum: string | null, innerLoop?: boolean}) => {
   await xfs.mkdirPromise(dstDir, {recursive: true});
   const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
 
   const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent, relativePath: PortablePath) => {
     if (srcType.isFile()) {
-      const srcStat = await baseFs.lstatPromise(srcPath);
-      if (casDir && packageChecksum) {
-        const casNamePath = ppath.join(casDir, makeHash(`${packageChecksum}/${relativePath}`) as Filename);
-
-        let doesNamePathExist;
-        try {
-          await xfs.linkPromise(casNamePath, dstPath);
-          doesNamePathExist = true;
-        } catch (e) {
-          doesNamePathExist = false;
-        }
-
-        if (!doesNamePathExist) {
-          const {content, digest} = await checksumFile(srcPath, baseFs);
-          const casContentPath = ppath.join(casDir, toFilename(`${digest}.dat`));
-          const doesCasContentExist = await xfs.existsPromise(casContentPath);
-          if (!doesCasContentExist) {
-            const tmpPath = ppath.join(casDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
-            try {
-              await xfs.writeFilePromise(tmpPath, content);
-              try {
-                await xfs.linkPromise(tmpPath, casContentPath);
-              } catch (e) {
-              }
-            } finally {
-              await xfs.unlinkPromise(tmpPath);
-            }
-          }
-          try {
-            await xfs.linkPromise(casContentPath, casNamePath);
-          } catch (e) {
-          }
-          await xfs.linkPromise(casNamePath, dstPath);
-        }
-
-        if (nmMode === NodeModulesMode.CAS) {
-          await xfs.chmodPromise(dstPath, 0o444);
-        }
-      } else {
-        await baseFs.copyFilePromise(srcPath, dstPath);
-        const mode = srcStat.mode & 0o777;
-        // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
-        if (mode !== 0o644) {
-          await xfs.chmodPromise(dstPath, mode);
-        }
-      }
+      await copyFilePromise({srcPath, dstPath, relativePath, packageChecksum, nmMode, baseFs, casDir});
     } else if (srcType.isSymbolicLink()) {
       const target = await baseFs.readlinkPromise(srcPath);
       await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), target), dstPath);
