@@ -3,9 +3,9 @@ import {getLibzipPromise}                                                       
 import {PassThrough, Readable}                                                            from 'stream';
 import tar                                                                                from 'tar';
 
-import {WorkerPool}                                                                       from "./WorkerPool";
-import {getContent as getZipWorkerSource, ConvertToZipPayload}                            from "./ZipWorker";
+import {WorkerPool}                                                                       from './WorkerPool';
 import * as miscUtils                                                                     from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                            from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,

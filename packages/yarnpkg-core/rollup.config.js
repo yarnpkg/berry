@@ -1,8 +1,8 @@
-import cjs                  from "@rollup/plugin-commonjs";
-import resolve              from "@rollup/plugin-node-resolve";
-import path                 from "path";
-import esbuild              from "rollup-plugin-esbuild";
-import {brotliCompressSync} from "zlib";
+import cjs                  from '@rollup/plugin-commonjs';
+import resolve              from '@rollup/plugin-node-resolve';
+import path                 from 'path';
+import esbuild              from 'rollup-plugin-esbuild';
+import {brotliCompressSync} from 'zlib';
 
 function wrapOutput() {
   return {
@@ -11,6 +11,7 @@ function wrapOutput() {
       const bundles = Object.keys(bundle);
       if (bundles.length !== 1)
         throw new Error(`Expected only one bundle, got ${bundles.length}`);
+
       const outputBundle = bundle[bundles[0]];
 
       outputBundle.code = `let hook;\n\nmodule.exports.getContent = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(
@@ -23,9 +24,9 @@ function wrapOutput() {
 // eslint-disable-next-line arca/no-default-export
 export default [
   {
-    input: `./sources/ZipWorker/Worker.ts`,
+    input: `./sources/worker-zip/Worker.ts`,
     output: {
-      file: `./sources/ZipWorker/index.js`,
+      file: `./sources/worker-zip/index.js`,
       format: `cjs`,
       strict: false,
       preferConst: true,
