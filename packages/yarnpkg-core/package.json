@@ -27,6 +27,7 @@
     "micromatch": "^4.0.2",
     "mkdirp": "^0.5.1",
     "p-limit": "^2.2.0",
+    "p-queue": "^6.0.0",
     "pluralize": "^7.0.0",
     "pretty-bytes": "^5.1.0",
     "semver": "^7.1.2",
@@ -38,6 +39,8 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/ci-info": "^2",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",
@@ -49,9 +52,14 @@
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/plugin-link": "workspace:*",
     "@yarnpkg/plugin-npm": "workspace:*",
-    "@yarnpkg/plugin-pnp": "workspace:*"
+    "@yarnpkg/plugin-pnp": "workspace:*",
+    "esbuild": "npm:esbuild-wasm@^0.8.36",
+    "rollup": "^2.43.0",
+    "rollup-plugin-esbuild": "^3.0.2"
   },
   "scripts": {
+    "build:zip:worker": "rollup -c",
+    "update:zip:worker": "run build:zip:worker",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
