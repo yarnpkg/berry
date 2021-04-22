@@ -21,9 +21,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   // Splits a require request into its components, or return null if the request is a file path
-  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
   // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
@@ -528,7 +529,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && builtinModules.has(request))
+    if (considerBuiltins && isBuiltinModule(request))
       return null;
 
     const requestForDisplay = getPathForDisplay(request);
@@ -697,7 +698,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && builtinModules.has(request)) {
+        if (!considerBuiltins && isBuiltinModule(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
@@ -829,7 +830,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         ? isPathIgnored(issuer)
         : false;
 
-    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored()
+    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored()
       ? resolveUnqualifiedExport(request, unqualifiedPath)
       : unqualifiedPath;
 
