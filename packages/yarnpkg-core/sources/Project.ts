@@ -1211,7 +1211,7 @@ export class Project {
         if (this.storedBuildState.has(pkg.locatorHash))
           report.reportInfo(MessageName.MUST_REBUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be rebuilt because its dependency tree changed`);
         else
-          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before or the last one failed`);
+          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never has been before or the last one failed`);
 
         for (const location of buildInfo.buildLocations) {
           if (!ppath.isAbsolute(location))
