@@ -156,7 +156,7 @@ jobs:
         node:
         - 12
         - 14
-        - 15
+        - 16
         platform:
         - ubuntu-latest
         - windows-latest
