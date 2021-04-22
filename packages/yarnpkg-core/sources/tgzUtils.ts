@@ -4,9 +4,7 @@ import {PassThrough, Readable}                                                  
 import tar                                                                                from 'tar';
 
 import {WorkerPool}                                                                       from "./WorkerPool";
-// @ts-expect-error
-import getWorkerSource                                                                    from "./ZipConvertWorkerSource";
-import type {ConvertToZipPayload}                                                         from './ZipConvertWorker';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                            from "./ZipWorker";
 import * as miscUtils                                                                     from './miscUtils';
 
 interface MakeArchiveFromDirectoryOptions {
@@ -56,7 +54,7 @@ export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-  workerPool ||= new WorkerPool(getWorkerSource());
+  workerPool ||= new WorkerPool(getZipWorkerSource());
 
   await workerPool.run({tmpFile, tgz, opts});
 

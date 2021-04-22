@@ -13,7 +13,7 @@ function wrapOutput() {
         throw new Error(`Expected only one bundle, got ${bundles.length}`);
       const outputBundle = bundle[bundles[0]];
 
-      outputBundle.code = `let hook;\n\nmodule.exports = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(
+      outputBundle.code = `let hook;\n\nmodule.exports.getContent = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(
         outputBundle.code.replace(/\r\n/g, `\n`)
       ).toString(`base64`)}', 'base64')).toString();\n\n  return hook;\n};\n`;
     },
@@ -23,9 +23,9 @@ function wrapOutput() {
 // eslint-disable-next-line arca/no-default-export
 export default [
   {
-    input: `./sources/ZipConvertWorker.ts`,
+    input: `./sources/ZipWorker/Worker.ts`,
     output: {
-      file: `./sources/ZipConvertWorkerSource.js`,
+      file: `./sources/ZipWorker/index.js`,
       format: `cjs`,
       strict: false,
       preferConst: true,

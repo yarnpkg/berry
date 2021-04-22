@@ -2,7 +2,7 @@ import {PortablePath, ZipFS}                    from '@yarnpkg/fslib';
 import {getLibzipPromise}                       from '@yarnpkg/libzip';
 import {parentPort}                             from 'worker_threads';
 
-import {extractArchiveTo, ExtractBufferOptions} from './tgzUtils';
+import {extractArchiveTo, ExtractBufferOptions} from '../tgzUtils';
 
 export type ConvertToZipPayload = {tmpFile: PortablePath, tgz: Buffer, opts: ExtractBufferOptions};
 
