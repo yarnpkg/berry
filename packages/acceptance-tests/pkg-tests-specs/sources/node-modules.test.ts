@@ -1168,4 +1168,41 @@ describe(`Node_Modules`, () => {
       }
     )
   );
+
+  test(`should wire via hardlinks files having the same content when in nmMode: cas`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep1: `file:./dep1`,
+          dep2: `file:./dep2`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `cas`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep1/package.json` as Filename), {
+          name: `dep1`,
+          version: `1.0.0`,
+        });
+
+        const content = `The same content`;
+        await xfs.writeFilePromise(ppath.resolve(path, `dep1/index.js` as Filename), content);
+
+        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+          name: `dep2`,
+          version: `1.0.0`,
+        });
+        await xfs.writeFilePromise(ppath.resolve(path, `dep2/index.js` as Filename), content);
+
+        await run(`install`);
+
+        const stats1 = await xfs.statPromise(`${path}/node_modules/dep1/index.js` as PortablePath);
+        const stats2 = await xfs.statPromise(`${path}/node_modules/dep2/index.js` as PortablePath);
+
+        expect(stats1.ino).toEqual(stats2.ino);
+      }
+    )
+  );
 });
