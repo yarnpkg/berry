@@ -25,7 +25,7 @@ exports[`Commands install it should print the logs to the standard output when u
 ➤ YN0013: │ no-deps-scripted@npm:1.0.0 can't be found in the cache and will be fetched from the remote registry
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
-➤ YN0007: │ no-deps-scripted@npm:1.0.0 must be built because it never did before or the last one failed
+➤ YN0007: │ no-deps-scripted@npm:1.0.0 must be built because it never has been before or the last one failed
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT preinstall out
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDERR preinstall err
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT install out
@@ -77,7 +77,7 @@ Object {
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
-➤ YN0007: │ foo@workspace:workspace must be built because it never did before or the last one failed
+➤ YN0007: │ foo@workspace:workspace must be built because it never has been before or the last one failed
 ➤ YN0000: └ Completed
 ➤ YN0000: Done
 ",
