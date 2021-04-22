@@ -83,6 +83,18 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `^16.8.2`,
     },
   }],
+  // https://github.com/xz64/license-webpack-plugin/pull/100
+  [`license-webpack-plugin@*`, {
+    peerDependenciesMeta: {
+      [`webpack`]: optionalPeerDep,
+    },
+  }],
+  // https://github.com/snowpackjs/snowpack/issues/3158
+  [`snowpack@>=3.3.0`, {
+    dependencies: {
+      [`node-gyp`]: `^7.1.0`,
+    },
+  }],
   // https://github.com/iarna/promise-inflight/pull/4
   [`promise-inflight@*`, {
     peerDependenciesMeta: {
