@@ -713,7 +713,8 @@ async function copyFilePromise({srcPath, dstPath, relativePath, casDir, baseFs, 
       await xfs.linkPromise(casNamePath, dstPath);
     }
 
-    await xfs.chmodPromise(dstPath, 0o444);
+    const mode = srcStat.mode & 0o555;
+    await xfs.chmodPromise(dstPath, mode);
   } else {
     await baseFs.copyFilePromise(srcPath, dstPath);
     const mode = srcStat.mode & 0o777;
@@ -724,31 +725,46 @@ async function copyFilePromise({srcPath, dstPath, relativePath, casDir, baseFs, 
   }
 }
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, relativePath: PortablePath, {baseFs, casDir, nmMode, packageChecksum, innerLoop}: {baseFs: FakeFS<PortablePath>, casDir: PortablePath | null, nmMode: NodeModulesMode, packageChecksum: string | null, innerLoop?: boolean}) => {
-  await xfs.mkdirPromise(dstDir, {recursive: true});
-  const entries = await baseFs.readdirPromise(srcDir, {withFileTypes: true});
+type DirEntry = {
+  isFile: boolean;
+  isSymbolicLink: boolean;
+  isDirectory: boolean;
+};
 
-  const copy = async (dstPath: PortablePath, srcPath: PortablePath, srcType: fs.Dirent, relativePath: PortablePath) => {
-    if (srcType.isFile()) {
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, casDir, nmMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, casDir: PortablePath | null, nmMode: NodeModulesMode, packageChecksum: string | null}) => {
+  await xfs.mkdirPromise(dstDir, {recursive: true});
+
+  const getEntriesRecursive = async (relativePath: PortablePath = PortablePath.dot): Promise<Map<PortablePath, DirEntry>> => {
+    const entries = await baseFs.readdirPromise(ppath.join(srcDir, relativePath), {withFileTypes: true});
+    const entryMap = new Map();
+
+    for (const entry of entries) {
+      const relativeEntryPath = ppath.join(relativePath, entry.name);
+      entryMap.set(relativeEntryPath, {isFile: entry.isFile(), isSymbolicLink: entry.isSymbolicLink(), isDirectory: entry.isDirectory()});
+      if (entry.isDirectory() && relativeEntryPath !== NODE_MODULES) {
+        const childEntries = await getEntriesRecursive(relativeEntryPath);
+        for (const [childRelativePath, childEntry] of childEntries) {
+          entryMap.set(childRelativePath, childEntry);
+        }
+      }
+    }
+
+    return entryMap;
+  };
+
+  const allEntries = await getEntriesRecursive();
+  for (const [relativePath, entry] of allEntries) {
+    const srcPath = ppath.join(srcDir, relativePath);
+    const dstPath = ppath.join(dstDir, relativePath);
+    if (entry.isDirectory) {
+      await xfs.mkdirPromise(dstPath, {recursive: true});
+    } else if (entry.isFile) {
       await copyFilePromise({srcPath, dstPath, relativePath, packageChecksum, nmMode, baseFs, casDir});
-    } else if (srcType.isSymbolicLink()) {
+    } else if (entry.isSymbolicLink) {
       const target = await baseFs.readlinkPromise(srcPath);
       await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), target), dstPath);
     } else {
       throw new Error(`Unsupported file type (file: ${srcPath}, mode: 0o${await xfs.statSync(srcPath).mode.toString(8).padStart(6, `0`)})`);
-    }
-  };
-
-  for (const entry of entries) {
-    const srcPath = ppath.join(srcDir, toFilename(entry.name));
-    const dstPath = ppath.join(dstDir, toFilename(entry.name));
-    const entryRelativePath = ppath.join(relativePath, entry.name);
-    if (entry.isDirectory()) {
-      if (entry.name !== NODE_MODULES || innerLoop) {
-        await copyPromise(dstPath, srcPath, entryRelativePath, {baseFs, casDir, nmMode, packageChecksum, innerLoop: true});
-      }
-    } else {
-      await copy(dstPath, srcPath, entry, entryRelativePath);
     }
   }
 };
@@ -890,7 +906,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
-          await copyPromise(dstDir, srcDir, PortablePath.dot, {baseFs, casDir, nmMode, packageChecksum});
+          await copyPromise(dstDir, srcDir, {baseFs, casDir, nmMode, packageChecksum});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
