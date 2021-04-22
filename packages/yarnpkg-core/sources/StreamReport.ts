@@ -243,7 +243,7 @@ export class StreamReport extends Report {
       this.reportInfo(null, `┌ ${what}`);
       this.indent += 1;
 
-      if (GROUP !== null) {
+      if (GROUP !== null && !this.json) {
         this.stdout.write(GROUP.start(what));
       }
     }};
@@ -269,7 +269,7 @@ export class StreamReport extends Report {
       if (mark.committed) {
         this.indent -= 1;
 
-        if (GROUP !== null)
+        if (GROUP !== null && !this.json)
           this.stdout.write(GROUP.end(what));
 
         if (this.configuration.get(`enableTimers`) && after - before > 200) {
@@ -291,7 +291,7 @@ export class StreamReport extends Report {
       this.reportInfo(null, `┌ ${what}`);
       this.indent += 1;
 
-      if (GROUP !== null) {
+      if (GROUP !== null && !this.json) {
         this.stdout.write(GROUP.start(what));
       }
     }};
@@ -317,7 +317,7 @@ export class StreamReport extends Report {
       if (mark.committed) {
         this.indent -= 1;
 
-        if (GROUP !== null)
+        if (GROUP !== null && !this.json)
           this.stdout.write(GROUP.end(what));
 
         if (this.configuration.get(`enableTimers`) && after - before > 200) {
