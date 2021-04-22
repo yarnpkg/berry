@@ -48108,9 +48108,12 @@ function getPathForDisplay(p) {
 function applyPatch(pnpapi, opts) {
   // @ts-expect-error
   const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
+
+  const isBuiltinModule = request => builtinModules.has(request) || request.startsWith(`node:`);
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
    */
+
 
   const defaultCache = {};
   /**
@@ -48151,7 +48154,7 @@ function applyPatch(pnpapi, opts) {
   external_module_.Module._load = function (request, parent, isMain) {
     if (!enableNativeHooks) return originalModuleLoad.call(external_module_.Module, request, parent, isMain); // Builtins are managed by the regular Node loader
 
-    if (builtinModules.has(request)) {
+    if (isBuiltinModule(request)) {
       try {
         enableNativeHooks = false;
         return originalModuleLoad.call(external_module_.Module, request, parent, isMain);
@@ -48265,7 +48268,7 @@ function applyPatch(pnpapi, opts) {
   const originalModuleResolveFilename = external_module_.Module._resolveFilename;
 
   external_module_.Module._resolveFilename = function (request, parent, isMain, options) {
-    if (builtinModules.has(request)) return request;
+    if (isBuiltinModule(request)) return request;
     if (!enableNativeHooks) return originalModuleResolveFilename.call(external_module_.Module, request, parent, isMain, options);
 
     if (options && options.plugnplay === false) {
@@ -48621,9 +48624,12 @@ function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL); // @ts-expect-error
 
-  const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`))); // Splits a require request into its components, or return null if the request is a file path
+  const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
 
-  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/; // Matches if the path starts with a valid path qualifier (./, ../, /)
+  const isBuiltinModule = request => builtinModules.has(request) || request.startsWith(`node:`); // Splits a require request into its components, or return null if the request is a file path
+
+
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/; // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
 
   const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/; // Matches if the path must point to a directory (ie ends with /)
@@ -49100,7 +49106,7 @@ function makeApi(runtimeState, opts) {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
     if (request === `pnpapi`) return npath.toPortablePath(opts.pnpapiResolution); // Bailout if the request is a native module
 
-    if (considerBuiltins && builtinModules.has(request)) return null;
+    if (considerBuiltins && isBuiltinModule(request)) return null;
     const requestForDisplay = getPathForDisplay(request);
     const issuerForDisplay = issuer && getPathForDisplay(issuer); // We allow disabling the pnp resolution for some subpaths.
     // This is because some projects, often legacy, contain multiple
@@ -49249,7 +49255,7 @@ function makeApi(runtimeState, opts) {
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && builtinModules.has(request)) {
+        if (!considerBuiltins && isBuiltinModule(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = internalTools_makeError(ErrorCode.UNDECLARED_DEPENDENCY, `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`, {
               request: requestForDisplay,
@@ -49383,7 +49389,7 @@ function makeApi(runtimeState, opts) {
 
     const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
 
-    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath) : unqualifiedPath;
+    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath) : unqualifiedPath;
 
     try {
       return resolveUnqualified(remappedPath, {
