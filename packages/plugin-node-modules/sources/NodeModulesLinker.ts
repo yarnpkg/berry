@@ -1231,7 +1231,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       } else {
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
-        if (ppath.contains(target, projectCwd) !== null) {
+        if (ppath.contains(projectCwd, await xfs.realpathPromise(target)) !== null) {
           await xfs.chmodPromise(target, 0o755);
         }
       }
