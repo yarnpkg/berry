@@ -715,17 +715,14 @@ async function copyFilePromise({srcPath, dstPath, srcMode, casDir, baseFs, nmMod
       const casContentPath = ppath.join(casDir, `${digest}.dat` as Filename);
       await atomicFileWriteIfNotExist(casDir, casContentPath, content);
       await xfs.linkPromise(casNamePath, dstPath);
-      const mode = srcMode & 0o777;
-      await xfs.chmodPromise(dstPath, mode);
     }
   } else {
-    const srcMode = (await baseFs.statPromise(srcPath)).mode;
     await baseFs.copyFilePromise(srcPath, dstPath);
-    const mode = srcMode & 0o777;
-    // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
-    if (mode !== 0o644) {
-      await xfs.chmodPromise(dstPath, mode);
-    }
+  }
+  const mode = srcMode & 0o777;
+  // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
+  if (mode !== 0o644) {
+    await xfs.chmodPromise(dstPath, mode);
   }
 }
 
