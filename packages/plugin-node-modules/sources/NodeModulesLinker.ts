@@ -692,7 +692,7 @@ async function atomicFileWriteIfNotExist(tmpDir: PortablePath, dstPath: Portable
   }
 }
 
-async function copyFilePromise({srcPath, dstPath, casDir, baseFs, nmMode, digest}: {srcPath: PortablePath, dstPath: PortablePath, casDir: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, digest?: string}) {
+async function copyFilePromise({srcPath, dstPath, srcMode, casDir, baseFs, nmMode, digest}: {srcPath: PortablePath, dstPath: PortablePath, srcMode: number, casDir: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, digest?: string}) {
   if (nmMode === NodeModulesMode.CAS && casDir && digest) {
     const casNamePath = ppath.join(casDir, `${digest}.dat` as Filename);
 
@@ -715,6 +715,8 @@ async function copyFilePromise({srcPath, dstPath, casDir, baseFs, nmMode, digest
       const casContentPath = ppath.join(casDir, `${digest}.dat` as Filename);
       await atomicFileWriteIfNotExist(casDir, casContentPath, content);
       await xfs.linkPromise(casNamePath, dstPath);
+      const mode = srcMode & 0o777;
+      await xfs.chmodPromise(dstPath, mode);
     }
   } else {
     const srcMode = (await baseFs.statPromise(srcPath)).mode;
@@ -733,6 +735,7 @@ enum DirEntryKind {
 
 type DirEntry = {
   kind: DirEntryKind.FILE,
+  mode: number,
   digest?: string,
 } | {
   kind: DirEntryKind. DIRECTORY
@@ -754,7 +757,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       let entryValue: DirEntry;
       const srcEntryPath = ppath.join(srcPath, entry.name);
       if (entry.isFile()) {
-        entryValue = {kind: DirEntryKind.FILE};
+        entryValue = {kind: DirEntryKind.FILE, mode: (await baseFs.lstatPromise(srcEntryPath)).mode};
         if (nmMode === NodeModulesMode.CAS) {
           const digest = await checksumFile(srcEntryPath, baseFs);
           entryValue.digest = digest;
@@ -798,7 +801,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
     if (entry.kind === DirEntryKind.DIRECTORY) {
       await xfs.mkdirPromise(dstPath, {recursive: true});
     } else if (entry.kind === DirEntryKind.FILE) {
-      await copyFilePromise({srcPath, dstPath, digest: entry.digest, nmMode, baseFs, casDir});
+      await copyFilePromise({srcPath, dstPath, srcMode: entry.mode, digest: entry.digest, nmMode, baseFs, casDir});
     } else if (entry.kind === DirEntryKind.SYMLINK) {
       await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath);
     }
