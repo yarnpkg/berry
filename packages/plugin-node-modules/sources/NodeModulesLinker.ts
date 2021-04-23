@@ -692,14 +692,20 @@ async function atomicFileWriteIfNotExist(tmpDir: PortablePath, dstPath: Portable
   }
 }
 
-async function copyFilePromise({srcPath, dstPath, srcMode, casDir, baseFs, nmMode, digest}: {srcPath: PortablePath, dstPath: PortablePath, srcMode: number, casDir: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, digest?: string}) {
+async function copyFilePromise({srcPath, dstPath, casDir, baseFs, nmMode, digest}: {srcPath: PortablePath, dstPath: PortablePath, casDir: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, digest?: string}) {
   if (nmMode === NodeModulesMode.CAS && casDir && digest) {
     const casNamePath = ppath.join(casDir, `${digest}.dat` as Filename);
 
     let doesNamePathExist;
     try {
-      await xfs.linkPromise(casNamePath, dstPath);
-      doesNamePathExist = true;
+      const casDigest = await checksumFile(casNamePath, xfs);
+      if (casDigest !== digest) {
+        await xfs.unlinkPromise(casNamePath);
+        doesNamePathExist = false;
+      } else {
+        await xfs.linkPromise(casNamePath, dstPath);
+        doesNamePathExist = true;
+      }
     } catch (e) {
       doesNamePathExist = false;
     }
@@ -710,10 +716,8 @@ async function copyFilePromise({srcPath, dstPath, srcMode, casDir, baseFs, nmMod
       await atomicFileWriteIfNotExist(casDir, casContentPath, content);
       await xfs.linkPromise(casNamePath, dstPath);
     }
-
-    const mode = srcMode & 0o555;
-    await xfs.chmodPromise(dstPath, mode);
   } else {
+    const srcMode = (await baseFs.statPromise(srcPath)).mode;
     await baseFs.copyFilePromise(srcPath, dstPath);
     const mode = srcMode & 0o777;
     // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
@@ -730,7 +734,6 @@ enum DirEntryKind {
 type DirEntry = {
   kind: DirEntryKind.FILE,
   digest?: string,
-  mode: number,
 } | {
   kind: DirEntryKind. DIRECTORY
 } | {
@@ -751,7 +754,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       let entryValue: DirEntry;
       const srcEntryPath = ppath.join(srcPath, entry.name);
       if (entry.isFile()) {
-        entryValue = {kind: DirEntryKind.FILE, mode: (await baseFs.lstatPromise(srcEntryPath)).mode};
+        entryValue = {kind: DirEntryKind.FILE};
         if (nmMode === NodeModulesMode.CAS) {
           const digest = await checksumFile(srcEntryPath, baseFs);
           entryValue.digest = digest;
@@ -795,7 +798,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
     if (entry.kind === DirEntryKind.DIRECTORY) {
       await xfs.mkdirPromise(dstPath, {recursive: true});
     } else if (entry.kind === DirEntryKind.FILE) {
-      await copyFilePromise({srcPath, dstPath, srcMode: entry.mode!, digest: entry.digest, nmMode, baseFs, casDir});
+      await copyFilePromise({srcPath, dstPath, digest: entry.digest, nmMode, baseFs, casDir});
     } else if (entry.kind === DirEntryKind.SYMLINK) {
       await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath);
     }
