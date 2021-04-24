@@ -63,9 +63,9 @@ const moduleWrapper = tsserver => {
           // and convert scheme to supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
           case `coc-nvim`: {
             if (isVirtual(str)) {
-              str = normalize(resolved);
+              str = resolved;
             }
-            str = str.replace(/\.zip\//, `.zip::`);
+            str = normalize(str).replace(/\.zip\//, `.zip::`);
             str = resolve(`zipfile:${str}`);
           } break;
 
