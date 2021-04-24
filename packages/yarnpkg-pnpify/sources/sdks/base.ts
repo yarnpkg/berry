@@ -41,6 +41,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const pnpApi = require(\`pnpapi\`);
 
       const isVirtual = str => str.match(/\\/(\\$\\$virtual|__virtual__)\\//);
+      const normalize = str => str.replace(/\\\\/g, \`/\`).replace(/^\\/?/, \`/\`);
 
       const dependencyTreeRoots = new Set(pnpApi.getDependencyTreeRoots().map(locator => {
         return \`\${locator.name}@\${locator.reference}\`;
@@ -63,14 +64,15 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // with peer dep (otherwise jumping into react-dom would show resolution
           // errors on react).
           //
-          const resolved = pnpApi.resolveVirtual(str);
-          const normalize = str => str.replace(/\\\\/g, \`/\`).replace(/^\\/?/, \`/\`);
+          const resolved = isVirtual(str) ? pnpApi.resolveVirtual(str) : str;
           if (resolved) {
             const locator = pnpApi.findPackageLocator(resolved);
             if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`)) {
-             str = normalize(resolved);
+              str = resolved;
             }
           }
+
+          str = normalize(str);
 
           if (str.match(/\\.zip\\//)) {
             switch (hostInfo) {
@@ -89,10 +91,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               // We have to resolve the actual file system path from virtual path
               // and convert scheme to supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
               case \`coc-nvim\`: {
-                if (isVirtual(str)) {
-                  str = resolved;
-                }
-                str = normalize(str).replace(/\\.zip\\//, \`.zip::\`);
+                str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
                 str = resolve(\`zipfile:\${str}\`);
               } break;
 
