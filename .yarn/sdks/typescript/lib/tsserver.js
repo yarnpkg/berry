@@ -35,25 +35,42 @@ const moduleWrapper = tsserver => {
       // errors on react).
       //
       const resolved = pnpApi.resolveVirtual(str);
+      const normalize = str => str.replace(/\\/g, `/`).replace(/^\/?/, `/`);
       if (resolved) {
         const locator = pnpApi.findPackageLocator(resolved);
         if (locator && dependencyTreeRoots.has(`${locator.name}@${locator.reference}`)) {
-         str = resolved;
+         str = normalize(resolved);
         }
       }
 
-      str = str.replace(/\\/g, `/`)
-      str = str.replace(/^\/?/, `/`);
-
-      // Absolute VSCode `Uri.fsPath`s need to start with a slash.
-      // VSCode only adds it automatically for supported schemes,
-      // so we have to do it manually for the `zip` scheme.
-      // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
-      //
-      // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-      //
       if (str.match(/\.zip\//)) {
-        str = `${isVSCode ? `^` : ``}zip:${str}`;
+        switch (hostInfo) {
+          // Absolute VSCode `Uri.fsPath`s need to start with a slash.
+          // VSCode only adds it automatically for supported schemes,
+          // so we have to do it manually for the `zip` scheme.
+          // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
+          //
+          // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
+          //
+          case `vscode`: {
+            str = `^zip:${str}`;
+          } break;
+
+          // To make "go to definition" work,
+          // We have to resolve the actual file system path from virtual path
+          // and convert scheme to supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
+          case `coc-nvim`: {
+            if (str.match(/\/(\$\$virtual|__virtual__)\//)) {
+              str = normalize(resolved);
+            }
+            str = str.replace(/\.zip\//, `.zip::`);
+            str = resolve(`zipfile:${str}`);
+          } break;
+
+          default: {
+            str = `zip:${str}`;
+          } break;
+        }
       }
     }
 
@@ -86,7 +103,7 @@ const moduleWrapper = tsserver => {
 
   const Session = tsserver.server.Session;
   const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
-  let isVSCode = false;
+  let hostInfo = `unknown`;
 
   return Object.assign(Session.prototype, {
     onMessage(/** @type {string} */ message) {
@@ -96,9 +113,9 @@ const moduleWrapper = tsserver => {
         parsedMessage != null &&
         typeof parsedMessage === `object` &&
         parsedMessage.arguments &&
-        parsedMessage.arguments.hostInfo === `vscode`
+        typeof parsedMessage.arguments.hostInfo === `string`
       ) {
-        isVSCode = true;
+        hostInfo = parsedMessage.arguments.hostInfo;
       }
 
       return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
