@@ -83,11 +83,11 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
                 str = \`^zip:\${str}\`;
               } break;
 
-              // To make "go to definition work",
-              // resolve the actual file system path from virtual path
-              // and convert to scheme supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
+              // To make "go to definition" work,
+              // We have to resolve the actual file system path from virtual path
+              // and convert scheme to supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
               case \`coc-nvim\`: {
-                str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
+                str = src.replace(/\\.zip\\//, \`.zip::\`);
                 str = resolve(\`zipfile:\${str}\`);
               } break;
 
