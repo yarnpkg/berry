@@ -383,6 +383,10 @@ export class PnpInstaller implements Installer {
     if (await xfs.existsPromise(readyFile))
       return new CwdFS(unplugPath);
 
+    // Delete any build state for the locator so it can run anew, this allows users
+    // to remove `.yarn/unplugged` and have the builds run again
+    this.opts.project.storedBuildState.delete(locator.locatorHash);
+
     await xfs.mkdirPromise(unplugPath, {recursive: true});
     await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
 

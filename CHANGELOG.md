@@ -8,6 +8,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+### Bugfixes
+
+- The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
+
 ## 3.0.0-rc.2
 
 ```
@@ -60,7 +64,7 @@ yarn set version 3.0.0-rc.1
 
 - Yarn now has a proper [governance model](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md).
 - The `node-modules` linker will now ensure that the generated install layouts are terminal, by doing several rounds when needed.
-- The `node-modules` linker will no longer prints warnings about postinstall scripts when a workspace depends on another workspace listing install scripts.
+- The `node-modules` linker will no longer print warnings about postinstall scripts when a workspace depends on another workspace listing install scripts.
 - Peer dependencies depending on their own parent are now properly hoisted by the node-modules linker.
 - Boolean values will be properly interpreted when specified inside the configuration file via the `${ENV_VAR}` syntax.
 - Should any of `preinstall`, `install`, `postinstall` fail, the remaining scripts will be skipped.

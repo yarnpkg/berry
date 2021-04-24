@@ -1899,4 +1899,33 @@ describe(`Plug'n'Play`, () => {
       }
     )
   );
+
+  test(
+    `it should run the install scripts anew if the unplugged folder is removed`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-scripted': `*`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringContaining(`YN0007`),
+        });
+
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.not.stringContaining(`YN0007`),
+        });
+
+        await xfs.removePromise(ppath.join(path, `.yarn/unplugged`));
+
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringContaining(`YN0007`),
+        });
+      }
+    )
+  );
 });
