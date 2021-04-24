@@ -1087,8 +1087,6 @@ export class Project {
 
     this.installersCustomData = installersCustomData;
 
-    await this.persistInstallStateFile();
-
     // Step 4: Build the packages in multiple steps
 
     if (skipBuild)
@@ -1168,6 +1166,8 @@ export class Project {
     // remove the state from packages that got removed
     const nextBState = new Map<LocatorHash, string>();
 
+    let isInstallStatePersisted = false;
+
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
       const buildPromises = [];
@@ -1206,6 +1206,11 @@ export class Project {
         if (this.storedBuildState.get(pkg.locatorHash) === buildHash) {
           nextBState.set(pkg.locatorHash, buildHash);
           continue;
+        }
+
+        if (!isInstallStatePersisted) {
+          await this.persistInstallStateFile();
+          isInstallStatePersisted = true;
         }
 
         if (this.storedBuildState.has(pkg.locatorHash))
