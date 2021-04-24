@@ -1103,7 +1103,7 @@ export class Project {
     const globalHashGenerator = createHash(`sha512`);
     globalHashGenerator.update(process.versions.node);
 
-    this.configuration.triggerHook(hooks => {
+    await this.configuration.triggerHook(hooks => {
       return hooks.globalHashGeneration;
     }, this, (data: Buffer | string) => {
       globalHashGenerator.update(`\0`);
