@@ -40,6 +40,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const {isAbsolute} = require(\`path\`);
       const pnpApi = require(\`pnpapi\`);
 
+      const isVirtual = str => str.match(/\\/(\\$\\$virtual|__virtual__)\\//);
+
       const dependencyTreeRoots = new Set(pnpApi.getDependencyTreeRoots().map(locator => {
         return \`\${locator.name}@\${locator.reference}\`;
       }));
@@ -50,7 +52,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function toEditorPath(str) {
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
-        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\/(\\$\\$virtual|__virtual__)\\//))) {
+        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || isVirtual(str))) {
           // We also take the opportunity to turn virtual paths into physical ones;
           // this makes is much easier to work with workspaces that list peer
           // dependencies, since otherwise Ctrl+Click would bring us to the virtual
@@ -87,7 +89,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               // We have to resolve the actual file system path from virtual path
               // and convert scheme to supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
               case \`coc-nvim\`: {
-                if (str.match(/\\/(\\$\\$virtual|__virtual__)\\//)) {
+                if (isVirtual(str)) {
                   str = normalize(resolved);
                 }
                 str = str.replace(/\\.zip\\//, \`.zip::\`);
