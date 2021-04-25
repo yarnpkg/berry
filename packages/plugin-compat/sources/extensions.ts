@@ -314,4 +314,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `>=16.0.0`,
     },
   }],
+  // https://github.com/mqttjs/MQTT.js/pull/1266
+  [`mqtt@<4.2.7`, {
+    dependencies: {
+      duplexify: `^4.1.1`,
+    },
+  }],
 ];
