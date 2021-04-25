@@ -26859,7 +26859,7 @@ typescript@beta:
 
 "typescript@patch:typescript@3.7.x#~builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=34ad7d"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=ea7f47"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26869,7 +26869,7 @@ typescript@beta:
 
 "typescript@patch:typescript@^3.8.3#~builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#~builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=34ad7d"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=ea7f47"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26879,11 +26879,11 @@ typescript@beta:
 
 "typescript@patch:typescript@beta#~builtin<compat/typescript>":
   version: 4.3.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.3.0-beta#~builtin<compat/typescript>::version=4.3.0-beta&hash=34ad7d"
+  resolution: "typescript@patch:typescript@npm%3A4.3.0-beta#~builtin<compat/typescript>::version=4.3.0-beta&hash=ea7f47"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 499d52598d790aaf64421e2837528a53d84e7235f5dc33c786f5029deb9a4576240b2d8c2ac22b5941c8dc3fb82eb83b01dc40f61ca65ab6531758b109dbc791
+  checksum: ca7a161bc6a4ca9dac511265923c90e1071d85871fa95f6d31738eb959e51cda1fdc55ed70c9b941e015f03b95b55d8ce4402acb5bb51006bd63a10c2ea975f2
   languageName: node
   linkType: hard
 
