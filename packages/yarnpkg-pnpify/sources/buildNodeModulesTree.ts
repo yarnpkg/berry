@@ -232,7 +232,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
   const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator) => {
-    if (!options.validateExternalSoftLinks || pkg.linkType !== LinkType.SOFT || !options.project)
+    if (pkg.linkType !== LinkType.SOFT || !options.project)
       return false;
 
     const realSoftLinkPath = npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation);
@@ -308,7 +308,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             throw new Error(`Assertion failed: Expected the package to have been registered`);
           const isExternalSoftLinkDep = isExternalSoftLink(depPkg, depLocator);
 
-          if (options.project && isExternalSoftLinkDep) {
+          if (options.validateExternalSoftLinks && options.project && isExternalSoftLinkDep) {
             if (depPkg.packageDependencies.size > 0)
               preserveSymlinksRequired = true;
 
@@ -321,7 +321,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
                   const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentDependencyReferencish) ? `${parentDependencyReferencish[0]}@${parentDependencyReferencish[1]}` : `${name}@${parentDependencyReferencish}`);
                   if (!areRealLocatorsEqual(parentDependencyLocator, portalDependencyLocator)) {
                     errors.push({
-                      messageName: MessageName.NM_CANT_INSTALL_PORTAL,
+                      messageName: MessageName.NM_CANT_INSTALL_EXTERNAL_SOFT_LINK,
                       text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
                         `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
                         `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
@@ -335,7 +335,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
                     const siblingPortalDependencyLocator = structUtils.parseLocator(Array.isArray(siblingReferncish) ? `${siblingReferncish[0]}@${siblingReferncish[1]}` : `${name}@${siblingReferncish}`);
                     if (!areRealLocatorsEqual(siblingPortalDependencyLocator, portalDependencyLocator)) {
                       errors.push({
-                        messageName: MessageName.NM_CANT_INSTALL_PORTAL,
+                        messageName: MessageName.NM_CANT_INSTALL_EXTERNAL_SOFT_LINK,
                         text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
                           `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
                           `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
