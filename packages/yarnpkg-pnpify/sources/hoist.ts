@@ -196,8 +196,10 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
 
     for (const dep of node.hoistedDependencies.values()) {
       if (!hiddenDependencies.has(dep.name)) {
-        const reachableDependency = reachableDependencies.get(dep.name)!;
-        usedDependencies.set(reachableDependency.name, reachableDependency);
+        const reachableDependency = reachableDependencies.get(dep.name);
+        if (reachableDependency) {
+          usedDependencies.set(reachableDependency.name, reachableDependency);
+        }
       }
     }
 
