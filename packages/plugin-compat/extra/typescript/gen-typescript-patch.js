@@ -51,12 +51,12 @@ const SLICES = [{
   range: `>=4.1 <4.2`,
 }, {
   from: `8e0e870`,
-  to: `577d24c`,
+  to: `58bf162`,
   onto: `bfc55b5`,
   range: `>=4.2 <4.3`,
 }, {
   from: `320a959`,
-  to: `4657a62`,
+  to: `508e98b`,
   onto: `f9b35cd`,
   range: `>=4.3`,
 }];
