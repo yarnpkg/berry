@@ -163,6 +163,13 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   return shrinkTree(treeCopy);
 };
 
+/**
+ * Unhoists different instances of the same soft link up to the point when they
+ * have common hoisting layout. We do this by recursively searching and unhoisting dependencies
+ * that were NOT hoisted at least from one soft link instance.
+ *
+ * @param nodePathSet node paths that lead to the same soft link
+ */
 const unhoistSoftLinkDependencies = (nodePathSet: Set<Array<HoisterWorkTree>>) => {
   const unhoistedDependencies = new Map<string, {nodePath: Array<HoisterWorkTree>, reason: string | undefined}>();
   let originalDepNames;
@@ -224,6 +231,12 @@ const unhoistSoftLinkDependencies = (nodePathSet: Set<Array<HoisterWorkTree>>) =
   }
 };
 
+/**
+ * Replaces all the occurences of the same soft link via single main soft link node. This is possible,
+ * because at this stage all the different instances of the soft link have the same dependencies layout.
+ *
+ * @param softLinkNodePaths node paths that lead to the same soft link
+ */
 const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>) => {
   const softLinkNodePathArray = Array.from(softLinkNodePaths);
   const mainSoftLinkNodePath = softLinkNodePathArray[0];
@@ -237,6 +250,13 @@ const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>
   }
 };
 
+/**
+ * Unhoists soft links that have multiple parents up to the point when they
+ * have common hoisting layout, then replaces all the occurences of the same soft link
+ * via singleton soft link node.
+ *
+ * @param softLinkMap map of soft link ident => node paths that lead to this soft link ident
+ */
 const unhoistSoftLinks = (softLinkMap: SoftLinkMap) => {
   for (const nodePathSet of softLinkMap.values()) {
     if (nodePathSet.size > 1) {
