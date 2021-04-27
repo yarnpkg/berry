@@ -9,11 +9,34 @@ import {NodeFS}                                                                 
 import {ZipFS}                                                                                                                                       from './ZipFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
-import {Filename, FSPath, PortablePath}                                                                                                              from './path';
+import {Filename, FSPath, PortablePath, ppath}                                                                                                       from './path';
 
 const ZIP_FD = 0x80000000;
 
-const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
+const DOT_ZIP = `.zip`;
+
+/**
+ * Extracts the archive part (ending in the first `.zip`) from a path.
+ *
+ * The indexOf-based implementation is ~3.7x faster than a RegExp-based implementation.
+ */
+export const getArchivePart = (path: string) => {
+  const idx = path.indexOf(DOT_ZIP);
+  if (idx <= 0)
+    return null;
+
+  // Disallow files named ".zip"
+  if (path[idx - 1] === ppath.sep)
+    return null;
+
+  const nextCharIdx = idx + DOT_ZIP.length;
+
+  // The path either has to end in ".zip" or contain an archive subpath (".zip/...")
+  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
+    return null;
+
+  return path.slice(0, nextCharIdx) as PortablePath;
+};
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
@@ -851,11 +874,11 @@ export class ZipOpenFS extends BasePortableFakeFS {
     let filePath = `` as PortablePath;
 
     while (true) {
-      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
-      if (!parts)
+      const archivePart = getArchivePart(p.substr(filePath.length));
+      if (!archivePart)
         return null;
 
-      filePath = this.pathUtils.join(filePath, parts[0] as PortablePath);
+      filePath = this.pathUtils.join(filePath, archivePart);
 
       if (this.isZip.has(filePath) === false) {
         if (this.notZip.has(filePath))

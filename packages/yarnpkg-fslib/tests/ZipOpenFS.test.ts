@@ -1,5 +1,6 @@
 import {getLibzipSync}          from '@yarnpkg/libzip';
 
+import {getArchivePart}         from '../sources/ZipOpenFS';
 import {ppath, npath, Filename} from '../sources/path';
 import {ZipOpenFS}              from '../sources';
 
@@ -16,6 +17,27 @@ const ZIP_DIR2 = ppath.join(
 
 export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
 const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
+
+describe(`getArchivePart`, () => {
+  const tests = [
+    [`.zip`, null],
+    [`foo`, null],
+    [`foo.zip`, `foo.zip`],
+    [`foo.zip/bar`, `foo.zip`],
+    [`foo.zip/bar/baz`, `foo.zip`],
+    [`/a/b/c/foo.zip`, `/a/b/c/foo.zip`],
+    [`./a/b/c/foo.zip`, `./a/b/c/foo.zip`],
+    [`./a/b/c/.zip`, null],
+    [`./a/b/c/foo.zipp`, null],
+    [`./a/b/c/foo.zip/bar/baz/qux.zip`, `./a/b/c/foo.zip`],
+  ] as const;
+
+  for (const [path, result] of tests) {
+    test(`getArchivePart(${JSON.stringify(path)}) === ${JSON.stringify(result)}`, () => {
+      expect(getArchivePart(path)).toStrictEqual(result);
+    });
+  }
+});
 
 describe(`ZipOpenFS`, () => {
   it(`can read from a zip file`, () => {
