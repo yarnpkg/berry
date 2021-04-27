@@ -251,7 +251,7 @@ const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>
     softLinkParent.dependencies.set(softLink.name, mainSoftLink);
   }
 
-  hoistTo(mainSoftLink, [mainSoftLink], new Set([mainSoftLink.locator]), new Map(), {...options, check: false});
+  hoistTo(mainSoftLink, [mainSoftLink], new Set([mainSoftLink.locator]), new Map(), {...options, fastLookupPossible: false, check: false});
 };
 
 /**
