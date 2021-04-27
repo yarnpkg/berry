@@ -20,6 +20,7 @@ const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
 
 describe(`getArchivePart`, () => {
   const tests = [
+    [`.zip`, null],
     [`foo`, null],
     [`foo.zip`, `foo.zip`],
     [`foo.zip/bar`, `foo.zip`],

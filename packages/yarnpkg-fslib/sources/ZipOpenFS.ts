@@ -22,7 +22,7 @@ const DOT_ZIP = `.zip`;
  */
 export const getArchivePart = (path: string) => {
   const idx = path.indexOf(DOT_ZIP);
-  if (idx === -1)
+  if (idx <= 0)
     return null;
 
   // Disallow files named ".zip"
