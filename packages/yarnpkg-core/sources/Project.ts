@@ -1564,9 +1564,9 @@ export class Project {
   }
 
   /**
-   * The uncompressed install state currently persisted on disk.
+   * Checksum of the install state currently persisted on disk.
    */
-  private persistedInstallState: Buffer | null = null;
+  private installStateChecksum: string | null = null;
 
   async persistInstallStateFile() {
     const fields = [];
@@ -1575,7 +1575,8 @@ export class Project {
 
     const installState = pick(this, fields) as InstallState;
     const serializedState = v8.serialize(installState);
-    if (this.persistedInstallState && Buffer.compare(serializedState, this.persistedInstallState) === 0)
+    const newInstallStateChecksum = hashUtils.makeHash(serializedState);
+    if (this.installStateChecksum === newInstallStateChecksum)
       return;
 
     const installStatePath = this.configuration.get(`installStatePath`);
@@ -1583,7 +1584,7 @@ export class Project {
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
     await xfs.writeFilePromise(installStatePath, await gzip(serializedState) as Buffer);
 
-    this.persistedInstallState = serializedState;
+    this.installStateChecksum = newInstallStateChecksum;
   }
 
   async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
@@ -1594,8 +1595,9 @@ export class Project {
       return;
     }
 
-    this.persistedInstallState = await gunzip(await xfs.readFilePromise(installStatePath)) as Buffer;
-    const installState: InstallState = v8.deserialize(this.persistedInstallState);
+    const installStateBuffer = await gunzip(await xfs.readFilePromise(installStatePath)) as Buffer;
+    this.installStateChecksum = hashUtils.makeHash(installStateBuffer);
+    const installState: InstallState = v8.deserialize(installStateBuffer);
 
     if (restoreInstallersCustomData)
       if (typeof installState.installersCustomData !== `undefined`)
