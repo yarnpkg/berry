@@ -878,6 +878,38 @@ describe(`Node_Modules`, () => {
       })
   );
 
+  test(`should still hoist direct dependencies from portal target to parent with nmHoistingLimits: dependencies`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `dependencies`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              [`one-fixed-dep`]: `1.0.0`,
+            },
+          });
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              [`portal`]: `portal:${portalTarget}`,
+            },
+          });
+
+          const {stdout} = await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
+          expect(stdout).toMatch(new RegExp(`--preserve-symlinks`));
+          expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
+          expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toBeFalsy();
+        });
+      })
+  );
+
   test(`should error out on external portal requiring a dependency that conflicts with parent package`,
     makeTemporaryEnv({},
       {
@@ -888,7 +920,10 @@ describe(`Node_Modules`, () => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             dependencies: {
-              [`no-deps`]: `2.0.0`,
+              'no-deps': `2.0.0`,
+            },
+            peerDependencies: {
+              'no-deps-bins': `1.0.0`,
             },
           });
 
@@ -896,6 +931,7 @@ describe(`Node_Modules`, () => {
             dependencies: {
               portal: `portal:${portalTarget}`,
               'no-deps': `1.0.0`,
+              'no-deps-bins': `1.0.0`,
             },
           });
 
@@ -907,6 +943,47 @@ describe(`Node_Modules`, () => {
           }
 
           expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
+        });
+      })
+  );
+
+  test(`should error out if two same-parent portals have conflict between their direct dependencies`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget1 => {
+          await xfs.mktempPromise(async portalTarget2 => {
+            await xfs.writeJsonPromise(`${portalTarget1}/package.json` as PortablePath, {
+              name: `portal1`,
+              dependencies: {
+                'no-deps': `2.0.0`,
+              },
+            });
+            await xfs.writeJsonPromise(`${portalTarget2}/package.json` as PortablePath, {
+              name: `portal2`,
+              dependencies: {
+                'no-deps': `1.0.0`,
+              },
+            });
+
+            await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+              dependencies: {
+                portal1: `portal:${portalTarget1}`,
+                portal2: `portal:${portalTarget2}`,
+              },
+            });
+
+            let stdout;
+            try {
+              await run(`install`);
+            } catch (e) {
+              stdout = e.stdout;
+            }
+
+            expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:1.0.0 conflicts with dependency no-deps@npm:2.0.0 from sibling portal portal1`));
+          });
         });
       })
   );

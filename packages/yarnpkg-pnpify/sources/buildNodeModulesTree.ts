@@ -1,4 +1,4 @@
-import {structUtils, Project, MessageName}                                    from '@yarnpkg/core';
+import {structUtils, Project, MessageName, Locator}                           from '@yarnpkg/core';
 import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
@@ -51,6 +51,7 @@ export type NodeModulesTreeErrors = Array<{messageName: MessageName, text: strin
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
+  validateExternalSoftLinks?: boolean;
   hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
   project?: Project;
 }
@@ -136,6 +137,12 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
   }
 
   return map;
+};
+
+const areRealLocatorsEqual = (a: Locator, b: Locator) => {
+  const realA = structUtils.isVirtualLocator(a) ? structUtils.devirtualizeLocator(a) : a;
+  const realB = structUtils.isVirtualLocator(b) ? structUtils.devirtualizeLocator(b) : b;
+  return structUtils.areLocatorsEqual(realA, realB);
 };
 
 /**
@@ -224,6 +231,14 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
 
+  const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator) => {
+    if (pkg.linkType !== LinkType.SOFT || !options.project)
+      return false;
+
+    const realSoftLinkPath = npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation);
+    return ppath.contains(options.project.cwd, realSoftLinkPath) === null;
+  };
+
   const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
@@ -232,22 +247,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     if (!isSeen && locator.name === topLocator.name && locator.reference === topLocator.reference) {
       node = packageTree;
       nodes.set(nodeKey, packageTree);
-    }
-
-    if (pkg.linkType === LinkType.SOFT && options.project && ppath.contains(options.project.cwd, npath.toPortablePath(pkg.packageLocation)) === null) {
-      if (pkg.packageDependencies.size > 0)
-        preserveSymlinksRequired = true;
-
-      for (const [name, referencish] of pkg.packageDependencies) {
-        const dependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
-        const parentReferencish = parentDependencies.get(name);
-        if (parentReferencish) {
-          const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentReferencish) ? `${parentReferencish[0]}@${parentReferencish[1]}` : `${name}@${parentReferencish}`);
-          if (!structUtils.areLocatorsEqual(parentDependencyLocator, dependencyLocator)) {
-            errors.push({messageName: MessageName.NM_CANT_INSTALL_PORTAL, text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(locator.name))} into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${parent.identName}@${parent.reference}`))} dependency ${structUtils.prettyLocator(options.project.configuration, dependencyLocator)} conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`});
-          }
-        }
-      }
     }
 
     if (!node) {
@@ -262,7 +261,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, node);
     }
 
-    if (isHoistBorder) {
+    if (isHoistBorder && !isExternalSoftLink(pkg, locator)) {
       const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
       const dependencyBorders = hoistingLimits.get(parentLocatorKey) || new Set();
       hoistingLimits.set(parentLocatorKey, dependencyBorders);
@@ -298,6 +297,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     parent.dependencies.add(node);
 
     if (!isSeen) {
+      const siblingPortalDependencyMap = new Map<string, {target: DependencyTarget, portal: PhysicalPackageLocator}>();
       for (const [depName, referencish] of allDependencies) {
         if (referencish !== null) {
           const depLocator = pnp.getLocator(depName, referencish);
@@ -306,9 +306,53 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
+          const isExternalSoftLinkDep = isExternalSoftLink(depPkg, depLocator);
+
+          if (options.validateExternalSoftLinks && options.project && isExternalSoftLinkDep) {
+            if (depPkg.packageDependencies.size > 0)
+              preserveSymlinksRequired = true;
+
+            for (const [name, referencish] of depPkg.packageDependencies) {
+              const portalDependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
+              // Ignore self-references during portal hoistability check
+              if (stringifyLocator(portalDependencyLocator) !== stringifyLocator(depLocator)) {
+                const parentDependencyReferencish = allDependencies.get(name);
+                if (parentDependencyReferencish) {
+                  const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentDependencyReferencish) ? `${parentDependencyReferencish[0]}@${parentDependencyReferencish[1]}` : `${name}@${parentDependencyReferencish}`);
+                  if (!areRealLocatorsEqual(parentDependencyLocator, portalDependencyLocator)) {
+                    errors.push({
+                      messageName: MessageName.NM_CANT_INSTALL_EXTERNAL_SOFT_LINK,
+                      text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
+                        `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
+                        `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
+                        `conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`,
+                    });
+                  }
+                } else {
+                  const siblingPortalDependency = siblingPortalDependencyMap.get(name);
+                  if (siblingPortalDependency) {
+                    const siblingReferncish = siblingPortalDependency.target;
+                    const siblingPortalDependencyLocator = structUtils.parseLocator(Array.isArray(siblingReferncish) ? `${siblingReferncish[0]}@${siblingReferncish[1]}` : `${name}@${siblingReferncish}`);
+                    if (!areRealLocatorsEqual(siblingPortalDependencyLocator, portalDependencyLocator)) {
+                      errors.push({
+                        messageName: MessageName.NM_CANT_INSTALL_EXTERNAL_SOFT_LINK,
+                        text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
+                          `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
+                          `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
+                          `conflicts with dependency ${structUtils.prettyLocator(options.project.configuration, siblingPortalDependencyLocator)} ` +
+                          `from sibling portal ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(siblingPortalDependency.portal.name))}`,
+                      });
+                    }
+                  } else {
+                    siblingPortalDependencyMap.set(name, {target: portalDependencyLocator.reference, portal: depLocator});
+                  }
+                }
+              }
+            }
+          }
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
-          const relativeDepCwd = ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const relativeDepCwd = isExternalSoftLinkDep ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
           const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
           const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES

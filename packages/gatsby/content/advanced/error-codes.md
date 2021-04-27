@@ -328,9 +328,11 @@ A packageExtension is detected by Yarn as being unused, which means that the sel
 
 A packageExtension is detected by Yarn as being unneeded, which means that the selected packages have the same behavior with and without the extension.
 
-## YN0071 - `NM_CANT_INSTALL_PORTAL`
+## YN0071 - `NM_CANT_INSTALL_EXTERNAL_SOFT_LINK`
 
-A portal dependency cannot be installed, because incompatible version of a dependency exists in the parent package. This prevents portal representation for node_modules installs without a need to write files into portal's target directory, which is forbidden for security reasons.
+An external soft link (portal) cannot be installed, because incompatible version of a dependency exists in the parent package. This prevents portal representation for node_modules installs without a need to write files into portal's target directory, which is forbidden for security reasons.
+
+**Workarounds** If the ranges for conflicting dependencies overlap between portal target and portal parent, the workaround is to use `yarn dedupe foo` (where `foo` is the conflicting dependency name) to upgrade the conflicting dependencies to the highest available versions, if `yarn dedupe` is used without arguments, all the dependencies across the project will be upgraded to the highest versions within their ranges in `package.json`. Another alternative is to use `link:` protocol instead of `portal:` and install dependencies inside the target directory explicitely.
 
 ## YN0072 - `NM_PRESERVE_SYMLINKS_REQUIRED`
 
