@@ -145,7 +145,7 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
     }
   }
 
-  unhoistSoftLinks(softLinkMap);
+  unhoistSoftLinks(softLinkMap, options);
 
   if (options.debugLevel >= DebugLevel.PERF)
     console.log(`hoist time: ${Date.now() - startTime!}ms, rounds: ${round}`);
@@ -234,10 +234,12 @@ const unhoistSoftLinkDependencies = (nodePathSet: Set<Array<HoisterWorkTree>>) =
 /**
  * Replaces all the occurences of the same soft link via single main soft link node. This is possible,
  * because at this stage all the different instances of the soft link have the same dependencies layout.
+ * Finally, the single soft link instance is hoisted as a separate tree to flatten it separately after
+ * series of unhoists.
  *
  * @param softLinkNodePaths node paths that lead to the same soft link
  */
-const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>) => {
+const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>, options: InternalHoistOptions) => {
   const softLinkNodePathArray = Array.from(softLinkNodePaths);
   const mainSoftLinkNodePath = softLinkNodePathArray[0];
   const mainSoftLink = mainSoftLinkNodePath[mainSoftLinkNodePath.length - 1];
@@ -248,6 +250,8 @@ const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>
     const softLinkParent = nodePath[nodePath.length - 2];
     softLinkParent.dependencies.set(softLink.name, mainSoftLink);
   }
+
+  hoistTo(mainSoftLink, [mainSoftLink], new Set([mainSoftLink.locator]), new Map(), {...options, check: false});
 };
 
 /**
@@ -257,12 +261,12 @@ const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>
  *
  * @param softLinkMap map of soft link ident => node paths that lead to this soft link ident
  */
-const unhoistSoftLinks = (softLinkMap: SoftLinkMap) => {
+const unhoistSoftLinks = (softLinkMap: SoftLinkMap, options: InternalHoistOptions) => {
   for (const nodePathSet of softLinkMap.values()) {
     if (nodePathSet.size > 1) {
       unhoistSoftLinkDependencies(nodePathSet);
 
-      replaceSoftLinkInstances(nodePathSet);
+      replaceSoftLinkInstances(nodePathSet, options);
     }
   }
 };
@@ -310,8 +314,10 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
 
     for (const depName of node.hoistedTo.keys()) {
       if (!hiddenDependencies.has(depName)) {
-        const reachableDependency = reachableDependencies.get(depName)!;
-        usedDependencies.set(reachableDependency.name, reachableDependency);
+        const reachableDependency = reachableDependencies.get(depName);
+        if (reachableDependency) {
+          usedDependencies.set(reachableDependency.name, reachableDependency);
+        }
       }
     }
 
