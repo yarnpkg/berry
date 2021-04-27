@@ -10,6 +10,7 @@ const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => 
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
+      isSoftLink: (obj[key] || {}).isSoftLink || false,
     };
     nodes.set(key, node);
 
@@ -530,6 +531,51 @@ describe(`hoist`, () => {
       A: {dependencies: [`A`, `B`]},
       B: {dependencies: [`A`], peerNames: [`A`]},
     };
-    expect(getTreeHeight(hoist(toTree(tree), {check: true, debugLevel: 2}))).toEqual(2);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
+
+  it(`should unite multiple soft link hoisting layouts`, () => {
+    // . -> D -> S -> A -> C -> F
+    //             -> B
+    //        -> A@Y
+    //        -> C@Y
+    //   -> E -> S -> A -> C -> F
+    //             -> B
+    //        -> B@Y
+    //        -> C@Y
+    //   -> S@Y
+    // here S - is a soft link, all other dependencies including S@Y are hard links
+    // if soft links are not taken into account will be wrongly hoisted to (notice different S hoisting layouts):
+    //  . -> D -> S -> A
+    //             -> C
+    //        -> A@Y
+    //   -> E -> S -> B
+    //        -> B@Y
+    //   -> S@Y
+    //   -> A -> C
+    //   -> B
+    //   -> C@Y
+    //   -> F
+    // the correct hoisting layout rather is (two different hoisting layouts of S must be intelligently merged, note F is still hoisted):
+    // . -> D -> S -> A
+    //             -> B
+    //             -> C
+    //        -> A@Y
+    //   -> E -> S -> A
+    //             -> B
+    //             -> C
+    //        -> B@Y
+    //   -> C@Y
+    //   -> F
+    //   -> S@Y
+    const tree = {
+      '.': {dependencies: [`D`, `E`, `S@Y`]},
+      D: {dependencies: [`S`, `A@Y`, `C@Y`]},
+      E: {dependencies: [`S`, `B@Y`, `C@Y`]},
+      S: {dependencies: [`A`, `B`], isSoftLink: true},
+      A: {dependencies: [`C`]},
+      C: {dependencies: [`F`]},
+    };
+    hoist(toTree(tree), {check: true, debugLevel: 2});
   });
 });

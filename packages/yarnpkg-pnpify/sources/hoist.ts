@@ -46,11 +46,12 @@
  * until you run out of candidates for current tree root.
  */
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
+export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, isSoftLink: boolean};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Array<string>};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedTo: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Map<PackageName, Map<HoisterWorkTree, string | null>>, isSoftLink: boolean};
+type SoftLinkMap = Map<Ident, Set<Array<HoisterWorkTree>>>;
 
 /**
  * Mapping which packages depend on a given package alias + ident. It is used to determine hoisting weight,
@@ -126,22 +127,31 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   const treeCopy = cloneTree(tree, options);
 
   let anotherRoundNeeded = false;
+  let softLinkMap;
   let round = 0;
   do {
-    anotherRoundNeeded = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options).anotherRoundNeeded;
+    const result = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options);
+    anotherRoundNeeded = result.anotherRoundNeeded;
+    softLinkMap = result.softLinkMap;
     options.fastLookupPossible = false;
     round++;
   } while (anotherRoundNeeded);
+
+  if (options.debugLevel >= DebugLevel.CHECK) {
+    const prevTreeDump = dumpDepTree(treeCopy);
+    const isGraphChanged = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options).isGraphChanged;
+    if (isGraphChanged) {
+      throw new Error(`The hoisting result is not terminal, prev tree:\n${prevTreeDump}, next tree:\n${dumpDepTree(treeCopy)}`);
+    }
+  }
+
+  unhoistSoftLinks(softLinkMap);
 
   if (options.debugLevel >= DebugLevel.PERF)
     console.log(`hoist time: ${Date.now() - startTime!}ms, rounds: ${round}`);
 
   if (options.debugLevel >= DebugLevel.CHECK) {
-    const prevTreeDump = dumpDepTree(treeCopy);
-    const isGraphChanged = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options).isGraphChanged;
-    if (isGraphChanged)
-      throw new Error(`The hoisting result is not terminal, prev tree:\n${prevTreeDump}, next tree:\n${dumpDepTree(treeCopy)}`);
-    const checkLog = selfCheck(treeCopy);
+    const checkLog = selfCheck(treeCopy, {isFinalCheck: true});
     if (checkLog) {
       throw new Error(`${checkLog}, after hoisting finished:\n${dumpDepTree(treeCopy)}`);
     }
@@ -151,6 +161,90 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
     console.log(dumpDepTree(treeCopy));
 
   return shrinkTree(treeCopy);
+};
+
+const unhoistSoftLinkDependencies = (nodePathSet: Set<Array<HoisterWorkTree>>) => {
+  const unhoistedDependencies = new Map<string, {nodePath: Array<HoisterWorkTree>, reason: string | undefined}>();
+  let originalDepNames;
+
+  for (const nodePath of nodePathSet) {
+    const node = nodePath[nodePath.length - 1];
+    const nodeUnhoistedDependencies = new Set(node.originalDependencies.keys());
+    if (!originalDepNames) {
+      originalDepNames = new Set(node.originalDependencies.keys());
+      originalDepNames.delete(node.name);
+    }
+
+    for (const name of node.hoistedTo.keys())
+      nodeUnhoistedDependencies.delete(name);
+
+    for (const name of nodeUnhoistedDependencies) {
+      unhoistedDependencies.set(name, {nodePath, reason: node.reasons.get(name)});
+    }
+  }
+
+  if (unhoistedDependencies) {
+    for (const [name, reasonInfo] of unhoistedDependencies) {
+      for (const nodePath of nodePathSet) {
+        const node = nodePath[nodePath.length - 1];
+        const hoistParent = node.hoistedTo.get(name);
+        if (hoistParent) {
+          const hoistedFromMap = hoistParent.hoistedFrom.get(name);
+          if (hoistedFromMap) {
+            hoistedFromMap.delete(node);
+            let hoistedDependency = hoistParent.dependencies.get(name)!;
+            if (hoistedFromMap.size === 0)
+              hoistParent.dependencies.delete(name);
+            else
+              hoistedDependency = cloneNode(hoistedDependency);
+
+            node.dependencies.set(name, hoistedDependency);
+            if (reasonInfo && reasonInfo.reason) {
+              const nodePathString = Array.from(reasonInfo.nodePath).map(x => prettyPrintLocator(x.locator)).join(`→`);
+              node.reasons.set(name, `${reasonInfo.reason} on: ${nodePathString}`);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (originalDepNames) {
+    const nextSet = new Set<Array<HoisterWorkTree>>();
+    for (const name of originalDepNames) {
+      for (const nodePath of nodePathSet) {
+        const node = nodePath[nodePath.length - 1];
+        const dep = node.dependencies.get(name);
+        if (dep) {
+          nextSet.add([...nodePath, dep]);
+        }
+      }
+    }
+    unhoistSoftLinkDependencies(nextSet);
+  }
+};
+
+const replaceSoftLinkInstances = (softLinkNodePaths: Set<Array<HoisterWorkTree>>) => {
+  const softLinkNodePathArray = Array.from(softLinkNodePaths);
+  const mainSoftLinkNodePath = softLinkNodePathArray[0];
+  const mainSoftLink = mainSoftLinkNodePath[mainSoftLinkNodePath.length - 1];
+
+  for (let idx = 1; idx < softLinkNodePathArray.length; idx++) {
+    const nodePath = softLinkNodePathArray[idx];
+    const softLink = nodePath[nodePath.length - 1];
+    const softLinkParent = nodePath[nodePath.length - 2];
+    softLinkParent.dependencies.set(softLink.name, mainSoftLink);
+  }
+};
+
+const unhoistSoftLinks = (softLinkMap: SoftLinkMap) => {
+  for (const nodePathSet of softLinkMap.values()) {
+    if (nodePathSet.size > 1) {
+      unhoistSoftLinkDependencies(nodePathSet);
+
+      replaceSoftLinkInstances(nodePathSet);
+    }
+  }
 };
 
 const getZeroRoundUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageName, HoisterWorkTree> => {
@@ -163,8 +257,8 @@ const getZeroRoundUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map
       return;
     seenNodes.add(node);
 
-    for (const dep of node.hoistedDependencies.values())
-      usedDependencies.set(dep.name, dep);
+    for (const depName of node.hoistedTo.keys())
+      usedDependencies.set(depName, node.originalDependencies.get(depName));
 
     for (const dep of node.dependencies.values()) {
       if (!node.peerNames.has(dep.name)) {
@@ -194,9 +288,9 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
       return;
     seenNodes.add(node);
 
-    for (const dep of node.hoistedDependencies.values()) {
-      if (!hiddenDependencies.has(dep.name)) {
-        const reachableDependency = reachableDependencies.get(dep.name)!;
+    for (const depName of node.hoistedTo.keys()) {
+      if (!hiddenDependencies.has(depName)) {
+        const reachableDependency = reachableDependencies.get(depName)!;
         usedDependencies.set(reachableDependency.name, reachableDependency);
       }
     }
@@ -218,6 +312,35 @@ const getUsedDependencies = (rootNodePath: Array<HoisterWorkTree>): Map<PackageN
   return usedDependencies;
 };
 
+const cloneNode = (node: HoisterWorkTree): HoisterWorkTree => {
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedTo, peerNames, reasons, isHoistBorder, isSoftLink} = node;
+  // To perform node hoisting from parent node we must clone parent nodes up to the root node,
+  // because some other package in the tree might depend on the parent package where hoisting
+  // cannot be performed
+  const clone = {
+    name,
+    references: new Set(references),
+    ident,
+    locator,
+    dependencies: new Map(dependencies),
+    originalDependencies: new Map(originalDependencies),
+    hoistedTo: new Map(hoistedTo),
+    peerNames: new Set(peerNames),
+    reasons: new Map(reasons),
+    decoupled: true,
+    isHoistBorder,
+    isSoftLink,
+    hoistedFrom: new Map(),
+  };
+
+  const selfDep = clone.dependencies.get(name);
+  if (selfDep && selfDep.ident == clone.ident)
+    // Update self-reference
+    clone.dependencies.set(name, clone);
+
+  return clone;
+};
+
 /**
  * This method clones the node and returns cloned node copy, if the node was not previously decoupled.
  *
@@ -237,28 +360,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder} = node;
-  // To perform node hoisting from parent node we must clone parent nodes up to the root node,
-  // because some other package in the tree might depend on the parent package where hoisting
-  // cannot be performed
-  const clone = {
-    name,
-    references: new Set(references),
-    ident,
-    locator,
-    dependencies: new Map(dependencies),
-    originalDependencies: new Map(originalDependencies),
-    hoistedDependencies: new Map(hoistedDependencies),
-    peerNames: new Set(peerNames),
-    reasons: new Map(reasons),
-    decoupled: true,
-    isHoistBorder,
-    hoistedFrom: [],
-  };
-  const selfDep = clone.dependencies.get(name);
-  if (selfDep && selfDep.ident == clone.ident)
-    // Update self-reference
-    clone.dependencies.set(name, clone);
+  const clone = cloneNode(node);
 
   parent.dependencies.set(clone.name, clone);
 
@@ -377,10 +479,10 @@ const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTre
  * @param rootNodePathLocators a set of locators for nodes that lead from the top of the tree up to root node
  * @param options hoisting options
  */
-const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, rootNodePathLocators: Set<Locator>, parentShadowedNodes: ShadowedNodes, options: InternalHoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()): {anotherRoundNeeded: boolean, isGraphChanged: boolean} => {
+const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, rootNodePathLocators: Set<Locator>, parentShadowedNodes: ShadowedNodes, options: InternalHoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()): {anotherRoundNeeded: boolean, isGraphChanged: boolean, softLinkMap: SoftLinkMap} => {
   const rootNode = rootNodePath[rootNodePath.length - 1];
   if (seenNodes.has(rootNode))
-    return {anotherRoundNeeded: false, isGraphChanged: false};
+    return {anotherRoundNeeded: false, isGraphChanged: false, softLinkMap: new Map()};
   seenNodes.add(rootNode);
 
   const preferenceMap = buildPreferenceMap(rootNode);
@@ -413,6 +515,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
     }
   } while (wasStateChanged);
 
+  const softLinkMap: SoftLinkMap = new Map();
   for (const dependency of rootNode.dependencies.values()) {
     if (!rootNode.peerNames.has(dependency.name) && !rootNodePathLocators.has(dependency.locator)) {
       rootNodePathLocators.add(dependency.locator);
@@ -421,12 +524,33 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
         isGraphChanged = true;
       if (result.anotherRoundNeeded)
         anotherRoundNeeded = true;
+      if (result.softLinkMap.size > 0) {
+        for (const [key, value] of result.softLinkMap) {
+          let softLinkPaths = softLinkMap.get(key);
+          if (!softLinkPaths) {
+            softLinkPaths = new Set<Array<HoisterWorkTree>>();
+            softLinkMap.set(key, softLinkPaths);
+          }
+          for (const nodePath of value) {
+            softLinkPaths.add(nodePath);
+          }
+        }
+      }
 
       rootNodePathLocators.delete(dependency.locator);
     }
   }
 
-  return {anotherRoundNeeded, isGraphChanged};
+  if (rootNode.dependencies.size > 0 && rootNode.isSoftLink) {
+    let softLinkPaths = softLinkMap.get(rootNode.ident);
+    if (!softLinkPaths) {
+      softLinkPaths = new Set<Array<HoisterWorkTree>>();
+      softLinkMap.set(rootNode.ident, softLinkPaths);
+    }
+    softLinkPaths.add(rootNodePath);
+  }
+
+  return {anotherRoundNeeded, isGraphChanged, softLinkMap};
 };
 
 const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason}: {outputReason: boolean}): HoistInfo => {
@@ -581,7 +705,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
           anotherRoundNeeded = true;
 
         parentNode.dependencies.delete(node.name);
-        parentNode.hoistedDependencies.set(node.name, node);
+        parentNode.hoistedTo.set(node.name, rootNode);
         parentNode.reasons.delete(node.name);
 
         const hoistedNode = rootNode.dependencies.get(node.name);
@@ -593,8 +717,14 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
           // Avoid adding other version of root node to itself
           if (rootNode.ident !== node.ident) {
             rootNode.dependencies.set(node.name, node);
-            if (options.debugLevel >= DebugLevel.REASONS)
-              node.hoistedFrom.push(hoistedFrom!);
+            if (options.debugLevel >= DebugLevel.REASONS) {
+              let entries = rootNode.hoistedFrom.get(node.name);
+              if (!entries) {
+                entries = new Map();
+                rootNode.hoistedFrom.set(node.name, entries);
+              }
+              entries.set(parentNode, hoistedFrom!);
+            }
 
             newNodes.add(node);
           }
@@ -602,7 +732,12 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
           for (const reference of node.references) {
             hoistedNode.references.add(reference);
             if (options.debugLevel >= DebugLevel.REASONS) {
-              hoistedNode.hoistedFrom.push(hoistedFrom!);
+              let entries = rootNode.hoistedFrom.get(node.name);
+              if (!entries) {
+                entries = new Map();
+                rootNode.hoistedFrom.set(node.name, entries);
+              }
+              entries.set(parentNode, hoistedFrom!);
             }
           }
         }
@@ -610,7 +745,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     }
 
     if (options.check) {
-      const checkLog = selfCheck(tree);
+      const checkLog = selfCheck(tree, {isFinalCheck: false});
       if (checkLog) {
         throw new Error(`${checkLog}, after hoisting dependencies of ${[rootNode, ...nodePath, parentNode].map(x => prettyPrintLocator(x.locator)).join(`→`)}:\n${dumpDepTree(tree)}`);
       }
@@ -653,16 +788,27 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
   return {anotherRoundNeeded, isGraphChanged};
 };
 
-const selfCheck = (tree: HoisterWorkTree): string => {
+const selfCheck = (tree: HoisterWorkTree, {isFinalCheck}: {isFinalCheck: boolean}): string => {
   const log: Array<string> = [];
 
   const seenNodes = new Set();
   const parents = new Set<HoisterWorkTree>();
+  const softIdents = new Map<Ident, Array<HoisterWorkTree>>();
 
   const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>) => {
     if (seenNodes.has(node))
       return;
     seenNodes.add(node);
+
+    const prettyPrintTreePath = () => `${Array.from(parents).concat([node]).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
+
+    if (isFinalCheck && node.isSoftLink === true) {
+      const seenNodePath = softIdents.get(node.ident);
+      if (seenNodePath && seenNodePath[seenNodePath.length - 1] !== node)
+        log.push(`${prettyPrintTreePath()} - only one instance of soft link must be present, the second instance is: ${Array.from(seenNodePath).map(x => prettyPrintLocator(x.locator)).join(`→`)}`);
+
+      softIdents.set(node.ident, Array.from(parents).concat([node]));
+    }
 
     if (parents.has(node))
       return;
@@ -674,7 +820,6 @@ const selfCheck = (tree: HoisterWorkTree): string => {
 
     for (const origDep of node.originalDependencies.values()) {
       const dep = dependencies.get(origDep.name);
-      const prettyPrintTreePath = () => `${Array.from(parents).concat([node]).map(x => prettyPrintLocator(x.locator)).join(`→`)}`;
       if (node.peerNames.has(origDep.name)) {
         const parentDep = parentDeps.get(origDep.name);
         if (parentDep !== dep || !parentDep || parentDep.ident !== origDep.ident) {
@@ -709,7 +854,7 @@ const selfCheck = (tree: HoisterWorkTree): string => {
  * @param tree package tree clone
  */
 const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWorkTree => {
-  const {identName, name, reference, peerNames} = tree;
+  const {identName, name, reference, peerNames, isSoftLink} = tree;
   const treeCopy: HoisterWorkTree = {
     name,
     references: new Set([reference]),
@@ -717,12 +862,13 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     ident: makeIdent(identName, reference),
     dependencies: new Map(),
     originalDependencies: new Map(),
-    hoistedDependencies: new Map(),
+    hoistedTo: new Map(),
     peerNames: new Set(peerNames),
     reasons: new Map(),
     decoupled: true,
     isHoistBorder: true,
-    hoistedFrom: [],
+    isSoftLink,
+    hoistedFrom: new Map(),
   };
 
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
@@ -731,7 +877,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
-      const {name, identName, reference, peerNames} = node;
+      const {name, identName, reference, peerNames, isSoftLink} = node;
       const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
@@ -740,12 +886,13 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         ident: makeIdent(identName, reference),
         dependencies: new Map(),
         originalDependencies: new Map(),
-        hoistedDependencies: new Map(),
+        hoistedTo: new Map(),
         peerNames: new Set(peerNames),
         reasons: new Map(),
         decoupled: true,
         isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
-        hoistedFrom: [],
+        hoistedFrom: new Map(),
+        isSoftLink,
       };
       seenNodes.set(node, workNode);
     }
@@ -935,7 +1082,9 @@ const dumpDepTree = (tree: HoisterWorkTree) => {
       if (!pkg.peerNames.has(dep.name) && dep !== pkg) {
         const reason = pkg.reasons.get(dep.name);
         const identName = getIdentName(dep.locator);
-        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) +  prettyPrintLocator(dep.locator) + (reason ? ` ${reason}` : ``) + (dep !== pkg && dep.hoistedFrom.length > 0 ? `, hoisted from: ${dep.hoistedFrom.join(`, `)}` : ``)}\n`;
+        const hoistedFromMap = pkg.hoistedFrom.get(dep.name);
+        const hoistedFrom = hoistedFromMap ? Array.from(hoistedFromMap.values()) : null;
+        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) +  prettyPrintLocator(dep.locator) + (reason ? ` ${reason}` : ``) + (dep !== pkg && hoistedFrom ? `, hoisted from: ${hoistedFrom.join(`, `)}` : ``)}\n`;
         str += dumpPackage(dep, parents, `${prefix}${idx < dependencies.length - 1 ? `│ ` : `  `}`);
       }
     }

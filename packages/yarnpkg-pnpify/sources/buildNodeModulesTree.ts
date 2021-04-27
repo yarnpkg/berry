@@ -219,6 +219,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
+    isSoftLink: topPkg.linkType === LinkType.SOFT,
   };
 
   const nodes = new Map<string, HoisterTree>();
@@ -257,6 +258,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
+        isSoftLink: pkg.linkType === LinkType.SOFT,
       };
 
       nodes.set(nodeKey, node);
