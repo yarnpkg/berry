@@ -184,9 +184,18 @@ export class Project {
    */
   public peerRequirements: Map<string, PeerRequirement> = new Map();
 
+  /**
+   * Contains whatever data the installers (cf `Linker.ts`) want to persist
+   * from an install to another.
+   */
   public installersCustomData: Map<string, unknown> = new Map();
 
+  /**
+   * Those checksums are used to detect whether the relevant files actually
+   * changed since we last read them (to skip part of their generation).
+   */
   public lockFileChecksum: string | null = null;
+  public installStateChecksum: string | null = null;
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
@@ -1208,6 +1217,10 @@ export class Project {
           continue;
         }
 
+        // The install state is persisted after the builds finish (because it
+        // contains the build state), but if we need to run builds then we
+        // also need it to be written before the builds (since the build
+        // scripts will need it to run).
         if (!isInstallStatePersisted) {
           await this.persistInstallStateFile();
           isInstallStatePersisted = true;
@@ -1562,11 +1575,6 @@ export class Project {
       automaticNewlines: true,
     });
   }
-
-  /**
-   * Checksum of the install state currently persisted on disk.
-   */
-  private installStateChecksum: string | null = null;
 
   async persistInstallStateFile() {
     const fields = [];
