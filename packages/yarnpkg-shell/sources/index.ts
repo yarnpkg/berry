@@ -259,7 +259,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     // Close all the outputs (since the shell never closes the output stream)
     await Promise.all(outputs.map(output => {
       // Wait until the output got flushed to the disk
-      return new Promise<void>(resolve => {
+      return new Promise<void>((resolve, reject) => {
+        output.on(`error`, error => {
+          reject(error);
+        });
         output.on(`close`, () => {
           resolve();
         });
