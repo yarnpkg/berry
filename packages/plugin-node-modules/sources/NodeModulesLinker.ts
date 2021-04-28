@@ -49,7 +49,8 @@ export class NodeModulesLinker implements Linker {
       throw err;
     }
 
-    return locatorInfo.locations[0];
+    const startingCwd = opts.project.configuration.startingCwd;
+    return locatorInfo.locations.find(location => ppath.contains(startingCwd, location)) || locatorInfo.locations[0];
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
@@ -273,7 +274,7 @@ class NodeModulesInstaller implements Installer {
       },
     };
 
-    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
+    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, validateExternalSoftLinks: true, hoistingLimitsByCwd, project: this.opts.project});
     if (!tree) {
       for (const {messageName, text} of errors)
         this.opts.report.reportError(messageName, text);
@@ -554,7 +555,7 @@ type LocationTree = Map<LocationRoot, LocationNode>;
 const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: PortablePath}): {locationRoot: PortablePath, segments: Array<Filename>} => {
   const projectRelativePath = ppath.contains(skipPrefix, location);
   if (projectRelativePath === null)
-    throw new Error(`Assertion failed: Cannot process a path that isn't part of the requested prefix (${location} isn't within ${skipPrefix})`);
+    throw new Error(`Assertion failed: Writing attempt prevented to ${location} which is outside project root: ${skipPrefix}`);
 
   const allSegments = projectRelativePath
     .split(ppath.sep)
@@ -1069,7 +1070,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       } else {
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
-        if (ppath.contains(target, projectCwd) !== null) {
+        if (ppath.contains(projectCwd, await xfs.realpathPromise(target)) !== null) {
           await xfs.chmodPromise(target, 0o755);
         }
       }

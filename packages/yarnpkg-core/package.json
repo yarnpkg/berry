@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "2.4.0",
+  "version": "3.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -8,12 +8,12 @@
     "@arcanis/slice-ansi": "^1.0.2",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
-    "@yarnpkg/fslib": "workspace:^2.4.0",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
     "@yarnpkg/json-proxy": "workspace:^2.1.0",
     "@yarnpkg/libzip": "workspace:^2.2.1",
-    "@yarnpkg/parsers": "workspace:^2.3.0",
-    "@yarnpkg/pnp": "workspace:^2.3.2",
-    "@yarnpkg/shell": "workspace:^2.4.1",
+    "@yarnpkg/parsers": "workspace:^2.3.1-rc.2",
+    "@yarnpkg/pnp": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/shell": "workspace:^3.0.0-rc.2",
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "ci-info": "^2.0.0",
@@ -27,6 +27,7 @@
     "micromatch": "^4.0.2",
     "mkdirp": "^0.5.1",
     "p-limit": "^2.2.0",
+    "p-queue": "^6.0.0",
     "pluralize": "^7.0.0",
     "pretty-bytes": "^5.1.0",
     "semver": "^7.1.2",
@@ -38,6 +39,8 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/ci-info": "^2",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",
@@ -46,12 +49,17 @@
     "@types/node": "^13.7.0",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
-    "@yarnpkg/cli": "workspace:^2.4.0",
-    "@yarnpkg/plugin-link": "workspace:^2.1.1",
-    "@yarnpkg/plugin-npm": "workspace:^2.4.0",
-    "@yarnpkg/plugin-pnp": "workspace:^2.4.0"
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/plugin-link": "workspace:*",
+    "@yarnpkg/plugin-npm": "workspace:*",
+    "@yarnpkg/plugin-pnp": "workspace:*",
+    "esbuild": "npm:esbuild-wasm@^0.8.36",
+    "rollup": "^2.43.0",
+    "rollup-plugin-esbuild": "^3.0.2"
   },
   "scripts": {
+    "build:zip:worker": "rollup -c",
+    "update:zip:worker": "run build:zip:worker",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -69,5 +77,6 @@
   },
   "engines": {
     "node": ">=10.19.0"
-  }
+  },
+  "stableVersion": "2.4.0"
 }

@@ -445,6 +445,9 @@ export class Project {
   }
 
   tryWorkspaceByDescriptor(descriptor: Descriptor) {
+    if (structUtils.isVirtualDescriptor(descriptor))
+      descriptor = structUtils.devirtualizeDescriptor(descriptor);
+
     const workspace = this.tryWorkspaceByIdent(descriptor);
 
     if (workspace === null || !workspace.accepts(descriptor.range))
@@ -1208,7 +1211,7 @@ export class Project {
         if (this.storedBuildState.has(pkg.locatorHash))
           report.reportInfo(MessageName.MUST_REBUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be rebuilt because its dependency tree changed`);
         else
-          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never did before or the last one failed`);
+          report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never has been before or the last one failed`);
 
         for (const location of buildInfo.buildLocations) {
           if (!ppath.isAbsolute(location))
@@ -1414,18 +1417,18 @@ export class Project {
       }
     });
 
+    const immutablePatterns = opts.immutable
+      ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
+      : [];
+
+    const before = await Promise.all(immutablePatterns.map(async pattern => {
+      return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
+    }));
+
     if (typeof opts.persistProject === `undefined` || opts.persistProject)
       await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
-      const immutablePatterns = opts.immutable
-        ? [...new Set(this.configuration.get(`immutablePatterns`))].sort()
-        : [];
-
-      const before = await Promise.all(immutablePatterns.map(async pattern => {
-        return hashUtils.checksumPattern(pattern, {cwd: this.cwd});
-      }));
-
       await this.linkEverything(opts);
 
       const after = await Promise.all(immutablePatterns.map(async pattern => {

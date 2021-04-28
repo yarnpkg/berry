@@ -169,18 +169,6 @@ export default class InitCommand extends BaseCommand {
       const lockfilePath = ppath.join(this.context.cwd, Filename.lockfile);
       await xfs.writeFilePromise(lockfilePath, ``);
 
-      const gitattributesLines = [
-        `/.yarn/** linguist-vendored`,
-      ];
-
-      const gitattributesBody = gitattributesLines.map(line => {
-        return `${line}\n`;
-      }).join(``);
-
-      const gitattributesPath = ppath.join(this.context.cwd, `.gitattributes` as Filename);
-      if (!xfs.existsSync(gitattributesPath))
-        await xfs.writeFilePromise(gitattributesPath, gitattributesBody);
-
       const gitignoreLines = [
         `/.yarn/*`,
         `!/.yarn/patches`,

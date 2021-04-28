@@ -15,7 +15,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     : null;
 
   const packageLocatorsByLocations = new Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>();
-  const packageLocationLengths = new Set<number>();
 
   const packageRegistry = new Map<string | null, PackageStore>(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map<string | null, PackageInformation<PortablePath>>(packageStoreData.map(([packageReference, packageInformationData]) => {
@@ -35,8 +34,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
           entry.locator = packageLocator;
         }
       }
-
-      packageLocationLengths.add(packageInformationData.packageLocation.length);
 
       let resolvedPackageLocation: PortablePath | null = null;
 
@@ -73,7 +70,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     fallbackExclusionList,
     fallbackPool,
     ignorePattern,
-    packageLocationLengths: [...packageLocationLengths].sort((a, b) => b - a),
     packageLocatorsByLocations,
     packageRegistry,
   };

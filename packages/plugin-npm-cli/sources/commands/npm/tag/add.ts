@@ -53,31 +53,17 @@ export default class NpmTagAddCommand extends BaseCommand {
       if (Object.prototype.hasOwnProperty.call(distTags, this.tag) && distTags[this.tag] === version)
         report.reportWarning(MessageName.UNNAMED, `Tag ${prettyTag} is already set to version ${prettyVersion}`);
 
-      try {
-        const url = `/-/package${npmHttpUtils.getIdentUrl(descriptor)}/dist-tags/${encodeURIComponent(this.tag)}`;
+      const url = `/-/package${npmHttpUtils.getIdentUrl(descriptor)}/dist-tags/${encodeURIComponent(this.tag)}`;
 
-        await npmHttpUtils.put(url, version, {
-          configuration,
-          registry,
-          ident: descriptor,
-          jsonRequest: true,
-          jsonResponse: true,
-        });
-      } catch (error) {
-        if (error.name !== `HTTPError`) {
-          throw error;
-        } else {
-          const message = error.response.body && error.response.body.error
-            ? error.response.body.error
-            : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
+      await npmHttpUtils.put(url, version, {
+        configuration,
+        registry,
+        ident: descriptor,
+        jsonRequest: true,
+        jsonResponse: true,
+      });
 
-          report.reportError(MessageName.NETWORK_ERROR, message);
-        }
-      }
-
-      if (!report.hasErrors()) {
-        report.reportInfo(MessageName.UNNAMED, `Tag ${prettyTag} added to version ${prettyVersion} of package ${prettyIdent}`);
-      }
+      report.reportInfo(MessageName.UNNAMED, `Tag ${prettyTag} added to version ${prettyVersion} of package ${prettyIdent}`);
     });
 
     return report.exitCode();

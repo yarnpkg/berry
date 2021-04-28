@@ -1,8 +1,9 @@
 import {BaseCommand}                                                                       from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
-import {formatUtils, httpUtils, structUtils}                                               from '@yarnpkg/core';
+import {YarnVersion, formatUtils, httpUtils, structUtils}                                  from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                                            from 'clipanion';
+import semver                                                                              from 'semver';
 import {URL}                                                                               from 'url';
 import {runInNewContext}                                                                   from 'vm';
 
@@ -75,8 +76,11 @@ export default class PluginDlCommand extends BaseCommand {
           pluginSpec = this.name;
           pluginUrl = this.name;
         } else {
-          const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
-          const identStr = structUtils.stringifyIdent(ident);
+          const locator = structUtils.parseLocator(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
+          if (locator.reference !== `unknown` && !semver.valid(locator.reference))
+            throw new ReportError(MessageName.UNNAMED, `Official plugins only accept strict version references. Use an explicit URL if you wish to download them from another location.`);
+
+          const identStr = structUtils.stringifyIdent(locator);
           const data = await getAvailablePlugins(configuration);
 
           if (!Object.prototype.hasOwnProperty.call(data, identStr))
@@ -84,6 +88,12 @@ export default class PluginDlCommand extends BaseCommand {
 
           pluginSpec = identStr;
           pluginUrl = data[identStr].url;
+
+          if (locator.reference !== `unknown`) {
+            pluginUrl = pluginUrl.replace(/\/master\//, `/${identStr}/${locator.reference}/`);
+          } else if (YarnVersion !== null) {
+            pluginUrl = pluginUrl.replace(/\/master\//, `/@yarnpkg/cli/${YarnVersion}/`);
+          }
         }
 
         report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, pluginUrl, `green`)}`);

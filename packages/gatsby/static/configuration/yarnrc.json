@@ -568,7 +568,7 @@
         "type": "string"
       },
       "default": [],
-      "_exampleItems": ["./subdir/.*"]
+      "_exampleItems": ["./subdir/*"]
     },
     "pnpMode": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -657,13 +657,6 @@
     "yarnPath": {
       "_package": "@yarnpkg/core",
       "description": "The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with `.js` it will be required, and will be spawned in any other case.\n\nThe `yarnPath` setting is currently the preferred way to install Yarn within a project, as it ensures that your whole team will use the exact same Yarn version, without having to individually keep it up-to-date.",
-      "type": "string",
-      "format": "uri-reference",
-      "examples": ["./scripts/yarn-2.0.0-rc001.js"]
-    },
-    "yarnUpgradePath": {
-      "_package": "@yarnpkg/core",
-      "description": "If set, the `yarn set version` command will store the downloaded file at this location instead of the one referenced by `yarnPath`. This settings is useful if you want the file referenced in `yarnPath` to be a wrapper, and the real Yarn binary to be stored elsewhere.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["./scripts/yarn-2.0.0-rc001.js"]

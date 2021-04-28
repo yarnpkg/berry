@@ -21,9 +21,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   // Splits a require request into its components, or return null if the request is a file path
-  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+  const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
   // Matches if the path starts with a valid path qualifier (./, ../, /)
   // eslint-disable-next-line no-unused-vars
@@ -83,7 +84,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     ignorePattern,
     packageRegistry,
     packageLocatorsByLocations,
-    packageLocationLengths,
   } = runtimeState as RuntimeState;
 
   /**
@@ -497,22 +497,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (!relativeLocation.endsWith(`/`))
       relativeLocation = `${relativeLocation}/` as PortablePath;
 
-    let from = 0;
+    do {
+      const entry = packageLocatorsByLocations.get(relativeLocation);
 
-    // If someone wants to use a binary search to go from O(n) to O(log n), be my guest
-    while (from < packageLocationLengths.length && packageLocationLengths[from] > relativeLocation.length)
-      from += 1;
-
-    for (let t = from; t < packageLocationLengths.length; ++t) {
-      const entry = packageLocatorsByLocations.get(relativeLocation.substr(0, packageLocationLengths[t]) as PortablePath);
-
-      if (typeof entry !== `undefined`) {
-        if (entry.discardFromLookup && !includeDiscardFromLookup)
-          continue;
-
-        return entry.locator;
+      if (typeof entry === `undefined` || (entry.discardFromLookup && !includeDiscardFromLookup)) {
+        relativeLocation = relativeLocation.substring(0, relativeLocation.lastIndexOf(`/`, relativeLocation.length - 2) + 1) as PortablePath;
+        continue;
       }
-    }
+
+      return entry.locator;
+    } while (relativeLocation !== ``);
 
     return null;
   }
@@ -535,7 +529,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && builtinModules.has(request))
+    if (considerBuiltins && isBuiltinModule(request))
       return null;
 
     const requestForDisplay = getPathForDisplay(request);
@@ -704,7 +698,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && builtinModules.has(request)) {
+        if (!considerBuiltins && isBuiltinModule(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
@@ -836,7 +830,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         ? isPathIgnored(issuer)
         : false;
 
-    const remappedPath = (!considerBuiltins || !builtinModules.has(request)) && !isIssuerIgnored()
+    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored()
       ? resolveUnqualifiedExport(request, unqualifiedPath)
       : unqualifiedPath;
 

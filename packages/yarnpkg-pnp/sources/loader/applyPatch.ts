@@ -16,6 +16,7 @@ export type ApplyPatchOptions = {
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
@@ -72,7 +73,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Builtins are managed by the regular Node loader
 
-    if (builtinModules.has(request)) {
+    if (isBuiltinModule(request)) {
       try {
         enableNativeHooks = false;
         return originalModuleLoad.call(Module, request, parent, isMain);
@@ -216,7 +217,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: (NodeModule & {pnpApiPath?: PortablePath}) | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
-    if (builtinModules.has(request))
+    if (isBuiltinModule(request))
       return request;
 
     if (!enableNativeHooks)

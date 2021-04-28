@@ -25,8 +25,8 @@ export default class DlxCommand extends BaseCommand {
     ]],
   });
 
-  pkg = Option.String(`-p,--package`, {
-    description: `The package to run the provided command from`,
+  packages = Option.Array(`-p,--package`, {
+    description: `The package(s) to install before running the command`,
   });
 
   quiet = Option.Boolean(`-q,--quiet`, false, {
@@ -50,6 +50,12 @@ export default class DlxCommand extends BaseCommand {
       const targetYarnrc = ppath.join(tmpDir, `.yarnrc.yml` as Filename);
       const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
 
+      // We set enableGlobalCache to true for dlx calls to speed it up but only if the
+      // project it's run in has enableGlobalCache set to false, otherwise we risk running into
+      // `Unable to locate pnpapi ... is controlled by multiple pnpapi instances` errors when
+      // running something like `yarn dlx sb init`
+      const enableGlobalCache = !(await Configuration.find(this.context.cwd, null, {strict: false})).get(`enableGlobalCache`);
+
       const sourceYarnrc = projectCwd !== null
         ? ppath.join(projectCwd, `.yarnrc.yml` as Filename)
         : null;
@@ -60,7 +66,7 @@ export default class DlxCommand extends BaseCommand {
         await Configuration.updateConfiguration(tmpDir, current => {
           const nextConfiguration: {[key: string]: unknown} = {
             ...current,
-            enableGlobalCache: true,
+            enableGlobalCache,
             enableTelemetry: false,
           };
 
@@ -85,14 +91,12 @@ export default class DlxCommand extends BaseCommand {
           return nextConfiguration;
         });
       } else {
-        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: true\nenableTelemetry: false\n`);
+        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: ${enableGlobalCache}\nenableTelemetry: false\n`);
       }
 
-      const pkgs = typeof this.pkg !== `undefined`
-        ? [this.pkg]
-        : [this.command];
+      const pkgs = this.packages ?? [this.command];
 
-      const command = structUtils.parseDescriptor(this.command).name;
+      let command = structUtils.parseDescriptor(this.command).name;
 
       const addExitCode = await this.cli.run([`add`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
       if (addExitCode !== 0)
@@ -109,7 +113,13 @@ export default class DlxCommand extends BaseCommand {
 
       await project.restoreInstallState();
 
+      const binaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
+
+      if (binaries.has(command) === false && binaries.size === 1 && typeof this.packages === `undefined`)
+        command = Array.from(binaries)[0][0];
+
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
+        packageAccessibleBinaries: binaries,
         cwd: this.context.cwd,
         stdin: this.context.stdin,
         stdout: this.context.stdout,
