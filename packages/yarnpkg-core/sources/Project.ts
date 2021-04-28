@@ -184,9 +184,18 @@ export class Project {
    */
   public peerRequirements: Map<string, PeerRequirement> = new Map();
 
+  /**
+   * Contains whatever data the installers (cf `Linker.ts`) want to persist
+   * from an install to another.
+   */
   public installersCustomData: Map<string, unknown> = new Map();
 
+  /**
+   * Those checksums are used to detect whether the relevant files actually
+   * changed since we last read them (to skip part of their generation).
+   */
   public lockFileChecksum: string | null = null;
+  public installStateChecksum: string | null = null;
 
   static async find(configuration: Configuration, startingCwd: PortablePath): Promise<{project: Project, workspace: Workspace | null, locator: Locator}> {
     if (!configuration.projectCwd)
@@ -1087,8 +1096,6 @@ export class Project {
 
     this.installersCustomData = installersCustomData;
 
-    await this.persistInstallStateFile();
-
     // Step 4: Build the packages in multiple steps
 
     if (skipBuild)
@@ -1103,7 +1110,7 @@ export class Project {
     const globalHashGenerator = createHash(`sha512`);
     globalHashGenerator.update(process.versions.node);
 
-    this.configuration.triggerHook(hooks => {
+    await this.configuration.triggerHook(hooks => {
       return hooks.globalHashGeneration;
     }, this, (data: Buffer | string) => {
       globalHashGenerator.update(`\0`);
@@ -1168,6 +1175,8 @@ export class Project {
     // remove the state from packages that got removed
     const nextBState = new Map<LocatorHash, string>();
 
+    let isInstallStatePersisted = false;
+
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
       const buildPromises = [];
@@ -1206,6 +1215,15 @@ export class Project {
         if (this.storedBuildState.get(pkg.locatorHash) === buildHash) {
           nextBState.set(pkg.locatorHash, buildHash);
           continue;
+        }
+
+        // The install state is persisted after the builds finish (because it
+        // contains the build state), but if we need to run builds then we
+        // also need it to be written before the builds (since the build
+        // scripts will need it to run).
+        if (!isInstallStatePersisted) {
+          await this.persistInstallStateFile();
+          isInstallStatePersisted = true;
         }
 
         if (this.storedBuildState.has(pkg.locatorHash))
@@ -1564,12 +1582,17 @@ export class Project {
       fields.push(...category);
 
     const installState = pick(this, fields) as InstallState;
-    const serializedState = await gzip(v8.serialize(installState));
+    const serializedState = v8.serialize(installState);
+    const newInstallStateChecksum = hashUtils.makeHash(serializedState);
+    if (this.installStateChecksum === newInstallStateChecksum)
+      return;
 
     const installStatePath = this.configuration.get(`installStatePath`);
 
     await xfs.mkdirPromise(ppath.dirname(installStatePath), {recursive: true});
-    await xfs.changeFilePromise(installStatePath, serializedState as Buffer);
+    await xfs.writeFilePromise(installStatePath, await gzip(serializedState) as Buffer);
+
+    this.installStateChecksum = newInstallStateChecksum;
   }
 
   async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
@@ -1580,8 +1603,9 @@ export class Project {
       return;
     }
 
-    const serializedState = await xfs.readFilePromise(installStatePath);
-    const installState: InstallState = v8.deserialize(await gunzip(serializedState) as Buffer);
+    const installStateBuffer = await gunzip(await xfs.readFilePromise(installStatePath)) as Buffer;
+    this.installStateChecksum = hashUtils.makeHash(installStateBuffer);
+    const installState: InstallState = v8.deserialize(installStateBuffer);
 
     if (restoreInstallersCustomData)
       if (typeof installState.installersCustomData !== `undefined`)
