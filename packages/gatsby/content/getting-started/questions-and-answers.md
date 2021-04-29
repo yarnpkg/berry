@@ -63,13 +63,6 @@ If you're not using Zero-Installs:
 .pnp.*
 ```
 
-Add a ".gitattributes" file to mark the release/plugin bundles binary content, so Git doesn't bother showing massive diffs when they're added/removed:
-
-```gitattributes
-/.yarn/releases/** binary
-/.yarn/plugins/** binary
-```
-
 If you're interested to know more about each of these files:
 
 - `.yarn/cache` and `.pnp.*` may be safely ignored, but you'll need to run `yarn install` to regenerate them between each branch switch - which would be optional otherwise, cf [Zero-Installs](/features/zero-installs).
@@ -89,6 +82,13 @@ If you're interested to know more about each of these files:
 - `yarn.lock` should always be stored within your repository ([even if you develop a library](#should-lockfiles-be-committed-to-the-repository)).
 
 - `.yarnrc.yml` (and its older counterpart, `.yarnrc`) are configuration files. They should always be stored in your project.
+
+> **Tip:** You can also add a `.gitattributes` file to identify the release and plugin bundles as binary content. This way Git won't bother showing massive diffs when each time you subsequently add or update them:
+>
+> ```gitattributes
+> /.yarn/releases/** binary
+> /.yarn/plugins/** binary
+> ```
 
 ## Should lockfiles be committed to the repository?
 
