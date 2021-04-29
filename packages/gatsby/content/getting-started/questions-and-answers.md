@@ -63,6 +63,13 @@ If you're not using Zero-Installs:
 .pnp.*
 ```
 
+Add a ".gitattributes" file to mark the release/plugin bundles binary content, so Git doesn't bother showing massive diffs when they're added/removed:
+
+```gitattributes
+/.yarn/releases/** binary
+/.yarn/plugins/** binary
+```
+
 If you're interested to know more about each of these files:
 
 - `.yarn/cache` and `.pnp.*` may be safely ignored, but you'll need to run `yarn install` to regenerate them between each branch switch - which would be optional otherwise, cf [Zero-Installs](/features/zero-installs).
