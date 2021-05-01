@@ -31,6 +31,19 @@ Object {
 }
 `;
 
+exports[`Commands workspace foreach should include dependencies of workspaces matching the from filter if using --from and --recursive 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace G
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace B
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should never run the scripts on workspaces that match the --exclude list 1`] = `
 Object {
   "code": 0,
@@ -50,6 +63,10 @@ Object {
 ➤ YN0000: [workspace-f]: Process started
 ➤ YN0000: [workspace-f]: Test Workspace F
 ➤ YN0000: [workspace-f]: Process exited (exit code 0)
+
+➤ YN0000: [workspace-g]: Process started
+➤ YN0000: [workspace-g]: Test Workspace G
+➤ YN0000: [workspace-g]: Process exited (exit code 0)
 ➤ YN0000: Done
 ",
 }
@@ -65,6 +82,7 @@ Object {
 ➤ YN0000: Test Workspace D
 ➤ YN0000: Test Workspace E
 ➤ YN0000: Test Workspace F
+➤ YN0000: Test Workspace G
 ➤ YN0000: Done
 ",
 }
@@ -113,6 +131,10 @@ Object {
 ➤ YN0000: [workspace-f]: Process started
 ➤ YN0000: [workspace-f]: Test Workspace F
 ➤ YN0000: [workspace-f]: Process exited (exit code 0)
+
+➤ YN0000: [workspace-g]: Process started
+➤ YN0000: [workspace-g]: Test Workspace G
+➤ YN0000: [workspace-g]: Process exited (exit code 0)
 ➤ YN0000: Done
 ",
 }
@@ -123,6 +145,7 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: One execution
+➤ YN0000: One execution
 ➤ YN0000: One execution
 ➤ YN0000: One execution
 ➤ YN0000: One execution
@@ -142,23 +165,26 @@ Object {
 ➤ YN0000: Test Workspace D
 ➤ YN0000: Test Workspace E
 ➤ YN0000: Test Workspace F
+➤ YN0000: Test Workspace G
 ➤ YN0000: Done
 ",
 }
 `;
 
 exports[`Commands workspace foreach should run scripts in parallel but following the topological order when run with --parallel --topological 1`] = `
+Array [
+  "C",
+  "B",
+  "D",
+  "E",
+  "F",
+]
+`;
+
+exports[`Commands workspace foreach should run scripts in parallel but following the topological order when run with --parallel --topological 2`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Test Workspace A
-➤ YN0000: Test Workspace C
-➤ YN0000: Test Workspace B
-➤ YN0000: Test Workspace D
-➤ YN0000: Test Workspace E
-➤ YN0000: Test Workspace F
-➤ YN0000: Done
-",
 }
 `;
 
@@ -173,6 +199,7 @@ Object {
 ➤ YN0000: packages/workspace-c/packages/workspace-d
 ➤ YN0000: packages/workspace-c/packages/workspace-d/packages/workspace-e
 ➤ YN0000: packages/workspace-c/packages/workspace-f
+➤ YN0000: packages/workspace-c/packages/workspace-g
 ➤ YN0000: Done
 ",
 }
