@@ -170,5 +170,22 @@ describe(`Protocols`, () => {
         },
       ),
     );
+
+    test(
+      `it should throw on invalid patch files`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH, {encoding: `utf16le`});
+
+          await expect(run(`install`)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`Unable to parse patch file: No changes found`),
+          });
+        },
+      ),
+    );
   });
 });
