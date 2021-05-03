@@ -1,7 +1,8 @@
 import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                             from '@yarnpkg/fslib';
+import {npath, ppath, xfs}                                        from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import micromatch                                                 from 'micromatch';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnlinkCommand extends BaseCommand {
@@ -20,6 +21,12 @@ export default class UnlinkCommand extends BaseCommand {
     ], [
       `Unregister all workspaces from a remote project in the current project`,
       `$0 unlink ~/jest --all`,
+    ], [
+      `Unregister all previously linked workspaces`,
+      `$0 unlink`,
+    ], [
+      `Unregister all workspaces matching a glob`,
+      `$0 unlink '@babel/*'`,
     ]],
   });
 
@@ -38,37 +45,48 @@ export default class UnlinkCommand extends BaseCommand {
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const topLevelWorkspace = project.topLevelWorkspace;
-    const unlinkedWorkspaces = new Set<string>();
+    const workspacesToUnlink = new Set<string>();
+
+    if (!this.destination) {
+      for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
+        if (reference.startsWith(`portal:`)) {
+          workspacesToUnlink.add(pattern.descriptor.fullName);
+        }
+      }
+    }
 
     if (this.destination) {
       const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
+      if (await xfs.existsPromise(absoluteDestination)) {
+        const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
+        const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
-      const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
-      const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
+        if (!workspace2)
+          throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
 
-      if (!workspace2)
-        throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
+        if (this.all) {
+          for (const workspace of project2.workspaces)
+            if (workspace.manifest.name)
+              workspacesToUnlink.add(structUtils.stringifyIdent(workspace.locator));
 
-      if (this.all) {
-        for (const workspace of project2.workspaces)
-          if (workspace.manifest.name)
-            unlinkedWorkspaces.add(structUtils.stringifyIdent(workspace.locator));
+          if (workspacesToUnlink.size === 0) {
+            throw new UsageError(`No workspace found to be unlinked in the target project`);
+          }
+        } else {
+          if (!workspace2.manifest.name)
+            throw new UsageError(`The target workspace doesn't have a name and thus cannot be unlinked`);
 
-        if (unlinkedWorkspaces.size === 0) {
-          throw new UsageError(`No workspace found to be unlinked in the target project`);
+          workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.locator));
         }
       } else {
-        if (!workspace2.manifest.name)
-          throw new UsageError(`The target workspace doesn't have a name and thus cannot be unlinked`);
-
-        unlinkedWorkspaces.add(structUtils.stringifyIdent(workspace2.locator));
+        const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
+        for (const fullName of micromatch(fullNames, this.destination)) {
+          workspacesToUnlink.add(fullName);
+        }
       }
-
-      topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({pattern}) =>
-        !unlinkedWorkspaces.has(pattern.descriptor.fullName));
-    } else {
-      topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({reference}) => !reference.startsWith(`portal:`));
     }
+
+    topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({pattern}) => !workspacesToUnlink.has(pattern.descriptor.fullName));
 
     const report = await StreamReport.start({
       configuration,

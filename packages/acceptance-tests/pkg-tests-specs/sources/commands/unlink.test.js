@@ -25,7 +25,7 @@ describe(`Commands`, () => {
 
         await run(`unlink`, `${tmp}/my-package`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({});
+        await expect(readJson(`${path}/package.json`)).resolves.toEqual({});
       }),
     );
 
@@ -59,22 +59,22 @@ describe(`Commands`, () => {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
             resolutions: {
               [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
               [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
             },
-          });
+          }));
 
           await run(`unlink`, `${tmp}/my-package-b`, {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
             resolutions: {
               [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
             },
-          });
+          }));
         },
       ),
     );
@@ -109,23 +109,78 @@ describe(`Commands`, () => {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
             resolutions: {
               [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
               [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
             },
-          });
+          }));
 
           await run(`unlink`, ``, {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(readJson(`${path}/package.json`)).resolves.not.toMatchObject({
+          await expect(readJson(`${path}/package.json`)).resolves.not.toEqual(expect.objectContaining({
             resolutions: expect.objectContaining({
               [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
               [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
             }),
+          }));
+        },
+      ),
+    );
+
+    test(
+      `it should remove all resolutions matching the specified glob`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run, source}) => {
+          const tmp = await createTemporaryFolder();
+
+          await writeJson(`${tmp}/my-package-a/package.json`, {
+            name: `my-package-a`,
           });
+
+          await writeJson(`${tmp}/my-package-b/package.json`, {
+            name: `my-package-b`,
+          });
+
+          await writeJson(`${path}/packages/workspace/package.json`, {
+            name: `workspace`,
+          });
+
+          await run(`link`, `${tmp}/my-package-a`, {
+            cwd: `${path}/packages/workspace`,
+          });
+
+          await run(`link`, `${tmp}/my-package-b`, {
+            cwd: `${path}/packages/workspace`,
+          });
+
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
+            resolutions: {
+              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+            },
+          }));
+
+          await run(`unlink`, `my-*-b`, {
+            cwd: `${path}/packages/workspace`,
+          });
+
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
+            resolutions: {
+              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+            },
+          }));
+          await expect(readJson(`${path}/package.json`)).resolves.not.toEqual(expect.objectContaining({
+            resolutions: {
+              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+            },
+          }));
         },
       ),
     );
@@ -155,21 +210,21 @@ describe(`Commands`, () => {
         await run(`link`, `${tmp}/my-workspace`, `--all`);
         await run(`link`, `${tmp}/my-package`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
           resolutions: {
             [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
             [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
             [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
           },
-        });
+        }));
 
         await run(`unlink`, `${tmp}/my-workspace`, `--all`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
           resolutions: {
             [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
           },
-        });
+        }));
       }),
     );
   });
