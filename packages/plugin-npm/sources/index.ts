@@ -1,5 +1,6 @@
 import {Plugin, SettingsType, miscUtils} from '@yarnpkg/core';
 
+import {Hooks}                           from './Hooks';
 import {NpmHttpFetcher}                  from './NpmHttpFetcher';
 import {NpmRemapResolver}                from './NpmRemapResolver';
 import {NpmSemverFetcher}                from './NpmSemverFetcher';
@@ -12,6 +13,7 @@ import * as npmPublishUtils              from './npmPublishUtils';
 export {npmConfigUtils};
 export {npmHttpUtils};
 export {npmPublishUtils};
+export type {Hooks};
 
 const authSettings = {
   npmAlwaysAuth: {

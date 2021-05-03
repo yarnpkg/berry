@@ -3,6 +3,7 @@ import {MessageName, ReportError}        from '@yarnpkg/core';
 import {prompt}                          from 'enquirer';
 import {URL}                             from 'url';
 
+import {Hooks}                           from "./Hooks";
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';
 
@@ -60,7 +61,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -87,7 +88,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -121,7 +122,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -155,7 +156,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -182,12 +183,20 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   }
 }
 
-function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
+async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
   const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
 
   if (!mustAuthenticate)
     return null;
+
+  const header = await configuration.reduceHook((hooks: Hooks) => {
+    return hooks.getNpmAuthenticationHeader;
+  }, undefined, registry, {configuration, ident});
+
+  if (header)
+    return header;
+
 
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;

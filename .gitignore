@@ -37,3 +37,5 @@ package.tgz
 !/packages/yarnpkg-pnp/lib/hook.js
 
 /vscode-case-study
+
+.idea
