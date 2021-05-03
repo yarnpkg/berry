@@ -53,7 +53,7 @@ export default class SetVersionCommand extends BaseCommand {
       bundleUrl = `https://github.com/yarnpkg/berry/raw/%40yarnpkg/cli/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
       bundleUrl = `https://github.com/yarnpkg/yarn/releases/download/v${this.version}/yarn-${this.version}.js`;
-    else if (semver.validRange(this.version))
+    else if (semverUtils.validRange(this.version))
       throw new UsageError(`Support for ranges got removed - please use the exact version you want to install, or 'latest' to get the latest build available`);
     else
       throw new UsageError(`Invalid version descriptor "${this.version}"`);
