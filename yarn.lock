@@ -4393,6 +4393,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/git-url-parse@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@types/git-url-parse@npm:9.0.0"
+  checksum: 3f4dbd6d5ca3ba84221983ceffe4d81c6a79cc85529ba3d54b1d0963f2d91cbcffcd9998e8478ee18df73c9697cf05b8aeddb1349f9e65af0e4b039a89d7fff6
+  languageName: node
+  linkType: hard
+
 "@types/glob@npm:*, @types/glob@npm:^7.1.1":
   version: 7.1.1
   resolution: "@types/glob@npm:7.1.1"
@@ -6021,6 +6028,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
+    "@types/git-url-parse": ^9.0.0
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"

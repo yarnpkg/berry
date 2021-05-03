@@ -8754,6 +8754,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/git-url-parse", [
+        ["npm:9.0.0", {
+          "packageLocation": "./.yarn/cache/@types-git-url-parse-npm-9.0.0-2704df37e9-3f4dbd6d5c.zip/node_modules/@types/git-url-parse/",
+          "packageDependencies": [
+            ["@types/git-url-parse", "npm:9.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/glob", [
         ["npm:5.0.36", {
           "packageLocation": "./.yarn/cache/@types-glob-npm-5.0.36-de93add935-5f0def7236.zip/node_modules/@types/glob/",
@@ -12584,6 +12593,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-git-virtual-10be4489c8/1/packages/plugin-git/",
           "packageDependencies": [
             ["@yarnpkg/plugin-git", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-git"],
+            ["@types/git-url-parse", "npm:9.0.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/yarnpkg__core", null],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
@@ -12602,6 +12612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-git/",
           "packageDependencies": [
             ["@yarnpkg/plugin-git", "workspace:packages/plugin-git"],
+            ["@types/git-url-parse", "npm:9.0.0"],
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
