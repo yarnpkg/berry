@@ -63,4 +63,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - run build commands across workspaces after detecting the ones which changed, and bundle them up into deployable AWS apps.
 
+- [**licenses**](https://github.com/tophat/yarn-plugin-licenses) by [**Noah Negin-Ulster**](https://noahnu.com/) - audit direct and indirect dependency licenses to ensure compliance
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
