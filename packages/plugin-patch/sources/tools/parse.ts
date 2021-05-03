@@ -409,6 +409,9 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
     }
   }
 
+  if (result.length === 0)
+    throw new Error(`Unable to parse patch file: No changes found. Make sure the patch is a valid UTF8 encoded string`);
+
   return result;
 }
 
