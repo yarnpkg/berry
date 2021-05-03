@@ -197,7 +197,6 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
   if (header)
     return header;
 
-
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
   if (effectiveConfiguration.get(`npmAuthIdent`))
