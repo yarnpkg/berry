@@ -211,6 +211,24 @@ export class PnpInstaller implements Installer {
 
 
   async finalizeInstall() {
+    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
+      return undefined;
+
+    const pnpPath = getPnpPath(this.opts.project);
+
+    if (xfs.existsSync(pnpPath.cjsLegacy)) {
+      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
+
+      await xfs.removePromise(pnpPath.cjsLegacy);
+    }
+
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
+      await xfs.removePromise(pnpPath.cjs);
+      await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+
+      return undefined;
+    }
+
     for (const {locator, location} of this.virtualTemplates.values()) {
       miscUtils.getMapWithDefault(this.packageRegistry, structUtils.stringifyIdent(locator)).set(locator.reference, {
         packageLocation: location,
@@ -260,24 +278,8 @@ export class PnpInstaller implements Installer {
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
-    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return;
-
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
-
-    if (xfs.existsSync(pnpPath.cjsLegacy)) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
-
-      await xfs.removePromise(pnpPath.cjsLegacy);
-    }
-
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
-      await xfs.removePromise(pnpPath.cjs);
-      await xfs.removePromise(pnpDataPath);
-
-      return;
-    }
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
