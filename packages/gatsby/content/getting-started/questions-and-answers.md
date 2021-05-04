@@ -83,6 +83,13 @@ If you're interested to know more about each of these files:
 
 - `.yarnrc.yml` (and its older counterpart, `.yarnrc`) are configuration files. They should always be stored in your project.
 
+> **Tip:** You can also add a `.gitattributes` file to identify the release and plugin bundles as binary content. This way Git won't bother showing massive diffs when each time you subsequently add or update them:
+>
+> ```gitattributes
+> /.yarn/releases/** binary
+> /.yarn/plugins/** binary
+> ```
+
 ## Should lockfiles be committed to the repository?
 
 **Yes.**

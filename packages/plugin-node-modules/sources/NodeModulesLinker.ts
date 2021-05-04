@@ -291,7 +291,7 @@ class NodeModulesInstaller implements Installer {
       },
     };
 
-    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, hoistingLimitsByCwd, project: this.opts.project});
+    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, validateExternalSoftLinks: true, hoistingLimitsByCwd, project: this.opts.project});
     if (!tree) {
       for (const {messageName, text} of errors)
         this.opts.report.reportError(messageName, text);

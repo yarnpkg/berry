@@ -3,22 +3,25 @@
   "private": true,
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
-  "dependencies": {
+  "devDependencies": {
+    "@types/finalhandler": "1.1.0",
     "@types/invariant": "^2.2.30",
     "@types/klaw": "^2.0.0",
     "@types/minimatch": "^3.0.3",
+    "@types/pem": "^1",
     "@types/semver": "^7.1.0",
+    "@types/serve-static": "1.13.3",
     "@types/tar-fs": "^1.16.1",
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
-    "@yarnpkg/parsers": "workspace:^2.3.1-rc.2",
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/fslib": "workspace:*",
+    "@yarnpkg/parsers": "workspace:*",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
     "klaw": "^2.1.1",
     "minimatch": "^3.0.4",
     "pem": "^1.14.4",
-    "pkg-tests-fixtures": "workspace:0.0.0",
+    "pkg-tests-fixtures": "workspace:*",
     "semver": "^7.1.2",
     "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
@@ -28,11 +31,6 @@
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git",
     "directory": "packages/acceptance-tests/pkg-tests-core"
-  },
-  "devDependencies": {
-    "@types/finalhandler": "1.1.0",
-    "@types/pem": "^1",
-    "@types/serve-static": "1.13.3"
   },
   "engines": {
     "node": ">=10.19.0"

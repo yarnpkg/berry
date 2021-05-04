@@ -19,8 +19,8 @@
   "devDependencies": {
     "@types/comment-json": "^1.1.1",
     "@types/lodash": "^4.14.136",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:^3.0.0-rc.2",
+    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/pnp": "workspace:*",
     "eslint": "^6.8.0",
     "typescript": "beta"
   },

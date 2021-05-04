@@ -376,7 +376,29 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
     )
   );
 
-  return {manifest: workspace.manifest, binFolder, env, cwd: cwd ?? workspace.cwd};
+  // When operating under PnP, `initializePackageEnvironment`
+  // yields package location to the linker, which goes into
+  // the PnP hook, which resolves paths relative to dirname,
+  // which is realpath'd (because of Node). The realpath that
+  // follows ensures that workspaces are realpath'd in a
+  // similar way.
+  //
+  // I'm not entirely comfortable with this, especially because
+  // there are no tests pertaining to this behaviour and the use
+  // case is still a bit fuzzy to me (something about Flow not
+  // handling well the case where a project was 1:1 symlinked
+  // into another place, I think?). I also don't like the idea
+  // of realpathing thing in general, since it means losing
+  // information...
+  //
+  // It's fine for now because it preserves a behaviour in 3.x
+  // that was already there in 2.x, but it should be considered
+  // for removal or standardization if it ever becomes a problem.
+  //
+  if (typeof cwd === `undefined`)
+    cwd = ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json` as Filename)));
+
+  return {manifest: workspace.manifest, binFolder, env, cwd};
 }
 
 async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {

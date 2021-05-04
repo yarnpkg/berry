@@ -16,19 +16,20 @@ You'll get a pretty output with all the warnings.
 - no unmet peer dependencies
 - no node_module strings
 - no unqualified webpack loaders
+- no bundleDependencies
 
 ### no unlisted dependencies
 
 This rule warns when imported dependencies are not listed in a project/workspace's package.json.
 
-Node allows you to import any package without having a version specified in your package.json. This can lead to subtle and hard to solve bugs. 
+Node allows you to import any package without having a version specified in your package.json. This can lead to subtle and hard to solve bugs.
 
-For example: 
+For example:
 1. Node might find a globally installed package and the project works on your machine. While other your colleagues might be missing the globally installed package or (worse) have an incompatible version installed.
 
 2. Or Node might find a transitive dependency (dependency of a dependency) and use that. If you remove or upgrade that dependency and it affects the transitive dependency then it can trigger all sorts of bugs.
 
-By making sure all dependencies are listed in the package.json pnp can make your project less brittle. 
+By making sure all dependencies are listed in the package.json pnp can make your project less brittle.
 
 ### no unmet peer dependencies
 
@@ -36,9 +37,9 @@ This rule warns when a package has unmet peer dependencies.
 
 Peer dependencies are useful for allowing package authors to delegate control of a dependency's version to the package user. When used correctly they prevent version conflicts and reduce bundle sizes.
 
-Peer dependencies must be manually added to the package user's package.json. Because they responsibility of the package user they can be overlooked. 
+Peer dependencies must be manually added to the package user's package.json. Because they responsibility of the package user they can be overlooked.
 
-This rule ensures that all peer dependencies are included and therefore installed for your project. 
+This rule ensures that all peer dependencies are included and therefore installed for your project.
 
 ### no node module strings
 
@@ -68,7 +69,7 @@ This rule disallows referencing loaders or plugins in string literals in a `webp
 
 Ensures that third party tools (CRA, Next, Vue-cli, etc) resolve their own versions of loaders and presets.
 
-When loaders and plugins are included as strings e.g `loader: 'file-loader'` in a `webpack.config.js` then Webpack will try to resolve it from the point of view of the project root. 
+When loaders and plugins are included as strings e.g `loader: 'file-loader'` in a `webpack.config.js` then Webpack will try to resolve it from the point of view of the project root.
 
 If the webpack config is located in a dependency, as with tools such as Create-React-App, Next.js and Gatsby, then Webpack might accidentally use an different hoisted version of a plugin. This can cause various weird bugs and crashes.
 
@@ -91,6 +92,12 @@ const webpackConfig = {
 ```
 
 This rule is a temporary measure to address this [issue](https://github.com/webpack/webpack/issues/9648)
+
+### no bundleDependencies
+
+This rule warns when the `bundleDependencies` (or `bundledDependencies`) field is used.
+
+Visit [the dedicated section](https://yarnpkg.com/getting-started/migration#dont-use-bundledependencies) on the website to learn more.
 
 ## Further reading
 

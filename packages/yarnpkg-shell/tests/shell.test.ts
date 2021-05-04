@@ -689,6 +689,14 @@ describe(`Shell`, () => {
           await expect(xfs.readFilePromise(file2, `utf8`)).resolves.toEqual(`hello world\n`);
         });
       });
+
+      it(`should throw on output redirections to inexistent folder`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" > "inexistent-folder/file.txt"`,
+          )).rejects.toThrowError(`ENOENT: no such file or directory, open`);
+        });
+      });
     });
 
     describe(`>>`, () => {

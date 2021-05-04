@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/monorepo": "workspace:0.0.0"
+    "@yarnpkg/monorepo": "workspace:*"
   },
   "scripts": {
     "postpack": "rm -rf lib",

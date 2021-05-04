@@ -51,6 +51,7 @@ export type NodeModulesTreeErrors = Array<{messageName: MessageName, text: strin
 
 export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
+  validateExternalSoftLinks?: boolean;
   hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
   project?: Project;
 }
@@ -304,6 +305,50 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
+          const isExternalSoftLinkDep = isExternalSoftLink(depPkg, depLocator);
+
+          if (options.validateExternalSoftLinks && options.project && isExternalSoftLinkDep) {
+            if (depPkg.packageDependencies.size > 0)
+              preserveSymlinksRequired = true;
+
+            for (const [name, referencish] of depPkg.packageDependencies) {
+              const portalDependencyLocator = structUtils.parseLocator(Array.isArray(referencish) ? `${referencish[0]}@${referencish[1]}` : `${name}@${referencish}`);
+              // Ignore self-references during portal hoistability check
+              if (stringifyLocator(portalDependencyLocator) !== stringifyLocator(depLocator)) {
+                const parentDependencyReferencish = allDependencies.get(name);
+                if (parentDependencyReferencish) {
+                  const parentDependencyLocator = structUtils.parseLocator(Array.isArray(parentDependencyReferencish) ? `${parentDependencyReferencish[0]}@${parentDependencyReferencish[1]}` : `${name}@${parentDependencyReferencish}`);
+                  if (!areRealLocatorsEqual(parentDependencyLocator, portalDependencyLocator)) {
+                    errors.push({
+                      messageName: MessageName.NM_CANT_INSTALL_EXTERNAL_SOFT_LINK,
+                      text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
+                        `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
+                        `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
+                        `conflicts with parent dependency ${structUtils.prettyLocator(options.project.configuration, parentDependencyLocator)}`,
+                    });
+                  }
+                } else {
+                  const siblingPortalDependency = siblingPortalDependencyMap.get(name);
+                  if (siblingPortalDependency) {
+                    const siblingReferncish = siblingPortalDependency.target;
+                    const siblingPortalDependencyLocator = structUtils.parseLocator(Array.isArray(siblingReferncish) ? `${siblingReferncish[0]}@${siblingReferncish[1]}` : `${name}@${siblingReferncish}`);
+                    if (!areRealLocatorsEqual(siblingPortalDependencyLocator, portalDependencyLocator)) {
+                      errors.push({
+                        messageName: MessageName.NM_CANT_INSTALL_EXTERNAL_SOFT_LINK,
+                        text: `Cannot link ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(depLocator.name))} ` +
+                          `into ${structUtils.prettyLocator(options.project.configuration, structUtils.parseLocator(`${locator.name}@${locator.reference}`))} ` +
+                          `dependency ${structUtils.prettyLocator(options.project.configuration, portalDependencyLocator)} ` +
+                          `conflicts with dependency ${structUtils.prettyLocator(options.project.configuration, siblingPortalDependencyLocator)} ` +
+                          `from sibling portal ${structUtils.prettyIdent(options.project.configuration, structUtils.parseIdent(siblingPortalDependency.portal.name))}`,
+                      });
+                    }
+                  } else {
+                    siblingPortalDependencyMap.set(name, {target: portalDependencyLocator.reference, portal: depLocator});
+                  }
+                }
+              }
+            }
+          }
 
           if (options.project && isExternalSoftLink(depPkg, depLocator)) {
             if (depPkg.packageDependencies.size > 0)
@@ -349,7 +394,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           }
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
-          const relativeDepCwd = isExternalSoftLink(depPkg, depLocator) ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const relativeDepCwd = isExternalSoftLinkDep ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
           const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
           const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES

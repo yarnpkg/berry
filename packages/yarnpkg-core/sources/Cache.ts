@@ -120,15 +120,25 @@ export class Cache {
   }
 
   async setup() {
+    // mkdir may cause write operations even when directories exist. To ensure that the cache can be successfully used
+    // on read-only filesystems, only run mkdir when not running in immutable mode.
     if (!this.configuration.get(`enableGlobalCache`)) {
-      await xfs.mkdirPromise(this.cwd, {recursive: true});
+      if (this.immutable) {
+        if (!await xfs.existsPromise(this.cwd)) {
+          throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache path does not exist.`);
+        }
+      } else {
+        await xfs.mkdirPromise(this.cwd, {recursive: true});
 
-      const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
+        const gitignorePath = ppath.resolve(this.cwd, `.gitignore` as Filename);
 
-      await xfs.changeFilePromise(gitignorePath, `/.gitignore\n*.flock\n`);
+        await xfs.changeFilePromise(gitignorePath, `/.gitignore\n*.flock\n`);
+      }
     }
 
-    await xfs.mkdirPromise(this.mirrorCwd || this.cwd, {recursive: true});
+    if (this.mirrorCwd || !this.immutable) {
+      await xfs.mkdirPromise(this.mirrorCwd || this.cwd, {recursive: true});
+    }
   }
 
   async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, skipIntegrityCheck}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>, skipIntegrityCheck?: boolean}): Promise<[FakeFS<PortablePath>, () => void, string]> {

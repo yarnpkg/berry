@@ -242,6 +242,19 @@ describe(`Plug'n'Play API`, () => {
       );
 
       test(
+        `it should return null for builtins ('node:' protocol)`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(
+            source(`require('pnpapi').resolveRequest('node:fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`)
+          ).resolves.toEqual(
+            null,
+          );
+        }),
+      );
+
+      test(
         `it should support the 'considerBuiltins' option`,
         makeTemporaryEnv(
           {
