@@ -34,7 +34,7 @@ export default class UnlinkCommand extends BaseCommand {
     description: `Unlink all workspaces belonging to the target project from the current one`,
   });
 
-  destination = Option.String({required: false});
+  leadingArgument = Option.String({required: false});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -47,7 +47,7 @@ export default class UnlinkCommand extends BaseCommand {
     const topLevelWorkspace = project.topLevelWorkspace;
     const workspacesToUnlink = new Set<string>();
 
-    if (!this.destination) {
+    if (!this.leadingArgument) {
       for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
         if (reference.startsWith(`portal:`)) {
           workspacesToUnlink.add(pattern.descriptor.fullName);
@@ -55,9 +55,9 @@ export default class UnlinkCommand extends BaseCommand {
       }
     }
 
-    if (this.destination) {
-      const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
-      if (!structUtils.tryParseIdent(this.destination) && await xfs.existsPromise(absoluteDestination)) {
+    if (this.leadingArgument) {
+      const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.leadingArgument));
+      if (!structUtils.tryParseIdent(this.leadingArgument) && await xfs.existsPromise(absoluteDestination)) {
         const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
         const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
@@ -80,7 +80,7 @@ export default class UnlinkCommand extends BaseCommand {
         }
       } else {
         const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
-        for (const fullName of micromatch(fullNames, this.destination)) {
+        for (const fullName of micromatch(fullNames, this.leadingArgument)) {
           workspacesToUnlink.add(fullName);
         }
       }
