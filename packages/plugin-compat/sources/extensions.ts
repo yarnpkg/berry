@@ -320,4 +320,20 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       duplexify: `^4.1.1`,
     },
   }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`vue-cli-plugin-vuetify@<=2.0.3`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+      'vuetify-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/152
+  [`vue-cli-plugin-vuetify@<=2.0.4`, {
+    dependencies: {
+      'null-loader': `^3.0.0`,
+    },
+  }],
 ];
