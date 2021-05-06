@@ -336,4 +336,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'null-loader': `^3.0.0`,
     },
   }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`@vuetify/cli-plugin-utils@<=0.0.4`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+    },
+  }],
 ];
