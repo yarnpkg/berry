@@ -57,7 +57,7 @@ export default class UnlinkCommand extends BaseCommand {
 
     if (this.destination) {
       const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
-      if (await xfs.existsPromise(absoluteDestination)) {
+      if (!structUtils.tryParseIdent(this.destination) && await xfs.existsPromise(absoluteDestination)) {
         const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
         const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
