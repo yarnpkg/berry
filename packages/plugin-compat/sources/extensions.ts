@@ -345,4 +345,22 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'sass-loader': optionalPeerDep,
     },
   }],
+  // https://github.com/vuejs/vue-cli/pull/6060/files#diff-857cfb6f3e9a676b0de4a00c2c712297068c038a7d5820c133b8d6aa8cceb146R28
+  [`@vue/cli-plugin-typescript@<=5.0.0-alpha.0`, {
+    dependencies: {
+      'babel-loader': `^8.1.0`,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6456
+  [`@vue/cli-plugin-typescript@<=5.0.0-beta.0`, {
+    dependencies: {
+      '@babel/core': `^7.12.16`,
+    },
+    peerDependencies: {
+      'vue-template-compiler': `^2.0.0`,
+    },
+    peerDependenciesMeta: {
+      'vue-template-compiler': optionalPeerDep,
+    },
+  }],
 ];
