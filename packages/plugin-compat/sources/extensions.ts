@@ -363,4 +363,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'vue-template-compiler': optionalPeerDep,
     },
   }],
+  // https://github.com/apache/cordova-ios/pull/1105
+  [`cordova-ios@<=6.3.0`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
 ];
