@@ -77,5 +77,5 @@ export function registerTerminalLinkProvider() {
     },
   };
 
-  vscode.window.registerTerminalLinkProvider(terminalProvider);
+  return vscode.window.registerTerminalLinkProvider(terminalProvider);
 }
