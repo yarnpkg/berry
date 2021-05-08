@@ -112,7 +112,9 @@ export default class BuildBundleCommand extends Command {
         };
 
         const res = await build({
-          banner: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          banner: {
+            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
           define: {YARN_VERSION: JSON.stringify(version)},

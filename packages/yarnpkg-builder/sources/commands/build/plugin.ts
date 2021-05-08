@@ -90,19 +90,23 @@ export default class BuildPluginCommand extends Command {
         };
 
         const res = await build({
-          banner: [
-            `/* eslint-disable */`,
-            `//prettier-ignore`,
-            `module.exports = {`,
-            `name: ${JSON.stringify(name)},`,
-            `factory: function (require) {`,
-          ].join(`\n`),
+          banner: {
+            js: [
+              `/* eslint-disable */`,
+              `//prettier-ignore`,
+              `module.exports = {`,
+              `name: ${JSON.stringify(name)},`,
+              `factory: function (require) {`,
+            ].join(`\n`),
+          },
           globalName: `plugin`,
-          footer: [
-            `return plugin;`,
-            `}`,
-            `};`,
-          ].join(`\n`),
+          footer: {
+            js: [
+              `return plugin;`,
+              `}`,
+              `};`,
+            ].join(`\n`),
+          },
           entryPoints: [path.join(basedir, `sources/index`)],
           bundle: true,
           outfile: output,
