@@ -5588,7 +5588,6 @@ __metadata:
     chalk: ^3.0.0
     ci-info: ^2.0.0
     clipanion: ^3.0.0-rc.10
-    fromentries: ^1.2.0
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -12865,13 +12864,6 @@ __metadata:
     inherits: ^2.0.1
     readable-stream: ^2.0.0
   checksum: 6080eba0793dce32f475141fb3d54cc15f84ee52e420ee22ac3ab0ad639dc95a1875bc6eb9c0e1140e94972a36a89dc5542491b85f1ab8df0c126241e0f1a61b
-  languageName: node
-  linkType: hard
-
-"fromentries@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "fromentries@npm:1.2.0"
-  checksum: ff5b279fdad143ff5c6f402c2f452412fbe0b0612f003ae5cdeb05fd32c12ecd2942d0992d880f05a08bb496eece372acc47eef89b33bd22ebb70390b9d0b430
   languageName: node
   linkType: hard
 
