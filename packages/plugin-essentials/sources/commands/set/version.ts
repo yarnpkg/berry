@@ -84,14 +84,12 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
       bundleVersion = stdout.trim();
       if (!semver.valid(bundleVersion)) {
-        throw new Error(`Invalid semver version. 'yarn --version' returned:\n${bundleVersion}`);
+        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE} returned:\n${bundleVersion}`);
       }
     });
   }
 
-  const projectCwd = configuration.projectCwd
-    ? configuration.projectCwd
-    : configuration.startingCwd;
+  const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
   const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
