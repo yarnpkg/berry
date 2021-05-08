@@ -26,7 +26,6 @@ export function assertStatus<T extends Status>(current: Status, expected: T): as
 export type ListenerOptions = Omit<Required<WatchFileOptions>, 'bigint'>;
 
 export type CustomStatWatcherOptions = {
-  // BigInt Stats aren't currently implemented in the FS layer, so this is a no-op
   bigint?: boolean,
 };
 

@@ -1,4 +1,4 @@
-import {npath} from '@yarnpkg/fslib';
+import {Filename, npath, xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, readJson, writeJson},
@@ -146,6 +146,47 @@ describe(`Commands`, () => {
             [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
             [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
           },
+        });
+      }),
+    );
+
+    test(
+      `it should not load the link target config in strict mode`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.mktempPromise(async target => {
+          await Promise.all([
+            xfs.writeJsonPromise(`${target}/package.json`, {name: `portal-target`}),
+            xfs.writeFilePromise(`${target}/${Filename.rc}`, `unknownConfig: 42`),
+          ]);
+
+          await expect(run(`link`, target)).resolves.toMatchObject({code: 0});
+
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+            resolutions: {
+              [`portal-target`]: `portal:${npath.toPortablePath(target)}`,
+            },
+          });
+        });
+      }),
+    );
+
+    test(
+      `it should not load plugins from the link target`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.mktempPromise(async target => {
+          await Promise.all([
+            xfs.writeJsonPromise(`${target}/package.json`, {name: `portal-target`}),
+            xfs.writeFilePromise(`${target}/${Filename.rc}`, `plugins:\n  - path: ./foo.js`),
+            xfs.writeFilePromise(`${target}/foo.js`, `throw new Error(42)`),
+          ]);
+
+          await expect(run(`link`, target)).resolves.toMatchObject({code: 0});
+
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+            resolutions: {
+              [`portal-target`]: `portal:${npath.toPortablePath(target)}`,
+            },
+          });
         });
       }),
     );

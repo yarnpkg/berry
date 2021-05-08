@@ -3,7 +3,9 @@ import {getLibzipPromise}                                                       
 import {PassThrough, Readable}                                                            from 'stream';
 import tar                                                                                from 'tar';
 
+import {WorkerPool}                                                                       from './WorkerPool';
 import * as miscUtils                                                                     from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                            from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
@@ -40,18 +42,23 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
   return zipFs;
 }
 
-interface ExtractBufferOptions {
+export interface ExtractBufferOptions {
   compressionLevel?: ZipCompression,
   prefixPath?: PortablePath,
   stripComponents?: number,
 }
 
+let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
+
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
-  const {compressionLevel, ...bufferOpts} = opts;
 
-  return await extractArchiveTo(tgz, new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel}), bufferOpts);
+  workerPool ||= new WorkerPool(getZipWorkerSource());
+
+  await workerPool.run({tmpFile, tgz, opts});
+
+  return new ZipFS(tmpFile, {libzip: await getLibzipPromise(), level: opts.compressionLevel});
 }
 
 async function * parseTar(tgz: Buffer) {

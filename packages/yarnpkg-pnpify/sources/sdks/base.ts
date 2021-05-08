@@ -40,6 +40,9 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const {isAbsolute} = require(\`path\`);
       const pnpApi = require(\`pnpapi\`);
 
+      const isVirtual = str => str.match(/\\/(\\$\\$virtual|__virtual__)\\//);
+      const normalize = str => str.replace(/\\\\/g, \`/\`).replace(/^\\/?/, \`/\`);
+
       const dependencyTreeRoots = new Set(pnpApi.getDependencyTreeRoots().map(locator => {
         return \`\${locator.name}@\${locator.reference}\`;
       }));
@@ -50,7 +53,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function toEditorPath(str) {
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
-        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || str.match(/\\/(\\$\\$virtual|__virtual__)\\//))) {
+        if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || isVirtual(str))) {
           // We also take the opportunity to turn virtual paths into physical ones;
           // this makes is much easier to work with workspaces that list peer
           // dependencies, since otherwise Ctrl+Click would bring us to the virtual
@@ -61,26 +64,41 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           // with peer dep (otherwise jumping into react-dom would show resolution
           // errors on react).
           //
-          const resolved = pnpApi.resolveVirtual(str);
+          const resolved = isVirtual(str) ? pnpApi.resolveVirtual(str) : str;
           if (resolved) {
             const locator = pnpApi.findPackageLocator(resolved);
             if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`)) {
-             str = resolved;
+              str = resolved;
             }
           }
 
-          str = str.replace(/\\\\/g, \`/\`)
-          str = str.replace(/^\\/?/, \`/\`);
+          str = normalize(str);
 
-          // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
-          // VSCode only adds it automatically for supported schemes,
-          // so we have to do it manually for the \`zip\` scheme.
-          // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
-          //
-          // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
-          //
           if (str.match(/\\.zip\\//)) {
-            str = \`\${isVSCode ? \`^\` : \`\`}zip:\${str}\`;
+            switch (hostInfo) {
+              // Absolute VSCode \`Uri.fsPath\`s need to start with a slash.
+              // VSCode only adds it automatically for supported schemes,
+              // so we have to do it manually for the \`zip\` scheme.
+              // The path needs to start with a caret otherwise VSCode doesn't handle the protocol
+              //
+              // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
+              //
+              case \`vscode\`: {
+                str = \`^zip:\${str}\`;
+              } break;
+
+              // To make "go to definition" work,
+              // We have to resolve the actual file system path from virtual path
+              // and convert scheme to supported by [vim-rzip](https://github.com/lbrayner/vim-rzip)
+              case \`coc-nvim\`: {
+                str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
+                str = resolve(\`zipfile:\${str}\`);
+              } break;
+
+              default: {
+                str = \`zip:\${str}\`;
+              } break;
+            }
           }
         }
 
@@ -113,7 +131,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       const Session = tsserver.server.Session;
       const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
-      let isVSCode = false;
+      let hostInfo = \`unknown\`;
 
       return Object.assign(Session.prototype, {
         onMessage(/** @type {string} */ message) {
@@ -123,9 +141,9 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             parsedMessage != null &&
             typeof parsedMessage === \`object\` &&
             parsedMessage.arguments &&
-            parsedMessage.arguments.hostInfo === \`vscode\`
+            typeof parsedMessage.arguments.hostInfo === \`string\`
           ) {
-            isVSCode = true;
+            hostInfo = parsedMessage.arguments.hostInfo;
           }
 
           return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {

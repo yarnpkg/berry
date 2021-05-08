@@ -1,5 +1,6 @@
 import {Configuration, Locator, execUtils, structUtils, httpUtils} from '@yarnpkg/core';
 import {npath, xfs}                                                from '@yarnpkg/fslib';
+import GitUrlParse                                                 from 'git-url-parse';
 import querystring                                                 from 'querystring';
 import semver                                                      from 'semver';
 import urlLib                                                      from 'url';
@@ -170,7 +171,7 @@ export function normalizeLocator(locator: Locator) {
 export async function lsRemote(repo: string, configuration: Configuration) {
   const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
 
-  const networkSettings = httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration});
+  const networkSettings = httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration});
   if (!networkSettings.enableNetwork)
     throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
@@ -298,7 +299,7 @@ export async function clone(url: string, configuration: Configuration) {
       throw new Error(`Invalid treeish protocol when cloning`);
 
     const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
-    if (httpUtils.getNetworkSettings(normalizedRepoUrl, {configuration}).enableNetwork === false)
+    if (httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration}).enableNetwork === false)
       throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
     const directory = await xfs.mktempPromise();

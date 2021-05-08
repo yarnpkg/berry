@@ -53,7 +53,7 @@ export default class LinkCommand extends BaseCommand {
 
     const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
 
-    const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins);
+    const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
     const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
     if (!workspace2)

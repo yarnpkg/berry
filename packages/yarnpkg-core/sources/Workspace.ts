@@ -189,5 +189,7 @@ export class Workspace {
     await xfs.changeFilePromise(path, content, {
       automaticNewlines: true,
     });
+
+    this.manifest.raw = data;
   }
 }
