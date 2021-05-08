@@ -84,7 +84,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
       bundleVersion = stdout.trim();
       if (!semver.valid(bundleVersion)) {
-        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE} returned:\n${bundleVersion}`);
+        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
       }
     });
   }
