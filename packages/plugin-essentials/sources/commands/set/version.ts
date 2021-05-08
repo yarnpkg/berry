@@ -72,26 +72,24 @@ export default class SetVersionCommand extends BaseCommand {
 }
 
 export async function setVersion(configuration: Configuration, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
-  const projectCwd = configuration.projectCwd
-    ? configuration.projectCwd
-    : configuration.startingCwd;
-
   if (bundleVersion === null) {
     await xfs.mktempPromise(async tmpDir => {
       const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer);
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
-        cwd: projectCwd,
+        cwd: tmpDir,
         env: {...process.env, YARN_IGNORE_PATH: `1`},
       });
 
       bundleVersion = stdout.trim();
       if (!semver.valid(bundleVersion)) {
-        throw new Error(`Invalid semver version`);
+        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
       }
     });
   }
+
+  const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
   const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
