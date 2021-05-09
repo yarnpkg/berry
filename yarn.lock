@@ -1646,6 +1646,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.10.5":
+  version: 7.14.0
+  resolution: "@babel/runtime@npm:7.14.0"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: 257dc2594355dd8798455f25b6f2f9a00f162b427391265752933e0e3337b3b14661d09283187d5039ae3764f723890ffe767e995c73d662f1d515bdf48e5ade
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.11.2":
   version: 7.11.2
   resolution: "@babel/runtime@npm:7.11.2"
@@ -4586,6 +4595,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.165":
+  version: 4.14.168
+  resolution: "@types/lodash@npm:4.14.168"
+  checksum: 3326966ee089debde7a7d819e13b64991756e879945852c3357df14a7be837130f697c2cb451be9dd599eb7213fed0975bc9ca0f8f56b46fa73c46a83815b79c
+  languageName: node
+  linkType: hard
+
 "@types/marked@npm:^1.1.0":
   version: 1.1.0
   resolution: "@types/marked@npm:1.1.0"
@@ -5112,6 +5128,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/yup@npm:^0":
+  version: 0.29.11
+  resolution: "@types/yup@npm:0.29.11"
+  checksum: 703fa2075231a831ee09087128c5ca3c45670a3854d9564d037c46e1f51247d3e00e468d73efb4b4e8ba3df880ddf8494c4cefcd96adddb8fcca06add70e192c
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:^2.24.0, @typescript-eslint/eslint-plugin@npm:^2.28.0":
   version: 2.29.0
   resolution: "@typescript-eslint/eslint-plugin@npm:2.29.0"
@@ -5562,6 +5585,7 @@ __metadata:
   dependencies:
     "@types/ci-info": ^2
     "@types/semver": ^7.1.0
+    "@types/yup": ^0
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/core": "workspace:^3.0.0-rc.2"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
@@ -5593,6 +5617,7 @@ __metadata:
     tslib: ^1.13.0
     typanion: ^3.3.0
     typescript: beta
+    yup: ^0.32.9
   peerDependencies:
     "@yarnpkg/core": ^3.0.0-rc.2
   languageName: unknown
@@ -18029,6 +18054,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:^4.17.15":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 05cbffad6e2adbb331a4e16fbd826e7faee403a1a04873b82b42c0f22090f280839f85b95393f487c1303c8a3d2a010048bf06151a6cbe03eee4d388fb0a12d2
+  languageName: node
+  linkType: hard
+
 "lodash._reinterpolate@npm:~3.0.0":
   version: 3.0.0
   resolution: "lodash._reinterpolate@npm:3.0.0"
@@ -19305,6 +19337,13 @@ fsevents@~2.3.1:
   dependencies:
     node-gyp: latest
   checksum: 6dfd00d9bf71769898dfab21ef9d2ef278b392c586147616a718b995d6a582f5caa7f2ca0f83ce956fb0def698aca813b2b6fd4598125cd16bdc85924c34a37d
+  languageName: node
+  linkType: hard
+
+"nanoclone@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "nanoclone@npm:0.2.1"
+  checksum: 96b2954e22f70561f41e20d69856266c65583c2a441dae108f1dc71b716785d2c8038dac5f1d5e92b117aed3825f526b53139e2e5d6e6db8a77cfa35b3b8bf40
   languageName: node
   linkType: hard
 
@@ -21947,6 +21986,13 @@ fsevents@~2.3.1:
   version: 2.0.2
   resolution: "property-expr@npm:2.0.2"
   checksum: a5f424d0029bc9660be05b3d9f2a5d18f09b5e072173dd56d4819d75bd41cdb8f27152621d4da054319ebcebf0557e5bb3d774884b6ddc7838e910ef7fcce09c
+  languageName: node
+  linkType: hard
+
+"property-expr@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "property-expr@npm:2.0.4"
+  checksum: 7ac142e189f0feef685f327f582efe13bfbc24a0b6e2328afdb38520bc140caa5f91dfa9529f2539b4468d85dc83a593e1ef0e0f7401b525368bb634b323bf54
   languageName: node
   linkType: hard
 
@@ -29080,6 +29126,21 @@ yoga-layout-prebuilt@1.10.0:
     synchronous-promise: ^2.0.10
     toposort: ^2.0.2
   checksum: 730fed39e18357b0ac60821eeb444644e3949e31d000cc748bb5aa4d6b3b951cd7edd9dc025e4bfc2602e28be3d2975b144734a5ac74754206cf23b6941e72af
+  languageName: node
+  linkType: hard
+
+"yup@npm:^0.32.9":
+  version: 0.32.9
+  resolution: "yup@npm:0.32.9"
+  dependencies:
+    "@babel/runtime": ^7.10.5
+    "@types/lodash": ^4.14.165
+    lodash: ^4.17.20
+    lodash-es: ^4.17.15
+    nanoclone: ^0.2.1
+    property-expr: ^2.0.4
+    toposort: ^2.0.2
+  checksum: 3f33850913a237fb7e59b0b5c71d2cc6bdb1d6b2b01fc24c53ec68b35ad2b95cd49f735532117136495cb57f0ec58f0a7e1f1c55fad685555c7114155170f1ea
   languageName: node
   linkType: hard
 
