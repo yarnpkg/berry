@@ -207,6 +207,17 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
 
   const {stdout, stderr} = await execUtils.execvp(`git`, [`-c`, `core.safecrlf=false`, `diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, `--text`, folderAN, folderBN], {
     cwd: npath.toPortablePath(process.cwd()),
+    env: {
+      ...process.env,
+      //#region Predictable output
+      // These variables aim to ignore the global git config so we get predictable output
+      // https://git-scm.com/docs/git#Documentation/git.txt-codeGITCONFIGNOSYSTEMcode
+      GIT_CONFIG_NOSYSTEM: `1`,
+      HOME: ``,
+      XDG_CONFIG_HOME: ``,
+      USERPROFILE: ``,
+      //#endregion
+    },
   });
 
   // we cannot rely on exit code, because --no-index implies --exit-code
