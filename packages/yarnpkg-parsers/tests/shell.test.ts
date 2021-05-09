@@ -22,6 +22,15 @@ const VALID_COMMANDS = [
     `{ echo foo}`,
     `{echo foo}`,
   ],
+
+  // Background jobs
+  ...[
+    `echo foo &`,
+    `echo foo & echo bar`,
+    `echo foo & echo bar &`,
+    `echo foo && echo bar &`,
+    `echo foo; echo bar &`,
+  ],
 ];
 
 const INVALID_COMMANDS = [
