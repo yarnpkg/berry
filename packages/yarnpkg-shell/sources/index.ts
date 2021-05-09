@@ -753,7 +753,10 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
 async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
   let rightMostExitCode = 0;
 
-  for (const command of node) {
+  for (const {command, type} of node) {
+    if (type === `&`)
+      throw new Error(`Background jobs aren't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/1349`);
+
     rightMostExitCode = await executeCommandLine(command, opts, state);
 
     // If the execution aborted (usually through "exit"), we must bailout
@@ -819,7 +822,7 @@ function locateArgsVariableInArithmetic(arg: ArithmeticExpression): boolean {
 }
 
 function locateArgsVariable(node: ShellLine): boolean {
-  return node.some(command => {
+  return node.some(({command}) => {
     while (command) {
       let chain = command.chain;
 
@@ -890,7 +893,7 @@ export async function execute(command: string, args: Array<string> = [], {
   // If the shell line doesn't use the args, inject it at the end of the
   // right-most command
   if (!locateArgsVariable(ast) && ast.length > 0 && args.length > 0) {
-    let command = ast[ast.length - 1];
+    let {command} = ast[ast.length - 1];
     while (command.then)
       command = command.then.line;
 

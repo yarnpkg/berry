@@ -1332,6 +1332,16 @@ describe(`Shell`, () => {
             });
           });
         });
+
+        it(`should say that background jobs aren't supported (unrecoverable)`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            await expect(bufferResult(
+              `echo foo & echo bar`,
+              [],
+              {cwd: tmpDir}
+            )).rejects.toThrowError(`Background jobs aren't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/1349`);
+          });
+        });
       });
 
       it(`should include directories`, async () => {

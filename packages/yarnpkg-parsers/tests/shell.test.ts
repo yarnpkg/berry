@@ -24,12 +24,16 @@ const VALID_COMMANDS = [
   ],
 
   // Background jobs
+  // "&" should have the same precedence as ";"
   ...[
     `echo foo &`,
     `echo foo & echo bar`,
     `echo foo & echo bar &`,
     `echo foo && echo bar &`,
     `echo foo; echo bar &`,
+    `sleep 3 && echo foo & echo bar`,
+    `echo foo | wc --chars &`,
+    `echo foo | wc --chars & echo bar`,
   ],
 ];
 
@@ -41,6 +45,8 @@ const INVALID_COMMANDS = [
   // Anyways, I can't think of any reason why anybody would like to start
   // a script with a semicolon. ¯\_(ツ)_/¯.
   `; echo foo`,
+
+  `& echo foo`,
 ];
 
 describe(`Shell parser`, () => {
