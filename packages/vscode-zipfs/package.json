@@ -10,7 +10,7 @@
   "version": "2.3.0-rc.2",
   "engines": {
     "vscode": "^1.54.0",
-    "node": ">=10.19.0"
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   },
   "categories": [
     "Other"
