@@ -25,23 +25,23 @@ export function makeHash<T extends string = string>(...args: Array<BinaryLike | 
   return hash.digest(`hex`) as T;
 }
 
-export function checksumFile(path: PortablePath) {
-  return new Promise<string>((resolve, reject) => {
+export async function checksumFile(path: PortablePath) {
+  const fd = await xfs.openPromise(path, `r`);
+
+  try {
+    const CHUNK_SIZE = 65536;
+    const chunk = Buffer.allocUnsafeSlow(CHUNK_SIZE);
+
     const hash = createHash(`sha512`);
-    const stream = xfs.createReadStream(path);
 
-    stream.on(`data`, chunk => {
-      hash.update(chunk);
-    });
+    let bytesRead = 0;
+    while ((bytesRead = await xfs.readPromise(fd, chunk, 0, CHUNK_SIZE)) !== 0)
+      hash.update(bytesRead === CHUNK_SIZE ? chunk : chunk.slice(0, bytesRead));
 
-    stream.on(`error`, error => {
-      reject(error);
-    });
-
-    stream.on(`end`, () => {
-      resolve(hash.digest(`hex`));
-    });
-  });
+    return hash.digest(`hex`);
+  } finally {
+    await xfs.closePromise(fd);
+  }
 }
 
 export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath}) {
