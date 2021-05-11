@@ -1928,4 +1928,30 @@ describe(`Plug'n'Play`, () => {
       }
     )
   );
+
+  test(
+    `it should output the "reloading the API instance" warning using process.emitWarning`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`reload-pnpapi`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`reload`)).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: expect.stringContaining(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance`),
+        });
+
+        await expect(run(`reload`, {env: {NODE_OPTIONS: `--no-warnings`}})).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: ``,
+        });
+      },
+    ),
+  );
 });
