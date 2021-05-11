@@ -6161,7 +6161,7 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:*"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.2"
     "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3"
-    "@zkochan/cmd-shim": ^4.3.0
+    "@zkochan/cmd-shim": ^5.1.0
     clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
     tslib: ^1.13.0
@@ -6425,13 +6425,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@zkochan/cmd-shim@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "@zkochan/cmd-shim@npm:4.3.0"
+"@zkochan/cmd-shim@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@zkochan/cmd-shim@npm:5.1.0"
   dependencies:
     is-windows: ^1.0.2
-    make-dir: ^3.0.0
-  checksum: 1576f5b0560267328c8fd9310aac5c0d43dc2e7559f04430a4d0b01bffec38fc5aec15e4b16635927393d602d467ab351034bcb3eb7b3dd6423e6fd7514ff45a
+  checksum: 7be69cfedea3a643b1b257904ec5c815d03678e7a2241f1852836eb1d3033db87288830e4a2e56c3e80238087e654b9be39bd8e2f5ba2fae61805ded8dd2fd3f
   languageName: node
   linkType: hard
 

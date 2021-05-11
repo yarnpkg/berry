@@ -9,7 +9,7 @@
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.2",
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.2",
     "@yarnpkg/pnpify": "workspace:^3.0.0-rc.3",
-    "@zkochan/cmd-shim": "^4.3.0",
+    "@zkochan/cmd-shim": "^5.1.0",
     "clipanion": "^3.0.0-rc.10",
     "micromatch": "^4.0.2",
     "tslib": "^1.13.0"
