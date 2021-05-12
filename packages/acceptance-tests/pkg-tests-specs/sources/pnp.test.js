@@ -1961,4 +1961,19 @@ describe(`Plug'n'Play`, () => {
       },
     ),
   );
+
+  test(
+    `it should be able to resolve relative preloads`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `-r`, `./.pnp.cjs`, `-p`, `42`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      }
+    )
+  );
 });

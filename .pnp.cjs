@@ -48318,7 +48318,7 @@ function applyPatch(pnpapi, opts) {
   function getIssuerSpecsFromModule(module) {
     var _a;
 
-    if (module && module.id !== `<repl>` && !module.parent && !module.filename && module.paths.length > 0) {
+    if (module && module.id !== `<repl>` && module.id !== `internal/preload` && !module.parent && !module.filename && module.paths.length > 0) {
       return [{
         apiPath: opts.manager.findApiPathFor(module.paths[0]),
         path: module.paths[0],
