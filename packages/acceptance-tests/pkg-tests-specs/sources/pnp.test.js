@@ -1936,13 +1936,13 @@ describe(`Plug'n'Play`, () => {
         workspaces: [`workspace-a`],
         dependencies: {
           [`workspace-a`]: `workspace:*`,
-        }
+        },
       },
       async ({path, run, source}) => {
         await xfs.mkdirpPromise(`${path}/workspace-a`);
         await xfs.writeJsonPromise(`${path}/workspace-a/package.json`, {
           name: `workspace-a`,
-          bin: {reload: './bin.js'}
+          bin: {reload: `./bin.js`},
         });
         await xfs.writeFilePromise(`${path}/workspace-a/bin.js`, `
           const fs = require(\`fs\`);
