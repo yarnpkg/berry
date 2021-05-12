@@ -1932,38 +1932,28 @@ describe(`Plug'n'Play`, () => {
   test(
     `it should output the "reloading the API instance" warning using process.emitWarning`,
     makeTemporaryEnv(
-      {
-        workspaces: [`workspace-a`],
-        dependencies: {
-          [`workspace-a`]: `workspace:*`,
-        },
-      },
+      { },
       async ({path, run, source}) => {
-        await xfs.mkdirpPromise(`${path}/workspace-a`);
-        await xfs.writeJsonPromise(`${path}/workspace-a/package.json`, {
-          name: `workspace-a`,
-          bin: {reload: `./bin.js`},
-        });
-        await xfs.writeFilePromise(`${path}/workspace-a/bin.js`, `
-          const fs = require(\`fs\`);
-          const api = require.resolve(\`pnpapi\`);
+        await run(`install`);
 
-          require(\`fs\`).writeFileSync(api, fs.readFileSync(api));
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs');
+          const api = require.resolve('pnpapi');
+
+          require('fs').writeFileSync(api, fs.readFileSync(api));
 
           setTimeout(() => {
-            require.resolve(\`pnpapi\`);
+            require.resolve('pnpapi');
           }, 1000);
         `);
 
-        await run(`install`);
-
-        await expect(run(`reload`)).resolves.toMatchObject({
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: ``,
           stderr: expect.stringContaining(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance`),
         });
 
-        await expect(run(`reload`, {env: {NODE_OPTIONS: `--no-warnings`}})).resolves.toMatchObject({
+        await expect(run(`node`, `./index.js`, {env: {NODE_OPTIONS: `--no-warnings`}})).resolves.toMatchObject({
           code: 0,
           stdout: ``,
           stderr: ``,
