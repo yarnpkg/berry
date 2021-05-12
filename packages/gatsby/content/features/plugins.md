@@ -65,4 +65,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**licenses**](https://github.com/tophat/yarn-plugin-licenses) by [**Noah Negin-Ulster**](https://noahnu.com/) - audit direct and indirect dependency licenses to ensure compliance
 
+- [**conditions**](https://github.com/nicolo-ribaudo/yarn-plugin-conditions) by [**Nicolò Ribaudo**](https://twitter.com/NicoloRibaudo) - allow choosing between different dependency versions via install-time (during development) and publish-time flags
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
