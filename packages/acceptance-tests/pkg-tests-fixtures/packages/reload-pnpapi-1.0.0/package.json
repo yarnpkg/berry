@@ -1,7 +1,0 @@
-{
-  "name": "reload-pnpapi",
-  "version": "1.0.0",
-  "bin": {
-    "reload": "./bin.js"
-  }
-}

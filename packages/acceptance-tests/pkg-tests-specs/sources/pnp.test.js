@@ -1933,11 +1933,28 @@ describe(`Plug'n'Play`, () => {
     `it should output the "reloading the API instance" warning using process.emitWarning`,
     makeTemporaryEnv(
       {
+        workspaces: [`workspace-a`],
         dependencies: {
-          [`reload-pnpapi`]: `1.0.0`,
-        },
+          [`workspace-a`]: `workspace:*`,
+        }
       },
       async ({path, run, source}) => {
+        await xfs.mkdirpPromise(`${path}/workspace-a`);
+        await xfs.writeJsonPromise(`${path}/workspace-a/package.json`, {
+          name: `workspace-a`,
+          bin: {reload: './bin.js'}
+        });
+        await xfs.writeFilePromise(`${path}/workspace-a/bin.js`, `
+          const fs = require(\`fs\`);
+          const api = require.resolve(\`pnpapi\`);
+
+          require(\`fs\`).writeFileSync(api, fs.readFileSync(api));
+
+          setTimeout(() => {
+            require.resolve(\`pnpapi\`);
+          }, 1000);
+        `);
+
         await run(`install`);
 
         await expect(run(`reload`)).resolves.toMatchObject({
