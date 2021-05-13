@@ -1,7 +1,7 @@
 import * as npm                                          from '@npm/types';
 import {BaseCommand}                                     from '@yarnpkg/cli';
 import {Project, Configuration, structUtils, Descriptor} from '@yarnpkg/core';
-import {StreamReport, MessageName}                       from '@yarnpkg/core';
+import {StreamReport, MessageName, semverUtils}          from '@yarnpkg/core';
 import {npmHttpUtils}                                    from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage, UsageError}              from 'clipanion';
 import path                                              from 'path';
@@ -127,8 +127,9 @@ export default class InfoCommand extends BaseCommand {
 
         // The latest version that satisfies `descriptor.range` (if it is a valid range), else `fallbackVersion`
         let version: string = fallbackVersion;
-        if (semver.validRange(descriptor.range)) {
-          const maxSatisfyingVersion = semver.maxSatisfying(versions, descriptor.range);
+        const validRange = semverUtils.validRange(descriptor.range);
+        if (validRange) {
+          const maxSatisfyingVersion = semver.maxSatisfying(versions, validRange);
 
           if (maxSatisfyingVersion !== null) {
             version = maxSatisfyingVersion;
