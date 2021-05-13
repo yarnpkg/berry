@@ -40,7 +40,7 @@
     "@yarnpkg/monorepo": "workspace:*",
     "@yarnpkg/pnpify": "workspace:*",
     "micromatch": "^4.0.2",
-    "typescript": "beta"
+    "typescript": "^4.3.2"
   },
   "peerDependencies": {
     "@yarnpkg/core": "^3.0.0-rc.2"
