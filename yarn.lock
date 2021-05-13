@@ -1597,39 +1597,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.4.5, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
-  version: 7.9.2
-  resolution: "@babel/runtime@npm:7.9.2"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 0418d73420248faef3cf8d2397d49d25dbc9e0cb7776f74fc01d6fe3e040b12c931f4df09b304ff6ef9dd2662bee1300437e5ae563f3284c9c86e4e290372e75
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.9.6":
-  version: 7.10.2
-  resolution: "@babel/runtime@npm:7.10.2"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: cdf5fbcfabda9bd93f2e8615f4099c57713aee2131e3f90e9e355468447493e908c9025ccca9cbd28efa33de4aa5359c2c652fa606a9b2b8756d8e70b31ee2e3
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.10.5":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.4.5, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2, @babel/runtime@npm:^7.9.6":
   version: 7.14.0
   resolution: "@babel/runtime@npm:7.14.0"
   dependencies:
     regenerator-runtime: ^0.13.4
   checksum: 257dc2594355dd8798455f25b6f2f9a00f162b427391265752933e0e3337b3b14661d09283187d5039ae3764f723890ffe767e995c73d662f1d515bdf48e5ade
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.11.2":
-  version: 7.11.2
-  resolution: "@babel/runtime@npm:7.11.2"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 8f3199cfb6107602018c5ea892ad2393332783cb78a9de7222e6ff363ed1c688d246d594630f9b17a21c752d65ab69e25ce723c773ef7c1054dcc962a6a72e60
   languageName: node
   linkType: hard
 
@@ -4550,14 +4523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.136, @types/lodash@npm:^4.14.92":
-  version: 4.14.136
-  resolution: "@types/lodash@npm:4.14.136"
-  checksum: 08c17a29e4168468a2fcf35b369a81e41dd633a952a077ecb8a976c8326e9c7785022165c3abc68610cf3b81e05fe5d571177d570db8f8c71637bfc099c62acc
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.14.165":
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.136, @types/lodash@npm:^4.14.165, @types/lodash@npm:^4.14.92":
   version: 4.14.168
   resolution: "@types/lodash@npm:4.14.168"
   checksum: 3326966ee089debde7a7d819e13b64991756e879945852c3357df14a7be837130f697c2cb451be9dd599eb7213fed0975bc9ca0f8f56b46fa73c46a83815b79c
@@ -17772,14 +17738,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.11, lodash-es@npm:^4.17.14":
-  version: 4.17.15
-  resolution: "lodash-es@npm:4.17.15"
-  checksum: dd76e36efca24f8294cdd99563c3bcaff8061732b04af8721313fe9a87e1f8e578ff466cfbcc103d1cb4db067d7d4bd143e3be390d957e22e0cb5d195b3847ed
-  languageName: node
-  linkType: hard
-
-"lodash-es@npm:^4.17.15":
+"lodash-es@npm:^4.17.11, lodash-es@npm:^4.17.14, lodash-es@npm:^4.17.15":
   version: 4.17.21
   resolution: "lodash-es@npm:4.17.21"
   checksum: 05cbffad6e2adbb331a4e16fbd826e7faee403a1a04873b82b42c0f22090f280839f85b95393f487c1303c8a3d2a010048bf06151a6cbe03eee4d388fb0a12d2
@@ -21607,14 +21566,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"property-expr@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "property-expr@npm:2.0.2"
-  checksum: a5f424d0029bc9660be05b3d9f2a5d18f09b5e072173dd56d4819d75bd41cdb8f27152621d4da054319ebcebf0557e5bb3d774884b6ddc7838e910ef7fcce09c
-  languageName: node
-  linkType: hard
-
-"property-expr@npm:^2.0.4":
+"property-expr@npm:^2.0.2, property-expr@npm:^2.0.4":
   version: 2.0.4
   resolution: "property-expr@npm:2.0.4"
   checksum: 7ac142e189f0feef685f327f582efe13bfbc24a0b6e2328afdb38520bc140caa5f91dfa9529f2539b4468d85dc83a593e1ef0e0f7401b525368bb634b323bf54
