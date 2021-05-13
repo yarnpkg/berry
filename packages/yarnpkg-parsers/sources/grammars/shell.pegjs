@@ -2,14 +2,15 @@ Start
   = line:ShellLine? { return line ? line : [] }
 
 ShellLine
-  = command:CommandLine S* type:ShellLineType then:ShellLineThen? { return [ command ].concat(then || []) }
-  / command:CommandLine S* type:ShellLineType? { return [ command ] }
+  = command:CommandLine S* type:ShellLineType then:ShellLineThen? { return [ { command, type } ].concat(then || []) }
+  / command:CommandLine S* type:ShellLineType? { return [ { command, type: type || ';' } ] }
 
 ShellLineThen
   = S* then:ShellLine S* { return then }
 
 ShellLineType
   = ';'
+  / '&'
 
 CommandLine
   = chain:CommandChain then:CommandLineThen? { return then ? { chain, then } : { chain } }

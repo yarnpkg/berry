@@ -131,7 +131,7 @@ Enter the `link:` protocol! Through it, you directly instruct the package manage
 
 > **Tip:** Yarn 2 implements support for self-references, making the `link:` protocol unneeded in most cases. Any file that's part of a package will always be able to import any file from its own package using the package name - even the top-level project! Just add a `"name": "app"` field into your top-level package.json, and you'll be able to use `import 'app/Toolbar'` without further ado.
 
-> **Note:** You may be tempted t alias a scope without giving an explicit name (ie `"@app": "link:./src"`). Don't. This pattern is invalid and won't work. The reason for this is that package identifiers have a required package name, and an optional scope name. As a result, a scope without package name is a syntax error. Prefer doing `"app": "link:./src"`, which will still allow you to use subdirectories if needed (ie `import 'app/toolbar/Icon'`).
+> **Note:** You may be tempted to alias a scope without giving an explicit name (ie `"@app": "link:./src"`). Don't. This pattern is invalid and won't work. The reason for this is that package identifiers have a required package name, and an optional scope name. As a result, a scope without package name is a syntax error. Prefer doing `"app": "link:./src"`, which will still allow you to use subdirectories if needed (ie `import 'app/toolbar/Icon'`).
 
 > **Note:** By reading this FAQ entry, you might think that we recommend against using aliases altogether. This isn't entirely correct. While using aliases *for directory mapping* is a practice we advise against, they have their usefulness in other contexts. For example, using an alias to map the `fs` module into a local mock is perfectly fine.
 

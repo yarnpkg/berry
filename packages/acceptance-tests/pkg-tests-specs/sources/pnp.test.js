@@ -1928,4 +1928,37 @@ describe(`Plug'n'Play`, () => {
       }
     )
   );
+
+  test(
+    `it should output the "reloading the API instance" warning using process.emitWarning`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs');
+          const api = require.resolve('pnpapi');
+
+          require('fs').writeFileSync(api, fs.readFileSync(api));
+
+          setTimeout(() => {
+            require.resolve('pnpapi');
+          }, 1000);
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: expect.stringContaining(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance`),
+        });
+
+        await expect(run(`node`, `./index.js`, {env: {NODE_OPTIONS: `--no-warnings`}})).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: ``,
+        });
+      },
+    ),
+  );
 });

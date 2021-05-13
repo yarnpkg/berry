@@ -1,6 +1,3 @@
-// @ts-expect-error: missing declaration
-import fromEntries from 'fromentries';
+// No polyfills are currently needed
 
-// Remove when dropping Node 10 (~April 2021)
-if (!Object.fromEntries)
-  Object.fromEntries = fromEntries;
+export {};

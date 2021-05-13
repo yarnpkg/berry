@@ -28,7 +28,7 @@
     "directory": "packages/yarnpkg-fslib"
   },
   "engines": {
-    "node": ">=10.19.0"
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   },
   "stableVersion": "2.4.0"
 }
