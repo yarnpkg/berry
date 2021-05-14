@@ -5368,7 +5368,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@jest/console", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["jest-message-util", "npm:26.0.1"],
             ["jest-util", "npm:26.0.1"],
             ["slash", "npm:3.0.0"]
@@ -5387,7 +5387,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/transform", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
             ["ansi-escapes", "npm:4.3.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["exit", "npm:0.1.2"],
             ["graceful-fs", "npm:4.2.4"],
             ["jest-changed-files", "npm:26.0.1"],
@@ -5460,7 +5460,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/test-result", "npm:26.0.1"],
             ["@jest/transform", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["collect-v8-coverage", "npm:1.0.1"],
             ["exit", "npm:0.1.2"],
             ["glob", "npm:7.1.6"],
@@ -5551,7 +5551,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/core", "npm:7.10.2"],
             ["@jest/types", "npm:26.0.1"],
             ["babel-plugin-istanbul", "npm:6.0.0"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["convert-source-map", "npm:1.7.0"],
             ["fast-json-stable-stringify", "npm:2.0.0"],
             ["graceful-fs", "npm:4.2.4"],
@@ -5596,7 +5596,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/istanbul-lib-coverage", "npm:2.0.1"],
             ["@types/istanbul-reports", "npm:1.1.1"],
             ["@types/yargs", "npm:15.0.4"],
-            ["chalk", "npm:4.1.0"]
+            ["chalk", "npm:4.1.1"]
           ],
           "linkType": "HARD",
         }]
@@ -16918,7 +16918,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/babel__core", "npm:7.1.8"],
             ["babel-plugin-istanbul", "npm:6.0.0"],
             ["babel-preset-jest", "virtual:7c99f7be14c0a06559b0dc1d2f90e49cbbea10f3bba5e5aebd4644bbf3a577cb55947442a374900e6ea536dee4ecd9141cd1f39bf9b40e9d71a8fdb4d4ed11ad#npm:26.0.0"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["graceful-fs", "npm:4.2.4"],
             ["slash", "npm:3.0.0"]
           ],
@@ -18493,15 +18493,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/chalk-npm-3.0.0-e813208025-8e3ddf3981.zip/node_modules/chalk/",
           "packageDependencies": [
             ["chalk", "npm:3.0.0"],
-            ["ansi-styles", "npm:4.2.0"],
-            ["supports-color", "npm:7.1.0"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:4.1.0", {
-          "packageLocation": "./.yarn/cache/chalk-npm-4.1.0-c746e252ba-5561c7b4c0.zip/node_modules/chalk/",
-          "packageDependencies": [
-            ["chalk", "npm:4.1.0"],
             ["ansi-styles", "npm:4.2.0"],
             ["supports-color", "npm:7.1.0"]
           ],
@@ -27070,7 +27061,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", "npm:16.9.2"],
             ["ansi-escapes", "npm:4.3.1"],
             ["auto-bind", "npm:4.0.0"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["cli-boxes", "npm:2.2.0"],
             ["cli-cursor", "npm:3.1.0"],
             ["cli-truncate", "npm:2.1.0"],
@@ -27368,7 +27359,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ink-text-input", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:4.0.1"],
             ["@types/ink", null],
             ["@types/react", "npm:16.9.2"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
             ["react", "npm:16.13.1"],
             ["type-fest", "npm:0.15.1"]
@@ -28586,7 +28577,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/core", "npm:26.0.1"],
             ["@jest/test-result", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["exit", "npm:0.1.2"],
             ["graceful-fs", "npm:4.2.4"],
             ["import-local", "npm:3.0.2"],
@@ -28609,7 +28600,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/test-sequencer", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
             ["babel-jest", "virtual:0975d94dee9ff79a18bada017469f037204c9b3564a1ecea9f0b0ed843f047fea139f0fb17afacefab3ae165c22666d09b4a19e31c5471b4e6eeae0f593875b5#npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["deepmerge", "npm:4.2.2"],
             ["glob", "npm:7.1.6"],
             ["graceful-fs", "npm:4.2.4"],
@@ -28654,7 +28645,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/jest-diff-npm-26.0.1-ab5a9ede47-8a8cd30ce3.zip/node_modules/jest-diff/",
           "packageDependencies": [
             ["jest-diff", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["diff-sequences", "npm:26.0.0"],
             ["jest-get-type", "npm:26.0.0"],
             ["pretty-format", "npm:26.0.1"]
@@ -28678,7 +28669,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["jest-each", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["jest-get-type", "npm:26.0.0"],
             ["jest-util", "npm:26.0.1"],
             ["pretty-format", "npm:26.0.1"]
@@ -28770,7 +28761,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/source-map", "npm:26.0.0"],
             ["@jest/test-result", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["co", "npm:4.6.0"],
             ["expect", "npm:26.0.1"],
             ["is-generator-fn", "npm:2.0.0"],
@@ -28827,7 +28818,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/jest-matcher-utils-npm-26.0.1-2a2e41b105-ed8d3d9dd2.zip/node_modules/jest-matcher-utils/",
           "packageDependencies": [
             ["jest-matcher-utils", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["jest-diff", "npm:26.0.1"],
             ["jest-get-type", "npm:26.0.0"],
             ["pretty-format", "npm:26.0.1"]
@@ -28858,7 +28849,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.10.1"],
             ["@jest/types", "npm:26.0.1"],
             ["@types/stack-utils", "npm:1.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["graceful-fs", "npm:4.2.4"],
             ["micromatch", "npm:4.0.2"],
             ["slash", "npm:3.0.0"],
@@ -28921,7 +28912,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["jest-resolve", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["graceful-fs", "npm:4.2.4"],
             ["jest-pnp-resolver", "virtual:631d11a244cf9e8543d845f9233371049f6acc7a371f8cdc0328ac0915c7fea1f5e43b0c6464606ba013212ee8e56784c791cb67764091471a2a31ac041ce93f#npm:1.2.1"],
             ["jest-util", "npm:26.0.1"],
@@ -28953,7 +28944,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/environment", "npm:26.0.1"],
             ["@jest/test-result", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["exit", "npm:0.1.2"],
             ["graceful-fs", "npm:4.2.4"],
             ["jest-config", "npm:26.0.1"],
@@ -28986,7 +28977,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/transform", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
             ["@types/yargs", "npm:15.0.4"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["collect-v8-coverage", "npm:1.0.1"],
             ["exit", "npm:0.1.2"],
             ["glob", "npm:7.1.6"],
@@ -29025,7 +29016,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/types", "npm:7.10.2"],
             ["@jest/types", "npm:26.0.1"],
             ["@types/prettier", "npm:2.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["expect", "npm:26.0.1"],
             ["graceful-fs", "npm:4.2.4"],
             ["jest-diff", "npm:26.0.1"],
@@ -29047,7 +29038,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["jest-util", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["graceful-fs", "npm:4.2.4"],
             ["is-ci", "npm:2.0.0"],
             ["make-dir", "npm:3.1.0"]
@@ -29075,7 +29066,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-validate", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
             ["camelcase", "npm:6.0.0"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["jest-get-type", "npm:26.0.0"],
             ["leven", "npm:3.1.0"],
             ["pretty-format", "npm:26.0.1"]
@@ -29091,7 +29082,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@jest/test-result", "npm:26.0.1"],
             ["@jest/types", "npm:26.0.1"],
             ["ansi-escapes", "npm:4.3.1"],
-            ["chalk", "npm:4.1.0"],
+            ["chalk", "npm:4.1.1"],
             ["jest-util", "npm:26.0.1"],
             ["string-length", "npm:4.0.1"]
           ],
