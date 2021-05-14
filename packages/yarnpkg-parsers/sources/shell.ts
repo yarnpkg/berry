@@ -123,7 +123,7 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
 }
 
 export function stringifyArithmeticExpression(argument: ArithmeticExpression): string {
-  const getSign = (type: ArithmeticExpression['type']) => {
+  const getOperator = (type: ArithmeticExpression['type']) => {
     switch (type) {
       case `addition`:
         return `+`;
@@ -134,7 +134,7 @@ export function stringifyArithmeticExpression(argument: ArithmeticExpression): s
       case `division`:
         return `/`;
       default:
-        throw new Error(`Can't extract sign from arithmetic expression of type "${type}"`);
+        throw new Error(`Can't extract operator from arithmetic expression of type "${type}"`);
     }
   };
 
@@ -151,7 +151,7 @@ export function stringifyArithmeticExpression(argument: ArithmeticExpression): s
       return argument.name;
 
     default:
-      return `${stringifyAndParenthesizeIfNeeded(argument.left)} ${getSign(argument.type)} ${stringifyAndParenthesizeIfNeeded(argument.right)}`;
+      return `${stringifyAndParenthesizeIfNeeded(argument.left)} ${getOperator(argument.type)} ${stringifyAndParenthesizeIfNeeded(argument.right)}`;
   }
 }
 
