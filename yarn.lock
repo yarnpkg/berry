@@ -6335,7 +6335,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
-    chalk: ^4.1.1
+    chalk: ^3.0.0
     clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
@@ -8534,7 +8534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
   version: 4.1.1
   resolution: "chalk@npm:4.1.1"
   dependencies:
