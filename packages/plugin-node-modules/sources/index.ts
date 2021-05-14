@@ -32,12 +32,12 @@ const plugin: Plugin<Hooks> = {
       default: NodeModulesHoistingLimits.NONE,
     },
     nmMode: {
-      description: `If set to "hardlinks" Yarn will utilize hardlinks to reduce disk space consumption inside node_modules directories. With "cas" Yarn will use global content addressable storage to reduce node_modules size across projects that use "cas" option.`,
+      description: `If set to "hardlinks-local" Yarn will utilize hardlinks to reduce disk space consumption inside "node_modules" directories. With "hardlinks-global" Yarn will use global content addressable storage to reduce "node_modules" size across all the projects using this option.`,
       type: SettingsType.STRING,
       values: [
         NodeModulesMode.CLASSIC,
-        NodeModulesMode.HARDLINKS,
-        NodeModulesMode.CAS,
+        NodeModulesMode.HARDLINKS_LOCAL,
+        NodeModulesMode.HARDLINKS_GLOBAL,
       ],
       default: NodeModulesMode.CLASSIC,
     },

@@ -1151,7 +1151,7 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks-local\n`);
         await run(`install`);
 
         expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
@@ -1161,7 +1161,7 @@ describe(`Node_Modules`, () => {
 
         expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 1});
 
-        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks\n`);
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks-local\n`);
         await run(`install`);
 
         expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
@@ -1169,7 +1169,7 @@ describe(`Node_Modules`, () => {
     )
   );
 
-  test(`should wire via hardlinks files having the same content when in nmMode: cas`,
+  test(`should wire via hardlinks files having the same content when in nmMode: hardlinks-global`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1179,7 +1179,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        nmMode: `cas`,
+        nmMode: `hardlinks-global`,
       },
       async ({path, run}) => {
         await writeJson(ppath.resolve(path, `dep1/package.json` as Filename), {
@@ -1215,7 +1215,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        nmMode: `cas`,
+        nmMode: `hardlinks-global`,
       },
       async ({path, run}) => {
         await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
