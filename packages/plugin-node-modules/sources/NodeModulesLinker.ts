@@ -672,7 +672,7 @@ async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, cont
 
 async function copyFilePromise({srcPath, dstPath, srcMode, globalHardlinksStore, baseFs, nmMode, digest}: {srcPath: PortablePath, dstPath: PortablePath, srcMode: number, globalHardlinksStore: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: NodeModulesMode, digest?: string}) {
   if (nmMode === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && digest) {
-    const contentFilePath = ppath.join(globalHardlinksStore, `${digest}.dat` as Filename);
+    const contentFilePath = ppath.join(globalHardlinksStore, digest.substring(0, 2) as Filename, `${digest.substring(2)}.dat` as Filename);
 
     let doesContentFileExist;
     try {
@@ -770,8 +770,8 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
   };
 
   let allEntries: Map<PortablePath, DirEntry>;
-  if (nmMode === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore) {
-    const entriesJsonPath = ppath.join(globalHardlinksStore, `${packageChecksum}.json` as Filename);
+  if (nmMode === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && packageChecksum) {
+    const entriesJsonPath = ppath.join(globalHardlinksStore, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
     try {
       allEntries = new Map(Object.entries(JSON.parse(await xfs.readFilePromise(entriesJsonPath, `utf8`)))) as Map<PortablePath, DirEntry>;
     } catch (e) {
@@ -1149,8 +1149,14 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // the other instances of the same package (this will avoid us having to
     // crawl the zip archives for each package).
     const globalHardlinksStore = nmMode === NodeModulesMode.HARDLINKS_GLOBAL ? `${getGlobalHardlinksStore(project.configuration)}/v1` as PortablePath : null;
-    if (globalHardlinksStore)
-      await xfs.mkdirpPromise(globalHardlinksStore);
+    if (globalHardlinksStore) {
+      if (!await xfs.existsPromise(globalHardlinksStore)) {
+        await xfs.mkdirpPromise(globalHardlinksStore);
+        for (let idx = 0; idx < 256; idx++) {
+          await xfs.mkdirPromise(ppath.join(globalHardlinksStore, idx.toString(16).padStart(2, `0`) as Filename));
+        }
+      }
+    }
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
         persistedLocations.set(entry.srcDir, entry.dstDir);
