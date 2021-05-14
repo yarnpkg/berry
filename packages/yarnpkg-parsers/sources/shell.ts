@@ -10,14 +10,20 @@ export function parseShell(source: string, options: {isGlobPattern: (arg: string
   }
 }
 
-export function stringifyShellLine(shellLine: ShellLine): string {
+export function stringifyShellLine(shellLine: ShellLine, {endSemicolon = false}: {endSemicolon?: boolean} = {}): string {
   return shellLine
-    .map(({command, type}) => `${stringifyCommandLine(command)} ${type}`)
+    .map(({command, type}, index) => `${
+      stringifyCommandLine(command)
+    }${
+      type === `;`
+        ? (index !== shellLine.length - 1 || endSemicolon ? `;` : ``)
+        : ` &`
+    }`)
     .join(` `);
 }
 
 export function stringifyCommandLine(commandLine: CommandLine): string {
-  return `${commandLine.chain}${commandLine.then ? ` ${stringifyCommandLineThen(commandLine.then)}` : ``}`;
+  return `${stringifyCommandChain(commandLine.chain)}${commandLine.then ? ` ${stringifyCommandLineThen(commandLine.then)}` : ``}`;
 }
 
 export function stringifyCommandLineThen(commandLineThen: CommandLineThen): string {
@@ -41,7 +47,7 @@ export function stringifyCommand(command: Command): string {
       return `(${stringifyShellLine(command.subshell)})${command.args.length > 0 ? ` ${command.args.map(argument => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
 
     case `group`:
-      return `{ ${stringifyShellLine(command.group)} }${command.args.length > 0 ? ` ${command.args.map(argument => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
+      return `{ ${stringifyShellLine(command.group, {/* Bash compat */ endSemicolon: true})} }${command.args.length > 0 ? ` ${command.args.map(argument => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
 
     case `envs`:
       return command.envs.map(env => stringifyEnvSegment(env)).join(` `);
@@ -101,7 +107,7 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
     case `variable`:
       return doubleQuoteIfRequested(
         typeof argumentSegment.defaultValue === `undefined`
-          ? `$${argumentSegment.name}`
+          ? `\${${argumentSegment.name}}`
           : argumentSegment.defaultValue.length === 0
             ? `\${${argumentSegment.name}:-}`
             : `\${${argumentSegment.name}:-${argumentSegment.defaultValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`,
@@ -148,3 +154,6 @@ export function stringifyArithmeticExpression(argument: ArithmeticExpression): s
       return `${stringifyAndParenthesizeIfNeeded(argument.left)} ${getSign(argument.type)} ${stringifyAndParenthesizeIfNeeded(argument.right)}`;
   }
 }
+
+// For symmetry
+export {stringifyShellLine as stringifyShell};

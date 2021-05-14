@@ -2,6 +2,7 @@ export type {ArgumentSegment, Argument, CommandChain, CommandLine, EnvSegment, S
 export type {ArithmeticExpression, ArithmeticPrimary}                                     from './grammars/shell';
 export {
   parseShell,
+  stringifyShell,
   stringifyArgument,
   stringifyArgumentSegment,
   stringifyArithmeticExpression,
