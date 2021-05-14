@@ -1,13 +1,14 @@
-import {PortablePath, npath, ppath, FakeFS, NodeFS}                                  from '@yarnpkg/fslib';
-import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell} from '@yarnpkg/parsers';
-import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                         from '@yarnpkg/parsers';
-import {homedir}                                                                     from 'os';
-import {PassThrough, Readable, Writable}                                             from 'stream';
+import {PortablePath, npath, ppath, FakeFS, NodeFS}                                                         from '@yarnpkg/fslib';
+import {Argument, ArgumentSegment, CommandChain, CommandLine, ShellLine, parseShell, stringifyCommandChain} from '@yarnpkg/parsers';
+import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                                                from '@yarnpkg/parsers';
+import chalk                                                                                                from 'chalk';
+import {homedir}                                                                                            from 'os';
+import {PassThrough, Readable, Writable}                                                                    from 'stream';
 
-import {ShellError}                                                                  from './errors';
-import * as globUtils                                                                from './globUtils';
-import {makeBuiltin, makeProcess}                                                    from './pipe';
-import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}          from './pipe';
+import {ShellError}                                                                                         from './errors';
+import * as globUtils                                                                                       from './globUtils';
+import {createOutputStreamsWithPrefix, makeBuiltin, makeProcess}                                            from './pipe';
+import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}                                 from './pipe';
 
 export {globUtils, ShellError};
 
@@ -50,6 +51,7 @@ export type ShellState = {
   stdout: Writable,
   stderr: Writable,
   variables: {[key: string]: string},
+  nextBackgroundJobIndex: number,
 };
 
 enum StreamType {
@@ -597,7 +599,7 @@ function makeActionFromProcedure(procedure: ProcessImplementation, args: Array<s
   }
 }
 
-async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState) {
+async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, state: ShellState) {
   let current: CommandChain | null = node;
   let pipeType = null;
 
@@ -688,11 +690,41 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
   return await execution.run();
 }
 
+async function executeCommandChain(node: CommandChain, opts: ShellOptions, state: ShellState, {background = false}: {background?: boolean} = {}) {
+  function getColorizer(index: number) {
+    const colors = [`#2E86AB`, `#A23B72`, `#F18F01`, `#C73E1D`, `#CCE2A3`];
+    const colorName = colors[index % colors.length];
+
+    return chalk.hex(colorName);
+  }
+
+  if (background) {
+    const index = state.nextBackgroundJobIndex++;
+    const colorizer = getColorizer(index);
+    const rawPrefix = `[${index}]`;
+    const prefix = colorizer(rawPrefix);
+
+    const {stdout, stderr} = createOutputStreamsWithPrefix(state, {prefix});
+
+    executeCommandChainImpl(node, opts, cloneState(state, {stdout, stderr}))
+      .catch(error => stderr.write(`${error.message}\n`))
+      .finally(() => {
+        if ((state.stdout as any).isTTY) {
+          state.stdout.write(`Job ${prefix}, '${colorizer(stringifyCommandChain(node))}' has ended\n`);
+        }
+      });
+
+    return 0;
+  }
+
+  return await executeCommandChainImpl(node, opts, state);
+}
+
 /**
  * Execute a command line. A command line is a list of command shells linked
  * together thanks to the use of either of the `||` or `&&` operators.
  */
-async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: ShellState): Promise<number> {
+async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: ShellState, {background = false}: {background?: boolean} = {}): Promise<number> {
   let code!: number;
   const setCode = (newCode: number) => {
     code = newCode;
@@ -702,9 +734,9 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
     state.variables[`?`] = String(newCode);
   };
 
-  const executeChain = async (chain: CommandChain) => {
+  const executeChain = async (line: CommandLine) => {
     try {
-      return await executeCommandChain(chain, opts, state);
+      return await executeCommandChain(line.chain, opts, state, {background: background && typeof line.then === `undefined`});
     } catch (error) {
       if (!(error instanceof ShellError))
         throw error;
@@ -715,7 +747,7 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
     }
   };
 
-  setCode(await executeChain(node.chain));
+  setCode(await executeChain(node));
 
   // We use a loop because we must make sure that we respect
   // the left associativity of lists, as per the bash spec.
@@ -729,13 +761,13 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
     switch (node.then.type) {
       case `&&`: {
         if (code === 0) {
-          setCode(await executeChain(node.then.line.chain));
+          setCode(await executeChain(node.then.line));
         }
       } break;
 
       case `||`: {
         if (code !== 0) {
-          setCode(await executeChain(node.then.line.chain));
+          setCode(await executeChain(node.then.line));
         }
       } break;
 
@@ -754,10 +786,7 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
   let rightMostExitCode = 0;
 
   for (const {command, type} of node) {
-    if (type === `&`)
-      throw new Error(`Background jobs aren't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/1349`);
-
-    rightMostExitCode = await executeCommandLine(command, opts, state);
+    rightMostExitCode = await executeCommandLine(command, opts, state, {background: type === `&`});
 
     // If the execution aborted (usually through "exit"), we must bailout
     if (state.exitCode !== null)
@@ -933,5 +962,6 @@ export async function execute(command: string, args: Array<string> = [], {
     variables: Object.assign({}, variables, {
       [`?`]: 0,
     }),
+    nextBackgroundJobIndex: 1,
   });
 }
