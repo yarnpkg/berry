@@ -13,6 +13,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
 - Plugins can now access `yup` again to make migration easier - will be removed again in the future
 
+### Shell
+
+- Yarn's portable shell now supports background jobs with color-coded output.
+
 ## 3.0.0-rc.2
 
 ```
