@@ -657,19 +657,16 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
   }
 };
 
-async function atomicFileWriteIfNotExist(tmpDir: PortablePath, dstPath: PortablePath, content: Buffer) {
-  const doesFileExist = await xfs.existsPromise(dstPath);
-  if (!doesFileExist) {
-    const tmpPath = ppath.join(tmpDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, content: Buffer) {
+  const tmpPath = ppath.join(tmpDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+  try {
+    await xfs.writeFilePromise(tmpPath, content);
     try {
-      await xfs.writeFilePromise(tmpPath, content);
-      try {
-        await xfs.linkPromise(tmpPath, dstPath);
-      } catch (e) {
-      }
-    } finally {
-      await xfs.unlinkPromise(tmpPath);
+      await xfs.linkPromise(tmpPath, dstPath);
+    } catch (e) {
     }
+  } finally {
+    await xfs.unlinkPromise(tmpPath);
   }
 }
 
@@ -706,7 +703,7 @@ async function copyFilePromise({srcPath, dstPath, srcMode, globalHardlinksStore,
 
     if (!doesContentFileExist) {
       const content = await baseFs.readFilePromise(srcPath);
-      await atomicFileWriteIfNotExist(globalHardlinksStore, contentFilePath, content);
+      await atomicFileWrite(globalHardlinksStore, contentFilePath, content);
       await xfs.linkPromise(contentFilePath, dstPath);
     }
   } else {
@@ -779,7 +776,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       allEntries = new Map(Object.entries(JSON.parse(await xfs.readFilePromise(entriesJsonPath, `utf8`)))) as Map<PortablePath, DirEntry>;
     } catch (e) {
       allEntries = await getEntriesRecursive();
-      await atomicFileWriteIfNotExist(globalHardlinksStore, entriesJsonPath, Buffer.from(JSON.stringify(Object.fromEntries(allEntries))));
+      await atomicFileWrite(globalHardlinksStore, entriesJsonPath, Buffer.from(JSON.stringify(Object.fromEntries(allEntries))));
     }
   } else {
     allEntries = await getEntriesRecursive();
