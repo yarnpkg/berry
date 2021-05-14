@@ -46,7 +46,18 @@ export type MkdirOptions = Partial<{
   mode: number,
 }>;
 
+export type MkdtempOptions = Partial<{
+  encoding: String,
+}>;
+
 export type RmdirOptions = Partial<{
+  maxRetries: number,
+  recursive: boolean,
+  retryDelay: number,
+}>;
+
+export type RmOptions = Partial<{
+  force: boolean,
   maxRetries: number,
   recursive: boolean,
   retryDelay: number,
@@ -119,6 +130,9 @@ export abstract class FakeFS<P extends Path> {
 
   abstract resolve(p: P): P;
 
+  abstract dataSync(): Promise<void>;
+  abstract sync(): Promise<void>;
+
   abstract opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>>;
   abstract opendirSync(p: P, opts?: OpendirOptions): Dir<P>;
 
@@ -183,12 +197,16 @@ export abstract class FakeFS<P extends Path> {
   abstract chmodSync(p: P, mask: number): void;
 
   abstract chownPromise(p: P, uid: number, gid: number): Promise<void>;
+  abstract lchownPromise(p: P, uid: number, gid: number): Promise<void>;
   abstract chownSync(p: P, uid: number, gid: number): void;
 
   abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
   abstract mkdirSync(p: P, opts?: MkdirOptions): void;
+  abstract mkdtemp(prefix: String, opts?: MkdtempOptions): Promise<void>;
+
 
   abstract rmdirPromise(p: P, opts?: RmdirOptions): Promise<void>;
+  abstract rmPromise(p: P, opts?: RmOptions): Promise<void>;
   abstract rmdirSync(p: P, opts?: RmdirOptions): void;
 
   abstract linkPromise(existingP: P, newP: P): Promise<void>;
