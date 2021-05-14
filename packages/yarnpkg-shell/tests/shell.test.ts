@@ -1,6 +1,7 @@
 import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
 import {execute, UserOptions}               from '@yarnpkg/shell';
 import {PassThrough}                        from 'stream';
+import stripAnsi                            from 'strip-ansi';
 
 const isNotWin32 = process.platform !== `win32`;
 
@@ -8,9 +9,14 @@ const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
 
-const bufferResult = async (command: string, args: Array<string> = [], options: Partial<UserOptions> = {}) => {
+const bufferResult = async (command: string, args: Array<string> = [], options: Partial<UserOptions> & {tty?: boolean} = {}) => {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
+
+  if (options.tty) {
+    (stdout as any).isTTY = true;
+    (stderr as any).isTTY = true;
+  }
 
   const stdoutChunks: Array<Buffer> = [];
   const stderrChunks: Array<Buffer> = [];
@@ -1332,16 +1338,6 @@ describe(`Shell`, () => {
             });
           });
         });
-
-        it(`should say that background jobs aren't supported (unrecoverable)`, async () => {
-          await xfs.mktempPromise(async tmpDir => {
-            await expect(bufferResult(
-              `echo foo & echo bar`,
-              [],
-              {cwd: tmpDir}
-            )).rejects.toThrowError(`Background jobs aren't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/1349`);
-          });
-        });
       });
 
       it(`should include directories`, async () => {
@@ -1564,6 +1560,38 @@ describe(`Shell`, () => {
         exitCode: 0,
         stdout: `5\n`,
       });
+    });
+  });
+
+  describe(`Background jobs`, () => {
+    it(`should provide color-coded prefixed output and color-coded "Job has ended" message inside TTYs`, async () => {
+      const {stdout, stderr, exitCode} = await bufferResult(`echo foo & echo bar`, [], {tty: true});
+
+      expect(stripAnsi(stdout)).not.toStrictEqual(stdout);
+      expect(stripAnsi(stdout)).toContain(`Job [1], 'echo foo' has ended`);
+      expect(stripAnsi(stdout)).toContain(`[1] foo`);
+
+      expect(stripAnsi(stderr)).toStrictEqual(``);
+      expect(exitCode).toStrictEqual(0);
+    });
+
+    it(`should provide the raw output when piped`, async () => {
+      const {stdout, stderr, exitCode} = await bufferResult(`echo foo & echo bar`, [], {tty: false});
+
+      expect(stripAnsi(stdout)).toStrictEqual(stdout);
+      expect(stripAnsi(stdout)).not.toContain(`Job [1], 'echo foo' has ended`);
+      expect(stripAnsi(stdout)).not.toContain(`[1] foo`);
+
+      expect(stripAnsi(stderr)).toStrictEqual(``);
+      expect(exitCode).toStrictEqual(0);
+    });
+
+    it(`should print errors to stderr and always exit with exit code 0`, async () => {
+      const {stdout, stderr, exitCode} = await bufferResult(`echo $THIS_VARIABLE_DOES_NOT_EXIST &`, [], {tty: true});
+
+      expect(stripAnsi(stdout)).toContain(`Job [1], 'echo \${THIS_VARIABLE_DOES_NOT_EXIST}' has ended`);
+      expect(stripAnsi(stderr)).toContain(`[1] Unbound variable "THIS_VARIABLE_DOES_NOT_EXIST"`);
+      expect(exitCode).toStrictEqual(0);
     });
   });
 });

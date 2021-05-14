@@ -18,7 +18,8 @@
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:*",
+    "strip-ansi": "^6.0.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",

@@ -15696,6 +15696,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fast-glob", "npm:3.2.2"],
             ["micromatch", "npm:4.0.2"],
             ["stream-buffers", "npm:3.0.2"],
+            ["strip-ansi", "npm:6.0.0"],
             ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
