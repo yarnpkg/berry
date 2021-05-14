@@ -3,7 +3,7 @@ import {xfs}                                from '@yarnpkg/fslib';
 import {NodeModulesHoistingLimits}          from '@yarnpkg/pnpify';
 
 import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
-import {getCasDirectory}                    from './NodeModulesLinker';
+import {getGlobalHardlinksDirectory}        from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
 declare module '@yarnpkg/core' {
@@ -16,8 +16,8 @@ declare module '@yarnpkg/core' {
 const plugin: Plugin<Hooks> = {
   hooks: {
     cleanGlobalArtifacts: async configuration => {
-      const casDirectory = getCasDirectory(configuration);
-      await xfs.removePromise(casDirectory);
+      const globalHardlinksDirectory = getGlobalHardlinksDirectory(configuration);
+      await xfs.removePromise(globalHardlinksDirectory);
     },
   },
   configuration: {

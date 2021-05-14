@@ -903,8 +903,8 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
 
-export function getCasDirectory(configuration: Configuration): PortablePath {
-  return `${configuration.get(`globalFolder`)}/cas` as PortablePath;
+export function getGlobalHardlinksDirectory(configuration: Configuration): PortablePath {
+  return ppath.join(configuration.get(`globalFolder`), `store` as Filename);
 }
 
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
@@ -1138,7 +1138,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // source directory. We'll later use the resulting install directories for
     // the other instances of the same package (this will avoid us having to
     // crawl the zip archives for each package).
-    const globalHardlinksDirectory = nmMode === NodeModulesMode.HARDLINKS_GLOBAL ? `${getCasDirectory(project.configuration)}/v1` as PortablePath : null;
+    const globalHardlinksDirectory = nmMode === NodeModulesMode.HARDLINKS_GLOBAL ? `${getGlobalHardlinksDirectory(project.configuration)}/v1` as PortablePath : null;
     if (globalHardlinksDirectory)
       await xfs.mkdirpPromise(globalHardlinksDirectory);
     for (const entry of addList) {
