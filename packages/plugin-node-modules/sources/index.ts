@@ -3,7 +3,7 @@ import {xfs}                                from '@yarnpkg/fslib';
 import {NodeModulesHoistingLimits}          from '@yarnpkg/pnpify';
 
 import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
-import {getGlobalHardlinksDirectory}        from './NodeModulesLinker';
+import {getGlobalHardlinksStore}            from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
 declare module '@yarnpkg/core' {
@@ -16,7 +16,7 @@ declare module '@yarnpkg/core' {
 const plugin: Plugin<Hooks> = {
   hooks: {
     cleanGlobalArtifacts: async configuration => {
-      const globalHardlinksDirectory = getGlobalHardlinksDirectory(configuration);
+      const globalHardlinksDirectory = getGlobalHardlinksStore(configuration);
       await xfs.removePromise(globalHardlinksDirectory);
     },
   },
