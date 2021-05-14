@@ -681,12 +681,25 @@ async function copyFilePromise({srcPath, dstPath, srcMode, globalHardlinksStore,
     try {
       const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
       if (contentDigest !== digest) {
-        await xfs.unlinkPromise(contentFilePath);
-        doesContentFileExist = false;
-      } else {
-        await xfs.linkPromise(contentFilePath, dstPath);
-        doesContentFileExist = true;
+        // If file content was modified by the user, or corrupted, we first move it out of the way
+        const tmpPath = ppath.join(globalHardlinksStore, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+        await xfs.renamePromise(contentFilePath, tmpPath);
+
+        // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
+        const content = await baseFs.readFilePromise(srcPath);
+        await xfs.writeFilePromise(tmpPath, content);
+
+        try {
+          // Then we try to move content file back on its place, if its still free
+          // If we fail here, it means that some other process or thread has created content file
+          // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
+          await xfs.linkPromise(tmpPath, contentFilePath);
+          await xfs.unlinkPromise(tmpPath);
+        } catch (e) {
+        }
       }
+      await xfs.linkPromise(contentFilePath, dstPath);
+      doesContentFileExist = true;
     } catch (e) {
       doesContentFileExist = false;
     }
