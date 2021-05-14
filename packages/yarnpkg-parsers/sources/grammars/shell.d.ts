@@ -67,7 +67,10 @@ export type CommandLineThen = {
   line: CommandLine,
 };
 
-export type ShellLine = Array<CommandLine>;
+export type ShellLine = Array<{
+  type: ';' | '&',
+  command: CommandLine,
+}>;
 
 export type ArithmeticPrimary = {
   type: `number`,

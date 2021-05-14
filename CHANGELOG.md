@@ -11,6 +11,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Bugfixes
 
 - The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
+- Plugins can now access `yup` again to make migration easier - will be removed again in the future
 
 ## 3.0.0-rc.2
 

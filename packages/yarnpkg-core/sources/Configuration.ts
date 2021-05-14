@@ -5,7 +5,6 @@ import camelcase                                                                
 import {isCI}                                                                                           from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
 import pLimit, {Limit}                                                                                  from 'p-limit';
-import semver                                                                                           from 'semver';
 import {PassThrough, Writable}                                                                          from 'stream';
 
 import {CorePlugin}                                                                                     from './CorePlugin';
@@ -1407,7 +1406,7 @@ export class Configuration {
     const packageExtensions = this.packageExtensions;
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
-      if (!semver.validRange(descriptor.range))
+      if (!semverUtils.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
       const extension = new Manifest();

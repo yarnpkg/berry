@@ -1,11 +1,11 @@
 import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
 import globby                                      from 'globby';
-import semver                                      from 'semver';
 
 import {HardDependencies, Manifest}                from './Manifest';
 import {Project}                                   from './Project';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
 import * as hashUtils                              from './hashUtils';
+import * as semverUtils                            from './semverUtils';
 import * as structUtils                            from './structUtils';
 import {IdentHash}                                 from './types';
 import {Descriptor, Locator}                       from './types';
@@ -101,17 +101,18 @@ export class Workspace {
     if (protocol === WorkspaceResolver.protocol && pathname === `*`)
       return true;
 
-    if (!semver.validRange(pathname))
+    const semverRange = semverUtils.validRange(pathname);
+    if (!semverRange)
       return false;
 
     if (protocol === WorkspaceResolver.protocol)
-      return semver.satisfies(this.manifest.version !== null ? this.manifest.version : `0.0.0`, pathname);
+      return semverRange.test(this.manifest.version ?? `0.0.0`);
 
     if (!this.project.configuration.get(`enableTransparentWorkspaces`))
       return false;
 
     if (this.manifest.version !== null)
-      return semver.satisfies(this.manifest.version, pathname);
+      return semverRange.test(this.manifest.version);
 
     return false;
   }
