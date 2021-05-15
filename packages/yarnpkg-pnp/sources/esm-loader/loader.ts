@@ -70,6 +70,11 @@ export async function getFormat(
         format: `module`,
       };
     }
+    case `.cjs`: {
+      return {
+        format: `module`,
+      };
+    }
     case `.json`: {
       // TODO: Enable if --experimental-json-modules is present
       throw new Error(
