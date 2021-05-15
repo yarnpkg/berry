@@ -438,7 +438,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `throw`,
   },
 
-  enableExperimentalESMLoader: {
+  enableExperimentalEsmLoader: {
     description: `If true, an ESM loader will be added to the environment`,
     type: SettingsType.BOOLEAN,
     default: false,
@@ -562,7 +562,7 @@ export interface ConfigurationValueMap {
     peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>,
   }>>;
 
-  enableExperimentalESMLoader: boolean
+  enableExperimentalEsmLoader: boolean
 }
 
 export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;

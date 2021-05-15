@@ -289,7 +289,7 @@ export class PnpInstaller implements Installer {
   }
 
   isEsmEnabled() {
-    if (this.opts.project.configuration.get(`enableExperimentalESMLoader`))
+    if (this.opts.project.configuration.get(`enableExperimentalEsmLoader`))
       return true;
 
     for (const workspace of this.opts.project.workspaces) {
