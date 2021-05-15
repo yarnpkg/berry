@@ -15,7 +15,7 @@ export const getPnpPath = (project: Project) => {
   return {
     cjs: ppath.join(project.cwd, Filename.pnpCjs),
     cjsLegacy: ppath.join(project.cwd, Filename.pnpJs),
-    esmLoader: ppath.join(project.cwd, `experimental-pnp-esm-loader.mjs` as Filename),
+    esmLoader: ppath.join(project.cwd, `.pnp.loader.mjs` as Filename),
   };
 };
 
@@ -39,7 +39,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
     // We still support .pnp.js files to improve multi-project compatibility.
     // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
     const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
-    const esmLoaderExpression = /\s*--experimental-loader\s+\S*experimental-pnp-esm-loader\.js\s*/;
+    const esmLoaderExpression = /\s*--experimental-loader\s+\S*\.pnp\.loader\.mjs\s*/;
     nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).replace(esmLoaderExpression, ` `).trim();
 
     nodeOptions = nodeOptions ? `${pnpRequire} ${nodeOptions}` : pnpRequire;
