@@ -1,5 +1,6 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
+import {CIRCLE as isCircleCI}                                               from 'ci-info';
 import stripAnsi                                                            from 'strip-ansi';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
@@ -57,7 +58,7 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 export const supportsColor = chalkOptions.level !== 0;
-export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS && !isCircleCI;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 
