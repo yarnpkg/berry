@@ -1567,7 +1567,6 @@ describe(`Shell`, () => {
     it(`should provide color-coded prefixed output and color-coded "Job has ended" message inside TTYs`, async () => {
       const {stdout, stderr, exitCode} = await bufferResult(`echo foo & echo bar`, [], {tty: true});
 
-      expect(stripAnsi(stdout)).not.toStrictEqual(stdout);
       expect(stripAnsi(stdout)).toContain(`Job [1], 'echo foo' has ended`);
       expect(stripAnsi(stdout)).toContain(`[1] foo`);
 
