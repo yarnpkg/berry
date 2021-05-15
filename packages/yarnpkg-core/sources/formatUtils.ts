@@ -297,10 +297,17 @@ export function applyColor(configuration: Configuration, value: string, formatTy
   return fn(value);
 }
 
+const isKonsole = !!process.env.KONSOLE_VERSION;
+
 export function applyHyperlink(configuration: Configuration, text: string, href: string) {
   // Only print hyperlinks if allowed per configuration
   if (!configuration.get(`enableHyperlinks`))
     return text;
+
+  // We use ESC as ST for Konsole because it doesn't support
+  // the non-standard BEL character for hyperlinks
+  if (isKonsole)
+    return `\u001b]8;;${href}\u001b\\${text}\u001b]8;;\u001b\\`;
 
   // We use BELL as ST because it seems that iTerm doesn't properly support
   // the \x1b\\ sequence described in the reference document
