@@ -1,3 +1,4 @@
+import {PortablePath}                      from '@yarnpkg/fslib';
 import {parse, init}                       from 'cjs-module-lexer';
 import fs                                  from 'fs';
 import * as moduleExports                  from 'module';
@@ -20,6 +21,16 @@ const builtins = new Set([...moduleExports.builtinModules]);
 // @ts-expect-error - This module, when bundled, is still ESM so this is valid
 const pnpapi: PnpApi = moduleExports.createRequire(import.meta.url)(`pnpapi`);
 
+const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+
+async function exists(path: string) {
+  try {
+    await fs.promises.access(path, fs.constants.R_OK);
+    return true;
+  } catch { }
+  return false;
+}
+
 export async function resolve(
   specifier: string,
   context: any,
@@ -38,10 +49,27 @@ export async function resolve(
 
   const parentPath = parentURL ? fileURLToPath(parentURL) : process.cwd();
 
+  const dependencyNameMatch = specifier.match(pathRegExp);
+
+  let allowLegacyResolve = false;
+
+  if (dependencyNameMatch) {
+    const [, dependencyName, subPath] = dependencyNameMatch as [unknown, string, PortablePath];
+
+    // https://github.com/nodejs/node/blob/0996eb71edbd47d9f9ec6153331255993fd6f0d1/lib/internal/modules/esm/resolve.js#L686-L691
+    if (subPath === ``) {
+      const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, parentPath);
+      if (resolved && await exists(resolved)) {
+        const pkg = JSON.parse(await fs.promises.readFile(resolved, `utf8`));
+        allowLegacyResolve = pkg.exports == null;
+      }
+    }
+  }
+
   const result = pnpapi.resolveRequest(specifier, parentPath, {
     conditions: new Set(conditions),
     // TODO: Handle --experimental-specifier-resolution=node
-    extensions: [],
+    extensions: allowLegacyResolve ? undefined : [],
   });
 
   if (!result)

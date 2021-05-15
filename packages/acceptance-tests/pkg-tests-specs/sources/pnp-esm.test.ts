@@ -178,4 +178,30 @@ describe(`Plug'n'Play - ESM`, () => {
       }
     )
   );
+
+  test(
+    `it should use legacy resolve when exports is missing`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+        dependencies: {
+          foo: `portal:./pkg`,
+        },
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(ppath.join(path, `pkg` as Filename));
+        await xfs.writeJsonPromise(ppath.join(path, `pkg/package.json` as Filename), {});
+        await xfs.writeFilePromise(ppath.join(path, `pkg/index.js` as Filename), `module.exports = 42`);
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import foo from 'foo';\nconsole.log(foo)`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      }
+    )
+  );
 });
