@@ -229,7 +229,7 @@ export class PnpInstaller implements Installer {
       await xfs.removePromise(pnpPath.cjsLegacy);
     }
 
-    if (this.opts.project.configuration.get(`enableExperimentalESMLoader`) !== true && this.opts.project.topLevelWorkspace.manifest.type !== `module`)
+    if (!this.isEsmEnabled())
       await xfs.removePromise(pnpPath.esmLoader);
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
@@ -288,6 +288,19 @@ export class PnpInstaller implements Installer {
     // Nothing to transform
   }
 
+  isEsmEnabled() {
+    if (this.opts.project.configuration.get(`enableExperimentalESMLoader`))
+      return true;
+
+    for (const workspace of this.opts.project.workspaces) {
+      if (workspace.manifest.type === `module`) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
@@ -326,7 +339,7 @@ export class PnpInstaller implements Installer {
       });
     }
 
-    if (this.opts.project.configuration.get(`enableExperimentalESMLoader`) === true || this.opts.project.topLevelWorkspace.manifest.type === `module`)
+    if (this.isEsmEnabled())
       await xfs.writeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate());
 
     const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
