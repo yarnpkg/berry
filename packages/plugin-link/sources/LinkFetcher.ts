@@ -1,9 +1,9 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator}                                    from '@yarnpkg/core';
-import {structUtils}                                from '@yarnpkg/core';
-import {CwdFS, JailFS, ppath, PortablePath}         from '@yarnpkg/fslib';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@yarnpkg/core';
+import {Locator}                                                 from '@yarnpkg/core';
+import {structUtils}                                             from '@yarnpkg/core';
+import {CwdFS, JailFS, ppath, PortablePath}                      from '@yarnpkg/fslib';
 
-import {LINK_PROTOCOL}                              from './constants';
+import {LINK_PROTOCOL}                                           from './constants';
 
 export class LinkFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -30,13 +30,13 @@ export class LinkFetcher implements Fetcher {
 
     // If the link target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = ppath.isAbsolute(path)
+    const parentFetch: FetchResult = ppath.isAbsolute(path)
       ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
     // in the case of "file:" packages), we use it to derive the real location.
-    const effectiveParentFetch = parentFetch.localPath
+    const effectiveParentFetch: FetchResult = parentFetch.localPath
       ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
       : parentFetch;
 

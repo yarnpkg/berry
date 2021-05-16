@@ -61,6 +61,11 @@ yarn set version 3.0.0-rc.1
   - Projects that make use of such dependencies will have to be run with the `--preserve-symlinks` Node option if they wish to access their dependencies.
   - Because Yarn installs will never modify files outside of the project due to security reasons, sub-dependencies of packages with `portal:` must be hoisted outside of the portal. Failing that (for example if the portal package depends on something incompatible with the version hoisted via another package), the linker will produce an error and abandon the install.
 
+- The node-modules linker can now utilize hardlinks. The new setting `nmMode: classic | hardlinks-local | hardlinks-global` specifies which `node_modules` strategy should be used:
+ - `classic` - standard `node_modules` layout, without hardlinks
+ - `hardlinks-local` - standard `node_modules` layout with hardlinks inside the project only
+ - `hardlinks-global` - standard `node_modules` layout with hardlinks pointing to global content storage across all the projects using this option
+
 ### Bugfixes
 
 - Yarn now has a proper [governance model](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md).

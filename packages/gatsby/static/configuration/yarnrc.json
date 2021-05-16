@@ -354,6 +354,13 @@
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
+    "nmMode": {
+      "_package": "@yarnpkg/plugin-node-modules",
+      "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
+      "type": "string",
+      "enum": ["classic", "hardlinks-local", "hardlinks-global"],
+      "default": "classic"
+    },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",

@@ -1071,6 +1071,7 @@ describe(`Node_Modules`, () => {
       }
     )
   );
+
   test(
     `should prefer bin executables from the calling workspace`,
     makeTemporaryEnv(
@@ -1119,6 +1120,124 @@ describe(`Node_Modules`, () => {
         expect((await run(`run`, `wb`)).stdout.trim()).toContain(`workspace-b`);
         expect((await run(`run`, `wa`)).stdout.trim()).toContain(`workspace-a`);
         expect((await run(`run`, `wc`)).stdout.trim()).toContain(`workspace-c`);
+      }
+    )
+  );
+
+  test(`should honor transparently nmMode: hardlinks during subsequent installs`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`, `ws3`],
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run}) => {
+        await writeJson(`${path}/ws1/package.json`, {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/ws2/package.json`, {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeJson(`${path}/ws3/package.json`, {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks-local\n`);
+        await run(`install`);
+
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
+
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: classic\n`);
+        await run(`install`);
+
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 1});
+
+        await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks-local\n`);
+        await run(`install`);
+
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
+      }
+    )
+  );
+
+  test(`should wire via hardlinks files having the same content when in nmMode: hardlinks-global`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep1: `file:./dep1`,
+          dep2: `file:./dep2`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep1/package.json` as Filename), {
+          name: `dep1`,
+          version: `1.0.0`,
+        });
+
+        const content = `The same content`;
+        await xfs.writeFilePromise(ppath.resolve(path, `dep1/index.js` as Filename), content);
+
+        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+          name: `dep2`,
+          version: `1.0.0`,
+        });
+        await xfs.writeFilePromise(ppath.resolve(path, `dep2/index.js` as Filename), content);
+
+        await run(`install`);
+
+        const stats1 = await xfs.statPromise(`${path}/node_modules/dep1/index.js` as PortablePath);
+        const stats2 = await xfs.statPromise(`${path}/node_modules/dep2/index.js` as PortablePath);
+
+        expect(stats1.ino).toEqual(stats2.ino);
+      }
+    )
+  );
+
+  test(`should recover from changes to the store on next install in nmMode: cas`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        const originalContent = `The same content`;
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js` as Filename), originalContent);
+
+        await run(`install`);
+
+        const modifiedContent = `The modified content`;
+        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js` as Filename);
+        await xfs.writeFilePromise(depNmPath, modifiedContent);
+
+        await xfs.removePromise(ppath.resolve(path, `node_modules` as Filename));
+
+        await run(`install`);
+
+        const depContent = await xfs.readFilePromise(depNmPath, `utf8`);
+        expect(depContent).toEqual(originalContent);
       }
     )
   );
