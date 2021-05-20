@@ -52,6 +52,7 @@ export type ShellState = {
   stderr: Writable,
   variables: {[key: string]: string},
   nextBackgroundJobIndex: number,
+  backgroundJobs: Array<Promise<unknown>>;
 };
 
 enum StreamType {
@@ -706,13 +707,15 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
 
     const {stdout, stderr} = createOutputStreamsWithPrefix(state, {prefix});
 
-    executeCommandChainImpl(node, opts, cloneState(state, {stdout, stderr}))
-      .catch(error => stderr.write(`${error.message}\n`))
-      .finally(() => {
-        if ((state.stdout as any).isTTY) {
-          state.stdout.write(`Job ${prefix}, '${colorizer(stringifyCommandChain(node))}' has ended\n`);
-        }
-      });
+    state.backgroundJobs.push(
+      executeCommandChainImpl(node, opts, cloneState(state, {stdout, stderr}))
+        .catch(error => stderr.write(`${error.message}\n`))
+        .finally(() => {
+          if ((state.stdout as any).isTTY) {
+            state.stdout.write(`Job ${prefix}, '${colorizer(stringifyCommandChain(node))}' has ended\n`);
+          }
+        })
+    );
 
     return 0;
   }
@@ -783,6 +786,8 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
 }
 
 async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
+  state = cloneState(state, {backgroundJobs: []});
+
   let rightMostExitCode = 0;
 
   for (const {command, type} of node) {
@@ -796,6 +801,8 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
     // the right-most command
     state.variables[`?`] = String(rightMostExitCode);
   }
+
+  await Promise.all(state.backgroundJobs);
 
   return rightMostExitCode;
 }
@@ -963,5 +970,6 @@ export async function execute(command: string, args: Array<string> = [], {
       [`?`]: 0,
     }),
     nextBackgroundJobIndex: 1,
+    backgroundJobs: [],
   });
 }
