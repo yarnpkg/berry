@@ -786,7 +786,8 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
 }
 
 async function executeShellLine(node: ShellLine, opts: ShellOptions, state: ShellState) {
-  state = cloneState(state, {backgroundJobs: []});
+  const originalBackgroundJobs = state.backgroundJobs;
+  state.backgroundJobs = [];
 
   let rightMostExitCode = 0;
 
@@ -803,6 +804,7 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
   }
 
   await Promise.all(state.backgroundJobs);
+  state.backgroundJobs = originalBackgroundJobs;
 
   return rightMostExitCode;
 }
