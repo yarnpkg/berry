@@ -116,7 +116,7 @@ describe(`Commands`, () => {
             },
           }));
 
-          await run(`unlink`, ``, {
+          await run(`unlink`, `--all`, {
             cwd: `${path}/packages/workspace`,
           });
 

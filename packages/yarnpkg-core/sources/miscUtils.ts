@@ -379,3 +379,9 @@ export function tryParseOptionalBoolean(value: unknown): boolean | undefined | n
 export type FilterKeys<T extends {}, Filter> = {
   [K in keyof T]: T[K] extends Filter ? K : never;
 }[keyof T];
+
+export function isPathLike(value: string): boolean {
+  if (npath.isAbsolute(value) || value.match(/^(\.{1,2}|~)\//))
+    return true;
+  return false;
+}

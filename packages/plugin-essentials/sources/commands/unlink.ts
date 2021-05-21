@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath, xfs}                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                       from 'clipanion';
-import micromatch                                                 from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                 from '@yarnpkg/cli';
+import {Cache, Configuration, miscUtils, Project, StreamReport, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                  from 'clipanion';
+import micromatch                                                            from 'micromatch';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnlinkCommand extends BaseCommand {
@@ -23,7 +23,7 @@ export default class UnlinkCommand extends BaseCommand {
       `$0 unlink ~/jest --all`,
     ], [
       `Unregister all previously linked workspaces`,
-      `$0 unlink`,
+      `$0 unlink --all`,
     ], [
       `Unregister all workspaces matching a glob`,
       `$0 unlink '@babel/*'`,
@@ -47,7 +47,7 @@ export default class UnlinkCommand extends BaseCommand {
     const topLevelWorkspace = project.topLevelWorkspace;
     const workspacesToUnlink = new Set<string>();
 
-    if (!this.leadingArgument) {
+    if (!this.leadingArgument && this.all) {
       for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
         if (reference.startsWith(`portal:`)) {
           workspacesToUnlink.add(pattern.descriptor.fullName);
@@ -57,7 +57,7 @@ export default class UnlinkCommand extends BaseCommand {
 
     if (this.leadingArgument) {
       const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.leadingArgument));
-      if (!structUtils.tryParseIdent(this.leadingArgument) && await xfs.existsPromise(absoluteDestination)) {
+      if (miscUtils.isPathLike(this.leadingArgument)) {
         const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
         const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
