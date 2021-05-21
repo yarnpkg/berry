@@ -1,10 +1,10 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
-import {ReadStream, Stats, WriteStream, constants, BigIntStats}                                                                                      from 'fs';
+import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 import {isDate}                                                                                                                                      from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import {WatchOptions, WatchCallback, Watcher, Dir}                                                                                                   from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats}                                                                               from './FakeFS';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
@@ -682,8 +682,9 @@ export class ZipFS extends BasePortableFakeFS {
         : 0o644;
 
       const mode = type | (this.getUnixMode(entry, defaultMode) & 0o777);
+      const crc = this.libzip.struct.statCrc(stat);
 
-      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
       return opts.bigint === true ? statUtils.convertToBigIntStats(statInstance) : statInstance;
     }
 
@@ -707,8 +708,9 @@ export class ZipFS extends BasePortableFakeFS {
       const mtime = new Date(mtimeMs);
 
       const mode = S_IFDIR | 0o755;
+      const crc = 0;
 
-      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
       return opts.bigint === true ? statUtils.convertToBigIntStats(statInstance) : statInstance;
     }
 

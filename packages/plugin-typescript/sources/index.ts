@@ -1,5 +1,5 @@
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
-import {structUtils, ThrowReport, miscUtils}                                                               from '@yarnpkg/core';
+import {structUtils, ThrowReport, miscUtils, semverUtils}                                                  from '@yarnpkg/core';
 import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
 import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
 import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
@@ -41,7 +41,7 @@ const afterWorkspaceDependencyAddition = async (
 
   let range = structUtils.parseRange(descriptor.range).selector;
   // If the range is a tag, we have to resolve it into a semver version
-  if (!semver.validRange(range)) {
+  if (!semverUtils.validRange(range)) {
     const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash, Package>(), resolveOptions);
     range = structUtils.parseRange(originalCandidates[0].reference).selector;
   }

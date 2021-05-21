@@ -11,6 +11,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Bugfixes
 
 - The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
+- Plugins can now access `yup` again to make migration easier - will be removed again in the future
 
 ## 3.0.0-rc.2
 
@@ -36,7 +37,7 @@ yarn set version 3.0.0-rc.1
 - Plugins can't access `yup` anymore (we migrated to [Typanion](https://github.com/arcanis/typanion) as part of [Clipanion v3](https://github.com/arcanis/clipanion)).
   - To upgrade `workspace-tools`, remove it from your `.yarnrc.yml`, upgrade, then import it back.
 - The `enableImmutableInstalls` will now default to `true` on CI (we still recommend to explicitly use `--immutable` on the CLI).
-  - You can re-allow mutations by adding `YARN_ENABLE_IMMUTABLE_INSTALLS=false` in your environment variables. 
+  - You can re-allow mutations by adding `YARN_ENABLE_IMMUTABLE_INSTALLS=false` in your environment variables.
 - The `initVersion` and `initLicense` configuration options have been removed. `initFields` should be used instead.
 - Yarn will now generate `.pnp.cjs` files (instead of `.pnp.js`) when using PnP, regardless of what the `type` field inside the manifest is set to.
 - The virtual folder (used to disambiguate peer dependencies) got renamed from `$$virtual` into `__virtual__`.
@@ -59,6 +60,11 @@ yarn set version 3.0.0-rc.1
 - The node-modules linker now does its best to support the `portal:` protocol. This support comes with two important limitations:
   - Projects that make use of such dependencies will have to be run with the `--preserve-symlinks` Node option if they wish to access their dependencies.
   - Because Yarn installs will never modify files outside of the project due to security reasons, sub-dependencies of packages with `portal:` must be hoisted outside of the portal. Failing that (for example if the portal package depends on something incompatible with the version hoisted via another package), the linker will produce an error and abandon the install.
+
+- The node-modules linker can now utilize hardlinks. The new setting `nmMode: classic | hardlinks-local | hardlinks-global` specifies which `node_modules` strategy should be used:
+ - `classic` - standard `node_modules` layout, without hardlinks
+ - `hardlinks-local` - standard `node_modules` layout with hardlinks inside the project only
+ - `hardlinks-global` - standard `node_modules` layout with hardlinks pointing to global content storage across all the projects using this option
 
 ### Bugfixes
 

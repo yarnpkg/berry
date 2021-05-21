@@ -230,7 +230,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
-
   const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator) => {
     if (pkg.linkType !== LinkType.SOFT || !options.project)
       return false;

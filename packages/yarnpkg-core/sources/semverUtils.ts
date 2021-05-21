@@ -2,6 +2,8 @@ import semver from 'semver';
 
 export {SemVer} from 'semver';
 
+const satisfiesWithPrereleasesCache = new Map<string, semver.Range | null>();
+
 /**
  * Returns whether the given semver version satisfies the given range. Notably
  * this supports prerelease versions so that "2.0.0-rc.0" satisfies the range
@@ -16,15 +18,22 @@ export {SemVer} from 'semver';
  * See https://github.com/yarnpkg/berry/issues/575 for more context.
  */
 export function satisfiesWithPrereleases(version: string | null, range: string, loose: boolean = false): boolean {
-  let semverRange;
-  try {
-    semverRange = new semver.Range(range, {includePrerelease: true, loose});
-  } catch (err) {
-    return false;
-  }
-
   if (!version)
     return false;
+
+  const key = `${range}${loose}`;
+  let semverRange = satisfiesWithPrereleasesCache.get(key);
+  if (typeof semverRange === `undefined`) {
+    try {
+      semverRange = new semver.Range(range, {includePrerelease: true, loose});
+    } catch {
+      return false;
+    } finally {
+      satisfiesWithPrereleasesCache.set(key, semverRange || null);
+    }
+  } else if (semverRange === null) {
+    return false;
+  }
 
   let semverVersion: semver.SemVer;
   try {

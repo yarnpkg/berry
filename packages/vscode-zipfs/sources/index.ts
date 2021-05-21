@@ -16,7 +16,7 @@ function mount(uri: vscode.Uri) {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  registerTerminalLinkProvider();
+  context.subscriptions.push(registerTerminalLinkProvider());
 
   context.subscriptions.push(vscode.workspace.registerFileSystemProvider(`zip`, new ZipFSProvider(), {
     isCaseSensitive: true,

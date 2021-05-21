@@ -1,5 +1,5 @@
-import {structUtils, FetchOptions, Locator, miscUtils, tgzUtils, Ident} from '@yarnpkg/core';
-import {ppath, PortablePath, npath, CwdFS, ZipFS}                       from '@yarnpkg/fslib';
+import {structUtils, FetchOptions, Locator, miscUtils, tgzUtils, Ident, FetchResult} from '@yarnpkg/core';
+import {ppath, PortablePath, npath, CwdFS, ZipFS}                                    from '@yarnpkg/fslib';
 
 export function parseSpec(spec: string) {
   const {params, selector} = structUtils.parseRange(spec);
@@ -42,13 +42,13 @@ export async function makeArchiveFromLocator(locator: Locator, {protocol, fetchO
 
   // If the file target is an absolute path we can directly access it via its
   // location on the disk. Otherwise we must go through the package fs.
-  const parentFetch = ppath.isAbsolute(path)
+  const parentFetch: FetchResult = ppath.isAbsolute(path)
     ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
     : await fetchOptions.fetcher.fetch(parentLocator, fetchOptions);
 
   // If the package fs publicized its "original location" (for example like
   // in the case of "file:" packages), we use it to derive the real location.
-  const effectiveParentFetch = parentFetch.localPath
+  const effectiveParentFetch: FetchResult = parentFetch.localPath
     ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
     : parentFetch;
 

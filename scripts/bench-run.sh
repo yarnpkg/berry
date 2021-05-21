@@ -41,6 +41,8 @@ setup-yarn2-nm() {
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "nodeLinker: node-modules"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "nmMode: hardlinks-local"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
     "enableGlobalCache: true"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "compressionLevel: 0"
