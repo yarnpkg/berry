@@ -653,6 +653,12 @@
       "default": [],
       "_exampleItems": ["*.example.org", "example.org"]
     },
+    "updateLockfileOnly": {
+      "_package": "@yarnpkg/core",
+      "description": "If true, Yarn will only fetch packages of which checksum doesn't exist and skip the link step during the install. This is useful for dependency management. Note the cache cleanup and post-install hooks will not run.",
+      "type": "boolean",
+      "default": false
+    },
     "virtualFolder": {
       "_package": "@yarnpkg/core",
       "description": "Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be `__virtual__`.",

@@ -205,6 +205,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  updateLockfileOnly: {
+    description: `If true, Yarn will only fetch packages of which checksum doesn't exist and skip the link step during the install.`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
 
   // Settings related to the output style
   enableColors: {
@@ -489,6 +494,7 @@ export interface ConfigurationValueMap {
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
+  updateLockfileOnly: boolean;
 
   enableColors: boolean;
   enableHyperlinks: boolean;

@@ -18,6 +18,20 @@ Object {
 }
 `;
 
+exports[`Commands install it should fetch only required packages when using \`updateLockfileOnly: true\` 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0000: └ Completed
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands install it should print the logs to the standard output when using --inline-builds 1`] = `
 "➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
