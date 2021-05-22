@@ -12,9 +12,9 @@ async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
   };
 }
 
-async function defaultOnResolve(args: OnResolveArgs, resolvedPath: string | null): Promise<OnResolveResult> {
+async function defaultOnResolve(args: OnResolveArgs, resolvedPath: string | null, watchFiles: Array<string>): Promise<OnResolveResult> {
   if (resolvedPath !== null) {
-    return {namespace: `pnp`, path: resolvedPath};
+    return {namespace: `pnp`, path: resolvedPath, watchFiles};
   } else {
     return {external: true};
   }
@@ -24,7 +24,7 @@ export type PluginOptions = {
   baseDir?: string,
   extensions?: Array<string>,
   filter?: RegExp,
-  onResolve?: (args: OnResolveArgs, resolvedPath: string | null) => Promise<OnResolveResult | null>,
+  onResolve?: (args: OnResolveArgs, resolvedPath: string | null, watchFiles: Array<string>) => Promise<OnResolveResult | null>,
   onLoad?: (args: OnLoadArgs) => Promise<OnLoadResult>,
 };
 
@@ -42,7 +42,7 @@ export function pnpPlugin({
       if (typeof findPnpApi === `undefined`)
         return;
 
-      build.onResolve({filter}, args => {
+      build.onResolve({filter}, async args => {
         // The entry point resolution uses an empty string
         const effectiveImporter = args.importer
           ? args.importer
@@ -58,7 +58,20 @@ export function pnpPlugin({
           extensions,
         });
 
-        return onResolve(args, path);
+        const watchFiles: Array<string> = [pnpApi.resolveRequest(`pnpapi`, null)!];
+
+        if (path) {
+          const locator = pnpApi.findPackageLocator(path);
+          if (locator) {
+            const info = pnpApi.getPackageInformation(locator);
+
+            if (info?.linkType === `SOFT`) {
+              watchFiles.push(pnpApi.resolveVirtual?.(path) ?? path);
+            }
+          }
+        }
+
+        return onResolve(args, path, watchFiles);
       });
 
       // We register on the build to prevent ESBuild from reading the files
