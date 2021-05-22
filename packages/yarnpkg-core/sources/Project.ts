@@ -455,7 +455,6 @@ export class Project {
 
   tryWorkspaceByDescriptor(descriptor: Descriptor) {
     const workspace = this.tryWorkspaceByIdent(descriptor);
-
     if (workspace === null)
       return null;
 
