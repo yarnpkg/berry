@@ -454,12 +454,14 @@ export class Project {
   }
 
   tryWorkspaceByDescriptor(descriptor: Descriptor) {
+    const workspace = this.tryWorkspaceByIdent(descriptor);
+    if (workspace === null)
+      return null;
+
     if (structUtils.isVirtualDescriptor(descriptor))
       descriptor = structUtils.devirtualizeDescriptor(descriptor);
 
-    const workspace = this.tryWorkspaceByIdent(descriptor);
-
-    if (workspace === null || !workspace.accepts(descriptor.range))
+    if (!workspace.accepts(descriptor.range))
       return null;
 
     return workspace;
@@ -475,11 +477,14 @@ export class Project {
   }
 
   tryWorkspaceByLocator(locator: Locator) {
+    const workspace = this.tryWorkspaceByIdent(locator);
+    if (workspace === null)
+      return null;
+
     if (structUtils.isVirtualLocator(locator))
       locator = structUtils.devirtualizeLocator(locator);
 
-    const workspace = this.tryWorkspaceByIdent(locator);
-    if (workspace === null || (workspace.locator.locatorHash !== locator.locatorHash && workspace.anchoredLocator.locatorHash !== locator.locatorHash))
+    if (workspace.locator.locatorHash !== locator.locatorHash && workspace.anchoredLocator.locatorHash !== locator.locatorHash)
       return null;
 
     return workspace;
