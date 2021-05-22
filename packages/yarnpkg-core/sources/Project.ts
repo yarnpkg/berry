@@ -1936,7 +1936,8 @@ function applyVirtualResolutionMutations({
             volatileDescriptors.delete(peerDescriptor.descriptorHash);
           }
 
-          if (!peerDescriptor && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
+          // If the peerRequest isn't provided by the parent then fall back to dependencies
+          if ((!peerDescriptor || peerDescriptor.range === `missing:`) && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
             virtualizedPackage.peerDependencies.delete(peerRequest.identHash);
             continue;
           }
