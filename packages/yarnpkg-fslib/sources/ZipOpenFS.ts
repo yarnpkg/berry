@@ -41,7 +41,7 @@ export const getArchivePart = (path: string) => {
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
-  libzip: Libzip,
+  libzip: Libzip | (() => Libzip),
   maxOpenFiles?: number,
   readOnlyArchives?: boolean,
   useCache?: boolean,
@@ -63,7 +63,12 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
-  private readonly libzip: Libzip;
+  private _libzip!: Libzip | (() => Libzip);
+  private get libzip(): Libzip {
+    return typeof this._libzip === `function`
+      ? (this._libzip = this._libzip())
+      : this._libzip;
+  }
 
   private readonly baseFs: FakeFS<PortablePath>;
 
@@ -84,7 +89,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
 
-    this.libzip = libzip;
+    this._libzip = libzip;
 
     this.baseFs = baseFs;
 
