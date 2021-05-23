@@ -7,7 +7,7 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "esbuild": "^0.8.36"
+    "esbuild": ">=0.8.36"
   },
   "devDependencies": {
     "@yarnpkg/pnp": "workspace:*",
