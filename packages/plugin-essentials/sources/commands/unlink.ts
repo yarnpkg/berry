@@ -34,7 +34,9 @@ export default class UnlinkCommand extends BaseCommand {
     description: `Unlink all workspaces belonging to the target project from the current one`,
   });
 
-  leadingArgument = Option.String({required: false});
+  leadingArgument = Option.String({
+    required: false,
+  });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -86,7 +88,9 @@ export default class UnlinkCommand extends BaseCommand {
       }
     }
 
-    topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({pattern}) => !workspacesToUnlink.has(pattern.descriptor.fullName));
+    topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({pattern}) => {
+      return !workspacesToUnlink.has(pattern.descriptor.fullName);
+    });
 
     const report = await StreamReport.start({
       configuration,
