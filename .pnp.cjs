@@ -46189,7 +46189,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     this.notZip = new Set();
     this.realPaths = new Map();
     this.limitOpenFilesTimeout = null;
-    this._libzip = libzip;
+    this.libzipFactory = typeof libzip !== `function` ? () => libzip : libzip;
     this.baseFs = baseFs;
     this.zipInstances = useCache ? new Map() : null;
     this.filter = filter;
@@ -46209,7 +46209,8 @@ class ZipOpenFS extends BasePortableFakeFS {
   }
 
   get libzip() {
-    return typeof this._libzip === `function` ? this._libzip = this._libzip() : this._libzip;
+    if (typeof this.libzipInstance === `undefined`) this.libzipInstance = this.libzipFactory();
+    return this.libzipInstance;
   }
 
   getExtractHint(hints) {
