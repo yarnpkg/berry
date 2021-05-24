@@ -32,6 +32,7 @@ import run                                                      from './commands
 import setResolutionPolicy                                      from './commands/set/resolution';
 import setVersionFromSources                                    from './commands/set/version/sources';
 import setVersionPolicy                                         from './commands/set/version';
+import unlink                                                   from './commands/unlink';
 import up                                                       from './commands/up';
 import why                                                      from './commands/why';
 import listWorkspaces                                           from './commands/workspaces/list';
@@ -119,6 +120,7 @@ const plugin: Plugin = {
     info,
     install,
     link,
+    unlink,
     node,
     pluginImportSources,
     pluginImport,
