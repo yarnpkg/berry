@@ -173,7 +173,7 @@
               "examples": [false]
             },
             "optional": {
-              "description": "If true, the build isn't required to succeed for the install to be considered a success. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevale.",
+              "description": "If true, the build isn't required to succeed for the install to be considered a success. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevail.",
               "type": "boolean",
               "examples": [false]
             },
