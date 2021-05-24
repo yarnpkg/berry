@@ -63,11 +63,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
-  private _libzip!: Libzip | (() => Libzip);
+  private libzipFactory!: () => Libzip;
+  private libzipInstance?: Libzip;
+
   private get libzip(): Libzip {
-    return typeof this._libzip === `function`
-      ? (this._libzip = this._libzip())
-      : this._libzip;
+    if (typeof this.libzipInstance === `undefined`)
+      this.libzipInstance = this.libzipFactory();
+
+    return this.libzipInstance;
   }
 
   private readonly baseFs: FakeFS<PortablePath>;
@@ -89,7 +92,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
 
-    this._libzip = libzip;
+    this.libzipFactory = typeof libzip !== `function`
+      ? () => libzip
+      : libzip;
 
     this.baseFs = baseFs;
 
