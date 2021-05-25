@@ -30,7 +30,7 @@ const defaultPnpapiResolution = __filename;
 const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
   baseFs: new ZipOpenFS({
     baseFs: nodeFs,
-    libzip: getLibzipSync(),
+    libzip: () => getLibzipSync(),
     maxOpenFiles: 80,
     readOnlyArchives: true,
   }),
