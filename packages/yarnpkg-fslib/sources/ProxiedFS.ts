@@ -253,7 +253,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
     const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
 
-    return this.baseFs.symlinkPromise(mappedTarget, this.mapToBase(p), type);
+    return this.baseFs.symlinkPromise(mappedTarget, mappedP, type);
   }
 
   symlinkSync(target: P, p: P, type?: SymlinkType) {
@@ -265,7 +265,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
     const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
 
-    return this.baseFs.symlinkSync(mappedTarget, this.mapToBase(p), type);
+    return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
   }
 
   async readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
