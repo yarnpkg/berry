@@ -43932,15 +43932,13 @@ class NodeFS extends BasePortableFakeFS {
   }
 
   async symlinkPromise(target, p, type) {
-    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
     return await new Promise((resolve, reject) => {
-      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
+      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target, p, type) {
-    const symlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
-    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), symlinkType);
+    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type);
   }
 
   async readFilePromise(p, encoding) {
@@ -44240,11 +44238,19 @@ class ProxiedFS extends FakeFS {
   }
 
   async symlinkPromise(target, p, type) {
-    return this.baseFs.symlinkPromise(this.mapToBase(target), this.mapToBase(p), type);
+    const mappedP = this.mapToBase(p);
+    if (this.pathUtils.isAbsolute(target)) return this.baseFs.symlinkPromise(this.mapToBase(target), mappedP, type);
+    const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
+    const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
+    return this.baseFs.symlinkPromise(mappedTarget, mappedP, type);
   }
 
   symlinkSync(target, p, type) {
-    return this.baseFs.symlinkSync(this.mapToBase(target), this.mapToBase(p), type);
+    const mappedP = this.mapToBase(p);
+    if (this.pathUtils.isAbsolute(target)) return this.baseFs.symlinkSync(this.mapToBase(target), mappedP, type);
+    const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
+    const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
+    return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
   }
 
   async readFilePromise(p, encoding) {
