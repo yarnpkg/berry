@@ -4,11 +4,14 @@ import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                    
 import chalk                                                                                                from 'chalk';
 import {homedir}                                                                                            from 'os';
 import {PassThrough, Readable, Writable}                                                                    from 'stream';
+import {promisify}                                                                                          from 'util';
 
 import {ShellError}                                                                                         from './errors';
 import * as globUtils                                                                                       from './globUtils';
 import {createOutputStreamsWithPrefix, makeBuiltin, makeProcess}                                            from './pipe';
 import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}                                 from './pipe';
+
+const setTimeoutPromise = promisify(setTimeout);
 
 export {globUtils, ShellError};
 
@@ -146,6 +149,22 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   [`echo`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     state.stdout.write(`${args.join(` `)}\n`);
     return 0;
+  }],
+
+  [`sleep`, async ([time]: Array<string>, opts: ShellOptions, state: ShellState) => {
+    if (typeof time === `undefined`) {
+      state.stderr.write(`sleep: missing operand\n`);
+      return 1;
+    }
+
+    // TODO: make it support unit suffixes
+    const seconds = Number(time);
+    if (Number.isNaN(seconds)) {
+      state.stderr.write(`sleep: invalid time interval '${time}'\n`);
+      return 1;
+    }
+
+    return await setTimeoutPromise(1000 * seconds, 0);
   }],
 
   [`__ysh_run_procedure`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
