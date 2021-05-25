@@ -386,17 +386,13 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
-    const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
-
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
+      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target: PortablePath, p: PortablePath, type?: SymlinkType) {
-    const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
-
-    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), symlinkType);
+    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type);
   }
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
