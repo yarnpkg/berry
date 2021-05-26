@@ -57,7 +57,6 @@ export default class UnlinkCommand extends BaseCommand {
 
     if (this.leadingArguments.length) {
       for (const leadingArgument of this.leadingArguments) {
-        console.log(`Leading Argument`, leadingArgument);
         const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(leadingArgument));
         if (miscUtils.isPathLike(leadingArgument)) {
           const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
