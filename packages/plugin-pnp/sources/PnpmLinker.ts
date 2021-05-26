@@ -22,6 +22,7 @@ export class PnpmLinker implements Linker {
 
 class PnpmInstaller implements Installer {
   private locations = new Map<LocatorHash, PortablePath>();
+  private pendingCopies: Array<Promise<void>> = [];
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
@@ -29,7 +30,7 @@ class PnpmInstaller implements Installer {
 
   getCustomDataKey() {
     return JSON.stringify({
-      name: `NodeModulesInstaller`,
+      name: `PnpmInstaller`,
       version: 1,
     });
   }
@@ -65,11 +66,13 @@ class PnpmInstaller implements Installer {
     const pkgPath = ppath.join(this.opts.project.cwd, Filename.nodeModules, `.store` as Filename, pkgKey);
     this.locations.set(pkg.locatorHash, pkgPath);
 
-    await xfs.mkdirPromise(pkgPath, {recursive: true});
-    await xfs.copyPromise(pkgPath, PortablePath.dot, {
-      baseFs: fetchResult.packageFs,
-      overwrite: false,
-    });
+    this.pendingCopies.push(Promise.resolve().then(async () => {
+      await xfs.mkdirPromise(pkgPath, {recursive: true});
+      await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
+        baseFs: fetchResult.packageFs,
+        overwrite: false,
+      });
+    }));
 
     return {
       packageLocation: pkgPath,
@@ -78,6 +81,11 @@ class PnpmInstaller implements Installer {
   }
 
   async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
+    await Promise.all(this.pendingCopies);
+
+    if (!this.isPnpmVirtualCompatible(locator))
+      return;
+
     const pkgPath = this.locations.get(locator.locatorHash);
     if (typeof pkgPath === `undefined`)
       throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
@@ -88,6 +96,9 @@ class PnpmInstaller implements Installer {
     const extraneous = new Map<PortablePath, Dirent>();
     try {
       for (const entry of await xfs.readdirPromise(nmPath, {withFileTypes: true})) {
+        if (entry.name.startsWith(`.`))
+          continue;
+
         if (entry.name.startsWith(`@`)) {
           for (const subEntry of await xfs.readdirPromise(ppath.join(nmPath, entry.name), {withFileTypes: true})) {
             extraneous.set(`${entry.name}/${subEntry.name}` as PortablePath, subEntry);
@@ -103,7 +114,11 @@ class PnpmInstaller implements Installer {
     }
 
     for (const [descriptor, dependency] of dependencies) {
-      const depSrcPath = this.locations.get(dependency.locatorHash);
+      const targetDependency = this.isPnpmVirtualCompatible(dependency)
+        ? dependency
+        : structUtils.devirtualizeLocator(dependency);
+
+      const depSrcPath = this.locations.get(targetDependency.locatorHash);
       if (typeof depSrcPath === `undefined`)
         throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
@@ -111,10 +126,10 @@ class PnpmInstaller implements Installer {
       const depDstPath = ppath.join(nmPath, name);
 
       const depLinkPath = ppath.relative(ppath.dirname(depDstPath), depSrcPath);
-      if (locator.name === `cli` && name === `@yarnpkg/monorepo`)
-        console.log(structUtils.stringifyLocator(locator), [name, depDstPath, depSrcPath, depLinkPath]);
 
       const existing = extraneous.get(name);
+      extraneous.delete(name);
+
       if (existing) {
         if (existing.isSymbolicLink() && await xfs.readlinkPromise(depDstPath) === depLinkPath) {
           continue;
@@ -125,8 +140,6 @@ class PnpmInstaller implements Installer {
 
       await xfs.mkdirpPromise(ppath.dirname(depDstPath));
       await xfs.symlinkPromise(depLinkPath, depDstPath);
-
-      extraneous.delete(name);
     }
 
     for (const name of extraneous.keys()) {
@@ -135,7 +148,7 @@ class PnpmInstaller implements Installer {
   }
 
   async attachExternalDependents(locator: Locator, dependentPaths: Array<PortablePath>) {
-    throw new Error(`External dependencies haven't been implemented for the node-modules linker`);
+    throw new Error(`External dependencies haven't been implemented for the pnpm linker`);
   }
 
   async finalizeInstall() {
@@ -143,5 +156,9 @@ class PnpmInstaller implements Installer {
       return undefined;
 
     return null as any;
+  }
+
+  private isPnpmVirtualCompatible(locator: Locator) {
+    return !structUtils.isVirtualLocator(locator) || !this.opts.project.tryWorkspaceByLocator(locator);
   }
 }
