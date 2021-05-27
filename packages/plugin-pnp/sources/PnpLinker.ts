@@ -40,7 +40,7 @@ export class PnpLinker implements Linker {
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequireFresh(pnpPath);
     });
 
     const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};

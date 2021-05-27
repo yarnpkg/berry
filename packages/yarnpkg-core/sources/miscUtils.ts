@@ -1,7 +1,7 @@
-import {PortablePath, npath} from '@yarnpkg/fslib';
-import {UsageError}          from 'clipanion';
-import micromatch            from 'micromatch';
-import {Readable, Transform} from 'stream';
+import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
+import {UsageError}               from 'clipanion';
+import micromatch                 from 'micromatch';
+import {Readable, Transform}      from 'stream';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
@@ -236,6 +236,9 @@ export class DefaultStream extends Transform {
 
 export const dynamicRequire: NodeRequire = eval(`require`);
 
+/**
+ * Requires a module without using the module cache
+ */
 export function dynamicRequireNoCache(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
@@ -259,6 +262,23 @@ export function dynamicRequireNoCache(path: PortablePath) {
   }
 
   return result;
+}
+
+const dynamicRequireFreshCache = new Map<PortablePath, { mtime: number, instance: any }>();
+
+/**
+ * Requires a module without using the cache if it has changed since the last time it was loaded
+ */
+export function dynamicRequireFresh(path: PortablePath) {
+  const cachedInstance = dynamicRequireFreshCache.get(path);
+  const stat = xfs.statSync(path);
+
+  if (cachedInstance?.mtime === stat.mtimeMs)
+    return cachedInstance.instance;
+
+  const instance = dynamicRequireNoCache(path);
+  dynamicRequireFreshCache.set(path, {mtime: stat.mtimeMs, instance});
+  return instance;
 }
 
 // This function transforms an iterable into an array and sorts it according to
