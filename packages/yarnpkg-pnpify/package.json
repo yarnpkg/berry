@@ -22,7 +22,7 @@
     "@yarnpkg/monorepo": "workspace:*",
     "@yarnpkg/pnp": "workspace:*",
     "eslint": "^6.8.0",
-    "typescript": "beta"
+    "typescript": "^4.3.2"
   },
   "peerDependencies": {
     "eslint": "*",
