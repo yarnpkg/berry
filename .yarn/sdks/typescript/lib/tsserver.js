@@ -28,7 +28,7 @@ const moduleWrapper = tsserver => {
     // We add the `zip:` prefix to both `.zip/` paths and virtual paths
     if (isAbsolute(str) && !str.match(/^\^zip:/) && (str.match(/\.zip\//) || isVirtual(str))) {
       // We also take the opportunity to turn virtual paths into physical ones;
-      // this makes is much easier to work with workspaces that list peer
+      // this makes it much easier to work with workspaces that list peer
       // dependencies, since otherwise Ctrl+Click would bring us to the virtual
       // file instances instead of the real ones.
       //
