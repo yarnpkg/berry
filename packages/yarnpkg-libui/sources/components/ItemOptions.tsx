@@ -8,6 +8,7 @@ import {Pad}          from './Pad';
 
 export const ItemOptions = function <T>({
   active,
+  gemColor,
   skewer,
   options,
   value,
@@ -15,6 +16,7 @@ export const ItemOptions = function <T>({
   sizes = [],
 }: {
   active: boolean,
+  gemColor: string | undefined;
   skewer?: boolean,
   options: Array<{value: T, label: string}>,
   value: T,
@@ -56,7 +58,7 @@ export const ItemOptions = function <T>({
       return (
         <Box key={label} width={boxWidth} marginLeft={1}>
           <Text wrap={`truncate`}>
-            <Gem active={isGemActive} />{` `}{label}
+            <Gem active={isGemActive} activeColor={gemColor} />{` `}{label}
           </Text>
           {skewer ? <Pad active={active} length={padWidth}/> : null}
         </Box>

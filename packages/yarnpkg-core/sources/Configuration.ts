@@ -465,6 +465,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       },
     },
   },
+
+  // Settings related to plugins
+  upgradeInteractiveIgnoredVersions: {
+    description: `List of versions ignored by the upgrade-interactive command`,
+    type: SettingsType.STRING,
+    default: [],
+    isArray: true,
+  },
 };
 
 /**
@@ -539,6 +547,9 @@ export interface ConfigurationValueMap {
     peerDependencies?: Map<string, string>,
     peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>,
   }>>;
+
+  // Settings related to plugins
+  upgradeInteractiveIgnoredVersions: Array<string>;
 }
 
 export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
