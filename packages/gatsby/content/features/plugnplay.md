@@ -132,6 +132,7 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Jest | Starting from 24.1+ |
 | Next.js | Starting from 9.1.2+ |
 | Parcel | Starting from 2.0.0-nightly.212+ |
+| Preact CLI | Starting from 3.1.0+ |
 | Prettier | Starting from 1.17+ |
 | Rollup | Starting from `resolve` 1.9+ |
 | Storybook | Starting from 6.0+ |
