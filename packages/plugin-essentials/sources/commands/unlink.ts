@@ -47,7 +47,7 @@ export default class UnlinkCommand extends BaseCommand {
     const topLevelWorkspace = project.topLevelWorkspace;
     const workspacesToUnlink = new Set<string>();
 
-    if (!this.leadingArguments.length && this.all) {
+    if (this.leadingArguments.length === 0 && this.all) {
       for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
         if (reference.startsWith(`portal:`)) {
           workspacesToUnlink.add(pattern.descriptor.fullName);
@@ -55,7 +55,7 @@ export default class UnlinkCommand extends BaseCommand {
       }
     }
 
-    if (this.leadingArguments.length) {
+    if (this.leadingArguments.length > 0) {
       for (const leadingArgument of this.leadingArguments) {
         const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(leadingArgument));
         if (miscUtils.isPathLike(leadingArgument)) {
