@@ -3,6 +3,10 @@
 set -e
 
 EMSDK_ENV=~/emsdk/emsdk_env.sh
+EMSDK_VERSION=2.0.22
+
+~/emsdk/emsdk install $EMSDK_VERSION
+~/emsdk/emsdk activate $EMSDK_VERSION
 
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
@@ -93,7 +97,7 @@ build() {
     -o ./build.js \
     -s WASM=1 \
     -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
-    -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
+    -s EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
     -s ALLOW_MEMORY_GROWTH=1 \
     -s ENVIRONMENT=node \
     -s NODERAWFS=1 \
