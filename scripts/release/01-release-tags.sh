@@ -16,14 +16,13 @@ PRERELEASE=0
 APPLY_OPTIONS=()
 
 OPTIND=1
-while :; do
+for arg in "$@"; do
   case $1 in
     --prerelease)
       APPLY_OPTIONS+=(--prerelease)
       PRERELEASE=1
       ;;
   esac
-  shift
 done
 
 
