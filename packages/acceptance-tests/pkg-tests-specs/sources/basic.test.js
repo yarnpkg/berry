@@ -1,3 +1,4 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
   tests: {getPackageArchivePath, getPackageHttpArchivePath, getPackageDirectoryPath},
 } = require(`pkg-tests-core`);
@@ -403,5 +404,46 @@ describe(`Basic tests`, () => {
         });
       },
     ),
+  );
+
+  test(
+    `it should fallback to dependencies if the parent doesn't provide the peer dependency`,
+    makeTemporaryEnv(
+      {},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/lib-2`);
+        await xfs.writeJsonPromise(`${path}/lib-2/package.json`, {
+          dependencies: {
+            'no-deps': `*`,
+          },
+          peerDependencies: {
+            'no-deps': `*`,
+          },
+        });
+
+        await xfs.mkdirPromise(`${path}/lib-1`);
+        await xfs.writeJsonPromise(`${path}/lib-1/package.json`, {
+          dependencies: {
+            'lib-2': `portal:${path}/lib-2`,
+          },
+          peerDependencies: {
+            'no-deps': `*`,
+          },
+        });
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          dependencies: {
+            'lib-1': `portal:${path}/lib-1`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(xfs.existsPromise(`${path}/node_modules/no-deps`)).resolves.toEqual(true);
+      }
+    )
   );
 });

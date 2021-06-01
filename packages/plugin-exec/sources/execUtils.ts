@@ -1,5 +1,5 @@
-import {structUtils, FetchOptions, Ident, Locator} from '@yarnpkg/core';
-import {ppath, PortablePath, npath, CwdFS}         from '@yarnpkg/fslib';
+import {structUtils, FetchOptions, Ident, Locator, FetchResult} from '@yarnpkg/core';
+import {ppath, PortablePath, npath, CwdFS}                      from '@yarnpkg/fslib';
 
 
 export function parseSpec(spec: string) {
@@ -43,7 +43,7 @@ export async function loadGeneratorFile(range: string, protocol: string, opts: F
 
   // If the file target is an absolute path we can directly access it via its
   // location on the disk. Otherwise we must go through the package fs.
-  const parentFetch = ppath.isAbsolute(path)
+  const parentFetch: FetchResult = ppath.isAbsolute(path)
     ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
     : await opts.fetcher.fetch(parentLocator, opts);
 

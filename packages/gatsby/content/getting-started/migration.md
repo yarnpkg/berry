@@ -311,7 +311,6 @@ Those features simply haven't been implemented yet. Help welcome!
 | `yarn list`     | `yarn why` may provide some information in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
 | `yarn team`     | Will eventually be available as `yarn npm team` |
-| `yarn unlink`   | Manually remove the `resolutions` entries from the `package.json` file for now |
 
 ## Troubleshooting
 

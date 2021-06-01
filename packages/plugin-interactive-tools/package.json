@@ -27,7 +27,7 @@
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",
     "@yarnpkg/plugin-essentials": "workspace:*",
-    "typescript": "beta"
+    "typescript": "^4.3.2"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=10.19.0"
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   },
   "stableVersion": "2.2.0"
 }

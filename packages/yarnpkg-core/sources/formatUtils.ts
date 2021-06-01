@@ -1,5 +1,6 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
+import {CIRCLE as isCircleCI}                                               from 'ci-info';
 import stripAnsi                                                            from 'strip-ansi';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
@@ -57,7 +58,7 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 export const supportsColor = chalkOptions.level !== 0;
-export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS && !isCircleCI;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 
@@ -297,10 +298,17 @@ export function applyColor(configuration: Configuration, value: string, formatTy
   return fn(value);
 }
 
+const isKonsole = !!process.env.KONSOLE_VERSION;
+
 export function applyHyperlink(configuration: Configuration, text: string, href: string) {
   // Only print hyperlinks if allowed per configuration
   if (!configuration.get(`enableHyperlinks`))
     return text;
+
+  // We use ESC as ST for Konsole because it doesn't support
+  // the non-standard BEL character for hyperlinks
+  if (isKonsole)
+    return `\u001b]8;;${href}\u001b\\${text}\u001b]8;;\u001b\\`;
 
   // We use BELL as ST because it seems that iTerm doesn't properly support
   // the \x1b\\ sequence described in the reference document

@@ -19,7 +19,7 @@
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
     "@babel/preset-typescript": "^7.10.1",
-    "@babel/register": "^7.10.1",
+    "@babel/register": "^7.13.16",
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
@@ -36,7 +36,7 @@
     "jest-junit": "^10.0.0",
     "micromatch": "^4.0.2",
     "tslib": "^1.13.0",
-    "typescript": "beta"
+    "typescript": "^4.3.2"
   },
   "resolutions": {
     "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
@@ -89,6 +89,6 @@
     "directory": "."
   },
   "engines": {
-    "node": ">=10.19.0"
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   }
 }

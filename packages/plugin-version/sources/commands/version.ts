@@ -26,7 +26,7 @@ export default class VersionCommand extends BaseCommand {
       - If a valid semver range, it will be used as new version.
       - If unspecified, Yarn will ask you for guidance.
 
-      For more information about the \`--deferred\` flag, consult our documentation ("Managing Releases").
+      For more information about the \`--deferred\` flag, consult our documentation (https://yarnpkg.com/features/release-workflow#deferred-versioning).
     `,
     examples: [[
       `Immediately bump the version to the next major`,

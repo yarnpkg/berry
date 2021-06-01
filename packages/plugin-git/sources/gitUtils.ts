@@ -1,9 +1,9 @@
-import {Configuration, Locator, execUtils, structUtils, httpUtils} from '@yarnpkg/core';
-import {npath, xfs}                                                from '@yarnpkg/fslib';
-import GitUrlParse                                                 from 'git-url-parse';
-import querystring                                                 from 'querystring';
-import semver                                                      from 'semver';
-import urlLib                                                      from 'url';
+import {Configuration, Locator, execUtils, structUtils, httpUtils, semverUtils} from '@yarnpkg/core';
+import {npath, xfs}                                                             from '@yarnpkg/fslib';
+import GitUrlParse                                                              from 'git-url-parse';
+import querystring                                                              from 'querystring';
+import semver                                                                   from 'semver';
+import urlLib                                                                   from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -237,7 +237,8 @@ export async function resolveUrl(url: string, configuration: Configuration) {
       }
 
       case TreeishProtocols.Semver: {
-        if (!semver.validRange(request))
+        const validRange = semverUtils.validRange(request);
+        if (!validRange)
           throw new Error(`Invalid range ("${request}")`);
 
         const semverTags = new Map([...refs.entries()].filter(([ref]) => {
@@ -248,7 +249,7 @@ export async function resolveUrl(url: string, configuration: Configuration) {
           return entry[0] !== null;
         }));
 
-        const bestVersion = semver.maxSatisfying([...semverTags.keys()], request);
+        const bestVersion = semver.maxSatisfying([...semverTags.keys()], validRange);
         if (bestVersion === null)
           throw new Error(`No matching range ("${request}")`);
 

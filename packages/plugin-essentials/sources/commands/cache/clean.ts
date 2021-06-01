@@ -1,7 +1,7 @@
-import {BaseCommand}                        from '@yarnpkg/cli';
-import {Configuration, Cache, StreamReport} from '@yarnpkg/core';
-import {xfs}                                from '@yarnpkg/fslib';
-import {Command, Option, Usage}             from 'clipanion';
+import {BaseCommand}                               from '@yarnpkg/cli';
+import {Configuration, Cache, StreamReport, Hooks} from '@yarnpkg/core';
+import {xfs}                                       from '@yarnpkg/fslib';
+import {Command, Option, Usage}                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CacheCleanCommand extends BaseCommand {
@@ -43,8 +43,11 @@ export default class CacheCleanCommand extends BaseCommand {
       const cleanMirror = (this.all || this.mirror) && cache.mirrorCwd !== null;
       const cleanCache = !this.mirror;
 
-      if (cleanMirror)
+      if (cleanMirror) {
         await xfs.removePromise(cache.mirrorCwd!);
+
+        await configuration.triggerHook((hooks: Hooks) => hooks.cleanGlobalArtifacts, configuration);
+      }
 
       if (cleanCache) {
         await xfs.removePromise(cache.cwd);

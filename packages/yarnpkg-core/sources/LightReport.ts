@@ -58,15 +58,15 @@ export class LightReport extends Report {
   reportCacheMiss(locator: Locator) {
   }
 
-  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): void;
-  startTimerSync<T>(what: string, cb: () => T): void;
+  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
+  startTimerSync<T>(what: string, cb: () => T): T;
   startTimerSync<T>(what: string, opts: TimerOptions | (() => T), cb?: () => T) {
     const realCb = typeof opts === `function` ? opts : cb!;
     return realCb();
   }
 
-  async startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<void>;
-  async startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<void>;
+  async startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<T>;
+  async startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   async startTimerPromise<T>(what: string, opts: TimerOptions | (() => Promise<T>), cb?: () => Promise<T>) {
     const realCb = typeof opts === `function` ? opts : cb!;
     return await realCb();

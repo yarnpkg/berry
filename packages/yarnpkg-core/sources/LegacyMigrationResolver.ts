@@ -1,11 +1,11 @@
 import {xfs, ppath}                                      from '@yarnpkg/fslib';
 import {parseSyml}                                       from '@yarnpkg/parsers';
-import semver                                            from 'semver';
 
 import {MessageName}                                     from './MessageName';
 import {Project}                                         from './Project';
 import {Report}                                          from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import * as semverUtils                                  from './semverUtils';
 import * as structUtils                                  from './structUtils';
 import {DescriptorHash, Descriptor, Locator}             from './types';
 
@@ -58,7 +58,7 @@ export class LegacyMigrationResolver implements Resolver {
         continue;
       }
 
-      if (semver.validRange(descriptor.range))
+      if (semverUtils.validRange(descriptor.range))
         descriptor = structUtils.makeDescriptor(descriptor, `npm:${descriptor.range}`);
 
       const {version, resolved} = (parsed as any)[key];

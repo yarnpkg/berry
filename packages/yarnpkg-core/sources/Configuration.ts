@@ -5,7 +5,6 @@ import camelcase                                                                
 import {isCI}                                                                                           from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
 import pLimit, {Limit}                                                                                  from 'p-limit';
-import semver                                                                                           from 'semver';
 import {PassThrough, Writable}                                                                          from 'stream';
 
 import {CorePlugin}                                                                                     from './CorePlugin';
@@ -983,14 +982,13 @@ export class Configuration {
       [`@@core`, CorePlugin],
     ]);
 
-    const interop =
-      (obj: any) => obj.__esModule
-        ? obj.default
-        : obj;
+    const getDefault = (object: any) => {
+      return `default` in object ? object.default : object;
+    };
 
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, interop(pluginConfiguration.modules.get(request)));
+        plugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
@@ -999,10 +997,6 @@ export class Configuration {
         requireEntries.set(request, () => embedModule);
 
       const dynamicPlugins = new Set();
-
-      const getDefault = (object: any) => {
-        return object.default || object;
-      };
 
       const importPlugin = (pluginPath: PortablePath, source: string) => {
         const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
@@ -1407,7 +1401,7 @@ export class Configuration {
     const packageExtensions = this.packageExtensions;
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
-      if (!semver.validRange(descriptor.range))
+      if (!semverUtils.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
       const extension = new Manifest();

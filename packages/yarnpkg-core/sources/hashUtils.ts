@@ -1,6 +1,6 @@
-import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
-import {createHash, BinaryLike}   from 'crypto';
-import globby                     from 'globby';
+import {PortablePath, xfs, npath, FakeFS} from '@yarnpkg/fslib';
+import {createHash, BinaryLike}           from 'crypto';
+import globby                             from 'globby';
 
 export function makeHash<T extends string = string>(...args: Array<BinaryLike | null>): T {
   const hash = createHash(`sha512`);
@@ -25,23 +25,23 @@ export function makeHash<T extends string = string>(...args: Array<BinaryLike | 
   return hash.digest(`hex`) as T;
 }
 
-export function checksumFile(path: PortablePath) {
-  return new Promise<string>((resolve, reject) => {
-    const hash = createHash(`sha512`);
-    const stream = xfs.createReadStream(path);
+export async function checksumFile(path: PortablePath, {baseFs, algorithm}: {baseFs: FakeFS<PortablePath>, algorithm: string} = {baseFs: xfs, algorithm: `sha512`}) {
+  const fd = await baseFs.openPromise(path, `r`);
 
-    stream.on(`data`, chunk => {
-      hash.update(chunk);
-    });
+  try {
+    const CHUNK_SIZE = 65536;
+    const chunk = Buffer.allocUnsafeSlow(CHUNK_SIZE);
 
-    stream.on(`error`, error => {
-      reject(error);
-    });
+    const hash = createHash(algorithm);
 
-    stream.on(`end`, () => {
-      resolve(hash.digest(`hex`));
-    });
-  });
+    let bytesRead = 0;
+    while ((bytesRead = await baseFs.readPromise(fd, chunk, 0, CHUNK_SIZE)) !== 0)
+      hash.update(bytesRead === CHUNK_SIZE ? chunk : chunk.slice(0, bytesRead));
+
+    return hash.digest(`hex`);
+  } finally {
+    await baseFs.closePromise(fd);
+  }
 }
 
 export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath}) {

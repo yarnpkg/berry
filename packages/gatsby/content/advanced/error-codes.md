@@ -334,6 +334,8 @@ An external soft link (portal) cannot be installed, because incompatible version
 
 **Workarounds** If the ranges for conflicting dependencies overlap between portal target and portal parent, the workaround is to use `yarn dedupe foo` (where `foo` is the conflicting dependency name) to upgrade the conflicting dependencies to the highest available versions, if `yarn dedupe` is used without arguments, all the dependencies across the project will be upgraded to the highest versions within their ranges in `package.json`. Another alternative is to use `link:` protocol instead of `portal:` and install dependencies inside the target directory explicitely.
 
+**Workarounds** If the ranges for conflicting dependencies overlap between portal target and portal parent, the workaround is to use `yarn dedupe foo` (where `foo` is the conflicting dependency name) to upgrade the conflicting dependencies to the highest available versions, if `yarn dedupe` is used without arguments, all the dependencies across the project will be upgraded to the highest versions within their ranges in `package.json`. Another alternative is to use `link:` protocol instead of `portal:` and install dependencies inside the target directory explicitely.
+
 ## YN0072 - `NM_PRESERVE_SYMLINKS_REQUIRED`
 
 A portal dependency with subdependencies is used in the project. `--preserve-symlinks` Node option must be used

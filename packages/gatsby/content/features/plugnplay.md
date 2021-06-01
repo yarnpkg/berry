@@ -132,6 +132,7 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Jest | Starting from 24.1+ |
 | Next.js | Starting from 9.1.2+ |
 | Parcel | Starting from 2.0.0-nightly.212+ |
+| Preact CLI | Starting from 3.1.0+ |
 | Prettier | Starting from 1.17+ |
 | Rollup | Starting from `resolve` 1.9+ |
 | Storybook | Starting from 6.0+ |
@@ -163,6 +164,7 @@ The following tools unfortunately cannot be used with pure Plug'n'Play install (
 | Pulumi | Follow [pulumi/pulumi#3586](https://github.com/pulumi/pulumi/issues/3586) |
 | VSCode Extension Manager (vsce) | Use the [vsce-yarn-patch](https://www.npmjs.com/package/vsce-yarn-patch) fork with the `node-modules` plugin enabled. The fork is required until [microsoft/vscode-vsce#493](https://github.com/microsoft/vscode-vsce/pull/493) is merged, as `vsce` currently uses the removed `yarn list` command |
 | Hugo | Hugo pipes expect a `node-modules` dir. Enable the `node-modules` plugin |
+| ReScript | Follow [rescript-lang/rescript-compiler#3276](https://github.com/rescript-lang/rescript-compiler/issues/3276) |
 
 This list is kept up-to-date based on the latest release we've published starting from the v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
 

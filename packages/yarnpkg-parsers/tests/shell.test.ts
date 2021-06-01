@@ -1,4 +1,4 @@
-import {parseShell} from '../sources';
+import {parseShell, stringifyShell} from '../sources';
 
 const VALID_COMMANDS = [
   // It should allow shell lines to end with semicolons
@@ -22,6 +22,19 @@ const VALID_COMMANDS = [
     `{ echo foo}`,
     `{echo foo}`,
   ],
+
+  // Background jobs
+  // "&" should have the same precedence as ";"
+  ...[
+    `echo foo &`,
+    `echo foo & echo bar`,
+    `echo foo & echo bar &`,
+    `echo foo && echo bar &`,
+    `echo foo; echo bar &`,
+    `sleep 3 && echo foo & echo bar`,
+    `echo foo | wc --chars &`,
+    `echo foo | wc --chars & echo bar`,
+  ],
 ];
 
 const INVALID_COMMANDS = [
@@ -32,6 +45,8 @@ const INVALID_COMMANDS = [
   // Anyways, I can't think of any reason why anybody would like to start
   // a script with a semicolon. ¯\_(ツ)_/¯.
   `; echo foo`,
+
+  `& echo foo`,
 ];
 
 describe(`Shell parser`, () => {
@@ -50,4 +65,32 @@ describe(`Shell parser`, () => {
       });
     }
   });
+});
+
+const STRINGIFIER_TESTS: Array<[string, string]> = [
+  [`echo foo`, `echo foo`],
+  [`echo foo; echo bar`, `echo foo; echo bar`],
+  [`echo foo; echo bar;`, `echo foo; echo bar`],
+  [`echo foo &`, `echo foo &`],
+  [`echo foo & echo bar`, `echo foo & echo bar`],
+  [`echo foo & echo bar &`, `echo foo & echo bar &`],
+  [`echo foo && echo bar || echo baz`, `echo foo && echo bar || echo baz`],
+  [`echo foo | wc --chars`, `echo foo | wc --chars`],
+  [`ls **/foo/*.txt`, `ls **/foo/*.txt`],
+  [`echo foo > bar`, `echo foo > bar`],
+  [`echo a$B"c"'d'`, `echo a\${B}cd`],
+  [`echo a$B"c"'d'`, `echo a\${B}cd`],
+  [`echo $(( 1 + 2 * 3 - 4 / 5 ))`, `echo $(( 1 + ( ( 2 * 3 ) - ( 4 / 5 ) ) ))`],
+  [`(echo foo && echo bar)`, `(echo foo && echo bar)`],
+  [`{echo foo && echo bar}`, `{ echo foo && echo bar; }`],
+  [`FOO=bar echo foo`, `FOO=bar echo foo`],
+  [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
+];
+
+describe(`Shell stringifier`, () => {
+  for (const [original, prettyPrinted] of STRINGIFIER_TESTS) {
+    it(`should pretty print '${original}' as '${prettyPrinted}'`, () => {
+      expect(stringifyShell(parseShell(original))).toStrictEqual(prettyPrinted);
+    });
+  }
 });
