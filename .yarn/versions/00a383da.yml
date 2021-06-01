@@ -1,7 +1,7 @@
 releases:
   "@yarnpkg/builder": major
   "@yarnpkg/cli": major
-  "@yarnpkg/esbuild-plugin-pnp": patch
+  "@yarnpkg/esbuild-plugin-pnp": major
 
 declined:
   - "@yarnpkg/plugin-compat"
