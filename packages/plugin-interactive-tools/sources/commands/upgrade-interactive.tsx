@@ -230,9 +230,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
             const mappedToSuggestions = dependencies.map((descriptor, i) => {
               const suggestionsForDescriptor = allSuggestions[i];
               return [descriptor, suggestionsForDescriptor] as const;
-            }).filter(([_, suggestions]) =>
-              suggestions.filter(suggestion => suggestion.label !== ``).length > 1
-            );
+            }).filter(([_, suggestions]) => {
+              return suggestions.filter(suggestion => suggestion.label !== ``).length > 1;
+            });
 
             if (mountedRef.current) {
               setSuggestions(mappedToSuggestions);
