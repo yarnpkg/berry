@@ -1,0 +1,30 @@
+on:
+  workflow_dispatch:
+
+name: 'Release Candidate'
+jobs:
+  release:
+    name: 'Releasing a RC'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Use Node.js 14.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Generates the release commits'
+      run: |
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+        ./scripts/release/01-release-tags.sh --prerelease
+        git push --follow-tags
+
+    - name: 'Upload the releases'
+      run: |
+        yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
+        yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
+        ./scripts/release/02-release-builds.sh
+        ./scripts/release/03-release-builds.sh

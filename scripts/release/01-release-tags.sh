@@ -10,8 +10,25 @@ if ! [[ -z $(git status --porcelain) ]]; then
   exit 1
 fi
 
+CURRENT_COMMIT=$(git rev-parse HEAD)
+
+PRERELEASE=0
+APPLY_OPTIONS=()
+
+OPTIND=1
+while :; do
+  case $1 in
+    --prerelease)
+      APPLY_OPTIONS+=(--prerelease)
+      PRERELEASE=1
+      ;;
+  esac
+  shift
+done
+
+
 # Bump the packages, and store which ones have been bumped (and thus need to be re-released)
-RELEASE_DETAILS=$(node "$REPO_DIR"/scripts/run-yarn.js version apply --all --json "$@")
+RELEASE_DETAILS=$(node "$REPO_DIR"/scripts/run-yarn.js version apply --all --json "${APPLY_OPTIONS}")
 RELEASE_SIZE=$(wc -l <<< "$RELEASE_DETAILS")
 
 if [[ $RELEASE_SIZE -eq 0 ]]; then
@@ -88,3 +105,10 @@ for TAG_SUFFIX in '' {a..z}; do
 done
 
 printf "%s" "$COMMIT_MESSAGE"
+
+# We need to revert the checked-in artifacts, since stable shouldn't move
+# just yet, and some of our tools expect "latest" to always be up-to-date
+if [[ $PRERELEASE -eq 1 ]]; then
+  git checkout "$CURRENT_COMMIT" -- "$REPO_DIR"/../packages/*/bin
+  git commit -m "Reset binaries to stable"
+fi
