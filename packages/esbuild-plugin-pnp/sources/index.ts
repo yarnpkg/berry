@@ -12,7 +12,12 @@ async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
   };
 }
 
-async function defaultOnResolve(args: OnResolveArgs, resolvedPath: string | null, error?: Error): Promise<OnResolveResult> {
+type OnResolveParams = {
+  resolvedPath: string | null;
+  error?: Error;
+};
+
+async function defaultOnResolve(args: OnResolveArgs, {resolvedPath, error}: OnResolveParams): Promise<OnResolveResult> {
   const problems = error ? [{text: error.message}] : [];
 
   // Sometimes dynamic resolve calls might be wrapped in a try / catch,
@@ -43,7 +48,7 @@ export type PluginOptions = {
   baseDir?: string,
   extensions?: Array<string>,
   filter?: RegExp,
-  onResolve?: (args: OnResolveArgs, resolvedPath: string | null, error?: Error) => Promise<OnResolveResult | null>,
+  onResolve?: (args: OnResolveArgs, params: OnResolveParams) => Promise<OnResolveResult | null>,
   onLoad?: (args: OnLoadArgs) => Promise<OnLoadResult>,
 };
 
@@ -83,7 +88,7 @@ export function pnpPlugin({
           error = e;
         }
 
-        return onResolve(args, path, error);
+        return onResolve(args, {resolvedPath: path, error});
       });
 
       // We register on the build to prevent ESBuild from reading the files
