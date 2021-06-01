@@ -1,8 +1,9 @@
 import {ChildProcess}                               from 'child_process';
 import crossSpawn                                   from 'cross-spawn';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
+import {StringDecoder}                              from 'string_decoder';
 
-import {ShellOptions}                               from './index';
+import {ShellOptions, ShellState}                   from './index';
 
 export enum Pipe {
   STDIN = 0b00,
@@ -291,4 +292,56 @@ export class Handle {
 
 export function start(p: ProcessImplementation, opts: StartOptions) {
   return Handle.start(p, opts);
+}
+
+function createStreamReporter(reportFn: (text: string) => void, prefix: string | null = null) {
+  const stream = new PassThrough();
+  const decoder = new StringDecoder();
+
+  let buffer = ``;
+
+  stream.on(`data`, chunk => {
+    let chunkStr = decoder.write(chunk);
+    let lineIndex;
+
+    do {
+      lineIndex = chunkStr.indexOf(`\n`);
+
+      if (lineIndex !== -1) {
+        const line = buffer + chunkStr.substr(0, lineIndex);
+
+        chunkStr = chunkStr.substr(lineIndex + 1);
+        buffer = ``;
+
+        if (prefix !== null) {
+          reportFn(`${prefix} ${line}`);
+        } else {
+          reportFn(line);
+        }
+      }
+    } while (lineIndex !== -1);
+
+    buffer += chunkStr;
+  });
+
+  stream.on(`end`, () => {
+    const last = decoder.end();
+
+    if (last !== ``) {
+      if (prefix !== null) {
+        reportFn(`${prefix} ${last}`);
+      } else {
+        reportFn(last);
+      }
+    }
+  });
+
+  return stream;
+}
+
+export function createOutputStreamsWithPrefix(state: ShellState, {prefix}: {prefix: string | null}) {
+  return {
+    stdout: createStreamReporter(text => state.stdout.write(`${text}\n`), (state.stdout as any).isTTY ? prefix : null),
+    stderr: createStreamReporter(text => state.stderr.write(`${text}\n`), (state.stderr as any).isTTY ? prefix : null),
+  };
 }

@@ -6335,11 +6335,13 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2"
     "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2"
+    chalk: ^3.0.0
     clipanion: ^3.0.0-rc.10
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
     stream-buffers: ^3.0.2
+    strip-ansi: ^6.0.0
     tslib: ^1.13.0
   bin:
     shell: ./sources/boot-cli-dev.js
@@ -8533,12 +8535,12 @@ __metadata:
   linkType: hard
 
 "chalk@npm:^4.0.0, chalk@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "chalk@npm:4.1.0"
+  version: 4.1.1
+  resolution: "chalk@npm:4.1.1"
   dependencies:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
-  checksum: 5561c7b4c063badee3e16d04bce50bd033e1be1bf4c6948639275683ffa7a1993c44639b43c22b1c505f0f813a24b1889037eb182546b48946f9fe7cdd0e7d13
+  checksum: 036e973e665ba1a32c975e291d5f3d549bceeb7b1b983320d4598fb75d70fe20c5db5d62971ec0fe76cdbce83985a00ee42372416abfc3a5584465005a7855ed
   languageName: node
   linkType: hard
 

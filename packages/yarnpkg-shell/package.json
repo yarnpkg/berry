@@ -7,6 +7,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
     "@yarnpkg/parsers": "workspace:^2.3.1-rc.2",
+    "chalk": "^3.0.0",
     "clipanion": "^3.0.0-rc.10",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
@@ -17,7 +18,8 @@
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/monorepo": "workspace:*",
+    "strip-ansi": "^6.0.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",
