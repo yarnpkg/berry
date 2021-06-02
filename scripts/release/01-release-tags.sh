@@ -55,10 +55,12 @@ while read line; do
   COMMIT_MESSAGE="$COMMIT_MESSAGE| \`$IDENT\` | \`$VERSION\` |$NL"
   UPDATE_ARGUMENTS+=(--include "$IDENT")
 
+  sleep 4
   yarn workspace "$IDENT" pack --dry-run
 done <<< "$RELEASE_DETAILS"
 
 echo
+sleep 4
 
 # Regenerate the local versions for the elements that get released
 yarn workspaces foreach \
