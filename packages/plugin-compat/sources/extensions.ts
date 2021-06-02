@@ -21,6 +21,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`tailwindcss`]: `^2.0.2`,
     },
   }],
+  // https://github.com/FullHuman/purgecss/commit/24116f394dc54c913e4fd254cf2d78c03db971f2
+  [`@fullhuman/postcss-purgecss@3.1.3`, {
+    peerDependencies: {
+      [`postcss`]: `^8.0.0`,
+    },
+  }],
   // https://github.com/SamVerschueren/stream-to-observable/pull/5
   [`@samverschueren/stream-to-observable@<0.3.1`, {
     peerDependenciesMeta: {
