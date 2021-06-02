@@ -7,13 +7,16 @@ jobs:
     name: 'Releasing a RC'
     runs-on: ubuntu-latest
 
+    env:
+      NODE_OPTIONS: --max_old_space_size=4096
+
     steps:
     - uses: actions/checkout@master
 
-    - name: 'Use Node.js 14.x'
+    - name: 'Use Node.js 16.x'
       uses: actions/setup-node@master
       with:
-        node-version: 14.x
+        node-version: 16.x
 
     - name: 'Generates the release commits'
       run: |
