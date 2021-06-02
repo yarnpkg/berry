@@ -55,11 +55,7 @@ while read line; do
   COMMIT_MESSAGE="$COMMIT_MESSAGE| \`$IDENT\` | \`$VERSION\` |$NL"
   UPDATE_ARGUMENTS+=(--include "$IDENT")
 
-  yarn workspace "$IDENT" pack --dry-run >& /dev/null || (
-    echo "Couldn't run prepack on $IDENT:"
-    yarn workspace "$IDENT" pack --dry-run
-    exit 1
-  )
+  yarn workspace "$IDENT" pack --dry-run
 done <<< "$RELEASE_DETAILS"
 
 echo
