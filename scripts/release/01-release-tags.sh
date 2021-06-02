@@ -56,7 +56,8 @@ while read line; do
   UPDATE_ARGUMENTS+=(--include "$IDENT")
 
   yarn workspace "$IDENT" pack --dry-run >& /dev/null || (
-    echo "Couldn't run prepack on $IDENT"
+    echo "Couldn't run prepack on $IDENT:"
+    yarn workspace "$IDENT" pack --dry-run
     exit 1
   )
 done <<< "$RELEASE_DETAILS"
