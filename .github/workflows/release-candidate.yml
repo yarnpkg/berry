@@ -12,13 +12,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+      with:
+        token: ${{secrets.YARNBOT_TOKEN}}
 
     - name: 'Use Node.js 16.x'
       uses: actions/setup-node@master
       with:
         node-version: 16.x
 
-    - name: 'Builds a binary for convenience'
+    - name: 'Build a binary for convenience'
       run: |
         yarn build:cli $(
           yarn constraints query "
@@ -37,7 +39,7 @@ jobs:
         echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
         git update-index --skip-worktree -- .yarnrc.yml
 
-    - name: 'Generates the release commits'
+    - name: 'Generate the release commits'
       run: |
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
