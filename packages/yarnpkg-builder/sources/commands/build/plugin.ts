@@ -1,13 +1,17 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
+import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath}                                                              from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                 from 'clipanion';
+import {build, Plugin}                                                      from 'esbuild-wasm';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
-import TerserPlugin                                                         from 'terser-webpack-plugin';
-import webpack                                                              from 'webpack';
 
 import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
-import {makeConfig, WebpackPlugin}                                          from '../../tools/makeConfig';
+
+const matchAll = /()/;
+
+// Splits a require request into its components, or return null if the request is a file path
+const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
 // The name gets normalized so that everyone can override some plugins by
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
@@ -58,8 +62,6 @@ export default class BuildPluginCommand extends Command {
     const prettyName = structUtils.prettyIdent(configuration, structUtils.parseIdent(name));
     const output = path.join(basedir, `bundles/${name}.js`);
 
-    let buildErrors: string | null = null;
-
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
@@ -67,103 +69,69 @@ export default class BuildPluginCommand extends Command {
       forgettableNames: new Set([MessageName.UNNAMED]),
     }, async report => {
       await report.startTimerPromise(`Building ${prettyName}`, async () => {
-        const progress = StreamReport.progressViaCounter(1);
-        report.reportProgress(progress);
+        const dynamicLibResolver: Plugin = {
+          name: `dynamic-lib-resolver`,
+          setup(build) {
+            build.onResolve({filter: matchAll}, async args => {
+              const dependencyNameMatch = args.path.match(pathRegExp);
+              if (dependencyNameMatch === null)
+                return undefined;
 
-        const prettyWebpack = structUtils.prettyIdent(configuration, structUtils.makeIdent(null, `webpack`));
+              const [, dependencyName] = dependencyNameMatch;
+              if (dependencyName === name || !isDynamicLib(dependencyName))
+                return undefined;
 
-        const compiler = webpack(makeConfig({
-          context: basedir,
-          entry: `.`,
-
-          ...this.sourceMap && {
-            devtool: `inline-source-map`,
+              return {
+                path: args.path,
+                external: true,
+              };
+            });
           },
+        };
 
-          ...!this.noMinify && {
-            mode: `production`,
+        const res = await build({
+          banner: {
+            js: [
+              `/* eslint-disable */`,
+              `//prettier-ignore`,
+              `module.exports = {`,
+              `name: ${JSON.stringify(name)},`,
+              `factory: function (require) {`,
+            ].join(`\n`),
           },
-
-          ...!this.noMinify && {
-            optimization: {
-              minimizer: [
-                new TerserPlugin({
-                  cache: false,
-                  extractComments: false,
-                  terserOptions: {
-                    ecma: 8,
-                  },
-                }) as WebpackPlugin,
-              ],
-            },
+          globalName: `plugin`,
+          footer: {
+            js: [
+              `return plugin;`,
+              `}`,
+              `};`,
+            ].join(`\n`),
           },
-
-          output: {
-            filename: path.basename(output),
-            path: path.dirname(output),
-            libraryTarget: `var`,
-            library: `plugin`,
-          },
-
-          externals: [
-            ({context, request}, callback: any) => {
-              if (request !== name && isDynamicLib(request)) {
-                callback(null, `commonjs ${request}`);
-              } else {
-                callback();
-              }
-            },
-          ],
-
-          plugins: [
-            // This plugin wraps the generated bundle so that it doesn't actually
-            // get evaluated right now - until after we give it a custom require
-            // function that will be able to fetch the dynamic modules.
-            {apply: (compiler: webpack.Compiler) => {
-              compiler.hooks.compilation.tap(`WrapperPlugin`, (compilation: webpack.Compilation) => {
-                compilation.hooks.optimizeChunkAssets.tap(`WrapperPlugin`, (chunks: Set<webpack.Chunk>) => {
-                  for (const chunk of chunks) {
-                    for (const file of chunk.files) {
-                      compilation.assets[file] = new webpack.sources.ConcatSource(
-                        [
-                          `/* eslint-disable */`,
-                          `module.exports = {`,
-                          `name: ${JSON.stringify(name)},`,
-                          `factory: function (require) {`,
-                        ].join(`\n`),
-                        compilation.assets[file],
-                        [
-                          `return plugin;`,
-                          `}`,
-                          `};`,
-                        ].join(`\n`)
-                      );
-                    }
-                  }
-                });
-              });
-            }},
-            new webpack.ProgressPlugin((percentage: number, message: string) => {
-              progress.set(percentage);
-
-              if (message) {
-                report.reportInfoOnce(MessageName.UNNAMED, `${prettyWebpack}: ${message}`);
-              }
-            }),
-          ],
-        }));
-
-        buildErrors = await new Promise<string | null>((resolve, reject) => {
-          compiler.run((err, stats) => {
-            if (err) {
-              reject(err);
-            } else if (stats && stats.compilation.errors.length > 0) {
-              resolve(stats.toString(`errors-only`));
-            } else {
-              resolve(null);
-            }
-          });
+          entryPoints: [path.join(basedir, `sources/index`)],
+          bundle: true,
+          outfile: output,
+          logLevel: `silent`,
+          plugins: [dynamicLibResolver, pnpPlugin()],
+          minify: !this.noMinify,
+          sourcemap: this.sourceMap ? `inline` : false,
+          target: `node12`,
         });
+
+        for (const warning of res.warnings) {
+          if (warning.location !== null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, warning.text);
+        }
+
+
+        for (const warning of res.warnings) {
+          if (warning.location === null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
+          report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
+        }
       });
     });
 
@@ -171,11 +139,8 @@ export default class BuildPluginCommand extends Command {
 
     const Mark = formatUtils.mark(configuration);
 
-    if (report.hasErrors() || buildErrors !== null) {
+    if (report.hasErrors()) {
       report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build ${prettyName}`);
-      if (buildErrors) {
-        report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
-      }
     } else {
       report.reportInfo(null, `${Mark.Check} Done building ${prettyName}!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);

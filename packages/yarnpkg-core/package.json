@@ -53,7 +53,7 @@
     "@yarnpkg/plugin-link": "workspace:*",
     "@yarnpkg/plugin-npm": "workspace:*",
     "@yarnpkg/plugin-pnp": "workspace:*",
-    "esbuild": "npm:esbuild-wasm@^0.8.36",
+    "esbuild": "npm:esbuild-wasm@^0.11.20",
     "rollup": "^2.43.0",
     "rollup-plugin-esbuild": "^3.0.2"
   },
