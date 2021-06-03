@@ -18,6 +18,25 @@ jobs:
       with:
         node-version: 16.x
 
+    - name: 'Builds a binary for convenience'
+      run: |
+        yarn build:cli $(
+          yarn constraints query "
+            workspace(Cwd),
+            workspace_field(Cwd, 'scripts["update-local"]', _),
+            workspace_ident(Cwd, Ident),
+            sub_atom(Ident, 0, _, _, '@yarnpkg/plugin-')
+          " --json | jq -r '"--plugin='$(pwd)'/" + .Cwd' | xargs
+        )
+
+        TMPBIN=$(mktemp -d)
+
+        cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn
+        chmod +x $TMPBIN/yarn
+
+        echo "YARN_IGNORE_PATH=1" >> $GITHUB_ENV
+        echo "PATH=$TMPBIN:$PATH"
+
     - name: 'Generates the release commits'
       run: |
         git config user.name "Yarn Bot"
