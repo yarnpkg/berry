@@ -32,7 +32,8 @@ jobs:
         TMPBIN=$(mktemp -d)
         cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
 
-        grep -v "yarnPath:" | sponge .yarnrc.yml
+        grep -v "yarnPath:" > $TMPBIN/.yarnrc.yml
+        cp $TMPBIN/.yarnrc.yml .yarnrc.yml
         echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
         git update-index --skip-worktree -- .yarnrc.yml
 
