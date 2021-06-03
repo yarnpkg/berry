@@ -30,12 +30,10 @@ jobs:
         )
 
         TMPBIN=$(mktemp -d)
+        cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
 
-        cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn
-        chmod +x $TMPBIN/yarn
-
-        echo "YARN_IGNORE_PATH=1" >> $GITHUB_ENV
-        echo "PATH=$TMPBIN:$PATH" >> $GITHUB_ENV
+        echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
+        git update-index --skip-worktree -- .yarnrc.yml
 
     - name: 'Generates the release commits'
       run: |
