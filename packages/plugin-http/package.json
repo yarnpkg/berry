@@ -1,14 +1,14 @@
 {
   "name": "@yarnpkg/plugin-http",
-  "version": "2.1.3-rc.4",
+  "version": "2.1.3-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.4",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^3.0.0-rc.4"
+    "@yarnpkg/core": "^3.0.0-rc.5"
   },
   "devDependencies": {
     "@yarnpkg/core": "workspace:*"
