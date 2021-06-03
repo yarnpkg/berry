@@ -1,6 +1,10 @@
 on:
   workflow_dispatch:
     inputs:
+      target_commit:
+        description: 'Which commit to release?'
+        required: false
+        default: master
       apply_versions:
         description: 'Apply new versions?'
         required: false
@@ -18,6 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
+        ref: ${{github.event.inputs.target_commit}}
         token: ${{secrets.YARNBOT_TOKEN}}
 
     - name: 'Use Node.js 16.x'
@@ -45,7 +50,7 @@ jobs:
         git update-index --skip-worktree -- .yarnrc.yml
 
     - name: 'Generate the release commits'
-      if: ${{ fromJSON(github.event.inputs.apply_versions) }}
+      if: ${{fromJSON(github.event.inputs.apply_versions)}}
       run: |
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
@@ -57,4 +62,4 @@ jobs:
         yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
         yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
         ./scripts/release/02-release-builds.sh
-        ./scripts/release/03-release-builds.sh
+        ./scripts/release/03-release-npm.sh
