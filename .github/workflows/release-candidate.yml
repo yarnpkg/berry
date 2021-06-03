@@ -35,7 +35,7 @@ jobs:
         chmod +x $TMPBIN/yarn
 
         echo "YARN_IGNORE_PATH=1" >> $GITHUB_ENV
-        echo "PATH=$TMPBIN:$PATH"
+        echo "PATH=$TMPBIN:$PATH" >> $GITHUB_ENV
 
     - name: 'Generates the release commits'
       run: |
