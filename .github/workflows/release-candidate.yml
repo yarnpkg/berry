@@ -1,5 +1,10 @@
 on:
   workflow_dispatch:
+    inputs:
+      apply_versions:
+        description: 'Apply new versions?'
+        required: false
+        default: '1'
 
 name: 'Release Candidate'
 jobs:
@@ -40,6 +45,7 @@ jobs:
         git update-index --skip-worktree -- .yarnrc.yml
 
     - name: 'Generate the release commits'
+      if: ${{ github.event.inputs.apply_versions }}
       run: |
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
