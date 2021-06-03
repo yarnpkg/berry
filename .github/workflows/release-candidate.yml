@@ -25,6 +25,9 @@ jobs:
         ref: ${{github.event.inputs.target_commit}}
         token: ${{secrets.YARNBOT_TOKEN}}
 
+    - name: 'Retrieve all the relevant tags'
+      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
     - name: 'Use Node.js 16.x'
       uses: actions/setup-node@master
       with:
