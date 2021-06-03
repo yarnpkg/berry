@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "2.2.2-rc.1",
+  "version": "2.2.2-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
