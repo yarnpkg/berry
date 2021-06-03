@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/json-proxy",
-  "version": "2.1.0",
+  "version": "2.1.1-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.3",
     "tslib": "^1.13.0"
   },
   "scripts": {
@@ -26,5 +26,6 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "2.1.0"
 }

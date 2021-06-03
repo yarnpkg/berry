@@ -1,17 +1,17 @@
 {
   "name": "@yarnpkg/plugin-patch",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
-    "@yarnpkg/libzip": "workspace:^2.2.1",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.3",
+    "@yarnpkg/libzip": "workspace:^2.2.2-rc.1",
     "clipanion": "^3.0.0-rc.10",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.2",
-    "@yarnpkg/core": "^3.0.0-rc.2"
+    "@yarnpkg/cli": "^3.0.0-rc.3",
+    "@yarnpkg/core": "^3.0.0-rc.3"
   },
   "devDependencies": {
     "@yarnpkg/cli": "workspace:*",

@@ -1,12 +1,12 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.3",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/cli": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/core": "workspace:^3.0.0-rc.2",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
+    "@yarnpkg/cli": "workspace:^3.0.0-rc.3",
+    "@yarnpkg/core": "workspace:^3.0.0-rc.3",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.3",
     "clipanion": "^3.0.0-rc.10",
     "globby": "^11.0.1",
     "micromatch": "^4.0.2",
