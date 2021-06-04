@@ -7,7 +7,7 @@ description: An in-depth guide to Yarn's workspaces, a feature that provides an 
 
 The Yarn workspaces aim to make working with [monorepos](/advanced/lexicon#monorepository) easy, solving one of the main use cases for `yarn link` in a more declarative way. In short, they allow multiple of your projects to live together in the same repository AND to cross-reference each others - any modification to one's source code being instantly applied to the others.
 
-First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a specific named package stored anywhere within the project. Finally, a *worktree* is the name given to private packages that list their own child workspaces. A project contains one or more worktrees, which may themselves contain any number of workspaces.
+First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a specific named package stored anywhere within the project. Finally, a *worktree* is the name given to packages that list their own child workspaces. A project contains one or more worktrees, which may themselves contain any number of workspaces.
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -17,13 +17,15 @@ First, some vocabulary: in the context of the workspace feature, a *project* is 
 
 Worktrees are defined through the traditional `package.json` files. What makes them special is that they have the following properties:
 
-- They have to be marked `private: true`. This requirement exists because workspaces are a client-only feature. The remote registries (such as the npm registry) have no idea what a workspace is, and neither should they. In order to prevent accidental pushes and information leaks workspaces must have their private flag set.
-
 - They must declare a `workspaces` field which is expected to be an array of glob patterns that should be used to locate the workspaces that make up the worktree. For example, if you want all folders within the `packages` folder to be workspaces, just add `packages/*` to this array.
 
 - They must be connected in some way to the project-level `package.json` file. This doesn't matter in the typical workspace setup because there's usually a single worktree defined in the project-level `package.json`, but if you try to setup nested workspaces then you must make sure that the nested worktree is defined as a valid workspace of its parent worktree (otherwise Yarn won't find its correct parent folder).
 
 Note that because worktrees are defined with an otherwise regular `package.json` file, they also are valid workspaces themselves. If they're named, other workspaces will be able to properly cross-reference them.
+
+> **Note**
+>
+> Worktrees used to be required to be private (ie list `"private": true` in their package.json). This requirement got removed with the 2.0 release in order to help standalone projects to progressively adopt workspaces (for example by listing their documentation website as a separate workspace).
 
 ## What does it mean to be a workspace?
 

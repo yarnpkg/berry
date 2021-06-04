@@ -1,26 +1,15 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
 import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils, ThrowReport} from '@yarnpkg/core';
 import {Filename, npath, ppath, xfs}                                                                                from '@yarnpkg/fslib';
-import {Command, Usage}                                                                                             from 'clipanion';
+import {Command, Option, Usage}                                                                                     from 'clipanion';
 
 import * as packUtils                                                                                               from '../packUtils';
 
-const outDescription = `Create the archive at the specified path`;
-
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
-  @Command.Boolean(`--install-if-needed`, {description: `Run a preliminary \`yarn install\` if the package contains build scripts`})
-  installIfNeeded: boolean = false;
-
-  @Command.Boolean(`-n,--dry-run`, {description: `Print the file paths without actually generating the package archive`})
-  dryRun: boolean = false;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.String(`--filename`, {hidden: false, description: outDescription})
-  @Command.String(`-o,--out`, {description: outDescription})
-  out?: string;
+  static paths = [
+    [`pack`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `generate a tarball from the active workspace`,
@@ -41,7 +30,25 @@ export default class PackCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`pack`)
+  installIfNeeded = Option.Boolean(`--install-if-needed`, false, {
+    description: `Run a preliminary \`yarn install\` if the package contains build scripts`,
+  });
+
+  dryRun = Option.Boolean(`-n,--dry-run`, false, {
+    description: `Print the file paths without actually generating the package archive`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  out = Option.String(`-o,--out`, {
+    description: `Create the archive at the specified path`,
+  });
+
+  // Legacy option
+  filename = Option.String(`--filename`, {hidden: true});
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -60,8 +67,10 @@ export default class PackCommand extends BaseCommand {
       }
     }
 
-    const target = typeof this.out !== `undefined`
-      ? ppath.resolve(this.context.cwd, interpolateOutputName(this.out, {workspace}))
+    const out = this.out ?? this.filename;
+
+    const target = typeof out !== `undefined`
+      ? ppath.resolve(this.context.cwd, interpolateOutputName(out, {workspace}))
       : ppath.resolve(workspace.cwd, `package.tgz` as Filename);
 
     const report = await StreamReport.start({

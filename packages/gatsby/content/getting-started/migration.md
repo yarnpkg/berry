@@ -5,7 +5,7 @@ title: "Migration"
 description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 ---
 
-Yarn v2 is a very different software from the v1. While one of our goals is to make the transition as easy as possible, some behaviors needed to be tweaked. To make things easier we've documented the most common problems that may arise when porting from one project to the other, along with suggestions to keep moving forward.
+Any major release has its breaking changes, and Yarn 2 isn't the exception. A few old behaviors were cleaned, fixed, modified, or removed. While one of our goals is to make the transition as easy as we can, there are a few things to be aware of when migrating a codebase. To make this process more efficient we've listed below the recommended migration steps, along with solutions for the most common problems you might face.
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -15,11 +15,20 @@ Yarn v2 is a very different software from the v1. While one of our goals is to m
 
 We answer this question in details [here](https://yarnpkg.com/getting-started/qa#why-should-you-upgrade-to-yarn-modern).
 
-Put simply, there are very few reasons not to upgrade. Even if you don't use Plug'n'Play nor plan to use it, your project will still benefit from more stable `node_modules` layouts, improved performances, improved user experience, active development, and many other boons.
+In a few words, upgrading to the latest versions is critical to a fast and stable Yarn experience. Numerous bugs were fixed since the first major version, and we no longer expect to build new features on the old trunk. **Even if you don't plan to use the new default installation strategy called Plug'n'Play** your projects will still get benefits from the upgrade:
+
+- The good old `node_modules` installer improved as well as various edge cases got fixed
+- A renewed focus on performances and good practices (we now formally track perfs via a [dashboard](https://yarnpkg.com/benchmarks))
+- Improved user experience for various CLI commands and settings ([`yarn add -i`](/cli/add), [`yarn up`](/cli/up), [`logFilters`](/configuration/yarnrc#logFilters), ...)
+- New commands and capabilities (such as the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript#yarnpkgplugin-typescript), or the [release workflow](/features/release-workflow))
+
+And of course a very active development cycle.
 
 ## Step by step
 
-**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**, and only in a later optional section we will cover how to enable PnP support (which is recommended, but not mandatory). Baby steps! 😉
+**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**. Only in a later optional section we will cover how to enable PnP support, and this part will only be recommended, not mandatory. Baby steps! 😉
+
+Note that those commands only need to be run once for the whole project and will automatically take effect for all your contributors as soon as they pull the migration commit, thanks to the power of [`yarnPath`](/configuration/yarnrc#yarnPath):
 
 1. Run `npm install -g yarn` to update the global yarn version to latest v1
 2. Go into your project directory
@@ -33,11 +42,11 @@ Put simply, there are very few reasons not to upgrade. Even if you don't use Plu
 
 Some optional features are available via external plugins:
 
-11. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
-12. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
-13. Commit the yarn plugins
+10. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
+11. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
+12. Commit the yarn plugins
 
-Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts)), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
+Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), and renamed `--frozen-lockfile` into `--immutable`), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
 
 ## Switching to Plug'n'Play
 
@@ -302,7 +311,6 @@ Those features simply haven't been implemented yet. Help welcome!
 | `yarn list`     | `yarn why` may provide some information in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
 | `yarn team`     | Will eventually be available as `yarn npm team` |
-| `yarn unlink`   | Manually remove the `resolutions` entries from the `package.json` file for now |
 
 ## Troubleshooting
 

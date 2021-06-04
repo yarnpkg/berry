@@ -1,17 +1,17 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "2.4.0",
+  "version": "3.0.0-rc.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/core": "workspace:^2.4.0",
-    "@yarnpkg/fslib": "workspace:^2.4.0",
-    "@yarnpkg/parsers": "workspace:^2.3.0",
+    "@yarnpkg/core": "workspace:^3.0.0-rc.5",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
+    "@yarnpkg/parsers": "workspace:^2.4.0-rc.3",
     "chalk": "^3.0.0",
-    "clipanion": "^2.6.2",
+    "clipanion": "^3.0.0-rc.10",
     "comment-json": "^2.2.0",
     "lodash": "^4.17.15",
     "tslib": "^1.13.0"
@@ -19,10 +19,10 @@
   "devDependencies": {
     "@types/comment-json": "^1.1.1",
     "@types/lodash": "^4.14.136",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/pnp": "workspace:^2.3.2",
+    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/pnp": "workspace:*",
     "eslint": "^6.8.0",
-    "typescript": "4.1.0-beta"
+    "typescript": "^4.3.2"
   },
   "peerDependencies": {
     "eslint": "*",
@@ -53,9 +53,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-pnpify"
   },
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "2.4.0"
 }

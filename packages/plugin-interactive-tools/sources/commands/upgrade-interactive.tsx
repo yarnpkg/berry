@@ -16,10 +16,14 @@ const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$
 const DEFAULT_WINDOW_SIZE = 10;
 
 type UpgradeSuggestion = {value: string | null, label: string};
-type UpgradeSuggestions = Array<UpgradeSuggestion>
+type UpgradeSuggestions = Array<UpgradeSuggestion>;
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
+  static paths = [
+    [`upgrade-interactive`],
+  ];
+
   static usage: Usage = Command.Usage({
     category: `Interactive commands`,
     description: `open the upgrade interface`,
@@ -32,7 +36,6 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`upgrade-interactive`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -40,6 +43,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
@@ -124,6 +131,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           value: resolution,
           label: colorizeVersionDiff(descriptor.range, resolution),
         });
+      } else {
+        suggestions.push({value: null, label: ``});
       }
 
       if (latest && latest !== resolution && latest !== descriptor.range) {
@@ -131,6 +140,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           value: latest,
           label: colorizeVersionDiff(descriptor.range, latest),
         });
+      } else {
+        suggestions.push({value: null, label: ``});
       }
 
       return suggestions;
@@ -219,7 +230,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
             const mappedToSuggestions = dependencies.map((descriptor, i) => {
               const suggestionsForDescriptor = allSuggestions[i];
               return [descriptor, suggestionsForDescriptor] as const;
-            }).filter(([_, suggestions]) => suggestions.length > 1);
+            }).filter(([_, suggestions]) => {
+              return suggestions.filter(suggestion => suggestion.label !== ``).length > 1;
+            });
 
             if (mountedRef.current) {
               setSuggestions(mappedToSuggestions);

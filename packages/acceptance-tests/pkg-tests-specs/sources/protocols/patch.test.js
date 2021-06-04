@@ -142,5 +142,50 @@ describe(`Protocols`, () => {
       ),
       10000,
     );
+
+    test(
+      `it should apply patches relative to the package`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await xfs.mktempPromise(async fileTarget => {
+            await xfs.writeFilePromise(ppath.join(fileTarget, `my-patch.patch`), NO_DEPS_PATCH);
+            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
+            await xfs.writeJsonPromise(ppath.join(fileTarget, `package.json`), {
+              dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+            });
+
+            await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+              dependencies: {[`file`]: `file:${fileTarget}`},
+            });
+
+            await run(`install`);
+
+            await expect(source(`require('file')`)).resolves.toMatchObject({
+              name: `no-deps`,
+              version: `1.0.0`,
+              hello: `world`,
+            });
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should throw on invalid patch files`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH, {encoding: `utf16le`});
+
+          await expect(run(`install`)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`Unable to parse patch file: No changes found`),
+          });
+        },
+      ),
+    );
   });
 });

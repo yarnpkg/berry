@@ -1,19 +1,10 @@
-import {npath}          from '@yarnpkg/fslib';
-import {Command, Usage} from 'clipanion';
+import {npath}                  from '@yarnpkg/fslib';
+import {Command, Option, Usage} from 'clipanion';
 
-import {execute}        from '../index';
+import {execute}                from '../index';
 
 // eslint-disable-next-line arca/no-default-export
 export default class EntryCommand extends Command {
-  @Command.String()
-  commandName!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
-
-  @Command.String(`--cwd`, {description: `The directory to run the command in`})
-  cwd: string = process.cwd();
-
   static usage: Usage = {
     description: `run a command using yarn's portable shell`,
     details: `
@@ -44,6 +35,13 @@ export default class EntryCommand extends Command {
       `$0 "GREETING=Hello echo $GREETING World"`,
     ]],
   };
+
+  cwd = Option.String(`--cwd`, process.cwd(), {
+    description: `The directory to run the command in`,
+  });
+
+  commandName = Option.String();
+  args = Option.Proxy();
 
   async execute() {
     // We assume that all arguments have to be processed by our shell,

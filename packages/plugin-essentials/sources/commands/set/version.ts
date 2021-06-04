@@ -2,16 +2,14 @@ import {BaseCommand}                                      from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report} from '@yarnpkg/core';
 import {execUtils, formatUtils, httpUtils, semverUtils}   from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs, npath}        from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                       from 'clipanion';
+import {Command, Option, Usage, UsageError}               from 'clipanion';
 import semver                                             from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
-  @Command.Boolean(`--only-if-needed`, {description: `Only lock the Yarn version if it isn't already locked`})
-  onlyIfNeeded: boolean = false;
-
-  @Command.String()
-  version!: string;
+  static paths = [
+    [`set`, `version`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `lock the Yarn version used by the project`,
@@ -35,9 +33,12 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
-  // TODO: Remove alias in next major
-  @Command.Path(`policies`, `set-version`)
-  @Command.Path(`set`, `version`)
+  onlyIfNeeded = Option.Boolean(`--only-if-needed`, false, {
+    description: `Only lock the Yarn version if it isn't already locked`,
+  });
+
+  version = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
@@ -52,7 +53,7 @@ export default class SetVersionCommand extends BaseCommand {
       bundleUrl = `https://github.com/yarnpkg/berry/raw/%40yarnpkg/cli/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
       bundleUrl = `https://github.com/yarnpkg/yarn/releases/download/v${this.version}/yarn-${this.version}.js`;
-    else if (semver.validRange(this.version))
+    else if (semverUtils.validRange(this.version))
       throw new UsageError(`Support for ranges got removed - please use the exact version you want to install, or 'latest' to get the latest build available`);
     else
       throw new UsageError(`Invalid version descriptor "${this.version}"`);
@@ -71,26 +72,24 @@ export default class SetVersionCommand extends BaseCommand {
 }
 
 export async function setVersion(configuration: Configuration, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
-  const projectCwd = configuration.projectCwd
-    ? configuration.projectCwd
-    : configuration.startingCwd;
-
   if (bundleVersion === null) {
     await xfs.mktempPromise(async tmpDir => {
       const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer);
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
-        cwd: projectCwd,
+        cwd: tmpDir,
         env: {...process.env, YARN_IGNORE_PATH: `1`},
       });
 
       bundleVersion = stdout.trim();
       if (!semver.valid(bundleVersion)) {
-        throw new Error(`Invalid semver version`);
+        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
       }
     });
   }
+
+  const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
   const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);

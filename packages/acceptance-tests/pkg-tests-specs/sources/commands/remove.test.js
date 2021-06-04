@@ -107,7 +107,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should remove all the occurences of the specified dependency when using -A`,
+      `it should remove all the occurrences of the specified dependency when using -A`,
       makeTemporaryEnv({
         private: true,
         workspaces: [

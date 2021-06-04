@@ -1,10 +1,20 @@
-import type {EventEmitter}                                                          from 'events';
-import type {Dirent as NodeDirent, ReadStream, Stats, WriteStream, NoParamCallback} from 'fs';
-import {EOL}                                                                        from 'os';
+import type {EventEmitter}                                    from 'events';
+import type {Dirent as NodeDirent, ReadStream}                from 'fs';
+import {Stats as NodeStats, WriteStream}                 from 'fs';
+import {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
+import {EOL}                                             from 'os';
 
-import {copyPromise}                                                                from './algorithms/copyPromise';
-import type {FSPath, Path, PortablePath, PathUtils, Filename}                       from './path';
-import {convertPath, ppath}                                                         from './path';
+import {copyPromise, LinkStrategy}                       from './algorithms/copyPromise';
+import type {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
+import {convertPath, ppath}                              from './path';
+
+export type Stats = NodeStats & {
+  crc?: number
+};
+export type BigIntStats = NodeBigIntStats & {
+  crc?: number
+};
+>>>>>>> origin/master
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
@@ -97,7 +107,7 @@ export type StatWatcher = EventEmitter & {
 
 export type ExtractHintOptions = {
   relevantExtensions: Set<string>;
-}
+};
 
 export type SymlinkType = 'file' | 'dir' | 'junction';
 
@@ -159,10 +169,25 @@ export abstract class FakeFS<P extends Path> {
   abstract accessSync(p: P, mode?: number): void;
 
   abstract statPromise(p: P): Promise<Stats>;
+  abstract statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   abstract statSync(p: P): Stats;
+  abstract statSync(p: P, opts: {bigint: true}): BigIntStats;
+  abstract statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
+
+  abstract fstatPromise(fd: number): Promise<Stats>;
+  abstract fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  abstract fstatSync(fd: number): Stats;
+  abstract fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
+  abstract fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract lstatPromise(p: P): Promise<Stats>;
+  abstract lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
+  abstract lstatPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   abstract lstatSync(p: P): Stats;
+  abstract lstatSync(p: P, opts: {bigint: true}): BigIntStats;
+  abstract lstatSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
 
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
@@ -258,9 +283,13 @@ export abstract class FakeFS<P extends Path> {
     }
 
     if (stat.isDirectory()) {
-      if (recursive)
-        for (const entry of await this.readdirPromise(p))
-          await this.removePromise(this.pathUtils.resolve(p, entry));
+      if (recursive) {
+        const entries = await this.readdirPromise(p);
+
+        await Promise.all(entries.map(entry => {
+          return this.removePromise(this.pathUtils.resolve(p, entry));
+        }));
+      }
 
       // 5 gives 1s worth of retries at worst
       let t = 0;
@@ -377,10 +406,10 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean}): Promise<void>;
-  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean} = {}) {
-    return await copyPromise(this, destination, baseFs, source, {overwrite, stableSort, stableTime});
+  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy}): Promise<void>;
+  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy}): Promise<void>;
+  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false, linkStrategy = null}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy | null} = {}) {
+    return await copyPromise(this, destination, baseFs, source, {overwrite, stableSort, stableTime, linkStrategy});
   }
 
   /** @deprecated Prefer using `copyPromise` instead */

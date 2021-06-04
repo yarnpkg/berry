@@ -30,7 +30,7 @@
       "examples": ["1.2.3"]
     },
     "type": {
-      "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs` (the default) and `module`. If `module`, Yarn will generate a `.pnp.cjs` file when using PnP. If `commonjs`, Yarn will generate a `.pnp.js` file when using PnP.",
+      "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs` (the default) and `module`. Yarn 3+ will generate a `.pnp.cjs` file when using PnP regardless of this option.",
       "type": "string",
       "enum": ["commonjs", "module"],
       "default": "commonjs"
@@ -168,12 +168,12 @@
           "type": "object",
           "properties": {
             "built": {
-              "description": "If false, the package will never be built. When the global settings `enableScripts` is toggled off, setting this additional flag will also downgrade the warning into a simple notice for this specific package.",
+              "description": "If false, the package will never be built (deny-list). This behavior is reversed when the `enableScripts` yarnrc setting is toggled off - when that happens, only packages with `built` explicitly set to `true` will be executed (allow-list), and those with `built` explicitly set to `false` will simply see their build script warnings downgraded into simple notices.",
               "type": "boolean",
               "examples": [false]
             },
             "optional": {
-              "description": "If true, the build isn't required to succeed for the install to be considered a success. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevale.",
+              "description": "If true, the build isn't required to succeed for the install to be considered a success. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevail.",
               "type": "boolean",
               "examples": [false]
             },

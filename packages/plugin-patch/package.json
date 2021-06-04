@@ -1,25 +1,26 @@
 {
   "name": "@yarnpkg/plugin-patch",
-  "version": "2.1.2",
+  "version": "3.0.0-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.4.0",
-    "@yarnpkg/libzip": "workspace:^2.2.1",
-    "clipanion": "^2.6.2",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
+    "@yarnpkg/libzip": "workspace:^2.2.2-rc.3",
+    "clipanion": "^3.0.0-rc.10",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.4.0",
-    "@yarnpkg/core": "^2.4.0"
+    "@yarnpkg/cli": "^3.0.0-rc.5",
+    "@yarnpkg/core": "^3.0.0-rc.5"
   },
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^2.4.0",
-    "@yarnpkg/core": "workspace:^2.4.0"
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/plugin-patch"
   },
   "scripts": {
     "postpack": "rm -rf lib",
@@ -33,6 +34,7 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "2.1.2"
 }

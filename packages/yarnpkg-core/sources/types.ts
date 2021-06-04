@@ -107,7 +107,7 @@ export enum LinkType {
    * so the linkers aren't allowed to do anything with them except use them as
    * they are.
    */
-  SOFT = `SOFT`
+  SOFT = `SOFT`,
 }
 
 /**
@@ -189,8 +189,4 @@ export type PackageExtension = (
   status: PackageExtensionStatus,
   userProvided: boolean,
   parentDescriptor: Descriptor,
-  /**
-   * @deprecated Use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead
-   */
-  description: string,
 };

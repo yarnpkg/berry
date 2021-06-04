@@ -17,7 +17,7 @@ export type LinkOptions = MinimalLinkOptions & {
  * Linkers are the glue between the logical dependency tree and the way it's
  * represented on the filesystem. Their main use is to take the package data
  * and put them on the filesystem in a way that their target environment will
- * understand (for example, in Node's case, it will be to generate a .pnp.js
+ * understand (for example, in Node's case, it will be to generate a .pnp.cjs
  * file).
  *
  * Note that *multiple linkers can coexist in the same dependency tree*. This

@@ -120,6 +120,13 @@ describe(`Features`, () => {
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`discard`));
+
+      ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
+      expect(stdout).not.toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
     }));
   });
 });

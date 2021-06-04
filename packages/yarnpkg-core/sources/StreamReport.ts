@@ -1,12 +1,12 @@
 import sliceAnsi                                  from '@arcanis/slice-ansi';
-
-import type {Writable}                            from 'stream';
+import type {Writable}                                 from 'stream';
 
 import type {Configuration}                       from './Configuration';
 import {MessageName, stringifyMessageName}        from './MessageName';
 import {ProgressDefinition, Report, TimerOptions} from './Report';
 import * as formatUtils                           from './formatUtils';
-import type {Locator}                             from './types';
+import * as structUtils                           from './structUtils';
+import type {Locator}                                  from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -79,6 +79,9 @@ const defaultStyle = (supportsEmojis && Object.keys(PROGRESS_STYLES).find(name =
 })) || `default`;
 
 export function formatName(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
+  if (!configuration.get(`enableMessageNames`))
+    return ``;
+
   const num = name === null ? 0 : name;
   const label = stringifyMessageName(num);
 
@@ -91,9 +94,7 @@ export function formatName(name: MessageName | null, {configuration, json}: {con
 
 export function formatNameWithHyperlink(name: MessageName | null, {configuration, json}: {configuration: Configuration, json: boolean}) {
   const code = formatName(name, {configuration, json});
-
-  // Only print hyperlinks if allowed per configuration
-  if (!configuration.get(`enableHyperlinks`))
+  if (!code)
     return code;
 
   // Don't print hyperlinks for the generic messages
@@ -103,11 +104,7 @@ export function formatNameWithHyperlink(name: MessageName | null, {configuration
   const desc = MessageName[name];
   const href = `https://yarnpkg.com/advanced/error-codes#${code}---${desc}`.toLowerCase();
 
-  // We use BELL as ST because it seems that iTerm doesn't properly support
-  // the \x1b\\ sequence described in the reference document
-  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
-
-  return `\u001b]8;;${href}\u0007${code}\u001b]8;;\u0007`;
+  return formatUtils.applyHyperlink(configuration, code, href);
 }
 
 export class StreamReport extends Report {
@@ -156,6 +153,7 @@ export class StreamReport extends Report {
 
   private cacheHitCount: number = 0;
   private cacheMissCount: number = 0;
+  private lastCacheMiss: Locator | null = null;
 
   private warningCount: number = 0;
   private errorCount: number = 0;
@@ -227,6 +225,7 @@ export class StreamReport extends Report {
   }
 
   reportCacheMiss(locator: Locator, message?: string) {
+    this.lastCacheMiss = locator;
     this.cacheMissCount += 1;
 
     if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
@@ -234,8 +233,8 @@ export class StreamReport extends Report {
     }
   }
 
-  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): void;
-  startTimerSync<T>(what: string, cb: () => T): void;
+  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
+  startTimerSync<T>(what: string, cb: () => T): T;
   startTimerSync<T>(what: string, opts: TimerOptions | (() => T), cb?: () => T) {
     const realOpts = typeof opts === `function` ? {} : opts;
     const realCb = typeof opts === `function` ? opts : cb!;
@@ -244,7 +243,7 @@ export class StreamReport extends Report {
       this.reportInfo(null, `┌ ${what}`);
       this.indent += 1;
 
-      if (GROUP !== null) {
+      if (GROUP !== null && !this.json) {
         this.stdout.write(GROUP.start(what));
       }
     }};
@@ -270,7 +269,7 @@ export class StreamReport extends Report {
       if (mark.committed) {
         this.indent -= 1;
 
-        if (GROUP !== null)
+        if (GROUP !== null && !this.json)
           this.stdout.write(GROUP.end(what));
 
         if (this.configuration.get(`enableTimers`) && after - before > 200) {
@@ -282,8 +281,8 @@ export class StreamReport extends Report {
     }
   }
 
-  async startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<void>;
-  async startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<void>;
+  async startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<T>;
+  async startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   async startTimerPromise<T>(what: string, opts: TimerOptions | (() => Promise<T>), cb?: () => Promise<T>) {
     const realOpts = typeof opts === `function` ? {} : opts;
     const realCb = typeof opts === `function` ? opts : cb!;
@@ -292,7 +291,7 @@ export class StreamReport extends Report {
       this.reportInfo(null, `┌ ${what}`);
       this.indent += 1;
 
-      if (GROUP !== null) {
+      if (GROUP !== null && !this.json) {
         this.stdout.write(GROUP.start(what));
       }
     }};
@@ -318,7 +317,7 @@ export class StreamReport extends Report {
       if (mark.committed) {
         this.indent -= 1;
 
-        if (GROUP !== null)
+        if (GROUP !== null && !this.json)
           this.stdout.write(GROUP.end(what));
 
         if (this.configuration.get(`enableTimers`) && after - before > 200) {
@@ -361,7 +360,10 @@ export class StreamReport extends Report {
 
     this.commit();
 
-    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`;
+    const formattedName = this.formatNameWithHyperlink(name);
+    const prefix = formattedName ? `${formattedName}: ` : ``;
+
+    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${this.formatIndent()}${text}`;
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
@@ -390,8 +392,11 @@ export class StreamReport extends Report {
 
     this.commit();
 
+    const formattedName = this.formatNameWithHyperlink(name);
+    const prefix = formattedName ? `${formattedName}: ` : ``;
+
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${prefix}${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -402,8 +407,11 @@ export class StreamReport extends Report {
 
     this.commit();
 
+    const formattedName = this.formatNameWithHyperlink(name);
+    const prefix = formattedName ? `${formattedName}: ` : ``;
+
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${this.formatIndent()}${text}`, {truncate: false});
+      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${prefix}${this.formatIndent()}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -525,13 +533,13 @@ export class StreamReport extends Report {
       if (this.cacheMissCount > 1) {
         fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
       } else if (this.cacheMissCount === 1) {
-        fetchStatus += `, one had to be fetched`;
+        fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
       }
     } else {
       if (this.cacheMissCount > 1) {
         fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
       } else if (this.cacheMissCount === 1) {
-        fetchStatus += ` - one package had to be fetched`;
+        fetchStatus += ` - one package had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
       }
     }
 
@@ -585,7 +593,10 @@ export class StreamReport extends Report {
       const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
       const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
 
-      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${this.formatName(null)}: ${spinner} ${ok}${ko}\n`);
+      const formattedName = this.formatName(null);
+      const prefix = formattedName ? `${formattedName}: ` : ``;
+
+      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${spinner} ${ok}${ko}\n`);
     }
 
     this.progressTimeout = setTimeout(() => {

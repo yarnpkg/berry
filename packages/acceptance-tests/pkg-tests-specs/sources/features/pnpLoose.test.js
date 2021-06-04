@@ -131,5 +131,6 @@ describe(`Features`, () => {
           expect(stderr).toMatch(/various-requires tried to access no-deps, but it isn't declared in its dependencies/);
         },
       ),
-    );  });
+    );
+  });
 });

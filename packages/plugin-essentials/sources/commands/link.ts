@@ -1,28 +1,18 @@
 import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
 import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
 import {npath, ppath}                                             from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                               from 'clipanion';
+import {Command, Option, Usage, UsageError}                       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
-  @Command.String()
-  destination!: string;
-
-  @Command.Boolean(`-A,--all`, {description: `Link all workspaces belonging to the target project to the current one`})
-  all: boolean = false;
-
-  @Command.Boolean(`-p,--private`, {description: `Also link private workspaces belonging to the target project to the current one`})
-  private: boolean = false;
-
-  @Command.Boolean(`-r,--relative`, {description: `Link workspaces using relative paths instead of absolute paths`})
-  relative: boolean = false;
+  static paths = [
+    [`link`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `connect the local project to another one`,
     details: `
       This command will set a new \`resolutions\` field in the project-level manifest and point it to the workspace at the specified location (even if part of another project).
-
-      There is no \`yarn unlink\` command. To unlink the workspaces from the current project one must revert the changes made to the \`resolutions\` field.
     `,
     examples: [[
       `Register a remote workspace for use in the current project`,
@@ -33,7 +23,20 @@ export default class LinkCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`link`)
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Link all workspaces belonging to the target project to the current one`,
+  });
+
+  private = Option.Boolean(`-p,--private`, false, {
+    description: `Also link private workspaces belonging to the target project to the current one`,
+  });
+
+  relative = Option.Boolean(`-r,--relative`, false, {
+    description: `Link workspaces using relative paths instead of absolute paths`,
+  });
+
+  destination = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -42,9 +45,13 @@ export default class LinkCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.destination));
 
-    const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins);
+    const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
     const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
     if (!workspace2)

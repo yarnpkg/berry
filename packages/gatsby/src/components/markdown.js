@@ -10,12 +10,18 @@ const Container = styled.article`
   line-height: 1.7;
 `;
 
+const TitleContainer = styled.div`
+  border-bottom: 1px solid;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+  flex-wrap: wrap-reverse;
+`;
 const Title = styled.h1`
   box-sizing: border-box;
 
   margin: 0;
-
-  border-bottom: 1px solid;
 
   font-weight: 600;
   font-size: 2rem;
@@ -24,6 +30,12 @@ const Title = styled.h1`
   + div > blockquote {
     font-style: normal;
   }
+`;
+
+const EditLink = styled.a`
+  font-size: initial;
+  font-weight: initial;
+  line-height: initial;
 `;
 
 const Content = styled.div`
@@ -161,11 +173,14 @@ const Content = styled.div`
   }
 `;
 
-export const PrerenderedMarkdown = ({title, children}) => <>
+export const PrerenderedMarkdown = ({title, children, editUrl}) => <>
   <Container>
-    <Title>
-      {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
-    </Title>
+    <TitleContainer>
+      <Title>
+        {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
+      </Title>
+      {editUrl && <EditLink target="_blank" href={editUrl}>Edit this page on GitHub</EditLink>}
+    </TitleContainer>
     <Content dangerouslySetInnerHTML={{__html: children}} />
   </Container>
 </>;

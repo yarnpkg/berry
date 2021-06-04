@@ -2,8 +2,8 @@ import {BaseCommand, WorkspaceRequiredError}                        from '@yarnp
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
 import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
-import type {PortablePath}                                          from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                 from 'clipanion';
+import type {PortablePath}                                               from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                         from 'clipanion';
 import {prompt}                                                     from 'enquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
@@ -11,38 +11,9 @@ import type {Hooks}                                                 from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {
-  @Command.Rest()
-  packages: Array<string> = [];
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.Boolean(`-E,--exact`, {description: `Don't use any semver modifier on the resolved range`})
-  exact: boolean = false;
-
-  @Command.Boolean(`-T,--tilde`, {description: `Use the \`~\` semver modifier on the resolved range`})
-  tilde: boolean = false;
-
-  @Command.Boolean(`-C,--caret`, {description: `Use the \`^\` semver modifier on the resolved range`})
-  caret: boolean = false;
-
-  @Command.Boolean(`-D,--dev`, {description: `Add a package as a dev dependency`})
-  dev: boolean = false;
-
-  @Command.Boolean(`-P,--peer`, {description: `Add a package as a peer dependency`})
-  peer: boolean = false;
-
-  @Command.Boolean(`-O,--optional`, {description: `Add / upgrade a package to an optional regular / peer dependency`})
-  optional: boolean = false;
-
-  @Command.Boolean(`--prefer-dev`, {description: `Add / upgrade a package to a dev dependency`})
-  preferDev: boolean = false;
-
-  @Command.Boolean(`-i,--interactive`, {description: `Reuse the specified package from other workspaces in the project`})
-  interactive: boolean | null = null;
-
-  @Command.Boolean(`--cached`, {description: `Reuse the highest version already used somewhere within the project`})
-  cached: boolean = false;
+  static paths = [
+    [`add`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `add dependencies to the project`,
@@ -88,7 +59,48 @@ export default class AddCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`add`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  exact = Option.Boolean(`-E,--exact`, false, {
+    description: `Don't use any semver modifier on the resolved range`,
+  });
+
+  tilde = Option.Boolean(`-T,--tilde`, false, {
+    description: `Use the \`~\` semver modifier on the resolved range`,
+  });
+
+  caret = Option.Boolean(`-C,--caret`, false, {
+    description: `Use the \`^\` semver modifier on the resolved range`,
+  });
+
+  dev = Option.Boolean(`-D,--dev`, false, {
+    description: `Add a package as a dev dependency`,
+  });
+
+  peer = Option.Boolean(`-P,--peer`, false, {
+    description: `Add a package as a peer dependency`,
+  });
+
+  optional = Option.Boolean(`-O,--optional`, false, {
+    description: `Add / upgrade a package to an optional regular / peer dependency`,
+  });
+
+  preferDev = Option.Boolean(`--prefer-dev`, false, {
+    description: `Add / upgrade a package to a dev dependency`,
+  });
+
+  interactive = Option.Boolean(`-i,--interactive`, false, {
+    description: `Reuse the specified package from other workspaces in the project`,
+  });
+
+  cached = Option.Boolean(`--cached`, false, {
+    description: `Reuse the highest version already used somewhere within the project`,
+  });
+
+  packages = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -152,13 +164,13 @@ export default class AddCommand extends BaseCommand {
           if (typeof firstError === `undefined`)
             throw new Error(`Assertion failed: Expected an error to have been set`);
 
-          const prettyError = this.cli.error(firstError);
+          if (!project.configuration.get(`enableNetwork`))
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
+          else
+            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
 
-          if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled):\n\n${prettyError}`);
-          } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range:\n\n${prettyError}`);
-          }
+          report.reportSeparator();
+          report.reportExceptionOnce(firstError);
         }
       }
     });
@@ -172,14 +184,14 @@ export default class AddCommand extends BaseCommand {
       Workspace,
       suggestUtils.Target,
       Descriptor,
-      Array<suggestUtils.Strategy>
+      Array<suggestUtils.Strategy>,
     ]> = [];
 
     const afterWorkspaceDependencyReplacementList: Array<[
       Workspace,
       suggestUtils.Target,
       Descriptor,
-      Descriptor
+      Descriptor,
     ]> = [];
 
     for (const [/*request*/, {suggestions}, target] of allSuggestions) {

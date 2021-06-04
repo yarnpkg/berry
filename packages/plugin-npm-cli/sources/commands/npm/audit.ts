@@ -1,27 +1,17 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, Project, ReportError, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                           from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                                                         from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
+import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                                    from 'clipanion';
+import * as t                                                                      from 'typanion';
 
-import * as npmAuditTypes                                                                       from '../../npmAuditTypes';
-import * as npmAuditUtils                                                                       from '../../npmAuditUtils';
+import * as npmAuditTypes                                                          from '../../npmAuditTypes';
+import * as npmAuditUtils                                                          from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AuditCommand extends BaseCommand {
-  @Command.Boolean(`-A,--all`)
-  all: boolean = false;
-
-  @Command.Boolean(`-R,--recursive`)
-  recursive: boolean = false;
-
-  @Command.String(`--environment`)
-  environment: npmAuditTypes.Environment = npmAuditTypes.Environment.All;
-
-  @Command.Boolean(`--json`)
-  json: boolean = false;
-
-  @Command.String(`--severity`)
-  severity: npmAuditTypes.Severity = npmAuditTypes.Severity.Info;
+  static paths = [
+    [`npm`, `audit`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `perform a vulnerability audit against the installed packages`,
@@ -57,7 +47,28 @@ export default class AuditCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `audit`)
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Audit dependencies from all workspaces`,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Audit transitive dependencies as well`,
+  });
+
+  environment = Option.String(`--environment`, npmAuditTypes.Environment.All, {
+    description: `Which environments to cover`,
+    validator: t.isEnum(npmAuditTypes.Environment),
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  severity = Option.String(`--severity`, npmAuditTypes.Severity.Info, {
+    description: `Minimal severity requested for packages to be displayed`,
+    validator: t.isEnum(npmAuditTypes.Severity),
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -74,8 +85,7 @@ export default class AuditCommand extends BaseCommand {
       for (const key of Object.keys(dependencies)) {
         if (!Object.prototype.hasOwnProperty.call(requires, key)) {
           delete dependencies[key];
-        }
-        else {
+        } else {
           dependencies[key].requires = {};
         }
       }
@@ -95,20 +105,12 @@ export default class AuditCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async () => {
-      try {
-        result = ((await npmHttpUtils.post(`/-/npm/v1/security/audits/quick`, body, {
-          authType: npmHttpUtils.AuthType.NO_AUTH,
-          configuration,
-          jsonResponse: true,
-          registry,
-        })) as unknown) as npmAuditTypes.AuditResponse;
-      } catch (err) {
-        if (err.name !== `HTTPError`) {
-          throw err;
-        } else {
-          throw new ReportError(MessageName.EXCEPTION, err.toString());
-        }
-      }
+      result = ((await npmHttpUtils.post(`/-/npm/v1/security/audits/quick`, body, {
+        authType: npmHttpUtils.AuthType.NO_AUTH,
+        configuration,
+        jsonResponse: true,
+        registry,
+      })) as unknown) as npmAuditTypes.AuditResponse;
     });
 
     if (httpReport.hasErrors())

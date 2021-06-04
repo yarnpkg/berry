@@ -8,12 +8,10 @@ import capitalize                                                   from 'lodash
 import startCase                                                    from 'lodash/startCase';
 
 import {dynamicRequire}                                             from './dynamicRequire';
-
 import {BASE_SDKS}                                                  from './sdks/base';
 import {COC_VIM_SDKS}                                               from './sdks/cocvim';
 import {VSCODE_SDKS}                                                from './sdks/vscode';
 
-export const OLD_SDK_FOLDER = `.vscode/pnpify` as PortablePath;
 export const SDK_FOLDER = `.yarn/sdks` as PortablePath;
 
 export const INTEGRATIONS_FILE = `integrations.yml` as Filename;
@@ -121,11 +119,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
   `const {createRequire, createRequireFromPath} = require(\`module\`);\n`,
-  ...(usePnpify ? [
-    `const {resolve, dirname} = require(\`path\`);\n`,
-  ] : [
-    `const {resolve} = require(\`path\`);\n`,
-  ]),
+  `const {resolve} = require(\`path\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
@@ -152,14 +146,20 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   ...(usePnpify ? [
     `\n`,
-    `  const pnpifyResolution = require.resolve(\`@yarnpkg/pnpify\`, {paths: [dirname(absPnpApiPath)]});\n`,
-    `  if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
-    `    Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
+    `  let pnpifyResolution;\n`,
+    `  try {\n`,
+    `    pnpifyResolution = absRequire.resolve(\`@yarnpkg/pnpify\`);\n`,
+    `  } catch (err) {}\n`,
+    `  \n`,
+    `  if (pnpifyResolution) {\n`,
+    `    if (typeof global[\`__yarnpkg_sdk_is_using_pnpify__\`] === \`undefined\`) {\n`,
+    `      Object.defineProperty(global, \`__yarnpkg_sdk_is_using_pnpify__\`, {configurable: true, value: true});\n`,
     `\n`,
-    `    process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
+    `      process.env.NODE_OPTIONS += \` -r \${pnpifyResolution}\`;\n`,
     `\n`,
-    `    // Apply PnPify to the current process\n`,
-    `    absRequire(pnpifyResolution).patchFs();\n`,
+    `      // Apply PnPify to the current process\n`,
+    `      absRequire(pnpifyResolution).patchFs();\n`,
+    `    }\n`,
     `  }\n`,
   ] : []),
   `}\n`,
@@ -278,13 +278,6 @@ export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexi
     ...requestedIntegrations,
     ...preexistingIntegrations,
   ]);
-
-  // TODO: remove in next major
-  const oldTargetFolder = ppath.join(projectRoot, OLD_SDK_FOLDER);
-  if (xfs.existsSync(oldTargetFolder) && !xfs.lstatSync(oldTargetFolder).isSymbolicLink()) {
-    report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files in the old ${formatUtils.pretty(configuration, OLD_SDK_FOLDER, formatUtils.Type.PATH)} folder. You might need to manually update existing references outside the ${formatUtils.pretty(configuration, `.vscode`, formatUtils.Type.PATH)} folder (e.g. .gitignore)...`);
-    await xfs.removePromise(oldTargetFolder);
-  }
 
   if (xfs.existsSync(targetFolder)) {
     report.reportWarning(MessageName.UNNAMED, `Cleaning up the existing SDK files...`);

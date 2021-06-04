@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/parsers",
-  "version": "2.3.0",
+  "version": "2.4.0-rc.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -8,6 +8,7 @@
     "tslib": "^1.13.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "^3.11.1",
     "pegjs": "^0.10.0"
   },
   "scripts": {
@@ -28,9 +29,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-parsers"
   },
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "2.3.0"
 }

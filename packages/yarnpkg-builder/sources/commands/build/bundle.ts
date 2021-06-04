@@ -1,18 +1,18 @@
 import {getDynamicLibs}                                                     from '@yarnpkg/cli';
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
+import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
-import {Command, Usage}                                                     from 'clipanion';
+import {Command, Option, Usage}                                             from 'clipanion';
+import {build, Plugin}                                                      from 'esbuild-wasm';
 import fs                                                                   from 'fs';
+import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
-import TerserPlugin                                                         from 'terser-webpack-plugin';
 import {promisify}                                                          from 'util';
-import webpack                                                              from 'webpack';
 
 import {findPlugins}                                                        from '../../tools/findPlugins';
-import {makeConfig, WebpackPlugin}                                          from '../../tools/makeConfig';
 
 const execFile = promisify(cp.execFile);
 
@@ -23,7 +23,7 @@ const pkgJsonVersion = (basedir: string): string => {
 const suggestHash = async (basedir: string) => {
   try {
     const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
-    return `git.${unique.stdout.trim().replace(/-/g, ``)}`;
+    return `git.${unique.stdout.trim().replace(/-/g, ``).replace(`.`, `.hash-`)}`;
   } catch {
     return null;
   }
@@ -31,17 +31,9 @@ const suggestHash = async (basedir: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildBundleCommand extends Command {
-  @Command.String(`--profile`, {description: `Only include plugins that are part of the the specified profile`})
-  profile: string = `standard`;
-
-  @Command.Array(`--plugin`, {description: `An array of plugins that should be included besides the ones specified in the profile`})
-  plugins: Array<string> = [];
-
-  @Command.Boolean(`--no-git-hash`, {description: `Don't include the git hash of the current commit in bundle version`})
-  noGitHash: boolean = false;
-
-  @Command.Boolean(`--no-minify`, {description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`})
-  noMinify: boolean = false;
+  static paths = [
+    [`build`, `bundle`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
@@ -57,7 +49,26 @@ export default class BuildBundleCommand extends Command {
     ]],
   });
 
-  @Command.Path(`build`, `bundle`)
+  profile = Option.String(`--profile`, `standard`, {
+    description: `Only include plugins that are part of the the specified profile`,
+  });
+
+  plugins = Option.Array(`--plugin`, [], {
+    description: `An array of plugins that should be included besides the ones specified in the profile`,
+  });
+
+  noGitHash = Option.Boolean(`--no-git-hash`, false, {
+    description: `Don't include the git hash of the current commit in bundle version`,
+  });
+
+  noMinify = Option.Boolean(`--no-minify`, false, {
+    description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`,
+  });
+
+  sourceMap = Option.Boolean(`--source-map`, false, {
+    description: `Includes a source map in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
@@ -66,7 +77,7 @@ export default class BuildBundleCommand extends Command {
 
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
     const modules = [...getDynamicLibs().keys()].concat(plugins);
-    const output = `${basedir}/bundles/yarn.js`;
+    const output = path.join(basedir, `bundles/yarn.js`);
 
     let version = pkgJsonVersion(basedir);
 
@@ -79,8 +90,6 @@ export default class BuildBundleCommand extends Command {
         ? `${version}.${hash}`
         : `${version}-${hash}`;
 
-    let buildErrors: string | null = null;
-
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
@@ -88,97 +97,51 @@ export default class BuildBundleCommand extends Command {
       forgettableNames: new Set([MessageName.UNNAMED]),
     }, async report => {
       await report.startTimerPromise(`Building the CLI`, async () => {
-        const progress = StreamReport.progressViaCounter(1);
-        report.reportProgress(progress);
+        const valLoad = (p: string, values: any) => {
+          const fn = require(p.replace(/.ts$/, `.val.js`));
+          return fn(values).code;
+        };
 
-        const prettyWebpack = structUtils.prettyIdent(configuration, structUtils.makeIdent(null, `webpack`));
-
-        const compiler = webpack(makeConfig({
-          context: basedir,
-          entry: `./sources/cli.ts`,
-
-          bail: true,
-
-          ...!this.noMinify && {
-            mode: `production`,
+        const valLoader: Plugin = {
+          name: `val-loader`,
+          setup(build) {
+            build.onLoad({filter: /[\\/]getPluginConfiguration\.ts$/}, async args => ({
+              contents: valLoad(args.path, {modules, plugins}),
+              loader: `default`,
+            }));
           },
+        };
 
-          ...!this.noMinify && {
-            optimization: {
-              minimizer: [
-                new TerserPlugin({
-                  cache: false,
-                  extractComments: false,
-                  terserOptions: {
-                    ecma: 8,
-                  },
-                }) as WebpackPlugin,
-              ],
-            },
+        const res = await build({
+          banner: {
+            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
           },
-
-          output: {
-            filename: path.basename(output),
-            path: path.dirname(output),
-          },
-
-          resolve: {
-            alias: {
-              [path.resolve(basedir, `./sources/tools/getPluginConfiguration.ts`)]: path.resolve(basedir, `./sources/tools/getPluginConfiguration.val.js`),
-            },
-          },
-
-          module: {
-            rules: [{
-            // This file is particular in that it exposes the bundle
-            // configuration to the bundle itself (primitive introspection).
-              test: /[\\/]getPluginConfiguration\.val\.js$/,
-              use: {
-                loader: require.resolve(`val-loader`),
-                options: {modules, plugins},
-              },
-            }],
-          },
-
-          plugins: [
-            // esprima is only needed for parsing !!js/function, which isn't part of the FAILSAFE_SCHEMA.
-            // Unfortunately, js-yaml declares it as a hard dependency and requires the entire module,
-            // which causes webpack to add 0.13 MB of unused code to the bundle.
-            // Fortunately, js-yaml wraps the require call inside a try / catch block, so we can just ignore it.
-            // Reference: https://github.com/nodeca/js-yaml/blob/34e5072f43fd36b08aaaad433da73c10d47c41e5/lib/js-yaml/type/js/function.js#L15
-            new webpack.IgnorePlugin({
-              resourceRegExp: /^esprima$/,
-              contextRegExp: /js-yaml/,
-            }),
-            new webpack.BannerPlugin({
-              entryOnly: true,
-              banner: `#!/usr/bin/env node\n/* eslint-disable */`,
-              raw: true,
-            }),
-            new webpack.DefinePlugin({
-              [`YARN_VERSION`]: JSON.stringify(version),
-            }),
-            new webpack.ProgressPlugin((percentage: number, message: string) => {
-              progress.set(percentage);
-
-              if (message) {
-                report.reportInfoOnce(MessageName.UNNAMED, `${prettyWebpack}: ${message}`);
-              }
-            }),
-          ],
-        }));
-
-        buildErrors = await new Promise<string | null>((resolve, reject) => {
-          compiler.run((err, stats) => {
-            if (err) {
-              reject(err);
-            } else if (stats && stats.compilation.errors.length > 0) {
-              resolve(stats.toString(`errors-only`));
-            } else {
-              resolve(null);
-            }
-          });
+          entryPoints: [path.join(basedir, `sources/cli.ts`)],
+          bundle: true,
+          define: {YARN_VERSION: JSON.stringify(version)},
+          outfile: output,
+          logLevel: `silent`,
+          plugins: [valLoader, pnpPlugin()],
+          minify: !this.noMinify,
+          sourcemap: this.sourceMap ? `inline` : false,
+          target: `node12`,
         });
+
+        for (const warning of res.warnings) {
+          if (warning.location !== null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, warning.text);
+        }
+
+
+        for (const warning of res.warnings) {
+          if (warning.location === null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
+          report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
+        }
       });
     });
 
@@ -186,9 +149,8 @@ export default class BuildBundleCommand extends Command {
 
     const Mark = formatUtils.mark(configuration);
 
-    if (buildErrors) {
-      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build the CLI:`);
-      report.reportError(MessageName.EXCEPTION, `${buildErrors}`);
+    if (report.hasErrors()) {
+      report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build the CLI`);
     } else {
       report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
@@ -196,8 +158,11 @@ export default class BuildBundleCommand extends Command {
 
       report.reportSeparator();
 
+      const basedirReq = createRequire(`${basedir}/package.json`);
+
       for (const plugin of plugins) {
-        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(plugin))}`);
+        const {name} = basedirReq(`${plugin}/package.json`);
+        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(name))}`);
       }
     }
 

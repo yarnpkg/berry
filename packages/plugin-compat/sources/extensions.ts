@@ -83,6 +83,18 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `^16.8.2`,
     },
   }],
+  // https://github.com/xz64/license-webpack-plugin/pull/100
+  [`license-webpack-plugin@*`, {
+    peerDependenciesMeta: {
+      [`webpack`]: optionalPeerDep,
+    },
+  }],
+  // https://github.com/snowpackjs/snowpack/issues/3158
+  [`snowpack@>=3.3.0`, {
+    dependencies: {
+      [`node-gyp`]: `^7.1.0`,
+    },
+  }],
   // https://github.com/iarna/promise-inflight/pull/4
   [`promise-inflight@*`, {
     peerDependenciesMeta: {
@@ -139,16 +151,18 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       eslint: `>= 6`,
       typescript: `>= 2.7`,
       webpack: `>= 4`,
+      'vue-template-compiler': `*`,
     },
     peerDependenciesMeta: {
       eslint: optionalPeerDep,
+      'vue-template-compiler': optionalPeerDep,
     },
   }],
-  // https://github.com/react-component/animate/pull/89
-  [`rc-animate@*`, {
+  // https://github.com/react-component/animate/pull/116
+  [`rc-animate@<=3.1.1`, {
     peerDependencies: {
-      react: `^15.0.0 || ^16.0.0`,
-      "react-dom": `^15.0.0 || ^16.0.0`,
+      react: `>=16.9.0`,
+      'react-dom': `>=16.9.0`,
     },
   }],
   // https://github.com/react-bootstrap-table/react-bootstrap-table2/pull/1491
@@ -197,6 +211,83 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`react-portal@*`, {
     peerDependencies: {
       'react-dom': `^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0`,
+    },
+  }],
+  // https://github.com/facebook/create-react-app/pull/9872
+  [`react-scripts@<=4.0.1`, {
+    peerDependencies: {
+      [`react`]: `*`,
+    },
+  }],
+  // https://github.com/DevExpress/testcafe/pull/5872
+  [`testcafe@<=1.10.1`, {
+    dependencies: {
+      '@babel/plugin-transform-for-of': `^7.12.1`,
+      '@babel/runtime': `^7.12.5`,
+    },
+  }],
+  // https://github.com/DevExpress/testcafe-legacy-api/pull/51
+  [`testcafe-legacy-api@<=4.2.0`, {
+    dependencies: {
+      'testcafe-hammerhead': `^17.0.1`,
+      'read-file-relative': `^1.2.0`,
+    },
+  }],
+  // https://github.com/googleapis/nodejs-firestore/pull/1425
+  [`@google-cloud/firestore@<=4.9.3`, {
+    dependencies: {
+      protobufjs: `^6.8.6`,
+    },
+  }],
+  // https://github.com/thinhle-agilityio/gatsby-source-apiserver/pull/58
+  [`gatsby-source-apiserver@*`, {
+    dependencies: {
+      [`babel-polyfill`]: `^6.26.0`,
+    },
+  }],
+  // https://github.com/webpack/webpack-cli/pull/2097
+  [`@webpack-cli/package-utils@<=1.0.1-alpha.4`, {
+    dependencies: {
+      [`cross-spawn`]: `^7.0.3`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/20156
+  [`gatsby-remark-prismjs@<3.3.28`, {
+    dependencies: {
+      [`lodash`]: `^4`,
+    },
+  }],
+  // https://github.com/Creatiwity/gatsby-plugin-favicon/pull/65
+  [`gatsby-plugin-favicon@*`, {
+    peerDependencies: {
+      [`webpack`]: `*`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/28759
+  [`gatsby-plugin-sharp@*`, {
+    dependencies: {
+      [`debug`]: `^4.3.1`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/28759
+  [`gatsby-react-router-scroll@*`, {
+    dependencies: {
+      [`prop-types`]: `^15.7.2`,
+    },
+  }],
+  // https://github.com/rebassjs/rebass/pull/934
+  [`@rebass/forms@*`, {
+    dependencies: {
+      [`@styled-system/should-forward-prop`]: `^5.0.0`,
+    },
+    peerDependencies: {
+      react: `^16.8.6`,
+    },
+  }],
+  // https://github.com/rebassjs/rebass/pull/934
+  [`rebass@*`, {
+    peerDependencies: {
+      react: `^16.8.6`,
     },
   }],
 ];

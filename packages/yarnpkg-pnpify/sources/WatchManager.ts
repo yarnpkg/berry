@@ -1,6 +1,5 @@
 import type {Filename, PortablePath, Watcher, WatchCallback} from '@yarnpkg/fslib';
-
-import {EventEmitter}                                        from 'events';
+import {EventEmitter}                                   from 'events';
 
 import type {ResolvedPath}                                   from './resolveNodeModulesPath';
 

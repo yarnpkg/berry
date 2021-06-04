@@ -110,6 +110,14 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async fstatPromise(fd: number): Promise<never> {
+    throw makeError();
+  }
+
+  fstatSync(fd: number): never {
+    throw makeError();
+  }
+
   async lstatPromise(p: PortablePath): Promise<never> {
     throw makeError();
   }

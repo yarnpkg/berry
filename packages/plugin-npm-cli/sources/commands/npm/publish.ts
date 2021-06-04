@@ -2,18 +2,13 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, Usage, UsageError}                                                             from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
-  @Command.String(`--access`, {description: `The access for the published package (public or restricted)`})
-  access?: string;
-
-  @Command.String(`--tag`, {description: `The tag on the registry that the package should be attached to`})
-  tag: string = `latest`;
-
-  @Command.Boolean(`--tolerate-republish`, {description: `Warn and exit when republishing an already existing version of a package`})
-  tolerateRepublish: boolean = false;
+  static paths = [
+    [`npm`, `publish`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -31,7 +26,18 @@ export default class NpmPublishCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `publish`)
+  access = Option.String(`--access`, {
+    description: `The access for the published package (public or restricted)`,
+  });
+
+  tag = Option.String(`--tag`, `latest`, {
+    description: `The tag on the registry that the package should be attached to`,
+  });
+
+  tolerateRepublish = Option.Boolean(`--tolerate-republish`, false, {
+    description: `Warn and exit when republishing an already existing version of a package`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -73,11 +79,9 @@ export default class NpmPublishCommand extends BaseCommand {
             report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
             return;
           }
-        } catch (error) {
-          if (error.name !== `HTTPError`) {
-            throw error;
-          } else if (error.response.statusCode !== 404) {
-            throw new ReportError(MessageName.NETWORK_ERROR, `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`);
+        } catch (err) {
+          if (err.originalError?.response?.statusCode !== 404) {
+            throw err;
           }
         }
       }
@@ -99,29 +103,15 @@ export default class NpmPublishCommand extends BaseCommand {
           registry,
         });
 
-        try {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            jsonResponse: true,
-          });
-        } catch (error) {
-          if (error.name !== `HTTPError`) {
-            throw error;
-          } else {
-            const message = error.response.body && error.response.body.error
-              ? error.response.body.error
-              : `The remote server answered with HTTP ${error.response.statusCode} ${error.response.statusMessage}`;
-
-            report.reportError(MessageName.NETWORK_ERROR, message);
-          }
-        }
+        await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+          configuration,
+          registry,
+          ident,
+          jsonResponse: true,
+        });
       });
 
-      if (!report.hasErrors()) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
-      }
+      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
     });
 
     return report.exitCode();

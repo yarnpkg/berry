@@ -1,12 +1,12 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
-import {Descriptor, Locator, semverUtils}                                                                             from '@yarnpkg/core';
-import {LinkType}                                                                                                     from '@yarnpkg/core';
-import {structUtils}                                                                                                  from '@yarnpkg/core';
-import semver                                                                                                         from 'semver';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash, Package, miscUtils} from '@yarnpkg/core';
+import {Descriptor, Locator, semverUtils}                                                                                        from '@yarnpkg/core';
+import {LinkType}                                                                                                                from '@yarnpkg/core';
+import {structUtils}                                                                                                             from '@yarnpkg/core';
+import semver                                                                                                                    from 'semver';
 
-import {NpmSemverFetcher}                                                                                             from './NpmSemverFetcher';
-import {PROTOCOL}                                                                                                     from './constants';
-import * as npmHttpUtils                                                                                              from './npmHttpUtils';
+import {NpmSemverFetcher}                                                                                                        from './NpmSemverFetcher';
+import {PROTOCOL}                                                                                                                from './constants';
+import * as npmHttpUtils                                                                                                         from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
@@ -53,9 +53,16 @@ export class NpmSemverResolver implements Resolver {
       jsonResponse: true,
     });
 
-    const candidates = Object.keys(registryData.versions)
-      .map(version => new semver.SemVer(version))
-      .filter(version => range.test(version));
+    const candidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
+      try {
+        const candidate = new semverUtils.SemVer(version);
+        if (range.test(candidate)) {
+          return candidate;
+        }
+      } catch { }
+
+      return miscUtils.mapAndFilter.skip;
+    });
 
     const noDeprecatedCandidates = candidates.filter(version => {
       return !registryData.versions[version.raw].deprecated;
@@ -87,18 +94,20 @@ export class NpmSemverResolver implements Resolver {
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    return references
-      .map(reference => {
-        try {
-          return new semver.SemVer(reference.slice(PROTOCOL.length));
-        } catch {
-          return null;
+    return miscUtils.mapAndFilter(references, reference => {
+      try {
+        const {selector} = structUtils.parseRange(reference, {requireProtocol: PROTOCOL});
+        const version = new semverUtils.SemVer(selector);
+
+        if (range.test(version)) {
+          return {reference, version};
         }
-      })
-      .filter((version): version is semver.SemVer => version !== null)
-      .filter(version => range.test(version))
-      .sort((a, b) => -a.compare(b))
-      .map(version => structUtils.makeLocator(descriptor, `${PROTOCOL}${version.raw}`));
+      } catch { }
+
+      return miscUtils.mapAndFilter.skip;
+    })
+      .sort((a, b) => -a.version.compare(b.version))
+      .map(({reference}) => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -139,7 +148,7 @@ export class NpmSemverResolver implements Resolver {
 
     // Show deprecation warnings
     if (typeof manifest.raw.deprecated === `string`)
-      opts.report.reportWarning(MessageName.DEPRECATED_PACKAGE, `${structUtils.prettyLocator(opts.project.configuration, locator)} is deprecated: ${manifest.raw.deprecated}`);
+      opts.report.reportWarningOnce(MessageName.DEPRECATED_PACKAGE, `${structUtils.prettyLocator(opts.project.configuration, locator)} is deprecated: ${manifest.raw.deprecated}`);
 
     return {
       ...locator,

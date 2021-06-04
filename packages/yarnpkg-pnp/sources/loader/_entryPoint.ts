@@ -24,13 +24,13 @@ const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
 
 // We create a virtual filesystem that will do three things:
-// 1. all requests inside a folder named "$$virtual" will be remapped according the virtual folder rules
+// 1. all requests inside a folder named "__virtual___" will be remapped according the virtual folder rules
 // 2. all requests going inside a Zip archive will be handled by the Zip fs implementation
 // 3. any remaining request will be forwarded to Node as-is
 const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
   baseFs: new ZipOpenFS({
     baseFs: nodeFs,
-    libzip: getLibzipSync(),
+    libzip: () => getLibzipSync(),
     maxOpenFiles: 80,
     readOnlyArchives: true,
   }),

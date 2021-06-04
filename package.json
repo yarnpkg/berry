@@ -5,35 +5,32 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {
-    "@arcanis/sherlock": "^1.0.38",
+  "devDependencies": {
+    "@arcanis/sherlock": "^2.0.2",
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "@babel/plugin-proposal-dynamic-import": "^7.10.1",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.13.8",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.1",
     "@babel/plugin-proposal-optional-chaining": "^7.10.1",
     "@babel/plugin-transform-modules-commonjs": "^7.10.1",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
     "@babel/preset-typescript": "^7.10.1",
-    "@babel/register": "^7.10.1",
+    "@babel/register": "^7.13.16",
     "@swc/core": "^1.2.40",
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
-    "@typescript-eslint/eslint-plugin": "^4.2.0",
-    "@typescript-eslint/parser": "^4.2.0",
-    "@yarnpkg/cli": "workspace:^2.4.0",
-    "@yarnpkg/core": "workspace:^2.4.0",
-    "@yarnpkg/eslint-config": "workspace:^0.2.0",
-    "@yarnpkg/pnpify": "workspace:^2.4.0",
+    "@yarnpkg/cli": "workspace:*",
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/eslint-config": "workspace:*",
+    "@yarnpkg/pnpify": "workspace:*",
     "babel-jest": "^26.0.1",
-    "clipanion": "^2.6.2",
+    "clipanion": "^3.0.0-rc.10",
     "eslint": "^6.8.0",
-    "eslint-plugin-arca": "^0.9.0",
-    "eslint-plugin-react": "^7.20.0",
     "github-api": "^3.2.2",
     "jest": "^26.0.1",
     "jest-environment-node": "^26.0.1",
@@ -41,7 +38,7 @@
     "micromatch": "^4.0.2",
     "ts-node": "github:TypeStrong/ts-node#ab/swc-compiler",
     "tslib": "^1.13.0",
-    "typescript": "4.1.0-beta",
+    "typescript": "^4.3.2",
     "typescript-cached-transpile": "^0.0.6"
   },
   "resolutions": {
@@ -91,9 +88,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "."
   },
   "engines": {
-    "node": ">=10.19.0"
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   }
 }

@@ -1,7 +1,6 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
-import type {Hooks as StageHooks}                          from '@yarnpkg/plugin-stage';
-
+import type {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
 import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';
@@ -13,20 +12,9 @@ export {jsInstallUtils};
 export {pnpUtils};
 
 export const getPnpPath = (project: Project) => {
-  let mainFilename;
-  let otherFilename;
-
-  if (project.topLevelWorkspace.manifest.type === `module`) {
-    mainFilename = `.pnp.cjs`;
-    otherFilename = `.pnp.js`;
-  } else {
-    mainFilename = `.pnp.js`;
-    otherFilename = `.pnp.cjs`;
-  }
-
   return {
-    main: ppath.join(project.cwd, mainFilename as Filename),
-    other: ppath.join(project.cwd, otherFilename as Filename),
+    cjs: ppath.join(project.cwd, Filename.pnpCjs),
+    cjsLegacy: ppath.join(project.cwd, Filename.pnpJs),
   };
 };
 
@@ -35,7 +23,7 @@ export const quotePathIfNeeded = (path: string) => {
 };
 
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
-  const pnpPath: PortablePath = getPnpPath(project).main;
+  const pnpPath: PortablePath = getPnpPath(project).cjs;
   const pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath))}`;
 
   if (pnpPath.includes(` `) && semver.lt(process.versions.node, `12.0.0`))
@@ -44,6 +32,8 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
   if (xfs.existsSync(pnpPath)) {
     let nodeOptions = env.NODE_OPTIONS || ``;
 
+    // We still support .pnp.js files to improve multi-project compatibility.
+    // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
     const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
     nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
 
@@ -54,8 +44,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 }
 
 async function populateYarnPaths(project: Project, definePath: (path: PortablePath | null) => void) {
-  definePath(getPnpPath(project).main);
-  definePath(getPnpPath(project).other);
+  definePath(getPnpPath(project).cjs);
 
   definePath(project.configuration.get(`pnpDataPath`));
   definePath(project.configuration.get(`pnpUnpluggedFolder`));

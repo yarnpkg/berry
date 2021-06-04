@@ -1,43 +1,54 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
+import {CIRCLE as isCircleCI}                                               from 'ci-info';
+import stripAnsi                                                            from 'strip-ansi';
 
-import type {Configuration}                                                 from './Configuration';
+import type {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
 import type {Report}                                                        from './Report';
 import * as miscUtils                                                       from './miscUtils';
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
 
-export enum Type {
-  NO_HINT = `NO_HINT`,
+// We have to workaround a TS bug:
+// https://github.com/microsoft/TypeScript/issues/35329
+//
+// We also can't use const enum because Babel doesn't support them:
+// https://github.com/babel/babel/issues/8741
+//
+export const Type = {
+  NO_HINT: `NO_HINT`,
 
-  NULL = `NULL`,
+  NULL: `NULL`,
 
-  SCOPE = `SCOPE`,
-  NAME = `NAME`,
-  RANGE = `RANGE`,
-  REFERENCE = `REFERENCE`,
+  SCOPE: `SCOPE`,
+  NAME: `NAME`,
+  RANGE: `RANGE`,
+  REFERENCE: `REFERENCE`,
 
-  NUMBER = `NUMBER`,
-  PATH = `PATH`,
-  URL = `URL`,
-  ADDED = `ADDED`,
-  REMOVED = `REMOVED`,
-  CODE = `CODE`,
+  NUMBER: `NUMBER`,
+  PATH: `PATH`,
+  URL: `URL`,
+  ADDED: `ADDED`,
+  REMOVED: `REMOVED`,
+  CODE: `CODE`,
 
-  DURATION = `DURATION`,
-  SIZE = `SIZE`,
+  DURATION: `DURATION`,
+  SIZE: `SIZE`,
 
-  IDENT = `IDENT`,
-  DESCRIPTOR = `DESCRIPTOR`,
-  LOCATOR = `LOCATOR`,
-  RESOLUTION = `RESOLUTION`,
-  DEPENDENT = `DEPENDENT`,
-  PACKAGE_EXTENSION = `PACKAGE_EXTENSION`,
-}
+  IDENT: `IDENT`,
+  DESCRIPTOR: `DESCRIPTOR`,
+  LOCATOR: `LOCATOR`,
+  RESOLUTION: `RESOLUTION`,
+  DEPENDENT: `DEPENDENT`,
+  PACKAGE_EXTENSION: `PACKAGE_EXTENSION`,
+  SETTING: `SETTING`,
+} as const;
+
+export type Type = keyof typeof Type;
 
 export enum Style {
-  BOLD = 1 << 1
+  BOLD = 1 << 1,
 }
 
 const chalkOptions = process.env.GITHUB_ACTIONS
@@ -47,11 +58,11 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 export const supportsColor = chalkOptions.level !== 0;
-export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS && !isCircleCI;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 
-const colors = new Map([
+const colors = new Map<Type, [string, number] | null>([
   [Type.NO_HINT, null],
 
   [Type.NULL, [`#a853b5`, 129]],
@@ -176,6 +187,18 @@ const transforms = {
     },
   }),
 
+  [Type.SETTING]: validateTransform({
+    pretty: (configuration: Configuration, settingName: keyof ConfigurationValueMap) => {
+      // Asserts that the setting is valid
+      configuration.get(settingName);
+
+      return applyHyperlink(configuration, applyColor(configuration, settingName, Type.CODE), `https://yarnpkg.com/configuration/yarnrc#${settingName}`);
+    },
+    json: (settingName: string) => {
+      return settingName;
+    },
+  }),
+
   [Type.DURATION]: validateTransform({
     pretty: (configuration: Configuration, duration: number) => {
       if (duration > 1000 * 60) {
@@ -230,6 +253,11 @@ export type Source<T> = T extends keyof AllTransforms
 export type Tuple<T extends Type = Type> =
   readonly [Source<T>, T];
 
+export type Field = {
+  label: string;
+  value: Tuple<any>;
+};
+
 export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T> {
   return [value, formatType];
 }
@@ -268,6 +296,24 @@ export function applyColor(configuration: Configuration, value: string, formatTy
     throw new Error(`Invalid format type ${color}`);
 
   return fn(value);
+}
+
+const isKonsole = !!process.env.KONSOLE_VERSION;
+
+export function applyHyperlink(configuration: Configuration, text: string, href: string) {
+  // Only print hyperlinks if allowed per configuration
+  if (!configuration.get(`enableHyperlinks`))
+    return text;
+
+  // We use ESC as ST for Konsole because it doesn't support
+  // the non-standard BEL character for hyperlinks
+  if (isKonsole)
+    return `\u001b]8;;${href}\u001b\\${text}\u001b]8;;\u001b\\`;
+
+  // We use BELL as ST because it seems that iTerm doesn't properly support
+  // the \x1b\\ sequence described in the reference document
+  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+  return `\u001b]8;;${href}\u0007${text}\u001b]8;;\u0007`;
 }
 
 export function pretty<T extends Type>(configuration: Configuration, value: Source<T>, formatType: T | string): string {
@@ -313,6 +359,10 @@ export function mark(configuration: Configuration) {
   };
 }
 
+export function prettyField(configuration: Configuration, {label, value: [value, formatType]}: Field) {
+  return `${pretty(configuration, label, Type.CODE)}: ${pretty(configuration, value, formatType)}`;
+}
+
 export enum LogLevel {
   Error = `error`,
   Warning = `warning`,
@@ -350,7 +400,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       return defaultLevel;
 
     if (logFiltersByText.size > 0) {
-      const level = logFiltersByText.get(chalk.reset(text));
+      const level = logFiltersByText.get(stripAnsi(text));
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
       }

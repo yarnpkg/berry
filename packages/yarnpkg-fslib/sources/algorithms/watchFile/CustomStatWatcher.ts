@@ -1,5 +1,5 @@
-import {EventEmitter}                                                  from 'events';
-import type {Stats}                                                    from 'fs';
+import {EventEmitter}                                             from 'events';
+import type {BigIntStats, Stats}                                       from 'fs';
 
 import type {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../../FakeFS';
 import type {Path}                                                     from '../../path';
@@ -7,7 +7,7 @@ import * as statUtils                                                  from '../
 
 export enum Event {
   Change = `change`,
-  Stop = `stop`
+  Stop = `stop`,
 }
 
 export enum Status {
@@ -26,7 +26,6 @@ export function assertStatus<T extends Status>(current: Status, expected: T): as
 export type ListenerOptions = Omit<Required<WatchFileOptions>, 'bigint'>;
 
 export type CustomStatWatcherOptions = {
-  // BigInt Stats aren't currently implemented in the FS layer, so this is a no-op
   bigint?: boolean,
 };
 
@@ -41,7 +40,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
   private changeListeners: Map<WatchFileCallback, NodeJS.Timeout> = new Map();
 
-  private lastStats: Stats;
+  private lastStats: Stats | BigIntStats;
 
   private startTimeout: NodeJS.Timeout | null = null;
 
@@ -96,10 +95,14 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
   stat() {
     try {
-      return this.fakeFs.statSync(this.path);
+      return this.fakeFs.statSync(this.path, {bigint: this.bigint});
     } catch (error) {
       if (error.code === `ENOENT`) {
-        return statUtils.makeEmptyStats();
+        const statInstance = this.bigint
+          ? ((new statUtils.BigIntStatsEntry() as unknown) as BigIntStats)
+          : ((new statUtils.StatEntry() as unknown) as Stats);
+
+        return statUtils.clearStats(statInstance);
       } else {
         throw error;
       }

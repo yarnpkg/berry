@@ -1,16 +1,15 @@
-import {PortablePath, npath, toFilename}      from '@yarnpkg/fslib';
-import crypto                                 from 'crypto';
-import finalhandler                           from 'finalhandler';
-import https                                  from 'https';
-import http                                   from 'http';
-
+import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
+import crypto                            from 'crypto';
+import finalhandler                      from 'finalhandler';
+import https                             from 'https';
+import http                              from 'http';
 import type {IncomingMessage, ServerResponse} from 'http';
-import invariant                              from 'invariant';
+import invariant                         from 'invariant';
 import type {AddressInfo}                     from 'net';
-import pem                                    from 'pem';
-import semver                                 from 'semver';
-import serveStatic                            from 'serve-static';
-import {promisify}                            from 'util';
+import pem                               from 'pem';
+import semver                            from 'semver';
+import serveStatic                       from 'serve-static';
+import {promisify}                       from 'util';
 
 const deepResolve = require(`super-resolve`);
 
@@ -677,7 +676,7 @@ export const getHttpsCertificates = async () => {
     csr: serverCSRResult.csr,
     clientKey: serverCSRResult.clientKey,
     serviceKey: caCertificate.clientKey,
-    serviceCertificate:  caCertificate.certificate,
+    serviceCertificate: caCertificate.certificate,
     days: 365,
   });
 

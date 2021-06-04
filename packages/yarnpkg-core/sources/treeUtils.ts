@@ -16,7 +16,7 @@ export type TreeMap = {
 
 export type TreeifyNode = {
   [key: string]: TreeifyNode;
-}
+};
 
 export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
   const target = {};

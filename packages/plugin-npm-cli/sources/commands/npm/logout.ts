@@ -2,7 +2,7 @@ import {BaseCommand}                                        from '@yarnpkg/cli';
 import {Configuration, MessageName, miscUtils, structUtils} from '@yarnpkg/core';
 import {StreamReport}                                       from '@yarnpkg/core';
 import {npmConfigUtils}                                     from '@yarnpkg/plugin-npm';
-import {Command, Usage}                                     from 'clipanion';
+import {Command, Option, Usage}                             from 'clipanion';
 
 import {getRegistry}                                        from './login';
 
@@ -13,14 +13,9 @@ const LOGOUT_KEYS = new Set([
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLogoutCommand extends BaseCommand {
-  @Command.String(`-s,--scope`, {description: `Logout of the registry configured for a given scope`})
-  scope?: string;
-
-  @Command.Boolean(`--publish`, {description: `Logout of the publish registry`})
-  publish: boolean = false;
-
-  @Command.Boolean(`-A,--all`, {description: `Logout of all registries`})
-  all: boolean = false;
+  static paths = [
+    [`npm`, `logout`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -49,7 +44,18 @@ export default class NpmLogoutCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `logout`)
+  scope = Option.String(`-s,--scope`, {
+    description: `Logout of the registry configured for a given scope`,
+  });
+
+  publish = Option.Boolean(`--publish`, false, {
+    description: `Logout of the publish registry`,
+  });
+
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Logout of all registries`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

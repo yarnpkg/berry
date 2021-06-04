@@ -8,7 +8,6 @@ import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/r
 import {Command, Usage}                      from 'clipanion';
 import InkTextInput                          from 'ink-text-input';
 import {Box, Text}                           from 'ink';
-
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
@@ -17,6 +16,10 @@ const TARGETS = [`regular`, `dev`, `peer`];
 
 // eslint-disable-next-line arca/no-default-export
 export default class SearchCommand extends BaseCommand {
+  static paths = [
+    [`search`],
+  ];
+
   static usage: Usage = Command.Usage({
     category: `Interactive commands`,
     description: `open the search interface`,
@@ -29,7 +32,6 @@ export default class SearchCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`search`)
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
@@ -148,7 +150,7 @@ export default class SearchCommand extends BaseCommand {
           target =>
             <Box key={target} width={14} marginLeft={1}>
               <Text>
-                {` `}<Gem active={action===target} />{` `}
+                {` `}<Gem active={action === target} />{` `}
                 <Text bold>{target}</Text>
               </Text>
             </Box>

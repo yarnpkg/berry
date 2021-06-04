@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {
   Container,
   Main,
@@ -11,11 +9,14 @@ import {
   Scalar,
 
   Theme,
-  ComponentPropsWithoutTheme,
   Dictionary,
+
+  themed,
 } from './syntax';
 
 const theme: Theme = {
+  name: `Syml`,
+
   colors: {
     background: `#3f3f3f`,
     documentation: `#ddddcc`,
@@ -52,30 +53,16 @@ const theme: Theme = {
   },
 };
 
-export const SymlContainer = (props: ComponentPropsWithoutTheme<typeof Container>) => {
-  return <Container {...props} theme={theme} />;
-};
+export const SymlContainer = themed(Container, theme);
 
-export const SymlMain = (props: ComponentPropsWithoutTheme<typeof Main>) => {
-  return <Main {...props} theme={theme} />;
-};
+export const SymlMain = themed(Main, theme);
 
-export const SymlArrayProperty = (props: ComponentPropsWithoutTheme<typeof ArrayProperty>) => {
-  return <ArrayProperty {...props} theme={theme} />;
-};
+export const SymlArrayProperty = themed(ArrayProperty, theme);
 
-export const SymlObjectProperty = (props: ComponentPropsWithoutTheme<typeof DictionaryProperty>) => {
-  return <DictionaryProperty {...props} theme={theme} />;
-};
+export const SymlObjectProperty = themed(DictionaryProperty, theme);
 
-export const SymlScalarProperty = (props: ComponentPropsWithoutTheme<typeof ScalarProperty>) => {
-  return <ScalarProperty {...props} theme={theme} />;
-};
+export const SymlScalarProperty = themed(ScalarProperty, theme);
 
-export const SymlDictionary = (props: ComponentPropsWithoutTheme<typeof Dictionary>) => {
-  return <Dictionary {...props} theme={theme}/>;
-};
+export const SymlDictionary = themed(Dictionary, theme);
 
-export const SymlScalar = (props: ComponentPropsWithoutTheme<typeof Scalar>) => {
-  return <Scalar {...props} theme={theme} />;
-};
+export const SymlScalar = themed(Scalar, theme);

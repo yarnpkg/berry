@@ -2,15 +2,13 @@ import {BaseCommand, openWorkspace}   from '@yarnpkg/cli';
 import {Configuration, MessageName}   from '@yarnpkg/core';
 import {StreamReport, structUtils}    from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils} from '@yarnpkg/plugin-npm';
-import {Command, Usage}               from 'clipanion';
+import {Command, Option, Usage}       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmWhoamiCommand extends BaseCommand {
-  @Command.String(`-s,--scope`, {description: `Print username for the registry configured for a given scope`})
-  scope?: string;
-
-  @Command.Boolean(`--publish`, {description: `Print username for the publish registry`})
-  publish: boolean = false;
+  static paths = [
+    [`npm`, `whoami`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -31,7 +29,14 @@ export default class NpmWhoamiCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `whoami`)
+  scope = Option.String(`-s,--scope`, {
+    description: `Print username for the registry configured for a given scope`,
+  });
+
+  publish = Option.Boolean(`--publish`, false, {
+    description: `Print username for the publish registry`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
@@ -49,25 +54,25 @@ export default class NpmWhoamiCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
+      let response;
       try {
-        const response = await npmHttpUtils.get(`/-/whoami`, {
+        response = await npmHttpUtils.get(`/-/whoami`, {
           configuration,
           registry,
           authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
           jsonResponse: true,
           ident: this.scope ? structUtils.makeIdent(this.scope, ``) : undefined,
         });
-
-        report.reportInfo(MessageName.UNNAMED, response.username);
       } catch (err) {
-        if (err.name !== `HTTPError`) {
-          throw err;
-        } else if (err.response.statusCode === 401 || err.response.statusCode === 403) {
+        if (err.response?.statusCode === 401 || err.response?.statusCode === 403) {
           report.reportError(MessageName.AUTHENTICATION_INVALID, `Authentication failed - your credentials may have expired`);
+          return;
         } else {
-          report.reportError(MessageName.AUTHENTICATION_INVALID, err.toString());
+          throw err;
         }
       }
+
+      report.reportInfo(MessageName.UNNAMED, response.username);
     });
 
     return report.exitCode();

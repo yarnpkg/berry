@@ -279,7 +279,9 @@ function makeValueObservable(value: any, version: TrackingVersion, filter: Track
 
 export type TrackingVersion = Object;
 export type TrackingFilter = true | TrackingFilterObject;
-interface TrackingFilterObject {[key: string]: TrackingFilter}
+interface TrackingFilterObject {
+  [key: string]: TrackingFilter
+}
 
 export type Tracker<T> = (cb: (value: T) => void) => T;
 

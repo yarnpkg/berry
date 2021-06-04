@@ -10,12 +10,12 @@ export const CorePlugin: Plugin = {
   hooks: {
     reduceDependency: (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
-        if (pattern.from && pattern.from.fullName !== structUtils.requirableIdent(locator))
+        if (pattern.from && pattern.from.fullName !== structUtils.stringifyIdent(locator))
           continue;
         if (pattern.from && pattern.from.description && pattern.from.description !== locator.reference)
           continue;
 
-        if (pattern.descriptor.fullName !== structUtils.requirableIdent(dependency))
+        if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
           continue;
         if (pattern.descriptor.description && pattern.descriptor.description !== dependency.range)
           continue;

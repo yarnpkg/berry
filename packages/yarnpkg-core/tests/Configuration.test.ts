@@ -118,6 +118,55 @@ describe(`Configuration`, () => {
         })).rejects.toThrow();
       });
     });
+
+    it(`should handle boolean variables correctly`, async () => {
+      process.env.TRUE_VARIABLE = `true`;
+      process.env.FALSE_VARIABLE = `false`;
+
+      process.env.ONE_VARIABLE = `1`;
+      process.env.ZERO_VARIABLE = `0`;
+
+      await initializeConfiguration({
+        npmScopes: {
+          true: {
+            npmAlwaysAuth: `\${TRUE_VARIABLE}`,
+          },
+          false: {
+            npmAlwaysAuth: `\${FALSE_VARIABLE}`,
+          },
+
+          one: {
+            npmAlwaysAuth: `\${ONE_VARIABLE}`,
+          },
+          zero: {
+            npmAlwaysAuth: `\${ZERO_VARIABLE}`,
+          },
+
+          defaultTrue: {
+            npmAlwaysAuth: `\${NOT_EXISTING_ENV-true}`,
+          },
+          defaultFalse: {
+            npmAlwaysAuth: `\${NOT_EXISTING_ENV-false}`,
+          },
+        },
+      }, async dir => {
+        const configuration = await Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        });
+
+        const getAlwaysAuth = (scope: string) => configuration.get(`npmScopes`).get(scope)!.get(`npmAlwaysAuth`);
+
+        expect(getAlwaysAuth(`true`)).toEqual(true);
+        expect(getAlwaysAuth(`false`)).toEqual(false);
+
+        expect(getAlwaysAuth(`one`)).toEqual(true);
+        expect(getAlwaysAuth(`zero`)).toEqual(false);
+
+        expect(getAlwaysAuth(`defaultTrue`)).toEqual(true);
+        expect(getAlwaysAuth(`defaultFalse`)).toEqual(false);
+      });
+    });
   });
 
   describe(`merging properties`, () => {

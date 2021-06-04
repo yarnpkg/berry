@@ -19,13 +19,6 @@
   ],
   "type": "object",
   "properties": {
-    "bstatePath": {
-      "_package": "@yarnpkg/core",
-      "description": "This setting defines the location where the bstate file will be stored. The bstate file contains the current build state of each package that has build requirements in your dependencies. Removing the bstate file is safe, but will cause all your packages to be rebuilt.",
-      "type": "string",
-      "format": "uri-reference",
-      "default": "./.yarn/build-state.yml"
-    },
     "cacheFolder": {
       "_package": "@yarnpkg/core",
       "description": "The path where the downloaded packages are stored on your system. They'll be normalized, compressed, and saved under the form of zip archives with standardized names. The cache is deemed to be relatively safe to be shared by multiple projects, even when multiple Yarn instances run at the same time on different projects. For setting a global cache folder, you should use `enableGlobalCache` instead.",
@@ -103,12 +96,6 @@
       "format": "uri-reference",
       "default": "./.yarn/versions"
     },
-    "enableAbsoluteVirtuals": {
-      "_package": "@yarnpkg/core",
-      "description": "If true, the virtual symlinks will use absolute (non-portable!) paths if required.",
-      "type": "boolean",
-      "default": false
-    },
     "enableColors": {
       "_package": "@yarnpkg/core",
       "description": "If true (by default detects terminal capabilities), Yarn will format its pretty-print its output by using colors to differentiate important parts of its messages.",
@@ -135,7 +122,7 @@
     },
     "enableImmutableInstalls": {
       "_package": "@yarnpkg/plugin-essentials",
-      "description": "If true, Yarn will refuse to change the installation artifacts (apart the cache) when running an install. This flag is quite intrusive, you typically should only set it on your CI by manually passing the `--immutable` flag to `yarn install`.",
+      "description": "If true (the default on CI), Yarn will refuse to change the installation artifacts (apart from the cache) when running an install. This flag is quite intrusive, you typically should only set it on your CI by manually passing the `--immutable` flag to `yarn install`.",
       "type": "boolean",
       "default": false
     },
@@ -177,7 +164,7 @@
     },
     "enableTelemetry": {
       "_package": "@yarnpkg/core",
-      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/telemetry) page for more details about it.",
+      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/advanced/telemetry) page for more details about it.",
       "type": "boolean",
       "examples": [true]
     },
@@ -246,7 +233,7 @@
         "type": "string"
       },
       "default": [],
-      "_exampleItems": ["**/.pnp.js"]
+      "_exampleItems": ["**/.pnp.*"]
     },
     "initScope": {
       "_package": "@yarnpkg/plugin-init",
@@ -328,7 +315,7 @@
     },
     "networkConcurrency": {
       "_package": "@yarnpkg/core",
-      "description": "Defines how many requests are allowed to run at the same time. By default Yarn doesn't put limits on it, but it may sometimes be required when working behind proxies that don't handle too well large amount of requests.",
+      "description": "Defines how many requests are allowed to run at the same time. By default Yarn doesn't put limits on it, but it may sometimes be required when working behind proxies that don't handle large amounts of requests very well.",
       "type": "number",
       "default": "Infinity",
       "examples": [8]
@@ -366,6 +353,13 @@
       "type": "string",
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
+    },
+    "nmMode": {
+      "_package": "@yarnpkg/plugin-node-modules",
+      "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
+      "type": "string",
+      "enum": ["classic", "hardlinks-local", "hardlinks-global"],
+      "default": "classic"
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -563,7 +557,7 @@
     },
     "pnpEnableInlining": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "If true (the default), Yarn will generate a single `.pnp.js` file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a `.pnp.data.json` file meant to be consumed by the `@yarnpkg/pnp` package.",
+      "description": "If true (the default), Yarn will generate a single `.pnp.cjs` file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a `.pnp.data.json` file meant to be consumed by the `@yarnpkg/pnp` package.",
       "type": "boolean",
       "default": true
     },
@@ -575,13 +569,13 @@
     },
     "pnpIgnorePatterns": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "An Array of glob patterns. Files matching the following locations (in term of relative path compared to the generated `.pnp.js` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
+      "description": "An Array of glob patterns. Files matching the following locations (in term of relative path compared to the generated `.pnp.cjs` file) will not be covered by PnP and will use the regular Node resolution. Typically only needed if you have subprojects that aren't yet part of your workspace tree.",
       "type": "array",
       "items": {
         "type": "string"
       },
       "default": [],
-      "_exampleItems": ["./subdir/.*"]
+      "_exampleItems": ["./subdir/*"]
     },
     "pnpMode": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -592,7 +586,7 @@
     },
     "pnpShebang": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "A header that will be prepended to the generated `.pnp.js` file. You're allowed to write multiple lines, but this is slightly frowned upon.",
+      "description": "A header that will be prepended to the generated `.pnp.cjs` file. You're allowed to write multiple lines, but this is slightly frowned upon.",
       "type": "string",
       "pattern": "^(#!.*\n?)+",
       "default": "#!/usr/bin/env node"
@@ -661,22 +655,15 @@
     },
     "virtualFolder": {
       "_package": "@yarnpkg/core",
-      "description": "Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be `$$virtual`.",
+      "description": "Due to a particularity in how Yarn installs packages which list peer dependencies, some packages will be mapped to multiple virtual directories that don't actually exist on the filesystem. This settings tells Yarn where to put them. Note that the folder name *must* be `__virtual__`.",
       "type": "string",
       "format": "uri-reference",
-      "pattern": "^.*\\$\\$virtual$",
-      "default": "./.yarn/$$virtual"
+      "pattern": "^.*__virtual__$",
+      "default": "./.yarn/__virtual__"
     },
     "yarnPath": {
       "_package": "@yarnpkg/core",
-      "description": "The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with `.js` it will be required, and will be spawned in any other case.",
-      "type": "string",
-      "format": "uri-reference",
-      "examples": ["./scripts/yarn-2.0.0-rc001.js"]
-    },
-    "yarnUpgradePath": {
-      "_package": "@yarnpkg/core",
-      "description": "If set, the `yarn set version` command will store the downloaded file at this location instead of the one referenced by `yarnPath`. This settings is useful if you want the file referenced in `yarnPath` to be a wrapper, and the real Yarn binary to be stored elsewhere.",
+      "description": "The path of a Yarn binary, which will be executed instead of any other (including the global one) for any command run within the directory covered by the rc file. If the file extension ends with `.js` it will be required, and will be spawned in any other case.\n\nThe `yarnPath` setting is currently the preferred way to install Yarn within a project, as it ensures that your whole team will use the exact same Yarn version, without having to individually keep it up-to-date.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["./scripts/yarn-2.0.0-rc001.js"]

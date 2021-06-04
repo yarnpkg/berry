@@ -1,22 +1,13 @@
 import {BaseCommand, WorkspaceRequiredError}                              from '@yarnpkg/cli';
 import {Cache, Configuration, Manifest, Project, StreamReport, Workspace} from '@yarnpkg/core';
 import {structUtils}                                                      from '@yarnpkg/core';
-import {Command, Usage}                                                   from 'clipanion';
-import * as yup                                                           from 'yup';
+import {Command, Option, Usage}                                           from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocus extends BaseCommand {
-  @Command.Rest()
-  workspaces: Array<string> = [];
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.Boolean(`--production`, {description: `Only install regular dependencies by omitting dev dependencies`})
-  production: boolean = false;
-
-  @Command.Boolean(`-A,--all`, {description: `Install the entire project`})
-  all: boolean = false;
+  static paths = [
+    [`workspaces`, `focus`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -24,26 +15,34 @@ export default class WorkspacesFocus extends BaseCommand {
     details: `
       This command will run an install as if the specified workspaces (and all other workspaces they depend on) were the only ones in the project. If no workspaces are explicitly listed, the active one will be assumed.
 
-      Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.js\` file, at the cost of introducing an extra complexity.
+      Note that this command is only very moderately useful when using zero-installs, since the cache will contain all the packages anyway - meaning that the only difference between a full install and a focused install would just be a few extra lines in the \`.pnp.cjs\` file, at the cost of introducing an extra complexity.
 
       If the \`-A,--all\` flag is set, the entire project will be installed. Combine with \`--production\` to replicate the old \`yarn install --production\`.
     `,
   });
 
-  static schema = yup.object().shape({
-    all: yup.bool(),
-    workspaces: yup.array().when(`all`, {
-      is: true,
-      then: yup.array().max(0, `Cannot specify workspaces when using the --all flag`),
-      otherwise: yup.array(),
-    }),
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
   });
 
-  @Command.Path(`workspaces`, `focus`)
+  production = Option.Boolean(`--production`, false, {
+    description: `Only install regular dependencies by omitting dev dependencies`,
+  });
+
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Install the entire project`,
+  });
+
+  workspaces = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
+
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
 
     let requiredWorkspaces: Set<Workspace>;
     if (this.all) {
@@ -66,7 +65,7 @@ export default class WorkspacesFocus extends BaseCommand {
     // iterating over it (because they're added at the end)
 
     for (const workspace of requiredWorkspaces) {
-      for (const dependencyType of Manifest.hardDependencies) {
+      for (const dependencyType of this.production ? [`dependencies`] : Manifest.hardDependencies) {
         for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
           const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 

@@ -140,7 +140,7 @@ describe(`ZipFS`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
 
-    zipFs.writeFileSync(`/foo.txt`as PortablePath, `Test`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
     const zipContent = zipFs.getBufferAndClose();
 
@@ -151,7 +151,7 @@ describe(`ZipFS`, () => {
   it(`can handle nested symlinks`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
-    zipFs.writeFileSync(`/foo.txt`as PortablePath, `Test`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
     zipFs.symlinkSync(`/foo.txt` as PortablePath, `/linkA` as PortablePath);
     zipFs.symlinkSync(`/linkA` as PortablePath, `/linkB` as PortablePath);
@@ -449,7 +449,7 @@ describe(`ZipFS`, () => {
 
     const writeStream = zipFs.createWriteStream(`/foo.txt` as Filename);
 
-    await new Promise<void>((resolve,reject) => {
+    await new Promise<void>((resolve, reject) => {
       writeStream.write(`foo`, err => {
         if (err) {
           reject(err);
@@ -570,5 +570,25 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
-});
 
+  it(`should return bigint stats`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    zipFs.mkdirSync(`/foo` as PortablePath);
+
+    expect(
+      statUtils.areStatsEqual(
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true})
+      )
+    ).toBe(true);
+
+    expect(
+      statUtils.areStatsEqual(
+        zipFs.statSync(`/foo` as PortablePath, {bigint: false}),
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true})
+      )
+    ).toBe(false);
+
+    zipFs.discardAndClose();
+  });
+});

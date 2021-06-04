@@ -1,7 +1,9 @@
+import {ChildProcess}                               from 'child_process';
 import crossSpawn                                   from 'cross-spawn';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
+import {StringDecoder}                              from 'string_decoder';
 
-import type {ShellOptions}                          from './index';
+import type {ShellOptions, ShellState}                   from './index';
 
 export enum Pipe {
   STDIN = 0b00,
@@ -13,7 +15,7 @@ export enum Pipe {
 export type Stdio = [
   any,
   any,
-  any
+  any,
 ];
 
 export type ProcessImplementation = (
@@ -23,15 +25,18 @@ export type ProcessImplementation = (
   promise: Promise<number>,
 };
 
+const activeChildren = new Set<ChildProcess>();
+
 function sigintHandler() {
   // We don't want SIGINT to kill our process; we want it to kill the
   // innermost process, whose end will cause our own to exit.
 }
 
-// Rather than attaching one SIGINT handler for each process, we
-// attach a single one and use a refcount to detect once it's no
-// longer needed.
-let sigintRefCount = 0;
+function sigtermHandler() {
+  for (const child of activeChildren) {
+    child.kill();
+  }
+}
 
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
   return (stdio: Stdio) => {
@@ -53,8 +58,12 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stderr,
     ]});
 
-    if (sigintRefCount++ === 0)
+    activeChildren.add(child);
+
+    if (activeChildren.size === 1) {
       process.on(`SIGINT`, sigintHandler);
+      process.on(`SIGTERM`, sigtermHandler);
+    }
 
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
@@ -67,8 +76,12 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       stdin: child.stdin!,
       promise: new Promise(resolve => {
         child.on(`error`, error => {
-          if (--sigintRefCount === 0)
+          activeChildren.delete(child);
+
+          if (activeChildren.size === 0) {
             process.off(`SIGINT`, sigintHandler);
+            process.off(`SIGTERM`, sigtermHandler);
+          }
 
           // @ts-expect-error
           switch (error.code) {
@@ -88,8 +101,12 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
         });
 
         child.on(`exit`, code => {
-          if (--sigintRefCount === 0)
+          activeChildren.delete(child);
+
+          if (activeChildren.size === 0) {
             process.off(`SIGINT`, sigintHandler);
+            process.off(`SIGTERM`, sigtermHandler);
+          }
 
           if (code !== null) {
             resolve(code);
@@ -275,4 +292,56 @@ export class Handle {
 
 export function start(p: ProcessImplementation, opts: StartOptions) {
   return Handle.start(p, opts);
+}
+
+function createStreamReporter(reportFn: (text: string) => void, prefix: string | null = null) {
+  const stream = new PassThrough();
+  const decoder = new StringDecoder();
+
+  let buffer = ``;
+
+  stream.on(`data`, chunk => {
+    let chunkStr = decoder.write(chunk);
+    let lineIndex;
+
+    do {
+      lineIndex = chunkStr.indexOf(`\n`);
+
+      if (lineIndex !== -1) {
+        const line = buffer + chunkStr.substr(0, lineIndex);
+
+        chunkStr = chunkStr.substr(lineIndex + 1);
+        buffer = ``;
+
+        if (prefix !== null) {
+          reportFn(`${prefix} ${line}`);
+        } else {
+          reportFn(line);
+        }
+      }
+    } while (lineIndex !== -1);
+
+    buffer += chunkStr;
+  });
+
+  stream.on(`end`, () => {
+    const last = decoder.end();
+
+    if (last !== ``) {
+      if (prefix !== null) {
+        reportFn(`${prefix} ${last}`);
+      } else {
+        reportFn(last);
+      }
+    }
+  });
+
+  return stream;
+}
+
+export function createOutputStreamsWithPrefix(state: ShellState, {prefix}: {prefix: string | null}) {
+  return {
+    stdout: createStreamReporter(text => state.stdout.write(`${text}\n`), (state.stdout as any).isTTY ? prefix : null),
+    stderr: createStreamReporter(text => state.stderr.write(`${text}\n`), (state.stderr as any).isTTY ? prefix : null),
+  };
 }

@@ -44,4 +44,3 @@ export {
 };
 
 export type {NodeModulesLocatorMap};
-

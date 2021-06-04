@@ -2,7 +2,6 @@ import {Path, npath} from '@yarnpkg/fslib';
 
 export enum ErrorCode {
   API_ERROR = `API_ERROR`,
-  BLACKLISTED = `BLACKLISTED`,
   BUILTIN_NODE_RESOLUTION_FAILED = `BUILTIN_NODE_RESOLUTION_FAILED`,
   MISSING_DEPENDENCY = `MISSING_DEPENDENCY`,
   MISSING_PEER_DEPENDENCY = `MISSING_PEER_DEPENDENCY`,
@@ -15,7 +14,6 @@ export enum ErrorCode {
 // Some errors are exposed as MODULE_NOT_FOUND for compatibility with packages
 // that expect this umbrella error when the resolution fails
 const MODULE_NOT_FOUND_ERRORS = new Set([
-  ErrorCode.BLACKLISTED,
   ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
   ErrorCode.MISSING_DEPENDENCY,
   ErrorCode.MISSING_PEER_DEPENDENCY,
@@ -28,7 +26,7 @@ const MODULE_NOT_FOUND_ERRORS = new Set([
  * by third-parties.
  */
 
-export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}): Error {
+export function makeError(pnpCode: ErrorCode, message: string, data: Record<string, any> = {}): Error & {code: string, pnpCode: ErrorCode, data: Record<string, any>} {
   const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode)
     ? `MODULE_NOT_FOUND`
     : pnpCode;
@@ -52,7 +50,7 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Object = {}
       ...propertySpec,
       value: data,
     },
-  });
+  }) as any;
 }
 
 /**

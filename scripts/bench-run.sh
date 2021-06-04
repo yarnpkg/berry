@@ -12,6 +12,7 @@ cd "$BENCH_DIR"
 
 bench() {
   SUBTEST_NAME=$1; shift
+  echo "Testing $SUBTEST_NAME"
   hyperfine ${HYPERFINE_OPTIONS:-} --export-json=bench-$SUBTEST_NAME.json --min-runs=10 --warmup=1 "$@"
 }
 
@@ -32,11 +33,15 @@ setup-yarn2() {
     "globalFolder: '${BENCH_DIR}/.yarn-global'"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "yarnPath: '${HERE_DIR}/../packages/yarnpkg-cli/bundles/yarn.js'"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "enableImmutableInstalls: false"
 }
 
 setup-yarn2-nm() {
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "nodeLinker: node-modules"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "nmMode: hardlinks-local"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
     "enableGlobalCache: true"
   >> "$BENCH_DIR/.yarnrc.yml" echo \
@@ -84,8 +89,6 @@ case $PACKAGE_MANAGER in
       'yarn install'
     bench install-cache-and-lock \
       --prepare 'rm -rf .yarn node_modules' \
-      'yarn install'
-    bench install-ready \
       'yarn install'
     bench install-ready \
       --prepare 'yarn remove dummy-pkg || true' \

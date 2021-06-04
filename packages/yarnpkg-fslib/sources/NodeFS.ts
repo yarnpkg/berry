@@ -1,11 +1,11 @@
-import fs, {Stats}                                                                                                                     from 'fs';
+import fs, {BigIntStats, Stats}                                                                                                   from 'fs';
 
 import type {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
 import type {Dirent, SymlinkType}                                                                                                      from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}                                                                                          from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
 import type {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
-import {ENOSYS}                                                                                                                        from './errors';
-import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                      from './path';
+import {ENOSYS}                                                                                                                   from './errors';
+import {FSPath, PortablePath, Filename, ppath, npath}                                                                             from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -45,7 +45,7 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
-    return await new Promise<Dir<NativePath>>((resolve, reject) => {
+    return await new Promise<Dir<PortablePath>>((resolve, reject) => {
       if (typeof opts !== `undefined`) {
         this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject) as any);
       } else {
@@ -56,10 +56,10 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
+  opendirSync(p: PortablePath, opts?: OpendirOptions) {
     const dir = typeof opts !== `undefined`
-      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<NativePath>
-      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<NativePath>;
+      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<PortablePath>
+      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<PortablePath>;
 
     return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
   }
@@ -154,24 +154,80 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.existsSync(npath.fromPortablePath(p));
   }
 
-  async statPromise(p: PortablePath) {
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  statSync(p: PortablePath) {
-    return this.realFs.statSync(npath.fromPortablePath(p));
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: {bigint: boolean}) {
+    if (opts) {
+      return this.realFs.statSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.statSync(npath.fromPortablePath(p));
+    }
   }
 
-  async lstatPromise(p: PortablePath) {
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
     return await new Promise<Stats>((resolve, reject) => {
-      this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      if (opts) {
+        // @ts-expect-error - The node typings doesn't know about the options
+        this.realFs.fstat(fd, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+      }
     });
   }
 
-  lstatSync(p: PortablePath) {
-    return this.realFs.lstatSync(npath.fromPortablePath(p));
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
+    if (opts) {
+      // @ts-expect-error - The node typings doesn't know about the options
+      return this.realFs.fstatSync(fd, opts);
+    } else {
+      return this.realFs.fstatSync(fd);
+    }
+  }
+
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+    return await new Promise<Stats>((resolve, reject) => {
+      if (opts) {
+        // @ts-expect-error - TS does not know this takes options
+        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    });
+  }
+
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
+    if (opts) {
+      // @ts-expect-error - TS does not know this takes options
+      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.lstatSync(npath.fromPortablePath(p));
+    }
   }
 
   async chmodPromise(p: PortablePath, mask: number) {
@@ -330,17 +386,13 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async symlinkPromise(target: PortablePath, p: PortablePath, type?: SymlinkType) {
-    const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
-
     return await new Promise<void>((resolve, reject) => {
-      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), symlinkType, this.makeCallback(resolve, reject));
+      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target: PortablePath, p: PortablePath, type?: SymlinkType) {
-    const symlinkType: SymlinkType = type || (target.endsWith(`/`) ? `dir` : `file`);
-
-    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), symlinkType);
+    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type);
   }
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;

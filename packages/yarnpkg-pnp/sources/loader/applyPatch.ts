@@ -1,12 +1,12 @@
-import {FakeFS, PosixFS, npath, patchFs, PortablePath, Filename, NativePath} from '@yarnpkg/fslib';
-import fs                                                                    from 'fs';
-import {Module}                                                              from 'module';
-import {URL, fileURLToPath}                                                  from 'url';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath} from '@yarnpkg/fslib';
+import fs                                                          from 'fs';
+import {Module}                                                    from 'module';
+import {URL, fileURLToPath}                                        from 'url';
 
-import type {PnpApi}                                                         from '../types';
+import type {PnpApi}                                                    from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}                               from './internalTools';
-import type {Manager}                                                        from './makeManager';
+import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
+import type {Manager}                                                   from './makeManager';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>,
@@ -16,9 +16,10 @@ export type ApplyPatchOptions = {
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   /**
-   * The cache that will be used for all accesses occuring outside of a PnP context.
+   * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
   const defaultCache: NodeJS.NodeRequireCache = {};
@@ -45,7 +46,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       return null;
 
     const apiEntry = opts.manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
+    // Check if the path is ignored
+    return apiEntry.instance.findPackageLocator(lookupPath) ? apiEntry.instance : null;
   };
 
   function getRequireStack(parent: Module | null | undefined) {
@@ -71,7 +73,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Builtins are managed by the regular Node loader
 
-    if (builtinModules.has(request)) {
+    if (isBuiltinModule(request)) {
       try {
         enableNativeHooks = false;
         return originalModuleLoad.call(Module, request, parent, isMain);
@@ -174,23 +176,36 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   }
 
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
+    if (module && module.id !== `<repl>` && module.id !== `internal/preload` && !module.parent && !module.filename && module.paths.length > 0) {
+      return [{
+        apiPath: opts.manager.findApiPathFor(module.paths[0]),
+        path: module.paths[0],
+        module,
+      }];
+    }
+
     const issuer = getIssuerModule(module);
 
-    const issuerPath = issuer !== null
-      ? npath.dirname(issuer.filename)
-      : process.cwd();
+    if (issuer !== null) {
+      const path = npath.dirname(issuer.filename);
+      const apiPath = opts.manager.getApiPathFromParent(issuer);
 
-    return [{
-      apiPath: opts.manager.getApiPathFromParent(issuer),
-      path: issuerPath,
-      module,
-    }];
+      return [{apiPath, path, module}];
+    } else {
+      const path = process.cwd();
+
+      const apiPath =
+        opts.manager.findApiPathFor(npath.join(path, `[file]`)) ??
+        opts.manager.getApiPathFromParent(null);
+
+      return [{apiPath, path, module}];
+    }
   }
 
   function makeFakeParent(path: string) {
     const fakeParent = new Module(``);
 
-    const fakeFilePath = npath.join(path, `[file]` as Filename);
+    const fakeFilePath = npath.join(path, `[file]`);
     fakeParent.paths = Module._nodeModulePaths(fakeFilePath);
 
     return fakeParent;
@@ -202,7 +217,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: (NodeModule & {pnpApiPath?: PortablePath}) | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
-    if (builtinModules.has(request))
+    if (isBuiltinModule(request))
       return request;
 
     if (!enableNativeHooks)
@@ -310,6 +325,9 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     if (requireStack.length > 0)
       firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
+
+    if (typeof firstError.pnpCode === `string`)
+      Error.captureStackTrace(firstError);
 
     throw firstError;
   };

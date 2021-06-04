@@ -3,11 +3,9 @@ import {PortablePath, npath, xfs}                                               
 import {execFileSync}                                                                      from 'child_process';
 import {isCI}                                                                              from 'ci-info';
 import {Cli, UsageError}                                                                   from 'clipanion';
-
 import {realpathSync}                                                                      from 'fs';
 
 import {pluginCommands}                                                                    from './pluginCommands';
-import {WelcomeCommand}                                                                    from './tools/WelcomeCommand';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -46,8 +44,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       binaryVersion,
     });
 
-    cli.register(WelcomeCommand);
-
     try {
       await exec(cli);
     } catch (error) {
@@ -58,12 +54,11 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
   async function exec(cli: Cli<CommandContext>): Promise<void> {
     // Non-exhaustive known requirements:
-    // - 10.16+ for Brotli support on `plugin-compat`
-    // - 10.17+ to silence `got` warning on `dns.promises`
     // - 14.0 and 14.1 empty http responses - https://github.com/sindresorhus/got/issues/1496
+    // - 14.10.0 broken streams - https://github.com/nodejs/node/pull/34035 (fix: https://github.com/nodejs/node/commit/0f94c6b4e4)
 
     const version = process.versions.node;
-    const range = `>=10.17 <14 || >14.1`;
+    const range = `>=12 <14 || 14.2 - 14.9 || >14.10.0`;
 
     if (process.env.YARN_IGNORE_NODE !== `1` && !semverUtils.satisfiesWithPrereleases(version, range))
       throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);

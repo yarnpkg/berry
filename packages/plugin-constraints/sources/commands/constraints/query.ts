@@ -1,17 +1,15 @@
 import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {StreamReport}           from '@yarnpkg/core';
-import {Command, Usage}         from 'clipanion';
+import {Command, Option, Usage} from 'clipanion';
 
 import {Constraints}            from '../../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsQueryCommand extends BaseCommand {
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
-
-  @Command.String()
-  query!: string;
+  static paths = [
+    [`constraints`, `query`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
@@ -25,7 +23,12 @@ export default class ConstraintsQueryCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`constraints`, `query`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  query = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

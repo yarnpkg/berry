@@ -1,12 +1,12 @@
-import {xfs, ppath}                                           from '@yarnpkg/fslib';
-import {parseSyml}                                            from '@yarnpkg/parsers';
-import semver                                                 from 'semver';
+import {xfs, ppath}                                      from '@yarnpkg/fslib';
+import {parseSyml}                                       from '@yarnpkg/parsers';
 
-import {MessageName}                                          from './MessageName';
+import {MessageName}                                     from './MessageName';
 import type {Project}                                         from './Project';
 import type {Report}                                          from './Report';
 import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                       from './structUtils';
+import * as semverUtils                                  from './semverUtils';
+import * as structUtils                                  from './structUtils';
 import type {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
@@ -19,11 +19,13 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
 
   // These ones come from the npm registry
   // Note: /download/ is used by custom registries like Taobao
-  [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@[^/]+\/)?([^/]+)\/(?:-|download)\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
+  [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@.+(?:\/|(?:%2f)))?([^/]+)\/(?:-|download)\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
   // The GitHub package registry uses a different style of URLs
   [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)$/, version => `npm:${version}`],
   // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
   [/^https:\/\/npm\.fontawesome\.com\/(?:@[^/]+)\/([^/]+)\/-\/([^/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
+  // JFrog
+  [/^https?:\/\/(?:[^\\.]+)\.jfrog\.io\/.*\/(@[^/]+)\/([^/]+)\/-\/\1\/\2-(?:[.\d\w-]+)\.tgz(?:#|$)/, (version, $0) => structUtils.makeRange({protocol: `npm:`, source: null, selector: version, params: {__archiveUrl: $0}})],
 
   // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
@@ -56,7 +58,7 @@ export class LegacyMigrationResolver implements Resolver {
         continue;
       }
 
-      if (semver.validRange(descriptor.range))
+      if (semverUtils.validRange(descriptor.range))
         descriptor = structUtils.makeDescriptor(descriptor, `npm:${descriptor.range}`);
 
       const {version, resolved} = (parsed as any)[key];
@@ -82,8 +84,18 @@ export class LegacyMigrationResolver implements Resolver {
         continue;
       }
 
-      const resolution = structUtils.makeLocator(descriptor, reference);
-      resolutions.set(descriptor.descriptorHash, resolution);
+      // If the range is a valid descriptor we're dealing with an alias ("foo": "npm:lodash@*")
+      // and need to make the locator from that instead of the original descriptor
+      let actualDescriptor = descriptor;
+      try {
+        const parsedRange = structUtils.parseRange(descriptor.range);
+        const potentialDescriptor = structUtils.tryParseDescriptor(parsedRange.selector, true);
+        if (potentialDescriptor) {
+          actualDescriptor = potentialDescriptor;
+        }
+      } catch { }
+
+      resolutions.set(descriptor.descriptorHash, structUtils.makeLocator(actualDescriptor, reference));
     }
   }
 

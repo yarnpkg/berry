@@ -59,7 +59,7 @@ Because the hoisting is heavily connected to the filesystem and the Node resolut
 
 ### Linker
 
-Linkers are the components that consume both a dependency tree and a store of package data, and generate in return disk artifacts specific to the environment they target. For example, the <abbr>Plug'n'Play</abbr> linker generates a single `.pnp.js` file.
+Linkers are the components that consume both a dependency tree and a store of package data, and generate in return disk artifacts specific to the environment they target. For example, the <abbr>Plug'n'Play</abbr> linker generates a single `.pnp.cjs` file.
 
 See also: [Architecture](/advanced/architecture)
 

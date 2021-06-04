@@ -1,14 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}            from '@yarnpkg/cli';
-import {Cache, Configuration, IdentHash, StreamReport}  from '@yarnpkg/core';
-import {ThrowReport, structUtils, Project, LocatorHash} from '@yarnpkg/core';
-import {xfs, ppath}                                     from '@yarnpkg/fslib';
-import {parseSyml}                                      from '@yarnpkg/parsers';
-import {Command, Usage}                                 from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}           from '@yarnpkg/cli';
+import {Cache, Configuration, IdentHash, StreamReport} from '@yarnpkg/core';
+import {ThrowReport, structUtils, Project}             from '@yarnpkg/core';
+import {Command, Option, Usage}                        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
-  @Command.Rest()
-  idents: Array<string> = [];
+  static paths = [
+    [`rebuild`],
+  ];
 
   static usage: Usage = Command.Usage({
     description: `rebuild the project's native packages`,
@@ -28,7 +27,8 @@ export default class RunCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`rebuild`)
+  idents = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -41,39 +41,23 @@ export default class RunCommand extends BaseCommand {
     for (const identStr of this.idents)
       filteredIdents.add(structUtils.parseIdent(identStr).identHash);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     await project.resolveEverything({
       cache,
       report: new ThrowReport(),
     });
 
-    const bstatePath = configuration.get(`bstatePath`);
-    const bstate = xfs.existsSync(bstatePath)
-      ? parseSyml(await xfs.readFilePromise(bstatePath, `utf8`)) as {[key: string]: string}
-      : {};
-
-    const nextBState = new Map<LocatorHash, string>();
-
-    for (const pkg of project.storedPackages.values()) {
-      if (!Object.prototype.hasOwnProperty.call(bstate, pkg.locatorHash))
-        continue;
-
-      if (filteredIdents.size === 0 || filteredIdents.has(pkg.identHash))
-        continue;
-
-      const buildHash = bstate[pkg.locatorHash];
-      nextBState.set(pkg.locatorHash, buildHash);
-    }
-
-    if (nextBState.size > 0) {
-      const bstatePath = configuration.get(`bstatePath`);
-      const bstateFile = Project.generateBuildStateFile(nextBState, project.storedPackages);
-
-      await xfs.mkdirPromise(ppath.dirname(bstatePath), {recursive: true});
-      await xfs.changeFilePromise(bstatePath, bstateFile, {
-        automaticNewlines: true,
-      });
+    if (filteredIdents.size > 0) {
+      for (const pkg of project.storedPackages.values()) {
+        if (filteredIdents.has(pkg.identHash)) {
+          project.storedBuildState.delete(pkg.locatorHash);
+        }
+      }
     } else {
-      await xfs.removePromise(bstatePath);
+      project.storedBuildState.clear();
     }
 
     const installReport = await StreamReport.start({

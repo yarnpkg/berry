@@ -1,22 +1,29 @@
 import {BaseCommand, WorkspaceRequiredError}                                                           from '@yarnpkg/cli';
 import {Cache, Configuration, Project, formatUtils, structUtils, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
 import {npath}                                                                                         from '@yarnpkg/fslib';
-import {Command, Usage, UsageError}                                                                    from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                            from 'clipanion';
 
 import * as patchUtils                                                                                 from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommand extends BaseCommand {
-  @Command.String()
-  package!: string;
+  static paths = [
+    [`patch`],
+  ];
 
   static usage: Usage = Command.Usage({
-    description: `
+    description: `prepare a package for patching`,
+    details: `
       This command will cause a package to be extracted in a temporary directory (under a folder named "patch-workdir"). This folder will be editable at will; running \`yarn patch\` inside it will then cause Yarn to generate a patchfile and register it into your top-level manifest (cf the \`patch:\` protocol).
     `,
   });
 
-  @Command.Path(`patch`)
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  package = Option.String();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -53,13 +60,19 @@ export default class PatchCommand extends BaseCommand {
 
     await StreamReport.start({
       configuration,
+      json: this.json,
       stdout: this.context.stdout,
     }, async report => {
       const temp = await patchUtils.extractPackageToDisk(locator, {cache, project});
 
+      report.reportJson({
+        locator: structUtils.stringifyLocator(locator),
+        path: npath.fromPortablePath(temp),
+      });
+
       report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, locator)} got extracted with success!`);
       report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);
-      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit ${npath.fromPortablePath(temp)}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
+      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit ${process.platform === `win32` ? `"` : ``}${npath.fromPortablePath(temp)}${process.platform === `win32` ? `"` : ``}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
     });
   }
 }

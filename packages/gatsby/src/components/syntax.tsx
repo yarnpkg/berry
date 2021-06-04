@@ -1,11 +1,11 @@
 import {css}                                  from '@emotion/core';
-import styled                                 from '@emotion/styled';
+import styled, {StyledComponent}              from '@emotion/styled';
 import {FaLink}                               from 'react-icons/fa';
 import React, {PropsWithChildren, useContext} from 'react';
 
-import {SymlScalar}                           from './syml';
-
 export type Theme = {
+  name: string;
+
   colors: {
     background: string;
     documentation: string;
@@ -41,10 +41,6 @@ export type Theme = {
 export type ThemeProps = {
   theme: Theme;
 };
-
-export type ComponentPropsWithoutTheme<
-  T extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>
-> = Omit<React.ComponentProps<T>, 'theme'>;
 
 const getColorForScalar = (theme: Theme, scalar: unknown) => {
   if (typeof scalar === `string`)
@@ -224,7 +220,7 @@ export type ArrayProps = KeyProps & {
 
 export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithChildren<ArrayProps>) => <div>
   <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.arrays.leading}</div>
-  <div style={{position: `relative`, paddingLeft: `2em`, top: !(children as any).every((child: any) => child.type === SymlScalar) ? `2em` : ``}}>
+  <div style={{position: `relative`, paddingLeft: `2em`, top: !(children as any).every((child: any) => child.type.BaseComponent === Scalar) ? `2em` : ``}}>
     {React.Children.map(children, (child, index) =>
       <div key={index} style={{display: `flex`}}>
         <div>{theme.arrays.prefix}</div>
@@ -292,3 +288,12 @@ export const ScalarProperty = ({theme, name, anchor = name, placeholder, descrip
     </div>
   </Describe>
 </>;
+
+export function themed<T extends ThemeProps>(BaseComponent: React.ComponentType<T> | StyledComponent<any, T, any>, theme: Theme) {
+  const ThemedComponent = (props: T) => <BaseComponent {...props} theme={theme} />;
+
+  ThemedComponent.BaseComponent = BaseComponent;
+  ThemedComponent.displayName = `${theme.name}${BaseComponent.displayName ?? BaseComponent.name}`;
+
+  return ThemedComponent;
+}

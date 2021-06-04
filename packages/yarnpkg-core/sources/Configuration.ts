@@ -5,7 +5,6 @@ import camelcase                                                                
 import {isCI}                                                                                           from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
 import pLimit, {Limit}                                                                                  from 'p-limit';
-import semver                                                                                           from 'semver';
 import {PassThrough, Writable}                                                                          from 'stream';
 
 import {CorePlugin}                                                                                     from './CorePlugin';
@@ -176,14 +175,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
-    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
+    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named __virtual__)`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/$$virtual`,
-  },
-  bstatePath: {
-    description: `Path of the file where the current state of the built packages must be stored`,
-    type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/build-state.yml`,
+    default: `./.yarn/__virtual__`,
   },
   lockfileFilename: {
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
@@ -211,11 +205,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
-  enableAbsoluteVirtuals: {
-    description: `If true, the virtual symlinks will use absolute paths if required [non portable!!]`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
 
   // Settings related to the output style
   enableColors: {
@@ -235,6 +224,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: isCI,
     defaultText: `<dynamic>`,
+  },
+  enableMessageNames: {
+    description: `If true, the CLI will prefix most messages with codes suitable for search engines`,
+    type: SettingsType.BOOLEAN,
+    default: true,
   },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
@@ -490,13 +484,11 @@ export interface ConfigurationValueMap {
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   virtualFolder: PortablePath;
-  bstatePath: PortablePath;
   lockfileFilename: Filename;
   installStatePath: PortablePath;
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
-  enableAbsoluteVirtuals: boolean;
 
   enableColors: boolean;
   enableHyperlinks: boolean;
@@ -579,10 +571,10 @@ type DefinitionForType<T> = T extends Array<infer U>
 // against what's actually put in the `values` field.
 export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
-}
+};
 
 function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
-  if (definition.isArray) {
+  if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     if (!Array.isArray(value)) {
       return String(value).split(/,/).map(segment => {
         return parseSingleValue(configuration, path, segment, definition, folder);
@@ -616,7 +608,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     return value;
 
   const interpretValue = () => {
-    if (definition.type === SettingsType.BOOLEAN)
+    if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
@@ -635,6 +627,8 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
         return parseInt(valueWithReplacedVariables);
       case SettingsType.LOCATOR:
         return structUtils.parseLocator(valueWithReplacedVariables);
+      case SettingsType.BOOLEAN:
+        return miscUtils.parseBoolean(valueWithReplacedVariables);
       default:
         return valueWithReplacedVariables;
     }
@@ -682,7 +676,7 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
-    const normalizedKey = definition.normalizeKeys? definition.normalizeKeys(propKey) : propKey;
+    const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
     const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
@@ -905,8 +899,24 @@ export class Configuration {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
-    const rcFiles = await Configuration.findRcFiles(startingCwd);
+    const rcFiles: Array<{
+      path: PortablePath;
+      cwd: PortablePath;
+      data: any;
+      strict?: boolean
+    }> = await Configuration.findRcFiles(startingCwd);
+
     const homeRcFile = await Configuration.findHomeRcFile();
+    if (homeRcFile) {
+      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+      // The home configuration is never strict because it improves support for
+      // multiple projects using different Yarn versions on the same machine
+      if (rcFile) {
+        rcFile.strict = false;
+      } else {
+        rcFiles.push({...homeRcFile, strict: false});
+      }
+    }
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
     // to not have to load the plugins if there's a `yarn-path` configured.
@@ -923,8 +933,6 @@ export class Configuration {
     configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
-    if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -974,29 +982,24 @@ export class Configuration {
       [`@@core`, CorePlugin],
     ]);
 
-    const interop =
-      (obj: any) => obj.__esModule
-        ? obj.default
-        : obj;
+    const getDefault = (object: any) => {
+      return `default` in object ? object.default : object;
+    };
 
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, interop(pluginConfiguration.modules.get(request)));
+        plugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
-        requireEntries.set(request, () => nodeUtils.dynamicRequire(request));
+        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
       const dynamicPlugins = new Set();
 
-      const getDefault = (object: any) => {
-        return object.default || object;
-      };
-
       const importPlugin = (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = nodeUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+        const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
@@ -1052,13 +1055,8 @@ export class Configuration {
       configuration.activatePlugin(name, plugin);
 
     configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
-
-    // The home configuration is never strict because it improves support for
-    // multiple projects using different Yarn versions on the same machine
-    if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1307,10 +1305,7 @@ export class Configuration {
   }
 
   get<K extends keyof ConfigurationValueMap>(key: K): ConfigurationValueMap[K];
-  /** @deprecated pass in a known configuration key instead */
-  get<T>(key: string): T;
-  /** @note Type will change to unknown in a future major version */
-  get(key: string): any;
+  get(key: string): unknown;
   get(key: string) {
     if (!this.values.has(key))
       throw new Error(`Invalid configuration key "${key}"`);
@@ -1406,7 +1401,7 @@ export class Configuration {
     const packageExtensions = this.packageExtensions;
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
-      if (!semver.validRange(descriptor.range))
+      if (!semverUtils.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
 
       const extension = new Manifest();
@@ -1424,13 +1419,13 @@ export class Configuration {
       } as const;
 
       for (const dependency of extension.dependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency, description: `${structUtils.stringifyIdent(descriptor)} > ${structUtils.stringifyIdent(dependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency});
       for (const peerDependency of extension.peerDependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency, description: `${structUtils.stringifyIdent(descriptor)} >> ${structUtils.stringifyIdent(peerDependency)}`});
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency});
 
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
-          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value, description: `${structUtils.stringifyIdent(descriptor)} >> ${selector} / ${key}`});
+          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value});
         }
       }
     };
@@ -1514,16 +1509,17 @@ export class Configuration {
     };
 
     for (const descriptor of pkg.peerDependencies.values()) {
-      if (descriptor.scope === `@types`)
+      if (descriptor.scope === `types`)
         continue;
 
       const typesName = getTypesName(descriptor);
       const typesIdent = structUtils.makeIdent(`types`, typesName);
+      const stringifiedTypesIdent = structUtils.stringifyIdent(typesIdent);
 
-      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(typesIdent.identHash))
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(stringifiedTypesIdent))
         continue;
 
-      pkg.peerDependenciesMeta.set(structUtils.stringifyIdent(typesIdent), {
+      pkg.peerDependenciesMeta.set(stringifiedTypesIdent, {
         optional: true,
       });
     }
@@ -1549,9 +1545,9 @@ export class Configuration {
     return pkg;
   }
 
-  getLimit(key: string) {
+  getLimit<K extends miscUtils.FilterKeys<ConfigurationValueMap, number>>(key: K) {
     return miscUtils.getFactoryWithDefault(this.limits, key, () => {
-      return pLimit(this.get<number>(key));
+      return pLimit(this.get(key));
     });
   }
 
@@ -1611,12 +1607,5 @@ export class Configuration {
     }
 
     return null;
-  }
-
-  /**
-   * @deprecated Prefer using formatUtils.pretty instead, which is type-safe
-   */
-  format(value: string, formatType: formatUtils.Type | string): string {
-    return formatUtils.pretty(this, value, formatType);
   }
 }

@@ -3,6 +3,7 @@ import {MessageName, ReportError}        from '@yarnpkg/core';
 import {prompt}                          from 'enquirer';
 import {URL}                             from 'url';
 
+import {Hooks}                           from "./Hooks";
 import * as npmConfigUtils               from './npmConfigUtils';
 import type {MapLike}                    from './npmConfigUtils';
 
@@ -34,9 +35,13 @@ export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
  * a prohibited action, such as publishing a package with a similar name to an existing package.
  */
 export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
-  if (error.name === `HTTPError` && error.response.statusCode === 401) {
+  if (error.originalError?.name === `HTTPError` && error.originalError?.response.statusCode === 401) {
     throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
   }
+}
+
+export function customPackageError(error: httpUtils.RequestError) {
+  return error.response?.statusCode === 404 ? `Package not found` : null;
 }
 
 export function getIdentUrl(ident: Ident) {
@@ -56,7 +61,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -83,7 +88,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -117,7 +122,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -151,7 +156,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  const auth = getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -178,12 +183,19 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   }
 }
 
-function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
+async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
   const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
 
   if (!mustAuthenticate)
     return null;
+
+  const header = await configuration.reduceHook((hooks: Hooks) => {
+    return hooks.getNpmAuthenticationHeader;
+  }, undefined, registry, {configuration, ident});
+
+  if (header)
+    return header;
 
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
@@ -191,7 +203,7 @@ function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGUR
     return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
-    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND ,`No authentication configured for request`);
+    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);
   } else {
     return null;
   }
@@ -215,7 +227,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
 }
 
 async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
-  if (typeof headers === `undefined` || typeof headers.authorization === `undefined` )
+  if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
     return `an anonymous user`;
 
   try {
@@ -247,11 +259,11 @@ async function askForOtp() {
 }
 
 function isOtpError(error: any) {
-  if (error.name !== `HTTPError`)
+  if (error.originalError?.name !== `HTTPError`)
     return false;
 
   try {
-    const authMethods = error.response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
+    const authMethods = error.originalError?.response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
     return authMethods.includes(`otp`);
   } catch (e) {
     return false;

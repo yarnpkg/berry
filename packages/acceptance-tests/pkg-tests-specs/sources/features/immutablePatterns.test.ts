@@ -10,7 +10,7 @@ describe(`Features`, () => {
           },
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [.pnp.js]`);
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [.pnp.cjs]`);
 
           await run(`install`);
 
@@ -43,13 +43,13 @@ describe(`Features`, () => {
           },
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [.pnp.js]`);
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [.pnp.cjs]`);
 
           await run(`install`);
 
-          await xfs.unlinkPromise(ppath.join(path, Filename.pnpJs));
+          await xfs.unlinkPromise(ppath.join(path, Filename.pnpCjs));
 
-          await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for .pnp.js has been modified by this install/);
+          await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \.pnp\.cjs has been modified by this install/);
         },
       )
     );
@@ -62,7 +62,7 @@ describe(`Features`, () => {
           },
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [.pnp.js]`);
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [.pnp.cjs]`);
 
           await run(`install`);
 
@@ -82,7 +82,7 @@ describe(`Features`, () => {
             },
           });
 
-          await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for .pnp.js has been modified by this install/);
+          await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \.pnp\.cjs has been modified by this install/);
         },
       )
     );
@@ -119,6 +119,24 @@ describe(`Features`, () => {
           });
 
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \*\*\/node_modules has been modified by this install/);
+        },
+      )
+    );
+
+    it(`should prevent reformatting of manifests when so configured`,
+      makeTemporaryEnv(
+        {
+        },
+        {
+          nodeLinker: `node-modules`,
+          immutablePatterns: [`package.json`],
+        },
+        async ({path, run, source}) => {
+          // create lockfile
+          await run(`install`);
+          // empty dependencies block will be deleted by persist()
+          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {dependencies: {}});
+          await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for package.json has been modified by this install/);
         },
       )
     );

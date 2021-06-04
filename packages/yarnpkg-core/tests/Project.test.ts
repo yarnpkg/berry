@@ -138,4 +138,20 @@ describe(`Project`, () => {
       });
     });
   });
+
+  it(`should update Manifest.raw when persisting a workspace`, async () => {
+    await xfs.mktempPromise(async path => {
+      await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {name: `foo`});
+      await xfs.writeFilePromise(ppath.join(path, Filename.lockfile), ``);
+
+      const configuration = getConfiguration(path);
+      const {project} = await Project.find(configuration, path);
+
+      expect(project.topLevelWorkspace.manifest.raw.main).toBeUndefined();
+
+      project.topLevelWorkspace.manifest.main = `./index.js` as PortablePath;
+      await project.topLevelWorkspace.persistManifest();
+      expect(project.topLevelWorkspace.manifest.raw.main).toEqual(`./index.js`);
+    });
+  });
 });

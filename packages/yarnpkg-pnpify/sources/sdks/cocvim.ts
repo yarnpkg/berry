@@ -28,6 +28,7 @@ export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: 
 
 export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addCocVimWorkspaceConfiguration(pnpApi, CocVimConfiguration.settings, {
+    [`workspace.workspaceFolderCheckCwd`]: false,
     [`tsserver.tsdk`]: npath.fromPortablePath(
       ppath.dirname(
         wrapper.getProjectPathTo(

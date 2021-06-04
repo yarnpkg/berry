@@ -1,12 +1,12 @@
 import {WorkspaceRequiredError}                                                                                 from '@yarnpkg/cli';
 import {CommandContext, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils} from '@yarnpkg/core';
-import {ppath}                                                                                                  from '@yarnpkg/fslib';
+import {npath}                                                                                                  from '@yarnpkg/fslib';
 import {Gem}                                                                                                    from '@yarnpkg/libui/sources/components/Gem';
 import {ScrollableItems}                                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {FocusRequest}                                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
 import {renderForm}                                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
-import {Command, Usage, UsageError}                                                                             from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                                     from 'clipanion';
 import {Box, Text}                                                                                              from 'ink';
 import React, {useCallback, useState}                                                                           from 'react';
 import semver                                                                                                   from 'semver';
@@ -17,8 +17,9 @@ type Releases = Map<Workspace, Exclude<versionUtils.Decision, versionUtils.Decis
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCheckCommand extends Command<CommandContext> {
-  @Command.Boolean(`-i,--interactive`, {description: `Open an interactive interface used to set version bumps`})
-  interactive?: boolean;
+  static paths = [
+    [`version`, `check`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
@@ -38,7 +39,10 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     ]],
   });
 
-  @Command.Path(`version`, `check`)
+  interactive = Option.Boolean(`-i,--interactive`, {
+    description: `Open an interactive interface used to set version bumps`,
+  });
+
   async execute() {
     if (this.interactive) {
       return await this.executeInteractive();
@@ -95,13 +99,20 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     };
 
     const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: versionUtils.Decision, setDecision: (decision: versionUtils.Decision) => void}) => {
-      const currentVersion = workspace.manifest.version;
+      const currentVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
       if (currentVersion === null)
         throw new Error(`Assertion failed: The version should have been set (${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
 
-      const strategies: Array<versionUtils.Decision> = semver.prerelease(currentVersion) === null
-        ? [versionUtils.Decision.UNDECIDED, versionUtils.Decision.DECLINE, versionUtils.Decision.PATCH, versionUtils.Decision.MINOR, versionUtils.Decision.MAJOR, versionUtils.Decision.PRERELEASE]
-        : [versionUtils.Decision.UNDECIDED, versionUtils.Decision.DECLINE, versionUtils.Decision.PRERELEASE, versionUtils.Decision.MAJOR];
+      if (semver.prerelease(currentVersion) !== null)
+        throw new Error(`Assertion failed: Prerelease identifiers shouldn't be found (${currentVersion})`);
+
+      const strategies: Array<versionUtils.Decision> = [
+        versionUtils.Decision.UNDECIDED,
+        versionUtils.Decision.DECLINE,
+        versionUtils.Decision.PATCH,
+        versionUtils.Decision.MINOR,
+        versionUtils.Decision.MAJOR,
+      ];
 
       useListInput(decision, strategies, {
         active: active!,
@@ -187,7 +198,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
     };
 
     const useReleases = (): [Releases, (workspace: Workspace, decision: versionUtils.Decision) => void] => {
-      const [releases, setReleases] = useState<Releases>(versionFile.releases);
+      const [releases, setReleases] = useState<Releases>(() => new Map(versionFile.releases));
 
       const setWorkspaceRelease = useCallback((workspace: Workspace, decision: versionUtils.Decision) => {
         const copy = new Map(releases);
@@ -260,7 +271,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
             {[...versionFile.changedFiles].map(file => (
               <Box key={file}>
                 <Text>
-                  <Text color="grey">{versionFile.root}</Text>/{ppath.relative(versionFile.root, file)}
+                  <Text color="grey">{npath.fromPortablePath(versionFile.root)}</Text>{npath.sep}{npath.relative(npath.fromPortablePath(versionFile.root), npath.fromPortablePath(file))}
                 </Text>
               </Box>
             ))}
@@ -353,7 +364,7 @@ export default class VersionCheckCommand extends Command<CommandContext> {
         report.reportSeparator();
 
         for (const file of versionFile.changedFiles) {
-          report.reportInfo(null, `${formatUtils.pretty(configuration, versionFile.root, `gray`)}/${ppath.relative(versionFile.root, file)}`);
+          report.reportInfo(null, `${formatUtils.pretty(configuration, npath.fromPortablePath(versionFile.root), `gray`)}${npath.sep}${npath.relative(npath.fromPortablePath(versionFile.root), npath.fromPortablePath(file))}`);
         }
       }
 

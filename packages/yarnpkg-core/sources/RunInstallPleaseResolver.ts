@@ -31,14 +31,14 @@ export class RunInstallPleaseResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions): Promise<never> {
-    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
+    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; run "yarn install" to update the lockfile`);
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions): Promise<never> {
-    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
+    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; run "yarn install" to update the lockfile`);
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<never> {
-    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; try to make an install to update your resolutions`);
+    throw new ReportError(MessageName.MISSING_LOCKFILE_ENTRY, `This package doesn't seem to be present in your lockfile; run "yarn install" to update the lockfile`);
   }
 }

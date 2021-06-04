@@ -38,6 +38,11 @@ unsigned int zipstruct_stat_mtime(struct zip_stat * st)
     return st->mtime;
 }
 
+unsigned int zipstruct_stat_crc(struct zip_stat * st)
+{
+    return st->crc;
+}
+
 struct zip_error * zipstruct_error(void)
 {
     struct zip_error * ptr = calloc(1, sizeof(struct zip_error));

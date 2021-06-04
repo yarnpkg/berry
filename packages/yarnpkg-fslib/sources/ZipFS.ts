@@ -1,11 +1,11 @@
-import type {Libzip}                                                                                                                                 from '@yarnpkg/libzip';
-import {ReadStream, Stats, WriteStream, constants}                                                                                                   from 'fs';
+import type {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 import {isDate}                                                                                                                                      from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import type {WatchOptions, WatchCallback, Watcher, Dir}                                                                                              from './FakeFS';
-import type {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                   from './FakeFS';
+import type {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats}                                                                               from './FakeFS';
+import type {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {opendir}                                                                                                                                     from './algorithms/opendir';
@@ -277,12 +277,10 @@ export class ZipFS extends BasePortableFakeFS {
 
         const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
         return Buffer.from(memory);
-      }
-      finally {
+      } finally {
         this.libzip.free(buffer);
       }
-    }
-    finally {
+    } finally {
       this.libzip.source.close(this.lzSource);
       this.libzip.source.free(this.lzSource);
       this.ready = false;
@@ -573,11 +571,17 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async statPromise(p: PortablePath) {
-    return this.statSync(p);
+  async statPromise(p: PortablePath): Promise<Stats>
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
+    return this.statSync(p, opts);
   }
 
-  statSync(p: PortablePath) {
+  statSync(p: PortablePath): Stats
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath, opts?: {bigint: boolean}) {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -586,14 +590,48 @@ export class ZipFS extends BasePortableFakeFS {
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw errors.ENOTDIR(`stat '${p}'`);
 
-    return this.statImpl(`stat '${p}'`, resolvedP);
+    return this.statImpl(`stat '${p}'`, resolvedP, opts);
   }
 
-  async lstatPromise(p: PortablePath) {
-    return this.lstatSync(p);
+  async fstatPromise(fd: number): Promise<Stats>
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+    return this.fstatSync(fd, opts);
   }
 
-  lstatSync(p: PortablePath) {
+  fstatSync(fd: number): Stats
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fstatSync`);
+
+    const {p} = entry;
+
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw errors.ENOENT(`stat '${p}'`);
+
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw errors.ENOTDIR(`stat '${p}'`);
+
+    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
+  }
+
+  async lstatPromise(p: PortablePath): Promise<Stats>
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+    return this.lstatSync(p, opts);
+  }
+
+  lstatSync(p: PortablePath): Stats;
+  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
 
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -602,10 +640,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw errors.ENOTDIR(`lstat '${p}'`);
 
-    return this.statImpl(`lstat '${p}'`, resolvedP);
+    return this.statImpl(`lstat '${p}'`, resolvedP, opts);
   }
 
-  private statImpl(reason: string, p: PortablePath): Stats {
+  private statImpl(reason: string, p: PortablePath, opts: {bigint?: boolean} = {}): Stats | BigIntStats {
     const entry = this.entries.get(p);
 
     // File, or explicit directory
@@ -644,8 +682,10 @@ export class ZipFS extends BasePortableFakeFS {
         : 0o644;
 
       const mode = type | (this.getUnixMode(entry, defaultMode) & 0o777);
+      const crc = this.libzip.struct.statCrc(stat);
 
-      return Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
+      return opts.bigint === true ? statUtils.convertToBigIntStats(statInstance) : statInstance;
     }
 
     // Implicit directory
@@ -668,8 +708,10 @@ export class ZipFS extends BasePortableFakeFS {
       const mtime = new Date(mtimeMs);
 
       const mode = S_IFDIR | 0o755;
+      const crc = 0;
 
-      return Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode});
+      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
+      return opts.bigint === true ? statUtils.convertToBigIntStats(statInstance) : statInstance;
     }
 
     throw new Error(`Unreachable`);
@@ -1302,9 +1344,6 @@ export class ZipFS extends BasePortableFakeFS {
   private readFileBuffer(p: PortablePath, opts: {asyncDecompress: true}): Promise<Buffer>
   private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
   private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
-    if (typeof p !== `string`)
-      throw errors.EBADF(`read`);
-
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`open '${p}'`);
@@ -1438,7 +1477,9 @@ export class ZipFS extends BasePortableFakeFS {
       return {on: () => {}, close: () => {}};
 
     const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
-    return {on: () => {}, close: () => {clearInterval(interval);}};
+    return {on: () => {}, close: () => {
+      clearInterval(interval);
+    }};
   }
 
   watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;

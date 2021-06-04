@@ -30,5 +30,24 @@ describe(`Features`, () => {
         await expect(run(`add`, `no-deps`)).resolves.toMatchObject({code: 0, stderr: ``});
       })
     );
+
+    test(
+      `it should work with git URLs`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.writeFilePromise(
+          `${path}/.yarnrc.yml`,
+          [
+            `networkSettings:`,
+            `  "github.com":`,
+            `    enableNetwork: false`,
+          ].join(`\n`)
+        );
+
+        await expect(run(`add`, `foo@git@github.com:foo/foo.git`)).rejects.toThrow(
+          / has been blocked because of your configuration settings/
+        );
+      }
+      )
+    );
   });
 });

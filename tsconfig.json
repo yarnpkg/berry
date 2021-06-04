@@ -8,7 +8,7 @@
     // "compiler": "typescript-cached-transpile",
 
     // swc, no caching
-    "compiler": "ts-node/dist/compilers/swc",
+    "compiler": "ts-node/transpilers/swc-experimental",
 
     // swc with caching (combination of the 2x from above)
     // "compiler": "./scripts/ts-compiler.js",

@@ -76,6 +76,11 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
 
   module: {
     rules: [{
+      test: /\.m?js/,
+      resolve: {
+        fullySpecified: false,
+      },
+    }, {
       test: /\.tsx?$/,
       exclude: /\.d\.ts$/,
       use: [{

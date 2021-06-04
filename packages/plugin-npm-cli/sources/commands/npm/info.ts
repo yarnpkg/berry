@@ -1,12 +1,12 @@
-import type * as npm                                                  from '@npm/types';
-import {BaseCommand}                                                  from '@yarnpkg/cli';
-import {Project, Configuration, structUtils, ReportError, Descriptor} from '@yarnpkg/core';
-import {StreamReport, MessageName}                                    from '@yarnpkg/core';
-import {npmHttpUtils}                                                 from '@yarnpkg/plugin-npm';
-import {Command, Usage, UsageError}                                   from 'clipanion';
-import path                                                           from 'path';
-import semver                                                         from 'semver';
-import {inspect}                                                      from 'util';
+import type * as npm                                          from '@npm/types';
+import {BaseCommand}                                     from '@yarnpkg/cli';
+import {Project, Configuration, structUtils, Descriptor} from '@yarnpkg/core';
+import {StreamReport, MessageName, semverUtils}          from '@yarnpkg/core';
+import {npmHttpUtils}                                    from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage, UsageError}              from 'clipanion';
+import path                                              from 'path';
+import semver                                            from 'semver';
+import {inspect}                                         from 'util';
 
 declare module '@npm/types' {
   /*
@@ -31,14 +31,9 @@ interface PackageInformation extends CombinedPackument {
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
-  @Command.Rest()
-  packages!: string;
-
-  @Command.String(`-f,--fields`, {description: `A comma-separated list of manifest fields that should be displayed`})
-  fields?: string;
-
-  @Command.Boolean(`--json`, {description: `Format the output as an NDJSON stream`})
-  json: boolean = false;
+  static paths = [
+    [`npm`, `info`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -78,7 +73,16 @@ export default class InfoCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`npm`, `info`)
+  fields = Option.String(`-f,--fields`, {
+    description: `A comma-separated list of manifest fields that should be displayed`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
+
+  packages = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
@@ -110,31 +114,22 @@ export default class InfoCommand extends BaseCommand {
 
         const identUrl = npmHttpUtils.getIdentUrl(descriptor);
 
-        let result: npm.Packument;
-        try {
-          // The information from `registry.npmjs.org/<package>`
-          result = clean(await npmHttpUtils.get(identUrl, {
-            configuration,
-            ident: descriptor,
-            jsonResponse: true,
-          })) as npm.Packument;
-        } catch (err) {
-          if (err.name !== `HTTPError`) {
-            throw err;
-          } else if (err.response.statusCode === 404) {
-            throw new ReportError(MessageName.EXCEPTION, `Package not found`);
-          } else {
-            throw new ReportError(MessageName.EXCEPTION, err.toString());
-          }
-        }
+        // The information from `registry.npmjs.org/<package>`
+        const result: npm.Packument = clean(await npmHttpUtils.get(identUrl, {
+          configuration,
+          ident: descriptor,
+          jsonResponse: true,
+          customErrorMessage: npmHttpUtils.customPackageError,
+        })) as npm.Packument;
 
         const versions = Object.keys(result.versions).sort(semver.compareLoose);
         const fallbackVersion = result[`dist-tags`].latest || versions[versions.length - 1];
 
         // The latest version that satisfies `descriptor.range` (if it is a valid range), else `fallbackVersion`
         let version: string = fallbackVersion;
-        if (semver.validRange(descriptor.range)) {
-          const maxSatisfyingVersion = semver.maxSatisfying(versions, descriptor.range);
+        const validRange = semverUtils.validRange(descriptor.range);
+        if (validRange) {
+          const maxSatisfyingVersion = semver.maxSatisfying(versions, validRange);
 
           if (maxSatisfyingVersion !== null) {
             version = maxSatisfyingVersion;

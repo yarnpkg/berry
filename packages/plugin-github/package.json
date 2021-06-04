@@ -1,19 +1,19 @@
 {
   "name": "@yarnpkg/plugin-github",
-  "version": "2.1.2",
+  "version": "2.2.0-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.4.0",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^2.4.0",
-    "@yarnpkg/plugin-git": "^2.3.0"
+    "@yarnpkg/core": "^3.0.0-rc.5",
+    "@yarnpkg/plugin-git": "^2.4.0-rc.5"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^2.4.0",
-    "@yarnpkg/plugin-git": "workspace:^2.3.0"
+    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/plugin-git": "workspace:*"
   },
   "scripts": {
     "test": "run test:unit packages/plugin-github",
@@ -22,7 +22,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/plugin-github"
   },
   "publishConfig": {
     "main": "./lib/index.js",
@@ -32,6 +33,7 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "2.1.2"
 }

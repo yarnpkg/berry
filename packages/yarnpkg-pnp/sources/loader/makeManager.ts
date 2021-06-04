@@ -51,7 +51,7 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
-      console.warn(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
+      process.emitWarning(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
 
       apiEntry.stats = stats;
       apiEntry.instance = loadApiInstance(pnpApiPath);
@@ -132,13 +132,15 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       if (cached !== undefined)
         return addToCacheAndReturn(start, curr, cached);
 
-      const candidate = ppath.join(curr, `.pnp.js` as Filename);
-      if (xfs.existsSync(candidate) && xfs.statSync(candidate).isFile())
-        return addToCacheAndReturn(start, curr, candidate);
-
-      const cjsCandidate = ppath.join(curr, `.pnp.cjs` as Filename);
+      const cjsCandidate = ppath.join(curr, Filename.pnpCjs);
       if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
         return addToCacheAndReturn(start, curr, cjsCandidate);
+
+      // We still support .pnp.js files to improve multi-project compatibility.
+      // TODO: Remove support for .pnp.js files after they stop being used.
+      const legacyCjsCandidate = ppath.join(curr, Filename.pnpJs);
+      if (xfs.existsSync(legacyCjsCandidate) && xfs.statSync(legacyCjsCandidate).isFile())
+        return addToCacheAndReturn(start, curr, legacyCjsCandidate);
 
       next = ppath.dirname(curr);
     } while (curr !== PortablePath.root);

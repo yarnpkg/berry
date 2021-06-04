@@ -1,21 +1,16 @@
 import {StreamReport, Configuration}                                                                       from '@yarnpkg/core';
-import {NativePath, npath, ppath, xfs, Filename}                                                           from '@yarnpkg/fslib';
+import {npath, ppath, xfs, Filename}                                                                       from '@yarnpkg/fslib';
 import type {PnpApi}                                                                                       from '@yarnpkg/pnp';
-import {Command, UsageError}                                                                               from 'clipanion';
+import {Command, Option, UsageError}                                                                       from 'clipanion';
 
 import {dynamicRequire}                                                                                    from '../dynamicRequire';
 import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedIntegration, IntegrationsFile} from '../generateSdk';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
-  @Command.Rest()
-  integrations: Array<string> = [];
-
-  @Command.String(`--cwd`, {description: `The directory to run the command in`})
-  cwd: NativePath = process.cwd();
-
-  @Command.Boolean(`-v,--verbose`, {description: `Print all skipped dependencies`})
-  verbose: boolean = false;
+  static paths = [
+    [`--sdk`],
+  ];
 
   static usage = Command.Usage({
     description: `generate editor SDKs and settings`,
@@ -50,21 +45,33 @@ export default class SdkCommand extends Command {
     ]],
   });
 
-  @Command.Path(`--sdk`)
+  cwd = Option.String(`--cwd`, process.cwd(), {
+    description: `The directory to run the command in`,
+  });
+
+  verbose = Option.Boolean(`-v,--verbose`, false, {
+    description: `Print all skipped dependencies`,
+  });
+
+  integrations = Option.Rest();
+
   async execute() {
     let nextProjectRoot = npath.toPortablePath(this.cwd);
     let currProjectRoot = null;
 
-    let isCJS = ``;
+    let pnpFilename!: Filename;
     while (nextProjectRoot !== currProjectRoot) {
       currProjectRoot = nextProjectRoot;
       nextProjectRoot = ppath.dirname(currProjectRoot);
 
-      if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.js` as Filename)))
+      if (xfs.existsSync(ppath.join(currProjectRoot, Filename.pnpCjs))) {
+        pnpFilename = Filename.pnpCjs;
         break;
+      }
 
-      if (xfs.existsSync(ppath.join(currProjectRoot, `.pnp.cjs` as Filename))) {
-        isCJS = `c`;
+      // TODO: Drop support for .pnp.js files after they stop being used.
+      if (xfs.existsSync(ppath.join(currProjectRoot, Filename.pnpJs))) {
+        pnpFilename = Filename.pnpJs;
         break;
       }
     }
@@ -73,7 +80,7 @@ export default class SdkCommand extends Command {
       throw new Error(`This tool can only be used with projects using Yarn Plug'n'Play`);
 
     const configuration = Configuration.create(currProjectRoot);
-    const pnpPath = ppath.join(currProjectRoot, `.pnp.${isCJS}js` as Filename);
+    const pnpPath = ppath.join(currProjectRoot, pnpFilename);
     const pnpApi = dynamicRequire(npath.fromPortablePath(pnpPath)) as PnpApi;
 
     // Need to setup the fs patch so we can read from the archives

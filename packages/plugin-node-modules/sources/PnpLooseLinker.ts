@@ -16,10 +16,7 @@ export class PnpLooseLinker extends PnpLinker {
 class PnpLooseInstaller extends PnpInstaller {
   protected mode = `loose`;
 
-  async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
-    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return undefined;
-
+  async transformPnpSettings(pnpSettings: PnpSettings) {
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({
         libzip: await getLibzipPromise(),
@@ -29,7 +26,13 @@ class PnpLooseInstaller extends PnpInstaller {
     });
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const nmTree = buildNodeModulesTree(pnp, {pnpifyFs: false, project: this.opts.project});
+    const {tree, errors} = buildNodeModulesTree(pnp, {pnpifyFs: false, project: this.opts.project});
+    if (!tree) {
+      for (const {messageName, text} of errors)
+        this.opts.report.reportError(messageName, text);
+
+      return;
+    }
 
     const fallbackPool = new Map<string, DependencyTarget>();
     pnpSettings.fallbackPool = fallbackPool;
@@ -47,7 +50,7 @@ class PnpLooseInstaller extends PnpInstaller {
 
     const root = ppath.join(this.opts.project.cwd, Filename.nodeModules);
 
-    const entry = nmTree.get(root);
+    const entry = tree.get(root);
     if (typeof entry === `undefined`)
       throw new Error(`Assertion failed: Expected a root junction point`);
 
@@ -57,7 +60,7 @@ class PnpLooseInstaller extends PnpInstaller {
     for (const childName of entry.dirList) {
       const childP = ppath.join(root, childName);
 
-      const child = nmTree.get(childP);
+      const child = tree.get(childP);
       if (typeof child === `undefined`)
         throw new Error(`Assertion failed: Expected the child to have been registered`);
 
@@ -67,7 +70,7 @@ class PnpLooseInstaller extends PnpInstaller {
         for (const subChildName of child.dirList) {
           const subChildP = ppath.join(childP, subChildName);
 
-          const subChild = nmTree.get(subChildP);
+          const subChild = tree.get(subChildP);
           if (typeof subChild === `undefined`)
             throw new Error(`Assertion failed: Expected the subchild to have been registered`);
 
@@ -79,7 +82,5 @@ class PnpLooseInstaller extends PnpInstaller {
         }
       }
     }
-
-    return super.finalizeInstallWithPnp(pnpSettings);
   }
 }

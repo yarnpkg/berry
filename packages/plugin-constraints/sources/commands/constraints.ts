@@ -2,7 +2,7 @@ import {BaseCommand}                                                    from '@y
 import {Configuration, IdentHash, Ident, Project, Workspace, miscUtils} from '@yarnpkg/core';
 import {MessageName, StreamReport, AllDependencies}                     from '@yarnpkg/core';
 import {formatUtils, structUtils}                                       from '@yarnpkg/core';
-import {Command, Usage}                                                 from 'clipanion';
+import {Command, Option, Usage}                                         from 'clipanion';
 import getPath                                                          from 'lodash/get';
 import setPath                                                          from 'lodash/set';
 import unsetPath                                                        from 'lodash/unset';
@@ -11,8 +11,9 @@ import {Constraints, EnforcedDependency, EnforcedField}                 from '..
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
-  @Command.Boolean(`--fix`, {description: `Attempt to automatically fix unambiguous issues, following a multi-pass process`})
-  fix: boolean = false;
+  static paths = [
+    [`constraints`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
@@ -33,7 +34,10 @@ export default class ConstraintsCheckCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`constraints`)
+  fix = Option.Boolean(`--fix`, false, {
+    description: `Attempt to automatically fix unambiguous issues, following a multi-pass process`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
@@ -49,38 +53,47 @@ export default class ConstraintsCheckCommand extends BaseCommand {
       for (let t = 0, T = this.fix ? 10 : 1; t < T; ++t) {
         errors = [];
 
-        const toSave = new Set<Workspace>();
         const result = await constraints.process();
 
-        await processDependencyConstraints(toSave, errors, result.enforcedDependencies, {
+        const modifiedDependencies = new Set<Workspace>();
+        await processDependencyConstraints(modifiedDependencies, errors, result.enforcedDependencies, {
           fix: this.fix,
           configuration,
         });
 
-        await processFieldConstraints(toSave, errors, result.enforcedFields, {
+        // Dependency constraints work on the manifess, field constraints work on the raw JSON objects
+        for (const {manifest} of modifiedDependencies) {
+          const newManifest = {};
+          manifest.exportTo(newManifest);
+          manifest.raw = newManifest;
+        }
+
+        const modifiedFields = new Set<Workspace>();
+        await processFieldConstraints(modifiedFields, errors, result.enforcedFields, {
           fix: this.fix,
           configuration,
         });
+
+        // Persist changes made by the constraints back to the Manifest instance
+        for (const {manifest} of modifiedFields)
+          manifest.load(manifest.raw);
 
         allSaves = new Set([
           ...allSaves,
-          ...toSave,
+          ...modifiedDependencies,
+          ...modifiedFields,
         ]);
 
         // If we didn't apply any change then we can exit the loop
-        if (toSave.size === 0) {
+        if (modifiedDependencies.size === 0 && modifiedFields.size === 0) {
           break;
         }
       }
 
       // save all modified manifests
       await Promise.all([...allSaves].map(async workspace => {
-        // Constraints modify the raw manifest so we need to reload it here
-        // otherwise changes are not persisted
-        workspace.manifest.load(workspace.manifest.raw);
         await workspace.persistManifest();
       }));
-
 
       // report all outstanding errors
       for (const [messageName, message] of errors) {
@@ -123,7 +136,8 @@ async function processDependencyConstraints(toSave: Set<Workspace>, errors: Arra
         throw new Error(`Assertion failed: The ident should have been registered`);
 
       for (const [dependencyType, byDependencyTypeStore] of byIdentStore) {
-        const expectedRanges = [...byDependencyTypeStore];
+        // If any of the expected ranges are `null` then the dependency should be removed
+        const expectedRanges = byDependencyTypeStore.has(null) ? [null] : [...byDependencyTypeStore];
         if (expectedRanges.length > 2) {
           errors.push([MessageName.CONSTRAINTS_AMBIGUITY, `${structUtils.prettyWorkspace(configuration, workspace)} must depend on ${structUtils.prettyIdent(configuration, dependencyIdent)} via conflicting ranges ${expectedRanges.slice(0, -1).map(expectedRange => structUtils.prettyRange(configuration, String(expectedRange))).join(`, `)}, and ${structUtils.prettyRange(configuration, String(expectedRanges[expectedRanges.length - 1]))} (in ${dependencyType})`]);
         } else if (expectedRanges.length > 1) {
@@ -207,7 +221,7 @@ async function processFieldConstraints(toSave: Set<Workspace>, errors: Array<[Me
               await setWorkspaceField(workspace, fieldPath, null);
               toSave.add(workspace);
             } else {
-              errors.push([MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, String(expectedValue), `magenta`)}`]);
+              errors.push([MessageName.CONSTRAINTS_EXTRANEOUS_FIELD, `${structUtils.prettyWorkspace(configuration, workspace)} has an extraneous field ${formatUtils.pretty(configuration, fieldPath, `cyan`)} set to ${formatUtils.pretty(configuration, JSON.stringify(actualValue), `magenta`)}`]);
             }
           }
         }

@@ -1,4 +1,3 @@
-
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
 import npmAudit               from './commands/npm/audit';

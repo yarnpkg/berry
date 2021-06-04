@@ -75,7 +75,7 @@ The `module` builtin module is extended when operating within the PnP API with o
 export function findPnpApi(lookupSource: URL | string): PnpApi | null;
 ```
 
-When called, this function will traverse the filesystem hierarchy starting from the given `lookupSource` in order to locate the closest `.pnp.js` file. It'll then load this file, register it inside the PnP loader internal store, and return the resulting API to you.
+When called, this function will traverse the filesystem hierarchy starting from the given `lookupSource` in order to locate the closest `.pnp.cjs` file. It'll then load this file, register it inside the PnP loader internal store, and return the resulting API to you.
 
 Note that while you'll be able to resolve the dependencies by using the API returned to you, you'll need to make sure they are properly *loaded* on behalf of the project too, by using `createRequire`:
 
@@ -164,7 +164,7 @@ The `getDependencyTreeRoots` function will return the set of locators that const
 export function getAllLocators(): PackageLocator[];
 ```
 
-**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnp-api#versions) dictionary contains a valid `getAllLocators` property.
+**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnpapi#versions) dictionary contains a valid `getAllLocators` property.
 
 The `getAllLocators` function will return all locators from the dependency tree, in no particular order (although it'll always be a consistent order between calls for the same API). It can be used when you wish to know more about the packages themselves, but not about the exact tree layout.
 

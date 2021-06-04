@@ -44,6 +44,7 @@
     "_zipstruct_stat_index",
     "_zipstruct_stat_size",
     "_zipstruct_stat_mtime",
+    "_zipstruct_stat_crc",
     "_zipstruct_error",
     "_zipstruct_errorS",
     "_zipstruct_error_code_zip",

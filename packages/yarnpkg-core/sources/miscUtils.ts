@@ -1,7 +1,6 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
 import {UsageError}          from 'clipanion';
 import micromatch            from 'micromatch';
-
 import {Readable, Transform} from 'stream';
 
 export function escapeRegExp(str: string) {
@@ -225,6 +224,8 @@ export class DefaultStream extends Transform {
   _flush(cb: any) {
     if (this.active && this.ifEmpty.length > 0) {
       cb(null, this.ifEmpty);
+    } else {
+      cb(null);
     }
   }
 }
@@ -233,34 +234,28 @@ export class DefaultStream extends Transform {
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!
 
-export function dynamicRequire(path: string) {
-  // @ts-expect-error
-  if (typeof __non_webpack_require__ !== `undefined`) {
-    // @ts-expect-error
-    return __non_webpack_require__(path);
-  } else {
-    return require(path);
-  }
-}
+export const dynamicRequire: NodeRequire = eval(`require`);
 
 export function dynamicRequireNoCache(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
-  const currentCacheEntry = require.cache[physicalPath];
-  delete require.cache[physicalPath];
+  const currentCacheEntry = dynamicRequire.cache[physicalPath];
+  delete dynamicRequire.cache[physicalPath];
 
   let result;
   try {
     result = dynamicRequire(physicalPath);
 
-    const freshCacheEntry = require.cache[physicalPath];
-    const freshCacheIndex = module.children.indexOf(freshCacheEntry);
+    const freshCacheEntry = dynamicRequire.cache[physicalPath];
+
+    const dynamicModule = eval(`module`) as NodeModule;
+    const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);
 
     if (freshCacheIndex !== -1) {
-      module.children.splice(freshCacheIndex, 1);
+      dynamicModule.children.splice(freshCacheIndex, 1);
     }
   } finally {
-    require.cache[physicalPath] = currentCacheEntry;
+    dynamicRequire.cache[physicalPath] = currentCacheEntry;
   }
 
   return result;
@@ -319,6 +314,7 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   return ignorePatterns.map(pattern => {
     return `(${micromatch.makeRe(pattern, {
       windows: false,
+      dot: true,
     }).source})`;
   }).join(`|`);
 }
@@ -378,4 +374,14 @@ export function tryParseOptionalBoolean(value: unknown): boolean | undefined | n
   } catch {
     return null;
   }
+}
+
+export type FilterKeys<T extends {}, Filter> = {
+  [K in keyof T]: T[K] extends Filter ? K : never;
+}[keyof T];
+
+export function isPathLike(value: string): boolean {
+  if (npath.isAbsolute(value) || value.match(/^(\.{1,2}|~)\//))
+    return true;
+  return false;
 }

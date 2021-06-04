@@ -2,7 +2,7 @@ import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}           
 import type {FetchResult, Locator, Package}                                                                  from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
 import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                         from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpSettings}                            from '@yarnpkg/pnp';
+import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings}                    from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
 import {getPnpPath}                                                                                          from './index';
@@ -22,6 +22,8 @@ const FORCED_UNPLUG_PACKAGES = new Set([
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
+  private pnpCache: Map<string, PnpApi> = new Map();
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
       return false;
@@ -33,13 +35,15 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project).main;
+    const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
-    const pnpFile = miscUtils.dynamicRequireNoCache(pnpPath);
+    const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
+      return miscUtils.dynamicRequireNoCache(pnpPath);
+    });
 
-    const packageLocator = {name: structUtils.requirableIdent(locator), reference: locator.reference};
+    const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
 
     if (!packageInformation)
@@ -49,13 +53,13 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    const pnpPath = getPnpPath(opts.project).main;
+    const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
       return null;
 
-    const physicalPath = npath.fromPortablePath(pnpPath);
-    const pnpFile = miscUtils.dynamicRequire(physicalPath);
-    delete require.cache[physicalPath];
+    const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
+      return miscUtils.dynamicRequireNoCache(pnpPath);
+    });
 
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
     if (!locator)
@@ -101,7 +105,7 @@ export class PnpInstaller implements Installer {
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
-    const key1 = structUtils.requirableIdent(pkg);
+    const key1 = structUtils.stringifyIdent(pkg);
     const key2 = pkg.reference;
 
     const isWorkspace =
@@ -158,7 +162,7 @@ export class PnpInstaller implements Installer {
     // just ignore their declared peer dependencies.
     if (structUtils.isVirtualLocator(pkg)) {
       for (const descriptor of pkg.peerDependencies.values()) {
-        packageDependencies.set(structUtils.requirableIdent(descriptor), null);
+        packageDependencies.set(structUtils.stringifyIdent(descriptor), null);
         packagePeers.add(structUtils.stringifyIdent(descriptor));
       }
 
@@ -190,10 +194,10 @@ export class PnpInstaller implements Installer {
 
     for (const [descriptor, locator] of dependencies) {
       const target = !structUtils.areIdentsEqual(descriptor, locator)
-        ? [structUtils.requirableIdent(locator), locator.reference] as [string, string]
+        ? [structUtils.stringifyIdent(locator), locator.reference] as [string, string]
         : locator.reference;
 
-      packageInformation.packageDependencies.set(structUtils.requirableIdent(descriptor), target);
+      packageInformation.packageDependencies.set(structUtils.stringifyIdent(descriptor), target);
     }
   }
 
@@ -201,13 +205,29 @@ export class PnpInstaller implements Installer {
     for (const dependentPath of dependentPaths) {
       const packageInformation = this.getDiskInformation(dependentPath);
 
-      packageInformation.packageDependencies.set(structUtils.requirableIdent(locator), locator.reference);
+      packageInformation.packageDependencies.set(structUtils.stringifyIdent(locator), locator.reference);
     }
   }
 
 
   async finalizeInstall() {
-    const blacklistedPaths = new Set<PortablePath>();
+    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
+      return undefined;
+
+    const pnpPath = getPnpPath(this.opts.project);
+
+    if (xfs.existsSync(pnpPath.cjsLegacy)) {
+      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
+
+      await xfs.removePromise(pnpPath.cjsLegacy);
+    }
+
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
+      await xfs.removePromise(pnpPath.cjs);
+      await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+
+      return undefined;
+    }
 
     for (const {locator, location} of this.virtualTemplates.values()) {
       miscUtils.getMapWithDefault(this.packageRegistry, structUtils.stringifyIdent(locator)).set(locator.reference, {
@@ -225,8 +245,7 @@ export class PnpInstaller implements Installer {
 
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
-    const blacklistedLocations = blacklistedPaths;
-    const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.requirableIdent(anchoredLocator), reference: anchoredLocator.reference}));
+    const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference}));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const fallbackPool = new Map();
@@ -237,10 +256,9 @@ export class PnpInstaller implements Installer {
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
         if (this.opts.project.tryWorkspaceByLocator(pkg))
-          fallbackExclusionList.push({name: structUtils.requirableIdent(pkg), reference: pkg.reference});
+          fallbackExclusionList.push({name: structUtils.stringifyIdent(pkg), reference: pkg.reference});
 
     await this.finalizeInstallWithPnp({
-      blacklistedLocations,
       dependencyTreeRoots,
       enableTopLevelFallback,
       fallbackExclusionList,
@@ -255,21 +273,13 @@ export class PnpInstaller implements Installer {
     };
   }
 
-  async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
-    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return;
+  async transformPnpSettings(pnpSettings: PnpSettings) {
+    // Nothing to transform
+  }
 
+  async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
-
-    await xfs.removePromise(pnpPath.other);
-
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
-      await xfs.removePromise(pnpPath.main);
-      await xfs.removePromise(pnpDataPath);
-
-      return;
-    }
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
@@ -279,19 +289,21 @@ export class PnpInstaller implements Installer {
       }
     }
 
+    await this.transformPnpSettings(pnpSettings);
+
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
 
-      await xfs.changeFilePromise(pnpPath.main, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath.main, 0o755);
+      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {automaticNewlines: true});
+      await xfs.chmodPromise(pnpPath.cjs, 0o755);
 
       await xfs.removePromise(pnpDataPath);
     } else {
-      const dataLocation = ppath.relative(ppath.dirname(pnpPath.main), pnpDataPath);
+      const dataLocation = ppath.relative(ppath.dirname(pnpPath.cjs), pnpDataPath);
       const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
 
-      await xfs.changeFilePromise(pnpPath.main, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath.main, 0o755);
+      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {automaticNewlines: true});
+      await xfs.chmodPromise(pnpPath.cjs, 0o755);
 
       await xfs.changeFilePromise(pnpDataPath, dataFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpDataPath, 0o644);
@@ -373,6 +385,10 @@ export class PnpInstaller implements Installer {
     if (await xfs.existsPromise(readyFile))
       return new CwdFS(unplugPath);
 
+    // Delete any build state for the locator so it can run anew, this allows users
+    // to remove `.yarn/unplugged` and have the builds run again
+    this.opts.project.storedBuildState.delete(locator.locatorHash);
+
     await xfs.mkdirPromise(unplugPath, {recursive: true});
     await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
 
@@ -382,7 +398,7 @@ export class PnpInstaller implements Installer {
   }
 
   private getPackageInformation(locator: Locator) {
-    const key1 = structUtils.requirableIdent(locator);
+    const key1 = structUtils.stringifyIdent(locator);
     const key2 = locator.reference;
 
     const packageInformationStore = this.packageRegistry.get(key1);

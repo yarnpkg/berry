@@ -2,17 +2,18 @@
     "name": "pkg-tests-fixtures",
     "private": true,
     "license": "BSD-2-Clause",
-    "dependencies": {
-        "@yarnpkg/fslib": "workspace:^2.4.0"
+    "devDependencies": {
+        "@yarnpkg/fslib": "workspace:*"
     },
     "scripts": {
         "copy-index": "find packages -type d -mindepth 1 -maxdepth 1 | while read pkg; do cp default-index.js \"$pkg/index.js\"; done"
     },
     "repository": {
         "type": "git",
-        "url": "ssh://git@github.com/yarnpkg/berry.git"
+        "url": "ssh://git@github.com/yarnpkg/berry.git",
+        "directory": "packages/acceptance-tests/pkg-tests-fixtures"
     },
     "engines": {
-        "node": ">=10.19.0"
+        "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
     }
 }

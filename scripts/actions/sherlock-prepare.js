@@ -51,7 +51,7 @@ global.yarn = async (...args) => {
   let stdout;
   try {
     ({stdout} = await execFileP(process.execPath, [`${__dirname}/../run-yarn.js`, ...args], {
-      env: {...process.env, YARN_ENABLE_COLORS: 0, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1},
+      env: {...process.env, YARN_ENABLE_COLORS: 0, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1, YARN_ENABLE_IMMUTABLE_INSTALLS: 0},
       ...opts,
     }));
   } catch (error) {

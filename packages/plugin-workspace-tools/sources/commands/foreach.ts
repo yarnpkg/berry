@@ -2,111 +2,18 @@ import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
 import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
-import {Command, Usage, UsageError}                        from 'clipanion';
+import {Command, Option, Usage, UsageError}                from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
-import type {Writable}                                     from 'stream';
-import * as yup                                            from 'yup';
-
-/**
- * Retrieves all the child workspaces of a given root workspace recursively
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the child workspaces
- */
-const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
-  const workspaceList = [];
-  for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
-    const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
-    if (childWorkspace) {
-      workspaceList.push(childWorkspace, ...getWorkspaceChildrenRecursive(childWorkspace, project));
-    }
-  }
-  return workspaceList;
-};
-
-/**
- * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the workspaces marked as dependencies
- */
-const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Set<Workspace> => {
-  const workspaceList = new Set<Workspace>();
-
-  const visitWorkspace = (workspace: Workspace) => {
-    const dependencies = new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]);
-    for (const descriptor of dependencies.values()) {
-      const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
-      if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
-        workspaceList.add(foundWorkspace);
-        visitWorkspace(foundWorkspace);
-      }
-    }
-  };
-
-  visitWorkspace(rootWorkspace);
-  return workspaceList;
-};
+import type {Writable}                                          from 'stream';
+import * as t                                              from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
-  @Command.String()
-  commandName!: string;
-
-  @Command.Proxy()
-  args: Array<string> = [];
-
-  // TODO: remove in next major
-  @Command.Boolean(`-a`, {hidden: true})
-  allLegacy: boolean = false;
-
-  @Command.Boolean(`-R,--recursive`, {description: `Find packages via dependencies/devDependencies instead of using the workspaces field`})
-  recursive: boolean = false;
-
-  @Command.Boolean(`-A,--all`, {description: `Run the command on all workspaces of a project`})
-  all?: boolean;
-
-  @Command.Boolean(`-v,--verbose`, {description: `Prefix each output line with the name of the originating workspace`})
-  verbose: boolean = false;
-
-  @Command.Boolean(`-p,--parallel`, {description: `Run the commands in parallel`})
-  parallel: boolean = false;
-
-  @Command.Boolean(`-i,--interlaced`, {description: `Print the output of commands in real-time instead of buffering it`})
-  interlaced: boolean = false;
-
-  @Command.String(`-j,--jobs`, {description: `The maximum number of parallel tasks that the execution will be limited to`})
-  jobs?: number;
-
-  @Command.Boolean(`-t,--topological`, {description: `Run the command after all workspaces it depends on (regular) have finished`})
-  topological: boolean = false;
-
-  @Command.Boolean(`--topological-dev`, {description: `Run the command after all workspaces it depends on (regular + dev) have finished`})
-  topologicalDev: boolean = false;
-
-  @Command.Array(`--include`, {description: `An array of glob pattern idents; only matching workspaces will be traversed`})
-  include: Array<string> = [];
-
-  @Command.Array(`--exclude`, {description: `An array of glob pattern idents; matching workspaces won't be traversed`})
-  exclude: Array<string> = [];
-
-  @Command.Boolean(`--no-private`, {description: `Avoid running the command on private workspaces`})
-  publicOnly: boolean = false;
-
-  static schema = yup.object().shape({
-    jobs: yup.number().min(2),
-    parallel: yup.boolean().when(`jobs`, {
-      is: (val: number) => val > 1,
-      then: yup.boolean().oneOf([true], `--parallel must be set when using --jobs`),
-      otherwise: yup.boolean(),
-    }),
-  });
+  static paths = [
+    [`workspaces`, `foreach`],
+  ];
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -142,13 +49,59 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     ]],
   });
 
-  @Command.Path(`workspaces`, `foreach`)
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
+  });
+
+  all = Option.Boolean(`-A,--all`, false, {
+    description: `Run the command on all workspaces of a project`,
+  });
+
+  verbose = Option.Boolean(`-v,--verbose`, false, {
+    description: `Prefix each output line with the name of the originating workspace`,
+  });
+
+  parallel = Option.Boolean(`-p,--parallel`, false, {
+    description: `Run the commands in parallel`,
+  });
+
+  interlaced = Option.Boolean(`-i,--interlaced`, false, {
+    description: `Print the output of commands in real-time instead of buffering it`,
+  });
+
+  jobs = Option.String(`-j,--jobs`, {
+    description: `The maximum number of parallel tasks that the execution will be limited to`,
+    validator: t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(2)]),
+  });
+
+  topological = Option.Boolean(`-t,--topological`, false, {
+    description: `Run the command after all workspaces it depends on (regular) have finished`,
+  });
+
+  topologicalDev = Option.Boolean(`--topological-dev`, false, {
+    description: `Run the command after all workspaces it depends on (regular + dev) have finished`,
+  });
+
+  include = Option.Array(`--include`, [], {
+    description: `An array of glob pattern idents; only matching workspaces will be traversed`,
+  });
+
+  exclude = Option.Array(`--exclude`, [], {
+    description: `An array of glob pattern idents; matching workspaces won't be traversed`,
+  });
+
+  publicOnly = Option.Boolean(`--no-private`, {
+    description: `Avoid running the command on private workspaces`,
+  });
+
+  commandName = Option.String();
+  args = Option.Proxy();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-    const all = this.all ?? this.allLegacy;
-    if (!all && !cwdWorkspace)
+    if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
@@ -159,13 +112,13 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = all
+    const rootWorkspace = this.all
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
     const candidates = this.recursive
-      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
-      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+      ? [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceDependencies()]
+      : [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceChildren()];
 
     const workspaces: Array<Workspace> = [];
 
@@ -224,6 +177,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
         try {
+          if (this.verbose)
+            report.reportInfo(null, `${prefix} Process started`);
+
+          const start = Date.now();
+
           const exitCode = (await this.cli.run([this.commandName, ...this.args], {
             cwd: workspace.cwd,
             stdout,
@@ -233,11 +191,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           stdout.end();
           stderr.end();
 
-          const emptyStdout = await stdoutEnd;
-          const emptyStderr = await stderrEnd;
+          await stdoutEnd;
+          await stderrEnd;
 
-          if (this.verbose && emptyStdout && emptyStderr)
-            report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+          const end = Date.now();
+          if (this.verbose) {
+            const timerMessage = configuration.get(`enableTimers`) ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}` : ``;
+            report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})${timerMessage}`);
+          }
 
           if (exitCode === 130) {
             // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
