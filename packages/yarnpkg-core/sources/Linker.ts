@@ -1,9 +1,9 @@
-import type {PortablePath}     from '@yarnpkg/fslib';
+import {PortablePath}     from '@yarnpkg/fslib';
 
-import type {Installer}        from './Installer';
-import type {Project}          from './Project';
-import type {Report}           from './Report';
-import type {Locator, Package} from './types';
+import {Installer}        from './Installer';
+import {Project}          from './Project';
+import {Report}           from './Report';
+import {Locator, Package} from './types';
 
 export type MinimalLinkOptions = {
   project: Project,

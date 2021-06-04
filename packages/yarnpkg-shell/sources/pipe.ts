@@ -3,7 +3,7 @@ import crossSpawn                                   from 'cross-spawn';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
 import {StringDecoder}                              from 'string_decoder';
 
-import type {ShellOptions, ShellState}                   from './index';
+import {ShellOptions, ShellState}                   from './index';
 
 export enum Pipe {
   STDIN = 0b00,

@@ -1,5 +1,5 @@
-import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import type {Descriptor, Locator}                             from './types';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {Descriptor, Locator}                             from './types';
 
 export class VirtualResolver implements Resolver {
   static protocol = `virtual:`;

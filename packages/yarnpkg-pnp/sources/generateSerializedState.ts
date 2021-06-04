@@ -1,5 +1,5 @@
-import type {PackageRegistryData}                            from './types';
-import type {PackageStoreData, PnpSettings, SerializedState} from './types';
+import {PackageRegistryData}                            from './types';
+import {PackageStoreData, PnpSettings, SerializedState} from './types';
 
 // Keep this function is sync with its implementation in:
 // @yarnpkg/core/sources/miscUtils.ts

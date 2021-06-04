@@ -1,4 +1,4 @@
-import type {Configuration, Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
+import {Configuration, Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {structUtils, tgzUtils}                                          from '@yarnpkg/core';
 import {Locator, MessageName, ReportError}                              from '@yarnpkg/core';
 import semver                                                           from 'semver';

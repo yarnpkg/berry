@@ -1,4 +1,4 @@
-import type {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver, DescriptorHash, Package} from '@yarnpkg/core';
+import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver, DescriptorHash, Package} from '@yarnpkg/core';
 import {structUtils}                                                                                        from '@yarnpkg/core';
 
 import {PROTOCOL}                                                                                           from './constants';

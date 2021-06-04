@@ -3,9 +3,9 @@ import chalk                                                                from
 import {CIRCLE as isCircleCI}                                               from 'ci-info';
 import stripAnsi                                                            from 'strip-ansi';
 
-import type {Configuration, ConfigurationValueMap}                               from './Configuration';
+import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
-import type {Report}                                                        from './Report';
+import {Report}                                                        from './Report';
 import * as miscUtils                                                       from './miscUtils';
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';

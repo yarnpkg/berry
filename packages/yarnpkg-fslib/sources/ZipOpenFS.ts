@@ -1,9 +1,9 @@
-import type {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {BigIntStats, constants, Stats}                                                                                                               from 'fs';
 
-import type {WatchOptions, WatchCallback, Watcher}                                                                                                   from './FakeFS';
-import type {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                   from './FakeFS';
-import type {Dirent, SymlinkType}                                                                                                                    from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher}                                                                                                   from './FakeFS';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                   from './FakeFS';
+import {Dirent, SymlinkType}                                                                                                                    from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {ZipFS}                                                                                                                                       from './ZipFS';

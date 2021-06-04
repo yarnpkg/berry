@@ -1,6 +1,6 @@
 import {StreamReport, Configuration}                                                                       from '@yarnpkg/core';
 import {npath, ppath, xfs, Filename}                                                                       from '@yarnpkg/fslib';
-import type {PnpApi}                                                                                       from '@yarnpkg/pnp';
+import {PnpApi}                                                                                       from '@yarnpkg/pnp';
 import {Command, Option, UsageError}                                                                       from 'clipanion';
 
 import {dynamicRequire}                                                                                    from '../dynamicRequire';

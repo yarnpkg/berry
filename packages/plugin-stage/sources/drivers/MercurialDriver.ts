@@ -1,4 +1,4 @@
-import type {PortablePath, Filename} from '@yarnpkg/fslib';
+import {PortablePath, Filename} from '@yarnpkg/fslib';
 
 import * as stageUtils               from '../stageUtils';
 

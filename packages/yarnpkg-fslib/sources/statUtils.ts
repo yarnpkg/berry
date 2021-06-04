@@ -1,8 +1,8 @@
-import type {BigIntStats, Stats}                from 'fs';
+import {BigIntStats, Stats}                from 'fs';
 import * as nodeUtils                      from 'util';
 
 import {S_IFDIR, S_IFLNK, S_IFMT, S_IFREG} from './constants';
-import type {Filename}                     from './path';
+import {Filename}                     from './path';
 
 export class DirEntry {
   public name: Filename = `` as Filename;

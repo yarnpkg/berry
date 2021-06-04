@@ -5,8 +5,8 @@ import semver                                             from 'semver';
 import * as miscUtils                                     from './miscUtils';
 import * as semverUtils                                   from './semverUtils';
 import * as structUtils                                   from './structUtils';
-import type {IdentHash}                                   from './types';
-import type {Ident, Descriptor}                           from './types';
+import {IdentHash}                                   from './types';
+import {Ident, Descriptor}                           from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';

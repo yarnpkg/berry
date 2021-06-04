@@ -1,5 +1,5 @@
-import type {FakeFS, WatchFileOptions, WatchFileCallback} from '../FakeFS';
-import type {Path}                                        from '../path';
+import {FakeFS, WatchFileOptions, WatchFileCallback} from '../FakeFS';
+import {Path}                                        from '../path';
 
 import {CustomStatWatcher}                                from './watchFile/CustomStatWatcher';
 

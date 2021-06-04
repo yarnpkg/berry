@@ -1,4 +1,4 @@
-import type {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
+import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
 
 // Note: most of those types are useless for most users. Just check the
 // PnpSettings and PnpApi types at the end and you'll be fine.

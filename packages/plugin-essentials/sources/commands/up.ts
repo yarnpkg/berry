@@ -8,7 +8,7 @@ import micromatch                                                               
 import * as t                                                                                                       from 'typanion';
 
 import * as suggestUtils                                                                                            from '../suggestUtils';
-import type {Hooks}                                                                                                 from '..';
+import {Hooks}                                                                                                 from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {

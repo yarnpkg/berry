@@ -1,4 +1,4 @@
-import type {Plugin} from '@yarnpkg/core';
+import {Plugin} from '@yarnpkg/core';
 
 import create        from './commands/create';
 import dlx           from './commands/dlx';

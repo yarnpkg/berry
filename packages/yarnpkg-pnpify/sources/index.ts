@@ -1,5 +1,5 @@
 import {patchFs as fslibPatchFs}               from '@yarnpkg/fslib';
-import type {PnpApi}                           from '@yarnpkg/pnp';
+import {PnpApi}                           from '@yarnpkg/pnp';
 import fs                                      from 'fs';
 
 import {NodeModulesFS}                         from './NodeModulesFS';

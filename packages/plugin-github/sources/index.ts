@@ -1,5 +1,5 @@
-import type {Plugin}            from '@yarnpkg/core';
-import type {Hooks as GitHooks} from '@yarnpkg/plugin-git';
+import {Plugin}            from '@yarnpkg/core';
+import {Hooks as GitHooks} from '@yarnpkg/plugin-git';
 
 import {GithubFetcher}          from './GithubFetcher';
 

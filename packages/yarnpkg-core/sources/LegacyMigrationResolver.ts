@@ -2,12 +2,12 @@ import {xfs, ppath}                                      from '@yarnpkg/fslib';
 import {parseSyml}                                       from '@yarnpkg/parsers';
 
 import {MessageName}                                     from './MessageName';
-import type {Project}                                         from './Project';
-import type {Report}                                          from './Report';
-import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {Project}                                         from './Project';
+import {Report}                                          from './Report';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as semverUtils                                  from './semverUtils';
 import * as structUtils                                  from './structUtils';
-import type {DescriptorHash, Descriptor, Locator}             from './types';
+import {DescriptorHash, Descriptor, Locator}             from './types';
 
 const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls

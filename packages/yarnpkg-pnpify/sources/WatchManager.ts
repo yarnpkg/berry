@@ -1,7 +1,7 @@
-import type {Filename, PortablePath, Watcher, WatchCallback} from '@yarnpkg/fslib';
+import {Filename, PortablePath, Watcher, WatchCallback} from '@yarnpkg/fslib';
 import {EventEmitter}                                   from 'events';
 
-import type {ResolvedPath}                                   from './resolveNodeModulesPath';
+import {ResolvedPath}                                   from './resolveNodeModulesPath';
 
 class WatchEventEmitter extends EventEmitter {
   private dirWatchers: DirectoryWatcherMap;

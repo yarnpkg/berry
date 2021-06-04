@@ -1,8 +1,8 @@
 import {EventEmitter}                                             from 'events';
-import type {BigIntStats, Stats}                                       from 'fs';
+import {BigIntStats, Stats}                                       from 'fs';
 
-import type {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../../FakeFS';
-import type {Path}                                                     from '../../path';
+import {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../../FakeFS';
+import {Path}                                                     from '../../path';
 import * as statUtils                                                  from '../../statUtils';
 
 export enum Event {

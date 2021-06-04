@@ -1,15 +1,15 @@
-import type {PortablePath}                                                                         from '@yarnpkg/fslib';
-import type {CommandClass}                                                                         from 'clipanion';
-import type {Writable, Readable}                                                                   from 'stream';
+import {PortablePath}                                                                         from '@yarnpkg/fslib';
+import {CommandClass}                                                                         from 'clipanion';
+import {Writable, Readable}                                                                   from 'stream';
 
-import type {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
-import type {Fetcher}                                                                              from './Fetcher';
-import type {Linker}                                                                               from './Linker';
-import type {MessageName}                                                                          from './MessageName';
-import type {Project, InstallOptions}                                                              from './Project';
-import type {Resolver, ResolveOptions}                                                             from './Resolver';
-import type {Workspace}                                                                            from './Workspace';
-import type {Locator, Descriptor}                                                                  from './types';
+import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
+import {Fetcher}                                                                              from './Fetcher';
+import {Linker}                                                                               from './Linker';
+import {MessageName}                                                                          from './MessageName';
+import {Project, InstallOptions}                                                              from './Project';
+import {Resolver, ResolveOptions}                                                             from './Resolver';
+import {Workspace}                                                                            from './Workspace';
+import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
 

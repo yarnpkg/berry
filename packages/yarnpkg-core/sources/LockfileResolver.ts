@@ -1,6 +1,6 @@
-import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                       from './structUtils';
-import type {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator}                             from './types';
 
 export class LockfileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

@@ -1,16 +1,16 @@
 import {PortablePath, xfs}                                   from '@yarnpkg/fslib';
-import type {ExtendOptions, RequestError, Response, TimeoutError} from 'got';
+import {ExtendOptions, RequestError, Response, TimeoutError} from 'got';
 import {Agent as HttpsAgent}                                 from 'https';
 import {Agent as HttpAgent}                                  from 'http';
 import micromatch                                            from 'micromatch';
 import tunnel, {ProxyOptions}                                from 'tunnel';
 import {URL}                                                 from 'url';
 
-import type {ConfigurationValueMap, Configuration}                from './Configuration';
+import {ConfigurationValueMap, Configuration}                from './Configuration';
 import {MessageName}                                         from './MessageName';
 import {ReportError}                                         from './Report';
 import * as formatUtils                                      from './formatUtils';
-import type {MapValue, MapValueToObjectValue}                     from './miscUtils';
+import {MapValue, MapValueToObjectValue}                     from './miscUtils';
 import * as miscUtils                                        from './miscUtils';
 
 export {RequestError} from 'got';

@@ -1,9 +1,9 @@
 import semver                                                 from 'semver';
 
-import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as semverUtils                                       from './semverUtils';
 import * as structUtils                                       from './structUtils';
-import type {Descriptor, Locator, DescriptorHash, Package}    from './types';
+import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 

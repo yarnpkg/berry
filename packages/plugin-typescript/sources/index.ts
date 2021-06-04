@@ -1,8 +1,8 @@
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
 import {structUtils, ThrowReport, miscUtils, semverUtils}                                                  from '@yarnpkg/core';
-import type {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
+import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
 import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
-import type {Hooks as PackHooks}                                                                           from '@yarnpkg/plugin-pack';
+import {Hooks as PackHooks}                                                                           from '@yarnpkg/plugin-pack';
 import semver                                                                                              from 'semver';
 
 import {hasDefinitelyTyped}                                                                                from './typescriptUtils';

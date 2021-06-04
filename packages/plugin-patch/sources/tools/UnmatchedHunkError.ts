@@ -1,4 +1,4 @@
-import type {Hunk} from './parse';
+import {Hunk} from './parse';
 
 export class UnmatchedHunkError extends Error {
   constructor(index: number, public hunk: Hunk) {

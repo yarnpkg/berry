@@ -5,7 +5,7 @@ import {URL}                             from 'url';
 
 import {Hooks}                           from "./Hooks";
 import * as npmConfigUtils               from './npmConfigUtils';
-import type {MapLike}                    from './npmConfigUtils';
+import {MapLike}                    from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,

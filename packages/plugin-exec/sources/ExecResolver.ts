@@ -1,4 +1,4 @@
-import type {Resolver, ResolveOptions, MinimalResolveOptions}   from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions}   from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
 import {LinkType}                                               from '@yarnpkg/core';
 import {miscUtils, structUtils, hashUtils}                      from '@yarnpkg/core';

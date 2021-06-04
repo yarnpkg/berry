@@ -1,7 +1,7 @@
 import {PortablePath, npath, ppath}                                from '@yarnpkg/fslib';
-import type {PnpApi}                                               from '@yarnpkg/pnp';
+import {PnpApi}                                               from '@yarnpkg/pnp';
 
-import type {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
+import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
 import * as sdkUtils                                               from '../sdkUtils';
 
 export enum CocVimConfiguration {

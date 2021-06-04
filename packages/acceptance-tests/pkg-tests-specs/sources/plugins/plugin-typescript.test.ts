@@ -1,5 +1,5 @@
 import {Manifest}          from '@yarnpkg/core';
-import type {PortablePath} from '@yarnpkg/fslib';
+import {PortablePath} from '@yarnpkg/fslib';
 import {merge}             from 'lodash';
 import {fs, yarn}          from 'pkg-tests-core';
 

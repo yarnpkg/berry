@@ -35,8 +35,7 @@
     "declaration": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "skipLibCheck": true,
-    "importsNotUsedAsValues": "error"
+    "skipLibCheck": true
   },
   "exclude": [
     "packages/*/lib",

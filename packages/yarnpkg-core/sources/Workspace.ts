@@ -2,13 +2,13 @@ import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
 import globby                                      from 'globby';
 
 import {HardDependencies, Manifest}                from './Manifest';
-import type {Project}                                   from './Project';
+import {Project}                                   from './Project';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
 import * as hashUtils                              from './hashUtils';
 import * as semverUtils                            from './semverUtils';
 import * as structUtils                            from './structUtils';
-import type {IdentHash}                            from './types';
-import type {Descriptor, Locator}                  from './types';
+import {IdentHash}                            from './types';
+import {Descriptor, Locator}                  from './types';
 
 export class Workspace {
   public readonly project: Project;

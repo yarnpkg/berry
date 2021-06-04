@@ -6,7 +6,7 @@ import {Command, Option, Usage, UsageError}                from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
-import type {Writable}                                          from 'stream';
+import {Writable}                                          from 'stream';
 import * as t                                              from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export

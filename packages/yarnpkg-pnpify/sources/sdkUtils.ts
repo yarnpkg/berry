@@ -1,5 +1,5 @@
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import type {PnpApi}                     from '@yarnpkg/pnp';
+import {PnpApi}                     from '@yarnpkg/pnp';
 import CJSON                             from 'comment-json';
 import mergeWith                         from 'lodash/mergeWith';
 

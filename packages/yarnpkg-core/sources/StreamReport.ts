@@ -1,12 +1,12 @@
 import sliceAnsi                                  from '@arcanis/slice-ansi';
-import type {Writable}                                 from 'stream';
+import {Writable}                                 from 'stream';
 
-import type {Configuration}                       from './Configuration';
+import {Configuration}                       from './Configuration';
 import {MessageName, stringifyMessageName}        from './MessageName';
 import {ProgressDefinition, Report, TimerOptions} from './Report';
 import * as formatUtils                           from './formatUtils';
 import * as structUtils                           from './structUtils';
-import type {Locator}                                  from './types';
+import {Locator}                                  from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,

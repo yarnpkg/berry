@@ -1,7 +1,7 @@
-import type {PortablePath}                                    from '@yarnpkg/fslib';
+import {PortablePath}                                    from '@yarnpkg/fslib';
 
-import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import type {Descriptor, Locator}                             from './types';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {Descriptor, Locator}                             from './types';
 import {LinkType}                                             from './types';
 
 export class WorkspaceResolver implements Resolver {

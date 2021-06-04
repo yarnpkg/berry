@@ -1,4 +1,4 @@
-import type * as npm                                          from '@npm/types';
+import * as npm                                          from '@npm/types';
 import {BaseCommand}                                     from '@yarnpkg/cli';
 import {Project, Configuration, structUtils, Descriptor} from '@yarnpkg/core';
 import {StreamReport, MessageName, semverUtils}          from '@yarnpkg/core';

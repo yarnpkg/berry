@@ -1,7 +1,7 @@
 import {BaseCommand}                                                                                                          from '@yarnpkg/cli';
 import {Configuration, MessageName, miscUtils, Project, StreamReport, structUtils, semverUtils, formatUtils, PeerRequirement} from '@yarnpkg/core';
 import {Command, Option}                                                                                                      from 'clipanion';
-import type {Writable}                                                                                                             from 'stream';
+import {Writable}                                                                                                             from 'stream';
 import * as t                                                                                                                 from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export

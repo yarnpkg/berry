@@ -1,6 +1,6 @@
 // @ts-expect-error
 import packageJson                from '@yarnpkg/cli/package.json';
-import type {PluginConfiguration} from '@yarnpkg/core';
+import {PluginConfiguration} from '@yarnpkg/core';
 
 import {getDynamicLibs}           from './getDynamicLibs';
 

@@ -1,5 +1,5 @@
 import {PnpApi}                                                                             from '@yarnpkg/pnp';
-import type {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild';
+import {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild';
 import * as fs                                                                              from 'fs';
 
 const matchAll = /()/;

@@ -1,6 +1,6 @@
-import type {FakeFS}          from './FakeFS';
+import {FakeFS}          from './FakeFS';
 import {ProxiedFS}            from './ProxiedFS';
-import type {Path, PathUtils} from './path';
+import {Path, PathUtils} from './path';
 
 export type AliasFSOptions<P extends Path> = {
   baseFs: FakeFS<P>,

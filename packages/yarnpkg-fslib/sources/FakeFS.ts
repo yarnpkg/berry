@@ -1,11 +1,11 @@
-import type {EventEmitter}                                    from 'events';
-import type {Dirent as NodeDirent, ReadStream}                from 'fs';
-import type {Stats as NodeStats, WriteStream}                 from 'fs';
-import type {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
+import {EventEmitter}                                    from 'events';
+import {Dirent as NodeDirent, ReadStream}                from 'fs';
+import {Stats as NodeStats, WriteStream}                 from 'fs';
+import {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
 import {EOL}                                             from 'os';
 
 import {copyPromise, LinkStrategy}                       from './algorithms/copyPromise';
-import type {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
+import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
 export type Stats = NodeStats & {

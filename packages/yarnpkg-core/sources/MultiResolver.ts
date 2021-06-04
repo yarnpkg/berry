@@ -1,6 +1,6 @@
-import type {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                       from './structUtils';
-import type {Descriptor, Locator, DescriptorHash, Package}    from './types';
+import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 
 export class MultiResolver implements Resolver {
   private readonly resolvers: Array<Resolver>;
