@@ -5,7 +5,7 @@ import stripAnsi                                                            from
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
-import {Report}                                                        from './Report';
+import {Report}                                                             from './Report';
 import * as miscUtils                                                       from './miscUtils';
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';

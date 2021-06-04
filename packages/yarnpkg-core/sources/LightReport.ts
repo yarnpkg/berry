@@ -1,11 +1,11 @@
-import {Writable}           from 'stream';
+import {Writable}                from 'stream';
 
-import {Configuration}      from './Configuration';
-import {MessageName}        from './MessageName';
+import {Configuration}           from './Configuration';
+import {MessageName}             from './MessageName';
 import {Report, TimerOptions}    from './Report';
 import {formatNameWithHyperlink} from './StreamReport';
 import * as formatUtils          from './formatUtils';
-import {Locator}            from './types';
+import {Locator}                 from './types';
 
 export type LightReportOptions = {
   configuration: Configuration,

@@ -11,18 +11,18 @@ import {promisify}                                                      from 'ut
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
 
-import {Cache}                                                     from './Cache';
+import {Cache}                                                          from './Cache';
 import {Configuration}                                                  from './Configuration';
-import {Fetcher}                                                   from './Fetcher';
+import {Fetcher}                                                        from './Fetcher';
 import {Installer, BuildDirective, BuildType}                           from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
-import {Linker}                                                    from './Linker';
+import {Linker}                                                         from './Linker';
 import {LockfileResolver}                                               from './LockfileResolver';
 import {DependencyMeta, Manifest}                                       from './Manifest';
 import {MessageName}                                                    from './MessageName';
 import {MultiResolver}                                                  from './MultiResolver';
 import {Report, ReportError}                                            from './Report';
-import {ResolveOptions, Resolver}                                  from './Resolver';
+import {ResolveOptions, Resolver}                                       from './Resolver';
 import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
 import {ThrowReport}                                                    from './ThrowReport';
 import {Workspace}                                                      from './Workspace';
@@ -34,7 +34,7 @@ import * as scriptUtils                                                 from './
 import * as semverUtils                                                 from './semverUtils';
 import * as structUtils                                                 from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './types';
-import {Descriptor, Ident, Locator, Package}                       from './types';
+import {Descriptor, Ident, Locator, Package}                            from './types';
 import {LinkType}                                                       from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific

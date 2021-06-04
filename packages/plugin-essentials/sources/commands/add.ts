@@ -7,7 +7,7 @@ import {Command, Option, Usage, UsageError}                         from 'clipan
 import {prompt}                                                     from 'enquirer';
 
 import * as suggestUtils                                            from '../suggestUtils';
-import {Hooks}                                                 from '..';
+import {Hooks}                                                      from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {

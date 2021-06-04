@@ -6,19 +6,19 @@ import capitalize                                             from 'lodash/capit
 import pLimit                                                 from 'p-limit';
 import {PassThrough, Readable, Writable}                      from 'stream';
 
-import {Configuration}                                   from './Configuration';
+import {Configuration}                                        from './Configuration';
 import {Manifest}                                             from './Manifest';
 import {MessageName}                                          from './MessageName';
-import {Project}                                         from './Project';
+import {Project}                                              from './Project';
 import {ReportError, Report}                                  from './Report';
 import {StreamReport}                                         from './StreamReport';
-import {Workspace}                                       from './Workspace';
+import {Workspace}                                            from './Workspace';
 import {YarnVersion}                                          from './YarnVersion';
 import * as execUtils                                         from './execUtils';
 import * as formatUtils                                       from './formatUtils';
 import * as miscUtils                                         from './miscUtils';
 import * as structUtils                                       from './structUtils';
-import {LocatorHash, Locator}                            from './types';
+import {LocatorHash, Locator}                                 from './types';
 
 enum PackageManager {
   Yarn1 = `Yarn Classic`,

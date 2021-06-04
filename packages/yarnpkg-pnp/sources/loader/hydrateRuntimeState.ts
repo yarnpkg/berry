@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath}                                                                   from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath}                                                              from '@yarnpkg/fslib';
 
 import {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
 

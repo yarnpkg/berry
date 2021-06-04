@@ -1,6 +1,6 @@
 import {PortablePath, Filename} from '@yarnpkg/fslib';
 
-import * as stageUtils               from '../stageUtils';
+import * as stageUtils          from '../stageUtils';
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {

@@ -1,10 +1,10 @@
-import {structUtils}                                     from '@yarnpkg/core';
+import {structUtils}                                from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {ppath}                                           from '@yarnpkg/fslib';
+import {ppath}                                      from '@yarnpkg/fslib';
 
-import {PROTOCOL}                                        from './constants';
-import * as fileUtils                                    from './fileUtils';
+import {PROTOCOL}                                   from './constants';
+import * as fileUtils                               from './fileUtils';
 
 export class FileFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

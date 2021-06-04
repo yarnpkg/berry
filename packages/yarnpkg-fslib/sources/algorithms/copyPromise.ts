@@ -1,6 +1,6 @@
 import fs, {Stats}         from 'fs';
 
-import {FakeFS}       from '../FakeFS';
+import {FakeFS}            from '../FakeFS';
 import {Path, convertPath} from '../path';
 
 // 1980-01-01, like Fedora

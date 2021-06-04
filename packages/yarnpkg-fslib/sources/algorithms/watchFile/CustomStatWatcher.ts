@@ -3,7 +3,7 @@ import {BigIntStats, Stats}                                       from 'fs';
 
 import {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../../FakeFS';
 import {Path}                                                     from '../../path';
-import * as statUtils                                                  from '../../statUtils';
+import * as statUtils                                             from '../../statUtils';
 
 export enum Event {
   Change = `change`,

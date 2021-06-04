@@ -1,7 +1,7 @@
 import {Plugin, Project} from '@yarnpkg/core';
 import {PortablePath}    from '@yarnpkg/fslib';
 
-import stage                  from './commands/stage';
+import stage             from './commands/stage';
 
 export interface Hooks {
   populateYarnPaths?: (

@@ -11,10 +11,10 @@ import {CorePlugin}                                                             
 import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
 import {MultiFetcher}                                                                                   from './MultiFetcher';
 import {MultiResolver}                                                                                  from './MultiResolver';
-import {Plugin, Hooks}                                                                             from './Plugin';
+import {Plugin, Hooks}                                                                                  from './Plugin';
 import {ProtocolResolver}                                                                               from './ProtocolResolver';
-import {Report}                                                                                    from './Report';
-import {TelemetryManager}                                                                          from './TelemetryManager';
+import {Report}                                                                                         from './Report';
+import {TelemetryManager}                                                                               from './TelemetryManager';
 import {VirtualFetcher}                                                                                 from './VirtualFetcher';
 import {VirtualResolver}                                                                                from './VirtualResolver';
 import {WorkspaceFetcher}                                                                               from './WorkspaceFetcher';

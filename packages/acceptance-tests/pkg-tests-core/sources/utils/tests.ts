@@ -18,7 +18,7 @@ const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtu
 import {Gzip}       from 'zlib';
 
 import {ExecResult} from './exec';
-import * as fsUtils      from './fs';
+import * as fsUtils from './fs';
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;

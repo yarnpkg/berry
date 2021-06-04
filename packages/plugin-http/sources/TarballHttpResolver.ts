@@ -1,9 +1,9 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                        from '@yarnpkg/core';
-import {LinkType}                                             from '@yarnpkg/core';
-import {miscUtils, structUtils}                               from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {miscUtils, structUtils}                          from '@yarnpkg/core';
 
-import {PROTOCOL_REGEXP, TARBALL_REGEXP}                      from './constants';
+import {PROTOCOL_REGEXP, TARBALL_REGEXP}                 from './constants';
 
 export class TarballHttpResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

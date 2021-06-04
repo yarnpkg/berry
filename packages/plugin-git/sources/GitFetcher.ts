@@ -1,9 +1,9 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
 import {Locator}                                                 from '@yarnpkg/core';
-import {miscUtils, scriptUtils, structUtils, tgzUtils}                from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                                     from '@yarnpkg/fslib';
+import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 
-import * as gitUtils                                                  from './gitUtils';
+import * as gitUtils                                             from './gitUtils';
 import {Hooks}                                                   from './index';
 
 export class GitFetcher implements Fetcher {

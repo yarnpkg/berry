@@ -1,7 +1,7 @@
 import sliceAnsi                                  from '@arcanis/slice-ansi';
 import {Writable}                                 from 'stream';
 
-import {Configuration}                       from './Configuration';
+import {Configuration}                            from './Configuration';
 import {MessageName, stringifyMessageName}        from './MessageName';
 import {ProgressDefinition, Report, TimerOptions} from './Report';
 import * as formatUtils                           from './formatUtils';

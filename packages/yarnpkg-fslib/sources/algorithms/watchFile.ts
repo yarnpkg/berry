@@ -1,7 +1,7 @@
 import {FakeFS, WatchFileOptions, WatchFileCallback} from '../FakeFS';
 import {Path}                                        from '../path';
 
-import {CustomStatWatcher}                                from './watchFile/CustomStatWatcher';
+import {CustomStatWatcher}                           from './watchFile/CustomStatWatcher';
 
 const statWatchersByFakeFS = new WeakMap<FakeFS<Path>, Map<Path, CustomStatWatcher<Path>>>();
 

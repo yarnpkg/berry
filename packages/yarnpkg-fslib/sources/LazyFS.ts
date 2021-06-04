@@ -1,5 +1,5 @@
 import {FakeFS}          from './FakeFS';
-import {ProxiedFS}            from './ProxiedFS';
+import {ProxiedFS}       from './ProxiedFS';
 import {Path, PathUtils} from './path';
 
 export type LazyFSFactory<P extends Path> = () => FakeFS<P>;

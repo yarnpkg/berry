@@ -2,8 +2,8 @@ import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
 // @ts-expect-error
 import getTemplate               from './hook';
-import {SerializedState}    from './types';
-import {PnpSettings}        from './types';
+import {SerializedState}         from './types';
+import {PnpSettings}             from './types';
 
 function generateLoader(shebang: string | null | undefined, loader: string) {
   return [

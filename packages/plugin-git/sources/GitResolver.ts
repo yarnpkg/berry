@@ -1,9 +1,9 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {miscUtils, structUtils}                               from '@yarnpkg/core';
-import {LinkType}                                             from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                        from '@yarnpkg/core';
+import {miscUtils, structUtils}                          from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 
-import * as gitUtils                                          from './gitUtils';
+import * as gitUtils                                     from './gitUtils';
 
 export class GitResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

@@ -1,7 +1,7 @@
 import {NoParamCallback}     from 'fs';
 
 import {Dir, Dirent, FakeFS} from '../FakeFS';
-import * as errors                from '../errors';
+import * as errors           from '../errors';
 import {Filename, Path}      from '../path';
 
 export type CustomDirOptions = {

@@ -1,6 +1,6 @@
-import {PnpApi}                                                                             from '@yarnpkg/pnp';
+import {PnpApi}                                                                        from '@yarnpkg/pnp';
 import {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild';
-import * as fs                                                                              from 'fs';
+import * as fs                                                                         from 'fs';
 
 const matchAll = /()/;
 const defaultExtensions = [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.cjs`, `.js`, `.css`, `.json`];

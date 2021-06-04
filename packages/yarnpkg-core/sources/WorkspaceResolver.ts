@@ -2,7 +2,7 @@ import {PortablePath}                                    from '@yarnpkg/fslib';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import {Descriptor, Locator}                             from './types';
-import {LinkType}                                             from './types';
+import {LinkType}                                        from './types';
 
 export class WorkspaceResolver implements Resolver {
   static protocol = `workspace:`;

@@ -1,9 +1,9 @@
-import {MessageName}                   from './MessageName';
+import {MessageName}              from './MessageName';
 import {Plugin}                   from './Plugin';
 import {Project}                  from './Project';
 import {Resolver, ResolveOptions} from './Resolver';
 import {Workspace}                from './Workspace';
-import * as structUtils                from './structUtils';
+import * as structUtils           from './structUtils';
 import {Descriptor, Locator}      from './types';
 
 export const CorePlugin: Plugin = {

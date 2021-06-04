@@ -1,7 +1,7 @@
 import {Report, MessageName, miscUtils, Configuration, formatUtils} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}                  from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                   from '@yarnpkg/parsers';
-import {PnpApi}                                                from '@yarnpkg/pnp';
+import {PnpApi}                                                     from '@yarnpkg/pnp';
 import chalk                                                        from 'chalk';
 import {UsageError}                                                 from 'clipanion';
 import capitalize                                                   from 'lodash/capitalize';

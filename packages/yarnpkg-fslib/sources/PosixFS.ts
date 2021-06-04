@@ -1,4 +1,4 @@
-import {FakeFS}                     from './FakeFS';
+import {FakeFS}                          from './FakeFS';
 import {ProxiedFS}                       from './ProxiedFS';
 import {npath, NativePath, PortablePath} from './path';
 

@@ -1,10 +1,10 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
-import {structUtils, tgzUtils}                           from '@yarnpkg/core';
-import semver                                            from 'semver';
+import {structUtils, tgzUtils}                      from '@yarnpkg/core';
+import semver                                       from 'semver';
 
-import {PROTOCOL}                                        from './constants';
-import * as npmHttpUtils                                 from './npmHttpUtils';
+import {PROTOCOL}                                   from './constants';
+import * as npmHttpUtils                            from './npmHttpUtils';
 
 export class NpmHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {

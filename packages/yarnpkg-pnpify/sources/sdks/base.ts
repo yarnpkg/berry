@@ -1,5 +1,5 @@
-import {PortablePath}                      from '@yarnpkg/fslib';
-import {PnpApi}                            from '@yarnpkg/pnp';
+import {PortablePath}                           from '@yarnpkg/fslib';
+import {PnpApi}                                 from '@yarnpkg/pnp';
 
 import {Wrapper, GenerateBaseWrapper, BaseSdks} from '../generateSdk';
 
