@@ -3350,23 +3350,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@napi-rs/triples@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@napi-rs/triples@npm:1.0.2"
-  checksum: 7de94a641d0a71b53367a323cd15411ed228cdd9bb6ad30a5491ddbd753e3ce8500786cd264e4f47e0e9b3512934d49821f34b349c4f10765db4571c1032cee7
-  languageName: node
-  linkType: hard
-
-"@node-rs/helper@npm:^1.0.0":
-  version: 1.1.1
-  resolution: "@node-rs/helper@npm:1.1.1"
-  dependencies:
-    "@napi-rs/triples": ^1.0.2
-    tslib: ^2.2.0
-  checksum: 1df388e9b1a8f2e893223cf69437b80038779ebca1760b7701e9df753a7fe8d03f7a67c39518a0843b2fc1ced5702de8435cbbb9f7cec26fa7c67628b49c0f14
-  languageName: node
-  linkType: hard
-
 "@nodelib/fs.scandir@npm:2.1.3":
   version: 2.1.3
   resolution: "@nodelib/fs.scandir@npm:2.1.3"
@@ -4015,141 +3998,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-android-arm64@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-android-arm64@npm:1.2.59"
-  checksum: 4593a9d928806f7ce7653d0b1be85e4b5cd81ed4e2fd67cf87aa60dc88be0309b7ab76ef2a78e5e1c231a5e0d2655bc97355766298f5210417e33084ab06a3af
-  languageName: node
-  linkType: hard
-
-"@swc/core-darwin-arm64@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-darwin-arm64@npm:1.2.59"
-  checksum: b18fcd532f7ba258a3ec606234b2ba06b5386931b9a2977e439e718fe0ec6086455e05c4672b7251cb5bdb494380f443065bde9787bee5ff2461923acb3ce742
-  languageName: node
-  linkType: hard
-
-"@swc/core-darwin-x64@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-darwin-x64@npm:1.2.59"
-  checksum: db94e21dc859d4875c0d383c2431bc1cc5ae62a9e559d78f89cb15bdb71cc957fb529806b3cb30eae2aa5f9193c6630a1e7c9e702366b4e87ab1320c6c2d5467
-  languageName: node
-  linkType: hard
-
-"@swc/core-darwin@npm:*":
-  version: 1.2.42
-  resolution: "@swc/core-darwin@npm:1.2.42"
-  checksum: 0351427ee55097930489f0a42506d9e4175b8c271af904a7a54ccd457ce37fa5fc0111372590a8a380a8ded352afe35eb9669295457254d8a5467be1b6d260cb
-  languageName: node
-  linkType: hard
-
-"@swc/core-freebsd-x64@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-freebsd-x64@npm:1.2.59"
-  checksum: 81994442357ee5c406013c0e2e430650120fcc54b4139ee0fe1493a5f9fa53369c32679f35b55394666995dde07f1bda9da9200acb11e8704edf1c8241fa5d12
-  languageName: node
-  linkType: hard
-
-"@swc/core-linux-arm-gnueabihf@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.2.59"
-  checksum: 302aed020242dce20d1dd75d836060af075ca14e4e31bd728260e63e25005cea73ce6cee316105d4fd07285b980dca141ca9982ca4d80929b213b380d1a3b988
-  languageName: node
-  linkType: hard
-
-"@swc/core-linux-arm64-gnu@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.2.59"
-  checksum: d7c834fa0a2b6b6d3f6c6036fc9fcd7e482f7a9168fb61e1bbb822aafcc87b6e655813385dc93236cca812ab4ebd9047c7b73545af265da838c0fb2d2c1b1cb4
-  languageName: node
-  linkType: hard
-
-"@swc/core-linux-musl@npm:*":
-  version: 1.2.42
-  resolution: "@swc/core-linux-musl@npm:1.2.42"
-  checksum: 1e53493f6af5e25c7a2fc860614b2919133f8a869454c4f6a6cef5511c89472af1a0f78598d4a232c5ac57a93fd72fc0c1fc3df551e315bcfa18a339ad48a556
-  languageName: node
-  linkType: hard
-
-"@swc/core-linux-x64-gnu@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-linux-x64-gnu@npm:1.2.59"
-  checksum: 8dfe2d66084e139b73e6c5960f2444523097814421fea71b8232f9f68cc167dbdbe5c2252da86003d5ad1da7c269300cb77cb4c5a638e0460f5820b9df33f2c4
-  languageName: node
-  linkType: hard
-
-"@swc/core-linux-x64-musl@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-linux-x64-musl@npm:1.2.59"
-  checksum: 812bfd952e9087ea51ae159e26dfe4ee1d5bce37f8afc9862ebb8b08d4c9c191c161751b97f1f3d1a778b206ade68c67246173b1faff10912b22112744a8f274
-  languageName: node
-  linkType: hard
-
-"@swc/core-linux@npm:*":
-  version: 1.2.42
-  resolution: "@swc/core-linux@npm:1.2.42"
-  checksum: aa62abfc4e09e9070ad2160eacd1aee47a27149ca1afa15fc2f27acd2610471fb228bf6fc800b6d4753c1b8bbd9312cb91b4daf21d6a61a2b6746b7a7cb3c1a8
-  languageName: node
-  linkType: hard
-
-"@swc/core-win32-ia32-msvc@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.2.59"
-  checksum: bb1e828824dd11ec2f96981fc03fc7941295a647722cb65df52885c828036c53c90596d6ab61974f26741973ddea56f275a9043ce9f22ab6311923e333377846
-  languageName: node
-  linkType: hard
-
-"@swc/core-win32-x64-msvc@npm:^1.2.59":
-  version: 1.2.59
-  resolution: "@swc/core-win32-x64-msvc@npm:1.2.59"
-  checksum: 8f6d476af13d1d4d346b437d41144f8af71eee51354d39d7c2caeb28969e3e937be9a792074d66ee838a8355f713e9c722203926a81740993a5457aca3c4bb50
-  languageName: node
-  linkType: hard
-
-"@swc/core-win32@npm:*":
-  version: 1.2.42
-  resolution: "@swc/core-win32@npm:1.2.42"
-  checksum: d16122a4d13d191f53933492a94b5b64e0d898ac1c41f0e8377033921cc576b8b87fd5e03d596cca60b2851fd247450ab972d729cb0d516b1519d23e033a391a
-  languageName: node
-  linkType: hard
-
-"@swc/core@npm:^1.2.40":
-  version: 1.2.59
-  resolution: "@swc/core@npm:1.2.59"
-  dependencies:
-    "@node-rs/helper": ^1.0.0
-    "@swc/core-android-arm64": ^1.2.59
-    "@swc/core-darwin-arm64": ^1.2.59
-    "@swc/core-darwin-x64": ^1.2.59
-    "@swc/core-freebsd-x64": ^1.2.59
-    "@swc/core-linux-arm-gnueabihf": ^1.2.59
-    "@swc/core-linux-arm64-gnu": ^1.2.59
-    "@swc/core-linux-x64-gnu": ^1.2.59
-    "@swc/core-linux-x64-musl": ^1.2.59
-    "@swc/core-win32-ia32-msvc": ^1.2.59
-    "@swc/core-win32-x64-msvc": ^1.2.59
-  dependenciesMeta:
-    "@swc/core-android-arm64":
-      optional: true
-    "@swc/core-darwin-arm64":
-      optional: true
-    "@swc/core-darwin-x64":
-      optional: true
-    "@swc/core-freebsd-x64":
-      optional: true
-    "@swc/core-linux-arm-gnueabihf":
-      optional: true
-    "@swc/core-linux-arm64-gnu":
-      optional: true
-    "@swc/core-linux-x64-gnu":
-      optional: true
-    "@swc/core-linux-x64-musl":
-      optional: true
-    "@swc/core-win32-ia32-msvc":
-      optional: true
-    "@swc/core-win32-x64-msvc":
-      optional: true
-  checksum: 1e6571da04e6b0434001a2ccbf6f6b808d71e882cd26f92667d46e3649cda890d1911240712fd1740017711b305b7f519d19be9b861eb06ddf4fe633461fec51
+"@swc/helpers@npm:^0.2.12":
+  version: 0.2.12
+  resolution: "@swc/helpers@npm:0.2.12"
+  checksum: 1c2f43859ab894fc5a8c14bf59c28e879f4cfd4e95dba0d540255c8939eb287637d104b3f5153cfc1601b4c5db4e1c1e1ec478b44ed1cd42299cf96369477028
   languageName: node
   linkType: hard
 
@@ -5671,6 +5523,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.10.2
     "@datadog/build-plugin": 0.3.6
+    "@swc/helpers": ^0.2.12
     "@types/filesize": 4.1.0
     "@types/semver": ^7.1.0
     "@types/terser-webpack-plugin": ^3.0.0
@@ -5706,6 +5559,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/ci-info": ^2
     "@types/semver": ^7.1.0
     "@types/yup": ^0
@@ -5753,6 +5607,7 @@ __metadata:
     "@arcanis/slice-ansi": ^1.0.2
     "@rollup/plugin-commonjs": ^18.0.0
     "@rollup/plugin-node-resolve": ^11.0.1
+    "@swc/helpers": ^0.2.12
     "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
@@ -5806,6 +5661,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/doctor@workspace:packages/yarnpkg-doctor"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:^3.0.0-rc.5"
     "@yarnpkg/core": "workspace:^3.0.0-rc.5"
@@ -5826,6 +5682,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/pnp": "workspace:*"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     tslib: ^1.13.0
@@ -5839,6 +5696,7 @@ __metadata:
   resolution: "@yarnpkg/eslint-config@workspace:packages/eslint-config"
   dependencies:
     "@rushstack/eslint-patch": ^1.0.6
+    "@swc/helpers": ^0.2.12
     "@typescript-eslint/eslint-plugin": ^4.11.1
     "@typescript-eslint/parser": ^4.11.1
     eslint-plugin-arca: ^0.10.0
@@ -5856,6 +5714,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/libzip": "workspace:^2.2.2-rc.3"
     tslib: ^1.13.0
   languageName: unknown
@@ -5876,6 +5735,7 @@ __metadata:
     "@reach/router": ^1.1.1
     "@rehooks/component-size": ^1.0.3
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch"
+    "@swc/helpers": ^0.2.12
     "@types/babel__core": 7.1.3
     "@types/dedent": 0.7.0
     "@types/indent-string": 4.0.1
@@ -5961,6 +5821,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/json-proxy@workspace:packages/yarnpkg-json-proxy"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
   languageName: unknown
@@ -5970,6 +5831,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/react": ^16.8.0
     chalk: ^3.0.0
     ink: ^3.0.8
@@ -5986,6 +5848,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/emscripten": ^1.38.0
     "@types/prettier": 1.19.0
     prettier: ^1.19.1
@@ -6011,7 +5874,7 @@ __metadata:
     "@babel/preset-react": ^7.10.1
     "@babel/preset-typescript": ^7.10.1
     "@babel/register": ^7.13.16
-    "@swc/core": ^1.2.40
+    "@swc/helpers": ^0.2.12
     "@swc/wasm": ^1.2.58
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
@@ -6058,6 +5921,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/js-yaml": ^3.11.1
     js-yaml: ^3.10.0
     pegjs: ^0.10.0
@@ -6069,6 +5933,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/resolve": ^1.17.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6088,6 +5953,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/lodash": ^4.14.136
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
@@ -6109,6 +5975,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6125,6 +5992,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/ci-info": ^2
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
@@ -6153,6 +6021,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/builder": "workspace:^3.0.0-rc.5"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6167,6 +6036,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-file@workspace:packages/plugin-file"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
@@ -6179,6 +6049,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/git-url-parse": ^9.0.0
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:*"
@@ -6195,6 +6066,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     "@yarnpkg/plugin-git": "workspace:*"
@@ -6209,6 +6081,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-http@workspace:packages/plugin-http"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
@@ -6221,6 +6094,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-init@workspace:packages/plugin-init"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/lodash": ^4.14.136
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6238,6 +6112,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/diff": ^4.0.2
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
@@ -6266,6 +6141,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-link@workspace:packages/plugin-link"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
@@ -6278,6 +6154,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6303,6 +6180,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
     "@npm/types": ^1.0.1
+    "@swc/helpers": ^0.2.12
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6326,6 +6204,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
     "@yarnpkg/core": "workspace:*"
@@ -6345,6 +6224,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/micromatch": ^4.0.1
     "@types/tar-stream": 1.6.0
     "@yarnpkg/cli": "workspace:*"
@@ -6365,6 +6245,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-patch@workspace:packages/plugin-patch"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6381,6 +6262,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:*"
@@ -6402,6 +6284,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-stage@workspace:packages/plugin-stage"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6420,6 +6303,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@algolia/requester-common": 4.0.0-beta.14
+    "@swc/helpers": ^0.2.12
     "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
@@ -6441,6 +6325,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:*"
@@ -6467,6 +6352,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/micromatch": ^4.0.1
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
@@ -6488,6 +6374,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6505,6 +6392,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/comment-json": ^1.1.1
     "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^3.0.0-rc.5"
@@ -6536,6 +6424,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/shell@workspace:packages/yarnpkg-shell"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/cross-spawn": 6.0.0
     "@types/micromatch": ^4.0.1
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6581,6 +6470,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:*"
@@ -21024,6 +20914,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/finalhandler": 1.1.0
     "@types/invariant": ^2.2.30
     "@types/klaw": ^2.0.0
@@ -21053,6 +20944,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@yarnpkg/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -21061,6 +20953,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/lodash": ^4.14.136
     "@types/tar": ^4.0.4
     "@yarnpkg/cli": "workspace:*"
@@ -26424,13 +26317,6 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "tslib@npm:2.2.0"
-  checksum: a48c9639f7496fa701ea8ffe0561070fcb44c104a59632f7f845c0af00825c99b6373575ec59b2b5cdbfd7505875086dbe5dc83312304d8979f22ce571218ca3
-  languageName: node
-  linkType: hard
-
 "tsutils@npm:^3.17.1":
   version: 3.17.1
   resolution: "tsutils@npm:3.17.1"
@@ -27704,6 +27590,7 @@ typescript@^4.3.2:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
+    "@swc/helpers": ^0.2.12
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:*"
     "@yarnpkg/libzip": "workspace:*"

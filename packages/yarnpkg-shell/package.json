@@ -5,6 +5,7 @@
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
+    "@swc/helpers": "^0.2.12",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.3",
     "chalk": "^3.0.0",

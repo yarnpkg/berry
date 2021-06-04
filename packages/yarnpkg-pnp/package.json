@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
+    "@swc/helpers": "^0.2.12",
     "@types/node": "^13.7.0",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "resolve.exports": "^1.0.2",

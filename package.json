@@ -20,7 +20,8 @@
     "@babel/preset-react": "^7.10.1",
     "@babel/preset-typescript": "^7.10.1",
     "@babel/register": "^7.13.16",
-    "@swc/core": "^1.2.40",
+    "@swc/helpers": "^0.2.12",
+    "@swc/wasm": "^1.2.58",
     "@types/emscripten": "^1.38.0",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
@@ -93,8 +94,5 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  },
-  "dependencies": {
-    "@swc/wasm": "^1.2.58"
   }
 }

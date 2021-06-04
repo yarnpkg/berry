@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
+    "@swc/helpers": "^0.2.12",
     "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.5",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",

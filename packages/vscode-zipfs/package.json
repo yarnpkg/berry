@@ -95,6 +95,7 @@
     "directory": "packages/vscode-zipfs"
   },
   "dependencies": {
+    "@swc/helpers": "^0.2.12",
     "tslib": "^1.13.0"
   },
   "stableVersion": "2.2.4"

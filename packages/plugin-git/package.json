@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
+    "@swc/helpers": "^0.2.12",
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "git-url-parse": "11.1.2",

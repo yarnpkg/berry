@@ -6,6 +6,7 @@
   "sideEffects": false,
   "dependencies": {
     "@arcanis/slice-ansi": "^1.0.2",
+    "@swc/helpers": "^0.2.12",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
