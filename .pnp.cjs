@@ -25197,7 +25197,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/gatsby", null],
             ["@types/prismjs", null],
             ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.23.3"],
-            ["lodash", "npm:4.17.21"],
             ["parse-numeric-range", "npm:0.0.2"],
             ["prismjs", "npm:1.16.0"],
             ["unist-util-visit", "npm:1.4.1"]
@@ -30199,13 +30198,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash-npm-4.17.20-c0db62021c-b31afa0973.zip/node_modules/lodash/",
           "packageDependencies": [
             ["lodash", "npm:4.17.20"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:4.17.21", {
-          "packageLocation": "./.yarn/cache/lodash-npm-4.17.21-6382451519-eb835a2e51.zip/node_modules/lodash/",
-          "packageDependencies": [
-            ["lodash", "npm:4.17.21"]
           ],
           "linkType": "HARD",
         }]
@@ -39983,14 +39975,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["ts-node", [
         ["npm:10.0.0", {
-          "packageLocation": "./.yarn/unplugged/ts-node-virtual-1a630c7f0e/node_modules/ts-node/",
+          "packageLocation": "./.yarn/cache/ts-node-npm-10.0.0-9c3d77d0a0-96d633774e.zip/node_modules/ts-node/",
           "packageDependencies": [
             ["ts-node", "npm:10.0.0"]
           ],
           "linkType": "SOFT",
         }],
         ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:10.0.0", {
-          "packageLocation": "./.yarn/unplugged/ts-node-virtual-1a630c7f0e/node_modules/ts-node/",
+          "packageLocation": "./.yarn/__virtual__/ts-node-virtual-1a630c7f0e/0/cache/ts-node-npm-10.0.0-9c3d77d0a0-96d633774e.zip/node_modules/ts-node/",
           "packageDependencies": [
             ["ts-node", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:10.0.0"],
             ["@swc/core", null],
