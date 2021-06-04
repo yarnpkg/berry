@@ -11,6 +11,7 @@
     "transpiler": "ts-node/transpilers/swc-experimental",
 
     // swc with caching (combination of the 2x from above)
+    // Does not work due to changes in the swc integration in ts-node@10
     // "compiler": "./scripts/ts-compiler.js",
 
     "compilerOptions": {
