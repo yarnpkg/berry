@@ -63,6 +63,8 @@ gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
   % Only proceed if the workspace doesn't already depend on tslib
     \+ workspace_has_dependency(WorkspaceCwd, 'tslib', _, _).
 
+gen_enforced_dependency(WorkspaceCwd, '@swc/helpers', '0.2.12', 'devDependencies').
+
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
 gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause').
 

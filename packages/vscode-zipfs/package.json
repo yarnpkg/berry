@@ -70,6 +70,7 @@
     }
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:*",
     "@yarnpkg/libzip": "workspace:*",
@@ -95,7 +96,6 @@
     "directory": "packages/vscode-zipfs"
   },
   "dependencies": {
-    "@swc/helpers": "^0.2.12",
     "tslib": "^1.13.0"
   },
   "stableVersion": "2.2.4"

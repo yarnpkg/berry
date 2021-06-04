@@ -4,13 +4,13 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@swc/helpers": "^0.2.12",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "esbuild": ">=0.8.36"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@yarnpkg/pnp": "workspace:*",
     "esbuild": "npm:esbuild-wasm@^0.11.20"
   },

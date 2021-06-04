@@ -4,7 +4,6 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@swc/helpers": "^0.2.12",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "clipanion": "^3.0.0-rc.10",
     "enquirer": "^2.3.6",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "@npm/types": "^1.0.1",
+    "@swc/helpers": "0.2.12",
     "@types/semver": "^7.1.0",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",

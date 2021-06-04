@@ -8,6 +8,7 @@
     "react": "^16.8.4"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/react": "^16.8.0",
     "ink": "^3.0.8",
     "react": "^16.13.1"
@@ -18,7 +19,6 @@
     "directory": "packages/yarnpkg-libui"
   },
   "dependencies": {
-    "@swc/helpers": "^0.2.12",
     "chalk": "^3.0.0",
     "redux": "^4.0.0",
     "tslib": "^1.13.0"

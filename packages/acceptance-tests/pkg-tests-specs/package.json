@@ -9,6 +9,7 @@
     "directory": "packages/acceptance-tests/pkg-tests-specs"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/lodash": "^4.14.136",
     "@types/tar": "^4.0.4",
     "@yarnpkg/cli": "workspace:*",
@@ -24,8 +25,5 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  },
-  "dependencies": {
-    "@swc/helpers": "^0.2.12"
   }
 }

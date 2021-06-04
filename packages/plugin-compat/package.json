@@ -8,6 +8,7 @@
     "@yarnpkg/plugin-patch": "^3.0.0-rc.5"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/resolve": "^1.17.1",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",
@@ -39,8 +40,5 @@
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   },
-  "stableVersion": "2.2.0",
-  "dependencies": {
-    "@swc/helpers": "^0.2.12"
-  }
+  "stableVersion": "2.2.0"
 }

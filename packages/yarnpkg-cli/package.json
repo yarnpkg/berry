@@ -4,7 +4,6 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@swc/helpers": "^0.2.12",
     "@yarnpkg/core": "workspace:^3.0.0-rc.5",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
     "@yarnpkg/libzip": "workspace:^2.2.2-rc.3",
@@ -34,6 +33,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/ci-info": "^2",
     "@types/semver": "^7.1.0",
     "@types/yup": "^0",
