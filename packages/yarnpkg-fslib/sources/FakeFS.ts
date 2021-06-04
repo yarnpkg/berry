@@ -1,7 +1,7 @@
 import type {EventEmitter}                                    from 'events';
 import type {Dirent as NodeDirent, ReadStream}                from 'fs';
-import {Stats as NodeStats, WriteStream}                 from 'fs';
-import {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
+import type {Stats as NodeStats, WriteStream}                 from 'fs';
+import type {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
 import {EOL}                                             from 'os';
 
 import {copyPromise, LinkStrategy}                       from './algorithms/copyPromise';
@@ -14,7 +14,6 @@ export type Stats = NodeStats & {
 export type BigIntStats = NodeBigIntStats & {
   crc?: number
 };
->>>>>>> origin/master
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
   name: Filename,
