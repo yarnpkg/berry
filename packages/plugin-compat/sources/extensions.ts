@@ -375,4 +375,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       underscore: `^1.9.2`,
     },
   }],
+  // https://github.com/creationix/git-node-fs/pull/8
+  [`git-node-fs@*`, {
+    peerDependencies: {
+      'js-git': `^0.7.8`,
+    },
+    peerDependenciesMeta: {
+      'js-git': optionalPeerDep,
+    },
+  }],
 ];
