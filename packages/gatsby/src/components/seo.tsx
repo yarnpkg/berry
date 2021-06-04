@@ -10,7 +10,7 @@ import Helmet                    from 'react-helmet';
 import React                     from 'react';
 
 import yarnKittenFull            from '../images/yarn-kitten-full.svg';
-import type {Query}                   from '../types/queries';
+import {Query}                   from '../types/queries';
 
 export const defaultKeywords = [`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`];
 
