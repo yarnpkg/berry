@@ -369,4 +369,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       underscore: `^1.9.2`,
     },
   }],
+  // https://github.com/apache/cordova-lib/pull/871
+  [`cordova-lib@<=10.0.1`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
 ];
