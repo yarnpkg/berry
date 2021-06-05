@@ -35,3 +35,5 @@ else
   echo "Invalid nodeLinker: $1"
   exit 1
 fi
+
+echo nodeLinker: $YARN_NODE_LINKER
