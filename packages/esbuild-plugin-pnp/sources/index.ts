@@ -5,6 +5,41 @@ import * as fs                                                                  
 const matchAll = /()/;
 const defaultExtensions = [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.cjs`, `.js`, `.css`, `.json`];
 
+type External = string | {prefix: string, suffix: string};
+
+// Reference: https://github.com/evanw/esbuild/blob/537195ae84bee1510fac14235906d588084c39cd/pkg/api/api_impl.go#L366-L388
+function parseExternals(externals: Array<string>): Array<External> {
+  return externals.map(external => {
+    // ESBuild's validation pass runs before this function is called so there's no need to assert that there's a single wildcard
+    const wildcardIdx = external.indexOf(`*`);
+    if (wildcardIdx !== -1)
+      return {prefix: external.slice(0, wildcardIdx), suffix: external.slice(wildcardIdx + 1)};
+
+    return external;
+  });
+}
+
+function isExternal(path: string, externals: Array<External>): boolean {
+  for (const external of externals) {
+    if (typeof external === `object`) {
+      // Reference: https://github.com/evanw/esbuild/blob/537195ae84bee1510fac14235906d588084c39cd/internal/resolver/resolver.go#L372-L381
+      if (
+        path.length >= external.prefix.length + external.suffix.length
+        && path.startsWith(external.prefix)
+        && path.endsWith(external.suffix)
+      ) {
+        return true;
+      }
+    } else {
+      if (path === external) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
   return {
     contents: await fs.promises.readFile(args.path, `utf8`),
@@ -66,7 +101,12 @@ export function pnpPlugin({
       if (typeof findPnpApi === `undefined`)
         return;
 
+      const externals = parseExternals(build.initialOptions.external ?? []);
+
       build.onResolve({filter}, args => {
+        if (isExternal(args.path, externals))
+          return {external: true};
+
         // The entry point resolution uses an empty string
         const effectiveImporter = args.importer
           ? args.importer
