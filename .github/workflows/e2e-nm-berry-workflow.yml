@@ -45,7 +45,7 @@ jobs:
 
     - name: 'Running node_modules install with self-validation'
       run: |
-        source scripts/e2e-setup-ci.sh
+        source scripts/e2e-setup-ci.sh nm
         cd -
-        NM_DEBUG_LEVEL=1 YARN_NODE_LINKER=node-modules yarn
+        NM_DEBUG_LEVEL=1 yarn
       shell: bash
