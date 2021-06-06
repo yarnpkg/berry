@@ -376,9 +376,9 @@
     },
     "npmAuthIdent": {
       "_package": "@yarnpkg/plugin-npm",
-      "description": "Defines the authentication credentials to use by default when accessing your registries (equivalent to `_auth` in the v1). This settings is strongly discouraged in favor of `npmAuthToken`.",
+      "description": "Defines the authentication credentials to use by default when accessing your registries (equivalent to `_auth` in the v1). This setting is strongly discouraged in favor of `npmAuthToken`.",
       "type": "string",
-      "examples": ["username:password"]
+      "examples": ["base64(username:password)"]
     },
     "npmAuthToken": {
       "_package": "@yarnpkg/plugin-npm",
