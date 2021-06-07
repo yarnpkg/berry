@@ -133,7 +133,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
       let hostInfo = \`unknown\`;
 
-      return Object.assign(Session.prototype, {
+      Object.assign(Session.prototype, {
         onMessage(/** @type {string} */ message) {
           const parsedMessage = JSON.parse(message)
 
@@ -157,6 +157,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           })));
         }
       });
+
+      return tsserver;
     };
   `;
 
@@ -170,6 +172,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
   await wrapper.writeFile(`lib/typescript.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
 
   return wrapper;
 };
