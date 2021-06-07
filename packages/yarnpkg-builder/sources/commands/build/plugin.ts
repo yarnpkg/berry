@@ -1,6 +1,6 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
 import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
-import {npath}                                                              from '@yarnpkg/fslib';
+import {npath, xfs}                                                         from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import {build, Plugin}                                                      from 'esbuild-wasm';
 import fs                                                                   from 'fs';
@@ -61,6 +61,8 @@ export default class BuildPluginCommand extends Command {
     const name = getNormalizedName(rawName);
     const prettyName = structUtils.prettyIdent(configuration, structUtils.parseIdent(name));
     const output = path.join(basedir, `bundles/${name}.js`);
+
+    await xfs.mkdirPromise(npath.toPortablePath(path.dirname(output)), {recursive: true});
 
     const report = await StreamReport.start({
       configuration,
