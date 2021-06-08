@@ -65,15 +65,8 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (auth)
     headers = {...headers, authorization: auth};
 
-  let url;
   try {
-    url = new URL(path);
-  } catch (e) {
-    url = new URL(registry + path);
-  }
-
-  try {
-    return await httpUtils.get(url.href, {configuration, headers, ...rest});
+    return await httpUtils.get(path.charAt(0) === `/` ? `${registry}${path}` : path, {configuration, headers, ...rest});
   } catch (error) {
     await handleInvalidAuthenticationError(error, {registry, configuration, headers});
 
