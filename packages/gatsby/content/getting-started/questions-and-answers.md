@@ -33,7 +33,7 @@ Generally, a few main things will need to be taken care of:
 
 3. Support for text editors is pretty good, but you'll need to run the one-time-setup listed in our [SDK documentation](https://yarnpkg.com/getting-started/editor-sdks).
 
-4. Some tools (mostly React Native and Flow) will require to downgrade to the `node_modules` install strategy by setting the [`nodeLinker`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) setting to `node-modules`. TypeScript doesn't have this problem.
+4. Some tools (mostly React Native and Flow) will require downgrading to the `node_modules` install strategy by setting the [`nodeLinker`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) setting to `node-modules`. TypeScript doesn't have this problem.
 
 Most projects will only face those four problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/getting-started/migration).
 
@@ -106,7 +106,7 @@ Although tempting, this reasoning has a fatal flaw: removing the lockfile from t
 
 Of course these points are only part of the problem - the lack of lockfile also means that key state information are missing from the repository. When months later you or your contributors want to make a fix on one of your old projects you might not even be able to *build* it anymore, let alone improve it.
 
-Lockfiles should **always** be kept within the repository. Continuous integration testing **is a good idea**, but should be left to continuous integration systems. For example, Yarn itself runs [daily tests](https://github.com/yarnpkg/berry#current-status) against the latest versions of major open-source frameworks and tools, which allows us to quickly spot any compatibility issue with newest release, while still being guarateed that every contributor will have a consistent experience working with the project. [Dependabot](https://dependabot.com/#how-it-works) and [Renovate](https://www.whitesourcesoftware.com/free-developer-tools/renovate) are also good tools that track your dependencies updates for you.
+Lockfiles should **always** be kept within the repository. Continuous integration testing **is a good idea**, but should be left to continuous integration systems. For example, Yarn itself runs [daily tests](https://github.com/yarnpkg/berry#current-status) against the latest versions of major open-source frameworks and tools, which allows us to quickly spot any compatibility issue with the newest release, while still being guarateed that every contributor will have a consistent experience working with the project. [Dependabot](https://dependabot.com/#how-it-works) and [Renovate](https://www.whitesourcesoftware.com/free-developer-tools/renovate) are also good tools that track your dependencies updates for you.
 
 ## How to share scripts between workspaces?
 
@@ -149,7 +149,7 @@ Should you want to run a script in the base of your project:
 
 Despite the first version of Yarn having been implemented by [Sebastian McKenzie](https://twitter.com/sebmck) while working at Facebook, the initial design received feedbacks from various other companies (such as [Tilde](https://www.tilde.io) via [Yehuda Katz](https://yehudakatz.com/2016/10/11/im-excited-to-work-on-yarn-the-new-js-package-manager-2/)) and the project was put into its own [GitHub organization](https://github.com/yarnpkg). Facebook kept investing in it during the following years (mostly because it proved to be a critical part of the RN ecosystem) but major contributions came from the open-source too.
 
-Nowadays the active development team is composed exclusively of people employed by non-founders companies. Facebook employees are of course still welcome to offer contributions to the project, but they would go through the same review process as everyone else.
+Nowadays, the active development team is composed exclusively of people employed by non-founders companies. Facebook employees are of course still welcome to offer contributions to the project, but they would go through the same review process as everyone else.
 
 ## Why `registry.yarnpkg.com`? Does Facebook track us?
 
