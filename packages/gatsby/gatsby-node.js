@@ -42,11 +42,9 @@ module.exports = {
     const webpack = gatsbyReq(`webpack`);
 
     actions.setWebpackConfig({
-      node: {
-        fs: `empty`,
-      },
       resolve: {
         fallback: {
+          fs: false,
           path: false,
         },
       },
@@ -55,7 +53,7 @@ module.exports = {
           languages: [`javascript`, `typescript`],
         }),
         new webpack.DefinePlugin({
-          [`process`]: `({platform: "browser", cwd: () => "/"})`,
+          [`process`]: `({platform: "browser", cwd: () => "/", versions: {}})`,
         }),
       ],
     });
