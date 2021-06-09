@@ -38,4 +38,6 @@ package.tgz
 
 /vscode-case-study
 
+/.typescript-cached-transpile
+
 .idea

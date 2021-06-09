@@ -8,6 +8,7 @@
     "tslib": "^1.13.0"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/js-yaml": "^3.11.1",
     "pegjs": "^0.10.0"
   },

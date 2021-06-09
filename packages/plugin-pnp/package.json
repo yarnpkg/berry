@@ -18,6 +18,7 @@
     "@yarnpkg/core": "^3.0.0-rc.5"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/micromatch": "^4.0.1",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*"

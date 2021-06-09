@@ -3998,6 +3998,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/helpers@npm:0.2.12":
+  version: 0.2.12
+  resolution: "@swc/helpers@npm:0.2.12"
+  checksum: 1c2f43859ab894fc5a8c14bf59c28e879f4cfd4e95dba0d540255c8939eb287637d104b3f5153cfc1601b4c5db4e1c1e1ec478b44ed1cd42299cf96369477028
+  languageName: node
+  linkType: hard
+
+"@swc/wasm@npm:^1.2.58":
+  version: 1.2.58
+  resolution: "@swc/wasm@npm:1.2.58"
+  checksum: 37a56e9d57221db800e5d11d9f6c3ac45e4634e716e23fee89dcd69bcf58d1293cf11e9e00f7c3e5a6b1daaa2d0f9b968ccb4aa9fa1fb190259fe670484418cc
+  languageName: node
+  linkType: hard
+
 "@szmarczak/http-timer@npm:^1.1.2":
   version: 1.1.2
   resolution: "@szmarczak/http-timer@npm:1.1.2"
@@ -4092,6 +4106,34 @@ __metadata:
     "@theme-ui/core": ^0.4.0-highlight.0
     "@theme-ui/mdx": ^0.4.0-highlight.0
   checksum: 2bbd1b770fa698c10dfa9c70ae7392d96f175b62977505569e84cd73afae9362b62ce3e12fcd648ef99e18980f8c997917025ee2c1740c81b509dc846bb8e368
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node10@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@tsconfig/node10@npm:1.0.7"
+  checksum: 54c3d90a93c7f0c04a4781403f4ec68f263968380d20e474ef615cec5eacac433b20081c68a084b13cc396bb2d1a1e1ee717592cbe02611b407654c4c50e0178
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node12@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@tsconfig/node12@npm:1.0.7"
+  checksum: e58704bf5132ca95e39935bbb1825e81ca40e12ec6be5446c54b9e612b5b8c16e81a5ab0e706f8c74883210adf25e4d34115dc38457991aefea37003a72ecad8
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node14@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@tsconfig/node14@npm:1.0.0"
+  checksum: a6e564b91e588bc05d37e2689e009ccd12743f6e1a2532ca7d20ca5e80b4d3b5b324b03e477497f2ebf2311901a369095a36c1c3cf744da7f35486923672c1f0
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node16@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@tsconfig/node16@npm:1.0.1"
+  checksum: 5fdfd91e48dc1f406cb59d19fd450a594ea6279f3be54a50bd6fd6b8d189a53bb930f2e7d496cbc3bb45fbb23f0ce5c69086f90c796ce8441cbd2a26fb738fd5
   languageName: node
   linkType: hard
 
@@ -4596,6 +4638,13 @@ __metadata:
   version: 13.7.0
   resolution: "@types/node@npm:13.7.0"
   checksum: ccc4eb30fd225dfdbf15307704b4acdb34fe57b13ff0942b1122723fe27b218d8d30915d7ff61f63e58a8213304ec3bd58bbb9cb0bcf13e687e57f5b25af6ec6
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^12.12.7":
+  version: 12.20.14
+  resolution: "@types/node@npm:12.20.14"
+  checksum: 66560d441240f968d0e8d668f7c52441b892e661d35833af01d8c43b05ebffce963f8f7454b00b259bf719782ffefad21a674a5b52637e4f21df58b8104ed280
   languageName: node
   linkType: hard
 
@@ -5474,6 +5523,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.10.2
     "@datadog/build-plugin": 0.3.6
+    "@swc/helpers": 0.2.12
     "@types/filesize": 4.1.0
     "@types/semver": ^7.1.0
     "@types/terser-webpack-plugin": ^3.0.0
@@ -5509,6 +5559,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/ci-info": ^2
     "@types/semver": ^7.1.0
     "@types/yup": ^0
@@ -5556,6 +5607,7 @@ __metadata:
     "@arcanis/slice-ansi": ^1.0.2
     "@rollup/plugin-commonjs": ^18.0.0
     "@rollup/plugin-node-resolve": ^11.0.1
+    "@swc/helpers": 0.2.12
     "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
@@ -5609,6 +5661,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/doctor@workspace:packages/yarnpkg-doctor"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:^3.0.0-rc.5"
     "@yarnpkg/core": "workspace:^3.0.0-rc.5"
@@ -5629,6 +5682,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/pnp": "workspace:*"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     tslib: ^1.13.0
@@ -5642,6 +5696,7 @@ __metadata:
   resolution: "@yarnpkg/eslint-config@workspace:packages/eslint-config"
   dependencies:
     "@rushstack/eslint-patch": ^1.0.6
+    "@swc/helpers": 0.2.12
     "@typescript-eslint/eslint-plugin": ^4.11.1
     "@typescript-eslint/parser": ^4.11.1
     eslint-plugin-arca: ^0.10.0
@@ -5659,6 +5714,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/libzip": "workspace:^2.2.2-rc.3"
     tslib: ^1.13.0
   languageName: unknown
@@ -5679,6 +5735,7 @@ __metadata:
     "@reach/router": ^1.1.1
     "@rehooks/component-size": ^1.0.3
     "@strictsoftware/typedoc-plugin-monorepo": "patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch"
+    "@swc/helpers": 0.2.12
     "@types/babel__core": 7.1.3
     "@types/dedent": 0.7.0
     "@types/indent-string": 4.0.1
@@ -5764,6 +5821,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/json-proxy@workspace:packages/yarnpkg-json-proxy"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
   languageName: unknown
@@ -5773,6 +5831,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/react": ^16.8.0
     chalk: ^3.0.0
     ink: ^3.0.8
@@ -5789,6 +5848,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/emscripten": ^1.38.0
     "@types/prettier": 1.19.0
     prettier: ^1.19.1
@@ -5814,6 +5874,8 @@ __metadata:
     "@babel/preset-react": ^7.10.1
     "@babel/preset-typescript": ^7.10.1
     "@babel/register": ^7.13.16
+    "@swc/helpers": 0.2.12
+    "@swc/wasm": ^1.2.58
     "@types/emscripten": ^1.38.0
     "@types/jest": ^24.0.25
     "@types/node": ^13.7.0
@@ -5829,8 +5891,10 @@ __metadata:
     jest-environment-node: ^26.0.1
     jest-junit: ^10.0.0
     micromatch: ^4.0.2
+    ts-node: ^10.0.0
     tslib: ^1.13.0
     typescript: ^4.3.2
+    typescript-cached-transpile: ^0.0.6
   dependenciesMeta:
     core-js:
       built: false
@@ -5857,6 +5921,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/js-yaml": ^3.11.1
     js-yaml: ^3.10.0
     pegjs: ^0.10.0
@@ -5868,6 +5933,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/resolve": ^1.17.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -5887,6 +5953,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/lodash": ^4.14.136
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
@@ -5908,6 +5975,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-dlx@workspace:packages/plugin-dlx"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -5924,6 +5992,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/ci-info": ^2
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
@@ -5952,6 +6021,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/builder": "workspace:^3.0.0-rc.5"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -5966,6 +6036,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-file@workspace:packages/plugin-file"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
@@ -5978,6 +6049,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/git-url-parse": ^9.0.0
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:*"
@@ -5994,6 +6066,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-github@workspace:packages/plugin-github"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     "@yarnpkg/plugin-git": "workspace:*"
@@ -6008,6 +6081,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-http@workspace:packages/plugin-http"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
@@ -6020,6 +6094,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-init@workspace:packages/plugin-init"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/lodash": ^4.14.136
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6037,6 +6112,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/diff": ^4.0.2
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
@@ -6065,6 +6141,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-link@workspace:packages/plugin-link"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     tslib: ^1.13.0
@@ -6077,6 +6154,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6102,6 +6180,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm-cli@workspace:packages/plugin-npm-cli"
   dependencies:
     "@npm/types": ^1.0.1
+    "@swc/helpers": 0.2.12
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6125,6 +6204,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/semver": ^7.1.0
     "@types/ssri": ^6.0.1
     "@yarnpkg/core": "workspace:*"
@@ -6144,6 +6224,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pack@workspace:packages/plugin-pack"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/micromatch": ^4.0.1
     "@types/tar-stream": 1.6.0
     "@yarnpkg/cli": "workspace:*"
@@ -6164,6 +6245,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-patch@workspace:packages/plugin-patch"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6180,6 +6262,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:*"
@@ -6201,6 +6284,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-stage@workspace:packages/plugin-stage"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -6219,6 +6303,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@algolia/requester-common": 4.0.0-beta.14
+    "@swc/helpers": 0.2.12
     "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
@@ -6240,6 +6325,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:*"
@@ -6266,6 +6352,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/micromatch": ^4.0.1
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/cli": "workspace:*"
@@ -6287,6 +6374,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6304,6 +6392,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/comment-json": ^1.1.1
     "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^3.0.0-rc.5"
@@ -6335,6 +6424,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/shell@workspace:packages/yarnpkg-shell"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/cross-spawn": 6.0.0
     "@types/micromatch": ^4.0.1
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
@@ -6380,6 +6470,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:*"
@@ -6810,6 +6901,13 @@ __metadata:
     delegates: ^1.0.0
     readable-stream: ^2.0.6
   checksum: 9a746b1dbce4122f44002b0c39fbba5b2c6f52c00e88b6ccba6fc68652323f8a1355a20e8ab94846995626d8de3bf67669a3b4a037dff0885db14607168f2b15
+  languageName: node
+  linkType: hard
+
+"arg@npm:^4.1.0":
+  version: 4.1.3
+  resolution: "arg@npm:4.1.3"
+  checksum: 544af8dd3f60546d3e4aff084d451b96961d2267d668670199692f8d054f0415d86fc5497d0e641e91546f0aa920e7c29e5250e99fc89f5552a34b5d93b77f43
   languageName: node
   linkType: hard
 
@@ -9616,6 +9714,13 @@ __metadata:
     prop-types: ^15.0.0
     react: ^0.14.0 || ^15.0.0 || ^16.0.0
   checksum: e59b7a65671e59f5b11e06f67faadf0733ab6c33247d5631331aeb05450d180b8ae44d73817b9c02f1527654ba490ea3d3dd7320f8d6debb36776f10b0ae6a47
+  languageName: node
+  linkType: hard
+
+"create-require@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "create-require@npm:1.1.1"
+  checksum: a9a1503d4390d8b59ad86f4607de7870b39cad43d929813599a23714831e81c520bddf61bcdd1f8e30f05fd3a2b71ae8538e946eb2786dc65c2bbc520f692eff
   languageName: node
   linkType: hard
 
@@ -18186,6 +18291,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"make-error@npm:^1.1.1":
+  version: 1.3.6
+  resolution: "make-error@npm:1.3.6"
+  checksum: b86e5e0e25f7f777b77fabd8e2cbf15737972869d852a22b7e73c17623928fccb826d8e46b9951501d3f20e51ad74ba8c59ed584f610526a48f8ccf88aaec402
+  languageName: node
+  linkType: hard
+
 "makeerror@npm:1.0.x":
   version: 1.0.11
   resolution: "makeerror@npm:1.0.11"
@@ -20795,6 +20907,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-core@workspace:packages/acceptance-tests/pkg-tests-core"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/finalhandler": 1.1.0
     "@types/invariant": ^2.2.30
     "@types/klaw": ^2.0.0
@@ -20824,6 +20937,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-fixtures@workspace:packages/acceptance-tests/pkg-tests-fixtures"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@yarnpkg/fslib": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -20832,6 +20946,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "pkg-tests-specs@workspace:packages/acceptance-tests/pkg-tests-specs"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/lodash": ^4.14.136
     "@types/tar": ^4.0.4
     "@yarnpkg/cli": "workspace:*"
@@ -24474,7 +24589,7 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.19":
+"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.19":
   version: 0.5.19
   resolution: "source-map-support@npm:0.5.19"
   dependencies:
@@ -26123,6 +26238,40 @@ resolve@1.9.0:
   languageName: node
   linkType: hard
 
+"ts-node@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "ts-node@npm:10.0.0"
+  dependencies:
+    "@tsconfig/node10": ^1.0.7
+    "@tsconfig/node12": ^1.0.7
+    "@tsconfig/node14": ^1.0.0
+    "@tsconfig/node16": ^1.0.1
+    arg: ^4.1.0
+    create-require: ^1.1.0
+    diff: ^4.0.1
+    make-error: ^1.1.1
+    source-map-support: ^0.5.17
+    yn: 3.1.1
+  peerDependencies:
+    "@swc/core": ">=1.2.45"
+    "@swc/wasm": ">=1.2.45"
+    "@types/node": "*"
+    typescript: ">=2.7"
+  peerDependenciesMeta:
+    "@swc/core":
+      optional: true
+    "@swc/wasm":
+      optional: true
+  bin:
+    ts-node: dist/bin.js
+    ts-node-cwd: dist/bin-cwd.js
+    ts-node-script: dist/bin-script.js
+    ts-node-transpile-only: dist/bin-transpile.js
+    ts-script: dist/bin-script-deprecated.js
+  checksum: 96d633774e13eb90ad49d644f397e99f5da72818e36040bf5b6bd66d0ab369dbb4348e499193c0fa45071f8e9559bb7724174139389e56bb562db36a3842484e
+  languageName: node
+  linkType: hard
+
 "ts-pnp@npm:^1.1.6":
   version: 1.2.0
   resolution: "ts-pnp@npm:1.2.0"
@@ -26420,6 +26569,19 @@ resolve@1.9.0:
   bin:
     typedoc: bin/typedoc
   checksum: fba4c704815d938a6bad6c1f563a516b4c434dbf70e230671bb2df93ad44575d510c5d409fa53c0a74ce02bcfb3d6e56bb807698a055ba2c4fb8da2f9e1e0206
+  languageName: node
+  linkType: hard
+
+"typescript-cached-transpile@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "typescript-cached-transpile@npm:0.0.6"
+  dependencies:
+    "@types/node": ^12.12.7
+    fs-extra: ^8.1.0
+    tslib: ^1.10.0
+  peerDependencies:
+    typescript: "*"
+  checksum: 58cebec4304801d4caa8d8ba47bc920442be3af1d00f2b2b4902d48d982ea2f0e2d9432a577953ec885cd9b7ac1a399733ca7031ee54b14658118e36fb83a84d
   languageName: node
   linkType: hard
 
@@ -27421,6 +27583,7 @@ typescript@^4.3.2:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
+    "@swc/helpers": 0.2.12
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:*"
     "@yarnpkg/libzip": "workspace:*"
@@ -28602,6 +28765,13 @@ typescript@^4.3.2:
   version: 0.1.2
   resolution: "yeast@npm:0.1.2"
   checksum: 81a250b69f601fed541e9518eb2972e75631dd81231689503d7f288612d4eec793b29c208d6807fd6bfc4c2a43614d0c6db233739a4ae6223e244aaed6a885c0
+  languageName: node
+  linkType: hard
+
+"yn@npm:3.1.1":
+  version: 3.1.1
+  resolution: "yn@npm:3.1.1"
+  checksum: 2c487b0e149e746ef48cda9f8bad10fc83693cd69d7f9dcd8be4214e985de33a29c9e24f3c0d6bcf2288427040a8947406ab27f7af67ee9456e6b84854f02dd6
   languageName: node
   linkType: hard
 

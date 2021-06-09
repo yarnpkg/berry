@@ -98,6 +98,7 @@
     "directory": "packages/gatsby"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/babel__core": "7.1.3",
     "@types/dedent": "0.7.0",
     "@types/indent-string": "4.0.1",

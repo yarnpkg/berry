@@ -21,6 +21,7 @@
     "@yarnpkg/core": "^3.0.0-rc.5"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/lodash": "^4.14.136",
     "@yarnpkg/builder": "workspace:*",
     "@yarnpkg/cli": "workspace:*",

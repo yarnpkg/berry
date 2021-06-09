@@ -33,6 +33,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/ci-info": "^2",
     "@types/semver": "^7.1.0",
     "@types/yup": "^0",

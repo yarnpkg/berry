@@ -1,4 +1,25 @@
 {
+  "ts-node": {
+    "transpileOnly": true,
+
+    // Uncomment one of the following to choose the compiler
+
+    // TSC but with caching
+    // "compiler": "typescript-cached-transpile",
+
+    // swc, no caching
+    "transpiler": "ts-node/transpilers/swc-experimental",
+
+    // swc with caching (combination of the 2x from above)
+    // Does not work due to changes in the swc integration in ts-node@10
+    // "compiler": "./scripts/ts-compiler.js",
+
+    "compilerOptions": {
+      // We are forced to use @swc/helpers due to swc bug: https://github.com/swc-project/swc/issues/1786
+
+      // "importHelpers": false, // to avoid depending on @swc/helpers everywhere when using swc compiler
+    }
+  },
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",

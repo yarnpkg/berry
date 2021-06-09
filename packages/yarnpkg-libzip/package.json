@@ -23,6 +23,7 @@
     "directory": "packages/yarnpkg-libzip"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/prettier": "1.19.0",
     "prettier": "^1.19.1"
   },

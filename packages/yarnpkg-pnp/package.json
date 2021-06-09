@@ -10,6 +10,7 @@
     "tslib": "^1.13.0"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@yarnpkg/builder": "workspace:*",
     "@yarnpkg/libzip": "workspace:*",
     "@yarnpkg/monorepo": "workspace:*",

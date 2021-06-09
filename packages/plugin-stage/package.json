@@ -13,6 +13,7 @@
     "@yarnpkg/core": "^3.0.0-rc.5"
   },
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@yarnpkg/builder": "workspace:*",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",

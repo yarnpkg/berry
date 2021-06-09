@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "devDependencies": {
+    "@swc/helpers": "0.2.12",
     "@types/finalhandler": "1.1.0",
     "@types/invariant": "^2.2.30",
     "@types/klaw": "^2.0.0",
