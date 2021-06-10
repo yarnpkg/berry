@@ -12,7 +12,7 @@ import npmWhoami              from './commands/npm/whoami';
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
-    npmPublishAccess: string|null;
+    npmPublishAccess: string | null;
   }
 }
 

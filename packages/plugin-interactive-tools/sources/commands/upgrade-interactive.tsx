@@ -215,7 +215,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const UpgradeEntries = ({dependencies}: { dependencies: Array<Descriptor> }) => {
-      const [suggestions, setSuggestions] = useState<Array<readonly [Descriptor, UpgradeSuggestions]>|null>(null);
+      const [suggestions, setSuggestions] = useState<Array<readonly [Descriptor, UpgradeSuggestions]> | null>(null);
       const mountedRef = useRef<boolean>(true);
 
       useEffect(() => {
