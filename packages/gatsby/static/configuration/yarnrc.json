@@ -342,7 +342,7 @@
               "$ref": "#/properties/httpsProxy"
             }
           },
-          "_exampleKeys": ["caFilePath"]
+          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsProxy"]
         }
       },
       "_exampleKeys": ["*.example.com"]
