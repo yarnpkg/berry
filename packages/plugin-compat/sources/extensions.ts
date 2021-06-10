@@ -308,4 +308,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `^16.8.6`,
     },
   }],
+  // https://github.com/ant-design/react-slick/pull/95
+  [`@ant-design/react-slick@<=0.28.3`, {
+    peerDependencies: {
+      react: `>=16.0.0`,
+    },
+  }],
 ];
