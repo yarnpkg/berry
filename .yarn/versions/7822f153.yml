@@ -1,0 +1,8 @@
+declined:
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-pack"
+  - "@yarnpkg/core"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/shell"
