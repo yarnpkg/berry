@@ -2,6 +2,6 @@
   "name": "gatsby-plugin-clipanion-cli",
   "version": "0.0.0",
   "peerDependencies": {
-    "gatsby": "^2.2.9"
+    "gatsby": "^3.7.0"
   }
 }

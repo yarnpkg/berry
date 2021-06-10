@@ -7,12 +7,13 @@
 const MonacoWebpackPlugin = require(`monaco-editor-webpack-plugin`);
 const fs = require(`fs`);
 const path = require(`path`);
+const {createRequire} = require(`module`);
 
 const regexExternalLink = /^(?:https?:)?\/\//;
 
 const staticRedirectsPath = path.join(__dirname, `./static/_redirects`);
 const staticRedirects = fs.readFileSync(staticRedirectsPath).toString();
-const redirectLines = staticRedirects.replace(/\n+/g,`\n`).split(`\n`);
+const redirectLines = staticRedirects.replace(/\n+/g, `\n`).split(`\n`);
 
 const redirects = [];
 
@@ -37,18 +38,22 @@ for (const redirectLine of redirectLines) {
 /** @type {import('gatsby').GatsbyNode} */
 module.exports = {
   onCreateWebpackConfig: ({actions}) => {
+    const gatsbyReq = createRequire(require.resolve(`gatsby/package.json`));
+    const webpack = gatsbyReq(`webpack`);
+
     actions.setWebpackConfig({
-      node: {
-        fs: `empty`,
-      },
       resolve: {
-        alias: {
-          [`@emotion/core`]: require.resolve(`@emotion/core`),
+        fallback: {
+          fs: false,
+          path: false,
         },
       },
       plugins: [
         new MonacoWebpackPlugin({
           languages: [`javascript`, `typescript`],
+        }),
+        new webpack.DefinePlugin({
+          [`process`]: `({platform: "browser", cwd: () => "/", versions: {}})`,
         }),
       ],
     });

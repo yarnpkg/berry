@@ -54,12 +54,11 @@ function getBuildPlugin() {
   })];
 }
 
-// @ts-expect-error: @types/webpack-merge depends on @types/webpack, which isn't compatible with the webpack 5 types
 export const makeConfig = (config: webpack.Configuration): webpack.Configuration => merge(identity<webpack.Configuration>({
   mode: `none`,
   devtool: false,
 
-  target: `node10.19`,
+  target: `node16`,
 
   node: {
     __dirname: false,

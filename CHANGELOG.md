@@ -474,7 +474,7 @@ To see a comprehensive documentation about each possible field, please check our
 
   - The `resolutions` field no longer support the glob syntax within its patterns, as it was redundant with its own glob-less syntax and caused unnecessary confusion.
 
-    ```diff
+    ```diff-json
     {
       "resolutions": {
     -    "**/@babel/core": "7.5.5",
