@@ -366,7 +366,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
   };
 
   const parseRequest = (url: string): Request | null => {
-    let match: RegExpMatchArray|null;
+    let match: RegExpMatchArray | null;
 
     url = url.replace(/%2f/g, `/`);
 

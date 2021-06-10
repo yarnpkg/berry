@@ -105,7 +105,7 @@ export class BigIntStatsEntry {
   atimeNs = BigInt(0);
   mtimeNs = BigInt(0);
   ctimeNs = BigInt(0);
-  birthtimeNs= BigInt(0);
+  birthtimeNs = BigInt(0);
 
   atime = new Date(0);
   mtime = new Date(0);
