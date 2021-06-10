@@ -28,12 +28,14 @@ git config --global user.name "John Doe"
 export NODE_OPTIONS="--unhandled-rejections=strict"
 
 if [[ "$1" == "nm" ]]; then
-  export YARN_NODE_LINKER="node-modules"
+  NODE_LINKER="node-modules"
 elif [[ -z "$1" || "$1" == "pnp" ]]; then
-  export YARN_NODE_LINKER="pnp"
+  NODE_LINKER="pnp"
 else
   echo "Invalid nodeLinker: $1"
   exit 1
 fi
 
-echo nodeLinker: $YARN_NODE_LINKER
+yarn config set -H nodeLinker "$NODE_LINKER"
+
+echo nodeLinker: $NODE_LINKER
