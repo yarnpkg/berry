@@ -9,6 +9,24 @@ const optionalPeerDep = {
 };
 
 export const packageExtensions: Array<[string, PackageExtensionData]> = [
+  // https://github.com/tailwindlabs/tailwindcss-aspect-ratio/pull/14
+  [`@tailwindcss/aspect-ratio@<0.2.1`, {
+    peerDependencies: {
+      [`tailwindcss`]: `^2.0.2`,
+    },
+  }],
+  // https://github.com/tailwindlabs/tailwindcss-line-clamp/pull/6
+  [`@tailwindcss/line-clamp@<0.2.1`, {
+    peerDependencies: {
+      [`tailwindcss`]: `^2.0.2`,
+    },
+  }],
+  // https://github.com/FullHuman/purgecss/commit/24116f394dc54c913e4fd254cf2d78c03db971f2
+  [`@fullhuman/postcss-purgecss@3.1.3 || 3.1.3-alpha.0`, {
+    peerDependencies: {
+      [`postcss`]: `^8.0.0`,
+    },
+  }],
   // https://github.com/SamVerschueren/stream-to-observable/pull/5
   [`@samverschueren/stream-to-observable@<0.3.1`, {
     peerDependenciesMeta: {
