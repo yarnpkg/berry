@@ -4,6 +4,7 @@ const {
 } = require(`pkg-tests-core`);
 
 const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
+const AUTH_IDENT_DECODED = `username:a very secure password`;
 const AUTH_IDENT = `dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`; // username:a very secure password
 
 const INVALID_AUTH_TOKEN = `a24cb960-e6a5-45fc-b9ab-0f9fe0aaae57`;
@@ -152,6 +153,25 @@ describe(`Auth tests`, () => {
       },
       async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT}"\n`);
+
+        await run(`install`);
+
+        await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+          name: `@private/package`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should support non-base64 encoded authentication ident`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`@private/package`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${AUTH_IDENT_DECODED}"\n`);
 
         await run(`install`);
 

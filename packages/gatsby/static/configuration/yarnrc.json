@@ -490,29 +490,6 @@
               "additionalProperties": false,
               "_exampleKeys": ["lodash"]
             },
-            "dependenciesMeta": {
-              "type": "object",
-              "patternProperties": {
-                "^(?:@([^/]+?)/)?([^/]+?)$": {
-                  "type": "object",
-                  "properties": {
-                    "built": {
-                      "type": "boolean",
-                      "examples": [false]
-                    },
-                    "optional": {
-                      "type": "boolean",
-                      "examples": [false]
-                    },
-                    "unplugged": {
-                      "type": "boolean",
-                      "examples": [true]
-                    }
-                  }
-                }
-              },
-              "additionalProperties": false
-            },
             "peerDependencies": {
               "type": "object",
               "patternProperties": {
@@ -535,13 +512,15 @@
                       "type": "boolean",
                       "examples": [true]
                     }
-                  }
+                  },
+                  "_exampleKeys": ["optional"]
                 }
               },
-              "additionalProperties": false
+              "additionalProperties": false,
+              "_exampleKeys": ["webpack-cli"]
             }
           },
-          "_exampleKeys": ["dependencies", "peerDependencies"],
+          "_exampleKeys": ["dependencies", "peerDependencies", "peerDependenciesMeta"],
           "_margin": false
         }
       },

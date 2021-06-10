@@ -828,7 +828,7 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
   return rightMostExitCode;
 }
 
-function locateArgsVariableInSegment(segment: ArgumentSegment|ArithmeticPrimary): boolean {
+function locateArgsVariableInSegment(segment: ArgumentSegment | ArithmeticPrimary): boolean {
   switch (segment.type) {
     case `variable`: {
       return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10)) || (`defaultValue` in segment && !!segment.defaultValue && segment.defaultValue.some(arg => locateArgsVariableInArgument(arg)));

@@ -27,7 +27,7 @@ done
 
 
 # Bump the packages, and store which ones have been bumped (and thus need to be re-released)
-RELEASE_DETAILS=$(node "$REPO_DIR"/scripts/run-yarn.js version apply --all --json "${APPLY_OPTIONS}")
+RELEASE_DETAILS=$(yarn version apply --all --json "${APPLY_OPTIONS}")
 RELEASE_SIZE=$(wc -l <<< "$RELEASE_DETAILS")
 
 if [[ $RELEASE_SIZE -eq 0 ]]; then
@@ -105,6 +105,6 @@ printf "%s" "$COMMIT_MESSAGE"
 # We need to revert the checked-in artifacts, since stable shouldn't move
 # just yet, and some of our tools expect "latest" to always be up-to-date
 if [[ $PRERELEASE -eq 1 ]]; then
-  git checkout "$CURRENT_COMMIT" -- "$REPO_DIR"/../packages/*/bin
+  git checkout "$CURRENT_COMMIT" -- "$REPO_DIR"/packages/*/bin
   git commit -m "Reset binaries to stable"
 fi
