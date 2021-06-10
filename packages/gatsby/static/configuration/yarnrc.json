@@ -535,13 +535,15 @@
                       "type": "boolean",
                       "examples": [true]
                     }
-                  }
+                  },
+                  "_exampleKeys": ["optional"]
                 }
               },
-              "additionalProperties": false
+              "additionalProperties": false,
+              "_exampleKeys": ["webpack-cli"]
             }
           },
-          "_exampleKeys": ["dependencies", "peerDependencies"],
+          "_exampleKeys": ["dependencies", "peerDependencies", "peerDependenciesMeta"],
           "_margin": false
         }
       },
