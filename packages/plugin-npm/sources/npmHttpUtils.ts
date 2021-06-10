@@ -199,8 +199,13 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
 
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
-  if (effectiveConfiguration.get(`npmAuthIdent`))
-    return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
+
+  if (effectiveConfiguration.get(`npmAuthIdent`)) {
+    const npmAuthIdent = effectiveConfiguration.get(`npmAuthIdent`);
+    if (npmAuthIdent.includes(`:`))
+      return `Basic ${Buffer.from(npmAuthIdent).toString(`base64`)}`;
+    return `Basic ${npmAuthIdent}`;
+  }
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);

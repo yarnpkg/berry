@@ -25,5 +25,7 @@ chmod +x "$TEMP_DIR"/bin/*
 
 cd "$TEMP_DIR"
 
+export YARN_ENABLE_IMMUTABLE_INSTALLS=0
+
 node "$TEMP_DIR"/bin/yarn.js
 node "$TEMP_DIR"/bin/yarn.js npm publish --access=public
