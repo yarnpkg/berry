@@ -536,7 +536,7 @@ export type RunFunction = (
   {path, run, source}:
   {
     path: PortablePath,
-    run: (...args: Array<any>) => Promise<ExecResult>,
+    run: (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>,
     source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
   }
 ) => void;

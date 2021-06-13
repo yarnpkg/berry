@@ -20,7 +20,7 @@ describe(`Features`, () => {
           await xfs.mkdirpPromise(`${tmp}/my-package` as PortablePath);
 
           await run(`init`, {
-            cwd: `${tmp}/my-package`,
+            cwd: `${tmp}/my-package` as PortablePath,
           });
 
           await expect(xfs.readJsonPromise(`${tmp}/my-package/package.json` as PortablePath)).resolves.toMatchObject({
@@ -50,7 +50,7 @@ describe(`Features`, () => {
           await xfs.mkdirpPromise(`${tmp}/my-package` as PortablePath);
 
           await run(`init`, {
-            cwd: `${tmp}/my-package`,
+            cwd: `${tmp}/my-package` as PortablePath,
           });
 
           await expect(xfs.readJsonPromise(`${tmp}/my-package/package.json` as PortablePath)).resolves.toMatchObject({
@@ -82,7 +82,7 @@ describe(`Features`, () => {
           await xfs.mkdirpPromise(`${tmp}/my-package` as PortablePath);
 
           await run(`init`, {
-            cwd: `${tmp}/my-package`,
+            cwd: `${tmp}/my-package` as PortablePath,
           });
 
           await expect(xfs.readJsonPromise(`${tmp}/my-package/package.json` as PortablePath)).resolves.toMatchObject({
@@ -109,7 +109,7 @@ describe(`Features`, () => {
           await xfs.mkdirpPromise(`${tmp}/my-package` as PortablePath);
 
           await run(`init`, {
-            cwd: `${tmp}/my-package`,
+            cwd: `${tmp}/my-package` as PortablePath,
           });
 
           await expect(xfs.readJsonPromise(`${tmp}/my-package/package.json` as PortablePath)).resolves.toMatchObject({
