@@ -172,7 +172,7 @@ export type Options = {
 };
 
 export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
-  const url = typeof target === `string`  ? new URL(target) : target;
+  const url = typeof target === `string` ? new URL(target) : target;
 
   const networkConfig = getNetworkSettings(url, {configuration});
   if (networkConfig.enableNetwork === false)
