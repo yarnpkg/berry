@@ -110,7 +110,7 @@ async function prettyNetworkError(response: Promise<Response<any>>, {configurati
 /**
  * Searches through networkSettings and returns the most specific match
  */
-export function getNetworkSettings(target: string, opts: { configuration: Configuration }) {
+export function getNetworkSettings(target: string | URL, opts: { configuration: Configuration }) {
   // Sort the config by key length to match on the most specific pattern
   const networkSettings = [...opts.configuration.get(`networkSettings`)].sort(([keyA], [keyB]) => {
     return keyB.length - keyA.length;
@@ -128,7 +128,7 @@ export function getNetworkSettings(target: string, opts: { configuration: Config
 
   const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
 
-  const url = new URL(target);
+  const url = typeof target === `string` ? new URL(target) : target;
   for (const [glob, config] of networkSettings) {
     if (micromatch.isMatch(url.hostname, glob)) {
       for (const key of mergableKeys) {
@@ -171,12 +171,13 @@ export type Options = {
   method?: Method,
 };
 
-export async function request(target: string, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
-  const networkConfig = getNetworkSettings(target, {configuration});
-  if (networkConfig.enableNetwork === false)
-    throw new Error(`Request to '${target}' has been blocked because of your configuration settings`);
+export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
+  const url = typeof target === `string` ? new URL(target) : target;
 
-  const url = new URL(target);
+  const networkConfig = getNetworkSettings(url, {configuration});
+  if (networkConfig.enableNetwork === false)
+    throw new Error(`Request to '${url.href}' has been blocked because of your configuration settings`);
+
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
@@ -227,7 +228,7 @@ export async function request(target: string, body: Body, {configuration, header
   });
 
   return configuration.getLimit(`networkConcurrency`)(() => {
-    return gotClient(target) as unknown as Response<any>;
+    return gotClient(url) as unknown as Response<any>;
   });
 }
 
