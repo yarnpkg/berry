@@ -1,5 +1,5 @@
-import {xfs} from '@yarnpkg/fslib';
-import {EOL} from 'os';
+import {PortablePath, xfs} from '@yarnpkg/fslib';
+import {EOL}               from 'os';
 
 describe(`Commands`, () => {
   describe(`config set`, () => {
@@ -10,7 +10,7 @@ describe(`Commands`, () => {
           stdout: expect.stringContaining(`#!/usr/bin/env iojs\\n`),
         });
 
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.toContain(`pnpShebang`);
+        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml` as PortablePath, `utf8`)).resolves.toContain(`pnpShebang`);
       }),
     );
 
@@ -22,7 +22,7 @@ describe(`Commands`, () => {
         expect(stdout).not.toContain(`foobar`);
         expect(stdout).toContain(`********`);
 
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.toContain(`npmAuthToken: foobar`);
+        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml` as PortablePath, `utf8`)).resolves.toContain(`npmAuthToken: foobar`);
       }),
     );
 
@@ -36,11 +36,22 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`npmScopes.yarnpkg`);
         expect(stdout).toContain(`npmAlwaysAuth: false`);
 
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.toContain(
+        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml` as PortablePath, `utf8`)).resolves.toContain(
           `npmScopes:${EOL}` +
           `  yarnpkg:${EOL}` +
           `    npmAlwaysAuth: false`,
         );
+      }),
+    );
+
+    test(
+      `it should allow running the command from arbitrary folders if the -H,--home option is set`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const tmpDir = await xfs.mktempPromise();
+
+        await expect(run(`config`, `set`, `--home`, `pnpShebang`, `#!/usr/bin/env iojs\n`, {cwd: tmpDir})).resolves.toMatchObject({
+          code: 0,
+        });
       }),
     );
   });
