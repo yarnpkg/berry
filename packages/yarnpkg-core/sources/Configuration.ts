@@ -51,6 +51,11 @@ const IGNORED_ENV_VARIABLES = new Set([
   // "wrapOutput" was a variable used to indicate nested "yarn run" processes
   // back in Yarn 1.
   `wrapOutput`,
+
+  // "YARN_HOME" and "YARN_CONF_DIR" may be present as part of the unrelated "Apache Hadoop YARN" software project.
+  // https://hadoop.apache.org/docs/r0.23.11/hadoop-project-dist/hadoop-common/SingleCluster.html
+  `home`,
+  `confDir`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
