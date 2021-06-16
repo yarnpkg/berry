@@ -274,7 +274,7 @@
           },
           "text": {
             "type": "string",
-            "description": "Selects exactly one message that must match the given text. In case a message matches both `code`-based and `text`-based filters, the `text`-based ones will take precedence over the `code`-based ones.",
+            "description": "Selects exactly one message that must match the given text. In case a message matches both `code`-based and `text`-based filters, the `text`-based ones will take precedence over the `code`-based ones. Provided `text` can also be a substring of the message or a Regular Expression.",
             "examples": ["lorem-ipsum@npm:1.2.3 lists build scripts, but its build has been explicitly disabled through configuration"]
           },
           "level": {
