@@ -15,8 +15,7 @@
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^3.0.0-rc.5",
-    "@yarnpkg/core": "^3.0.0-rc.5",
-    "@yarnpkg/plugin-pack": "^3.0.0-rc.5"
+    "@yarnpkg/core": "^3.0.0-rc.5"
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
@@ -24,7 +23,6 @@
     "@yarnpkg/builder": "workspace:*",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",
-    "@yarnpkg/plugin-pack": "workspace:*",
     "typescript": "^4.3.2"
   },
   "scripts": {

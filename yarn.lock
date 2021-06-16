@@ -5988,7 +5988,6 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.5"
     "@yarnpkg/libui": "workspace:^2.1.2-rc.5"
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.3"
-    "@yarnpkg/plugin-pack": "workspace:*"
     clipanion: ^3.0.0-rc.10
     ink: ^3.0.8
     react: ^16.13.1
@@ -5998,7 +5997,6 @@ __metadata:
   peerDependencies:
     "@yarnpkg/cli": ^3.0.0-rc.5
     "@yarnpkg/core": ^3.0.0-rc.5
-    "@yarnpkg/plugin-pack": ^3.0.0-rc.5
   languageName: unknown
   linkType: soft
 
