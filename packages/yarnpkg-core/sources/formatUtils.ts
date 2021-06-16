@@ -400,7 +400,13 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       return defaultLevel;
 
     if (logFiltersByText.size > 0) {
-      const level = logFiltersByText.get(stripAnsi(text));
+      let level;
+      for (const [filterText, filterLevel] of logFiltersByText.entries()) {
+        if ((new RegExp(filterText)).test(stripAnsi(text))) {
+          level = filterLevel;
+        }
+      }
+
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
       }

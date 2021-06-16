@@ -8,6 +8,16 @@ const makeTextFilter = level => JSON.stringify([{
   level,
 }]);
 
+const makePartialTextFilter = level => JSON.stringify([{
+  text: `no-deps-scripted@npm:1.0.0`,
+  level,
+}]);
+
+const makeRegExpFilter = level => JSON.stringify([{
+  text: `no-.*-scripted`,
+  level,
+}]);
+
 describe(`Features`, () => {
   describe(`LogFilters`, () => {
     test(`it should allow to filter by message name`, makeTemporaryEnv({
@@ -126,6 +136,100 @@ describe(`Features`, () => {
       ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+    }));
+
+    test(`it should allow to filter with a partial message text`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps-scripted`]: `1.0.0`,
+      },
+      dependenciesMeta: {
+        [`no-deps-scripted`]: {built: false},
+      },
+    }, async ({path, run, source}) => {
+      let {stdout} = await run(`install`);
+      expect(stdout).toMatch(/lists build scripts/); // sanity check
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePartialTextFilter(`discard`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).not.toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePartialTextFilter(`info`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePartialTextFilter(`warning`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePartialTextFilter(`error`));
+
+      let hadError = false;
+      try {
+        await run(`install`);
+      } catch (err) {
+        ({stdout} = err);
+        hadError = true;
+      }
+      expect(hadError).toBe(true);
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+    }));
+
+    test(`it should allow to filter with a regular expression`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps-scripted`]: `1.0.0`,
+      },
+      dependenciesMeta: {
+        [`no-deps-scripted`]: {built: false},
+      },
+    }, async ({path, run, source}) => {
+      let {stdout} = await run(`install`);
+      expect(stdout).toMatch(/lists build scripts/); // sanity check
+
+      await run(`config`, `set`, `logFilters`, `--json`, makeRegExpFilter(`discard`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).not.toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makeRegExpFilter(`info`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makeRegExpFilter(`warning`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makeRegExpFilter(`error`));
+
+      let hadError = false;
+      try {
+        await run(`install`);
+      } catch (err) {
+        ({stdout} = err);
+        hadError = true;
+      }
+      expect(hadError).toBe(true);
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
     }));
   });
