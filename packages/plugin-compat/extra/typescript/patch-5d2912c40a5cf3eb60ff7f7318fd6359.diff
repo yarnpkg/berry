@@ -1,9 +1,9 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index 83f54758a..75f5bd1f3 100644
-semver exclusivity >=4.3
+index 22e834acc..3bdaa4b8f 100644
+semver exclusivity >=4.4
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
-@@ -4692,6 +4692,9 @@ var ts;
+@@ -4753,6 +4753,9 @@ var ts;
                      : new Buffer(input, encoding);
              }
              function isFileSystemCaseSensitive() {
@@ -13,7 +13,7 @@ semver exclusivity >=4.3
                  if (platform === "win32" || platform === "win64") {
                      return false;
                  }
-@@ -32586,21 +32589,52 @@ var ts;
+@@ -33060,21 +33063,52 @@ var ts;
          }
      }
      ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
@@ -69,7 +69,7 @@ semver exclusivity >=4.3
      function resolveTypeReferenceDirective(typeReferenceDirectiveName, containingFile, options, host, redirectedReference, cache) {
          var traceEnabled = isTraceEnabled(options, host);
          if (redirectedReference) {
-@@ -32707,7 +32741,9 @@ var ts;
+@@ -33181,7 +33215,9 @@ var ts;
                  }
                  var result_4;
                  if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
@@ -80,7 +80,7 @@ semver exclusivity >=4.3
                      result_4 = searchResult && searchResult.value;
                  }
                  else {
-@@ -33146,9 +33182,12 @@ var ts;
+@@ -33622,9 +33658,12 @@ var ts;
                  if (traceEnabled) {
                      trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
                  }
@@ -95,7 +95,7 @@ semver exclusivity >=4.3
                  var resolvedValue = resolved_1.value;
                  if (!compilerOptions.preserveSymlinks && resolvedValue && !resolvedValue.originalPath) {
                      var path = realPath(resolvedValue.path, host, traceEnabled);
-@@ -33459,6 +33498,14 @@ var ts;
+@@ -33935,6 +33974,14 @@ var ts;
      }
      function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state) {
          var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
@@ -110,7 +110,7 @@ semver exclusivity >=4.3
          var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
          if (packageInfo) {
              var fromFile = loadModuleFromFile(extensions, candidate, !nodeModulesDirectoryExists, state);
-@@ -33473,9 +33520,12 @@ var ts;
+@@ -33949,9 +33996,12 @@ var ts;
                  loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, packageInfo && packageInfo.packageJsonContent, packageInfo && packageInfo.versionPaths);
              return withPackageId(packageInfo, pathAndExtension);
          };
@@ -125,7 +125,7 @@ semver exclusivity >=4.3
              packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
              if (packageInfo && packageInfo.versionPaths) {
                  if (state.traceEnabled) {
-@@ -33612,6 +33662,47 @@ var ts;
+@@ -34089,6 +34139,47 @@ var ts;
      function toSearchResult(value) {
          return value !== undefined ? { value: value } : undefined;
      }
@@ -173,7 +173,7 @@ semver exclusivity >=4.3
  })(ts || (ts = {}));
  var ts;
  (function (ts) {
-@@ -89033,6 +89124,7 @@ var ts;
+@@ -89725,6 +89816,7 @@ var ts;
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["None"] = 0] = "None";
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
@@ -181,7 +181,7 @@ semver exclusivity >=4.3
      })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
      function updateSharedExtendedConfigFileWatcher(projectPath, options, extendedConfigFilesMap, createExtendedConfigFileWatch, toPath) {
          var _a;
-@@ -94524,6 +94616,25 @@ var ts;
+@@ -95265,6 +95357,25 @@ var ts;
                  return undefined;
              }
              var parts = getNodeModulePathParts(path);
@@ -207,7 +207,7 @@ semver exclusivity >=4.3
              if (!parts) {
                  return undefined;
              }
-@@ -94551,14 +94662,18 @@ var ts;
+@@ -95292,14 +95403,18 @@ var ts;
              if (isRedirect && !isPackageRootPath) {
                  return undefined;
              }
@@ -233,7 +233,7 @@ semver exclusivity >=4.3
              function tryDirectoryWithPackageJson(packageRootIndex) {
                  var packageRootPath = path.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
-@@ -95280,6 +95395,10 @@ var ts;
+@@ -96021,6 +96136,10 @@ var ts;
          if (configFileName) {
              configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
          }
@@ -244,7 +244,7 @@ semver exclusivity >=4.3
          var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
          ts.setGetSourceFileAsHashVersioned(compilerHost, host);
          var getNewSourceFile = compilerHost.getSourceFile;
-@@ -95351,6 +95470,10 @@ var ts;
+@@ -96092,6 +96211,10 @@ var ts;
                  configFileWatcher.close();
                  configFileWatcher = undefined;
              }
@@ -255,7 +255,7 @@ semver exclusivity >=4.3
              extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
              extendedConfigCache = undefined;
              if (sharedExtendedConfigFileWatchers) {
-@@ -95383,7 +95506,8 @@ var ts;
+@@ -96124,7 +96247,8 @@ var ts;
          function getCurrentProgram() {
              return builderProgram && builderProgram.getProgramOrUndefined();
          }
@@ -265,7 +265,7 @@ semver exclusivity >=4.3
              writeLog("Synchronizing program");
              clearInvalidateResolutionsOfFailedLookupLocations();
              var program = getCurrentBuilderProgram();
-@@ -95393,7 +95517,7 @@ var ts;
+@@ -96134,7 +96258,7 @@ var ts;
                      resolutionCache.clear();
                  }
              }
@@ -274,7 +274,7 @@ semver exclusivity >=4.3
              if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
                  if (hasChangedConfigFileParsingErrors) {
                      builderProgram = createProgram(undefined, undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
-@@ -95571,6 +95695,12 @@ var ts;
+@@ -96312,6 +96436,12 @@ var ts;
              reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
              scheduleProgramUpdate();
          }
@@ -287,7 +287,7 @@ semver exclusivity >=4.3
          function updateProgramWithWatchStatus() {
              timerToUpdateProgram = undefined;
              reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
-@@ -95586,6 +95716,10 @@ var ts;
+@@ -96327,6 +96457,10 @@ var ts;
                      ts.perfLogger.logStartUpdateProgram("FullConfigReload");
                      reloadConfigFile();
                      break;
@@ -299,11 +299,11 @@ semver exclusivity >=4.3
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 58028943d..ad0cf1001 100644
-semver exclusivity >=4.3
+index c8ee276a9..29333715b 100644
+semver exclusivity >=4.4
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
-@@ -7338,6 +7338,11 @@ var ts;
+@@ -7447,6 +7447,11 @@ var ts;
                      : new Buffer(input, encoding);
              }
              function isFileSystemCaseSensitive() {
@@ -315,7 +315,7 @@ semver exclusivity >=4.3
                  // win32\win64 are case insensitive platforms
                  if (platform === "win32" || platform === "win64") {
                      return false;
-@@ -40003,24 +40008,56 @@ var ts;
+@@ -40536,24 +40541,56 @@ var ts;
      ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
      /**
       * Returns the path to every node_modules/@types directory from some ancestor directory.
@@ -376,7 +376,7 @@ semver exclusivity >=4.3
      /**
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
-@@ -40134,7 +40171,9 @@ var ts;
+@@ -40667,7 +40704,9 @@ var ts;
                  }
                  var result_4;
                  if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
@@ -387,7 +387,7 @@ semver exclusivity >=4.3
                      result_4 = searchResult && searchResult.value;
                  }
                  else {
-@@ -40685,9 +40724,12 @@ var ts;
+@@ -41220,9 +41259,12 @@ var ts;
                  if (traceEnabled) {
                      trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
                  }
@@ -402,7 +402,7 @@ semver exclusivity >=4.3
                  var resolvedValue = resolved_1.value;
                  if (!compilerOptions.preserveSymlinks && resolvedValue && !resolvedValue.originalPath) {
                      var path = realPath(resolvedValue.path, host, traceEnabled);
-@@ -41032,6 +41074,14 @@ var ts;
+@@ -41567,6 +41609,14 @@ var ts;
      }
      function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state) {
          var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
@@ -417,7 +417,7 @@ semver exclusivity >=4.3
          // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
          var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
          if (packageInfo) {
-@@ -41047,9 +41097,12 @@ var ts;
+@@ -41582,9 +41632,12 @@ var ts;
                  loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, packageInfo && packageInfo.packageJsonContent, packageInfo && packageInfo.versionPaths);
              return withPackageId(packageInfo, pathAndExtension);
          };
@@ -432,7 +432,7 @@ semver exclusivity >=4.3
              // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
              packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
              if (packageInfo && packageInfo.versionPaths) {
-@@ -41207,6 +41260,58 @@ var ts;
+@@ -41743,6 +41796,58 @@ var ts;
      function toSearchResult(value) {
          return value !== undefined ? { value: value } : undefined;
      }
@@ -491,7 +491,7 @@ semver exclusivity >=4.3
  })(ts || (ts = {}));
  /* @internal */
  var ts;
-@@ -108308,6 +108413,8 @@ var ts;
+@@ -109089,6 +109194,8 @@ var ts;
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
          /** Reload completely by re-reading contents of config file from disk and updating program */
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
@@ -500,7 +500,7 @@ semver exclusivity >=4.3
      })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
      /**
       * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
-@@ -114695,6 +114802,29 @@ var ts;
+@@ -115527,6 +115634,29 @@ var ts;
                  return undefined;
              }
              var parts = getNodeModulePathParts(path);
@@ -530,7 +530,7 @@ semver exclusivity >=4.3
              if (!parts) {
                  return undefined;
              }
-@@ -114725,18 +114855,24 @@ var ts;
+@@ -115557,18 +115687,24 @@ var ts;
              if (isRedirect && !isPackageRootPath) {
                  return undefined;
              }
@@ -564,7 +564,7 @@ semver exclusivity >=4.3
              function tryDirectoryWithPackageJson(packageRootIndex) {
                  var packageRootPath = path.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
-@@ -115524,6 +115660,10 @@ var ts;
+@@ -116356,6 +116492,10 @@ var ts;
          if (configFileName) {
              configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
          }
@@ -575,7 +575,7 @@ semver exclusivity >=4.3
          var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
          ts.setGetSourceFileAsHashVersioned(compilerHost, host);
          // Members for CompilerHost
-@@ -115602,6 +115742,10 @@ var ts;
+@@ -116434,6 +116574,10 @@ var ts;
                  configFileWatcher.close();
                  configFileWatcher = undefined;
              }
@@ -586,7 +586,7 @@ semver exclusivity >=4.3
              extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
              extendedConfigCache = undefined;
              if (sharedExtendedConfigFileWatchers) {
-@@ -115634,7 +115778,8 @@ var ts;
+@@ -116466,7 +116610,8 @@ var ts;
          function getCurrentProgram() {
              return builderProgram && builderProgram.getProgramOrUndefined();
          }
@@ -596,7 +596,7 @@ semver exclusivity >=4.3
              writeLog("Synchronizing program");
              clearInvalidateResolutionsOfFailedLookupLocations();
              var program = getCurrentBuilderProgram();
-@@ -115645,7 +115790,7 @@ var ts;
+@@ -116477,7 +116622,7 @@ var ts;
                  }
              }
              // All resolutions are invalid if user provided resolutions
@@ -605,7 +605,7 @@ semver exclusivity >=4.3
              if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
                  if (hasChangedConfigFileParsingErrors) {
                      builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
-@@ -115845,6 +115990,12 @@ var ts;
+@@ -116677,6 +116822,12 @@ var ts;
              reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
              scheduleProgramUpdate();
          }
@@ -618,7 +618,7 @@ semver exclusivity >=4.3
          function updateProgramWithWatchStatus() {
              timerToUpdateProgram = undefined;
              reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
-@@ -115860,6 +116011,10 @@ var ts;
+@@ -116692,6 +116843,10 @@ var ts;
                      ts.perfLogger.logStartUpdateProgram("FullConfigReload");
                      reloadConfigFile();
                      break;
@@ -629,7 +629,7 @@ semver exclusivity >=4.3
                  default:
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
-@@ -121132,11 +121287,27 @@ var ts;
+@@ -122025,11 +122180,31 @@ var ts;
          return hasImportablePath;
      }
      ts.isImportableFile = isImportableFile;
@@ -649,6 +649,10 @@ semver exclusivity >=4.3
 +        }
 +        return findPnpApi(path + "/");
 +    }
++    function isDeprecatedDeclaration(decl) {
++        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
++    }
++    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      /**
       * Don't include something from a `node_modules` that isn't actually reachable by a global import.
       * A relative import to node_modules is usually a bad idea.
@@ -658,10 +662,12 @@ semver exclusivity >=4.3
          // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
          var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
          var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
-@@ -121144,6 +121315,26 @@ var ts;
+@@ -122037,10 +122212,26 @@ var ts;
              || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
              || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
      }
+-    function isDeprecatedDeclaration(decl) {
+-        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
 +    function isImportablePathPnp(fromPath, toPath) {
 +        var pnpApi = getPnpApi(fromPath);
 +        var fromLocator = pnpApi.findPackageLocator(fromPath);
@@ -681,11 +687,12 @@ semver exclusivity >=4.3
 +        else {
 +            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
 +        }
-+    }
+     }
+-    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      // #endregion
  })(ts || (ts = {}));
  var ts;
-@@ -122815,6 +123006,7 @@ var ts;
+@@ -123713,6 +123904,7 @@ var ts;
               *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
               */
              function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
@@ -693,7 +700,7 @@ semver exclusivity >=4.3
                  var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
                  var result = [];
                  var extensionOptions = getExtensionOptions(compilerOptions);
-@@ -122827,8 +123019,8 @@ var ts;
+@@ -123725,8 +123917,8 @@ var ts;
                      }
                  }
                  var fragmentDirectory = getFragmentDirectory(fragment);
@@ -704,7 +711,7 @@ semver exclusivity >=4.3
                      result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                  }
                  getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
-@@ -122843,18 +123035,36 @@ var ts;
+@@ -123741,18 +123933,36 @@ var ts;
                                  result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                              }
                          };
@@ -748,7 +755,7 @@ semver exclusivity >=4.3
                      }
                  }
                  return result;
-@@ -122955,6 +123165,7 @@ var ts;
+@@ -123853,6 +124063,7 @@ var ts;
                  return addReplacementSpans(toComplete, range.pos + prefix.length, names);
              }
              function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
@@ -756,7 +763,7 @@ semver exclusivity >=4.3
                  if (result === void 0) { result = []; }
                  // Check for typings specified in compiler options
                  var seen = new ts.Map();
-@@ -122963,11 +123174,19 @@ var ts;
+@@ -123861,11 +124072,19 @@ var ts;
                      var root = typeRoots_1[_i];
                      getCompletionEntriesFromDirectories(root);
                  }
@@ -781,7 +788,7 @@ semver exclusivity >=4.3
                  }
                  return result;
                  function getCompletionEntriesFromDirectories(directory) {
-@@ -150455,9 +150674,9 @@ var ts;
+@@ -151416,9 +151635,9 @@ var ts;
                  if (isTopLevelDeclarationStatement(statement) &&
                      !isExported(sourceFile, statement, useEs6Exports) &&
                      forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
@@ -794,7 +801,7 @@ semver exclusivity >=4.3
                  }
                  return statement;
              });
-@@ -159155,6 +159374,37 @@ var ts;
+@@ -160138,6 +160357,37 @@ var ts;
                  return this.projectReferences;
              };
              ConfiguredProject.prototype.updateReferences = function (refs) {
@@ -832,7 +839,7 @@ semver exclusivity >=4.3
                  this.projectReferences = refs;
                  this.potentialProjectReferences = undefined;
              };
-@@ -159762,6 +160012,7 @@ var ts;
+@@ -160753,6 +161003,7 @@ var ts;
                          watchDirectory: ts.returnNoopFileWatcher,
                      } :
                      ts.getWatchFactory(this.host, watchLogLevel, log, getDetailWatchInfo);
@@ -840,7 +847,7 @@ semver exclusivity >=4.3
              }
              ProjectService.prototype.toPath = function (fileName) {
                  return ts.toPath(fileName, this.currentDirectory, this.toCanonicalFileName);
-@@ -161586,7 +161837,7 @@ var ts;
+@@ -162603,7 +162854,7 @@ var ts;
              };
              ProjectService.prototype.setHostConfiguration = function (args) {
                  var _this = this;
@@ -849,7 +856,7 @@ semver exclusivity >=4.3
                  if (args.file) {
                      var info = this.getScriptInfoForNormalizedPath(server.toNormalizedPath(args.file));
                      if (info) {
-@@ -161604,7 +161855,7 @@ var ts;
+@@ -162621,7 +162872,7 @@ var ts;
                          this.logger.info("Format host information updated");
                      }
                      if (args.preferences) {
@@ -858,7 +865,7 @@ semver exclusivity >=4.3
                          this.hostConfiguration.preferences = __assign(__assign({}, this.hostConfiguration.preferences), args.preferences);
                          if (lazyConfiguredProjectsFromExternalProject && !this.hostConfiguration.preferences.lazyConfiguredProjectsFromExternalProject) {
                              // Load configured projects for external projects that are pending reload
-@@ -161630,6 +161881,8 @@ var ts;
+@@ -162647,6 +162898,8 @@ var ts;
                      if (args.watchOptions) {
                          this.hostConfiguration.watchOptions = (_a = convertWatchOptions(args.watchOptions)) === null || _a === void 0 ? void 0 : _a.watchOptions;
                          this.logger.info("Host watch options changed to " + JSON.stringify(this.hostConfiguration.watchOptions) + ", it will be take effect for next watches.");
@@ -867,7 +874,7 @@ semver exclusivity >=4.3
                      }
                  }
              };
-@@ -162607,6 +162860,25 @@ var ts;
+@@ -163624,6 +163877,25 @@ var ts;
                  });
              };
              /*@internal*/
@@ -893,7 +900,7 @@ semver exclusivity >=4.3
              ProjectService.prototype.watchPackageJsonFile = function (path) {
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
-@@ -167357,6 +167629,9 @@ var ts;
+@@ -168374,6 +168646,9 @@ var ts;
                          }
                          try {
                              var args = [ts.combinePaths(__dirname, "watchGuard.js"), path];
@@ -903,7 +910,7 @@ semver exclusivity >=4.3
                              if (logger.hasLevel(server.LogLevel.verbose)) {
                                  logger.info("Starting " + process.execPath + " with args:" + server.stringifyIndented(args));
                              }
-@@ -167617,6 +167892,9 @@ var ts;
+@@ -168634,6 +168909,9 @@ var ts;
                              break;
                          }
                      }
@@ -914,11 +921,11 @@ semver exclusivity >=4.3
                      this.installer.on("message", function (m) { return _this.handleMessage(m); });
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.d.ts b/lib/tsserverlibrary.d.ts
-index 6195d669a..0cabf3bdf 100644
-semver exclusivity >=4.3
+index 4289acd54..09016b5f1 100644
+semver exclusivity >=4.4
 --- a/lib/tsserverlibrary.d.ts
 +++ b/lib/tsserverlibrary.d.ts
-@@ -4710,6 +4710,7 @@ declare namespace ts {
+@@ -4746,6 +4746,7 @@ declare namespace ts {
  }
  declare namespace ts {
      export function getEffectiveTypeRoots(options: CompilerOptions, host: GetEffectiveTypeRootsHost): string[] | undefined;
@@ -927,11 +934,11 @@ semver exclusivity >=4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index ee78ce982..d798ba17f 100644
-semver exclusivity >=4.3
+index 98904ab84..95baa41d1 100644
+semver exclusivity >=4.4
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
-@@ -7532,6 +7532,11 @@ var ts;
+@@ -7641,6 +7641,11 @@ var ts;
                      : new Buffer(input, encoding);
              }
              function isFileSystemCaseSensitive() {
@@ -943,7 +950,7 @@ semver exclusivity >=4.3
                  // win32\win64 are case insensitive platforms
                  if (platform === "win32" || platform === "win64") {
                      return false;
-@@ -40197,24 +40202,56 @@ var ts;
+@@ -40730,24 +40735,56 @@ var ts;
      ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
      /**
       * Returns the path to every node_modules/@types directory from some ancestor directory.
@@ -1004,7 +1011,7 @@ semver exclusivity >=4.3
      /**
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
-@@ -40328,7 +40365,9 @@ var ts;
+@@ -40861,7 +40898,9 @@ var ts;
                  }
                  var result_4;
                  if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
@@ -1015,7 +1022,7 @@ semver exclusivity >=4.3
                      result_4 = searchResult && searchResult.value;
                  }
                  else {
-@@ -40879,9 +40918,12 @@ var ts;
+@@ -41414,9 +41453,12 @@ var ts;
                  if (traceEnabled) {
                      trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
                  }
@@ -1030,7 +1037,7 @@ semver exclusivity >=4.3
                  var resolvedValue = resolved_1.value;
                  if (!compilerOptions.preserveSymlinks && resolvedValue && !resolvedValue.originalPath) {
                      var path = realPath(resolvedValue.path, host, traceEnabled);
-@@ -41226,6 +41268,14 @@ var ts;
+@@ -41761,6 +41803,14 @@ var ts;
      }
      function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state) {
          var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
@@ -1045,7 +1052,7 @@ semver exclusivity >=4.3
          // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
          var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
          if (packageInfo) {
-@@ -41241,9 +41291,12 @@ var ts;
+@@ -41776,9 +41826,12 @@ var ts;
                  loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, packageInfo && packageInfo.packageJsonContent, packageInfo && packageInfo.versionPaths);
              return withPackageId(packageInfo, pathAndExtension);
          };
@@ -1060,7 +1067,7 @@ semver exclusivity >=4.3
              // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
              packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
              if (packageInfo && packageInfo.versionPaths) {
-@@ -41401,6 +41454,58 @@ var ts;
+@@ -41937,6 +41990,58 @@ var ts;
      function toSearchResult(value) {
          return value !== undefined ? { value: value } : undefined;
      }
@@ -1119,7 +1126,7 @@ semver exclusivity >=4.3
  })(ts || (ts = {}));
  /* @internal */
  var ts;
-@@ -108502,6 +108607,8 @@ var ts;
+@@ -109283,6 +109388,8 @@ var ts;
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
          /** Reload completely by re-reading contents of config file from disk and updating program */
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
@@ -1128,7 +1135,7 @@ semver exclusivity >=4.3
      })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
      /**
       * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
-@@ -114889,6 +114996,29 @@ var ts;
+@@ -115721,6 +115828,29 @@ var ts;
                  return undefined;
              }
              var parts = getNodeModulePathParts(path);
@@ -1158,7 +1165,7 @@ semver exclusivity >=4.3
              if (!parts) {
                  return undefined;
              }
-@@ -114919,18 +115049,24 @@ var ts;
+@@ -115751,18 +115881,24 @@ var ts;
              if (isRedirect && !isPackageRootPath) {
                  return undefined;
              }
@@ -1192,7 +1199,7 @@ semver exclusivity >=4.3
              function tryDirectoryWithPackageJson(packageRootIndex) {
                  var packageRootPath = path.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
-@@ -115718,6 +115854,10 @@ var ts;
+@@ -116550,6 +116686,10 @@ var ts;
          if (configFileName) {
              configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
          }
@@ -1203,7 +1210,7 @@ semver exclusivity >=4.3
          var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
          ts.setGetSourceFileAsHashVersioned(compilerHost, host);
          // Members for CompilerHost
-@@ -115796,6 +115936,10 @@ var ts;
+@@ -116628,6 +116768,10 @@ var ts;
                  configFileWatcher.close();
                  configFileWatcher = undefined;
              }
@@ -1214,7 +1221,7 @@ semver exclusivity >=4.3
              extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
              extendedConfigCache = undefined;
              if (sharedExtendedConfigFileWatchers) {
-@@ -115828,7 +115972,8 @@ var ts;
+@@ -116660,7 +116804,8 @@ var ts;
          function getCurrentProgram() {
              return builderProgram && builderProgram.getProgramOrUndefined();
          }
@@ -1224,7 +1231,7 @@ semver exclusivity >=4.3
              writeLog("Synchronizing program");
              clearInvalidateResolutionsOfFailedLookupLocations();
              var program = getCurrentBuilderProgram();
-@@ -115839,7 +115984,7 @@ var ts;
+@@ -116671,7 +116816,7 @@ var ts;
                  }
              }
              // All resolutions are invalid if user provided resolutions
@@ -1233,7 +1240,7 @@ semver exclusivity >=4.3
              if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
                  if (hasChangedConfigFileParsingErrors) {
                      builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
-@@ -116039,6 +116184,12 @@ var ts;
+@@ -116871,6 +117016,12 @@ var ts;
              reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
              scheduleProgramUpdate();
          }
@@ -1246,7 +1253,7 @@ semver exclusivity >=4.3
          function updateProgramWithWatchStatus() {
              timerToUpdateProgram = undefined;
              reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
-@@ -116054,6 +116205,10 @@ var ts;
+@@ -116886,6 +117037,10 @@ var ts;
                      ts.perfLogger.logStartUpdateProgram("FullConfigReload");
                      reloadConfigFile();
                      break;
@@ -1257,7 +1264,7 @@ semver exclusivity >=4.3
                  default:
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
-@@ -121701,11 +121856,27 @@ var ts;
+@@ -122594,11 +122749,31 @@ var ts;
          return hasImportablePath;
      }
      ts.isImportableFile = isImportableFile;
@@ -1277,6 +1284,10 @@ semver exclusivity >=4.3
 +        }
 +        return findPnpApi(path + "/");
 +    }
++    function isDeprecatedDeclaration(decl) {
++        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
++    }
++    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      /**
       * Don't include something from a `node_modules` that isn't actually reachable by a global import.
       * A relative import to node_modules is usually a bad idea.
@@ -1286,10 +1297,12 @@ semver exclusivity >=4.3
          // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
          var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
          var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
-@@ -121713,6 +121884,26 @@ var ts;
+@@ -122606,10 +122781,26 @@ var ts;
              || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
              || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
      }
+-    function isDeprecatedDeclaration(decl) {
+-        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
 +    function isImportablePathPnp(fromPath, toPath) {
 +        var pnpApi = getPnpApi(fromPath);
 +        var fromLocator = pnpApi.findPackageLocator(fromPath);
@@ -1309,11 +1322,12 @@ semver exclusivity >=4.3
 +        else {
 +            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
 +        }
-+    }
+     }
+-    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      // #endregion
  })(ts || (ts = {}));
  var ts;
-@@ -123384,6 +123575,7 @@ var ts;
+@@ -124282,6 +124473,7 @@ var ts;
               *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
               */
              function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
@@ -1321,7 +1335,7 @@ semver exclusivity >=4.3
                  var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
                  var result = [];
                  var extensionOptions = getExtensionOptions(compilerOptions);
-@@ -123396,8 +123588,8 @@ var ts;
+@@ -124294,8 +124486,8 @@ var ts;
                      }
                  }
                  var fragmentDirectory = getFragmentDirectory(fragment);
@@ -1332,7 +1346,7 @@ semver exclusivity >=4.3
                      result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                  }
                  getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
-@@ -123412,18 +123604,36 @@ var ts;
+@@ -124310,18 +124502,36 @@ var ts;
                                  result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                              }
                          };
@@ -1376,7 +1390,7 @@ semver exclusivity >=4.3
                      }
                  }
                  return result;
-@@ -123524,6 +123734,7 @@ var ts;
+@@ -124422,6 +124632,7 @@ var ts;
                  return addReplacementSpans(toComplete, range.pos + prefix.length, names);
              }
              function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
@@ -1384,7 +1398,7 @@ semver exclusivity >=4.3
                  if (result === void 0) { result = []; }
                  // Check for typings specified in compiler options
                  var seen = new ts.Map();
-@@ -123532,11 +123743,19 @@ var ts;
+@@ -124430,11 +124641,19 @@ var ts;
                      var root = typeRoots_1[_i];
                      getCompletionEntriesFromDirectories(root);
                  }
@@ -1409,7 +1423,7 @@ semver exclusivity >=4.3
                  }
                  return result;
                  function getCompletionEntriesFromDirectories(directory) {
-@@ -151024,9 +151243,9 @@ var ts;
+@@ -151985,9 +152204,9 @@ var ts;
                  if (isTopLevelDeclarationStatement(statement) &&
                      !isExported(sourceFile, statement, useEs6Exports) &&
                      forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
@@ -1422,7 +1436,7 @@ semver exclusivity >=4.3
                  }
                  return statement;
              });
-@@ -159349,6 +159568,37 @@ var ts;
+@@ -160332,6 +160551,37 @@ var ts;
                  return this.projectReferences;
              };
              ConfiguredProject.prototype.updateReferences = function (refs) {
@@ -1460,7 +1474,7 @@ semver exclusivity >=4.3
                  this.projectReferences = refs;
                  this.potentialProjectReferences = undefined;
              };
-@@ -159956,6 +160206,7 @@ var ts;
+@@ -160947,6 +161197,7 @@ var ts;
                          watchDirectory: ts.returnNoopFileWatcher,
                      } :
                      ts.getWatchFactory(this.host, watchLogLevel, log, getDetailWatchInfo);
@@ -1468,7 +1482,7 @@ semver exclusivity >=4.3
              }
              ProjectService.prototype.toPath = function (fileName) {
                  return ts.toPath(fileName, this.currentDirectory, this.toCanonicalFileName);
-@@ -161780,7 +162031,7 @@ var ts;
+@@ -162797,7 +163048,7 @@ var ts;
              };
              ProjectService.prototype.setHostConfiguration = function (args) {
                  var _this = this;
@@ -1477,7 +1491,7 @@ semver exclusivity >=4.3
                  if (args.file) {
                      var info = this.getScriptInfoForNormalizedPath(server.toNormalizedPath(args.file));
                      if (info) {
-@@ -161798,7 +162049,7 @@ var ts;
+@@ -162815,7 +163066,7 @@ var ts;
                          this.logger.info("Format host information updated");
                      }
                      if (args.preferences) {
@@ -1486,7 +1500,7 @@ semver exclusivity >=4.3
                          this.hostConfiguration.preferences = __assign(__assign({}, this.hostConfiguration.preferences), args.preferences);
                          if (lazyConfiguredProjectsFromExternalProject && !this.hostConfiguration.preferences.lazyConfiguredProjectsFromExternalProject) {
                              // Load configured projects for external projects that are pending reload
-@@ -161824,6 +162075,8 @@ var ts;
+@@ -162841,6 +163092,8 @@ var ts;
                      if (args.watchOptions) {
                          this.hostConfiguration.watchOptions = (_a = convertWatchOptions(args.watchOptions)) === null || _a === void 0 ? void 0 : _a.watchOptions;
                          this.logger.info("Host watch options changed to " + JSON.stringify(this.hostConfiguration.watchOptions) + ", it will be take effect for next watches.");
@@ -1495,7 +1509,7 @@ semver exclusivity >=4.3
                      }
                  }
              };
-@@ -162801,6 +163054,25 @@ var ts;
+@@ -163818,6 +164071,25 @@ var ts;
                  });
              };
              /*@internal*/
@@ -1522,11 +1536,11 @@ semver exclusivity >=4.3
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
-index b86a3a299..a7937dd2e 100644
-semver exclusivity >=4.3
+index d3afe0978..c9a5afe2e 100644
+semver exclusivity >=4.4
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
-@@ -4710,6 +4710,7 @@ declare namespace ts {
+@@ -4746,6 +4746,7 @@ declare namespace ts {
  }
  declare namespace ts {
      export function getEffectiveTypeRoots(options: CompilerOptions, host: GetEffectiveTypeRootsHost): string[] | undefined;
@@ -1535,11 +1549,11 @@ semver exclusivity >=4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 615ad27f3..891eff5c5 100644
-semver exclusivity >=4.3
+index 0ee658bca..2eb97f075 100644
+semver exclusivity >=4.4
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
-@@ -7532,6 +7532,11 @@ var ts;
+@@ -7641,6 +7641,11 @@ var ts;
                      : new Buffer(input, encoding);
              }
              function isFileSystemCaseSensitive() {
@@ -1551,7 +1565,7 @@ semver exclusivity >=4.3
                  // win32\win64 are case insensitive platforms
                  if (platform === "win32" || platform === "win64") {
                      return false;
-@@ -40197,24 +40202,56 @@ var ts;
+@@ -40730,24 +40735,56 @@ var ts;
      ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
      /**
       * Returns the path to every node_modules/@types directory from some ancestor directory.
@@ -1612,7 +1626,7 @@ semver exclusivity >=4.3
      /**
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
-@@ -40328,7 +40365,9 @@ var ts;
+@@ -40861,7 +40898,9 @@ var ts;
                  }
                  var result_4;
                  if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
@@ -1623,7 +1637,7 @@ semver exclusivity >=4.3
                      result_4 = searchResult && searchResult.value;
                  }
                  else {
-@@ -40879,9 +40918,12 @@ var ts;
+@@ -41414,9 +41453,12 @@ var ts;
                  if (traceEnabled) {
                      trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
                  }
@@ -1638,7 +1652,7 @@ semver exclusivity >=4.3
                  var resolvedValue = resolved_1.value;
                  if (!compilerOptions.preserveSymlinks && resolvedValue && !resolvedValue.originalPath) {
                      var path = realPath(resolvedValue.path, host, traceEnabled);
-@@ -41226,6 +41268,14 @@ var ts;
+@@ -41761,6 +41803,14 @@ var ts;
      }
      function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state) {
          var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
@@ -1653,7 +1667,7 @@ semver exclusivity >=4.3
          // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
          var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
          if (packageInfo) {
-@@ -41241,9 +41291,12 @@ var ts;
+@@ -41776,9 +41826,12 @@ var ts;
                  loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, packageInfo && packageInfo.packageJsonContent, packageInfo && packageInfo.versionPaths);
              return withPackageId(packageInfo, pathAndExtension);
          };
@@ -1668,7 +1682,7 @@ semver exclusivity >=4.3
              // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
              packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
              if (packageInfo && packageInfo.versionPaths) {
-@@ -41401,6 +41454,58 @@ var ts;
+@@ -41937,6 +41990,58 @@ var ts;
      function toSearchResult(value) {
          return value !== undefined ? { value: value } : undefined;
      }
@@ -1727,7 +1741,7 @@ semver exclusivity >=4.3
  })(ts || (ts = {}));
  /* @internal */
  var ts;
-@@ -108502,6 +108607,8 @@ var ts;
+@@ -109283,6 +109388,8 @@ var ts;
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
          /** Reload completely by re-reading contents of config file from disk and updating program */
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
@@ -1736,7 +1750,7 @@ semver exclusivity >=4.3
      })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
      /**
       * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
-@@ -114889,6 +114996,29 @@ var ts;
+@@ -115721,6 +115828,29 @@ var ts;
                  return undefined;
              }
              var parts = getNodeModulePathParts(path);
@@ -1766,7 +1780,7 @@ semver exclusivity >=4.3
              if (!parts) {
                  return undefined;
              }
-@@ -114919,18 +115049,24 @@ var ts;
+@@ -115751,18 +115881,24 @@ var ts;
              if (isRedirect && !isPackageRootPath) {
                  return undefined;
              }
@@ -1800,7 +1814,7 @@ semver exclusivity >=4.3
              function tryDirectoryWithPackageJson(packageRootIndex) {
                  var packageRootPath = path.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
-@@ -115718,6 +115854,10 @@ var ts;
+@@ -116550,6 +116686,10 @@ var ts;
          if (configFileName) {
              configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
          }
@@ -1811,7 +1825,7 @@ semver exclusivity >=4.3
          var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
          ts.setGetSourceFileAsHashVersioned(compilerHost, host);
          // Members for CompilerHost
-@@ -115796,6 +115936,10 @@ var ts;
+@@ -116628,6 +116768,10 @@ var ts;
                  configFileWatcher.close();
                  configFileWatcher = undefined;
              }
@@ -1822,7 +1836,7 @@ semver exclusivity >=4.3
              extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
              extendedConfigCache = undefined;
              if (sharedExtendedConfigFileWatchers) {
-@@ -115828,7 +115972,8 @@ var ts;
+@@ -116660,7 +116804,8 @@ var ts;
          function getCurrentProgram() {
              return builderProgram && builderProgram.getProgramOrUndefined();
          }
@@ -1832,7 +1846,7 @@ semver exclusivity >=4.3
              writeLog("Synchronizing program");
              clearInvalidateResolutionsOfFailedLookupLocations();
              var program = getCurrentBuilderProgram();
-@@ -115839,7 +115984,7 @@ var ts;
+@@ -116671,7 +116816,7 @@ var ts;
                  }
              }
              // All resolutions are invalid if user provided resolutions
@@ -1841,7 +1855,7 @@ semver exclusivity >=4.3
              if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
                  if (hasChangedConfigFileParsingErrors) {
                      builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
-@@ -116039,6 +116184,12 @@ var ts;
+@@ -116871,6 +117016,12 @@ var ts;
              reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
              scheduleProgramUpdate();
          }
@@ -1854,7 +1868,7 @@ semver exclusivity >=4.3
          function updateProgramWithWatchStatus() {
              timerToUpdateProgram = undefined;
              reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
-@@ -116054,6 +116205,10 @@ var ts;
+@@ -116886,6 +117037,10 @@ var ts;
                      ts.perfLogger.logStartUpdateProgram("FullConfigReload");
                      reloadConfigFile();
                      break;
@@ -1865,7 +1879,7 @@ semver exclusivity >=4.3
                  default:
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
-@@ -121701,11 +121856,27 @@ var ts;
+@@ -122594,11 +122749,31 @@ var ts;
          return hasImportablePath;
      }
      ts.isImportableFile = isImportableFile;
@@ -1885,6 +1899,10 @@ semver exclusivity >=4.3
 +        }
 +        return findPnpApi(path + "/");
 +    }
++    function isDeprecatedDeclaration(decl) {
++        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
++    }
++    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      /**
       * Don't include something from a `node_modules` that isn't actually reachable by a global import.
       * A relative import to node_modules is usually a bad idea.
@@ -1894,10 +1912,12 @@ semver exclusivity >=4.3
          // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
          var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
          var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
-@@ -121713,6 +121884,26 @@ var ts;
+@@ -122606,10 +122781,26 @@ var ts;
              || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
              || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
      }
+-    function isDeprecatedDeclaration(decl) {
+-        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
 +    function isImportablePathPnp(fromPath, toPath) {
 +        var pnpApi = getPnpApi(fromPath);
 +        var fromLocator = pnpApi.findPackageLocator(fromPath);
@@ -1917,11 +1937,12 @@ semver exclusivity >=4.3
 +        else {
 +            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
 +        }
-+    }
+     }
+-    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      // #endregion
  })(ts || (ts = {}));
  var ts;
-@@ -123384,6 +123575,7 @@ var ts;
+@@ -124282,6 +124473,7 @@ var ts;
               *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
               */
              function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
@@ -1929,7 +1950,7 @@ semver exclusivity >=4.3
                  var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
                  var result = [];
                  var extensionOptions = getExtensionOptions(compilerOptions);
-@@ -123396,8 +123588,8 @@ var ts;
+@@ -124294,8 +124486,8 @@ var ts;
                      }
                  }
                  var fragmentDirectory = getFragmentDirectory(fragment);
@@ -1940,7 +1961,7 @@ semver exclusivity >=4.3
                      result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                  }
                  getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
-@@ -123412,18 +123604,36 @@ var ts;
+@@ -124310,18 +124502,36 @@ var ts;
                                  result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                              }
                          };
@@ -1984,7 +2005,7 @@ semver exclusivity >=4.3
                      }
                  }
                  return result;
-@@ -123524,6 +123734,7 @@ var ts;
+@@ -124422,6 +124632,7 @@ var ts;
                  return addReplacementSpans(toComplete, range.pos + prefix.length, names);
              }
              function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
@@ -1992,7 +2013,7 @@ semver exclusivity >=4.3
                  if (result === void 0) { result = []; }
                  // Check for typings specified in compiler options
                  var seen = new ts.Map();
-@@ -123532,11 +123743,19 @@ var ts;
+@@ -124430,11 +124641,19 @@ var ts;
                      var root = typeRoots_1[_i];
                      getCompletionEntriesFromDirectories(root);
                  }
@@ -2017,7 +2038,7 @@ semver exclusivity >=4.3
                  }
                  return result;
                  function getCompletionEntriesFromDirectories(directory) {
-@@ -151024,9 +151243,9 @@ var ts;
+@@ -151985,9 +152204,9 @@ var ts;
                  if (isTopLevelDeclarationStatement(statement) &&
                      !isExported(sourceFile, statement, useEs6Exports) &&
                      forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
@@ -2031,11 +2052,11 @@ semver exclusivity >=4.3
                  return statement;
              });
 diff --git a/lib/typescriptServices.d.ts b/lib/typescriptServices.d.ts
-index 2d44d601a..6fe4cf63a 100644
-semver exclusivity >=4.3
+index 0439d2384..ff4d64435 100644
+semver exclusivity >=4.4
 --- a/lib/typescriptServices.d.ts
 +++ b/lib/typescriptServices.d.ts
-@@ -4710,6 +4710,7 @@ declare namespace ts {
+@@ -4746,6 +4746,7 @@ declare namespace ts {
  }
  declare namespace ts {
      export function getEffectiveTypeRoots(options: CompilerOptions, host: GetEffectiveTypeRootsHost): string[] | undefined;
@@ -2044,11 +2065,11 @@ semver exclusivity >=4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 59f7d01b5..2d49e271b 100644
-semver exclusivity >=4.3
+index 7cb5ac697..b580c4017 100644
+semver exclusivity >=4.4
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
-@@ -7532,6 +7532,11 @@ var ts;
+@@ -7641,6 +7641,11 @@ var ts;
                      : new Buffer(input, encoding);
              }
              function isFileSystemCaseSensitive() {
@@ -2060,7 +2081,7 @@ semver exclusivity >=4.3
                  // win32\win64 are case insensitive platforms
                  if (platform === "win32" || platform === "win64") {
                      return false;
-@@ -40197,24 +40202,56 @@ var ts;
+@@ -40730,24 +40735,56 @@ var ts;
      ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
      /**
       * Returns the path to every node_modules/@types directory from some ancestor directory.
@@ -2121,7 +2142,7 @@ semver exclusivity >=4.3
      /**
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
-@@ -40328,7 +40365,9 @@ var ts;
+@@ -40861,7 +40898,9 @@ var ts;
                  }
                  var result_4;
                  if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
@@ -2132,7 +2153,7 @@ semver exclusivity >=4.3
                      result_4 = searchResult && searchResult.value;
                  }
                  else {
-@@ -40879,9 +40918,12 @@ var ts;
+@@ -41414,9 +41453,12 @@ var ts;
                  if (traceEnabled) {
                      trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
                  }
@@ -2147,7 +2168,7 @@ semver exclusivity >=4.3
                  var resolvedValue = resolved_1.value;
                  if (!compilerOptions.preserveSymlinks && resolvedValue && !resolvedValue.originalPath) {
                      var path = realPath(resolvedValue.path, host, traceEnabled);
-@@ -41226,6 +41268,14 @@ var ts;
+@@ -41761,6 +41803,14 @@ var ts;
      }
      function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state) {
          var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
@@ -2162,7 +2183,7 @@ semver exclusivity >=4.3
          // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
          var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
          if (packageInfo) {
-@@ -41241,9 +41291,12 @@ var ts;
+@@ -41776,9 +41826,12 @@ var ts;
                  loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, packageInfo && packageInfo.packageJsonContent, packageInfo && packageInfo.versionPaths);
              return withPackageId(packageInfo, pathAndExtension);
          };
@@ -2177,7 +2198,7 @@ semver exclusivity >=4.3
              // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
              packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
              if (packageInfo && packageInfo.versionPaths) {
-@@ -41401,6 +41454,58 @@ var ts;
+@@ -41937,6 +41990,58 @@ var ts;
      function toSearchResult(value) {
          return value !== undefined ? { value: value } : undefined;
      }
@@ -2236,7 +2257,7 @@ semver exclusivity >=4.3
  })(ts || (ts = {}));
  /* @internal */
  var ts;
-@@ -108502,6 +108607,8 @@ var ts;
+@@ -109283,6 +109388,8 @@ var ts;
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
          /** Reload completely by re-reading contents of config file from disk and updating program */
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
@@ -2245,7 +2266,7 @@ semver exclusivity >=4.3
      })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
      /**
       * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
-@@ -114889,6 +114996,29 @@ var ts;
+@@ -115721,6 +115828,29 @@ var ts;
                  return undefined;
              }
              var parts = getNodeModulePathParts(path);
@@ -2275,7 +2296,7 @@ semver exclusivity >=4.3
              if (!parts) {
                  return undefined;
              }
-@@ -114919,18 +115049,24 @@ var ts;
+@@ -115751,18 +115881,24 @@ var ts;
              if (isRedirect && !isPackageRootPath) {
                  return undefined;
              }
@@ -2309,7 +2330,7 @@ semver exclusivity >=4.3
              function tryDirectoryWithPackageJson(packageRootIndex) {
                  var packageRootPath = path.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
-@@ -115718,6 +115854,10 @@ var ts;
+@@ -116550,6 +116686,10 @@ var ts;
          if (configFileName) {
              configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
          }
@@ -2320,7 +2341,7 @@ semver exclusivity >=4.3
          var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
          ts.setGetSourceFileAsHashVersioned(compilerHost, host);
          // Members for CompilerHost
-@@ -115796,6 +115936,10 @@ var ts;
+@@ -116628,6 +116768,10 @@ var ts;
                  configFileWatcher.close();
                  configFileWatcher = undefined;
              }
@@ -2331,7 +2352,7 @@ semver exclusivity >=4.3
              extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
              extendedConfigCache = undefined;
              if (sharedExtendedConfigFileWatchers) {
-@@ -115828,7 +115972,8 @@ var ts;
+@@ -116660,7 +116804,8 @@ var ts;
          function getCurrentProgram() {
              return builderProgram && builderProgram.getProgramOrUndefined();
          }
@@ -2341,7 +2362,7 @@ semver exclusivity >=4.3
              writeLog("Synchronizing program");
              clearInvalidateResolutionsOfFailedLookupLocations();
              var program = getCurrentBuilderProgram();
-@@ -115839,7 +115984,7 @@ var ts;
+@@ -116671,7 +116816,7 @@ var ts;
                  }
              }
              // All resolutions are invalid if user provided resolutions
@@ -2350,7 +2371,7 @@ semver exclusivity >=4.3
              if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
                  if (hasChangedConfigFileParsingErrors) {
                      builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
-@@ -116039,6 +116184,12 @@ var ts;
+@@ -116871,6 +117016,12 @@ var ts;
              reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
              scheduleProgramUpdate();
          }
@@ -2363,7 +2384,7 @@ semver exclusivity >=4.3
          function updateProgramWithWatchStatus() {
              timerToUpdateProgram = undefined;
              reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
-@@ -116054,6 +116205,10 @@ var ts;
+@@ -116886,6 +117037,10 @@ var ts;
                      ts.perfLogger.logStartUpdateProgram("FullConfigReload");
                      reloadConfigFile();
                      break;
@@ -2374,7 +2395,7 @@ semver exclusivity >=4.3
                  default:
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
-@@ -121701,11 +121856,27 @@ var ts;
+@@ -122594,11 +122749,31 @@ var ts;
          return hasImportablePath;
      }
      ts.isImportableFile = isImportableFile;
@@ -2394,6 +2415,10 @@ semver exclusivity >=4.3
 +        }
 +        return findPnpApi(path + "/");
 +    }
++    function isDeprecatedDeclaration(decl) {
++        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
++    }
++    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      /**
       * Don't include something from a `node_modules` that isn't actually reachable by a global import.
       * A relative import to node_modules is usually a bad idea.
@@ -2403,10 +2428,12 @@ semver exclusivity >=4.3
          // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
          var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
          var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
-@@ -121713,6 +121884,26 @@ var ts;
+@@ -122606,10 +122781,26 @@ var ts;
              || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
              || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
      }
+-    function isDeprecatedDeclaration(decl) {
+-        return !!(ts.getCombinedNodeFlagsAlwaysIncludeJSDoc(decl) & 8192 /* Deprecated */);
 +    function isImportablePathPnp(fromPath, toPath) {
 +        var pnpApi = getPnpApi(fromPath);
 +        var fromLocator = pnpApi.findPackageLocator(fromPath);
@@ -2426,11 +2453,12 @@ semver exclusivity >=4.3
 +        else {
 +            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
 +        }
-+    }
+     }
+-    ts.isDeprecatedDeclaration = isDeprecatedDeclaration;
      // #endregion
  })(ts || (ts = {}));
  var ts;
-@@ -123384,6 +123575,7 @@ var ts;
+@@ -124282,6 +124473,7 @@ var ts;
               *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
               */
              function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
@@ -2438,7 +2466,7 @@ semver exclusivity >=4.3
                  var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
                  var result = [];
                  var extensionOptions = getExtensionOptions(compilerOptions);
-@@ -123396,8 +123588,8 @@ var ts;
+@@ -124294,8 +124486,8 @@ var ts;
                      }
                  }
                  var fragmentDirectory = getFragmentDirectory(fragment);
@@ -2449,7 +2477,7 @@ semver exclusivity >=4.3
                      result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                  }
                  getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
-@@ -123412,18 +123604,36 @@ var ts;
+@@ -124310,18 +124502,36 @@ var ts;
                                  result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
                              }
                          };
@@ -2493,7 +2521,7 @@ semver exclusivity >=4.3
                      }
                  }
                  return result;
-@@ -123524,6 +123734,7 @@ var ts;
+@@ -124422,6 +124632,7 @@ var ts;
                  return addReplacementSpans(toComplete, range.pos + prefix.length, names);
              }
              function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
@@ -2501,7 +2529,7 @@ semver exclusivity >=4.3
                  if (result === void 0) { result = []; }
                  // Check for typings specified in compiler options
                  var seen = new ts.Map();
-@@ -123532,11 +123743,19 @@ var ts;
+@@ -124430,11 +124641,19 @@ var ts;
                      var root = typeRoots_1[_i];
                      getCompletionEntriesFromDirectories(root);
                  }
@@ -2526,7 +2554,7 @@ semver exclusivity >=4.3
                  }
                  return result;
                  function getCompletionEntriesFromDirectories(directory) {
-@@ -151024,9 +151243,9 @@ var ts;
+@@ -151985,9 +152204,9 @@ var ts;
                  if (isTopLevelDeclarationStatement(statement) &&
                      !isExported(sourceFile, statement, useEs6Exports) &&
                      forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
@@ -2540,11 +2568,11 @@ semver exclusivity >=4.3
                  return statement;
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 6810860b9..3b1d2e432 100644
-semver exclusivity >=4.3
+index 846715e47..3b2eb504d 100644
+semver exclusivity >=4.4
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
-@@ -7327,6 +7327,11 @@ var ts;
+@@ -7436,6 +7436,11 @@ var ts;
                      : new Buffer(input, encoding);
              }
              function isFileSystemCaseSensitive() {
@@ -2556,7 +2584,7 @@ semver exclusivity >=4.3
                  // win32\win64 are case insensitive platforms
                  if (platform === "win32" || platform === "win64") {
                      return false;
-@@ -39992,24 +39997,56 @@ var ts;
+@@ -40525,24 +40530,56 @@ var ts;
      ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
      /**
       * Returns the path to every node_modules/@types directory from some ancestor directory.
@@ -2617,7 +2645,7 @@ semver exclusivity >=4.3
      /**
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
-@@ -40123,7 +40160,9 @@ var ts;
+@@ -40656,7 +40693,9 @@ var ts;
                  }
                  var result_4;
                  if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
@@ -2628,7 +2656,7 @@ semver exclusivity >=4.3
                      result_4 = searchResult && searchResult.value;
                  }
                  else {
-@@ -40674,9 +40713,12 @@ var ts;
+@@ -41209,9 +41248,12 @@ var ts;
                  if (traceEnabled) {
                      trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
                  }
@@ -2643,7 +2671,7 @@ semver exclusivity >=4.3
                  var resolvedValue = resolved_1.value;
                  if (!compilerOptions.preserveSymlinks && resolvedValue && !resolvedValue.originalPath) {
                      var path = realPath(resolvedValue.path, host, traceEnabled);
-@@ -41021,6 +41063,14 @@ var ts;
+@@ -41556,6 +41598,14 @@ var ts;
      }
      function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state) {
          var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
@@ -2658,7 +2686,7 @@ semver exclusivity >=4.3
          // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
          var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
          if (packageInfo) {
-@@ -41036,9 +41086,12 @@ var ts;
+@@ -41571,9 +41621,12 @@ var ts;
                  loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, state, packageInfo && packageInfo.packageJsonContent, packageInfo && packageInfo.versionPaths);
              return withPackageId(packageInfo, pathAndExtension);
          };
@@ -2673,7 +2701,7 @@ semver exclusivity >=4.3
              // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
              packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
              if (packageInfo && packageInfo.versionPaths) {
-@@ -41196,6 +41249,58 @@ var ts;
+@@ -41732,6 +41785,58 @@ var ts;
      function toSearchResult(value) {
          return value !== undefined ? { value: value } : undefined;
      }
@@ -2732,7 +2760,7 @@ semver exclusivity >=4.3
  })(ts || (ts = {}));
  /* @internal */
  var ts;
-@@ -108297,6 +108402,8 @@ var ts;
+@@ -109078,6 +109183,8 @@ var ts;
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
          /** Reload completely by re-reading contents of config file from disk and updating program */
          ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
@@ -2741,7 +2769,7 @@ semver exclusivity >=4.3
      })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
      /**
       * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
-@@ -114684,6 +114791,29 @@ var ts;
+@@ -115516,6 +115623,29 @@ var ts;
                  return undefined;
              }
              var parts = getNodeModulePathParts(path);
@@ -2771,7 +2799,7 @@ semver exclusivity >=4.3
              if (!parts) {
                  return undefined;
              }
-@@ -114714,18 +114844,24 @@ var ts;
+@@ -115546,18 +115676,24 @@ var ts;
              if (isRedirect && !isPackageRootPath) {
                  return undefined;
              }
@@ -2805,7 +2833,7 @@ semver exclusivity >=4.3
              function tryDirectoryWithPackageJson(packageRootIndex) {
                  var packageRootPath = path.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
-@@ -115513,6 +115649,10 @@ var ts;
+@@ -116345,6 +116481,10 @@ var ts;
          if (configFileName) {
              configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
          }
@@ -2816,7 +2844,7 @@ semver exclusivity >=4.3
          var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
          ts.setGetSourceFileAsHashVersioned(compilerHost, host);
          // Members for CompilerHost
-@@ -115591,6 +115731,10 @@ var ts;
+@@ -116423,6 +116563,10 @@ var ts;
                  configFileWatcher.close();
                  configFileWatcher = undefined;
              }
@@ -2827,7 +2855,7 @@ semver exclusivity >=4.3
              extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
              extendedConfigCache = undefined;
              if (sharedExtendedConfigFileWatchers) {
-@@ -115623,7 +115767,8 @@ var ts;
+@@ -116455,7 +116599,8 @@ var ts;
          function getCurrentProgram() {
              return builderProgram && builderProgram.getProgramOrUndefined();
          }
@@ -2837,7 +2865,7 @@ semver exclusivity >=4.3
              writeLog("Synchronizing program");
              clearInvalidateResolutionsOfFailedLookupLocations();
              var program = getCurrentBuilderProgram();
-@@ -115634,7 +115779,7 @@ var ts;
+@@ -116466,7 +116611,7 @@ var ts;
                  }
              }
              // All resolutions are invalid if user provided resolutions
@@ -2846,7 +2874,7 @@ semver exclusivity >=4.3
              if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
                  if (hasChangedConfigFileParsingErrors) {
                      builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
-@@ -115834,6 +115979,12 @@ var ts;
+@@ -116666,6 +116811,12 @@ var ts;
              reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
              scheduleProgramUpdate();
          }
@@ -2859,7 +2887,7 @@ semver exclusivity >=4.3
          function updateProgramWithWatchStatus() {
              timerToUpdateProgram = undefined;
              reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
-@@ -115849,6 +116000,10 @@ var ts;
+@@ -116681,6 +116832,10 @@ var ts;
                      ts.perfLogger.logStartUpdateProgram("FullConfigReload");
                      reloadConfigFile();
                      break;
