@@ -31,12 +31,18 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra && cd my-cra
-        yarn add -D eslint-config-react-app
+
+        # TODO: Remove when fixed upstream
+        yarn add -D eslint-config-react-app babel-eslint eslint
+
         yarn build
 
     - name: 'Running the TypeScript integration test'
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
-        yarn add -D eslint-config-react-app
+
+        # TODO: Remove when fixed upstream
+        yarn add -D eslint-config-react-app babel-eslint eslint @typescript-eslint/parser
+
         yarn build
