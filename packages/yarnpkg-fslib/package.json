@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "2.5.0-rc.5",
+  "version": "2.5.0-rc.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/libzip": "workspace:^2.2.2-rc.3",
+    "@yarnpkg/libzip": "workspace:^2.2.2-rc.4",
     "tslib": "^1.13.0"
   },
   "scripts": {

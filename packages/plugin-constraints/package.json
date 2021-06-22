@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "3.0.0-rc.5",
+  "version": "3.0.0-rc.6",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.5",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.6",
     "clipanion": "^3.0.0-rc.10",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
@@ -17,8 +17,8 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.5",
-    "@yarnpkg/core": "^3.0.0-rc.5"
+    "@yarnpkg/cli": "^3.0.0-rc.6",
+    "@yarnpkg/core": "^3.0.0-rc.6"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
