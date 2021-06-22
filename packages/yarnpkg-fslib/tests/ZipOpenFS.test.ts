@@ -30,6 +30,9 @@ describe(`getArchivePart`, () => {
     [`./a/b/c/.zip`, null],
     [`./a/b/c/foo.zipp`, null],
     [`./a/b/c/foo.zip/bar/baz/qux.zip`, `./a/b/c/foo.zip`],
+    [`./a/b/c/foo.zip-bar.zip`, `./a/b/c/foo.zip-bar.zip`],
+    [`./a/b/c/foo.zip-bar.zip/bar/baz/qux.zip`, `./a/b/c/foo.zip-bar.zip`],
+    [`./a/b/c/foo.zip-bar/foo.zip-bar/foo.zip-bar.zip/d`, `./a/b/c/foo.zip-bar/foo.zip-bar/foo.zip-bar.zip`],
   ] as const;
 
   for (const [path, result] of tests) {
