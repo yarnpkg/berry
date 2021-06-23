@@ -384,6 +384,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
         type: SettingsType.STRING,
         default: undefined,
       },
+      pattern: {
+        description: `Code of the patterns covered by this override`,
+        type: SettingsType.STRING,
+        default: undefined,
+      },
       level: {
         description: `Log level override, set to null to remove override`,
         type: SettingsType.STRING,
@@ -526,7 +531,7 @@ export interface ConfigurationValueMap {
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
-  logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
+  logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;

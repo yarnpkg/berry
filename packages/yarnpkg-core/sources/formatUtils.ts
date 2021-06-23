@@ -1,6 +1,7 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import {CIRCLE as isCircleCI}                                               from 'ci-info';
+import micromatch                                                           from "micromatch";
 import stripAnsi                                                            from 'strip-ansi';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
@@ -379,6 +380,8 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
   const logFiltersByCode = new Map<string, LogLevel | null>();
   const logFiltersByText = new Map<string, LogLevel | null>();
+  const logFiltersByPatternMatcher = new Map<(str: string) => boolean, LogLevel | null>();
+
 
   for (const filter of logFilters) {
     const level = filter.get(`level`);
@@ -390,8 +393,12 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       logFiltersByCode.set(code, level);
 
     const text = filter.get(`text`);
-    if (typeof text !== `undefined`) {
+    if (typeof text !== `undefined`)
       logFiltersByText.set(text, level);
+
+    const pattern = filter.get(`pattern`);
+    if (typeof pattern !== `undefined`) {
+      logFiltersByPatternMatcher.set(micromatch.matcher(pattern), level);
     }
   }
 
@@ -399,13 +406,26 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
     if (name === null || name === MessageName.UNNAMED)
       return defaultLevel;
 
-    if (logFiltersByText.size > 0) {
+
+    const strippedText = (stripAnsi(text));
+
+    if (
+      logFiltersByPatternMatcher.size > 0
+    ) {
       let level;
-      for (const [filterText, filterLevel] of logFiltersByText.entries()) {
-        if ((new RegExp(filterText)).test(stripAnsi(text))) {
+      for (const [filterMatcher, filterLevel] of logFiltersByPatternMatcher.entries()) {
+        if (filterMatcher(strippedText)) {
           level = filterLevel;
         }
       }
+
+      if (typeof level !== `undefined`) {
+        return level ?? defaultLevel;
+      }
+    }
+
+    if (logFiltersByText.size > 0) {
+      const level = logFiltersByText.get(strippedText);
 
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
