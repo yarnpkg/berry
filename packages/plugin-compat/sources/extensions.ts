@@ -102,7 +102,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/xz64/license-webpack-plugin/pull/100
-  [`license-webpack-plugin@*`, {
+  [`license-webpack-plugin@<2.3.18`, {
     peerDependenciesMeta: {
       [`webpack`]: optionalPeerDep,
     },
