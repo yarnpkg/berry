@@ -49914,7 +49914,12 @@ function patchFs(patchedFs, fakeFs) {
         fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
           callback(null, bytesRead, buffer);
         }, error => {
-          callback(error);
+          // https://github.com/nodejs/node/issues/35997
+          if (process.platform === `win32` && error.code === `EOF`) {
+            callback(error, 0, buffer);
+          } else {
+            callback(error);
+          }
         });
       });
     });
