@@ -53,7 +53,7 @@ module.exports = {
           languages: [`javascript`, `typescript`],
         }),
         new webpack.DefinePlugin({
-          [`process`]: `({platform: "browser", cwd: () => "/", versions: {}})`,
+          [`process`]: `({platform: "browser", cwd: () => "/", versions: {}, env: {}})`,
         }),
       ],
     });
