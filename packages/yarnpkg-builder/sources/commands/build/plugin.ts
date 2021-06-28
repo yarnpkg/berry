@@ -80,7 +80,7 @@ export default class BuildPluginCommand extends Command {
                 return undefined;
 
               const [, dependencyName] = dependencyNameMatch;
-              if (dependencyName === name || !isDynamicLib(dependencyName))
+              if (dependencyName === name || !isDynamicLib(args.path))
                 return undefined;
 
               return {
