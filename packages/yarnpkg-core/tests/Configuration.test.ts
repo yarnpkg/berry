@@ -300,16 +300,19 @@ describe(`Configuration`, () => {
           new Map(Object.entries({
             code: `YN0027`,
             text: undefined,
+            pattern: undefined,
             level: `error`,
           })),
           new Map(Object.entries({
             code: `YN0005`,
             text: undefined,
+            pattern: undefined,
             level: `info`,
           })),
           new Map(Object.entries({
             code: `YN0066`,
             text: undefined,
+            pattern: undefined,
             level: `warning`,
           })),
         ]);
