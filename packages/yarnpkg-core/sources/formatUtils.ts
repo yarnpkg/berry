@@ -380,8 +380,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
   const logFiltersByCode = new Map<string, LogLevel | null>();
   const logFiltersByText = new Map<string, LogLevel | null>();
-  const logFiltersByPatternMatcher = new Map<(str: string) => boolean, LogLevel | null>();
-
+  const logFiltersByPatternMatcher: Array<[(str: string) => boolean, LogLevel | null]> = [];
 
   for (const filter of logFilters) {
     const level = filter.get(`level`);
@@ -398,37 +397,35 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
     const pattern = filter.get(`pattern`);
     if (typeof pattern !== `undefined`) {
-      logFiltersByPatternMatcher.set(micromatch.matcher(pattern), level);
+      logFiltersByPatternMatcher.push([micromatch.matcher(pattern), level]);
     }
   }
+
+  // Higher priority to the last patterns, just like other filters
+  logFiltersByPatternMatcher.reverse();
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
     if (name === null || name === MessageName.UNNAMED)
       return defaultLevel;
 
-
-    const strippedText = (stripAnsi(text));
-
-    if (
-      logFiltersByPatternMatcher.size > 0
-    ) {
-      let level;
-      for (const [filterMatcher, filterLevel] of logFiltersByPatternMatcher.entries()) {
-        if (filterMatcher(strippedText)) {
-          level = filterLevel;
-        }
-      }
-
-      if (typeof level !== `undefined`) {
-        return level ?? defaultLevel;
-      }
-    }
+    // Avoid processing the string unless we know we'll actually need it
+    const strippedText = logFiltersByText.size > 0 || logFiltersByPatternMatcher.length > 0
+      ? stripAnsi(text)
+      : text;
 
     if (logFiltersByText.size > 0) {
       const level = logFiltersByText.get(strippedText);
 
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
+      }
+    }
+
+    if (logFiltersByPatternMatcher.length > 0) {
+      for (const [filterMatcher, filterLevel] of logFiltersByPatternMatcher) {
+        if (filterMatcher(strippedText)) {
+          return filterLevel ?? defaultLevel;
+        }
       }
     }
 
