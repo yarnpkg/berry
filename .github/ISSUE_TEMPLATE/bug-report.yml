@@ -1,6 +1,6 @@
 name: "\U0001F41E Bug report"
 description: "For unintended behaviors. Missing features aren't bugs."
-title: "[Bug?] "
+title: "[Bug?]: "
 labels: bug
 body:
   - type: checkboxes
@@ -15,8 +15,7 @@ body:
     attributes:
       label: Describe the bug
       description: |
-        A clear and concise description of what the bug is. A bug is **unintended**. A feature not being
-        implemented is **not a bug**, and your issue may be closed for misleading labeling.
+        A clear and concise description of what the bug is. A bug is **unintended**. A feature not being implemented is **not a bug**, and your issue may be closed for misleading labeling.
       placeholder: |
         ex: Scoped packages cause "yarn why" to crash.
     validations:
@@ -26,11 +25,9 @@ body:
     attributes:
       label: To reproduce
       description: |
-        The _minimal_ information needed to reproduce your issue (ideally a package.json with a single dep).
-        Note that bugs without minimal reproductions **will** be closed as non-actionable.
+        The _minimal_ information needed to reproduce your issue (ideally a package.json with a single dep). Note that bugs without minimal reproductions **will** be closed as non-actionable.
 
-        **IMPORTANT**: We **strongly** prefer reproductions that use Sherlock. Please check our documentation
-        for more information: https://yarnpkg.com/advanced/sherlock
+        **IMPORTANT**: We **strongly** prefer reproductions that use Sherlock. Please check our documentation for more information: https://yarnpkg.com/advanced/sherlock
       placeholder: |
         ```js repro
         // Sherlock reproduction. For instance:
@@ -62,4 +59,5 @@ body:
   - type: textarea
     attributes:
       label: Additional context
-      description: "Add any other context about the problem here. Or a screenshot if applicable."
+      description: |
+        Add any other context about the problem here. Or a screenshot if applicable.
