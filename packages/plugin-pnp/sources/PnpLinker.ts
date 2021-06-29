@@ -83,6 +83,8 @@ export class PnpInstaller implements Installer {
     location: PortablePath,
   }> = new Map();
 
+  private isESMLoaderRequired: boolean = false;
+
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
   }
@@ -90,7 +92,7 @@ export class PnpInstaller implements Installer {
   getCustomDataKey() {
     return JSON.stringify({
       name: `PnpInstaller`,
-      version: 1,
+      version: 2,
     });
   }
 
@@ -142,6 +144,9 @@ export class PnpInstaller implements Installer {
           this.customData.store.set(devirtualizedLocator.locatorHash, customPackageData);
         }
       }
+
+      if (customPackageData.manifest.type === `module`)
+        this.isESMLoaderRequired = true;
 
       dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
     }
@@ -290,6 +295,9 @@ export class PnpInstaller implements Installer {
 
   isEsmEnabled() {
     if (this.opts.project.configuration.get(`enableExperimentalEsmLoader`))
+      return true;
+
+    if (this.isESMLoaderRequired)
       return true;
 
     for (const workspace of this.opts.project.workspaces) {
@@ -486,6 +494,7 @@ async function extractCustomPackageData(fetchResult: FetchResult) {
       cpu: manifest.cpu,
       scripts: manifest.scripts,
       preferUnplugged: manifest.preferUnplugged,
+      type: manifest.type,
     },
     misc: {
       extractHint: jsInstallUtils.getExtractHint(fetchResult),
