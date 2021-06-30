@@ -5267,7 +5267,7 @@ __metadata:
     "@yarnpkg/plugin-http": "workspace:^2.1.3-rc.6"
     "@yarnpkg/plugin-init": "workspace:^3.0.0-rc.6"
     "@yarnpkg/plugin-link": "workspace:^2.1.2-rc.6"
-    "@yarnpkg/plugin-node-modules": "workspace:^3.0.0-rc.6"
+    "@yarnpkg/plugin-nm": "workspace:^3.0.0-rc.6"
     "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.6"
     "@yarnpkg/plugin-npm-cli": "workspace:^3.0.0-rc.6"
     "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.6"
@@ -5823,9 +5823,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-node-modules@workspace:^3.0.0-rc.6, @yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules":
+"@yarnpkg/plugin-nm@workspace:^3.0.0-rc.6, @yarnpkg/plugin-nm@workspace:packages/plugin-nm":
   version: 0.0.0-use.local
-  resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
+  resolution: "@yarnpkg/plugin-nm@workspace:packages/plugin-nm"
   dependencies:
     "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:*"
