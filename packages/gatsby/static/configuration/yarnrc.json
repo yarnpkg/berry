@@ -279,7 +279,7 @@
           },
           "pattern": {
             "type": "string",
-            "description": "Selects exactly one message that must match the given glob pattern. In case a message matches `pattern`-based and `text`-based or `code`-based filters, the `pattern`-based ones will take precedence over the other ones.",
+            "description": "Selects exactly one message that must match the given glob pattern. In case a message matches both `pattern`-based and `code`-based filters, the `pattern`-based ones will take precedence over the other ones. Patterns can be overriden on a case-by-case basis by using the `text` filter, which has precedence over `pattern`.",
             "examples": ["lorem-ipsum@* lists build scripts, but its build has been explicitly disabled through configuration"]
           },
           "level": {
