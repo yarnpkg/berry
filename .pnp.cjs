@@ -14796,7 +14796,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["cross-spawn", "npm:6.0.5"]
+            ["cross-spawn", "npm:7.0.3"]
           ],
           "linkType": "SOFT",
         }]

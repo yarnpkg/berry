@@ -10,7 +10,7 @@
     "@yarnpkg/core": "workspace:^3.0.0-rc.6",
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.6",
     "@yarnpkg/nm": "workspace:^3.0.0-rc.7",
-    "cross-spawn": "6.0.5"
+    "cross-spawn": "7.0.3"
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
