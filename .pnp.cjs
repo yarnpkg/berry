@@ -49914,7 +49914,9 @@ function patchFs(patchedFs, fakeFs) {
         fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
           callback(null, bytesRead, buffer);
         }, error => {
-          callback(error);
+          // https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/fs.js#L655-L658
+          // Known issue: bytesRead could theoretically be > than 0, but we currently always return 0
+          callback(error, 0, buffer);
         });
       });
     });
