@@ -9,7 +9,7 @@ import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedInte
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
   static paths = [
-    [`--sdk`],
+    Command.Default,
   ];
 
   static usage = Command.Usage({
@@ -35,13 +35,13 @@ export default class SdkCommand extends Command {
     `,
     examples: [[
       `Generate the base SDKs`,
-      `$0 --sdk base`,
+      `$0 base`,
     ], [
       `Generate the base SDKs and editor settings for supported editors`,
-      `$0 --sdk vscode vim`,
+      `$0 vscode vim`,
     ], [
       `Update all generated SDKs and editor settings`,
-      `$0 --sdk`,
+      `$0`,
     ]],
   });
 

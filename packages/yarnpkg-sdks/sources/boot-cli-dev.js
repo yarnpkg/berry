@@ -2,4 +2,4 @@ process.env.NODE_OPTIONS += ` --require ${require.resolve(`@yarnpkg/monorepo/scr
 
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
-require(`./index`);
+require(`./cli`);

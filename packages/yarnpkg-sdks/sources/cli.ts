@@ -2,15 +2,15 @@
 
 import {Cli, Builtins} from 'clipanion';
 
-import RunCommand      from './commands/RunCommand';
+import SdkCommand      from './commands/SdkCommand';
 
 const cli = new Cli({
-  binaryLabel: `Yarn PnPify`,
-  binaryName: `pnpify`,
-  binaryVersion: require(`@yarnpkg/pnpify/package.json`).version,
+  binaryLabel: `Yarn SDKs`,
+  binaryName: `sdks`,
+  binaryVersion: require(`@yarnpkg/sdks/package.json`).version,
 });
 
-cli.register(RunCommand);
+cli.register(SdkCommand);
 
 cli.register(Builtins.DefinitionsCommand);
 cli.register(Builtins.HelpCommand);
