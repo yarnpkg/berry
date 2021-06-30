@@ -1,7 +1,7 @@
-import {PortablePath}                      from '@yarnpkg/fslib';
+import {NativePath, PortablePath}          from '@yarnpkg/fslib';
 import {parse, init}                       from 'cjs-module-lexer';
 import fs                                  from 'fs';
-import * as moduleExports                  from 'module';
+import moduleExports                       from 'module';
 import path                                from 'path';
 import {fileURLToPath, pathToFileURL, URL} from 'url';
 
@@ -18,9 +18,6 @@ function isValidURL(str: string) {
 
 const builtins = new Set([...moduleExports.builtinModules]);
 
-// @ts-expect-error - This module, when bundled, is still ESM so this is valid
-const pnpapi: PnpApi = moduleExports.createRequire(import.meta.url)(`pnpapi`);
-
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 
 async function exists(path: string) {
@@ -32,14 +29,15 @@ async function exists(path: string) {
 }
 
 export async function resolve(
-  specifier: string,
+  originalSpecifier: string,
   context: any,
   defaultResolver: any
 ) {
+  let specifier = originalSpecifier;
   let validURL;
   if (builtins.has(specifier) || (validURL = isValidURL(specifier))) {
     if (!validURL || pathToFileURL(specifier).protocol !== `file:`) {
-      return defaultResolver(specifier, context, defaultResolver);
+      return defaultResolver(originalSpecifier, context, defaultResolver);
     } else {
       specifier = fileURLToPath(specifier);
     }
@@ -48,6 +46,10 @@ export async function resolve(
   const {parentURL, conditions = []} = context;
 
   const parentPath = parentURL ? fileURLToPath(parentURL) : process.cwd();
+
+  const pnpapi = (moduleExports as unknown as {findPnpApi?: (path: NativePath) => null | PnpApi}).findPnpApi?.(parentPath);
+  if (!pnpapi)
+    return defaultResolver(originalSpecifier, context, defaultResolver);
 
   const dependencyNameMatch = specifier.match(pathRegExp);
 
