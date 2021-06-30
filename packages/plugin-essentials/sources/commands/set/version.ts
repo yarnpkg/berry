@@ -125,9 +125,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
     const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
 
-    manifest.packageManager = bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion)
-      ? bundleVersion
-      : null;
+    if (bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion))
+      manifest.packageManager = bundleVersion;
 
     const data = {};
     manifest.exportTo(data);
