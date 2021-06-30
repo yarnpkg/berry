@@ -34,7 +34,7 @@ export const validateIntegrations = (integrations: Set<string>) => {
   }
 
   if (unsupportedIntegrations.length > 0) {
-    throw new UsageError(`No supported integrations with the following names could be found: ${unsupportedIntegrations.join(`, `)}. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
+    throw new UsageError(`No supported integrations with the following names could be found: ${unsupportedIntegrations.join(`, `)}. Run \`yarn sdks --sdk -h\` to see the list of supported integrations.`);
   }
 };
 

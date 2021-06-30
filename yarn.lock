@@ -5593,6 +5593,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/nm@workspace:^3.0.0-rc.7, @yarnpkg/nm@workspace:packages/yarnpkg-nm":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/nm@workspace:packages/yarnpkg-nm"
+  dependencies:
+    "@yarnpkg/core": "workspace:^3.0.0-rc.6"
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.6"
+    "@yarnpkg/pnp": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/parsers@workspace:*, @yarnpkg/parsers@workspace:^2.4.0-rc.4, @yarnpkg/parsers@workspace:packages/yarnpkg-parsers":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
@@ -5822,11 +5832,11 @@ __metadata:
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.6"
     "@yarnpkg/libzip": "workspace:^2.2.2-rc.4"
+    "@yarnpkg/nm": "workspace:^3.0.0-rc.7"
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.4"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.6"
     "@yarnpkg/plugin-stage": "workspace:*"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.6"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.7"
     "@zkochan/cmd-shim": ^5.1.0
     clipanion: ^3.0.0-rc.10
     micromatch: ^4.0.2
@@ -6042,6 +6052,22 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
+    "@types/cross-spawn": 6.0.0
+    "@yarnpkg/core": "workspace:^3.0.0-rc.6"
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.6"
+    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/nm": "workspace:^3.0.0-rc.7"
+    "@yarnpkg/pnp": "workspace:*"
+    cross-spawn: 6.0.5
+  bin:
+    pnpify: ./sources/boot-cli-dev.js
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/sdks@workspace:packages/yarnpkg-sdks":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/sdks@workspace:packages/yarnpkg-sdks"
+  dependencies:
     "@types/comment-json": ^1.1.1
     "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^3.0.0-rc.6"
@@ -6052,20 +6078,9 @@ __metadata:
     chalk: ^3.0.0
     clipanion: ^3.0.0-rc.10
     comment-json: ^2.2.0
-    eslint: ^6.8.0
     lodash: ^4.17.15
-    tslib: ^1.13.0
-    typescript: ^4.3.2
-  peerDependencies:
-    eslint: "*"
-    typescript: "*"
-  peerDependenciesMeta:
-    eslint:
-      optional: true
-    typescript:
-      optional: true
   bin:
-    pnpify: ./sources/boot-cli-dev.js
+    sdks: ./sources/boot-dev.js
   languageName: unknown
   linkType: soft
 
@@ -9219,6 +9234,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-spawn@npm:6.0.5, cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
+  version: 6.0.5
+  resolution: "cross-spawn@npm:6.0.5"
+  dependencies:
+    nice-try: ^1.0.4
+    path-key: ^2.0.1
+    semver: ^5.5.0
+    shebang-command: ^1.2.0
+    which: ^1.2.9
+  checksum: f893bb0d96cd3d5751d04e67145bdddf25f99449531a72e82dcbbd42796bbc8268c1076c6b3ea51d4d455839902804b94bc45dfb37ecbb32ea8e54a6741c3ab9
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
@@ -9238,19 +9266,6 @@ __metadata:
     shebang-command: ^1.2.0
     which: ^1.2.9
   checksum: 726939c9954fc70c20e538923feaaa33bebc253247d13021737c3c7f68cdc3e0a57f720c0fe75057c0387995349f3f12e20e9bfdbf12274db28019c7ea4ec166
-  languageName: node
-  linkType: hard
-
-"cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
-  version: 6.0.5
-  resolution: "cross-spawn@npm:6.0.5"
-  dependencies:
-    nice-try: ^1.0.4
-    path-key: ^2.0.1
-    semver: ^5.5.0
-    shebang-command: ^1.2.0
-    which: ^1.2.9
-  checksum: f893bb0d96cd3d5751d04e67145bdddf25f99449531a72e82dcbbd42796bbc8268c1076c6b3ea51d4d455839902804b94bc45dfb37ecbb32ea8e54a6741c3ab9
   languageName: node
   linkType: hard
 

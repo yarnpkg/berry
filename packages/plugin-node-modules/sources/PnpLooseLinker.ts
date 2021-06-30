@@ -1,8 +1,8 @@
 import {LinkOptions, structUtils}                      from '@yarnpkg/core';
 import {VirtualFS, ZipOpenFS, ppath, Filename}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                              from '@yarnpkg/libzip';
+import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/nm';
 import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
-import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/pnpify';
 import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
 
 export class PnpLooseLinker extends PnpLinker {
