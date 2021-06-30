@@ -1,6 +1,6 @@
 import {BaseCommand}                                                from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report, Manifest} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, semverUtils}             from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}  from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs, npath}                  from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                         from 'clipanion';
 import semver                                                       from 'semver';
@@ -123,19 +123,20 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
       yarnPath: projectPath,
     });
 
-    if (bundleVersion!.match(/^[^-]+(-rc\.[0-9]+)?$/)) {
-      const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
-      manifest.packageManager = bundleVersion;
+    const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
 
-      const data = {};
-      manifest.exportTo(data);
+    manifest.packageManager = bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion)
+      ? bundleVersion
+      : null;
 
-      const path = ppath.join(projectCwd, Manifest.fileName);
-      const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
+    const data = {};
+    manifest.exportTo(data);
 
-      await xfs.changeFilePromise(path, content, {
-        automaticNewlines: true,
-      });
-    }
+    const path = ppath.join(projectCwd, Manifest.fileName);
+    const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
+
+    await xfs.changeFilePromise(path, content, {
+      automaticNewlines: true,
+    });
   }
 }

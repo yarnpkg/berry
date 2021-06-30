@@ -1,10 +1,10 @@
-import {BaseCommand}                                   from '@yarnpkg/cli';
-import {Configuration, Manifest, Project, YarnVersion} from '@yarnpkg/core';
-import {execUtils, scriptUtils, structUtils}           from '@yarnpkg/core';
-import {xfs, ppath, Filename}                          from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}            from 'clipanion';
-import merge                                           from 'lodash/merge';
-import {inspect}                                       from 'util';
+import {BaseCommand}                                              from '@yarnpkg/cli';
+import {Configuration, Manifest, miscUtils, Project, YarnVersion} from '@yarnpkg/core';
+import {execUtils, scriptUtils, structUtils}                      from '@yarnpkg/core';
+import {xfs, ppath, Filename}                                     from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import merge                                                      from 'lodash/merge';
+import {inspect}                                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
@@ -133,8 +133,9 @@ export default class InitCommand extends BaseCommand {
     manifest.name = manifest.name
       ?? structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
 
-    manifest.packageManager = manifest.packageManager
-      ?? YarnVersion;
+    manifest.packageManager = YarnVersion && miscUtils.isTaggedYarnVersion(YarnVersion)
+      ? YarnVersion
+      : null;
 
     if (typeof manifest.raw.private === `undefined` && (this.private || (this.workspace && manifest.workspaceDefinitions.length === 0)))
       manifest.private = true;
