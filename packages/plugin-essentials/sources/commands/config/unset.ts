@@ -56,14 +56,12 @@ export default class ConfigUnsetCommand extends BaseCommand {
         : patch => Configuration.updateConfiguration(assertProjectCwd(), patch);
 
     await updateConfiguration(current => {
-      if (path) {
-        const clone = cloneDeep(current);
-        unsetPath(clone, this.name);
-        return clone;
-      } else {
-        const next = unsetPath({...current}, name);
-        return next;
-      }
+      const clone = path
+        ? cloneDeep(current)
+        : {...current};
+
+      unsetPath(clone, this.name);
+      return clone;
     });
 
     const report = await StreamReport.start({
