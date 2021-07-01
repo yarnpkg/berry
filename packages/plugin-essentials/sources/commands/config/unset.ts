@@ -35,8 +35,13 @@ export default class ConfigUnsetCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    if (!configuration.projectCwd)
-      throw new UsageError(`This command must be run from within a project folder`);
+
+    const assertProjectCwd = () => {
+      if (!configuration.projectCwd)
+        throw new UsageError(`This command must be run from within a project folder`);
+
+      return configuration.projectCwd;
+    };
 
     const name = this.name.replace(/[.[].*$/, ``);
     const path = this.name.replace(/^[^.[]*\.?/, ``);
@@ -48,7 +53,7 @@ export default class ConfigUnsetCommand extends BaseCommand {
     const updateConfiguration: (patch: ((current: any) => any)) => Promise<void> =
       this.home
         ? patch => Configuration.updateHomeConfiguration(patch)
-        : patch => Configuration.updateConfiguration(configuration.projectCwd!, patch);
+        : patch => Configuration.updateConfiguration(assertProjectCwd(), patch);
 
     await updateConfiguration(current => {
       if (path) {
