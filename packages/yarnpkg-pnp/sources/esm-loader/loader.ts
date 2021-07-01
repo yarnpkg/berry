@@ -33,8 +33,12 @@ export async function resolve(
   context: any,
   defaultResolver: any
 ) {
+  const {findPnpApi} = (moduleExports as unknown as { findPnpApi?: (path: NativePath) => null | PnpApi });
+  if (!findPnpApi)
+    return defaultResolver(originalSpecifier, context, defaultResolver);
+
   let specifier = originalSpecifier;
-  let validURL;
+  let validURL: boolean | undefined;
   if (builtins.has(specifier) || (validURL = isValidURL(specifier))) {
     if (!validURL || pathToFileURL(specifier).protocol !== `file:`) {
       return defaultResolver(originalSpecifier, context, defaultResolver);
@@ -45,9 +49,9 @@ export async function resolve(
 
   const {parentURL, conditions = []} = context;
 
-  const parentPath = parentURL ? fileURLToPath(parentURL) : process.cwd();
+  const issuer = parentURL ? fileURLToPath(parentURL) : process.cwd();
 
-  const pnpapi = (moduleExports as unknown as {findPnpApi?: (path: NativePath) => null | PnpApi}).findPnpApi?.(parentPath);
+  const pnpapi = findPnpApi(issuer) ?? (validURL ? findPnpApi(specifier) : null);
   if (!pnpapi)
     return defaultResolver(originalSpecifier, context, defaultResolver);
 
@@ -60,7 +64,7 @@ export async function resolve(
 
     // https://github.com/nodejs/node/blob/0996eb71edbd47d9f9ec6153331255993fd6f0d1/lib/internal/modules/esm/resolve.js#L686-L691
     if (subPath === ``) {
-      const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, parentPath);
+      const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, issuer);
       if (resolved && await exists(resolved)) {
         const pkg = JSON.parse(await fs.promises.readFile(resolved, `utf8`));
         allowLegacyResolve = pkg.exports == null;
@@ -68,7 +72,7 @@ export async function resolve(
     }
   }
 
-  const result = pnpapi.resolveRequest(specifier, parentPath, {
+  const result = pnpapi.resolveRequest(specifier, issuer, {
     conditions: new Set(conditions),
     // TODO: Handle --experimental-specifier-resolution=node
     extensions: allowLegacyResolve ? undefined : [],
