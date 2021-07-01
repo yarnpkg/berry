@@ -17,7 +17,7 @@ declined:
   - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
-  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
@@ -29,4 +29,4 @@ declined:
   - vscode-zipfs
   - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/pnp" 
+  - "@yarnpkg/pnp"

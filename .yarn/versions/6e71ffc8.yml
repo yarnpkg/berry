@@ -2,7 +2,7 @@ releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/fslib": patch
   "@yarnpkg/libzip": patch
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/pnpify": patch
 
 declined:

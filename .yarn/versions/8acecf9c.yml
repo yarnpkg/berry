@@ -1,7 +1,7 @@
 releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/nm": patch
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/pnpify": patch
   "@yarnpkg/sdks": patch
 
