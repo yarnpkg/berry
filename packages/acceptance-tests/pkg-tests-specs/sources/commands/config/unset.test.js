@@ -44,5 +44,16 @@ describe(`Commands`, () => {
         await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.not.toContain(`npmAlwaysAuth`);
       }),
     );
+
+    test(
+      `it should allow running the command from arbitrary folders if the -H,--home option is set`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const tmpDir = await xfs.mktempPromise();
+
+        await expect(run(`config`, `unset`, `--home`, `pnpShebang`, {cwd: tmpDir})).resolves.toMatchObject({
+          code: 0,
+        });
+      }),
+    );
   });
 });
