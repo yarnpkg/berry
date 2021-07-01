@@ -223,4 +223,24 @@ describe(`Plug'n'Play - ESM`, () => {
       }
     )
   );
+
+  test(
+    `it should not enter ESM mode just because the loader is present`,
+    makeTemporaryEnv(
+      { },
+      {
+        enableExperimentalEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log(typeof require === 'undefined')`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `false\n`,
+        });
+      }
+    )
+  );
 });

@@ -5,6 +5,7 @@ import moduleExports                       from 'module';
 import path                                from 'path';
 import {fileURLToPath, pathToFileURL, URL} from 'url';
 
+import * as nodeUtils                      from '../loader/nodeUtils';
 import {PnpApi}                            from '../types';
 
 function isValidURL(str: string) {
@@ -120,31 +121,16 @@ export async function getFormat(
       };
     }
     case `.js`: {
-      let packageJSONUrl = new URL(`./package.json`, resolved);
-      while (true) {
-        if (packageJSONUrl.pathname.endsWith(`node_modules/package.json`))
-          break;
+      const filePath = fileURLToPath(resolved);
+      const pkg = nodeUtils.readPackageScope(filePath);
+      if (pkg) {
+        let moduleType = pkg.data.type ?? `commonjs`;
+        if (moduleType === `commonjs`) moduleType = `module`;
+        else realModules.add(filePath);
 
-        const filePath = fileURLToPath(packageJSONUrl);
-
-        try {
-          let moduleType =
-            JSON.parse(await fs.promises.readFile(filePath, `utf8`)).type ??
-            `commonjs`;
-          if (moduleType === `commonjs`) moduleType = `module`;
-          else realModules.add(fileURLToPath(resolved));
-
-          return {
-            format: moduleType,
-          };
-        } catch {}
-
-        const lastPackageJSONUrl = packageJSONUrl;
-        packageJSONUrl = new URL(`../package.json`, packageJSONUrl);
-
-        if (packageJSONUrl.pathname === lastPackageJSONUrl.pathname) {
-          break;
-        }
+        return {
+          format: moduleType,
+        };
       }
     }
   }

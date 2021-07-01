@@ -7,6 +7,7 @@ import {PnpApi}                                                    from '../type
 
 import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
 import {Manager}                                                   from './makeManager';
+import * as nodeUtils                                              from './nodeUtils';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>,
@@ -389,6 +390,20 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     }
 
     return false;
+  };
+
+  // Specifying the `--experimental-loader` flag makes Node enter ESM mode so we change it to not do that
+  // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L72-L81
+  const originalRunMain = moduleExports.runMain;
+  moduleExports.runMain = function (main = process.argv[1]) {
+    const resolvedMain = nodeUtils.resolveMainPath(main);
+
+    const useESMLoader = resolvedMain ? nodeUtils.shouldUseESMLoader(resolvedMain) : false;
+    if (useESMLoader) {
+      originalRunMain(main);
+    } else {
+      Module._load(main, null, true);
+    }
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));
