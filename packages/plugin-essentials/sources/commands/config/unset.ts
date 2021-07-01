@@ -56,8 +56,9 @@ export default class ConfigUnsetCommand extends BaseCommand {
         unsetPath(clone, this.name);
         return clone;
       } else {
-        const next = unsetPath({...current}, name);
-        return next;
+        const clone = {...current};
+        unsetPath(clone, name);
+        return clone;
       }
     });
 
