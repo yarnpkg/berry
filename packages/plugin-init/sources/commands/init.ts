@@ -58,8 +58,8 @@ export default class InitCommand extends BaseCommand {
   yes = Option.Boolean(`-y,--yes`, {hidden: true});
 
   // Deprecated; doesn't have any effect anymore, but we can't remove it for
-  // some time as it has some risks of breaking a few special setups. Probably
-  // good for removal in 4.x.
+  // some time as it has some risks of breaking a few special setups.
+  // TODO: Remove it in 4.x.
   assumeFreshProject = Option.Boolean(`--assume-fresh-project`, false, {hidden: true});
 
   async execute() {
