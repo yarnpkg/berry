@@ -24,7 +24,7 @@ describe(`Commands`, () => {
         await expect(run(`config`, `unset`, `npmScopes`)).resolves.toMatchObject({
           stdout: expect.stringContaining(`Successfully unset`),
         });
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.not.toContain(`npmScopes`);
+        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml`, `utf8`)).resolves.toStrictEqual(``);
       }),
     );
 
