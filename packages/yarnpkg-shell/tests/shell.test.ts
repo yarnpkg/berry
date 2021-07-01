@@ -641,6 +641,19 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should support input redirections to fd (file)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+          await xfs.writeFilePromise(file, `hello world\n`);
+
+          await expect(bufferResult(
+            `cat 0< "${file}"`,
+          )).resolves.toMatchObject({
+            stdout: `hello world\n`,
+          });
+        });
+      });
+
       it(`should support multiple inputs`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           const file1 = ppath.join(tmpDir, `file1` as Filename);
@@ -656,6 +669,25 @@ describe(`Shell`, () => {
           });
         });
       });
+
+      it(`should throw on input redirections to unsupported file descriptors`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+          await xfs.writeFilePromise(file, `hello world\n`);
+
+          await expect(bufferResult(
+            `cat 1< "${file}"`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "1"`);
+
+          await expect(bufferResult(
+            `cat 2< "${file}"`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "2"`);
+
+          await expect(bufferResult(
+            `cat 3< "${file}"`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
+        });
+      });
     });
 
     describe(`<<<`, () => {
@@ -664,6 +696,30 @@ describe(`Shell`, () => {
           `cat <<< "hello world"`,
         )).resolves.toMatchObject({
           stdout: `hello world\n`,
+        });
+      });
+
+      it(`should support input redirections to fd (string)`, async () => {
+        await expect(bufferResult(
+          `cat 0<<< "hello world"`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+
+      it(`should throw on input redirections to unsupported file descriptors`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `cat 1<<< "hello world"`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "1"`);
+
+          await expect(bufferResult(
+            `cat 2<<< "hello world"`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "2"`);
+
+          await expect(bufferResult(
+            `cat 3<<< "hello world"`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
         });
       });
     });
@@ -680,6 +736,34 @@ describe(`Shell`, () => {
           });
 
           await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+
+      it(`should support output redirections from fd (stdout)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `node -e "console.log(\`foo\`), console.error(\`bar\`)" 1> "${file}"`,
+          )).resolves.toMatchObject({
+            stderr: `bar\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo\n`);
+        });
+      });
+
+      it(`should support output redirections from fd (stderr)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `node -e "console.log(\`foo\`), console.error(\`bar\`)" 2> "${file}"`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`bar\n`);
         });
       });
 
@@ -706,6 +790,20 @@ describe(`Shell`, () => {
           )).rejects.toThrowError(`ENOENT: no such file or directory, open`);
         });
       });
+
+      it(`should throw on output redirections from unsupported file descriptors`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" 0> /dev/null`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "0"`);
+        });
+
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" 3> /dev/null`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
+        });
+      });
     });
 
     describe(`>>`, () => {
@@ -723,10 +821,54 @@ describe(`Shell`, () => {
           await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\nhello world\n`);
         });
       });
+
+      it(`should support output redirections from fd (stdout)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+          await xfs.writeFilePromise(file, `foo bar baz\n`);
+
+          await expect(bufferResult(
+            `node -e "console.log(\`foo\`), console.error(\`bar\`)" 1>> "${file}"`,
+          )).resolves.toMatchObject({
+            stderr: `bar\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\nfoo\n`);
+        });
+      });
+
+      it(`should support output redirections from fd (stderr)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+          await xfs.writeFilePromise(file, `foo bar baz\n`);
+
+          await expect(bufferResult(
+            `node -e "console.log(\`foo\`), console.error(\`bar\`)" 2>> "${file}"`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\nbar\n`);
+        });
+      });
+
+      it(`should throw on output redirections from unsupported file descriptors`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" 0>> /dev/null`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "0"`);
+        });
+
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" 3>> /dev/null`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
+        });
+      });
     });
 
     describe(`>&`, () => {
-      it(`should support stdout redirections (file descriptor)`, async () => {
+      it(`should support implicit stdout redirections (file descriptor)`, async () => {
         await expect(bufferResult(
           `echo "hello world" >& 1`,
         )).resolves.toMatchObject({
@@ -740,12 +882,54 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should support stdout redirections (file descriptor)`, async () => {
+        await expect(bufferResult(
+          `echo "hello world" 1>& 1`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+
+        await expect(bufferResult(
+          `echo "hello world" 1>& 2`,
+        )).resolves.toMatchObject({
+          stderr: `hello world\n`,
+        });
+      });
+
+      it(`should support stderr redirections (file descriptor)`, async () => {
+        await expect(bufferResult(
+          `node -e "console.error(\`hello world\`)" 2>& 1`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+
+        await expect(bufferResult(
+          `node -e "console.error(\`hello world\`)" 2>& 2`,
+        )).resolves.toMatchObject({
+          stderr: `hello world\n`,
+        });
+      });
+
       it(`should support multiple stdout redirections (file descriptor)`, async () => {
         await expect(bufferResult(
           `echo "hello world" >& 1 >& 2`,
         )).resolves.toMatchObject({
           stdout: `hello world\n`,
           stderr: `hello world\n`,
+        });
+      });
+
+      it(`should throw on output redirections from unsupported file descriptors`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" 0>& 1`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "0"`);
+        });
+
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `echo "hello world" 3>& 1`,
+          )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
         });
       });
 

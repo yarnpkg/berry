@@ -20,6 +20,7 @@ export type Argument =
 export type RedirectArgument = {
   type: `redirection`,
   subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`,
+  fd: number | null,
   args: Array<ValueArgument>
 };
 
