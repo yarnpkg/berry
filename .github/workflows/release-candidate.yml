@@ -1,0 +1,64 @@
+on:
+  workflow_dispatch:
+    inputs:
+      apply_versions:
+        description: 'Apply new versions?'
+        required: false
+        default: '1'
+
+name: 'Release Candidate'
+jobs:
+  release:
+    name: 'Releasing a RC'
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_OPTIONS: --max_old_space_size=8192
+
+    steps:
+    - uses: actions/checkout@master
+      with:
+        ref: master
+        token: ${{secrets.YARNBOT_TOKEN}}
+
+    - name: 'Retrieve all the relevant tags'
+      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+    - name: 'Use Node.js 16.x'
+      uses: actions/setup-node@master
+      with:
+        node-version: 16.x
+
+    - name: 'Build a binary for convenience'
+      run: |
+        yarn build:cli $(
+          yarn constraints query "
+            workspace(Cwd),
+            workspace_field(Cwd, 'scripts["update-local"]', _),
+            workspace_ident(Cwd, Ident),
+            sub_atom(Ident, 0, _, _, '@yarnpkg/plugin-')
+          " --json | jq -r '"--plugin='$(pwd)'/" + .Cwd' | xargs
+        )
+
+        TMPBIN=$(mktemp -d)
+        cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
+
+        grep -v "yarnPath:" .yarnrc.yml > $TMPBIN/.yarnrc.yml
+        cp $TMPBIN/.yarnrc.yml .yarnrc.yml
+        echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
+        git update-index --skip-worktree -- .yarnrc.yml
+
+    - name: 'Generate the release commits'
+      if: ${{fromJSON(github.event.inputs.apply_versions)}}
+      run: |
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+        ./scripts/release/01-release-tags.sh --prerelease
+        git push --follow-tags
+
+    - name: 'Upload the releases'
+      run: |
+        yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
+        yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
+        ./scripts/release/02-release-builds.sh
+        ./scripts/release/03-release-npm.sh

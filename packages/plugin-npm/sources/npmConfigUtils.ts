@@ -46,12 +46,13 @@ export function getDefaultRegistry({configuration, type = RegistryType.FETCH_REG
 
 export function getRegistryConfiguration(registry: string, {configuration}: {configuration: Configuration}): MapLike | null {
   const registryConfigurations = configuration.get(`npmRegistries`);
+  const normalizedRegistry = normalizeRegistry(registry);
 
-  const exactEntry = registryConfigurations.get(registry);
+  const exactEntry = registryConfigurations.get(normalizedRegistry);
   if (typeof exactEntry !== `undefined`)
     return exactEntry;
 
-  const noProtocolEntry = registryConfigurations.get(registry.replace(/^[a-z]+:/, ``));
+  const noProtocolEntry = registryConfigurations.get(normalizedRegistry.replace(/^[a-z]+:/, ``));
   if (typeof noProtocolEntry !== `undefined`)
     return noProtocolEntry;
 

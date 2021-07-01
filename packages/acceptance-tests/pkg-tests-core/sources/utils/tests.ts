@@ -366,7 +366,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
   };
 
   const parseRequest = (url: string): Request | null => {
-    let match: RegExpMatchArray|null;
+    let match: RegExpMatchArray | null;
 
     url = url.replace(/%2f/g, `/`);
 
@@ -536,7 +536,7 @@ export type RunFunction = (
   {path, run, source}:
   {
     path: PortablePath,
-    run: (...args: Array<any>) => Promise<ExecResult>,
+    run: (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>,
     source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
   }
 ) => void;

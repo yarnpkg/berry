@@ -127,11 +127,12 @@ A lot of very common frontend tools now support Plug'n'Play natively!
 | Babel | Starting from `resolve` 1.9 |
 | Create-React-App | Starting from 2.0+ |
 | ESLint | Some compatibility issues w/ shared configs |
-| Gatsby | Starting from 2.15.0+ |
+| Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
 | Husky | Starting from 4.0.0-1+ |
 | Jest | Starting from 24.1+ |
 | Next.js | Starting from 9.1.2+ |
 | Parcel | Starting from 2.0.0-nightly.212+ |
+| Preact CLI | Starting from 3.1.0+ |
 | Prettier | Starting from 1.17+ |
 | Rollup | Starting from `resolve` 1.9+ |
 | Storybook | Starting from 6.0+ |

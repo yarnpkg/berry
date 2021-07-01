@@ -26,7 +26,7 @@ export default class UnlinkCommand extends BaseCommand {
       `$0 unlink --all`,
     ], [
       `Unregister all workspaces matching a glob`,
-      `$0 unlink '@babel/*'`,
+      `$0 unlink '@babel/*' 'pkg-{a,b}'`,
     ]],
   });
 
@@ -34,9 +34,7 @@ export default class UnlinkCommand extends BaseCommand {
     description: `Unlink all workspaces belonging to the target project from the current one`,
   });
 
-  leadingArgument = Option.String({
-    required: false,
-  });
+  leadingArguments = Option.Rest();
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -49,7 +47,7 @@ export default class UnlinkCommand extends BaseCommand {
     const topLevelWorkspace = project.topLevelWorkspace;
     const workspacesToUnlink = new Set<string>();
 
-    if (!this.leadingArgument && this.all) {
+    if (this.leadingArguments.length === 0 && this.all) {
       for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
         if (reference.startsWith(`portal:`)) {
           workspacesToUnlink.add(pattern.descriptor.fullName);
@@ -57,33 +55,35 @@ export default class UnlinkCommand extends BaseCommand {
       }
     }
 
-    if (this.leadingArgument) {
-      const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(this.leadingArgument));
-      if (miscUtils.isPathLike(this.leadingArgument)) {
-        const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
-        const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
+    if (this.leadingArguments.length > 0) {
+      for (const leadingArgument of this.leadingArguments) {
+        const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(leadingArgument));
+        if (miscUtils.isPathLike(leadingArgument)) {
+          const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
+          const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
 
-        if (!workspace2)
-          throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
+          if (!workspace2)
+            throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
 
-        if (this.all) {
-          for (const workspace of project2.workspaces)
-            if (workspace.manifest.name)
-              workspacesToUnlink.add(structUtils.stringifyIdent(workspace.locator));
+          if (this.all) {
+            for (const workspace of project2.workspaces)
+              if (workspace.manifest.name)
+                workspacesToUnlink.add(structUtils.stringifyIdent(workspace.locator));
 
-          if (workspacesToUnlink.size === 0) {
-            throw new UsageError(`No workspace found to be unlinked in the target project`);
+            if (workspacesToUnlink.size === 0) {
+              throw new UsageError(`No workspace found to be unlinked in the target project`);
+            }
+          } else {
+            if (!workspace2.manifest.name)
+              throw new UsageError(`The target workspace doesn't have a name and thus cannot be unlinked`);
+
+            workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.locator));
           }
         } else {
-          if (!workspace2.manifest.name)
-            throw new UsageError(`The target workspace doesn't have a name and thus cannot be unlinked`);
-
-          workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.locator));
-        }
-      } else {
-        const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
-        for (const fullName of micromatch(fullNames, this.leadingArgument)) {
-          workspacesToUnlink.add(fullName);
+          const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
+          for (const fullName of micromatch(fullNames, leadingArgument)) {
+            workspacesToUnlink.add(fullName);
+          }
         }
       }
     }

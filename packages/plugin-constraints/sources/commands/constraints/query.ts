@@ -62,7 +62,7 @@ export default class ConstraintsQueryCommand extends BaseCommand {
   }
 }
 
-function valueToString(value: string|null): string {
+function valueToString(value: string | null): string {
   if (typeof value !== `string`)
     return `${value}`;
 

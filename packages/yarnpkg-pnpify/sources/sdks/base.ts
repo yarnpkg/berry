@@ -55,7 +55,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
         // We add the \`zip:\` prefix to both \`.zip/\` paths and virtual paths
         if (isAbsolute(str) && !str.match(/^\\^zip:/) && (str.match(/\\.zip\\//) || isVirtual(str))) {
           // We also take the opportunity to turn virtual paths into physical ones;
-          // this makes is much easier to work with workspaces that list peer
+          // this makes it much easier to work with workspaces that list peer
           // dependencies, since otherwise Ctrl+Click would bring us to the virtual
           // file instances instead of the real ones.
           //
@@ -133,7 +133,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
       let hostInfo = \`unknown\`;
 
-      return Object.assign(Session.prototype, {
+      Object.assign(Session.prototype, {
         onMessage(/** @type {string} */ message) {
           const parsedMessage = JSON.parse(message)
 
@@ -157,6 +157,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           })));
         }
       });
+
+      return tsserver;
     };
   `;
 
@@ -170,6 +172,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
   await wrapper.writeFile(`lib/typescript.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
 
   return wrapper;
 };

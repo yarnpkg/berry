@@ -190,5 +190,20 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `it should not allow linking a project to itself`,
+      makeTemporaryEnv(
+        {
+          name: `foo`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`link`, path)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`Can't link the project to itself`),
+          });
+        }
+      )
+    );
   });
 });

@@ -1976,4 +1976,34 @@ describe(`Plug'n'Play`, () => {
       }
     )
   );
+
+  test(
+    `it should set bytesRead on Windows when input is a pipe and EOF is thrown`,
+    makeTemporaryEnv(
+      {
+        scripts: {
+          test: `echo '' | node index.js`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs');
+
+          fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
+            console.log(bytesRead);
+            fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
+              console.log(bytesRead);
+            });
+          });
+        `);
+
+        await expect(run(`test`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `1\n0\n`,
+        });
+      }
+    )
+  );
 });

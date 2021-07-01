@@ -7,6 +7,7 @@ import cp                                                                   from
 import {Command, Option, Usage}                                             from 'clipanion';
 import {build, Plugin}                                                      from 'esbuild-wasm';
 import fs                                                                   from 'fs';
+import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
 import {promisify}                                                          from 'util';
@@ -112,7 +113,9 @@ export default class BuildBundleCommand extends Command {
         };
 
         const res = await build({
-          banner: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          banner: {
+            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
           define: {YARN_VERSION: JSON.stringify(version)},
@@ -155,8 +158,11 @@ export default class BuildBundleCommand extends Command {
 
       report.reportSeparator();
 
+      const basedirReq = createRequire(`${basedir}/package.json`);
+
       for (const plugin of plugins) {
-        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(plugin))}`);
+        const {name} = basedirReq(`${plugin}/package.json`);
+        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(name))}`);
       }
     }
 

@@ -8,6 +8,11 @@ const makeTextFilter = level => JSON.stringify([{
   level,
 }]);
 
+const makePatternFilter = level => JSON.stringify([{
+  pattern: `no-deps-scripted*`,
+  level,
+}]);
+
 describe(`Features`, () => {
   describe(`LogFilters`, () => {
     test(`it should allow to filter by message name`, makeTemporaryEnv({
@@ -126,6 +131,53 @@ describe(`Features`, () => {
       ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+    }));
+
+    test(`it should allow to filter by pattern`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps-scripted`]: `1.0.0`,
+      },
+      dependenciesMeta: {
+        [`no-deps-scripted`]: {built: false},
+      },
+    }, async ({path, run, source}) => {
+      let {stdout} = await run(`install`);
+      expect(stdout).toMatch(/lists build scripts/); // sanity check
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`discard`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).not.toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`info`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).not.toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`warning`));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).not.toMatch(/Failed with errors/);
+      expect(stdout).toMatch(/Done with warnings/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`error`));
+
+      let hadError = false;
+      try {
+        await run(`install`);
+      } catch (err) {
+        ({stdout} = err);
+        hadError = true;
+      }
+      expect(hadError).toBe(true);
+      expect(stdout).toMatch(/lists build scripts/);
+      expect(stdout).toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
     }));
   });
