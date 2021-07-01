@@ -204,4 +204,23 @@ describe(`Plug'n'Play - ESM`, () => {
       }
     )
   );
+
+  test(
+    `it should not allow unknown extensions`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log('foo')`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index`)).rejects.toMatchObject({
+          code: 1,
+          stderr: expect.stringContaining(`Unknown file extension ""`),
+        });
+      }
+    )
+  );
 });

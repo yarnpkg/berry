@@ -97,7 +97,8 @@ export async function getFormat(
   if (parsedURL.protocol !== `file:`)
     return defaultGetFormat(resolved, context, defaultGetFormat);
 
-  switch (path.extname(parsedURL.pathname)) {
+  const ext = path.extname(parsedURL.pathname);
+  switch (ext) {
     case `.mjs`: {
       realModules.add(fileURLToPath(resolved));
       return {
@@ -118,7 +119,7 @@ export async function getFormat(
         format: `module`,
       };
     }
-    default: {
+    case `.js`: {
       let packageJSONUrl = new URL(`./package.json`, resolved);
       while (true) {
         if (packageJSONUrl.pathname.endsWith(`node_modules/package.json`))
@@ -148,7 +149,7 @@ export async function getFormat(
     }
   }
 
-  throw new Error(`Unable to get module type of '${resolved}'`);
+  return defaultGetFormat(resolved, context, defaultGetFormat);
 }
 
 let parserInit: Promise<void> | null = init().then(() => {
