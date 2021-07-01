@@ -37,6 +37,10 @@ export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = 
 export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const tsServerMonkeyPatch = `
     tsserver => {
+      if (!process.versions.pnp) {
+        return tsserver;
+      }
+
       const {isAbsolute} = require(\`path\`);
       const pnpApi = require(\`pnpapi\`);
 
