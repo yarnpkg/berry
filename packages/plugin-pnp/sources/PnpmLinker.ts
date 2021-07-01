@@ -1,6 +1,6 @@
-import {Descriptor, FetchResult, Installer, Linker, LinkOptions, LinkType, Locator, LocatorHash, MinimalLinkOptions, Package, structUtils} from '@yarnpkg/core';
-import {Filename, LinkStrategy, PortablePath, ppath, xfs}                                                                                  from '@yarnpkg/fslib';
-import {Dirent}                                                                                                                            from 'fs';
+import {Descriptor, FetchResult, Installer, Linker, LinkOptions, LinkType, Locator, LocatorHash, MinimalLinkOptions, Package, Project, structUtils} from '@yarnpkg/core';
+import {Filename, LinkStrategy, PortablePath, ppath, xfs}                                                                                           from '@yarnpkg/fslib';
+import {Dirent}                                                                                                                                     from 'fs';
 
 export class PnpmLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -8,11 +8,12 @@ export class PnpmLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    return null as any;
+    // TODO: Support soft linked packages
+    return getPackageLocation(locator, {project: opts.project});
   }
 
-  async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    return null as any;
+  async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator> {
+    throw new Error(`Not implemented yet`);
   }
 
   makeInstaller(opts: LinkOptions) {
@@ -61,11 +62,11 @@ class PnpmInstaller implements Installer {
   }
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult) {
-    const pkgKey = structUtils.slugifyLocator(pkg);
-
-    const pkgPath = ppath.join(this.opts.project.cwd, Filename.nodeModules, `.store` as Filename, pkgKey);
+    const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
     this.locations.set(pkg.locatorHash, pkgPath);
 
+    // Copy the package source into the <root>/n_m/.store/<hash> directory, so
+    // that we can then create symbolic links to it later.
     this.pendingCopies.push(Promise.resolve().then(async () => {
       await xfs.mkdirPromise(pkgPath, {recursive: true});
       await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
@@ -83,7 +84,7 @@ class PnpmInstaller implements Installer {
   async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
     await Promise.all(this.pendingCopies);
 
-    if (!this.isPnpmVirtualCompatible(locator))
+    if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
     const pkgPath = this.locations.get(locator.locatorHash);
@@ -93,30 +94,16 @@ class PnpmInstaller implements Installer {
     const nmPath = ppath.join(pkgPath, Filename.nodeModules);
     await xfs.mkdirpPromise(nmPath);
 
-    const extraneous = new Map<PortablePath, Dirent>();
-    try {
-      for (const entry of await xfs.readdirPromise(nmPath, {withFileTypes: true})) {
-        if (entry.name.startsWith(`.`))
-          continue;
-
-        if (entry.name.startsWith(`@`)) {
-          for (const subEntry of await xfs.readdirPromise(ppath.join(nmPath, entry.name), {withFileTypes: true})) {
-            extraneous.set(`${entry.name}/${subEntry.name}` as PortablePath, subEntry);
-          }
-        } else {
-          extraneous.set(entry.name, entry);
-        }
-      }
-    } catch (err) {
-      if (err.code !== `ENOENT`) {
-        throw err;
-      }
-    }
+    // Retrieve what's currently inside the package's true nm folder. We
+    // will use that to figure out what are the extraneous entries we'll
+    // need to remove.
+    const extraneous = await getNodeModulesListing(nmPath);
 
     for (const [descriptor, dependency] of dependencies) {
-      const targetDependency = this.isPnpmVirtualCompatible(dependency)
-        ? dependency
-        : structUtils.devirtualizeLocator(dependency);
+      // Downgrade virtual workspaces (cf isPnpmVirtualCompatible's documentation)
+      const targetDependency = !isPnpmVirtualCompatible(dependency, {project: this.opts.project})
+        ? structUtils.devirtualizeLocator(dependency)
+        : dependency;
 
       const depSrcPath = this.locations.get(targetDependency.locatorHash);
       if (typeof depSrcPath === `undefined`)
@@ -130,6 +117,7 @@ class PnpmInstaller implements Installer {
       const existing = extraneous.get(name);
       extraneous.delete(name);
 
+      // No need to update the symlink if it's already the correct one
       if (existing) {
         if (existing.isSymbolicLink() && await xfs.readlinkPromise(depDstPath) === depLinkPath) {
           continue;
@@ -157,8 +145,52 @@ class PnpmInstaller implements Installer {
 
     return null as any;
   }
+}
 
-  private isPnpmVirtualCompatible(locator: Locator) {
-    return !structUtils.isVirtualLocator(locator) || !this.opts.project.tryWorkspaceByLocator(locator);
+function getPackageLocation(locator: Locator, {project}: {project: Project}) {
+  const pkgKey = structUtils.slugifyLocator(locator);
+  const pkgPath = ppath.join(project.cwd, Filename.nodeModules, `.store` as Filename, pkgKey);
+
+  return pkgPath;
+}
+
+function isPnpmVirtualCompatible(locator: Locator, {project}: {project: Project}) {
+  // The pnpm install strategy has a limitation: because Node would always
+  // resolve symbolic path to their true location, and because we can't just
+  // copy-paste workspaces like we do with normal dependencies, we can't give
+  // multiple dependency sets to the same workspace based on how its peer
+  // dependencies are satisfied by its dependents (like PnP can).
+  //
+  // For this reason, we ignore all virtual instances of workspaces, and
+  // instead have to rely on the user being aware of this caveat.
+  //
+  // TODO: Perhaps we could implement an error message when we detect multiple
+  // sets in a way that can't be reproduced on disk?
+
+  return !structUtils.isVirtualLocator(locator) || !project.tryWorkspaceByLocator(locator);
+}
+
+async function getNodeModulesListing(nmPath: PortablePath) {
+  const listing = new Map<PortablePath, Dirent>();
+
+  try {
+    for (const entry of await xfs.readdirPromise(nmPath, {withFileTypes: true})) {
+      if (entry.name.startsWith(`.`))
+        continue;
+
+      if (entry.name.startsWith(`@`)) {
+        for (const subEntry of await xfs.readdirPromise(ppath.join(nmPath, entry.name), {withFileTypes: true})) {
+          listing.set(`${entry.name}/${subEntry.name}` as PortablePath, subEntry);
+        }
+      } else {
+        listing.set(entry.name, entry);
+      }
+    }
+  } catch (err) {
+    if (err.code !== `ENOENT`) {
+      throw err;
+    }
   }
+
+  return listing;
 }
