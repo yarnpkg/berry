@@ -2,6 +2,7 @@ import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
 import semver                                              from 'semver';
+import {pathToFileURL}                                     from 'url';
 
 import {PnpLinker}                                         from './PnpLinker';
 import unplug                                              from './commands/unplug';
@@ -28,7 +29,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
   let pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath.cjs))}`;
 
   if (xfs.existsSync(pnpPath.esmLoader))
-    pnpRequire = `${pnpRequire} --experimental-loader file:///${npath.fromPortablePath(pnpPath.esmLoader).replace(/\\/g, `/`)}`;
+    pnpRequire = `${pnpRequire} --experimental-loader ${pathToFileURL(npath.fromPortablePath(pnpPath.esmLoader)).href}`;
 
   if (pnpPath.cjs.includes(` `) && semver.lt(process.versions.node, `12.0.0`))
     throw new Error(`Expected the build location to not include spaces when using Node < 12.0.0 (${process.versions.node})`);
