@@ -88,7 +88,9 @@ export const makeConfig = (config: webpack.Configuration): webpack.Configuration
         loader: require.resolve(`ts-loader`),
         options: identity<Partial<tsLoader.Options>>({
           compilerOptions: {
+            composite: false,
             declaration: false,
+            declarationMap: false,
             module: `ESNext` as any,
             moduleResolution: `node` as any,
           },
