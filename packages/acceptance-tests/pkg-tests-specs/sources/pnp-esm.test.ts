@@ -280,4 +280,18 @@ describe(`Plug'n'Play - ESM`, () => {
       }
     )
   );
+
+  test(
+    `it should enter ESM mode when target is ESM but the cwd doesn't have a pnpapi`,
+    makeTemporaryEnv(
+      {
+      },
+      async ({path, run, source}) => {
+        await expect(run(`dlx`, `no-deps-bins-esm`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringMatching(/\n42\n$/),
+        });
+      }
+    )
+  );
 });
