@@ -361,15 +361,16 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (request === `pnpapi`)
       return false;
 
-    // Node sometimes call this function with an absolute path and a `null` set
-    // of paths. This would cause the resolution to fail. To avoid that, we
-    // fallback on the regular resolution. We only do this when `isMain` is
-    // true because the Node default resolution doesn't handle well in-zip
-    // paths, even absolute, so we try to use it as little as possible.
-    if (!enableNativeHooks || (isMain && npath.isAbsolute(request)))
+    if (!enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
 
-    for (const path of paths || []) {
+    // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L490-L494
+    if (npath.isAbsolute(request))
+      paths = [``];
+    else if (!paths || paths.length === 0)
+      return false;
+
+    for (const path of paths) {
       let resolution: string | false;
 
       try {
