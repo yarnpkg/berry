@@ -35,7 +35,7 @@ export default class ExecCommand extends BaseCommand {
     const {project, locator} = await Project.find(configuration, this.context.cwd);
 
     return await xfs.mktempPromise(async binFolder => {
-      return await execute([this.commandName, ...this.args].join(` `), [], {
+      return await execute(this.commandName, this.args, {
         cwd: this.context.cwd,
         stdin: this.context.stdin,
         stdout: this.context.stdout,
