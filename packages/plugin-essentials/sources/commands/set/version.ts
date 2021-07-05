@@ -1,10 +1,10 @@
-import {BaseCommand}                                                            from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}              from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                              from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                     from 'clipanion';
-import {fstat}                                                                  from 'fs';
-import semver                                                                   from 'semver';
+import {BaseCommand}                                                                         from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                           from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                                           from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
+import {fstat}                                                                               from 'fs';
+import semver                                                                                from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
@@ -45,7 +45,16 @@ export default class SetVersionCommand extends BaseCommand {
     if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
       return 0;
 
+    const getBundlePath = () => {
+      if (typeof YarnVersion === `undefined`)
+        throw new UsageError(`The --install flag can only be used without explicit version specifier from the Yarn CLI`);
+
+      return process.argv[1];
+    };
+
     let bundleUrl: string;
+    if (this.version === `self`)
+      bundleUrl = getBundlePath();
     if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
       bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `canary`)
@@ -66,6 +75,7 @@ export default class SetVersionCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      includeLogs: !this.context.quiet,
     }, async (report: StreamReport) => {
       let bundleBuffer: Buffer;
       if (bundleUrl.startsWith(`file://`)) {
