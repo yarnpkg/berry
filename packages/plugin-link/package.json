@@ -1,14 +1,14 @@
 {
   "name": "@yarnpkg/plugin-link",
-  "version": "2.1.2-rc.7",
+  "version": "2.1.2-rc.8",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.7",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.8",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^3.0.0-rc.7"
+    "@yarnpkg/core": "^3.0.0-rc.8"
   },
   "devDependencies": {
     "@yarnpkg/core": "workspace:*"
