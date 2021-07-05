@@ -1,9 +1,10 @@
-import {BaseCommand}                                                from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}  from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                  from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                         from 'clipanion';
-import semver                                                       from 'semver';
+import {BaseCommand}                                                            from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}              from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                              from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                     from 'clipanion';
+import {fstat}                                                                  from 'fs';
+import semver                                                                   from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
@@ -45,12 +46,14 @@ export default class SetVersionCommand extends BaseCommand {
       return 0;
 
     let bundleUrl: string;
-    if (this.version === `latest` || this.version === `berry`)
+    if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
       bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `canary`)
       bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `classic`)
       bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
+    else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
+      bundleUrl = `file://${npath.resolve(this.version)}`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
       bundleUrl = `https://repo.yarnpkg.com/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
@@ -64,8 +67,15 @@ export default class SetVersionCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async (report: StreamReport) => {
-      report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, `green`)}`);
-      const bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
+      let bundleBuffer: Buffer;
+      if (bundleUrl.startsWith(`file://`)) {
+        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, FormatType.URL)}`);
+        bundleBuffer = await xfs.readFilePromise(npath.toPortablePath(bundleUrl.slice(7)));
+      } else {
+        report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, FormatType.PATH)}`);
+        bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
+      }
+
       await setVersion(configuration, null, bundleBuffer, {report});
     });
 

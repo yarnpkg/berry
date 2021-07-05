@@ -65,8 +65,15 @@ export default class InitCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
+    const getBundleUrl = () => {
+      if (typeof YarnVersion === `undefined`)
+        throw new UsageError(`The --install flag can only be used without explicit version specifier from the Yarn CLI`);
+
+      return process.argv[1];
+    };
+
     const install = this.install
-      ? this.usev2 || this.install === true ? `latest` : this.install
+      ? this.usev2 || this.install === true ? getBundleUrl() : this.install
       : null;
 
     if (install !== null) {
