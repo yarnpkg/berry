@@ -1,9 +1,9 @@
-import {BaseCommand}                                      from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, semverUtils}   from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}               from 'clipanion';
-import semver                                             from 'semver';
+import {BaseCommand}                                                from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}  from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                  from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                         from 'clipanion';
+import semver                                                       from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
@@ -46,11 +46,13 @@ export default class SetVersionCommand extends BaseCommand {
 
     let bundleUrl: string;
     if (this.version === `latest` || this.version === `berry`)
-      bundleUrl = `https://github.com/yarnpkg/berry/raw/master/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
+    else if (this.version === `canary`)
+      bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `classic`)
       bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
-      bundleUrl = `https://github.com/yarnpkg/berry/raw/%40yarnpkg/cli/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleUrl = `https://repo.yarnpkg.com/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
       bundleUrl = `https://github.com/yarnpkg/yarn/releases/download/v${this.version}/yarn-${this.version}.js`;
     else if (semverUtils.validRange(this.version))
@@ -69,6 +71,14 @@ export default class SetVersionCommand extends BaseCommand {
 
     return report.exitCode();
   }
+}
+
+export async function findVersion(configuration: Configuration, request: `stable` | `canary`) {
+  const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
+  if (!data.latest[request])
+    throw new UsageError(`Tag '${request}' not found`);
+
+  return data.latest[request];
 }
 
 export async function setVersion(configuration: Configuration, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
@@ -111,6 +121,21 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   if (updateConfig) {
     await Configuration.updateConfiguration(projectCwd, {
       yarnPath: projectPath,
+    });
+
+    const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
+
+    if (bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion))
+      manifest.packageManager = bundleVersion;
+
+    const data = {};
+    manifest.exportTo(data);
+
+    const path = ppath.join(projectCwd, Manifest.fileName);
+    const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
+
+    await xfs.changeFilePromise(path, content, {
+      automaticNewlines: true,
     });
   }
 }
