@@ -3,7 +3,6 @@ import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, 
 import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                           from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs, npath}                                           from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
-import {fstat}                                                                               from 'fs';
 import semver                                                                                from 'semver';
 
 // eslint-disable-next-line arca/no-default-export
