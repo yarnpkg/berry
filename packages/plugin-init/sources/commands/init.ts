@@ -134,7 +134,7 @@ export default class InitCommand extends BaseCommand {
       ?? structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
 
     manifest.packageManager = YarnVersion && miscUtils.isTaggedYarnVersion(YarnVersion)
-      ? YarnVersion
+      ? `yarn@${YarnVersion}`
       : null;
 
     if (typeof manifest.raw.private === `undefined` && (this.private || (this.workspace && manifest.workspaceDefinitions.length === 0)))
