@@ -48,13 +48,13 @@ export default class SetVersionCommand extends BaseCommand {
       if (typeof YarnVersion === `undefined`)
         throw new UsageError(`The --install flag can only be used without explicit version specifier from the Yarn CLI`);
 
-      return process.argv[1];
+      return `file://${process.argv[1]}`;
     };
 
     let bundleUrl: string;
     if (this.version === `self`)
       bundleUrl = getBundlePath();
-    if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
+    else if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
       bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `canary`)
       bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
