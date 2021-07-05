@@ -5,7 +5,7 @@ import {Worker} from 'worker_threads';
 export class WorkerPool<TIn, TOut> {
   private pool: Array<Worker> = [];
   private queue = new PQueue({
-    concurrency: cpus().length,
+    concurrency: Math.max(1, cpus().length),
   });
 
   constructor(private source: string) {
