@@ -1,7 +1,7 @@
 import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
-  describe(`add`, () => {
+  describe(`init`, () => {
     test(
       `it should create a new package.json in the local directory if it doesn't exist`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
