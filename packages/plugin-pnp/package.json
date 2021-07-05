@@ -1,21 +1,21 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "version": "3.0.0-rc.8",
+  "version": "3.0.0-rc.9",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.8",
-    "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.8",
-    "@yarnpkg/pnp": "workspace:^3.0.0-rc.8",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.9",
+    "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.9",
+    "@yarnpkg/pnp": "workspace:^3.0.0-rc.9",
     "clipanion": "^3.0.0-rc.10",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.8",
-    "@yarnpkg/core": "^3.0.0-rc.8"
+    "@yarnpkg/cli": "^3.0.0-rc.9",
+    "@yarnpkg/core": "^3.0.0-rc.9"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
