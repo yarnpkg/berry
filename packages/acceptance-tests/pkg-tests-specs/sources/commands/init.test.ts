@@ -62,7 +62,7 @@ describe(`Commands`, () => {
           const pkgDir = ppath.join(tmpDir, `my-package` as PortablePath);
           await xfs.mkdirpPromise(pkgDir);
 
-          await run(`init`, `--install`, {
+          await run(`init`, `--install=self`, {
             cwd: pkgDir,
           });
 

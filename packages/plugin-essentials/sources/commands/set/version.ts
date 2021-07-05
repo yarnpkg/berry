@@ -76,10 +76,12 @@ export default class SetVersionCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: !this.context.quiet,
     }, async (report: StreamReport) => {
+      const filePrefix = `file://`;
+
       let bundleBuffer: Buffer;
-      if (bundleUrl.startsWith(`file://`)) {
+      if (bundleUrl.startsWith(filePrefix)) {
         report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, FormatType.URL)}`);
-        bundleBuffer = await xfs.readFilePromise(npath.toPortablePath(bundleUrl.slice(7)));
+        bundleBuffer = await xfs.readFilePromise(npath.toPortablePath(bundleUrl.slice(filePrefix.length)));
       } else {
         report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, FormatType.PATH)}`);
         bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
