@@ -65,9 +65,11 @@ export default class InitCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const install = this.install
-      ? this.usev2 || this.install === true ? `latest` : this.install
-      : null;
+    const install = typeof this.install === `string`
+      ? this.install
+      : this.usev2 || this.install === true
+        ? `latest`
+        : null;
 
     if (install !== null) {
       return await this.executeProxy(configuration, install);
@@ -87,7 +89,7 @@ export default class InitCommand extends BaseCommand {
     if (!xfs.existsSync(lockfilePath))
       await xfs.writeFilePromise(lockfilePath, ``);
 
-    const versionExitCode = await this.cli.run([`set`, `version`, version]);
+    const versionExitCode = await this.cli.run([`set`, `version`, version], {quiet: true});
     if (versionExitCode !== 0)
       return versionExitCode;
 
