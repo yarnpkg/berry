@@ -8,6 +8,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+### Commands
+
+- `yarn exec` got support for running shell scripts using Yarn's portable shell
+
 ### Bugfixes
 
 - The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
