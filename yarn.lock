@@ -5560,7 +5560,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/eslint-config": "workspace:*"
-    "@yarnpkg/pnpify": "workspace:*"
+    "@yarnpkg/sdks": "workspace:*"
     babel-jest: ^26.0.1
     clipanion: ^3.0.0-rc.10
     eslint: ^6.8.0
@@ -6066,7 +6066,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/sdks@workspace:packages/yarnpkg-sdks":
+"@yarnpkg/sdks@workspace:*, @yarnpkg/sdks@workspace:packages/yarnpkg-sdks":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/sdks@workspace:packages/yarnpkg-sdks"
   dependencies:
