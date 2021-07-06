@@ -22,19 +22,46 @@ export default class SetVersionCommand extends BaseCommand {
       This command will download a specific release of Yarn directly from the Yarn GitHub repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.
 
       A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
+
+      The version specifier can be:
+
+      - a tag:
+        - \`latest\` / \`berry\` / \`stable\` -> the most recent stable berry (\`>=2.0.0\`) release
+        - \`canary\` -> the most recent canary (release candidate) berry (\`>=2.0.0\`) release
+        - \`classic\` -> the most recent classic (\`^0.x || ^1.x\`) release
+
+      - a semver range (e.g. \`2.x\`) -> the most recent version satisfying the range
+
+      - a semver version (e.g. \`2.4.1\`, \`1.22.1\`)
+
+      - a local file referenced through either a relative or absolute path
+
+      - \`self\` -> the version used to invoke the command
     `,
     examples: [[
       `Download the latest release from the Yarn repository`,
       `$0 set version latest`,
     ], [
+      `Download the latest canary release from the Yarn repository`,
+      `$0 set version canary`,
+    ], [
       `Download the latest classic release from the Yarn repository`,
       `$0 set version classic`,
+    ], [
+      `Download the most recent Yarn 3 build`,
+      `$0 set version 3.x`,
     ], [
       `Download a specific Yarn 2 build`,
       `$0 set version 2.0.0-rc.30`,
     ], [
       `Switch back to a specific Yarn 1 release`,
       `$0 set version 1.22.1`,
+    ], [
+      `Use a release from the local filesystem`,
+      `$0 set version ./yarn.cjs`,
+    ], [
+      `Download the version used to invoke the command`,
+      `$0 set version self`,
     ]],
   });
 
