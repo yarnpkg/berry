@@ -100,23 +100,9 @@ export default class SetVersionCommand extends BaseCommand {
 }
 
 export async function resolveRange(configuration: Configuration, request: string) {
-  const range = semverUtils.validRange(request)!;
-
   const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
 
-  const candidates = data.tags.filter(version => {
-    const candidate = new semverUtils.SemVer(version);
-
-    // Ignore prereleases
-    if (candidate.prerelease.length > 0)
-      return false;
-
-    if (!range.test(candidate))
-      return false;
-
-    return true;
-  });
-
+  const candidates = data.tags.filter(version => semverUtils.satisfiesWithPrereleases(version, request));
   if (candidates.length === 0)
     throw new UsageError(`No matching release found for range ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)}.`);
 
