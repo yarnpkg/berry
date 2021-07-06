@@ -8,6 +8,7 @@ const VALID_COMMANDS = [
   ...[
     `echo foo >& 1`,
     `echo foo >&1`,
+    `echo foo 2> bar`,
   ],
 
   // Groups
@@ -64,6 +65,38 @@ describe(`Shell parser`, () => {
         expect(() => parseShell(command)).toThrow();
       });
     }
+  });
+
+  describe(`Redirections`, () => {
+    describe(`fd`, () => {
+      it(`shouldn't parse fds that aren't single digits as part of the redirection`, () => {
+        expect(parseShell(`echo 10> /dev/null`)).toStrictEqual([expect.objectContaining({
+          command: expect.objectContaining({
+            chain: expect.objectContaining({
+              args: [
+                expect.anything(),
+                {type: `argument`, segments: [{type: `text`, text: `10`}]},
+                expect.objectContaining({fd: null}),
+              ],
+            }),
+          }),
+        })]);
+      });
+
+      it(`shouldn't parse fds that aren't directly next to the redirection as part of the redirection`, () => {
+        expect(parseShell(`echo 1 > /dev/null`)).toStrictEqual([expect.objectContaining({
+          command: expect.objectContaining({
+            chain: expect.objectContaining({
+              args: [
+                expect.anything(),
+                {type: `argument`, segments: [{type: `text`, text: `1`}]},
+                expect.objectContaining({fd: null}),
+              ],
+            }),
+          }),
+        })]);
+      });
+    });
   });
 });
 

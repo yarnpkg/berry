@@ -74,8 +74,21 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     const ignorePath = configuration.get(`ignorePath`);
     const ignoreCwd = configuration.get(`ignoreCwd`);
 
+    const selfPath = npath.toPortablePath(npath.resolve(process.argv[1]));
+
+    const tryRead = (p: PortablePath) => xfs.readFilePromise(p).catch(() => {
+      return Buffer.of();
+    });
+
+    const isSameBinary = async () =>
+      yarnPath === selfPath ||
+      Buffer.compare(...await Promise.all([
+        tryRead(yarnPath),
+        tryRead(selfPath),
+      ])) === 0;
+
     // Avoid unnecessary spawn when run directly
-    if (!ignorePath && !ignoreCwd && yarnPath === npath.toPortablePath(npath.resolve(process.argv[1]))) {
+    if (!ignorePath && !ignoreCwd && await isSameBinary()) {
       process.env.YARN_IGNORE_PATH = `1`;
       process.env.YARN_IGNORE_CWD = `1`;
 

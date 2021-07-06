@@ -82,15 +82,21 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
   // binaries for the dependencies of the active package
   scriptEnv.BERRY_BIN_FOLDER = npath.fromPortablePath(nBinFolder);
 
+  // Otherwise we'd override the Corepack binaries, and thus break the detection
+  // of the `packageManager` field when running Yarn in other directories.
+  const yarnBin = process.env.COREPACK_ROOT
+    ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
+    : process.argv[1];
+
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
   await Promise.all([
     makePathWrapper(binFolder, `node` as Filename, process.execPath),
     ...YarnVersion !== null ? [
-      makePathWrapper(binFolder, `run` as Filename, process.execPath, [process.argv[1], `run`]),
-      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [process.argv[1]]),
-      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [process.argv[1]]),
-      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]),
+      makePathWrapper(binFolder, `run` as Filename, process.execPath, [yarnBin, `run`]),
+      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [yarnBin]),
+      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [yarnBin]),
+      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [yarnBin, `run`, `--top-level`, `node-gyp`]),
     ] : [],
   ]);
 

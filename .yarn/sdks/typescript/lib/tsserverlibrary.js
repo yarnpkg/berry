@@ -10,6 +10,10 @@ const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
 const moduleWrapper = tsserver => {
+  if (!process.versions.pnp) {
+    return tsserver;
+  }
+
   const {isAbsolute} = require(`path`);
   const pnpApi = require(`pnpapi`);
 
