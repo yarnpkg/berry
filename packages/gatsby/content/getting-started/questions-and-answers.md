@@ -176,3 +176,15 @@ At the time Yarn got released Yarn was effectively much faster than some of its 
 Put simply, our differences lie in our priorities. Different projects make different tradeoffs, and it's exactly what happens here. We prioritized workspaces because we felt like monorepos were providing significant value. We've spent significant resources pushing for Plug'n'Play (including through [dozens of contributions to third-party projects](https://github.com/pulls?utf8=%E2%9C%93&q=is%3Apr+author%3Aarcanis+archived%3Afalse+is%3Aclosed+pnp+-user%3Ayarnpkg+)) because we felt like this was important for the ecosystem. This is the main difference: we make our own informed decisions regarding the project roadmap.
 
 Speed is relative and a temporary state. Processes, roadmaps and core values are what stick.
+
+## Why is TypeScript patched even if I don't use Plug'n'Play?
+
+Given that PnP is a resolver standard different from Node, tools that reimplement the `require.resolve` API need to add some logic to account for the PnP resolution. While various projects did so (for example Webpack 5 now supports PnP out of the box), a few are still on the fence about it. In the case of TypeScript we started and keep maintaining a [pull request](https://github.com/microsoft/TypeScript/pull/35206), but the TypeScript team still has to accept it. In order to unblock our users, we made the decision to automatically apply this exact pull request to the downloaded TypeScript versions, using our new [`patch:` protocol](/features/protocols#patch).
+
+Which now begs the question: why do we still apply this patch even when Plug'n'Play is disabled? The main reason is that Yarn intends to provide consistent behaviour. Some setups involve using the `node_modules` linker during development (to avoid having to setup editor [SDKS](/getting-started/editor-sdks)) and PnP in production (for install speed). If we were to only apply the patches when PnP is enabled, then the package cache would turn different, which would for example break immutable installs.
+
+We *could* potentially make it configurable through a switch, but in the end we decided it wasn't worth the extra configuration:
+
+- The TypeScript patch is a noop if PnP isn't enabled, so this shouldn't affect your work (if it does, please open an issue)
+- We hope to eventually land this PR in TypeScript one day, so the more eyes we can get on it the higher our confidence will be
+- Since Yarn 3+, failing builtin patches are simply ignored and fallback to the original sources
