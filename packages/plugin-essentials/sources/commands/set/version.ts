@@ -105,20 +105,16 @@ export async function resolveRange(configuration: Configuration, request: string
   const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
 
   const candidates = data.tags.filter(version => {
-    try {
-      const candidate = new semverUtils.SemVer(version);
+    const candidate = new semverUtils.SemVer(version);
 
-      // Ignore prereleases
-      if (candidate.prerelease.length > 0)
-        return false;
+    // Ignore prereleases
+    if (candidate.prerelease.length > 0)
+      return false;
 
-      if (!range.test(candidate))
-        return false;
+    if (!range.test(candidate))
+      return false;
 
-      return true;
-    } catch { }
-
-    return false;
+    return true;
   });
 
   if (candidates.length === 0)
