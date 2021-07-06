@@ -5,6 +5,11 @@ import {Filename, PortablePath, ppath, xfs, npath}                              
 import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
 import semver                                                                                from 'semver';
 
+export type Tags = {
+  latest: Record<string, string>;
+  tags: Array<string>;
+};
+
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
   static paths = [
@@ -55,9 +60,9 @@ export default class SetVersionCommand extends BaseCommand {
     if (this.version === `self`)
       bundleUrl = getBundlePath();
     else if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
-      bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleUrl = `https://repo.yarnpkg.com/${await resolveTag(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `canary`)
-      bundleUrl = `https://repo.yarnpkg.com/${await findVersion(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleUrl = `https://repo.yarnpkg.com/${await resolveTag(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `classic`)
       bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
@@ -67,7 +72,7 @@ export default class SetVersionCommand extends BaseCommand {
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
       bundleUrl = `https://github.com/yarnpkg/yarn/releases/download/v${this.version}/yarn-${this.version}.js`;
     else if (semverUtils.validRange(this.version))
-      throw new UsageError(`Support for ranges got removed - please use the exact version you want to install, or 'latest' to get the latest build available`);
+      bundleUrl = `https://repo.yarnpkg.com/${await resolveRange(configuration, this.version)}/packages/yarnpkg-cli/bin/yarn.js`;
     else
       throw new UsageError(`Invalid version descriptor "${this.version}"`);
 
@@ -94,10 +99,39 @@ export default class SetVersionCommand extends BaseCommand {
   }
 }
 
-export async function findVersion(configuration: Configuration, request: `stable` | `canary`) {
-  const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
+export async function resolveRange(configuration: Configuration, request: string) {
+  const range = semverUtils.validRange(request)!;
+
+  const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
+
+  const candidates = data.tags.filter(version => {
+    try {
+      const candidate = new semverUtils.SemVer(version);
+
+      // Ignore prereleases
+      if (candidate.prerelease.length > 0)
+        return false;
+
+      if (!range.test(candidate))
+        return false;
+
+      return true;
+    } catch { }
+
+    return false;
+  });
+
+  if (candidates.length === 0)
+    throw new UsageError(`No matching release found for range ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)}.`);
+
+  // The tags on the website are sorted by semver descending
+  return candidates[0];
+}
+
+export async function resolveTag(configuration: Configuration, request: `stable` | `canary`) {
+  const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
   if (!data.latest[request])
-    throw new UsageError(`Tag '${request}' not found`);
+    throw new UsageError(`Tag ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)} not found`);
 
   return data.latest[request];
 }
