@@ -30,7 +30,7 @@ export default class SetVersionCommand extends BaseCommand {
         - \`canary\` -> the most recent canary (release candidate) berry (\`>=2.0.0\`) release
         - \`classic\` -> the most recent classic (\`^0.x || ^1.x\`) release
 
-      - a semver range (e.g. \`2.x\`) -> the most recent version satisfying the range
+      - a semver range (e.g. \`2.x\`) -> the most recent version satisfying the range (limited to berry releases)
 
       - a semver version (e.g. \`2.4.1\`, \`1.22.1\`)
 
