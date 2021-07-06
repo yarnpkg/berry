@@ -1,1 +1,3 @@
-export * as sdkUtils from './sdkUtils';
+import * as sdkUtils from './sdkUtils';
+
+export {sdkUtils};
