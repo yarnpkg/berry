@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-import {Cli, Builtins} from 'clipanion';
+import {Cli, Builtins}  from 'clipanion';
 
-import RunCommand      from './commands/RunCommand';
+import ClipanionCommand from './commands/ClipanionCommand';
+import RunCommand       from './commands/RunCommand';
 
 const cli = new Cli({
   binaryLabel: `Yarn PnPify`,
@@ -11,8 +12,9 @@ const cli = new Cli({
 });
 
 cli.register(RunCommand);
+// TODO: use the builtin entry once https://github.com/arcanis/clipanion/pull/91 is merged
+cli.register(ClipanionCommand);
 
-cli.register(Builtins.DefinitionsCommand);
 cli.register(Builtins.HelpCommand);
 cli.register(Builtins.VersionCommand);
 
