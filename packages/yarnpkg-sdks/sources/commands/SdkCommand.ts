@@ -109,7 +109,7 @@ export default class SdkCommand extends Command {
     ]);
 
     if (allIntegrations.size === 0 && !onlyBase)
-      throw new UsageError(`No integrations have been provided as arguments, and no preexisting integrations could be found. Make sure to run \`yarn sdks --sdk <integrations>\` first, or \`yarn sdks --sdk base\` if you only need the SDK files and prefer to manage your own environment settings. Run \`yarn sdks --sdk -h\` to see the list of supported integrations.`);
+      throw new UsageError(`No integrations have been provided as arguments, and no preexisting integrations could be found. Make sure to run \`yarn sdks <integrations>\` first, or \`yarn sdks base\` if you only need the SDK files and prefer to manage your own environment settings. Run \`yarn sdks -h\` to see the list of supported integrations.`);
 
     const report = await StreamReport.start({
       configuration,
