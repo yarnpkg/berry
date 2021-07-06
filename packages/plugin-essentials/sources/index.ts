@@ -80,6 +80,8 @@ declare module '@yarnpkg/core' {
     // One in packages/plugin-essentials and one virtual package.
     // Defining this property with two different enum instances leads to a compiler error.
     defaultSemverRangePrefix: `^` | `~` | ``;
+
+    alias: Map<string, string>;
   }
 }
 
@@ -96,6 +98,15 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       values: [`^`, `~`, ``],
       default: suggestUtils.Modifier.CARET,
+    },
+
+    alias: {
+      description: `Command aliases`,
+      type: SettingsType.MAP,
+      valueDefinition: {
+        description: ``,
+        type: SettingsType.STRING,
+      },
     },
   },
   commands: [
