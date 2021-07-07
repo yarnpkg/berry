@@ -206,7 +206,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: false,
   },
   updateLockfileOnly: {
-    description: `If true, Yarn will only fetch packages of which checksum doesn't exist and skip the link step during the install.`,
+    description: `If true, Yarn will only update the lockfile, fetching packages of which checksum doesn't exist and skipping the link step during the install.`,
     type: SettingsType.BOOLEAN,
     default: false,
   },
