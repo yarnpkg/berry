@@ -193,7 +193,7 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
   const sourceFile = await ts.createSourceFile(
     npath.fromPortablePath(p),
     content,
-    ts.ScriptTarget.ES2015,
+    ts.ScriptTarget.JSON,
     /*setParentNodes */ true,
   );
 
