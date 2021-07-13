@@ -4,41 +4,9 @@
 
 Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 
-## Master
+## Master (soon-to-be 3.0)
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
-
-### Commands
-
-- `yarn exec` got support for running shell scripts using Yarn's portable shell
-
-### Bugfixes
-
-- The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
-- Plugins can now access `yup` again to make migration easier - will be removed again in the future
-- `yarn config unset` will now correctly unset non-nested properties
-
-### Shell
-
-- Yarn's portable shell now supports background jobs with color-coded output.
-
-## 3.0.0-rc.2
-
-```
-yarn set version 3.0.0-rc.2
-```
-
-Few functional changes; mostly intended to fix distribution issues.
-
-- `yarn plugin import` can now install specific versions of the official plugins.
-- `yarn plugin import` will now download plugins compatible with the current CLI by default.
-- Fixed a bug in `yarn version check` when used with the `--prerelease` flag.
-
-## 3.0.0-rc.1
-
-```
-yarn set version 3.0.0-rc.1
-```
 
 ### **Breaking Changes**
 
@@ -85,6 +53,9 @@ yarn set version 3.0.0-rc.1
 - Should any of `preinstall`, `install`, `postinstall` fail, the remaining scripts will be skipped.
 - The `git:` protocol will now default to fetching `HEAD` (rather than the hardcoded `master`).
 - The `SIGTERM` signal will now be propagated to child processes.
+- The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
+- `yarn config unset` will now correctly unset non-nested properties
+- The TypeScript SDK now 
 - And a bunch of smaller fixes.
 
 ### Settings
@@ -95,6 +66,9 @@ yarn set version 3.0.0-rc.1
 
 ### Commands
 
+- `yarn init` can now be run even from within existing projects (will create missing files).
+- `yarn init` and `yarn set version` will set the [`packageManager`]() field.
+- `yarn set version` now downloads binaries from the official Yarn website (rather than GitHub).
 - `yarn set version from sources` will now upgrade the builtin plugins as well unless `--skip-plugins` is set.
 - `yarn version apply` now support a new `--prerelease` flag which replaces how prerelease were previously handled.
 - `yarn run` should be significantly faster to boot on large projects.
@@ -103,6 +77,14 @@ yarn set version 3.0.0-rc.1
 - `yarn patch-commit` now support a new `-s,--save` flag which will save the patch instead of just printing it.
 - `yarn up` now support a new `-R,--recursive` flag which will upgrade the specified package, regardless where it is.
 - `yarn config unset` is a new command that will remove a setting from the local configuration (or home if `-H` is set).
+- `yarn exec` got support for running shell scripts using Yarn's portable shell.
+- `yarn plugin import` can now install specific versions of the official plugins.
+- `yarn plugin import` will now download plugins compatible with the current CLI by default.
+
+### Builtin Shell
+
+- The shell now supports background jobs, with color-coded output.
+- It now also supports redirections from file descriptors.
 
 ### Compatibility
 
@@ -110,7 +92,9 @@ yarn set version 3.0.0-rc.1
 - The patched filesystem now supports file URLs, `bigint`, and `fstat`.
 - An official ESBuild resolver is now provided under the name `@yarnpkg/esbuild-plugin-pnp`. We use it to bundle Yarn itself!
 - PnP projects can now use the Node [`exports` field](https://nodejs.org/api/packages.html#packages_package_entry_points) - regardless of the Node version.
+- The PnP hook now supports the `node:` protocol (new in Node 16)
 - The Prettier SDK does not use PnPify anymore since it was its only remaining use, and was fairly invasive; as a result, the Prettier plugins must be specified in Prettier's `plugins` configuration property.
+- Zip terminal links can now be clicked from within VSCode
 - Builtin patches that fail to apply will no longer cause an error (they'll emit a warning and the original sources will be used instead).
   - Remember that patches are a problem for our team too, and that we only do this because we don't have any other option available to us right now - if you wish to help, consider [upvoting](https://github.com/microsoft/TypeScript/pull/35206) the relevant pull request in the TypeScript repository or, if you work at Microsoft, perhaps mention to your TypeScript team next door that fixing this would benefit you.
 
