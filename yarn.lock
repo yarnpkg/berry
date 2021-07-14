@@ -25483,14 +25483,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"typanion@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "typanion@npm:3.3.0"
-  checksum: 659a5dcd9c969e98cd658dc85c3ee1d1c692a2ce6f6f378f5fce086776c8ef5806c0a1311711518f32173c315f30bae249abe1c18398a4c939a5ced5ec880f1e
-  languageName: node
-  linkType: hard
-
-"typanion@npm:^3.3.1":
+"typanion@npm:^3.3.0, typanion@npm:^3.3.1":
   version: 3.3.2
   resolution: "typanion@npm:3.3.2"
   checksum: e7621409eb56cac3145ba3955702682627d4018a8f31b1c8355d354a93b86f7cea339583b211a4dbf7576847dd04aacad4af6912f3c42542e573b9c325e6093c
