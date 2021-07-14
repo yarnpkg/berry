@@ -1,7 +1,6 @@
-import {CommandContext, Configuration} from '@yarnpkg/core';
-import {Command, Cli}                  from 'clipanion';
+import {CommandContext, Configuration}                   from '@yarnpkg/core';
+import {Command, Cli, Definition as ClipanionDefinition} from 'clipanion';
 
-type ClipanionDefinition = ReturnType<Cli['definitions']>[number];
 type ExtendedDefinition = ClipanionDefinition & {
   plugin: {
     name: string,

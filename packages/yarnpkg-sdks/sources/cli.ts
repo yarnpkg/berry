@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-import {Cli, Builtins}  from 'clipanion';
+import {Cli, Builtins} from 'clipanion';
 
-import ClipanionCommand from './commands/ClipanionCommand';
-import SdkCommand       from './commands/SdkCommand';
+import SdkCommand      from './commands/SdkCommand';
 
 const cli = new Cli({
   binaryLabel: `Yarn SDKs`,
@@ -12,9 +11,8 @@ const cli = new Cli({
 });
 
 cli.register(SdkCommand);
-// TODO: use the builtin entry once https://github.com/arcanis/clipanion/pull/91 is merged
-cli.register(ClipanionCommand);
 
+cli.register(Builtins.DefinitionsCommand);
 cli.register(Builtins.HelpCommand);
 cli.register(Builtins.VersionCommand);
 
