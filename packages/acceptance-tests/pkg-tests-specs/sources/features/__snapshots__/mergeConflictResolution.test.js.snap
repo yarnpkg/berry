@@ -26,7 +26,7 @@ __metadata:
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
     no-deps: \\"*\\"
-  languageName: node
+  languageName: unknown
   linkType: soft
 "
 `;
