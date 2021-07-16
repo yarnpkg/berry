@@ -497,4 +497,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       twing: optionalPeerDep,
     },
   }],
+  // https://github.com/vuejs/vue-loader/pull/1853
+  [`vue-loader@<=16.3.1`, {
+    peerDependencies: {
+      '@vue/compiler-sfc': `^3.0.8`,
+      webpack: `^4.1.0 || ^5.0.0-0`,
+    },
+  }],
 ];
