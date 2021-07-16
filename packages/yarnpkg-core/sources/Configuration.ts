@@ -1008,7 +1008,7 @@ export class Configuration {
 
       const dynamicPlugins = new Set();
 
-      const importPlugin = (pluginPath: PortablePath, source: string) => {
+      const importPlugin = async (pluginPath: PortablePath, source: string) => {
         const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
 
         // Prevent plugin redefinition so that the ones declared deeper in the
@@ -1025,8 +1025,8 @@ export class Configuration {
           }
         };
 
-        const plugin = miscUtils.prettifySyncErrors(() => {
-          return getDefault(factory(pluginRequire));
+        const plugin = await miscUtils.prettifyAsyncErrors(async () => {
+          return getDefault(await factory(pluginRequire));
         }, message => {
           return `${message} (when initializing ${name}, defined in ${source})`;
         });
@@ -1040,7 +1040,7 @@ export class Configuration {
       if (environmentSettings.plugins) {
         for (const userProvidedPath of environmentSettings.plugins.split(`;`)) {
           const pluginPath = ppath.resolve(startingCwd, npath.toPortablePath(userProvidedPath));
-          importPlugin(pluginPath, `<environment>`);
+          await importPlugin(pluginPath, `<environment>`);
         }
       }
 
