@@ -56,13 +56,27 @@ Your VSCode project is now configured to use the exact same version of TypeScrip
 
 Note that VSCode might ask you to do Step 3 again from time to time, but apart from that your experience should be mostly the same as usual. Happy development!
 
-### VIM / coc.nvim
+### VIM
 
-Run the following command, which will generate a new directory called `.yarn/sdks`:
+To support features like go-to-definition a plugin like [vim-rzip](https://github.com/lbrayner/vim-rzip) is needed.
+
+#### coc.nvim
+
+Run the following command, which will generate a new directory called `.yarn/sdks` and create a `.vim/coc-settings.json` file:
 
 ```bash
 yarn dlx @yarnpkg/pnpify --sdk vim
 ```
+
+#### Neovim Native LSP
+
+Run the following command, which will generate a new directory called `.yarn/sdks`:
+
+```bash
+yarn dlx @yarnpkg/pnpify --sdk base
+```
+
+With the `.yarn/sdks` in place TypeScript support should work out of the box with [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) and [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server).
 
 ### Emacs
 
