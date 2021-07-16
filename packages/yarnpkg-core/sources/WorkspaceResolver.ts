@@ -55,7 +55,7 @@ export class WorkspaceResolver implements Resolver {
 
       version: workspace.manifest.version || `0.0.0`,
 
-      languageName: workspace.manifest.languageName || opts.project.configuration.get(`defaultLanguageName`),
+      languageName: `unknown`,
       linkType: LinkType.SOFT,
 
       dependencies: new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]),
