@@ -1056,7 +1056,7 @@ export class Configuration {
             : userPluginEntry;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          importPlugin(pluginPath, path);
+          await importPlugin(pluginPath, path);
         }
       }
     }
