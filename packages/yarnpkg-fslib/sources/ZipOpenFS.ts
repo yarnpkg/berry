@@ -30,9 +30,11 @@ export const getArchivePart = (path: string) => {
     nextCharIdx = idx + DOT_ZIP.length;
     if (path[nextCharIdx] === ppath.sep)
       break;
+
     // Disallow files named ".zip"
     if (path[idx - 1] === ppath.sep)
       return null;
+
     idx = path.indexOf(DOT_ZIP, nextCharIdx);
   }
 
