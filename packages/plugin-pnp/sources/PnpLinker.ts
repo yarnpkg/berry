@@ -1,13 +1,13 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                        from '@yarnpkg/core';
-import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
-import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                         from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings}                    from '@yarnpkg/pnp';
-import {UsageError}                                                                                          from 'clipanion';
+import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                           from '@yarnpkg/core';
+import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
+import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
+import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                            from '@yarnpkg/fslib';
+import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
+import {UsageError}                                                                                             from 'clipanion';
 
-import {getPnpPath}                                                                                          from './index';
-import * as jsInstallUtils                                                                                   from './jsInstallUtils';
-import * as pnpUtils                                                                                         from './pnpUtils';
+import {getPnpPath}                                                                                             from './index';
+import * as jsInstallUtils                                                                                      from './jsInstallUtils';
+import * as pnpUtils                                                                                            from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Some packages do weird stuff and MUST be unplugged. I don't like them.
@@ -83,6 +83,8 @@ export class PnpInstaller implements Installer {
     location: PortablePath,
   }> = new Map();
 
+  private isESMLoaderRequired: boolean = false;
+
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
   }
@@ -90,7 +92,7 @@ export class PnpInstaller implements Installer {
   getCustomDataKey() {
     return JSON.stringify({
       name: `PnpInstaller`,
-      version: 1,
+      version: 2,
     });
   }
 
@@ -141,6 +143,9 @@ export class PnpInstaller implements Installer {
           this.customData.store.set(pkg.locatorHash, customPackageData);
         }
       }
+
+      if (customPackageData.manifest.type === `module`)
+        this.isESMLoaderRequired = true;
 
       dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
     }
@@ -228,9 +233,13 @@ export class PnpInstaller implements Installer {
       await xfs.removePromise(pnpPath.cjsLegacy);
     }
 
+    if (!this.isEsmEnabled())
+      await xfs.removePromise(pnpPath.esmLoader);
+
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
       await xfs.removePromise(pnpPath.cjs);
       await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+      await xfs.removePromise(pnpPath.esmLoader);
 
       return undefined;
     }
@@ -283,6 +292,22 @@ export class PnpInstaller implements Installer {
     // Nothing to transform
   }
 
+  isEsmEnabled() {
+    if (this.opts.project.configuration.get(`enableExperimentalEsmLoader`))
+      return true;
+
+    if (this.isESMLoaderRequired)
+      return true;
+
+    for (const workspace of this.opts.project.workspaces) {
+      if (workspace.manifest.type === `module`) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
@@ -314,6 +339,9 @@ export class PnpInstaller implements Installer {
       await xfs.changeFilePromise(pnpDataPath, dataFile, {automaticNewlines: true});
       await xfs.chmodPromise(pnpDataPath, 0o644);
     }
+
+    if (this.isEsmEnabled())
+      await xfs.writeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate());
 
     const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
     if (this.unpluggedPaths.size === 0) {
@@ -459,6 +487,7 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
       cpu: manifest.cpu,
       scripts: manifest.scripts,
       preferUnplugged: manifest.preferUnplugged,
+      type: manifest.type,
     },
     misc: {
       extractHint: jsInstallUtils.getExtractHint(fetchResult),

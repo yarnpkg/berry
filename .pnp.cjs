@@ -7320,11 +7320,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:18.0.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-commonjs-virtual-138f99b153/0/cache/@rollup-plugin-commonjs-npm-18.0.0-6e9288de62-1e8d2589ab.zip/node_modules/@rollup/plugin-commonjs/",
+        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-commonjs-virtual-6346e6754f/0/cache/@rollup-plugin-commonjs-npm-18.0.0-6e9288de62-1e8d2589ab.zip/node_modules/@rollup/plugin-commonjs/",
           "packageDependencies": [
-            ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:18.0.0"],
-            ["@rollup/pluginutils", "virtual:138f99b1535bc3900ca6fa4b5087f04b16477d2dcd046c3fa6dce737984cefa6139c569163b4d891cb098e48482636cba221284ba1f0284a06f2847cdf61d50c#npm:3.1.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
             ["@types/rollup", null],
             ["commondir", "npm:1.0.1"],
             ["estree-walker", "npm:2.0.2"],
@@ -7349,11 +7349,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-node-resolve-virtual-486ecf0085/0/cache/@rollup-plugin-node-resolve-npm-11.2.1-1cea144df4-6f3b3ecf9a.zip/node_modules/@rollup/plugin-node-resolve/",
+        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-node-resolve-virtual-ae233f33e2/0/cache/@rollup-plugin-node-resolve-npm-11.2.1-1cea144df4-6f3b3ecf9a.zip/node_modules/@rollup/plugin-node-resolve/",
           "packageDependencies": [
-            ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],
-            ["@rollup/pluginutils", "virtual:138f99b1535bc3900ca6fa4b5087f04b16477d2dcd046c3fa6dce737984cefa6139c569163b4d891cb098e48482636cba221284ba1f0284a06f2847cdf61d50c#npm:3.1.0"],
+            ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
+            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
             ["@types/resolve", "npm:1.17.1"],
             ["@types/rollup", null],
             ["builtin-modules", "npm:3.2.0"],
@@ -7384,10 +7384,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:138f99b1535bc3900ca6fa4b5087f04b16477d2dcd046c3fa6dce737984cefa6139c569163b4d891cb098e48482636cba221284ba1f0284a06f2847cdf61d50c#npm:3.1.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-d5042195b6/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
+        ["virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-b3203f5e42/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
           "packageDependencies": [
-            ["@rollup/pluginutils", "virtual:138f99b1535bc3900ca6fa4b5087f04b16477d2dcd046c3fa6dce737984cefa6139c569163b4d891cb098e48482636cba221284ba1f0284a06f2847cdf61d50c#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
             ["@types/estree", "npm:0.0.39"],
             ["@types/rollup", null],
             ["estree-walker", "npm:1.0.1"],
@@ -7400,10 +7400,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:8a75fd665d2cffdae4afc565e38653aef357920bdc4cefff043dcec6bd095942c290a59daa08791f732c0600903ebb3097983add68948f2a1c3e74a290b342a7#npm:4.1.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-d16652e0ee/0/cache/@rollup-pluginutils-npm-4.1.0-d00c3a42d6-5ef767b4e5.zip/node_modules/@rollup/pluginutils/",
+        ["virtual:d1800bb785de4e8fd3deeb0bd23bc2a0fcefe1ce67a4bc1a38bee5d21f779cc01416cef04745a05260bb4b269cbfc8994c70d5c358d62aa114c8782281bc9e0d#npm:4.1.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-b715ed13a5/0/cache/@rollup-pluginutils-npm-4.1.0-d00c3a42d6-5ef767b4e5.zip/node_modules/@rollup/pluginutils/",
           "packageDependencies": [
-            ["@rollup/pluginutils", "virtual:8a75fd665d2cffdae4afc565e38653aef357920bdc4cefff043dcec6bd095942c290a59daa08791f732c0600903ebb3097983add68948f2a1c3e74a290b342a7#npm:4.1.0"],
+            ["@rollup/pluginutils", "virtual:d1800bb785de4e8fd3deeb0bd23bc2a0fcefe1ce67a4bc1a38bee5d21f779cc01416cef04745a05260bb4b269cbfc8994c70d5c358d62aa114c8782281bc9e0d#npm:4.1.0"],
             ["@types/rollup", null],
             ["estree-walker", "npm:2.0.2"],
             ["picomatch", "npm:2.2.3"],
@@ -10191,8 +10191,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@arcanis/slice-ansi", "npm:1.0.2"],
-            ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:18.0.0"],
-            ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/ci-info", "npm:2.0.0"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
@@ -10234,7 +10234,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pluralize", "npm:7.0.0"],
             ["pretty-bytes", "npm:5.6.0"],
             ["rollup", "npm:2.45.2"],
-            ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],
+            ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["semver", "npm:7.3.5"],
             ["stream-to-promise", "npm:2.2.0"],
             ["strip-ansi", "npm:6.0.0"],
@@ -14763,12 +14763,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-pnp/",
           "packageDependencies": [
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/node", "npm:13.7.0"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/monorepo", "workspace:."],
+            ["cjs-module-lexer", "npm:1.2.1"],
+            ["esbuild", [
+              "esbuild-wasm",
+              "npm:0.11.20"
+            ]],
             ["resolve.exports", "npm:1.0.2"],
+            ["rollup", "npm:2.45.2"],
+            ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A4.3.2#~builtin<compat/typescript>::version=4.3.2&hash=d8b4e7"],
             ["webpack", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:5.38.1"],
@@ -17604,6 +17613,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cipher-base", "npm:1.0.4"],
             ["inherits", "npm:2.0.4"],
             ["safe-buffer", "npm:5.2.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["cjs-module-lexer", [
+        ["npm:1.2.1", {
+          "packageLocation": "./.yarn/cache/cjs-module-lexer-npm-1.2.1-11eb01eaf4-9e9905e3f5.zip/node_modules/cjs-module-lexer/",
+          "packageDependencies": [
+            ["cjs-module-lexer", "npm:1.2.1"]
           ],
           "linkType": "HARD",
         }]
@@ -35181,11 +35199,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4", {
-          "packageLocation": "./.yarn/__virtual__/rollup-plugin-esbuild-virtual-8a75fd665d/0/cache/rollup-plugin-esbuild-npm-3.0.4-12d9ea0c89-d1fca713fe.zip/node_modules/rollup-plugin-esbuild/",
+        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4", {
+          "packageLocation": "./.yarn/__virtual__/rollup-plugin-esbuild-virtual-d1800bb785/0/cache/rollup-plugin-esbuild-npm-3.0.4-12d9ea0c89-d1fca713fe.zip/node_modules/rollup-plugin-esbuild/",
           "packageDependencies": [
-            ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],
-            ["@rollup/pluginutils", "virtual:8a75fd665d2cffdae4afc565e38653aef357920bdc4cefff043dcec6bd095942c290a59daa08791f732c0600903ebb3097983add68948f2a1c3e74a290b342a7#npm:4.1.0"],
+            ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
+            ["@rollup/pluginutils", "virtual:d1800bb785de4e8fd3deeb0bd23bc2a0fcefe1ce67a4bc1a38bee5d21f779cc01416cef04745a05260bb4b269cbfc8994c70d5c358d62aa114c8782281bc9e0d#npm:4.1.0"],
             ["@types/esbuild", null],
             ["@types/rollup", null],
             ["esbuild", [
@@ -50129,7 +50147,64 @@ function getIssuerModule(parent) {
 function getPathForDisplay(p) {
   return npath.normalize(npath.fromPortablePath(p));
 }
+;// CONCATENATED MODULE: ./sources/loader/nodeUtils.ts
+
+
+ // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
+
+function resolveMainPath(main) {
+  let mainPath = external_module_.Module._findPath(npath.resolve(main), null, true);
+
+  if (!mainPath) return false; // const preserveSymlinksMain = getOptionValue(`--preserve-symlinks-main`);
+  // if (!preserveSymlinksMain)
+
+  mainPath = external_fs_default().realpathSync(mainPath);
+  return mainPath;
+} // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L26-L41
+
+function shouldUseESMLoader(mainPath) {
+  // const userLoader = getOptionValue(`--experimental-loader`);
+  // if (userLoader)
+  //   return true;
+  // const esModuleSpecifierResolution =
+  //   getOptionValue(`--experimental-specifier-resolution`);
+  // if (esModuleSpecifierResolution === `node`)
+  //   return true;
+  // Determine the module format of the main
+  if (mainPath && mainPath.endsWith(`.mjs`)) return true;
+  if (!mainPath || mainPath.endsWith(`.cjs`)) return false;
+  const pkg = readPackageScope(mainPath);
+  return pkg && pkg.data.type === `module`;
+} // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
+
+function readPackageScope(checkPath) {
+  const rootSeparatorIndex = checkPath.indexOf(npath.sep);
+  let separatorIndex;
+
+  do {
+    separatorIndex = checkPath.lastIndexOf(npath.sep);
+    checkPath = checkPath.slice(0, separatorIndex);
+    if (checkPath.endsWith(`${npath.sep}node_modules`)) return false;
+    const pjson = readPackage(checkPath + npath.sep);
+
+    if (pjson) {
+      return {
+        data: pjson,
+        path: checkPath
+      };
+    }
+  } while (separatorIndex > rootSeparatorIndex);
+
+  return false;
+} // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L284-L313
+
+function readPackage(requestPath) {
+  const jsonPath = npath.resolve(requestPath, `package.json`);
+  if (!external_fs_default().existsSync(jsonPath)) return null;
+  return JSON.parse(external_fs_default().readFileSync(jsonPath, `utf8`));
+}
 ;// CONCATENATED MODULE: ./sources/loader/applyPatch.ts
+
 
 
 
@@ -50217,8 +50292,26 @@ function applyPatch(pnpapi, opts) {
     }; // Check if the module has already been created for the given file
 
     const cacheEntry = entry.cache[modulePath];
-    if (cacheEntry) return cacheEntry.exports; // Create a new module and store it into the cache
+
+    if (cacheEntry) {
+      // @ts-expect-error
+      if (!cacheEntry.loaded && !cacheEntry.isLoading && typeof cacheEntry.load === `function`) {
+        // @ts-expect-error
+        cacheEntry.isLoading = true;
+
+        try {
+          // @ts-expect-error
+          cacheEntry.load(modulePath);
+        } finally {
+          // @ts-expect-error
+          cacheEntry.isLoading = false;
+        }
+      }
+
+      return cacheEntry.exports;
+    } // Create a new module and store it into the cache
     // @ts-expect-error
+
 
     const module = new external_module_.Module(modulePath, parent); // @ts-expect-error
 
@@ -50235,7 +50328,11 @@ function applyPatch(pnpapi, opts) {
 
     try {
       // @ts-expect-error
-      module.load(modulePath);
+      module.isLoading = true; // @ts-expect-error
+
+      module.load(modulePath); // @ts-expect-error
+
+      module.isLoading = false;
       hasThrown = false;
     } finally {
       if (hasThrown) {
@@ -50391,19 +50488,17 @@ function applyPatch(pnpapi, opts) {
   const originalFindPath = external_module_.Module._findPath;
 
   external_module_.Module._findPath = function (request, paths, isMain) {
-    if (request === `pnpapi`) return false; // Node sometimes call this function with an absolute path and a `null` set
-    // of paths. This would cause the resolution to fail. To avoid that, we
-    // fallback on the regular resolution. We only do this when `isMain` is
-    // true because the Node default resolution doesn't handle well in-zip
-    // paths, even absolute, so we try to use it as little as possible.
+    if (request === `pnpapi`) return false;
+    if (!enableNativeHooks) return originalFindPath.call(external_module_.Module, request, paths, isMain); // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L490-L494
 
-    if (!enableNativeHooks || isMain && npath.isAbsolute(request)) return originalFindPath.call(external_module_.Module, request, paths, isMain);
+    const isAbsolute = npath.isAbsolute(request);
+    if (isAbsolute) paths = [``];else if (!paths || paths.length === 0) return false;
 
-    for (const path of paths || []) {
+    for (const path of paths) {
       let resolution;
 
       try {
-        const pnpApiPath = opts.manager.findApiPathFor(path);
+        const pnpApiPath = opts.manager.findApiPathFor(isAbsolute ? request : path);
 
         if (pnpApiPath !== null) {
           const api = opts.manager.getApiEntry(pnpApiPath, true).instance;
@@ -50421,6 +50516,21 @@ function applyPatch(pnpapi, opts) {
     }
 
     return false;
+  }; // Specifying the `--experimental-loader` flag makes Node enter ESM mode so we change it to not do that
+  // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L72-L81
+
+
+  const originalRunMain = moduleExports.runMain;
+
+  moduleExports.runMain = function (main = process.argv[1]) {
+    const resolvedMain = resolveMainPath(main);
+    const useESMLoader = resolvedMain ? shouldUseESMLoader(resolvedMain) : false;
+
+    if (useESMLoader) {
+      originalRunMain(main);
+    } else {
+      external_module_.Module._load(main, null, true);
+    }
   };
 
   patchFs((external_fs_default()), new PosixFS(opts.fakeFs));
@@ -50832,7 +50942,7 @@ function makeApi(runtimeState, opts) {
    */
 
 
-  function applyNodeExportsResolution(unqualifiedPath) {
+  function applyNodeExportsResolution(unqualifiedPath, conditions = new Set()) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       resolveIgnored: true,
       includeDiscardFromLookup: true
@@ -50856,11 +50966,12 @@ function makeApi(runtimeState, opts) {
 
     if (!isRelativeRegexp.test(subpath)) subpath = `./${subpath}`;
     const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
-      browser: false,
-      require: true,
+      browser: conditions.has(`browser`),
+      require: conditions.size === 0 ? true : conditions.has(`require`),
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions: []
+      // @ts-expect-error - Type should be Set | Array
+      conditions
     });
     if (typeof resolvedExport === `string`) return ppath.join(packageLocation, resolvedExport);
     return null;
@@ -51365,10 +51476,10 @@ function makeApi(runtimeState, opts) {
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request, unqualifiedPath) {
+  function resolveUnqualifiedExport(request, unqualifiedPath, conditions = new Set()) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request)) return unqualifiedPath;
-    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, conditions);
 
     if (unqualifiedExportPath) {
       return ppath.normalize(unqualifiedExportPath);
@@ -51410,7 +51521,8 @@ function makeApi(runtimeState, opts) {
 
   function resolveRequest(request, issuer, {
     considerBuiltins,
-    extensions
+    extensions,
+    conditions
   } = {}) {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {
       considerBuiltins
@@ -51419,7 +51531,7 @@ function makeApi(runtimeState, opts) {
 
     const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
 
-    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath) : unqualifiedPath;
+    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath, conditions) : unqualifiedPath;
 
     try {
       return resolveUnqualified(remappedPath, {

@@ -199,7 +199,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    *
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
-  function applyNodeExportsResolution(unqualifiedPath: PortablePath) {
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath, conditions: Set<string> = new Set()) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {
       resolveIgnored: true,
       includeDiscardFromLookup: true,
@@ -231,11 +231,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       subpath = `./${subpath}` as PortablePath;
 
     const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
-      browser: false,
-      require: true,
+      browser: conditions.has(`browser`),
+      require: conditions.size === 0 ? true : conditions.has(`require`),
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions: [],
+      // @ts-expect-error - Type should be Set | Array
+      conditions,
     });
 
     if (typeof resolvedExport === `string`)
@@ -778,12 +779,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath) {
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, conditions: Set<string> = new Set()) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request))
       return unqualifiedPath;
 
-    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, conditions);
     if (unqualifiedExportPath) {
       return ppath.normalize(unqualifiedExportPath);
     } else {
@@ -820,7 +821,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
     if (unqualifiedPath === null)
       return null;
@@ -831,7 +832,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         : false;
 
     const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored()
-      ? resolveUnqualifiedExport(request, unqualifiedPath)
+      ? resolveUnqualifiedExport(request, unqualifiedPath, conditions)
       : unqualifiedPath;
 
     try {
