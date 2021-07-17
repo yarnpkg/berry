@@ -834,7 +834,7 @@ export class Project {
     const fetcher = userFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
-    const locatorHashes = Array.from(
+    let locatorHashes = Array.from(
       new Set(
         miscUtils.sortMap(this.storedResolutions.values(), [
           (locatorHash: LocatorHash) => {
@@ -847,6 +847,9 @@ export class Project {
         ])
       )
     );
+
+    if (this.configuration.get(`updateLockfileOnly`))
+      locatorHashes = locatorHashes.filter((locatorHash: LocatorHash) => !this.storedChecksums.has(locatorHash));
 
     let firstError = false;
 
@@ -1436,10 +1439,12 @@ export class Project {
           if (extension.userProvided && extension.status === PackageExtensionStatus.Active)
             Configuration.telemetry?.reportPackageExtension(formatUtils.json(extension, formatUtils.Type.PACKAGE_EXTENSION));
 
+    const updateLockfileOnly = this.configuration.get(`updateLockfileOnly`);
+
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
 
-      if (typeof opts.persistProject === `undefined` || opts.persistProject) {
+      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && !updateLockfileOnly) {
         await this.cacheCleanup(opts);
       }
     });
@@ -1454,6 +1459,9 @@ export class Project {
 
     if (typeof opts.persistProject === `undefined` || opts.persistProject)
       await this.persist();
+
+    if (updateLockfileOnly)
+      return;
 
     await opts.report.startTimerPromise(`Link step`, async () => {
       await this.linkEverything(opts);

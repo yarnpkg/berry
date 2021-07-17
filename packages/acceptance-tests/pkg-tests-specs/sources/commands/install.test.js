@@ -349,5 +349,39 @@ describe(`Commands`, () => {
         expect(stdout).not.toMatch(/YN0004/g);
       }),
     );
+
+    test(
+      `it should fetch only required packages when using \`updateLockfileOnly: true\``,
+      makeTemporaryEnv({
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await writeFile(`${path}/.yarnrc.yml`, `updateLockfileOnly: true`);
+        await run(`install`);
+
+        const cacheBefore = await xfs.readdirPromise(`${path}/.yarn/cache`);
+        expect(cacheBefore.find(entry => entry.includes(`one-fixed-dep-npm-1.0.0`))).toBeDefined();
+        expect(cacheBefore.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+        await xfs.removePromise(`${path}/.yarn/cache`);
+        await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
+
+        const {code, stdout, stderr} = await run(`install`);
+        await expect({code, stdout, stderr}).toMatchSnapshot();
+
+        const cacheAfter = await xfs.readdirPromise(`${path}/.yarn/cache`);
+        expect(cacheAfter.find(entry => entry.includes(`one-fixed-dep-npm-1.0.0`))).toBeUndefined();
+        expect(cacheAfter.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeUndefined();
+        expect(cacheAfter.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
+      }),
+    );
   });
 });
