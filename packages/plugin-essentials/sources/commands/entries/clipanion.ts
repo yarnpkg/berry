@@ -47,8 +47,6 @@ export default class ClipanionCommand extends Command<CommandContext> {
       }
     }
 
-    this.context.stdout.write(`${JSON.stringify({
-      commands: clipanionDefinitions,
-    }, null, 2)}\n`);
+    this.context.stdout.write(`${JSON.stringify(clipanionDefinitions, null, 2)}\n`);
   }
 }
