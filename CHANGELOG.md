@@ -54,6 +54,11 @@ yarn set version 3.0.0-rc.1
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 - The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 - The cache files need to be regenerated. We had to change their timestamps in order to account for a flaw in the zip spec that was causing problems with some third-party tools.
+- `@yarnpkg/pnpify` has been refactored into 3 packages:
+  - `@yarnpkg/sdks` now contains the [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks)
+  - `@yarnpkg/pnpify` now contains the [PnPify CLI compatibility tool that creates in-memory `node_modules`](https://yarnpkg.com/advanced/pnpify)
+  - `@yarnpkg/nm` now contains the `node_modules` tree builder and hoister
+- The `--clipanion=definitions` commands supported by our CLIs will now expose the definitions on the entry point (rather than on `.command`)
 
 ### API
 
