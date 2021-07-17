@@ -223,7 +223,7 @@ export class PnpInstaller implements Installer {
     const pnpPath = getPnpPath(this.opts.project);
 
     if (xfs.existsSync(pnpPath.cjsLegacy)) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
+      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use Editor SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn sdks`, formatUtils.Type.CODE)}.`);
 
       await xfs.removePromise(pnpPath.cjsLegacy);
     }

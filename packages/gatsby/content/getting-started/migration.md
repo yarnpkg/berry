@@ -94,7 +94,7 @@ We have a [dedicated documentation](/getting-started/editor-sdks), but if you're
 
 1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode extension
 2. Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the *top level* of the project (rather than in a random workspace)
-3. Run `yarn dlx @yarnpkg/pnpify --sdk vscode`
+3. Run `yarn dlx @yarnpkg/sdks vscode`
 4. Commit the changes - this way contributors won't have to follow the same procedure
 5. For TypeScript, don't forget to select [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript) in VSCode
 
