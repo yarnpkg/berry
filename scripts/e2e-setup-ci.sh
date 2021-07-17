@@ -20,6 +20,9 @@ export YARN_ENABLE_INLINE_BUILDS=1
 # We want to allow installs to modify the lockfile
 export YARN_ENABLE_IMMUTABLE_INSTALLS=0
 
+# We want to make sure the projects work in a monorepo
+export YARN_PNP_FALLBACK_MODE=none
+
 # Otherwise git commit doesn't work, and some tools require it
 git config --global user.email "you@example.com"
 git config --global user.name "John Doe"
