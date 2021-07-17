@@ -221,7 +221,7 @@ export class Wrapper {
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
     await xfs.writeJsonPromise(absWrapperPath, {
       name: this.name,
-      version: `${manifest.version}-pnpify`,
+      version: `${manifest.version}-sdk`,
       main: manifest.main,
       type: `commonjs`,
     });
