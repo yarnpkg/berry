@@ -504,4 +504,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       webpack: `^4.1.0 || ^5.0.0-0`,
     },
   }],
+  // https://github.com/salesforce-ux/scss-parser/pull/43
+  [`scss-parser@*`, {
+    dependencies: {
+      lodash: `^4.17.21`,
+    },
+  }],
 ];
