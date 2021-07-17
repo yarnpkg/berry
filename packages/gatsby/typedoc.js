@@ -48,6 +48,7 @@ module.exports = {
         "@yarnpkg/parsers": `yarnpkg_parsers`,
         "@yarnpkg/pnp": `yarnpkg_pnp`,
         "@yarnpkg/pnpify": `yarnpkg_pnpify`,
+        "@yarnpkg/sdks": `yarnpkg_sdks`,
         "@yarnpkg/shell": `yarnpkg_shell`,
       },
       "Yarn Packages": {
