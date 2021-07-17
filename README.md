@@ -203,9 +203,11 @@ The following packages are generic and can be used in a variety of purposes (inc
 - [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.
 - [@yarnpkg/json-proxy](packages/yarnpkg-json-proxy) allows to temporarily convert any POD object to an immutable object.
 - [@yarnpkg/libzip](packages/yarnpkg-libzip) contains zlib+libzip bindings compiled to WebAssembly.
+- [@yarnpkg/nm](packages/yarnpkg-nm) contains the `node_modules` tree builder and hoister.
 - [@yarnpkg/parsers](packages/yarnpkg-parsers) can be used to parse the language used by [@yarnpkg/shell](packages/yarnpkg-shell).
 - [@yarnpkg/pnp](packages/yarnpkg-pnp) can be used to generate [Plug'n'Play](https://yarnpkg.com/features/pnp)-compatible hooks.
 - [@yarnpkg/pnpify](packages/yarnpkg-pnpify) is a CLI tool to transparently add PnP support to various tools.
+- [@yarnpkg/sdks](packages/yarnpkg-sdks) is a CLI tool to generate the [PnP Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks).
 - [@yarnpkg/shell](packages/yarnpkg-shell) is a portable bash-like shell interpreter.
 
 ## Yarn packages
