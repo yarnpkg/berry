@@ -20,7 +20,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       const command = commands[t];
       const sections = [];
 
-      const url = command.path.split(` `).slice(1).join(`/`);
+      const url = command.path.split(` `).slice(1).join(`/`) || `default`;
 
       const description = `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`;
 
