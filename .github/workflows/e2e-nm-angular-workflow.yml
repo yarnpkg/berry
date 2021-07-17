@@ -7,15 +7,15 @@ on:
     paths:
     - .github/workflows/e2e-angular-workflow.yml
     - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-pnpify/sources/hoist.ts
-    - packages/yarnpkg-pnpify/sources/buildNodeModulesTree.ts
+    - packages/yarnpkg-nm/sources/hoist.ts
+    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
     - packages/plugin-nm/sources/NodeModulesLinker.ts
   pull_request:
     paths:
     - .github/workflows/e2e-angular-workflow.yml
     - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-pnpify/sources/hoist.ts
-    - packages/yarnpkg-pnpify/sources/buildNodeModulesTree.ts
+    - packages/yarnpkg-nm/sources/hoist.ts
+    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
     - packages/plugin-nm/sources/NodeModulesLinker.ts
 
 name: 'E2E NM Angular'
