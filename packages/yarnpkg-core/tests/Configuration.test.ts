@@ -244,12 +244,10 @@ describe(`Configuration`, () => {
 
     it(`should merge mergeable array properties`, async () => {
       await initializeConfiguration({
-        logFilters: [
-          {
-            code: `YN0005`,
-            level: `info`,
-          },
-        ],
+        logFilters: [{
+          code: `YN0005`,
+          level: `info`,
+        }],
 
         unsafeHttpWhitelist: [
           `example.com`,
@@ -258,12 +256,10 @@ describe(`Configuration`, () => {
         const configuration = await Configuration.find(dir, null);
 
         configuration.useWithSource(`second file`, {
-          logFilters: [
-            {
-              code: `YN0027`,
-              level: `error`,
-            },
-          ],
+          logFilters: [{
+            code: `YN0027`,
+            level: `error`,
+          }],
 
           unsafeHttpWhitelist: [
             `evil.com`,
@@ -274,25 +270,26 @@ describe(`Configuration`, () => {
           new Map(Object.entries({
             code: `YN0027`,
             text: undefined,
+            pattern: undefined,
             level: `error`,
           })),
           new Map(Object.entries({
             code: `YN0005`,
             text: undefined,
+            pattern: undefined,
             level: `info`,
           })),
         ]);
+
         expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
           `example.com`,
         ]);
 
         configuration.useWithSource(`override file`, {
-          logFilters: [
-            {
-              code: `YN0066`,
-              level: `warning`,
-            },
-          ],
+          logFilters: [{
+            code: `YN0066`,
+            level: `warning`,
+          }],
 
           unsafeHttpWhitelist: [
             `yarnpkg.com`,
@@ -303,19 +300,23 @@ describe(`Configuration`, () => {
           new Map(Object.entries({
             code: `YN0027`,
             text: undefined,
+            pattern: undefined,
             level: `error`,
           })),
           new Map(Object.entries({
             code: `YN0005`,
             text: undefined,
+            pattern: undefined,
             level: `info`,
           })),
           new Map(Object.entries({
             code: `YN0066`,
             text: undefined,
+            pattern: undefined,
             level: `warning`,
           })),
         ]);
+
         expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
           `yarnpkg.com`,
         ]);

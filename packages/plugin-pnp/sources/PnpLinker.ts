@@ -40,7 +40,7 @@ export class PnpLinker implements Linker {
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
     });
 
     const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
@@ -58,7 +58,7 @@ export class PnpLinker implements Linker {
       return null;
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
     });
 
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
@@ -129,22 +129,28 @@ export class PnpInstaller implements Installer {
       // We never need to unplug soft links, since we don't control them
       pkg.linkType !== LinkType.SOFT;
 
-    let customPackageData = this.customData.store.get(pkg.locatorHash);
-    if (typeof customPackageData === `undefined`) {
-      customPackageData = await extractCustomPackageData(pkg, fetchResult);
-      if (pkg.linkType === LinkType.HARD) {
-        this.customData.store.set(pkg.locatorHash, customPackageData);
+    let customPackageData: CustomPackageData | undefined;
+    let dependencyMeta: DependencyMeta | undefined;
+
+    if (mayNeedToBeBuilt || mayNeedToBeUnplugged) {
+      customPackageData = this.customData.store.get(pkg.locatorHash);
+
+      if (typeof customPackageData === `undefined`) {
+        customPackageData = await extractCustomPackageData(pkg, fetchResult);
+        if (pkg.linkType === LinkType.HARD) {
+          this.customData.store.set(pkg.locatorHash, customPackageData);
+        }
       }
+
+      dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
     }
 
-    const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
-
     const buildScripts = mayNeedToBeBuilt
-      ? jsInstallUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
+      ? jsInstallUtils.extractBuildScripts(pkg, customPackageData!, dependencyMeta!, {configuration: this.opts.project.configuration, report: this.opts.report})
       : [];
 
     const packageFs = mayNeedToBeUnplugged
-      ? await this.unplugPackageIfNeeded(pkg, customPackageData, fetchResult, dependencyMeta)
+      ? await this.unplugPackageIfNeeded(pkg, customPackageData!, fetchResult, dependencyMeta!)
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))

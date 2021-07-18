@@ -90,8 +90,8 @@ export interface PathUtils<P extends Path> {
   cwd(): P;
 
   normalize(p: P): P;
-  join(...paths: Array<P|Filename>): P;
-  resolve(...pathSegments: Array<P|Filename>): P;
+  join(...paths: Array<P | Filename>): P;
+  resolve(...pathSegments: Array<P | Filename>): P;
   isAbsolute(path: P): boolean;
   relative(from: P, to: P): P;
   dirname(p: P): P;

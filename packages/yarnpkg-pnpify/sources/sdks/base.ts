@@ -37,6 +37,10 @@ export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = 
 export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const tsServerMonkeyPatch = `
     tsserver => {
+      if (!process.versions.pnp) {
+        return tsserver;
+      }
+
       const {isAbsolute} = require(\`path\`);
       const pnpApi = require(\`pnpapi\`);
 
@@ -95,6 +99,14 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
                 str = resolve(\`zipfile:\${str}\`);
               } break;
 
+              // Support neovim native LSP and [typescript-language-server](https://github.com/theia-ide/typescript-language-server)
+              // We have to resolve the actual file system path from virtual path,
+              // everything else is up to neovim
+              case \`neovim\`: {
+                str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
+                str = \`zipfile:\${str}\`;
+              } break;
+
               default: {
                 str = \`zip:\${str}\`;
               } break;
@@ -133,7 +145,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
       let hostInfo = \`unknown\`;
 
-      return Object.assign(Session.prototype, {
+      Object.assign(Session.prototype, {
         onMessage(/** @type {string} */ message) {
           const parsedMessage = JSON.parse(message)
 
@@ -157,6 +169,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           })));
         }
       });
+
+      return tsserver;
     };
   `;
 
@@ -170,6 +184,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
   await wrapper.writeFile(`lib/typescript.js` as PortablePath);
+  await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
 
   return wrapper;
 };

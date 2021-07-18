@@ -50,7 +50,7 @@ Argument
   / S* arg:ValueArgument { return arg }
 
 RedirectArgument
-  = S* redirect:RedirectType arg:ValueArgument { return { type: `redirection`, subtype: redirect, args: [arg] } }
+  = S* fd:[0-9]? redirect:RedirectType arg:ValueArgument { return { type: `redirection`, subtype: redirect, fd: fd !== null ? parseInt(fd) : null, args: [arg] } }
 
 RedirectType
   = '>>'

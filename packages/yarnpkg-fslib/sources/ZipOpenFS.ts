@@ -21,15 +21,22 @@ const DOT_ZIP = `.zip`;
  * The indexOf-based implementation is ~3.7x faster than a RegExp-based implementation.
  */
 export const getArchivePart = (path: string) => {
-  const idx = path.indexOf(DOT_ZIP);
+  let idx = path.indexOf(DOT_ZIP);
   if (idx <= 0)
     return null;
 
-  // Disallow files named ".zip"
-  if (path[idx - 1] === ppath.sep)
-    return null;
+  let nextCharIdx = idx;
+  while (idx >= 0) {
+    nextCharIdx = idx + DOT_ZIP.length;
+    if (path[nextCharIdx] === ppath.sep)
+      break;
 
-  const nextCharIdx = idx + DOT_ZIP.length;
+    // Disallow files named ".zip"
+    if (path[idx - 1] === ppath.sep)
+      return null;
+
+    idx = path.indexOf(DOT_ZIP, nextCharIdx);
+  }
 
   // The path either has to end in ".zip" or contain an archive subpath (".zip/...")
   if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)

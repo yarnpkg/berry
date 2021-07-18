@@ -17,7 +17,7 @@ We have some rules regarding our issues. Please check [the following page](/adva
 
 ## How can you help?
 
-- Review our documentation! We often aren't native english speakers, and our grammar might be a bit off. Any help we can get that makes our documentation more digest is appreciated!
+- Review our documentation! We often aren't native english speakers, and our grammar might be a bit off. Any help we can get that makes our documentation more digestible is appreciated!
 
 - Talk about Yarn in your local meetups! Even our users aren't always aware of some of our features. Learn, then share your knowledge with your own circles!
 

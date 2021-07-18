@@ -48,16 +48,16 @@ jobs:
 
     - name: 'Running the integration test'
       run: |
-        source scripts/e2e-setup-ci.sh;
+        source scripts/e2e-setup-ci.sh nm
 
         yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false
 
         cd berry-angular
-        echo 'nodeLinker: node-modules' >> .yarnrc.yml
-        echo 'enableGlobalCache: true' >> .yarnrc.yml
-        echo 'compressionLevel: 0' >> .yarnrc.yml
 
         yarn add @angular-devkit/core@next @babel/preset-env @babel/core -D
 
         yarn ng build --aot
       shell: bash
+      env:
+        YARN_ENABLE_GLOBAL_CACHE: true
+        YARN_COMPRESSION_LEVEL: 0

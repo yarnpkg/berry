@@ -1,6 +1,7 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import {CIRCLE as isCircleCI}                                               from 'ci-info';
+import micromatch                                                           from "micromatch";
 import stripAnsi                                                            from 'strip-ansi';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
@@ -379,6 +380,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
   const logFiltersByCode = new Map<string, LogLevel | null>();
   const logFiltersByText = new Map<string, LogLevel | null>();
+  const logFiltersByPatternMatcher: Array<[(str: string) => boolean, LogLevel | null]> = [];
 
   for (const filter of logFilters) {
     const level = filter.get(`level`);
@@ -390,19 +392,40 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       logFiltersByCode.set(code, level);
 
     const text = filter.get(`text`);
-    if (typeof text !== `undefined`) {
+    if (typeof text !== `undefined`)
       logFiltersByText.set(text, level);
+
+    const pattern = filter.get(`pattern`);
+    if (typeof pattern !== `undefined`) {
+      logFiltersByPatternMatcher.push([micromatch.matcher(pattern), level]);
     }
   }
+
+  // Higher priority to the last patterns, just like other filters
+  logFiltersByPatternMatcher.reverse();
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
     if (name === null || name === MessageName.UNNAMED)
       return defaultLevel;
 
+    // Avoid processing the string unless we know we'll actually need it
+    const strippedText = logFiltersByText.size > 0 || logFiltersByPatternMatcher.length > 0
+      ? stripAnsi(text)
+      : text;
+
     if (logFiltersByText.size > 0) {
-      const level = logFiltersByText.get(stripAnsi(text));
+      const level = logFiltersByText.get(strippedText);
+
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
+      }
+    }
+
+    if (logFiltersByPatternMatcher.length > 0) {
+      for (const [filterMatcher, filterLevel] of logFiltersByPatternMatcher) {
+        if (filterMatcher(strippedText)) {
+          return filterLevel ?? defaultLevel;
+        }
       }
     }
 

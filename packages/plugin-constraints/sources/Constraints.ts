@@ -284,7 +284,7 @@ export class Constraints {
     const session = this.createSession();
 
     for await (const answer of session.makeQuery(query)) {
-      const parsedLinks: Record<string, string|null> = {};
+      const parsedLinks: Record<string, string | null> = {};
 
       for (const [variable, value] of Object.entries(answer.links)) {
         if (variable !== `_`) {
