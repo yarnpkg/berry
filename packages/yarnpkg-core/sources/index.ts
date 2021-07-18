@@ -25,7 +25,7 @@ export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMe
 export {MessageName}                                                                                      from './MessageName';
 export type {CommandContext, Hooks, Plugin}                                                               from './Plugin';
 export type {PeerRequirement}                                                                             from './Project';
-export {Project}                                                                                          from './Project';
+export {Project, InstallMode}                                                                             from './Project';
 export {TAG_REGEXP}                                                                                       from './ProtocolResolver';
 export {ReportError, Report}                                                                              from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                             from './Resolver';

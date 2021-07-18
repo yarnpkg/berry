@@ -1,9 +1,10 @@
 import {BaseCommand, WorkspaceRequiredError}                                from '@yarnpkg/cli';
 import {Configuration, Cache, Descriptor, Project, formatUtils, FormatType} from '@yarnpkg/core';
-import {StreamReport, Workspace}                                            from '@yarnpkg/core';
+import {StreamReport, Workspace, InstallMode}                               from '@yarnpkg/core';
 import {structUtils}                                                        from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import micromatch                                                           from 'micromatch';
+import * as t                                                               from 'typanion';
 
 import * as suggestUtils                                                    from '../suggestUtils';
 import {Hooks}                                                              from '..';
@@ -18,6 +19,12 @@ export default class RemoveCommand extends BaseCommand {
     description: `remove dependencies from the project`,
     details: `
       This command will remove the packages matching the specified patterns from the current workspace.
+
+      If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
+
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+
+      - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
 
       This command accepts glob patterns as arguments (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
     `,
@@ -41,6 +48,11 @@ export default class RemoveCommand extends BaseCommand {
 
   all = Option.Boolean(`-A,--all`, false, {
     description: `Apply the operation to all workspaces from the current project`,
+  });
+
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   patterns = Option.Rest();
@@ -149,7 +161,7 @@ export default class RemoveCommand extends BaseCommand {
         configuration,
         stdout: this.context.stdout,
       }, async report => {
-        await project.install({cache, report});
+        await project.install({cache, report, mode: this.mode});
       });
 
       return report.exitCode();

@@ -1,10 +1,11 @@
 import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
 import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, Ident}                    from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident, InstallMode}       from '@yarnpkg/core';
 import {structUtils}                                                from '@yarnpkg/core';
 import {PortablePath}                                               from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                         from 'clipanion';
 import {prompt}                                                     from 'enquirer';
+import * as t                                                       from 'typanion';
 
 import * as suggestUtils                                            from '../suggestUtils';
 import {Hooks}                                                      from '..';
@@ -35,6 +36,12 @@ export default class AddCommand extends BaseCommand {
       If the \`--cached\` option is used, Yarn will preferably reuse the highest version already used somewhere within the project, even if through a transitive dependency.
 
       If the \`-i,--interactive\` option is used (or if the \`preferInteractive\` settings is toggled on) the command will first try to check whether other workspaces in the project use the specified package and, if so, will offer to reuse them.
+
+      If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
+
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+
+      - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
 
       For a compilation of all the supported protocols, please consult the dedicated page from our website: https://yarnpkg.com/features/protocols.
     `,
@@ -97,6 +104,11 @@ export default class AddCommand extends BaseCommand {
 
   cached = Option.Boolean(`--cached`, false, {
     description: `Reuse the highest version already used somewhere within the project`,
+  });
+
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   packages = Option.Rest();
@@ -290,7 +302,7 @@ export default class AddCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: !this.context.quiet,
     }, async report => {
-      await project.install({cache, report});
+      await project.install({cache, report, mode: this.mode});
     });
 
     return installReport.exitCode();

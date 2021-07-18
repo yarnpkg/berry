@@ -55,6 +55,19 @@ const FETCHER_CONCURRENCY = 32;
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
+export enum InstallMode {
+  /**
+   * Doesn't run the link step, and only fetches what's necessary to compute
+   * an updated lockfile.
+   */
+  UpdateLockfile = `update-lockfile`,
+
+  /**
+   * Don't run the build scripts.
+   */
+  SkipBuild = `skip-build`,
+}
+
 export type InstallOptions = {
   /**
    * Instance of the cache that the project will use when packages have to be
@@ -99,17 +112,21 @@ export type InstallOptions = {
   lockfileOnly?: boolean,
 
   /**
+   * Changes which artifacts are generated during the install. Check the
+   * enumeration documentation for details.
+   */
+  mode?: InstallMode,
+
+  /**
    * If true (the default), Yarn will update the workspace manifests once the
    * install has completed.
    */
   persistProject?: boolean,
 
   /**
-   * If true, Yarn will skip the build step during the install. Contrary to
-   * setting the `enableScripts` setting to false, setting this won't cause
-   * the generated artifacts to change.
+   * @deprecated Use `mode=skip-build`
    */
-  skipBuild?: boolean,
+  skipBuild?: never,
 };
 
 const INSTALL_STATE_FIELDS = {
@@ -625,7 +642,7 @@ export class Project {
     return null;
   }
 
-  async resolveEverything(opts: {report: Report, lockfileOnly: true, resolver?: Resolver} | {report: Report, lockfileOnly?: boolean, cache: Cache, resolver?: Resolver}) {
+  async resolveEverything(opts: Pick<InstallOptions, `report` | `resolver` | `mode`> & ({report: Report, lockfileOnly: true} | {lockfileOnly?: boolean, cache: Cache})) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -830,11 +847,11 @@ export class Project {
     this.refreshWorkspaceDependencies();
   }
 
-  async fetchEverything({cache, report, fetcher: userFetcher}: InstallOptions) {
+  async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
     const fetcher = userFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
 
-    const locatorHashes = Array.from(
+    let locatorHashes = Array.from(
       new Set(
         miscUtils.sortMap(this.storedResolutions.values(), [
           (locatorHash: LocatorHash) => {
@@ -847,6 +864,12 @@ export class Project {
         ])
       )
     );
+
+    // In "dependency update" mode, we won't trigger the link step. As a
+    // result, we only need to fetch the packages that are missing their
+    // hashes (to add them to the lockfile).
+    if (mode === InstallMode.UpdateLockfile)
+      locatorHashes = locatorHashes.filter(locatorHash => !this.storedChecksums.has(locatorHash));
 
     let firstError = false;
 
@@ -892,7 +915,7 @@ export class Project {
     }
   }
 
-  async linkEverything({cache, report, fetcher: optFetcher, skipBuild}: InstallOptions) {
+  async linkEverything({cache, report, fetcher: optFetcher, mode}: InstallOptions) {
     const fetcher = optFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
 
@@ -1107,7 +1130,7 @@ export class Project {
 
     // Step 4: Build the packages in multiple steps
 
-    if (skipBuild)
+    if (mode === InstallMode.SkipBuild)
       return;
 
     const readyPackages = new Set(this.storedPackages.keys());
@@ -1439,7 +1462,7 @@ export class Project {
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
 
-      if (typeof opts.persistProject === `undefined` || opts.persistProject) {
+      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile) {
         await this.cacheCleanup(opts);
       }
     });
@@ -1456,6 +1479,11 @@ export class Project {
       await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
+      if (opts.mode === InstallMode.UpdateLockfile) {
+        opts.report.reportWarning(MessageName.UPDATE_LOCKFILE_ONLY_SKIP_LINK, `Skipped due to ${formatUtils.pretty(this.configuration, `mode=update-lockfile`, formatUtils.Type.CODE)}`);
+        return;
+      }
+
       await this.linkEverything(opts);
 
       const after = await Promise.all(immutablePatterns.map(async pattern => {
