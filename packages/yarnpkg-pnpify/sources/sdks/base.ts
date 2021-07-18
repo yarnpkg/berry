@@ -99,6 +99,14 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
                 str = resolve(\`zipfile:\${str}\`);
               } break;
 
+              // Support neovim native LSP and [typescript-language-server](https://github.com/theia-ide/typescript-language-server)
+              // We have to resolve the actual file system path from virtual path,
+              // everything else is up to neovim
+              case \`neovim\`: {
+                str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
+                str = \`zipfile:\${str}\`;
+              } break;
+
               default: {
                 str = \`zip:\${str}\`;
               } break;
