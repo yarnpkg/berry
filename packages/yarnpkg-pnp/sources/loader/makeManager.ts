@@ -96,14 +96,17 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function findApiPathFor(modulePath: NativePath) {
-    const candidates: Array<{packageLocation: NativePath, apiPath: PortablePath}> = [];
+    let bestCandidate: {
+      packageLocation: NativePath,
+      apiPaths: Array<PortablePath>,
+    } | null = null;
 
     for (const [apiPath, apiEntry] of apiMetadata) {
       const locator = apiEntry.instance.findPackageLocator(modulePath);
-
       if (!locator)
         continue;
 
+      // No need to go the slow way when there's a single API
       if (apiMetadata.size === 1)
         return apiPath;
 
@@ -111,26 +114,25 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       if (!packageInformation)
         throw new Error(`Assertion failed: Couldn't get package information for '${modulePath}'`);
 
-      candidates.push({packageLocation: packageInformation.packageLocation, apiPath});
+      if (!bestCandidate)
+        bestCandidate = {packageLocation: packageInformation.packageLocation, apiPaths: []};
+
+      if (packageInformation.packageLocation === bestCandidate.packageLocation) {
+        bestCandidate.apiPaths.push(apiPath);
+      } else if (packageInformation.packageLocation.length > bestCandidate.packageLocation.length) {
+        bestCandidate = {packageLocation: packageInformation.packageLocation, apiPaths: [apiPath]};
+      }
     }
 
-    if (candidates.length === 1)
-      return candidates[0].apiPath;
+    if (bestCandidate) {
+      if (bestCandidate.apiPaths.length === 1)
+        return bestCandidate.apiPaths[0];
 
-    if (candidates.length > 1) {
-      const [candidateA, candidateB] = [...candidates].sort(
-        (a, b) => b.packageLocation.length - a.packageLocation.length
-      );
+      const controlSegment = bestCandidate.apiPaths
+        .map(apiPath => `  ${npath.fromPortablePath(apiPath)}`)
+        .join(`\n`);
 
-      if (candidateA.packageLocation.length > candidateB.packageLocation.length)
-        return candidateA.apiPath;
-
-      throw new Error(
-        `Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\n` +
-        `This is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${candidates
-          .map(({apiPath}) => `  ${npath.fromPortablePath(apiPath)}`)
-          .join(`\n`)}`
-      );
+      throw new Error(`Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\nThis is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${controlSegment}\n`);
     }
 
     const start = ppath.resolve(npath.toPortablePath(modulePath));
