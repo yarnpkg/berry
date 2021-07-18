@@ -40,7 +40,7 @@ export class PnpLinker implements Linker {
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
     });
 
     const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
@@ -58,7 +58,7 @@ export class PnpLinker implements Linker {
       return null;
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
     });
 
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
@@ -129,22 +129,28 @@ export class PnpInstaller implements Installer {
       // We never need to unplug soft links, since we don't control them
       pkg.linkType !== LinkType.SOFT;
 
-    let customPackageData = this.customData.store.get(pkg.locatorHash);
-    if (typeof customPackageData === `undefined`) {
-      customPackageData = await extractCustomPackageData(pkg, fetchResult);
-      if (pkg.linkType === LinkType.HARD) {
-        this.customData.store.set(pkg.locatorHash, customPackageData);
+    let customPackageData: CustomPackageData | undefined;
+    let dependencyMeta: DependencyMeta | undefined;
+
+    if (mayNeedToBeBuilt || mayNeedToBeUnplugged) {
+      customPackageData = this.customData.store.get(pkg.locatorHash);
+
+      if (typeof customPackageData === `undefined`) {
+        customPackageData = await extractCustomPackageData(pkg, fetchResult);
+        if (pkg.linkType === LinkType.HARD) {
+          this.customData.store.set(pkg.locatorHash, customPackageData);
+        }
       }
+
+      dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
     }
 
-    const dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
-
     const buildScripts = mayNeedToBeBuilt
-      ? jsInstallUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report})
+      ? jsInstallUtils.extractBuildScripts(pkg, customPackageData!, dependencyMeta!, {configuration: this.opts.project.configuration, report: this.opts.report})
       : [];
 
     const packageFs = mayNeedToBeUnplugged
-      ? await this.unplugPackageIfNeeded(pkg, customPackageData, fetchResult, dependencyMeta)
+      ? await this.unplugPackageIfNeeded(pkg, customPackageData!, fetchResult, dependencyMeta!)
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
@@ -211,6 +217,24 @@ export class PnpInstaller implements Installer {
 
 
   async finalizeInstall() {
+    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
+      return undefined;
+
+    const pnpPath = getPnpPath(this.opts.project);
+
+    if (xfs.existsSync(pnpPath.cjsLegacy)) {
+      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
+
+      await xfs.removePromise(pnpPath.cjsLegacy);
+    }
+
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
+      await xfs.removePromise(pnpPath.cjs);
+      await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+
+      return undefined;
+    }
+
     for (const {locator, location} of this.virtualTemplates.values()) {
       miscUtils.getMapWithDefault(this.packageRegistry, structUtils.stringifyIdent(locator)).set(locator.reference, {
         packageLocation: location,
@@ -260,24 +284,8 @@ export class PnpInstaller implements Installer {
   }
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
-    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return;
-
     const pnpPath = getPnpPath(this.opts.project);
     const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
-
-    if (xfs.existsSync(pnpPath.cjsLegacy)) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
-
-      await xfs.removePromise(pnpPath.cjsLegacy);
-    }
-
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
-      await xfs.removePromise(pnpPath.cjs);
-      await xfs.removePromise(pnpDataPath);
-
-      return;
-    }
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {

@@ -9,6 +9,24 @@ const optionalPeerDep = {
 };
 
 export const packageExtensions: Array<[string, PackageExtensionData]> = [
+  // https://github.com/tailwindlabs/tailwindcss-aspect-ratio/pull/14
+  [`@tailwindcss/aspect-ratio@<0.2.1`, {
+    peerDependencies: {
+      [`tailwindcss`]: `^2.0.2`,
+    },
+  }],
+  // https://github.com/tailwindlabs/tailwindcss-line-clamp/pull/6
+  [`@tailwindcss/line-clamp@<0.2.1`, {
+    peerDependencies: {
+      [`tailwindcss`]: `^2.0.2`,
+    },
+  }],
+  // https://github.com/FullHuman/purgecss/commit/24116f394dc54c913e4fd254cf2d78c03db971f2
+  [`@fullhuman/postcss-purgecss@3.1.3 || 3.1.3-alpha.0`, {
+    peerDependencies: {
+      [`postcss`]: `^8.0.0`,
+    },
+  }],
   // https://github.com/SamVerschueren/stream-to-observable/pull/5
   [`@samverschueren/stream-to-observable@<0.3.1`, {
     peerDependenciesMeta: {
@@ -84,7 +102,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/xz64/license-webpack-plugin/pull/100
-  [`license-webpack-plugin@*`, {
+  [`license-webpack-plugin@<2.3.18`, {
     peerDependenciesMeta: {
       [`webpack`]: optionalPeerDep,
     },
@@ -288,6 +306,82 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`rebass@*`, {
     peerDependencies: {
       react: `^16.8.6`,
+    },
+  }],
+  // https://github.com/ant-design/react-slick/pull/95
+  [`@ant-design/react-slick@<=0.28.3`, {
+    peerDependencies: {
+      react: `>=16.0.0`,
+    },
+  }],
+  // https://github.com/mqttjs/MQTT.js/pull/1266
+  [`mqtt@<4.2.7`, {
+    dependencies: {
+      duplexify: `^4.1.1`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`vue-cli-plugin-vuetify@<=2.0.3`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+      'vuetify-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/152
+  [`vue-cli-plugin-vuetify@<=2.0.4`, {
+    dependencies: {
+      'null-loader': `^3.0.0`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`@vuetify/cli-plugin-utils@<=0.0.4`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6060/files#diff-857cfb6f3e9a676b0de4a00c2c712297068c038a7d5820c133b8d6aa8cceb146R28
+  [`@vue/cli-plugin-typescript@<=5.0.0-alpha.0`, {
+    dependencies: {
+      'babel-loader': `^8.1.0`,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6456
+  [`@vue/cli-plugin-typescript@<=5.0.0-beta.0`, {
+    dependencies: {
+      '@babel/core': `^7.12.16`,
+    },
+    peerDependencies: {
+      'vue-template-compiler': `^2.0.0`,
+    },
+    peerDependenciesMeta: {
+      'vue-template-compiler': optionalPeerDep,
+    },
+  }],
+  // https://github.com/apache/cordova-ios/pull/1105
+  [`cordova-ios@<=6.3.0`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
+  // https://github.com/apache/cordova-lib/pull/871
+  [`cordova-lib@<=10.0.1`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
+  // https://github.com/creationix/git-node-fs/pull/8
+  [`git-node-fs@*`, {
+    peerDependencies: {
+      'js-git': `^0.7.8`,
+    },
+    peerDependenciesMeta: {
+      'js-git': optionalPeerDep,
     },
   }],
 ];

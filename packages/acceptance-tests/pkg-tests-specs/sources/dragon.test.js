@@ -226,7 +226,7 @@ describe(`Dragon tests`, () => {
         //     care about too much (except that X has a peer dep on Y).
         //
         //   - Since A has a peer dependency, two different instances of it
-        //     exist: one as an independant workspace, and another as a
+        //     exist: one as an independent workspace, and another as a
         //     dependency of B. This is critical because otherwise Yarn will
         //     just skip the second traversal of A (since we know its
         //     dependencies have already been virtualized).

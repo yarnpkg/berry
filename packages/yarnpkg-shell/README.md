@@ -22,6 +22,7 @@ process.exitCode = await execute(`ls "$0" | wc -l`, [process.cwd()]);
 - Supports variables
 - Supports string manipulators
 - Supports argc/argv
+- Supports background jobs with color-coded output
 - Supports the most classic builtins
 - Doesn't necessarily need to access the fs
 

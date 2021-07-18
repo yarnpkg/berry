@@ -277,6 +277,11 @@
             "description": "Selects exactly one message that must match the given text. In case a message matches both `code`-based and `text`-based filters, the `text`-based ones will take precedence over the `code`-based ones.",
             "examples": ["lorem-ipsum@npm:1.2.3 lists build scripts, but its build has been explicitly disabled through configuration"]
           },
+          "pattern": {
+            "type": "string",
+            "description": "Selects exactly one message that must match the given glob pattern. In case a message matches both `pattern`-based and `code`-based filters, the `pattern`-based ones will take precedence over the other ones. Patterns can be overriden on a case-by-case basis by using the `text` filter, which has precedence over `pattern`.",
+            "examples": ["lorem-ipsum@* lists build scripts, but its build has been explicitly disabled through configuration"]
+          },
           "level": {
             "description": "Applies the specified log level to all selected messages. Can be one of `info`, `warning`, `error`, or `discard` if you wish to hide those messages altogether.",
             "examples": ["error"],
@@ -302,6 +307,10 @@
         },
         {
           "text": "lorem-ipsum@npm:1.2.3 lists build scripts, but its build has been explicitly disabled through configuration",
+          "level": "error"
+        },
+        {
+          "pattern": "lorem-ipsum@* lists build scripts, but its build has been explicitly disabled through configuration",
           "level": "error"
         }
       ]
@@ -342,7 +351,7 @@
               "$ref": "#/properties/httpsProxy"
             }
           },
-          "_exampleKeys": ["caFilePath"]
+          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsProxy"]
         }
       },
       "_exampleKeys": ["*.example.com"]
@@ -490,29 +499,6 @@
               "additionalProperties": false,
               "_exampleKeys": ["lodash"]
             },
-            "dependenciesMeta": {
-              "type": "object",
-              "patternProperties": {
-                "^(?:@([^/]+?)/)?([^/]+?)$": {
-                  "type": "object",
-                  "properties": {
-                    "built": {
-                      "type": "boolean",
-                      "examples": [false]
-                    },
-                    "optional": {
-                      "type": "boolean",
-                      "examples": [false]
-                    },
-                    "unplugged": {
-                      "type": "boolean",
-                      "examples": [true]
-                    }
-                  }
-                }
-              },
-              "additionalProperties": false
-            },
             "peerDependencies": {
               "type": "object",
               "patternProperties": {
@@ -535,13 +521,15 @@
                       "type": "boolean",
                       "examples": [true]
                     }
-                  }
+                  },
+                  "_exampleKeys": ["optional"]
                 }
               },
-              "additionalProperties": false
+              "additionalProperties": false,
+              "_exampleKeys": ["webpack-cli"]
             }
           },
-          "_exampleKeys": ["dependencies", "peerDependencies"],
+          "_exampleKeys": ["dependencies", "peerDependencies", "peerDependenciesMeta"],
           "_margin": false
         }
       },

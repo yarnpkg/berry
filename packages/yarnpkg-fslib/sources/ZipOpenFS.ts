@@ -21,15 +21,22 @@ const DOT_ZIP = `.zip`;
  * The indexOf-based implementation is ~3.7x faster than a RegExp-based implementation.
  */
 export const getArchivePart = (path: string) => {
-  const idx = path.indexOf(DOT_ZIP);
+  let idx = path.indexOf(DOT_ZIP);
   if (idx <= 0)
     return null;
 
-  // Disallow files named ".zip"
-  if (path[idx - 1] === ppath.sep)
-    return null;
+  let nextCharIdx = idx;
+  while (idx >= 0) {
+    nextCharIdx = idx + DOT_ZIP.length;
+    if (path[nextCharIdx] === ppath.sep)
+      break;
 
-  const nextCharIdx = idx + DOT_ZIP.length;
+    // Disallow files named ".zip"
+    if (path[idx - 1] === ppath.sep)
+      return null;
+
+    idx = path.indexOf(DOT_ZIP, nextCharIdx);
+  }
 
   // The path either has to end in ".zip" or contain an archive subpath (".zip/...")
   if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
@@ -41,7 +48,7 @@ export const getArchivePart = (path: string) => {
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
-  libzip: Libzip,
+  libzip: Libzip | (() => Libzip),
   maxOpenFiles?: number,
   readOnlyArchives?: boolean,
   useCache?: boolean,
@@ -63,7 +70,15 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
-  private readonly libzip: Libzip;
+  private libzipFactory!: () => Libzip;
+  private libzipInstance?: Libzip;
+
+  private get libzip(): Libzip {
+    if (typeof this.libzipInstance === `undefined`)
+      this.libzipInstance = this.libzipFactory();
+
+    return this.libzipInstance;
+  }
 
   private readonly baseFs: FakeFS<PortablePath>;
 
@@ -84,7 +99,9 @@ export class ZipOpenFS extends BasePortableFakeFS {
   constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
     super();
 
-    this.libzip = libzip;
+    this.libzipFactory = typeof libzip !== `function`
+      ? () => libzip
+      : libzip;
 
     this.baseFs = baseFs;
 

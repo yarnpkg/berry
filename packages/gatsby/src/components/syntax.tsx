@@ -1,4 +1,4 @@
-import {css}                                  from '@emotion/core';
+import {css}                                  from '@emotion/react';
 import styled, {StyledComponent}              from '@emotion/styled';
 import {FaLink}                               from 'react-icons/fa';
 import React, {PropsWithChildren, useContext} from 'react';

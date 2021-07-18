@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.9",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
@@ -9,23 +9,23 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.2",
-    "clipanion": "^3.0.0-rc.10",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.9",
+    "clipanion": "^3.0.0",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.66",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.2",
-    "@yarnpkg/core": "^3.0.0-rc.2"
+    "@yarnpkg/cli": "^3.0.0-rc.9",
+    "@yarnpkg/core": "^3.0.0-rc.9"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "@yarnpkg/builder": "workspace:*",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",
-    "typescript": "beta"
+    "typescript": "^4.3.2"
   },
   "scripts": {
     "build:plugin-constraints": "builder build plugin",

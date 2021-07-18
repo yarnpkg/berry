@@ -65,15 +65,8 @@ export async function get(path: string, {configuration, headers, ident, authType
   if (auth)
     headers = {...headers, authorization: auth};
 
-  let url;
   try {
-    url = new URL(path);
-  } catch (e) {
-    url = new URL(registry + path);
-  }
-
-  try {
-    return await httpUtils.get(url.href, {configuration, headers, ...rest});
+    return await httpUtils.get(path.charAt(0) === `/` ? `${registry}${path}` : path, {configuration, headers, ...rest});
   } catch (error) {
     await handleInvalidAuthenticationError(error, {registry, configuration, headers});
 
@@ -199,8 +192,13 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
 
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
-  if (effectiveConfiguration.get(`npmAuthIdent`))
-    return `Basic ${effectiveConfiguration.get(`npmAuthIdent`)}`;
+
+  if (effectiveConfiguration.get(`npmAuthIdent`)) {
+    const npmAuthIdent = effectiveConfiguration.get(`npmAuthIdent`);
+    if (npmAuthIdent.includes(`:`))
+      return `Basic ${Buffer.from(npmAuthIdent).toString(`base64`)}`;
+    return `Basic ${npmAuthIdent}`;
+  }
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);

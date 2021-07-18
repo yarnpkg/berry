@@ -28,7 +28,7 @@
     "@yarnpkg/eslint-config": "workspace:*",
     "@yarnpkg/pnpify": "workspace:*",
     "babel-jest": "^26.0.1",
-    "clipanion": "^3.0.0-rc.10",
+    "clipanion": "^3.0.0",
     "eslint": "^6.8.0",
     "github-api": "^3.2.2",
     "jest": "^26.0.1",
@@ -36,7 +36,7 @@
     "jest-junit": "^10.0.0",
     "micromatch": "^4.0.2",
     "tslib": "^1.13.0",
-    "typescript": "beta"
+    "typescript": "^4.3.2"
   },
   "resolutions": {
     "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"

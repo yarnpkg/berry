@@ -64,7 +64,6 @@ export class Workspace {
     const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
 
     const relativeCwds = await globby(patterns, {
-      absolute: true,
       cwd: npath.fromPortablePath(this.cwd),
       expandDirectories: false,
       onlyDirectories: true,
