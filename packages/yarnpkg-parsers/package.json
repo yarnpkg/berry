@@ -15,6 +15,7 @@
     "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
     "grammar:resolution": "run pegjs -o sources/grammars/resolution.js sources/grammars/resolution.pegjs",
     "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs",
+    "grammar:all": "run grammar:shell & run grammar:resolution & run grammar:syml &",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\"",
     "release": "yarn npm publish",
