@@ -5226,7 +5226,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^3.0.0-rc.10"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     esbuild-wasm: ^0.11.20
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
@@ -5277,7 +5277,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^3.0.0-rc.9"
     chalk: ^3.0.0
     ci-info: ^2.0.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -5319,7 +5319,7 @@ __metadata:
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^2.0.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     cross-spawn: 7.0.3
     diff: ^4.0.1
     esbuild: "npm:esbuild-wasm@^0.11.20"
@@ -5354,7 +5354,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^3.0.0-rc.9"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/monorepo": "workspace:*"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     globby: ^11.0.1
     micromatch: ^4.0.2
     p-limit: ^2.2.0
@@ -5562,7 +5562,7 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:*"
     "@yarnpkg/pnpify": "workspace:*"
     babel-jest: ^26.0.1
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     eslint: ^6.8.0
     github-api: ^3.2.2
     jest: ^26.0.1
@@ -5632,7 +5632,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
@@ -5652,7 +5652,7 @@ __metadata:
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/json-proxy": "workspace:^2.1.1-rc.7"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^3.0.0-rc.9
@@ -5676,7 +5676,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.7"
     "@yarnpkg/shell": "workspace:^3.0.0-rc.9"
     ci-info: ^2.0.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     enquirer: ^2.3.6
     lodash: ^4.17.15
     micromatch: ^4.0.2
@@ -5765,7 +5765,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     lodash: ^4.17.15
     tslib: ^1.13.0
   peerDependencies:
@@ -5787,7 +5787,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^2.1.2-rc.9"
     "@yarnpkg/plugin-essentials": "workspace:*"
     algoliasearch: ^4.2.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     diff: ^4.0.1
     ink: ^3.0.8
     ink-text-input: ^4.0.1
@@ -5829,7 +5829,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.9"
     "@yarnpkg/pnpify": "workspace:^3.0.0-rc.10"
     "@zkochan/cmd-shim": ^5.1.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     micromatch: ^4.0.2
     tslib: ^1.13.0
   peerDependencies:
@@ -5849,7 +5849,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/plugin-npm": "workspace:*"
     "@yarnpkg/plugin-pack": "workspace:*"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     enquirer: ^2.3.6
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -5891,7 +5891,7 @@ __metadata:
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/plugin-stage": "workspace:*"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
     tslib: ^1.13.0
@@ -5909,7 +5909,7 @@ __metadata:
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/libzip": "workspace:^2.2.2-rc.7"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": ^3.0.0-rc.9
@@ -5928,7 +5928,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/plugin-stage": "workspace:^3.0.0-rc.9"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.9"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -5946,7 +5946,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     tslib: ^1.13.0
     typescript: ^4.3.2
   peerDependencies:
@@ -5989,7 +5989,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/libui": "workspace:^2.1.2-rc.9"
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.7"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     ink: ^3.0.8
     react: ^16.13.1
     semver: ^7.1.2
@@ -6010,7 +6010,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
@@ -6051,7 +6051,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.7"
     "@yarnpkg/pnp": "workspace:*"
     chalk: ^3.0.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     comment-json: ^2.2.0
     eslint: ^6.8.0
     lodash: ^4.17.15
@@ -6080,7 +6080,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:*"
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.7"
     chalk: ^3.0.0
-    clipanion: ^3.0.0-rc.10
+    clipanion: ^3.0.0
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
@@ -8387,14 +8387,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^3.0.0-rc.10":
-  version: 3.0.0-rc.10
-  resolution: "clipanion@npm:3.0.0-rc.10"
+"clipanion@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "clipanion@npm:3.0.0"
   dependencies:
-    typanion: ^3.3.0
+    typanion: ^3.3.1
   peerDependencies:
     typanion: "*"
-  checksum: b08ff3d50715b890ed1301ff7daa4fecfa0ddeddc14ac0e86270e763449a61138eb5b87201f8607051f9b490dc669cc98d295f9c1ee7cd1f11dbe59e2c3ba300
+  checksum: a33f6305d06f66379de47043e10034ee4f872decb4229365d2b92fa9f3b6f79336057aa0a58207d802ba390650bddd2360d4079f6407b3fe8fda923390b79114
   languageName: node
   linkType: hard
 
@@ -25483,10 +25483,10 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"typanion@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "typanion@npm:3.3.0"
-  checksum: 659a5dcd9c969e98cd658dc85c3ee1d1c692a2ce6f6f378f5fce086776c8ef5806c0a1311711518f32173c315f30bae249abe1c18398a4c939a5ced5ec880f1e
+"typanion@npm:^3.3.0, typanion@npm:^3.3.1":
+  version: 3.3.2
+  resolution: "typanion@npm:3.3.2"
+  checksum: e7621409eb56cac3145ba3955702682627d4018a8f31b1c8355d354a93b86f7cea339583b211a4dbf7576847dd04aacad4af6912f3c42542e573b9c325e6093c
   languageName: node
   linkType: hard
 
