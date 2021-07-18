@@ -61,7 +61,7 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**plugin-installs**](https://gitlab.com/Larry1123/yarn-contrib/-/blob/master/packages/plugin-production-install/README.md) by [**Larry1123**](https://gitlab.com/Larry1123) - create minimal yarn installs after removing development dependencies, unrelated workspaces, `@types` packages, etc
 
-- [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - run build commands across workspaces after detecting the ones which changed, and bundle them up into deployable AWS apps.
+- [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - run builds and tests in parallel according to your workspace dependencies if they have changed, and bundle them up into deployable apps for Docker, AWS Lambda, or any other server.
 
 - [**licenses**](https://github.com/tophat/yarn-plugin-licenses) by [**Noah Negin-Ulster**](https://noahnu.com/) - audit direct and indirect dependency licenses to ensure compliance
 
