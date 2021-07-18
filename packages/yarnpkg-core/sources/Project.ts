@@ -56,7 +56,15 @@ const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
 export enum InstallMode {
+  /**
+   * Doesn't run the link step, and only fetches what's necessary to compute
+   * an updated lockfile.
+   */
   LockfileUpdate = `lockfile-update`,
+
+  /**
+   * Don't run the build scripts.
+   */
   SkippedBuilds = `skipped-builds`,
 }
 
@@ -104,9 +112,8 @@ export type InstallOptions = {
   lockfileOnly?: boolean,
 
   /**
-   * If true, Yarn won't run the link step and will just fetch what's needed
-   * to generate an up-to-date lockfile (particularly with regard to missing
-   * checksums).
+   * Changes which artifacts are generated during the install. Check the
+   * enumeration documentation for details.
    */
   mode?: InstallMode,
 

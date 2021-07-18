@@ -74,7 +74,7 @@ export default class YarnCommand extends BaseCommand {
   });
 
   mode = Option.String(`--mode`, {
-    description: `Update the lockfile, but doesn't install the dependencies`,
+    description: `Change what artifacts installs generate`,
     validator: t.isEnum(InstallMode),
   });
 
