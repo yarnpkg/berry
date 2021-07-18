@@ -37,7 +37,7 @@ export class RawLinkFetcher implements Fetcher {
     // If the package fs publicized its "original location" (for example like
     // in the case of "file:" packages), we use it to derive the real location.
     const effectiveParentFetch: FetchResult = parentFetch.localPath
-      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
+      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: parentFetch.localPath}
       : parentFetch;
 
     // Discard the parent fs unless we really need it to access the files
