@@ -290,15 +290,14 @@ export enum CachingStrategy {
   Node,
 }
 
+export function dynamicRequire(path: string, opts?: {cachingStrategy?: CachingStrategy}): any;
+export function dynamicRequire(path: PortablePath, opts: {cachingStrategy: CachingStrategy.FsTime}): any;
 export function dynamicRequire(path: string | PortablePath, {cachingStrategy = CachingStrategy.Node}: {cachingStrategy?: CachingStrategy} = {}) {
   switch (cachingStrategy) {
     case CachingStrategy.NoCache:
       return dynamicRequireNoCache(path);
 
     case CachingStrategy.FsTime:
-      if (!ppath.isAbsolute(path as PortablePath))
-        throw new Error(`File-based cache can only be used with absolute filesystem paths`);
-
       return dynamicRequireFsTime(path as PortablePath);
 
     case CachingStrategy.Node:
