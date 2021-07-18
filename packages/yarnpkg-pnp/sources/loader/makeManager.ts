@@ -1,8 +1,8 @@
-import {FakeFS, Filename, NativePath, PortablePath, VirtualFS, npath, ppath, xfs} from '@yarnpkg/fslib';
-import fs                                                                         from 'fs';
-import {Module}                                                                   from 'module';
+import {FakeFS, Filename, NativePath, PortablePath, VirtualFS, npath, ppath} from '@yarnpkg/fslib';
+import fs                                                                    from 'fs';
+import {Module}                                                              from 'module';
 
-import {PnpApi}                                                                   from '../types';
+import {PnpApi}                                                              from '../types';
 
 export type ApiMetadata = {
   cache: typeof Module._cache,
@@ -133,13 +133,13 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
         return addToCacheAndReturn(start, curr, cached);
 
       const cjsCandidate = ppath.join(curr, Filename.pnpCjs);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
+      if (opts.fakeFs.existsSync(cjsCandidate) && opts.fakeFs.statSync(cjsCandidate).isFile())
         return addToCacheAndReturn(start, curr, cjsCandidate);
 
       // We still support .pnp.js files to improve multi-project compatibility.
       // TODO: Remove support for .pnp.js files after they stop being used.
       const legacyCjsCandidate = ppath.join(curr, Filename.pnpJs);
-      if (xfs.existsSync(legacyCjsCandidate) && xfs.statSync(legacyCjsCandidate).isFile())
+      if (opts.fakeFs.existsSync(legacyCjsCandidate) && opts.fakeFs.statSync(legacyCjsCandidate).isFile())
         return addToCacheAndReturn(start, curr, legacyCjsCandidate);
 
       next = ppath.dirname(curr);
