@@ -38,12 +38,15 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
   let semverVersion: semver.SemVer;
   try {
     semverVersion = new semver.SemVer(version, semverRange);
-    if (semverVersion.prerelease) {
-      semverVersion.prerelease = [];
-    }
   } catch (err) {
     return false;
   }
+
+  if (semverRange.test(semverVersion))
+    return true;
+
+  if (semverVersion.prerelease)
+    semverVersion.prerelease = [];
 
   // A range has multiple sets of comparators. A version must satisfy all
   // comparators in a set and at least one set to satisfy the range.

@@ -43,6 +43,9 @@ const SPECS: Specs = [
   [`1.0.0-rc2`, `1.0.0-rc4`, false],
   [`1.0.0-rc4`, `1.0.0-rc2`, false],
   [`1.0.0-beta.1`, `1.0.0-beta.2`, false],
+
+  // These don't match with our patch but do without it
+  [`<=5.0.0-beta.0`, `5.0.0-alpha.7`, true],
 ];
 
 describe(`semverUtils`, () => {
