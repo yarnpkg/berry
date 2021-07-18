@@ -17,7 +17,7 @@ declined:
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
-  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"

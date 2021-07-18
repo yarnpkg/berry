@@ -2,7 +2,7 @@ releases:
   "@yarnpkg/cli": major
   "@yarnpkg/core": major
   "@yarnpkg/plugin-essentials": major
-  "@yarnpkg/plugin-node-modules": major
+  "@yarnpkg/plugin-nm": major
   "@yarnpkg/plugin-pack": major
   "@yarnpkg/plugin-stage": major
 

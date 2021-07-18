@@ -1,9 +1,13 @@
-import {PortablePath, Filename}    from '@yarnpkg/fslib';
-import {toFilename, npath, ppath}  from '@yarnpkg/fslib';
-
-import {NodeModulesTree, LinkType} from './buildNodeModulesTree';
+import {PortablePath, Filename}   from '@yarnpkg/fslib';
+import {toFilename, npath, ppath} from '@yarnpkg/fslib';
+import {NodeModulesTree}          from '@yarnpkg/nm';
 
 const NODE_MODULES = `node_modules`;
+
+enum LinkType {
+  HARD = `HARD`,
+  SOFT = `SOFT`,
+}
 
 /**
  * Resolved `/node_modules` path inside PnP project info.

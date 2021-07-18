@@ -168,7 +168,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 - [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
 - [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
 - [★ plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/features/protocols#whats-the-difference-between-link-and-portal) references as dependencies.
-- [★ plugin-node-modules](packages/plugin-node-modules) adds support for installing packages through a `node_modules` folder.
+- [★ plugin-nm](packages/plugin-nm) adds support for installing packages through a `node_modules` folder.
 - [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) as dependencies, resolving them to an NPM-like registry.
 - [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm info`](https://yarnpkg.com/cli/npm/info), [`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
 - [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
@@ -203,9 +203,11 @@ The following packages are generic and can be used in a variety of purposes (inc
 - [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.
 - [@yarnpkg/json-proxy](packages/yarnpkg-json-proxy) allows to temporarily convert any POD object to an immutable object.
 - [@yarnpkg/libzip](packages/yarnpkg-libzip) contains zlib+libzip bindings compiled to WebAssembly.
+- [@yarnpkg/nm](packages/yarnpkg-nm) contains the `node_modules` tree builder and hoister.
 - [@yarnpkg/parsers](packages/yarnpkg-parsers) can be used to parse the language used by [@yarnpkg/shell](packages/yarnpkg-shell).
 - [@yarnpkg/pnp](packages/yarnpkg-pnp) can be used to generate [Plug'n'Play](https://yarnpkg.com/features/pnp)-compatible hooks.
 - [@yarnpkg/pnpify](packages/yarnpkg-pnpify) is a CLI tool to transparently add PnP support to various tools.
+- [@yarnpkg/sdks](packages/yarnpkg-sdks) is a CLI tool to generate the [PnP Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks).
 - [@yarnpkg/shell](packages/yarnpkg-shell) is a portable bash-like shell interpreter.
 
 ## Yarn packages

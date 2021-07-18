@@ -1,6 +1,6 @@
 releases:
   "@yarnpkg/core": major
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/plugin-pnp": patch
 
 declined:

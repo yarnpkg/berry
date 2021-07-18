@@ -26,7 +26,7 @@ describe(`Features`, () => {
         });
 
         await run(`install`);
-        await pnpify([`--sdk`, `base`], path);
+        await sdks([`base`], path);
 
         const rawOutput = await noPnpNode([`./.yarn/sdks/eslint/bin/eslint.js`], path);
         const jsonOutput = JSON.parse(rawOutput);
@@ -63,7 +63,7 @@ describe(`Features`, () => {
         });
 
         await run(`install`);
-        await pnpify([`--sdk`, `base`], path);
+        await sdks([`base`], path);
 
         await run(`install`, {nodeLinker: `node-modules`});
         expect(xfs.existsSync(ppath.join(path, `.pnp.cjs`))).toEqual(false);
@@ -215,9 +215,9 @@ const noPnpNode = async (args, cwd) => {
   });
 };
 
-const pnpify = async (args, cwd) => {
+const sdks = async (args, cwd) => {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/scripts/run-pnpify.js`), ...args], {
+    const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/scripts/run-sdks.js`), ...args], {
       cwd: npath.fromPortablePath(cwd),
       stdio: `ignore`,
     });

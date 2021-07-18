@@ -1,6 +1,6 @@
 import {Hooks, Plugin, SettingsType}        from '@yarnpkg/core';
 import {xfs}                                from '@yarnpkg/fslib';
-import {NodeModulesHoistingLimits}          from '@yarnpkg/pnpify';
+import {NodeModulesHoistingLimits}          from '@yarnpkg/nm';
 
 import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
 import {getGlobalHardlinksStore}            from './NodeModulesLinker';

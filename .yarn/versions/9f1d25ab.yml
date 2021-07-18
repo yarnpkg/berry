@@ -16,7 +16,7 @@ releases:
   "@yarnpkg/plugin-init": decline
   "@yarnpkg/plugin-interactive-tools": decline
   "@yarnpkg/plugin-link": patch
-  "@yarnpkg/plugin-node-modules": decline
+  "@yarnpkg/plugin-nm": decline
   "@yarnpkg/plugin-npm": decline
   "@yarnpkg/plugin-npm-cli": decline
   "@yarnpkg/plugin-pack": decline

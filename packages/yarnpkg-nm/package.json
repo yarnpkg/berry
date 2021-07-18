@@ -1,0 +1,37 @@
+{
+  "name": "@yarnpkg/nm",
+  "version": "3.0.0-rc.10",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "types": "./sources/index.ts",
+  "sideEffects": false,
+  "dependencies": {
+    "@yarnpkg/core": "workspace:^3.0.0-rc.9",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
+  },
+  "devDependencies": {
+    "@yarnpkg/pnp": "workspace:*"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\"",
+    "release": "yarn npm publish",
+    "test": "run test:unit \"$(pwd)\""
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-nm"
+  },
+  "engines": {
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "2.4.0"
+}

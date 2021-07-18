@@ -2,7 +2,7 @@ releases:
   "@yarnpkg/pnpify": major
 
 declined:
-  - "@yarnpkg/plugin-node-modules"
+  - "@yarnpkg/plugin-nm"
   - vscode-zipfs
   - "@yarnpkg/builder"
   - "@yarnpkg/cli"

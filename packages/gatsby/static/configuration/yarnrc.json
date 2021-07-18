@@ -357,14 +357,14 @@
       "_exampleKeys": ["*.example.com"]
     },
     "nmHoistingLimits": {
-      "_package": "@yarnpkg/plugin-node-modules",
+      "_package": "@yarnpkg/plugin-nm",
       "description": "Defines the highest point where packages can be hoisted. One of `workspaces` (don't hoist packages past the workspace that depends on them), `dependencies` (packages aren't hoisted past the direct dependencies for each workspace), or `none` (the default, packages are hoisted as much as possible). This setting can be overriden per-workspace through the [`installConfig.hoistingLimits` field](/configuration/manifest#installConfig.hoistingLimits).",
       "type": "string",
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
     "nmMode": {
-      "_package": "@yarnpkg/plugin-node-modules",
+      "_package": "@yarnpkg/plugin-nm",
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
       "type": "string",
       "enum": ["classic", "hardlinks-local", "hardlinks-global"],

@@ -1,6 +1,6 @@
 releases:
   "@yarnpkg/cli": minor
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/plugin-pack": minor
   "@yarnpkg/plugin-pnp": minor
   "@yarnpkg/pnp": minor

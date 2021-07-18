@@ -145,7 +145,7 @@ step "Check that double-clicking on both 'namespace slugify {' and 'function slu
 
 setup yarn init -y
 yarn add typescript@3.8 >& /dev/null
-yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
+yarn node "${YARN2_DIR}/packages/yarnpkg-sdks/sources/boot-cli-dev.js"
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
@@ -162,7 +162,7 @@ step "Check that double-clicking on both 'namespace slugify {' and 'function slu
 
 setup yarn init -y
 yarn add typescript@3.8 >& /dev/null
-yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
+yarn node "${YARN2_DIR}/packages/yarnpkg-sdks/sources/boot-cli-dev.js"
 open_vscode "$(pwd)" 1
 
 step "Open index.ts"
@@ -181,7 +181,7 @@ step "Command-click on 'slugify'. This will show an empty bubble"
 
 setup yarn init -y
 yarn add typescript@3.8 >& /dev/null
-yarn node "${YARN2_DIR}/packages/yarnpkg-pnpify/sources/boot-cli-dev.js" --sdk
+yarn node "${YARN2_DIR}/packages/yarnpkg-sdks/sources/boot-cli-dev.js"
 open_vscode "$(pwd)"
 
 step "Open index.ts"

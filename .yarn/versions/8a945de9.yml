@@ -8,7 +8,7 @@ releases:
   "@yarnpkg/plugin-essentials": patch
   "@yarnpkg/plugin-init": patch
   "@yarnpkg/plugin-interactive-tools": patch
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/plugin-npm-cli": patch
   "@yarnpkg/plugin-pack": patch
   "@yarnpkg/plugin-patch": patch

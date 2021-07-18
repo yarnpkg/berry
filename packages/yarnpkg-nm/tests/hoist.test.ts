@@ -530,6 +530,6 @@ describe(`hoist`, () => {
       A: {dependencies: [`A`, `B`]},
       B: {dependencies: [`A`], peerNames: [`A`]},
     };
-    expect(getTreeHeight(hoist(toTree(tree), {check: true, debugLevel: 2}))).toEqual(2);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 });

@@ -11,7 +11,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
 
     let commands;
     try {
-      ({commands} = JSON.parse(output));
+      commands = JSON.parse(output);
     } catch (error) {
       throw new Error(`Failed to parse "${output}"`);
     }
@@ -20,7 +20,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       const command = commands[t];
       const sections = [];
 
-      const url = command.path.split(` `).slice(1).join(`/`);
+      const url = command.path.split(` `).slice(1).join(`/`) || `default`;
 
       const description = `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`;
 
@@ -71,7 +71,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       }
 
       if (command.options.length > 0) {
-        const addAnchor = (definition) => `<h3 id="${encodeURIComponent(("options-" + definition).replace(/\-+/g, "-"))}" class="header-code"><code class="language-text">${definition}</code></h3>`;
+        const addAnchor = definition => `<h3 id="${encodeURIComponent((`options-${definition}`).replace(/\-+/g, `-`))}" class="header-code"><code class="language-text">${definition}</code></h3>`;
         sections.push([
           `## Options\n`,
           `\n`,
