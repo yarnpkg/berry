@@ -227,5 +227,58 @@ describe(`Commands`, () => {
         }));
       }),
     );
+
+    test(
+      `it should remove resolutions matching the multiple globs and paths provided`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run, source}) => {
+          const tmp = await createTemporaryFolder();
+
+          await writeJson(`${path}/packages/workspace/package.json`, {
+            name: `workspace`,
+          });
+
+          const packages = [`my-package-a`, `my-package-b`, `my-package-c`, `my-package-d`];
+          for (const pkg of packages) {
+            await writeJson(`${tmp}/${pkg}/package.json`, {
+              name: pkg,
+            });
+            await run(`link`, `${tmp}/${pkg}`, {
+              cwd: `${path}/packages/workspace`,
+            });
+          }
+
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
+            resolutions: {
+              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              [`my-package-c`]: `portal:${npath.toPortablePath(`${tmp}/my-package-c`)}`,
+              [`my-package-d`]: `portal:${npath.toPortablePath(`${tmp}/my-package-d`)}`,
+            },
+          }));
+
+          await run(`unlink`, `my-package-{a,b}`, `${tmp}/my-package-d`, {
+            cwd: `${path}/packages/workspace`,
+          });
+
+          await expect(readJson(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
+            resolutions: {
+              [`my-package-c`]: `portal:${npath.toPortablePath(`${tmp}/my-package-c`)}`,
+            },
+          }));
+          await expect(readJson(`${path}/package.json`)).resolves.not.toEqual(expect.objectContaining({
+            resolutions: {
+              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              [`my-package-d`]: `portal:${npath.toPortablePath(`${tmp}/my-package-d`)}`,
+            },
+          }));
+        },
+      ),
+    );
   });
 });

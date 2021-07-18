@@ -1976,4 +1976,61 @@ describe(`Plug'n'Play`, () => {
       }
     )
   );
+
+  test(
+    `it should set bytesRead on Windows when input is a pipe and EOF is thrown`,
+    makeTemporaryEnv(
+      {
+        scripts: {
+          test: `echo '' | node index.js`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs');
+
+          fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
+            console.log(bytesRead);
+            fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
+              console.log(bytesRead);
+            });
+          });
+        `);
+
+        await expect(run(`test`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `1\n0\n`,
+        });
+      }
+    )
+  );
+
+  test(
+    `it should pick the most specific locator`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/sub-project`);
+        await xfs.writeJsonPromise(`${path}/sub-project/package.json`, {
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+        await xfs.writeFilePromise(`${path}/sub-project/yarn.lock`, ``);
+
+        await expect(run(`install`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/sub-project/index.js`, `
+          const path = require('path');
+          require.resolve('no-deps', {paths: [path.resolve(__dirname, '..'), __filename]});
+          require.resolve('no-deps', {paths: [path.resolve(__dirname, '..'), __filename]});
+        `);
+
+        await expect(run(`node`, `./index.js`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
+      }
+    )
+  );
 });

@@ -4,6 +4,9 @@ import {PortablePath}         from '@yarnpkg/fslib';
 import versionApply           from './commands/version/apply';
 import versionCheck           from './commands/version/check';
 import version                from './commands/version';
+import * as versionUtils      from './versionUtils';
+
+export {versionUtils};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {

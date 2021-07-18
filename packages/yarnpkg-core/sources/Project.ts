@@ -944,10 +944,12 @@ export class Project {
             buildScripts.push([BuildType.SCRIPT, scriptName]);
 
         try {
-          for (const installer of installers.values()) {
-            const result = await installer.installPackage(pkg, fetchResult);
-            if (result.buildDirective !== null) {
-              throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
+          for (const [linker, installer] of installers) {
+            if (linker.supportsPackage(pkg, linkerOptions)) {
+              const result = await installer.installPackage(pkg, fetchResult);
+              if (result.buildDirective !== null) {
+                throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
+              }
             }
           }
         } finally {
@@ -1049,7 +1051,9 @@ export class Project {
 
       if (isWorkspace) {
         for (const [packageLinker, installer] of installers) {
-          await linkPackage(packageLinker, installer);
+          if (packageLinker.supportsPackage(pkg, linkerOptions)) {
+            await linkPackage(packageLinker, installer);
+          }
         }
       } else {
         const packageLinker = packageLinkers.get(pkg.locatorHash);

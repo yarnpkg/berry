@@ -54,7 +54,7 @@ This step is completely optional - while we recommend to use Plug'n'Play for mos
 
 ### Before we start
 
-Plug'n'Play enforces strict dependency rules. In particular, you'll hit problems if you (or your dependencies) rely on unlisted dependencies (the reasons for that are detailed in our [Rulebook](/advanced/rulebook)), but the gist is that it was the cause of many "project doesn't work on my computer" issues, both in Yarn and other package managers).
+Plug'n'Play enforces strict dependency rules. In particular, you'll hit problems if you (or your dependencies) rely on unlisted dependencies (the reasons for that are detailed in our [Rulebook](/advanced/rulebook)), but the gist is that it was the cause of many "project doesn't work on my computer" issues, both in Yarn and other package managers.
 
 To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could result in a subpar experience. For example here's what `webpack-dev-server` would reveal:
 
@@ -196,7 +196,7 @@ Into:
 
 ### Setup your IDE for PnP support
 
-We've written a [guide](/getting-started/editor-sdks) entirely designed to explain you how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+We've written a [guide](/getting-started/editor-sdks) entirely designed to explain how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
 
 ### Update your configuration to the new settings
 

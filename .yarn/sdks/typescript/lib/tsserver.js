@@ -10,6 +10,10 @@ const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = (createRequire || createRequireFromPath)(absPnpApiPath);
 
 const moduleWrapper = tsserver => {
+  if (!process.versions.pnp) {
+    return tsserver;
+  }
+
   const {isAbsolute} = require(`path`);
   const pnpApi = require(`pnpapi`);
 
@@ -28,7 +32,7 @@ const moduleWrapper = tsserver => {
     // We add the `zip:` prefix to both `.zip/` paths and virtual paths
     if (isAbsolute(str) && !str.match(/^\^zip:/) && (str.match(/\.zip\//) || isVirtual(str))) {
       // We also take the opportunity to turn virtual paths into physical ones;
-      // this makes is much easier to work with workspaces that list peer
+      // this makes it much easier to work with workspaces that list peer
       // dependencies, since otherwise Ctrl+Click would bring us to the virtual
       // file instances instead of the real ones.
       //
@@ -66,6 +70,14 @@ const moduleWrapper = tsserver => {
           case `coc-nvim`: {
             str = normalize(resolved).replace(/\.zip\//, `.zip::`);
             str = resolve(`zipfile:${str}`);
+          } break;
+
+          // Support neovim native LSP and [typescript-language-server](https://github.com/theia-ide/typescript-language-server)
+          // We have to resolve the actual file system path from virtual path,
+          // everything else is up to neovim
+          case `neovim`: {
+            str = normalize(resolved).replace(/\.zip\//, `.zip::`);
+            str = `zipfile:${str}`;
           } break;
 
           default: {
@@ -106,7 +118,7 @@ const moduleWrapper = tsserver => {
   const {onMessage: originalOnMessage, send: originalSend} = Session.prototype;
   let hostInfo = `unknown`;
 
-  return Object.assign(Session.prototype, {
+  Object.assign(Session.prototype, {
     onMessage(/** @type {string} */ message) {
       const parsedMessage = JSON.parse(message)
 
@@ -130,6 +142,8 @@ const moduleWrapper = tsserver => {
       })));
     }
   });
+
+  return tsserver;
 };
 
 if (existsSync(absPnpApiPath)) {

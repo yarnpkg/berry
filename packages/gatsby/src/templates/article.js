@@ -1,10 +1,10 @@
+import {Global, css}         from '@emotion/react';
 import {graphql}             from 'gatsby';
 import React                 from 'react';
 
 import {LayoutContentNav}    from '../components/layout-content-nav';
 import {PrerenderedMarkdown} from '../components/markdown';
 import {SEO}                 from '../components/seo';
-import { Global, css }       from '@emotion/core';
 
 const GlobalStyleOverrides = css`
 :root {
