@@ -1,7 +1,7 @@
-import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
-import {UsageError}               from 'clipanion';
-import micromatch                 from 'micromatch';
-import {Readable, Transform}      from 'stream';
+import {PortablePath, npath, xfs, ppath} from '@yarnpkg/fslib';
+import {UsageError}                      from 'clipanion';
+import micromatch                        from 'micromatch';
+import {Readable, Transform}             from 'stream';
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
@@ -234,22 +234,22 @@ export class DefaultStream extends Transform {
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!
 
-export const dynamicRequire: NodeRequire = eval(`require`);
+const dynamicRequireNode: NodeRequire = eval(`require`);
 
 /**
  * Requires a module without using the module cache
  */
-export function dynamicRequireNoCache(path: PortablePath) {
+function dynamicRequireNoCache(path: string) {
   const physicalPath = npath.fromPortablePath(path);
 
-  const currentCacheEntry = dynamicRequire.cache[physicalPath];
-  delete dynamicRequire.cache[physicalPath];
+  const currentCacheEntry = dynamicRequireNode.cache[physicalPath];
+  delete dynamicRequireNode.cache[physicalPath];
 
   let result;
   try {
-    result = dynamicRequire(physicalPath);
+    result = dynamicRequireNode(physicalPath);
 
-    const freshCacheEntry = dynamicRequire.cache[physicalPath];
+    const freshCacheEntry = dynamicRequireNode.cache[physicalPath];
 
     const dynamicModule = eval(`module`) as NodeModule;
     const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);
@@ -258,27 +258,56 @@ export function dynamicRequireNoCache(path: PortablePath) {
       dynamicModule.children.splice(freshCacheIndex, 1);
     }
   } finally {
-    dynamicRequire.cache[physicalPath] = currentCacheEntry;
+    dynamicRequireNode.cache[physicalPath] = currentCacheEntry;
   }
 
   return result;
 }
 
-const dynamicRequireFreshCache = new Map<PortablePath, { mtime: number, instance: any }>();
+const dynamicRequireFsTimeCache = new Map<PortablePath, {
+  mtime: number;
+  instance: any;
+}>();
 
 /**
  * Requires a module without using the cache if it has changed since the last time it was loaded
  */
-export function dynamicRequireFresh(path: PortablePath) {
-  const cachedInstance = dynamicRequireFreshCache.get(path);
+function dynamicRequireFsTime(path: PortablePath) {
+  const cachedInstance = dynamicRequireFsTimeCache.get(path);
   const stat = xfs.statSync(path);
 
   if (cachedInstance?.mtime === stat.mtimeMs)
     return cachedInstance.instance;
 
   const instance = dynamicRequireNoCache(path);
-  dynamicRequireFreshCache.set(path, {mtime: stat.mtimeMs, instance});
+  dynamicRequireFsTimeCache.set(path, {mtime: stat.mtimeMs, instance});
   return instance;
+}
+
+export enum CachingStrategy {
+  NoCache,
+  FsTime,
+  Node,
+}
+
+export function dynamicRequire(path: string | PortablePath, {cachingStrategy = CachingStrategy.Node}: {cachingStrategy?: CachingStrategy} = {}) {
+  switch (cachingStrategy) {
+    case CachingStrategy.NoCache:
+      return dynamicRequireNoCache(path);
+
+    case CachingStrategy.FsTime:
+      if (!ppath.isAbsolute(path as PortablePath))
+        throw new Error(`File-based cache can only be used with absolute filesystem paths`);
+
+      return dynamicRequireFsTime(path as PortablePath);
+
+    case CachingStrategy.Node:
+      return dynamicRequireNode(path);
+
+    default: {
+      throw new Error(`Unsupported caching strategy`);
+    }
+  }
 }
 
 // This function transforms an iterable into an array and sorts it according to
