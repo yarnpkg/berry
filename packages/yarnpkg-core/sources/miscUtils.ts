@@ -1,7 +1,7 @@
-import {PortablePath, npath, xfs, ppath} from '@yarnpkg/fslib';
-import {UsageError}                      from 'clipanion';
-import micromatch                        from 'micromatch';
-import {Readable, Transform}             from 'stream';
+import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
+import {UsageError}               from 'clipanion';
+import micromatch                 from 'micromatch';
+import {Readable, Transform}      from 'stream';
 
 /**
  * @internal
