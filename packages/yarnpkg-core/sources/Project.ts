@@ -60,12 +60,12 @@ export enum InstallMode {
    * Doesn't run the link step, and only fetches what's necessary to compute
    * an updated lockfile.
    */
-  LockfileUpdate = `lockfile-update`,
+  UpdateLockfile = `update-lockfile`,
 
   /**
    * Don't run the build scripts.
    */
-  SkippedBuilds = `skipped-builds`,
+  SkipBuild = `skip-build`,
 }
 
 export type InstallOptions = {
@@ -124,7 +124,7 @@ export type InstallOptions = {
   persistProject?: boolean,
 
   /**
-   * @deprecated Use `mode=skipped-builds`
+   * @deprecated Use `mode=skip-build`
    */
   skipBuild?: never,
 };
@@ -868,7 +868,7 @@ export class Project {
     // In "dependency update" mode, we won't trigger the link step. As a
     // result, we only need to fetch the packages that are missing their
     // hashes (to add them to the lockfile).
-    if (mode === InstallMode.LockfileUpdate)
+    if (mode === InstallMode.UpdateLockfile)
       locatorHashes = locatorHashes.filter(locatorHash => !this.storedChecksums.has(locatorHash));
 
     let firstError = false;
@@ -1130,7 +1130,7 @@ export class Project {
 
     // Step 4: Build the packages in multiple steps
 
-    if (mode === InstallMode.SkippedBuilds)
+    if (mode === InstallMode.SkipBuild)
       return;
 
     const readyPackages = new Set(this.storedPackages.keys());
@@ -1462,7 +1462,7 @@ export class Project {
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
 
-      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.LockfileUpdate) {
+      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile) {
         await this.cacheCleanup(opts);
       }
     });
@@ -1479,8 +1479,8 @@ export class Project {
       await this.persist();
 
     await opts.report.startTimerPromise(`Link step`, async () => {
-      if (opts.mode === InstallMode.LockfileUpdate) {
-        opts.report.reportWarning(MessageName.UPDATE_LOCKFILE_ONLY_SKIP_LINK, `Skipped due to ${formatUtils.pretty(this.configuration, `mode=lockfile-update`, formatUtils.Type.CODE)}`);
+      if (opts.mode === InstallMode.UpdateLockfile) {
+        opts.report.reportWarning(MessageName.UPDATE_LOCKFILE_ONLY_SKIP_LINK, `Skipped due to ${formatUtils.pretty(this.configuration, `mode=update-lockfile`, formatUtils.Type.CODE)}`);
         return;
       }
 

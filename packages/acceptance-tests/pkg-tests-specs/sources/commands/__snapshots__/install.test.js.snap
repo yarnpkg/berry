@@ -18,7 +18,7 @@ Object {
 }
 `;
 
-exports[`Commands install it should fetch only required packages when using \`--mode=lockfile-update\` 1`] = `
+exports[`Commands install it should fetch only required packages when using \`--mode=update-lockfile\` 1`] = `
 Object {
   "code": 0,
   "stderr": "",
@@ -28,7 +28,7 @@ Object {
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
-➤ YN0073: │ Skipped due to mode=lockfile-update
+➤ YN0073: │ Skipped due to mode=update-lockfile
 ➤ YN0000: └ Completed
 ➤ YN0000: Done with warnings
 ",
@@ -54,7 +54,7 @@ exports[`Commands install it should print the logs to the standard output when u
 "
 `;
 
-exports[`Commands install it should skip build scripts when using --mode=skipped-builds 1`] = `
+exports[`Commands install it should skip build scripts when using --mode=skip-build 1`] = `
 "➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
