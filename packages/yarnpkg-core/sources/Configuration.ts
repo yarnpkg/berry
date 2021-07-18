@@ -1009,7 +1009,7 @@ export class Configuration {
       const dynamicPlugins = new Set();
 
       const importPlugin = async (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+        const {factory, name} = miscUtils.dynamicRequire(pluginPath);
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.

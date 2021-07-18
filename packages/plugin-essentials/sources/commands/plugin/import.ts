@@ -142,7 +142,7 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
         : entry;
 
       const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
-      const {name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+      const {name} = miscUtils.dynamicRequire(pluginPath);
 
       if (name !== pluginName) {
         plugins.push(entry);
