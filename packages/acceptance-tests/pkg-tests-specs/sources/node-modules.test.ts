@@ -988,6 +988,40 @@ describe(`Node_Modules`, () => {
       })
   );
 
+  test(`should not error out if one of two same-parent portals has unresolved peer dependency, while the other has resolved dependency with the same name`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget1 => {
+          await xfs.mktempPromise(async portalTarget2 => {
+            await xfs.writeJsonPromise(`${portalTarget1}/package.json` as PortablePath, {
+              name: `portal1`,
+              peerDependencies: {
+                'no-deps': `2.0.0`,
+              },
+            });
+            await xfs.writeJsonPromise(`${portalTarget2}/package.json` as PortablePath, {
+              name: `portal2`,
+              dependencies: {
+                'no-deps': `1.0.0`,
+              },
+            });
+
+            await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+              dependencies: {
+                portal1: `portal:${portalTarget1}`,
+                portal2: `portal:${portalTarget2}`,
+              },
+            });
+
+            await expect(run(`install`)).resolves.not.toThrow();
+          });
+        });
+      })
+  );
+
   test(
     `should not warn when depending on workspaces with postinstall`,
     makeTemporaryEnv(
@@ -1032,7 +1066,7 @@ describe(`Node_Modules`, () => {
         },
       });
 
-      await expect(async () => await run(`install`)).not.toThrow();
+      await expect(run(`install`)).resolves.not.toThrow();
     })
   );
 
