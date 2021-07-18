@@ -1,6 +1,6 @@
-import {CommandContext, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                from '@yarnpkg/fslib';
-import {Command, Option}             from 'clipanion';
+import {CommandContext, Configuration, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                               from '@yarnpkg/fslib';
+import {Command, Option}                            from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class EntryCommand extends Command<CommandContext> {
@@ -11,6 +11,13 @@ export default class EntryCommand extends Command<CommandContext> {
     if (this.leadingArgument.match(/[\\/]/) && !structUtils.tryParseIdent(this.leadingArgument)) {
       const newCwd = ppath.resolve(this.context.cwd, npath.toPortablePath(this.leadingArgument));
       return await this.cli.run(this.args, {cwd: newCwd});
+    }
+
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const aliased = configuration.get(`alias`).get(this.leadingArgument);
+
+    if (aliased !== undefined) {
+      return await this.cli.run([...aliased.split(` `), ...this.args]);
     } else {
       return await this.cli.run([`run`, this.leadingArgument, ...this.args]);
     }
