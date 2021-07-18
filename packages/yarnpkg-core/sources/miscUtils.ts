@@ -241,7 +241,11 @@ export class DefaultStream extends Transform {
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!
 
-const dynamicRequireNode: NodeRequire = eval(`require`);
+const realRequire: NodeRequire = eval(`require`);
+
+function dynamicRequireNode(path: string) {
+  return realRequire(npath.fromPortablePath(path));
+}
 
 /**
  * Requires a module without using the module cache
@@ -249,14 +253,14 @@ const dynamicRequireNode: NodeRequire = eval(`require`);
 function dynamicRequireNoCache(path: string) {
   const physicalPath = npath.fromPortablePath(path);
 
-  const currentCacheEntry = dynamicRequireNode.cache[physicalPath];
-  delete dynamicRequireNode.cache[physicalPath];
+  const currentCacheEntry = realRequire.cache[physicalPath];
+  delete realRequire.cache[physicalPath];
 
   let result;
   try {
     result = dynamicRequireNode(physicalPath);
 
-    const freshCacheEntry = dynamicRequireNode.cache[physicalPath];
+    const freshCacheEntry = realRequire.cache[physicalPath];
 
     const dynamicModule = eval(`module`) as NodeModule;
     const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);
@@ -265,7 +269,7 @@ function dynamicRequireNoCache(path: string) {
       dynamicModule.children.splice(freshCacheIndex, 1);
     }
   } finally {
-    dynamicRequireNode.cache[physicalPath] = currentCacheEntry;
+    realRequire.cache[physicalPath] = currentCacheEntry;
   }
 
   return result;
