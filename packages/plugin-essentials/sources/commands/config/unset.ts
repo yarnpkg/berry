@@ -2,6 +2,7 @@ import {BaseCommand}                              from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}       from 'clipanion';
 import cloneDeep                                  from 'lodash/cloneDeep';
+import hasPath                                    from 'lodash/has';
 import unsetPath                                  from 'lodash/unset';
 
 // eslint-disable-next-line arca/no-default-export
@@ -55,21 +56,31 @@ export default class ConfigUnsetCommand extends BaseCommand {
         ? patch => Configuration.updateHomeConfiguration(patch)
         : patch => Configuration.updateConfiguration(assertProjectCwd(), patch);
 
-    await updateConfiguration(current => {
-      const clone = path
-        ? cloneDeep(current)
-        : {...current};
-
-      unsetPath(clone, this.name);
-      return clone;
-    });
-
     const report = await StreamReport.start({
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
     }, async report => {
-      report.reportInfo(MessageName.UNNAMED, `Successfully unset ${this.name}`);
+      let bailedOutEarly = false;
+      await updateConfiguration(current => {
+        if (!hasPath(current, this.name)) {
+          report.reportWarning(MessageName.UNNAMED, `Configuration doesn't contain setting ${this.name}; there is nothing to unset`);
+          bailedOutEarly = true;
+          return current;
+        }
+
+        const clone = path
+          ? cloneDeep(current)
+          : {...current};
+
+        unsetPath(clone, this.name);
+        return clone;
+      });
+
+      // We can't show the success message in the callback as we must first wait for the new configuration to be persisted
+      if (!bailedOutEarly) {
+        report.reportInfo(MessageName.UNNAMED, `Successfully unset ${this.name}`);
+      }
     });
 
     return report.exitCode();

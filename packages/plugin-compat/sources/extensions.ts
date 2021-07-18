@@ -102,7 +102,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/xz64/license-webpack-plugin/pull/100
-  [`license-webpack-plugin@*`, {
+  [`license-webpack-plugin@<2.3.18`, {
     peerDependenciesMeta: {
       [`webpack`]: optionalPeerDep,
     },
@@ -312,6 +312,76 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`@ant-design/react-slick@<=0.28.3`, {
     peerDependencies: {
       react: `>=16.0.0`,
+    },
+  }],
+  // https://github.com/mqttjs/MQTT.js/pull/1266
+  [`mqtt@<4.2.7`, {
+    dependencies: {
+      duplexify: `^4.1.1`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`vue-cli-plugin-vuetify@<=2.0.3`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+      'vuetify-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/152
+  [`vue-cli-plugin-vuetify@<=2.0.4`, {
+    dependencies: {
+      'null-loader': `^3.0.0`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`@vuetify/cli-plugin-utils@<=0.0.4`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6060/files#diff-857cfb6f3e9a676b0de4a00c2c712297068c038a7d5820c133b8d6aa8cceb146R28
+  [`@vue/cli-plugin-typescript@<=5.0.0-alpha.0`, {
+    dependencies: {
+      'babel-loader': `^8.1.0`,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6456
+  [`@vue/cli-plugin-typescript@<=5.0.0-beta.0`, {
+    dependencies: {
+      '@babel/core': `^7.12.16`,
+    },
+    peerDependencies: {
+      'vue-template-compiler': `^2.0.0`,
+    },
+    peerDependenciesMeta: {
+      'vue-template-compiler': optionalPeerDep,
+    },
+  }],
+  // https://github.com/apache/cordova-ios/pull/1105
+  [`cordova-ios@<=6.3.0`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
+  // https://github.com/apache/cordova-lib/pull/871
+  [`cordova-lib@<=10.0.1`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
+  // https://github.com/creationix/git-node-fs/pull/8
+  [`git-node-fs@*`, {
+    peerDependencies: {
+      'js-git': `^0.7.8`,
+    },
+    peerDependenciesMeta: {
+      'js-git': optionalPeerDep,
     },
   }],
 ];
