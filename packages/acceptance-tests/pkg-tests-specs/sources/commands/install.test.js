@@ -20,20 +20,20 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should skip build scripts when using --skip-builds`,
+      `it should skip build scripts when using --mode=skipped-builds`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps-scripted`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        const {stdout} = await run(`install`, `--inline-builds`, `--skip-builds`);
+        const {stdout} = await run(`install`, `--inline-builds`, `--mode=skipped-builds`);
 
         await expect(stdout).toMatchSnapshot();
       }),
     );
 
     test(
-      `it shouldn't impact how artifacts are generated when using --skip-builds`,
+      `it shouldn't impact how artifacts are generated when using --mode=skipped-builds`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps-scripted`]: `1.0.0`,
@@ -46,7 +46,7 @@ describe(`Commands`, () => {
 
         await xfs.removePromise(pnpPath);
 
-        await run(`install`, `--skip-builds`);
+        await run(`install`, `--mode=skipped-builds`);
         const pnpFileWithoutBuilds = await xfs.readFilePromise(pnpPath);
 
         expect(pnpFileWithBuilds).toEqual(pnpFileWithoutBuilds);
@@ -351,15 +351,14 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should fetch only required packages when using \`updateLockfileOnly: true\``,
+      `it should fetch only required packages when using \`--mode=lockfile-update\``,
       makeTemporaryEnv({
         dependencies: {
           [`one-fixed-dep`]: `1.0.0`,
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `updateLockfileOnly: true`);
-        await run(`install`);
+        await run(`install`, `--mode=lockfile-update`);
 
         const cacheBefore = await xfs.readdirPromise(`${path}/.yarn/cache`);
         expect(cacheBefore.find(entry => entry.includes(`one-fixed-dep-npm-1.0.0`))).toBeDefined();
@@ -374,7 +373,7 @@ describe(`Commands`, () => {
         await xfs.removePromise(`${path}/.yarn/cache`);
         await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
 
-        const {code, stdout, stderr} = await run(`install`);
+        const {code, stdout, stderr} = await run(`install`, `--mode=lockfile-update`);
         await expect({code, stdout, stderr}).toMatchSnapshot();
 
         const cacheAfter = await xfs.readdirPromise(`${path}/.yarn/cache`);
