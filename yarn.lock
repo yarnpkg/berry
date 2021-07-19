@@ -6061,6 +6061,7 @@ __metadata:
     "@yarnpkg/pnp": "workspace:*"
     clipanion: ^3.0.0
     cross-spawn: 7.0.3
+    tslib: ^1.13.0
   bin:
     pnpify: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -6081,6 +6082,7 @@ __metadata:
     clipanion: ^3.0.0
     comment-json: ^2.2.0
     lodash: ^4.17.15
+    tslib: ^1.13.0
   bin:
     sdks: ./sources/boot-cli-dev.js
   languageName: unknown

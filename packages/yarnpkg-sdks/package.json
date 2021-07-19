@@ -13,7 +13,8 @@
     "chalk": "^3.0.0",
     "clipanion": "^3.0.0",
     "comment-json": "^2.2.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
     "@types/comment-json": "^1.1.1",
