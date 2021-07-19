@@ -7,7 +7,7 @@ description: An overview of the editor SDKs used to bring PnP compatibility to e
 
 Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work. This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
 
-The editor SDKs and settings can be generated using the `yarn sdks` (or `yarn dlx @yarnpkg/sdks` if you don't need to install it locally) command. Its detailed documentation can be found on the [dedicated page](/sdks/cli/default).
+The editor SDKs and settings can be generated using `yarn dlx @yarnpkg/sdks` (or `yarn sdks` if you added `@yarnpkg/sdks` to your dependencies). Its detailed documentation can be found on the [dedicated page](/sdks/cli/default).
 Generally speaking:
 - Use `yarn sdks vscode vim` to generate both the base SDKs and the settings for the specified supported editors.
 - Use `yarn sdks base` to generate the base SDKs and then manually tweak the configuration of unsupported editors.
