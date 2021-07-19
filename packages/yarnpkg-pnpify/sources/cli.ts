@@ -3,6 +3,7 @@
 import {Cli, Builtins} from 'clipanion';
 
 import RunCommand      from './commands/RunCommand';
+import SdkCommand      from './commands/SdkCommand';
 
 const cli = new Cli({
   binaryLabel: `Yarn PnPify`,
@@ -11,6 +12,7 @@ const cli = new Cli({
 });
 
 cli.register(RunCommand);
+cli.register(SdkCommand);
 
 cli.register(Builtins.DefinitionsCommand);
 cli.register(Builtins.HelpCommand);
