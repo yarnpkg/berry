@@ -14811,7 +14811,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.0.0"],
-            ["cross-spawn", "npm:7.0.3"]
+            ["cross-spawn", "npm:7.0.3"],
+            ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -14831,7 +14832,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chalk", "npm:3.0.0"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.0.0"],
             ["comment-json", "npm:2.2.0"],
-            ["lodash", "npm:4.17.21"]
+            ["lodash", "npm:4.17.21"],
+            ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
         }]
