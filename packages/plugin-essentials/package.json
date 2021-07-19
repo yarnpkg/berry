@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "3.0.0-rc.10",
+  "version": "3.0.0-rc.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.10",
-    "@yarnpkg/json-proxy": "workspace:^2.1.1-rc.8",
-    "@yarnpkg/parsers": "workspace:^2.4.0-rc.8",
-    "@yarnpkg/shell": "workspace:^3.0.0-rc.10",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.11",
+    "@yarnpkg/json-proxy": "workspace:^2.1.1-rc.9",
+    "@yarnpkg/parsers": "workspace:^2.4.0-rc.9",
+    "@yarnpkg/shell": "workspace:^3.0.0-rc.11",
     "ci-info": "^2.0.0",
     "clipanion": "^3.0.0",
     "enquirer": "^2.3.6",
@@ -18,8 +18,8 @@
     "typanion": "^3.3.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.10",
-    "@yarnpkg/core": "^3.0.0-rc.10"
+    "@yarnpkg/cli": "^3.0.0-rc.11",
+    "@yarnpkg/core": "^3.0.0-rc.11"
   },
   "devDependencies": {
     "@types/ci-info": "^2",
