@@ -1,4 +1,4 @@
-# `@yarnpkg/plugin-node-modules`
+# `@yarnpkg/plugin-nm`
 
 This plugin adds support for installing packages through a `node_modules` folder.
 

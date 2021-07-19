@@ -5267,7 +5267,7 @@ __metadata:
     "@yarnpkg/plugin-http": "workspace:^2.1.3-rc.9"
     "@yarnpkg/plugin-init": "workspace:^3.0.0-rc.9"
     "@yarnpkg/plugin-link": "workspace:^2.1.2-rc.9"
-    "@yarnpkg/plugin-node-modules": "workspace:^3.0.0-rc.9"
+    "@yarnpkg/plugin-nm": "workspace:^3.0.0-rc.9"
     "@yarnpkg/plugin-npm": "workspace:^2.5.0-rc.9"
     "@yarnpkg/plugin-npm-cli": "workspace:^3.0.0-rc.9"
     "@yarnpkg/plugin-pack": "workspace:^3.0.0-rc.9"
@@ -5560,7 +5560,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/eslint-config": "workspace:*"
-    "@yarnpkg/pnpify": "workspace:*"
+    "@yarnpkg/sdks": "workspace:*"
     babel-jest: ^26.0.1
     clipanion: ^3.0.0
     eslint: ^6.8.0
@@ -5590,6 +5590,16 @@ __metadata:
       unplugged: true
     webpack-cli:
       built: false
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/nm@workspace:^3.0.0-rc.10, @yarnpkg/nm@workspace:packages/yarnpkg-nm":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/nm@workspace:packages/yarnpkg-nm"
+  dependencies:
+    "@yarnpkg/core": "workspace:^3.0.0-rc.9"
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
+    "@yarnpkg/pnp": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5814,20 +5824,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-node-modules@workspace:^3.0.0-rc.9, @yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules":
+"@yarnpkg/plugin-nm@workspace:^3.0.0-rc.9, @yarnpkg/plugin-nm@workspace:packages/plugin-nm":
   version: 0.0.0-use.local
-  resolution: "@yarnpkg/plugin-node-modules@workspace:packages/plugin-node-modules"
+  resolution: "@yarnpkg/plugin-nm@workspace:packages/plugin-nm"
   dependencies:
     "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
     "@yarnpkg/libzip": "workspace:^2.2.2-rc.7"
+    "@yarnpkg/nm": "workspace:^3.0.0-rc.10"
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.7"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0-rc.9"
     "@yarnpkg/plugin-stage": "workspace:*"
     "@yarnpkg/pnp": "workspace:^3.0.0-rc.9"
-    "@yarnpkg/pnpify": "workspace:^3.0.0-rc.10"
     "@zkochan/cmd-shim": ^5.1.0
     clipanion: ^3.0.0
     micromatch: ^4.0.2
@@ -6043,6 +6053,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnpify@workspace:packages/yarnpkg-pnpify"
   dependencies:
+    "@types/cross-spawn": 6.0.0
+    "@yarnpkg/core": "workspace:^3.0.0-rc.9"
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.9"
+    "@yarnpkg/monorepo": "workspace:*"
+    "@yarnpkg/nm": "workspace:^3.0.0-rc.10"
+    "@yarnpkg/pnp": "workspace:*"
+    clipanion: ^3.0.0
+    cross-spawn: 7.0.3
+  bin:
+    pnpify: ./sources/boot-cli-dev.js
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/sdks@workspace:*, @yarnpkg/sdks@workspace:packages/yarnpkg-sdks":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/sdks@workspace:packages/yarnpkg-sdks"
+  dependencies:
     "@types/comment-json": ^1.1.1
     "@types/lodash": ^4.14.136
     "@yarnpkg/core": "workspace:^3.0.0-rc.9"
@@ -6053,20 +6080,9 @@ __metadata:
     chalk: ^3.0.0
     clipanion: ^3.0.0
     comment-json: ^2.2.0
-    eslint: ^6.8.0
     lodash: ^4.17.15
-    tslib: ^1.13.0
-    typescript: ^4.3.2
-  peerDependencies:
-    eslint: "*"
-    typescript: "*"
-  peerDependenciesMeta:
-    eslint:
-      optional: true
-    typescript:
-      optional: true
   bin:
-    pnpify: ./sources/boot-cli-dev.js
+    sdks: ./sources/boot-cli-dev.js
   languageName: unknown
   linkType: soft
 

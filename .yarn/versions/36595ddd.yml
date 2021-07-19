@@ -22,7 +22,7 @@ releases:
   "@yarnpkg/plugin-init": patch
   "@yarnpkg/plugin-interactive-tools": patch
   "@yarnpkg/plugin-link": patch
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/plugin-npm": patch
   "@yarnpkg/plugin-npm-cli": patch
   "@yarnpkg/plugin-pack": patch

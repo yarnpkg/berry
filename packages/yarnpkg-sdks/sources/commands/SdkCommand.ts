@@ -9,7 +9,7 @@ import {generateSdk, validateIntegrations, SUPPORTED_INTEGRATIONS, SupportedInte
 // eslint-disable-next-line arca/no-default-export
 export default class SdkCommand extends Command {
   static paths = [
-    [`--sdk`],
+    Command.Default,
   ];
 
   static usage = Command.Usage({
@@ -35,13 +35,13 @@ export default class SdkCommand extends Command {
     `,
     examples: [[
       `Generate the base SDKs`,
-      `$0 --sdk base`,
+      `$0 base`,
     ], [
       `Generate the base SDKs and editor settings for supported editors`,
-      `$0 --sdk vscode vim`,
+      `$0 vscode vim`,
     ], [
       `Update all generated SDKs and editor settings`,
-      `$0 --sdk`,
+      `$0`,
     ]],
   });
 
@@ -109,7 +109,7 @@ export default class SdkCommand extends Command {
     ]);
 
     if (allIntegrations.size === 0 && !onlyBase)
-      throw new UsageError(`No integrations have been provided as arguments, and no preexisting integrations could be found. Make sure to run \`yarn pnpify --sdk <integrations>\` first, or \`yarn pnpify --sdk base\` if you only need the SDK files and prefer to manage your own environment settings. Run \`yarn pnpify --sdk -h\` to see the list of supported integrations.`);
+      throw new UsageError(`No integrations have been provided as arguments, and no preexisting integrations could be found. Make sure to run \`yarn sdks <integrations>\` first, or \`yarn sdks base\` if you only need the SDK files and prefer to manage your own environment settings. Run \`yarn sdks -h\` to see the list of supported integrations.`);
 
     const report = await StreamReport.start({
       configuration,

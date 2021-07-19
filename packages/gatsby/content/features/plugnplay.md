@@ -87,7 +87,7 @@ Because the hoisting heuristics aren't standardized and predictable, PnP operati
 
 To address this problem, Yarn ships with a "loose" mode which will cause the PnP linker to work in tandem with the `node-modules` hoister - we will first generate the list of packages that would have been hoisted to the top level in a typical `node_modules` install, then remember this list as what we call the "fallback pool".
 
-> Note that because the loose mode directly calls the `node-modules` hoister, it follows the exact same implementation as the true algorithm used by the [`node-modules` linker](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules)!
+> Note that because the loose mode directly calls the `node-modules` hoister, it follows the exact same implementation as the true algorithm used by the [`node-modules` linker](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm)!
 
 At runtime, packages that require unlisted dependencies will still be allowed to access them if any version of the dependency ended up in the fallback pool (which packages exactly are allowed to rely on the fallback pool can be tweaked with [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode)).
 
@@ -154,7 +154,7 @@ Many common frontend tools now support Plug'n'Play natively!
 
 The following tools cannot be used with pure Plug'n'Play install (even under loose mode).
 
-**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules). Just follow the [instructions](/getting-started/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
+**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm). Just follow the [instructions](/getting-started/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |

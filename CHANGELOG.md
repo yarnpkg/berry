@@ -22,6 +22,12 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
 - The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 - The cache files need to be regenerated. We had to change their timestamps in order to account for a flaw in the zip spec that was causing problems with some third-party tools.
+- `@yarnpkg/pnpify` has been refactored into 3 packages:
+  - `@yarnpkg/sdks` now contains the [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks)
+  - `@yarnpkg/pnpify` now contains the [PnPify CLI compatibility tool that creates in-memory `node_modules`](https://yarnpkg.com/advanced/pnpify)
+  - `@yarnpkg/nm` now contains the `node_modules` tree builder and hoister
+- `@yarnpkg/plugin-node-modules` has been renamed to `@yarnpkg/plugin-nm`
+- The `--clipanion=definitions` commands supported by our CLIs will now expose the definitions on the entry point (rather than on `.command`)
 
 ### API
 
@@ -55,7 +61,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The `SIGTERM` signal will now be propagated to child processes.
 - The PnP linker now schedules packages to be rebuilt if their unplugged folder is removed
 - `yarn config unset` will now correctly unset non-nested properties
-- The TypeScript SDK now 
+- The TypeScript SDK now
 - And a bunch of smaller fixes.
 
 ### Settings

@@ -94,7 +94,7 @@ We have a [dedicated documentation](/getting-started/editor-sdks), but if you're
 
 1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode extension
 2. Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the *top level* of the project (rather than in a random workspace)
-3. Run `yarn dlx @yarnpkg/pnpify --sdk vscode`
+3. Run `yarn dlx @yarnpkg/sdks vscode`
 4. Commit the changes - this way contributors won't have to follow the same procedure
 5. For TypeScript, don't forget to select [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript) in VSCode
 
@@ -251,7 +251,7 @@ So how to replace them? There are different ways:
 
 Despite our best efforts some tools don't work at all under Plug'n'Play environments, and we don't have the resources to update them ourselves. There are only two notorious ones on our list: Flow, and React Native.
 
-In such a radical case, you can enable the built-in [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules) by adding the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file before running a fresh `yarn install`:
+In such a radical case, you can enable the built-in [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm) by adding the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file before running a fresh `yarn install`:
 
 ```yaml
 nodeLinker: node-modules
