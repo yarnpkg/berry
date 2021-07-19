@@ -815,7 +815,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
           throw makeError(
             ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
-            `${errorMessage}\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${packageLocation}\n`,
+            `${errorMessage}\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`,
             {unqualifiedPath: unqualifiedPathForDisplay},
           );
         }
