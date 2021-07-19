@@ -1,8 +1,11 @@
-import {Workspace, structUtils} from '@yarnpkg/core';
-import {packUtils}              from '@yarnpkg/plugin-pack';
-import {createHash}             from 'crypto';
-import ssri                     from 'ssri';
-import {URL}                    from 'url';
+import {Workspace, structUtils}             from '@yarnpkg/core';
+import {NodeFS, PortablePath, ppath, npath} from '@yarnpkg/fslib';
+import {packUtils}                          from '@yarnpkg/plugin-pack';
+import {createHash}                         from 'crypto';
+import ssri                                 from 'ssri';
+import {URL}                                from 'url';
+
+const nodeFs = new NodeFS();
 
 export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
   const configuration = workspace.project.configuration;
@@ -45,7 +48,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
         length: buffer.length,
       },
     },
-
+    gitHead: await gitHead(workspace.cwd),
     name,
     access,
 
@@ -72,4 +75,50 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
       },
     },
   };
+}
+
+// This is based on the npm implementation here:
+// https://github.com/npm/read-package-json/blob/v3.0.1/read-json.js#L345-L384
+async function gitHead (workingDir: PortablePath) {
+  try {
+    const gitDir = await getGitDir(npath.toPortablePath(workingDir));
+    const headFilePath = ppath.resolve(gitDir, `.git/HEAD`);
+    const headValue = await nodeFs.readFilePromise(headFilePath, `utf8`);
+    if (headValue.match(/^ref: /) == null)
+      return headValue.trim();
+    const headRefFileName = headValue.replace(/^ref: /, ``).trim();
+    const headRefFilePath = ppath.resolve(gitDir, `.git`, headRefFileName);
+    const commitRef = await nodeFs.readFilePromise(headRefFilePath, `utf8`).catch(() => null);
+    if (commitRef)
+      return commitRef.replace(/^ref: /, ``).trim();
+    const packFile = ppath.resolve(gitDir, `.git/packed-refs`);
+    const refs = await nodeFs.readFilePromise(packFile, `utf8`);
+    if (!refs)
+      return null;
+
+    const refsList = refs.split(`\n`);
+    for (let i = 0; i < refsList.length; i++) {
+      const match = refsList[i].match(/^([0-9a-f]{40}) (.+)$/);
+      if ((match != null) && match[2].trim() === headRefFileName) {
+        return match[1];
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function getGitDir (dir: PortablePath) {
+  while (dir != PortablePath.root) {
+    try {
+      const dirStats = await nodeFs.statPromise(ppath.resolve(dir, `.git`));
+      if (dirStats.isDirectory()) {
+        return dir;
+      }
+    } catch {
+    }
+    dir = ppath.resolve(dir, `..`);
+  }
+  return dir;
 }
