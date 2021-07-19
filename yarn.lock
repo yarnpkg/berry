@@ -5227,7 +5227,7 @@ __metadata:
     babel-loader: ^8.1.0
     chalk: ^3.0.0
     clipanion: ^3.0.1
-    esbuild-wasm: ^0.11.20
+    esbuild: "npm:esbuild-wasm@^0.11.20"
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
     semver: ^7.1.2
@@ -10875,7 +10875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:^0.11.20, esbuild@npm:esbuild-wasm@^0.11.20":
+"esbuild@npm:esbuild-wasm@^0.11.20":
   version: 0.11.20
   resolution: "esbuild-wasm@npm:0.11.20"
   bin:

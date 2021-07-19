@@ -5,7 +5,7 @@ import {npath}                                                              from
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
 import {Command, Option, Usage}                                             from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild-wasm';
+import {build, Plugin}                                                      from 'esbuild';
 import fs                                                                   from 'fs';
 import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
