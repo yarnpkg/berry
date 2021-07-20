@@ -17,7 +17,7 @@
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "ci-info": "^2.0.0",
-    "clipanion": "^3.0.0",
+    "clipanion": "^3.0.1",
     "cross-spawn": "7.0.3",
     "diff": "^4.0.1",
     "globby": "^11.0.1",
