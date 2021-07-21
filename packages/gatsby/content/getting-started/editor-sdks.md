@@ -73,7 +73,7 @@ yarn dlx @yarnpkg/sdks vim
 Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk base
+yarn dlx @yarnpkg/sdks base
 ```
 
 With the `.yarn/sdks` in place TypeScript support should work out of the box with [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) and [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server).
