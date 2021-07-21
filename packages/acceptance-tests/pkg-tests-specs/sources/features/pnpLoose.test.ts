@@ -1,3 +1,5 @@
+export {};
+
 describe(`Features`, () => {
   describe(`PnP Loose`, () => {
     test(
