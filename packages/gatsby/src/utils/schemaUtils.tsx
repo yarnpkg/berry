@@ -158,7 +158,7 @@ export const renderArrayProperty = (name: string, definition: JSONSchema7, state
     if (typeof arrayProperty === `object` && arrayProperty !== null) {
       const subDefinition = definition.items! as JSONSchema7;
       return <>{Object.keys(arrayProperty).map(name => {
-        // @ts-ignore
+        // @ts-expect-error
         return renderProperty(name, subDefinition.properties[name], {...state, pathSegments: [...state.pathSegments, `${index}`, name]});
       })}</>;
     } else {
