@@ -132,5 +132,31 @@ describe(`Features`, () => {
         },
       ),
     );
+
+    test(
+      `it should install a root workspace without any dependencies (unnamed)`,
+      makeTemporaryEnv(
+        {},
+        {
+          pnpMode: `loose`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toBeTruthy();
+        },
+      ),
+    );
+
+    test(
+      `it should install a root workspace without any dependencies (named)`,
+      makeTemporaryEnv(
+        {name: `workspace`},
+        {
+          pnpMode: `loose`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toBeTruthy();
+        },
+      ),
+    );
   });
 });
