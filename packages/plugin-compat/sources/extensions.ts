@@ -516,4 +516,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       lodash: `^4.17.21`,
     },
   }],
+  // https://github.com/reduxjs/redux-thunk/pull/251
+  [`redux-thunk@<=2.3.0`, {
+    peerDependencies: {
+      redux: `^4.0.0`,
+    },
+  }],
 ];
