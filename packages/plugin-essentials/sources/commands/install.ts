@@ -15,13 +15,13 @@ export default class YarnCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `install the project dependencies`,
     details: `
-      This command setup your project if needed. The installation is splitted in four different steps that each have their own characteristics:
+      This command sets up your project if needed. The installation is split into four different steps that each have their own characteristics:
 
       - **Resolution:** First the package manager will resolve your dependencies. The exact way a dependency version is privileged over another isn't standardized outside of the regular semver guarantees. If a package doesn't resolve to what you would expect, check that all dependencies are correctly declared (also check our website for more information: ).
 
-      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where are stored the cache files).
+      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where the cache files are stored).
 
-      - **Link:** Then we send the dependency tree information to internal plugins tasked from writing them on the disk in some form (for example by generating the .pnp.cjs file you might know).
+      - **Link:** Then we send the dependency tree information to internal plugins tasked with writing them on the disk in some form (for example by generating the .pnp.cjs file you might know).
 
       - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another.
 
