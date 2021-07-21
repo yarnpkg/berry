@@ -1,13 +1,14 @@
 import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
 import {UsageError}               from 'clipanion';
 import micromatch                 from 'micromatch';
+import semver                     from 'semver';
 import {Readable, Transform}      from 'stream';
 
 /**
  * @internal
  */
 export function isTaggedYarnVersion(version: string) {
-  return version.match(/^[^-]+(-rc\.[0-9]+)?$/);
+  return semver.valid(version) && version.match(/^[^-]+(-rc\.[0-9]+)?$/);
 }
 
 export function escapeRegExp(str: string) {
