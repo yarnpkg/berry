@@ -1,2 +1,2 @@
 releases:
-  "@yarnpkg/eslint-config": patch
+  "@yarnpkg/eslint-config": minor
