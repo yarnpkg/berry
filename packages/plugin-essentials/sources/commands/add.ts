@@ -98,7 +98,7 @@ export default class AddCommand extends BaseCommand {
     description: `Add / upgrade a package to a dev dependency`,
   });
 
-  interactive = Option.Boolean(`-i,--interactive`, false, {
+  interactive = Option.Boolean(`-i,--interactive`, {
     description: `Reuse the specified package from other workspaces in the project`,
   });
 
