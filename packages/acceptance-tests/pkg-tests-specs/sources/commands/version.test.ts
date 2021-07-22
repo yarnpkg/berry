@@ -1,4 +1,4 @@
-import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
+import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 
 const {
   fs: {readJson},
@@ -217,7 +217,7 @@ describe(`Commands`, () => {
           // Create the primary package.
           const pkgPrimary = ppath.join(path, `packages/pkg-primary` as PortablePath);
           await xfs.mkdirpPromise(pkgPrimary);
-          await xfs.writeJsonPromise(ppath.join(pkgPrimary, `package.json` as PortablePath), {
+          await xfs.writeJsonPromise(ppath.join(pkgPrimary, Filename.manifest), {
             name: `pkg-primary`,
             version: `1.0.0`,
           });
@@ -225,7 +225,7 @@ describe(`Commands`, () => {
           // Create the dependant package.
           const pkgDependant = ppath.join(path, `packages/pkg-dependant` as PortablePath);
           await xfs.mkdirpPromise(pkgDependant);
-          await xfs.writeJsonPromise(ppath.join(pkgDependant, `package.json` as PortablePath), {
+          await xfs.writeJsonPromise(ppath.join(pkgDependant, Filename.manifest), {
             name: `pkg-dependant`,
             version: `1.0.0`,
             dependencies: {
