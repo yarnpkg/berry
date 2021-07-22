@@ -1,3 +1,5 @@
+export {};
+
 describe(`Features`, () => {
   describe(`PnP Loose`, () => {
     test(
@@ -129,6 +131,32 @@ describe(`Features`, () => {
 
           const {stderr} = await run(`node`, `-e`, `require('various-requires/invalid-require')`);
           expect(stderr).toMatch(/various-requires tried to access no-deps, but it isn't declared in its dependencies/);
+        },
+      ),
+    );
+
+    test(
+      `it should install a root workspace without any dependencies (unnamed)`,
+      makeTemporaryEnv(
+        {},
+        {
+          pnpMode: `loose`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toBeTruthy();
+        },
+      ),
+    );
+
+    test(
+      `it should install a root workspace without any dependencies (named)`,
+      makeTemporaryEnv(
+        {name: `workspace`},
+        {
+          pnpMode: `loose`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toBeTruthy();
         },
       ),
     );
