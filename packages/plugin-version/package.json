@@ -9,6 +9,7 @@
     "@yarnpkg/parsers": "workspace:^2.4.0-rc.10",
     "clipanion": "^3.0.1",
     "ink": "^3.0.8",
+    "lodash": "^4.17.15",
     "react": "^16.13.1",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
@@ -18,6 +19,7 @@
     "@yarnpkg/core": "^3.0.0-rc.12"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.136",
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:*",

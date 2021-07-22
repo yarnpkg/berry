@@ -1,4 +1,4 @@
-import {xfs, ppath} from '@yarnpkg/fslib';
+import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 
 const {
   fs: {readJson},
@@ -215,17 +215,17 @@ describe(`Commands`, () => {
         },
         async ({path, run, source}) => {
           // Create the primary package.
-          const pkgPrimary = ppath.join(path, `packages/pkg-primary`);
+          const pkgPrimary = ppath.join(path, `packages/pkg-primary` as PortablePath);
           await xfs.mkdirpPromise(pkgPrimary);
-          await xfs.writeJsonPromise(ppath.join(pkgPrimary, `package.json`), {
+          await xfs.writeJsonPromise(ppath.join(pkgPrimary, Filename.manifest), {
             name: `pkg-primary`,
             version: `1.0.0`,
           });
 
           // Create the dependant package.
-          const pkgDependant = ppath.join(path, `packages/pkg-dependant`);
+          const pkgDependant = ppath.join(path, `packages/pkg-dependant` as PortablePath);
           await xfs.mkdirpPromise(pkgDependant);
-          await xfs.writeJsonPromise(ppath.join(pkgDependant, `package.json`), {
+          await xfs.writeJsonPromise(ppath.join(pkgDependant, Filename.manifest), {
             name: `pkg-dependant`,
             version: `1.0.0`,
             dependencies: {
@@ -240,6 +240,47 @@ describe(`Commands`, () => {
             stdout: expect.stringContaining(`Couldn't auto-upgrade range * (in pkg-dependant@workspace:packages/pkg-dependant)`),
           });
         }),
+    );
+
+    test(
+      `it should throw when applying an invalid strategy`,
+      makeTemporaryEnv({
+        version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
+        await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+      }),
+    );
+
+    test(
+      `it should throw when applying an invalid strategy on top of the stored version`,
+      makeTemporaryEnv({
+        version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
+        await run(`version`, `major`, `--deferred`);
+
+        await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+      }),
+    );
+
+    test(
+      `it should throw when applying an invalid strategy (deferred)`,
+      makeTemporaryEnv({
+        version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
+        await expect(run(`version`, `invalid`, `--deferred`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+      }),
     );
   });
 });

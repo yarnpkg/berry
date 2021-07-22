@@ -88,7 +88,7 @@ export default class VersionCommand extends BaseCommand {
         }
       }
 
-      releaseStrategy = this.strategy;
+      releaseStrategy = versionUtils.validateReleaseDecision(this.strategy);
     }
 
     if (!deferred) {
