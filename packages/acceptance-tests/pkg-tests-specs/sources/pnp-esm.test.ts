@@ -294,4 +294,49 @@ describe(`Plug'n'Play - ESM`, () => {
       }
     )
   );
+
+  test(
+    `it should work with dynamic imports in esm mode`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+        dependencies: {
+          "no-deps": `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import('no-deps').then(() => console.log(42))`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringMatching(`42\n`),
+        });
+      }
+    )
+  );
+
+  test(
+    `it should work with dynamic imports in commonjs mode`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          "no-deps": `1.0.0`,
+        },
+      },
+      {
+        enableExperimentalEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import('no-deps').then(() => console.log(42))`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringMatching(`42\n`),
+        });
+      }
+    )
+  );
 });
