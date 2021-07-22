@@ -14742,6 +14742,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-version/",
           "packageDependencies": [
             ["@yarnpkg/plugin-version", "workspace:packages/plugin-version"],
+            ["@types/lodash", "npm:4.14.168"],
             ["@types/react", "npm:16.9.2"],
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/builder", "virtual:c44c4b6360dc34d25da6d32e39622e7e40f36f37b99dc66b6ebbd615fdd49465f496bf10f81b6fa5f71b95443fda61174ad51d2799fc7ca433af9a9666cd0f37#workspace:packages/yarnpkg-builder"],
@@ -14752,6 +14753,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.0.1"],
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],
+            ["lodash", "npm:4.17.21"],
             ["react", "npm:16.13.1"],
             ["semver", "npm:7.3.5"],
             ["tslib", "npm:1.13.0"],

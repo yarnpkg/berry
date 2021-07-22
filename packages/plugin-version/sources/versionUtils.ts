@@ -2,6 +2,7 @@ import {AllDependencies, execUtils, miscUtils, hashUtils, Workspace, structUtils
 import {Filename, PortablePath, npath, ppath, xfs}                                                                                                      from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                                                                       from '@yarnpkg/parsers';
 import {UsageError}                                                                                                                                     from 'clipanion';
+import omit                                                                                                                                             from 'lodash/omit';
 import semver                                                                                                                                           from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
@@ -18,6 +19,10 @@ export enum Decision {
 
 export type Releases =
   Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
+
+export function validateReleaseDecision(decision: unknown) {
+  return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
+}
 
 export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
   if (baseRefs.length === 0)
@@ -121,6 +126,9 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
     const versionData = parseSyml(versionContent);
 
     for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
+      if (decision === Decision.DECLINE)
+        continue;
+
       const ident = structUtils.parseIdent(identStr);
 
       const workspace = project.tryWorkspaceByIdent(ident);
@@ -136,7 +144,7 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
       const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
 
       const candidateRelease = candidateReleases.get(workspace);
-      const suggestedRelease = applyStrategy(baseVersion, decision as any);
+      const suggestedRelease = applyStrategy(baseVersion, validateReleaseDecision(decision));
 
       if (suggestedRelease === null)
         throw new Error(`Assertion failed: Expected ${baseVersion} to support being bumped via strategy ${decision}`);
@@ -258,7 +266,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     const ident = structUtils.parseIdent(identStr);
     const workspace = project.getWorkspaceByIdent(ident);
 
-    releaseStore.set(workspace, decision as any);
+    releaseStore.set(workspace, validateReleaseDecision(decision));
   }
 
   return {
