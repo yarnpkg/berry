@@ -1,9 +1,6 @@
-import {Workspace, Project} from '@yarnpkg/core';
-import {npath}              from '@yarnpkg/fslib';
-import {makePublishBody}    from '@yarnpkg/plugin-npm/sources/npmPublishUtils';
-import Tacks                from 'tacks';
-
-import {makeConfiguration}  from './_makeConfiguration';
+import {npath}      from '@yarnpkg/fslib';
+import {getGitHead} from '@yarnpkg/plugin-npm/sources/npmPublishUtils';
+import Tacks        from 'tacks';
 
 const File = Tacks.File;
 const Dir = Tacks.Dir;
@@ -110,30 +107,16 @@ afterAll(() => {
   fixtures.remove(testDir);
 });
 
-describe(`npmPublishUtils.makePublishBody`, () =>   {
+describe(`npmPublishUtils.getGitHead`, () =>   {
   it(`should detect the gitHead for this repo`, async () => {
-    const configuration = await makeConfiguration();
-
     const workspaceCwd = npath.toPortablePath(`${testDir}/WithGitRepo`);
-
-    const project = new Project(workspaceCwd, {configuration});
-    const workspace = new Workspace(workspaceCwd, {project});
-    await workspace.setup();
-    const fly = {access: `public`, tag: `latest`, registry: configuration.get(`npmRegistryServer`)};
-    const publishBody = await makePublishBody(workspace, Buffer.from(``), fly);
-    expect(publishBody.gitHead).not.toEqual(null);
+    const gitHead = await getGitHead(workspaceCwd);
+    expect(gitHead).not.toEqual(null);
   });
 
   it(`should not detect the gitHead for this repo`, async () => {
-    const configuration = await makeConfiguration();
-
     const workspaceCwd = npath.toPortablePath(`${testDir}/WithoutGitRepo`);
-
-    const project = new Project(workspaceCwd, {configuration});
-    const workspace = new Workspace(workspaceCwd, {project});
-    await workspace.setup();
-    const fly = {access: `public`, tag: `latest`, registry: configuration.get(`npmRegistryServer`)};
-    const publishBody = await makePublishBody(workspace, Buffer.from(``), fly);
-    expect(publishBody.gitHead).toEqual(null);
+    const gitHead = await getGitHead(workspaceCwd);
+    expect(gitHead).toEqual(undefined);
   });
 });
