@@ -15,7 +15,6 @@
     "@yarnpkg/builder": "workspace:*",
     "@yarnpkg/libzip": "workspace:*",
     "@yarnpkg/monorepo": "workspace:*",
-    "cjs-module-lexer": "^1.2.1",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
     "rollup": "^2.43.0",
     "rollup-plugin-esbuild": "^3.0.2",

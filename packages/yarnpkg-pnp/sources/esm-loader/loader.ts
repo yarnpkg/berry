@@ -1,5 +1,4 @@
 import {NativePath, PortablePath}          from '@yarnpkg/fslib';
-import {parse, init}                       from 'cjs-module-lexer';
 import fs                                  from 'fs';
 import moduleExports                       from 'module';
 import path                                from 'path';
@@ -88,8 +87,6 @@ export async function resolve(
   };
 }
 
-const realModules = new Set<string>();
-
 export async function getFormat(
   resolved: string,
   context: any,
@@ -102,14 +99,13 @@ export async function getFormat(
   const ext = path.extname(parsedURL.pathname);
   switch (ext) {
     case `.mjs`: {
-      realModules.add(fileURLToPath(resolved));
       return {
         format: `module`,
       };
     }
     case `.cjs`: {
       return {
-        format: `module`,
+        format: `commonjs`,
       };
     }
     case `.json`: {
@@ -117,20 +113,12 @@ export async function getFormat(
       throw new Error(
         `Unknown file extension ".json" for ${fileURLToPath(resolved)}`
       );
-      return {
-        format: `module`,
-      };
     }
     case `.js`: {
-      const filePath = fileURLToPath(resolved);
-      const pkg = nodeUtils.readPackageScope(filePath);
+      const pkg = nodeUtils.readPackageScope(fileURLToPath(resolved));
       if (pkg) {
-        let moduleType = pkg.data.type ?? `commonjs`;
-        if (moduleType === `commonjs`) moduleType = `module`;
-        else realModules.add(filePath);
-
         return {
-          format: moduleType,
+          format: pkg.data.type ?? `commonjs`,
         };
       }
     }
@@ -139,15 +127,6 @@ export async function getFormat(
   return defaultGetFormat(resolved, context, defaultGetFormat);
 }
 
-let parserInit: Promise<void> | null = init().then(() => {
-  parserInit = null;
-});
-
-async function parseExports(filePath: string) {
-  const {exports} = parse(await fs.promises.readFile(filePath, `utf8`));
-
-  return new Set(exports);
-}
 
 export async function getSource(
   urlString: string,
@@ -158,36 +137,63 @@ export async function getSource(
   if (url.protocol !== `file:`)
     return defaultGetSource(url, context, defaultGetSource);
 
-  urlString = fileURLToPath(urlString);
-
-  if (realModules.has(urlString)) {
-    return {
-      source: await fs.promises.readFile(urlString, `utf8`),
-    };
-  }
-
-  if (parserInit !== null) await parserInit;
-
-  const exports = await parseExports(urlString);
-
-  let exportStrings = `export default cjs\n`;
-  for (const exportName of exports) {
-    if (exportName !== `default`) {
-      exportStrings += `const __${exportName} = cjs['${exportName}'];\n export { __${exportName} as ${exportName} }\n`;
-    }
-  }
-
-  const fakeModulePath = path.join(path.dirname(urlString), `noop.js`);
-
-  const code = `
-  import {createRequire} from 'module';
-  const require = createRequire('${fakeModulePath.replace(/\\/g, `/`)}');
-  const cjs = require('${urlString.replace(/\\/g, `/`)}');
-
-  ${exportStrings}
-  `;
-
   return {
-    source: code,
+    source: await fs.promises.readFile(fileURLToPath(urlString), `utf8`),
   };
 }
+
+//#region ESM to CJS support
+/*
+  In order to import CJS files from ESM Node does some translating
+  internally[1]. This translator calls an unpatched `readFileSync`[2]
+  which itself calls an internal `tryStatSync`[3] which calls
+  `binding.fstat`[4]. A PR[5] has been made to use the monkey-patchable
+  `fs.readFileSync` but assuming that wont be merged this region of code
+  patches that final `binding.fstat` call.
+
+  1: https://github.com/nodejs/node/blob/d872aaf1cf20d5b6f56a699e2e3a64300e034269/lib/internal/modules/esm/translators.js#L177-L277
+  2: https://github.com/nodejs/node/blob/d872aaf1cf20d5b6f56a699e2e3a64300e034269/lib/internal/modules/esm/translators.js#L240
+  3: https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/fs.js#L452
+  4: https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/fs.js#L403
+  5: https://github.com/nodejs/node/pull/39513
+*/
+
+const binding = (process as any).binding(`fs`) as {
+  fstat: (fd: number, useBigint: false, req: any, ctx: object) => Float64Array
+};
+const originalfstat = binding.fstat;
+
+const ZIP_FD = 0x80000000;
+binding.fstat = function(...args) {
+  const [fd, useBigint, req] = args;
+  if ((fd & ZIP_FD) !== 0 && useBigint === false && req === undefined) {
+    try {
+      const stats = fs.fstatSync(fd);
+      // The reverse of this internal util
+      // https://github.com/nodejs/node/blob/8886b63cf66c29d453fdc1ece2e489dace97ae9d/lib/internal/fs/utils.js#L542-L551
+      return new Float64Array([
+        stats.dev,
+        stats.mode,
+        stats.nlink,
+        stats.uid,
+        stats.gid,
+        stats.rdev,
+        stats.blksize,
+        stats.ino,
+        stats.size,
+        stats.blocks,
+        // atime sec
+        // atime ns
+        // mtime sec
+        // mtime ns
+        // ctime sec
+        // ctime ns
+        // birthtime sec
+        // birthtime ns
+      ]);
+    } catch {}
+  }
+
+  return originalfstat.apply(this, args);
+};
+//#endregion
