@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "version": "0.0.0-sdk",
+  "version": "4.3.2-sdk",
   "main": "./lib/typescript.js",
   "type": "commonjs"
 }
