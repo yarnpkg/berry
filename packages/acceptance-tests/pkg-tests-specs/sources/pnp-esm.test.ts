@@ -101,6 +101,9 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should support named exports in commonjs files`,
     makeTemporaryEnv(
       {
+        dependencies: {
+          'no-deps-exports': `1.0.0`,
+        },
         type: `module`,
       },
       async ({path, run, source}) => {
@@ -108,11 +111,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import {foo} from './foo.cjs';\nconsole.log(foo)`
-        );
-        await xfs.writeFilePromise(
-          ppath.join(path, `foo.cjs` as Filename),
-          `module.exports.foo = 42`
+          `import {foo} from 'no-deps-exports';\nconsole.log(foo)`
         );
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
