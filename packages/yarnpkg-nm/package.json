@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/nm",
-  "version": "2.4.1-rc.3",
+  "version": "2.4.1-rc.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/core": "workspace:^3.0.0-rc.12",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.12"
+    "@yarnpkg/core": "workspace:^3.0.0-rc.13",
+    "@yarnpkg/fslib": "workspace:^2.5.0-rc.13"
   },
   "devDependencies": {
     "@yarnpkg/pnp": "workspace:*"

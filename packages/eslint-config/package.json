@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/eslint-config",
-  "version": "0.3.0-rc.12",
+  "version": "0.3.0-rc.13",
   "license": "BSD-2-Clause",
   "dependencies": {
     "@rushstack/eslint-patch": "^1.0.6",

@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "3.0.0-rc.12",
+  "version": "3.0.0-rc.13",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^3.0.0-rc.12",
-    "@yarnpkg/plugin-patch": "^3.0.0-rc.12"
+    "@yarnpkg/core": "^3.0.0-rc.13",
+    "@yarnpkg/plugin-patch": "^3.0.0-rc.13"
   },
   "devDependencies": {
     "@types/resolve": "^1.17.1",

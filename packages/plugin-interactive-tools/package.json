@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
-  "version": "3.0.0-rc.12",
+  "version": "3.0.0-rc.13",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/libui": "workspace:^2.1.2-rc.12",
+    "@yarnpkg/libui": "workspace:^2.1.2-rc.13",
     "algoliasearch": "^4.2.0",
     "clipanion": "^3.0.1",
     "diff": "^4.0.1",
@@ -15,9 +15,9 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0-rc.12",
-    "@yarnpkg/core": "^3.0.0-rc.12",
-    "@yarnpkg/plugin-essentials": "^3.0.0-rc.12"
+    "@yarnpkg/cli": "^3.0.0-rc.13",
+    "@yarnpkg/core": "^3.0.0-rc.13",
+    "@yarnpkg/plugin-essentials": "^3.0.0-rc.13"
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",
