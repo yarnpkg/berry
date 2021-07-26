@@ -20,6 +20,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The virtual folder (used to disambiguate peer dependencies) got renamed from `$$virtual` into `__virtual__`.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
+- The `--skip-builds` flag from `yarn install` got renamed into `--mode=skip-build`.
 - The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 - The cache files need to be regenerated. We had to change their timestamps in order to account for a flaw in the zip spec that was causing problems with some third-party tools.
 - `@yarnpkg/pnpify` has been refactored into 3 packages:
