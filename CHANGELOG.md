@@ -34,7 +34,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `structUtils.requirableIdent` got removed; use `structUtils.stringifyIdent` instead, which is strictly the same.
 - `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
-- `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
+- `PackageExtension['description']` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
 - `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`.
 - `Project.tryWorkspaceByDescriptor` and `Project.getWorkspaceByDescriptor` now match on virtual descriptors.
 
@@ -76,16 +76,18 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn init` and `yarn set version` will set the [`packageManager`]() field.
 - `yarn set version` now downloads binaries from the official Yarn website (rather than GitHub).
 - `yarn set version from sources` will now upgrade the builtin plugins as well unless `--skip-plugins` is set.
-- `yarn version apply` now support a new `--prerelease` flag which replaces how prerelease were previously handled.
+- `yarn version apply` now supports a new `--prerelease` flag which replaces how prereleases were previously handled.
 - `yarn run` should be significantly faster to boot on large projects.
 - `yarn workspaces foreach --verbose` will now print when processes start and end, even if they don't have an output.
+- `yarn workspaces foreach` now supports a `--from <glob>` flag, which when combined with `-R` will target workspaces reachable from the 'from' glob.
 - `yarn patch-commit` can now be used as many times as you want on the same patch folder.
-- `yarn patch-commit` now support a new `-s,--save` flag which will save the patch instead of just printing it.
-- `yarn up` now support a new `-R,--recursive` flag which will upgrade the specified package, regardless where it is.
+- `yarn patch-commit` now supports a new `-s,--save` flag which will save the patch instead of just printing it.
+- `yarn up` now supports a new `-R,--recursive` flag which will upgrade the specified package, regardless where it is.
 - `yarn config unset` is a new command that will remove a setting from the local configuration (or home if `-H` is set).
 - `yarn exec` got support for running shell scripts using Yarn's portable shell.
 - `yarn plugin import` can now install specific versions of the official plugins.
 - `yarn plugin import` will now download plugins compatible with the current CLI by default.
+- `yarn unlink` has been added which removes resolutions previously set by `yarn link`.
 
 ### Builtin Shell
 
