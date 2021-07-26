@@ -1,15 +1,15 @@
 {
   "name": "@yarnpkg/sdks",
-  "version": "2.4.1-rc.4",
+  "version": "2.4.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/core": "workspace:^3.0.0-rc.13",
-    "@yarnpkg/fslib": "workspace:^2.5.0-rc.13",
-    "@yarnpkg/parsers": "workspace:^2.4.0-rc.11",
+    "@yarnpkg/core": "workspace:^3.0.0",
+    "@yarnpkg/fslib": "workspace:^2.5.0",
+    "@yarnpkg/parsers": "workspace:^2.4.0",
     "chalk": "^3.0.0",
     "clipanion": "^3.0.1",
     "comment-json": "^2.2.0",
@@ -42,6 +42,5 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  },
-  "stableVersion": "2.4.0"
+  }
 }
