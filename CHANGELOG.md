@@ -4,9 +4,11 @@
 
 Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 
-## Master (soon-to-be 3.0)
+## Master
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
+
+## 3.0.0
 
 ### **Breaking Changes**
 
