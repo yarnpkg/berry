@@ -739,6 +739,32 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`shouldn't affect unrelated commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file}"; echo foo`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file}" && echo foo`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+
       it(`should support output redirections from fd (stdout)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
