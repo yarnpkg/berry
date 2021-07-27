@@ -632,11 +632,23 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
     throw new Error(`Assertion failed: A builtin should exist for "${name}"`);
 
   return makeBuiltin(async ({stdin, stdout, stderr}) => {
+    const {
+      stdin: initialStdin,
+      stdout: initialStdout,
+      stderr: initialStderr,
+    } = state;
+
     state.stdin = stdin;
     state.stdout = stdout;
     state.stderr = stderr;
 
-    return await builtin(rest, opts, state);
+    try {
+      return await builtin(rest, opts, state);
+    } finally {
+      state.stdin = initialStdin;
+      state.stdout = initialStdout;
+      state.stderr = initialStderr;
+    }
   });
 }
 

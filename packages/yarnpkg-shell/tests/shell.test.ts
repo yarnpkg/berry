@@ -739,6 +739,60 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`shouldn't affect unrelated commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file}"; echo foo`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file}" && echo foo`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+
+      it(`shouldn't do weird stuff when piping a builtin redirection`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file1 = ppath.join(tmpDir, `file1` as Filename);
+          const file2 = ppath.join(tmpDir, `file2` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file1}" | echo "foo bar" > "${file2}"; echo test`,
+          )).resolves.toMatchObject({
+            stdout: `test\n`,
+          });
+
+          await expect(xfs.readFilePromise(file1, `utf8`)).resolves.toEqual(`hello world\n`);
+          await expect(xfs.readFilePromise(file2, `utf8`)).resolves.toEqual(`foo bar\n`);
+        });
+
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file` as Filename);
+
+          await expect(bufferResult(
+            `echo "hello world" > "${file}" && echo foo`,
+          )).resolves.toMatchObject({
+            stdout: `foo\n`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+
       it(`should support output redirections from fd (stdout)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
