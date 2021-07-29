@@ -171,7 +171,7 @@ In some cases, however, keeping the package read-only may be difficult (such as 
 
 Packages are unplugged in a few scenarios:
 - explicitly by setting the [`unplugged` field](/configuration/manifest#dependenciesMeta.unplugged) to `true`
-- explicitly when the package set its [preferUnplugged field](/configuration/manifest#preferUnplugged) to `true`
+- explicitly when the package set its [`preferUnplugged` field](/configuration/manifest#preferUnplugged) to `true`
 - implicitly when the package lists postinstall scripts
 - implicitly when the package contains native files
 
