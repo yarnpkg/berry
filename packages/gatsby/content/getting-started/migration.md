@@ -296,6 +296,7 @@ nmHoistingLimits: workspaces
 | `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
 | `yarn import`   | First import to Classic, then migrate to 2.x |
 | `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
+| `yarn versions` | Use `yarn --version` and `node -p process.versions` |
 
 ### Not implemented yet
 
