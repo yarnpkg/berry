@@ -289,16 +289,11 @@ nmHoistingLimits: workspaces
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
 | `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
 
-### Deprecated
-
-| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
-| ------------------ | ----------------------------- |
-| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
-
 ### Removed from core
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
+| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
 | `yarn import`   | First import to Classic, then migrate to 2.x |
 | `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
 
