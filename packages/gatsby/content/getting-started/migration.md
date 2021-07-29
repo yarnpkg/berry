@@ -277,6 +277,7 @@ nmHoistingLimits: workspaces
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
 | ------------------ | -------------------------- | ----------------------------- |
+| `yarn audit`    | `yarn npm audit`           ||
 | `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
@@ -298,7 +299,6 @@ nmHoistingLimits: workspaces
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn audit`    | Relied on an undocumented proprietary protocol; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
 | `yarn import`   | First import to Classic, then migrate to 2.x |
 | `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
 
