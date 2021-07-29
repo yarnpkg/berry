@@ -257,7 +257,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
-        isExternalSoftLink: isExternalSoftLinkPackage,
+        hoistPriority: isExternalSoftLinkPackage ? 1 : 0,
       };
 
       nodes.set(nodeKey, node);

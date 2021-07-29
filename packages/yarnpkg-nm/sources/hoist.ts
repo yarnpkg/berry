@@ -46,11 +46,11 @@
  * until you run out of candidates for current tree root.
  */
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, isExternalSoftLink?: boolean};
+export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Array<string>, isExternalSoftLink: boolean};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Array<string>, hoistPriority: number};
 
 /**
  * Mapping which packages depend on a given package alias + ident. It is used to determine hoisting weight,
@@ -239,7 +239,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, isExternalSoftLink} = node;
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistPriority} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
@@ -255,7 +255,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
     reasons: new Map(reasons),
     decoupled: true,
     isHoistBorder,
-    isExternalSoftLink,
+    hoistPriority,
     hoistedFrom: [],
   };
   const selfDep = clone.dependencies.get(name);
@@ -727,7 +727,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     reasons: new Map(),
     decoupled: true,
     isHoistBorder: true,
-    isExternalSoftLink: false,
+    hoistPriority: 0,
     hoistedFrom: [],
   };
 
@@ -737,7 +737,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
-      const {name, identName, reference, peerNames, isExternalSoftLink} = node;
+      const {name, identName, reference, peerNames, hoistPriority} = node;
       const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
@@ -751,7 +751,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         reasons: new Map(),
         decoupled: true,
         isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
-        isExternalSoftLink: !!isExternalSoftLink,
+        hoistPriority: hoistPriority || 0,
         hoistedFrom: [],
       };
       seenNodes.set(node, workNode);
@@ -875,8 +875,7 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
       seenNodes.add(node);
       for (const dep of node.dependencies.values()) {
         const entry = getOrCreatePreferenceEntry(dep);
-        if (node.isExternalSoftLink)
-          entry.hoistPriority = 1;
+        entry.hoistPriority = Math.max(entry.hoistPriority, node.hoistPriority);
         if (node.peerNames.has(dep.name)) {
           entry.peerDependents.add(node.ident);
         } else {
