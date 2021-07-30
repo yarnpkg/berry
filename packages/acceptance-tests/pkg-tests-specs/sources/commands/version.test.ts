@@ -282,5 +282,26 @@ describe(`Commands`, () => {
         await expect(run(`version`, `invalid`, `--deferred`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
       }),
     );
+
+    test(
+      `it should successfully apply "decline" on top of the stored version`,
+      makeTemporaryEnv({
+        version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
+        await run(`version`, `major`, `--deferred`);
+
+        await expect(run(`version`, `decline`)).resolves.toMatchObject({
+          code: 0,
+        });
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          version: `2.0.0`,
+        });
+      }),
+    );
   });
 });
