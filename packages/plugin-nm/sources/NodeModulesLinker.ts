@@ -500,8 +500,6 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
 }
 
 const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean}): Promise<any> => {
-  console.log(`removeDir`, dir);
-  console.trace();
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
