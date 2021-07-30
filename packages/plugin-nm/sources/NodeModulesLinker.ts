@@ -21,7 +21,7 @@ const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 
-type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: {value: NodeModulesMode}};
+type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, 'bin'>>;
 
@@ -216,13 +216,13 @@ class NodeModulesInstaller implements Installer {
     });
 
     let preinstallState = await findInstallState(this.opts.project);
-    const nmMode = {value: this.opts.project.configuration.get(`nmMode`)};
+    const nmModeSetting = this.opts.project.configuration.get(`nmMode`);
 
     // Remove build state as well, to force rebuild of all the packages
-    if (preinstallState === null || nmMode.value !== preinstallState.nmMode.value) {
+    if (preinstallState === null || nmModeSetting !== preinstallState.nmMode) {
       this.opts.project.storedBuildState.clear();
 
-      preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map(), nmMode};
+      preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map(), nmMode: nmModeSetting};
     }
 
     const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(workspace => {
@@ -500,6 +500,8 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
 }
 
 const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean}): Promise<any> => {
+  console.log(`removeDir`, dir);
+  console.trace();
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
