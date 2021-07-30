@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "3.0.0",
+  "version": "3.0.1-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -23,7 +23,7 @@
     "@yarnpkg/plugin-pack": "workspace:^3.0.0",
     "@yarnpkg/plugin-patch": "workspace:^3.0.0",
     "@yarnpkg/plugin-pnp": "workspace:^3.0.0",
-    "@yarnpkg/shell": "workspace:^3.0.0",
+    "@yarnpkg/shell": "workspace:^3.0.1-rc.1",
     "chalk": "^3.0.0",
     "ci-info": "^2.0.0",
     "clipanion": "^3.0.1",
@@ -91,5 +91,6 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "3.0.0"
 }
