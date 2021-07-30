@@ -68,5 +68,7 @@ This is just a centralized list of third-party plugins to make discovery easier.
 - [**semver-up**](https://github.com/tophat/yarn-plugin-semver-up) by [**Noah Negin-Ulster**](https://noahnu.com/) - configurable `yarn up` command that preserves semantic version ranges and update groups
 
 - [**conditions**](https://github.com/nicolo-ribaudo/yarn-plugin-conditions) by [**Nicolò Ribaudo**](https://twitter.com/NicoloRibaudo) - allow choosing between different dependency versions via install-time (during development) and publish-time flags
+- 
+- [**az-cli-auth**](https://github.com/FishandRichardsonPC/yarn-plugin-az-cli-auth) by [**Fish & Richardson P.C**](https://fr.com) - Uses the az cli to generate auth tokens when using azure devops repos
 
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
