@@ -133,7 +133,7 @@ module.exports = {
 };
 ```
 
-## Using hooks
+## Using hooks 
 
 Plugins can register to various events in the Yarn lifetime, and provide them additional information to alter their behavior. To do this, you just need to declare a new `hooks` property in your plugin and add members for each hook you want to listen to:
 
