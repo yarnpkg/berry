@@ -44,13 +44,13 @@ export default class RunCommand extends BaseCommand {
     description: `Forwarded to the underlying Node process when executing a binary`,
   });
 
-  // This flag is mostly used to give users a way to configure node-gyp. They
-  // just have to add it as a top-level workspace.
-  topLevel = Option.Boolean(`-T,--top-level`, false, {hidden: true});
+  topLevel = Option.Boolean(`-T,--top-level`, false, {
+    description: `Check the root workspace for scripts and/or binaries instead of the current one`,
+  });
 
-  // Some tools (for example text editors) want to call the real binaries, not
-  // what their users might have remapped them to in their `scripts` field.
-  binariesOnly = Option.Boolean(`-B,--binaries-only`, false, {hidden: true});
+  binariesOnly = Option.Boolean(`-B,--binaries-only`, false, {
+    description: `Ignore any user defined scripts and only check for binaries`,
+  });
 
   // The v1 used to print the Yarn version header when using "yarn run", which
   // was messing with the output of things like `--version` & co. We don't do
