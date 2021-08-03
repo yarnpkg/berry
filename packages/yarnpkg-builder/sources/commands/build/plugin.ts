@@ -2,7 +2,7 @@ import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from
 import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath, xfs}                                                         from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                 from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild-wasm';
+import {build, Plugin}                                                      from 'esbuild';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 
