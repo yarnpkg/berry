@@ -133,12 +133,22 @@ Then, from any workspace that contains its own `tsconfig.json`, you'll be able t
 }
 ```
 
+or if you only want to use `tsc` from the root workspace:
+
+```json
+{
+  "scripts": {
+    "build": "run -T tsc"
+  }
+}
+```
+
 Should you want to run a script in the base of your project:
 
 ```json
 {
   "scripts": {
-    "build": "run node ${PROJECT_CWD}/scripts/update-contributors.js"
+    "build": "node ${PROJECT_CWD}/scripts/update-contributors.js"
   }
 }
 ```

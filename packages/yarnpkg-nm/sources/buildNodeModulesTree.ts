@@ -248,6 +248,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
+    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
+
     if (!node) {
       node = {
         name,
@@ -255,12 +257,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
+        hoistPriority: isExternalSoftLinkPackage ? 1 : 0,
       };
 
       nodes.set(nodeKey, node);
     }
 
-    if (isHoistBorder && !isExternalSoftLink(pkg, locator)) {
+    if (isHoistBorder && !isExternalSoftLinkPackage) {
       const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
       const dependencyBorders = hoistingLimits.get(parentLocatorKey) || new Set();
       hoistingLimits.set(parentLocatorKey, dependencyBorders);

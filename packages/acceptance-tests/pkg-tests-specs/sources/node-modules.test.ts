@@ -1070,6 +1070,33 @@ describe(`Node_Modules`, () => {
     })
   );
 
+  test(`should give a priority to direct portal dependencies over indirect regular dependencies`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              'no-deps': `2.0.0`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+              'one-fixed-dep': `1.0.0`,
+              'one-range-dep': `1.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.not.toThrow();
+        });
+      })
+  );
+
   test(
     `should not hoist dependencies in nested workspaces when using nmHoistingLimits`,
     makeTemporaryEnv(

@@ -46,18 +46,18 @@
  * until you run out of candidates for current tree root.
  */
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>};
+export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Array<string>};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Array<string>, hoistPriority: number};
 
 /**
  * Mapping which packages depend on a given package alias + ident. It is used to determine hoisting weight,
  * e.g. which one among the group of packages with the same name should be hoisted.
  * The package having the biggest number of parents using this package will be hoisted.
  */
-type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident> }>;
+type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident>, hoistPriority: number }>;
 
 enum Hoistable {
   YES, NO, DEPENDS,
@@ -239,7 +239,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder} = node;
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistPriority} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
@@ -255,6 +255,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
     reasons: new Map(reasons),
     decoupled: true,
     isHoistBorder,
+    hoistPriority,
     hoistedFrom: [],
   };
   const selfDep = clone.dependencies.get(name);
@@ -290,7 +291,9 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, preferenceMap: PreferenceMa
   keyList.sort((key1, key2) => {
     const entry1 = preferenceMap.get(key1)!;
     const entry2 = preferenceMap.get(key2)!;
-    if (entry2.peerDependents.size !== entry1.peerDependents.size) {
+    if (entry2.hoistPriority !== entry1.hoistPriority) {
+      return entry2.hoistPriority - entry1.hoistPriority;
+    } else if (entry2.peerDependents.size !== entry1.peerDependents.size) {
       return entry2.peerDependents.size - entry1.peerDependents.size;
     } else {
       return entry2.dependents.size - entry1.dependents.size;
@@ -724,6 +727,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     reasons: new Map(),
     decoupled: true,
     isHoistBorder: true,
+    hoistPriority: 0,
     hoistedFrom: [],
   };
 
@@ -733,7 +737,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
-      const {name, identName, reference, peerNames} = node;
+      const {name, identName, reference, peerNames, hoistPriority} = node;
       const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
@@ -747,6 +751,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         reasons: new Map(),
         decoupled: true,
         isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
+        hoistPriority: hoistPriority || 0,
         hoistedFrom: [],
       };
       seenNodes.set(node, workNode);
@@ -854,7 +859,7 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
     const key = getPreferenceKey(node);
     let entry = preferenceMap.get(key);
     if (!entry) {
-      entry = {dependents: new Set<Ident>(), peerDependents: new Set<Ident>()};
+      entry = {dependents: new Set<Ident>(), peerDependents: new Set<Ident>(), hoistPriority: 0};
       preferenceMap.set(key, entry);
     }
     return entry;
@@ -869,8 +874,9 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
     if (!isSeen) {
       seenNodes.add(node);
       for (const dep of node.dependencies.values()) {
+        const entry = getOrCreatePreferenceEntry(dep);
+        entry.hoistPriority = Math.max(entry.hoistPriority, node.hoistPriority);
         if (node.peerNames.has(dep.name)) {
-          const entry = getOrCreatePreferenceEntry(dep);
           entry.peerDependents.add(node.ident);
         } else {
           addDependent(node, dep);
