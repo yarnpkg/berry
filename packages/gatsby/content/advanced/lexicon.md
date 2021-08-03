@@ -81,6 +81,10 @@ A monorepository is a repository that contains multiple packages. For example, [
 
 See also: [Workspaces](/features/workspaces)
 
+### Package
+
+Packages are nodes of the dependency tree. Simply put, a package is a bundle of source code usually characterized by a `package.json` at its root. Packages can define <abbr>dependencies</abbr>, which are other packages that need to be made available for it to work properly.
+
 ### Peer dependency
 
 A dependency (listed in the [`peerDependencies` field](/configuration/manifest#peerDependencies) of the manifest) describes a relationship between two packages.
@@ -185,7 +189,9 @@ In the past virtual packages were implemented using symlinks, but this recently 
 
 Generally speaking workspaces are a Yarn features used to work on multiple projects stored within the same repository.
 
-In the context of Yarn's vocabulary, workspaces are packages that are of a single <abbr>project</abbr>.
+In the context of Yarn's vocabulary, workspaces are local <abbr>packages</abbr> that directly belong to a <abbr>project</abbr>.
+
+See also: [Packages](/features/packages)
 
 See also: [Workspaces](/features/workspaces)
 

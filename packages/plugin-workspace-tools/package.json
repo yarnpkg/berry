@@ -12,7 +12,7 @@
     "typanion": "^3.3.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0",
+    "@yarnpkg/cli": "^3.0.1-rc.1",
     "@yarnpkg/core": "^3.0.0"
   },
   "devDependencies": {
