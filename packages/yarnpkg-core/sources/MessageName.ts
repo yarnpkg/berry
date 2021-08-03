@@ -76,6 +76,7 @@ export enum MessageName {
   NM_CANT_INSTALL_EXTERNAL_SOFT_LINK = 71,
   NM_PRESERVE_SYMLINKS_REQUIRED = 72,
   UPDATE_LOCKFILE_ONLY_SKIP_LINK = 73,
+  NM_HARDLINKS_MODE_DOWNGRADED = 74,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

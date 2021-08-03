@@ -338,3 +338,7 @@ An external soft link (portal) cannot be installed, because incompatible version
 
 A portal dependency with subdependencies is used in the project. `--preserve-symlinks` Node option must be used
 to start the application in order for portal dependency to find its subdependencies and peer dependencies.
+
+## YN0074 - `NM_HARDLINKS_MODE_DOWNGRADED`
+
+`nmMode` has been downgraded to `hardlinks-local` due to global cache and install folder being on different devices. Consider changing `globalFolder` setting and place the global cache on the same device as your project, if you want `hardlinks-global` to take effect.
