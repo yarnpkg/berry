@@ -8,6 +8,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+### Bugfixes
+
+- Direct portal dependencies for `node_modules` install are given priority during hoisting now, to prevent cases when indirect regular dependencies take place in the install tree first and block the way for direct portal dependencies.
+
 ### Installs
 
 - `hardlinks-global` node modules mode is automatically downgraded to `hardlinks-local` when global cache and install folder are on a different devices and the install continues normally. Warning is produced to the user with mitigation steps provided in documentation.
