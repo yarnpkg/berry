@@ -77,8 +77,8 @@ require('./.pnp.cjs').setup();
 As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
 
 ```
-node -r ./.pnp.js ./server.js
-NODE_OPTIONS="--require $(pwd)/.pnp.js" node ./server.js
+node -r ./.pnp.cjs ./server.js
+NODE_OPTIONS="--require $(pwd)/.pnp.cjs" node ./server.js
 ```
 
 ## PnP `loose` mode
