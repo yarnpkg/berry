@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/cli": patch
+  "@yarnpkg/plugin-exec": patch
   "@yarnpkg/plugin-pnp": patch
 
 declined:

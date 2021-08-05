@@ -26,7 +26,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 
     // We still support .pnp.js files to improve multi-project compatibility.
     // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
-    const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
+    const pnpRegularExpression = /\s*--require\s+"?.*\.pnp\.c?js"?\s*/g;
     nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
 
     nodeOptions = nodeOptions ? `${pnpRequire} ${nodeOptions}` : pnpRequire;
