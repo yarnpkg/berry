@@ -4,8 +4,8 @@ import {Filename, PortablePath, npath, ppath, xfs}                              
 import {Command, Option, Usage}                                                                                       from 'clipanion';
 import {tmpdir}                                                                                                       from 'os';
 
+import * as repoUtils                                                                                                 from '../../../repoUtils';
 import {buildAndSavePlugin, BuildAndSavePluginsSpec}                                                                  from '../../plugin/import/sources';
-import {getAvailablePlugins}                                                                                          from '../../plugin/list';
 import {setVersion}                                                                                                   from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
@@ -185,7 +185,7 @@ export async function prepareRepo(spec: PrepareSpec, {configuration, report, tar
 }
 
 async function updatePlugins(context: BuildAndSavePluginsSpec, {project, report, target}: {project: Project, report: Report, target: PortablePath}) {
-  const data = await getAvailablePlugins(project.configuration);
+  const data = await repoUtils.getAvailablePluginsFromSources(project.configuration);
   const contribPlugins = new Set(Object.keys(data));
 
   for (const name of project.configuration.plugins.keys()) {
