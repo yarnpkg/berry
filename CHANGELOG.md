@@ -11,6 +11,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Bugfixes
 
 - Direct portal dependencies for `node_modules` install are given priority during hoisting now, to prevent cases when indirect regular dependencies take place in the install tree first and block the way for direct portal dependencies.
+- Usage of `pnpify` inside directories containing spaces is now possible.
 
 ### Installs
 
@@ -65,7 +66,6 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Bugfixes
 
 - Yarn now has a proper [governance model](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md).
-- Usage of `pnpify` inside directories containing spaces is now possible.
 - The `node-modules` linker will now ensure that the generated install layouts are terminal, by doing several rounds when needed.
 - The `node-modules` linker will no longer print warnings about postinstall scripts when a workspace depends on another workspace listing install scripts.
 - Peer dependencies depending on their own parent are now properly hoisted by the node-modules linker.
