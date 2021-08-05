@@ -143,7 +143,7 @@ export class ExecFetcher implements Fetcher {
 
         let nodeOptions = env.NODE_OPTIONS || ``;
 
-        const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
+        const pnpRegularExpression = /\s*--require\s+"?.*\.pnp\.c?js"?\s*/g;
         nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
 
         env.NODE_OPTIONS = nodeOptions;

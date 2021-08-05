@@ -62,23 +62,23 @@ Yarn generates a single `.pnp.cjs` file that needs to be installed for Node to k
 
 For some remaining edge cases, a small setup may be required:
 
-- If you need to run an arbitrary Node script, use [`yarn node`](/cli/node) as the interpreter, instead of `node`. This will be enough to register the `.pnp.cjs` file as a runtime dependency. 
+- If you need to run an arbitrary Node script, use [`yarn node`](/cli/node) as the interpreter, instead of `node`. This will be enough to register the `.pnp.cjs` file as a runtime dependency.
 
-```
+```sh
 yarn node ./server.js
 ```
 
 - If you operate on a system that automatically executes a Node script (for instance on Google Cloud Platform (--reference needed here--)), simply require the PnP file at the top of your init script and call its `setup` function.
 
-```
+```js
 require('./.pnp.cjs').setup();
 ```
 
 As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
 
-```
+```sh
 node -r ./.pnp.cjs ./server.js
-NODE_OPTIONS="--require $(pwd)/.pnp.cjs" node ./server.js
+NODE_OPTIONS="--require \"$(pwd)/.pnp.cjs\"" node ./server.js
 ```
 
 ## PnP `loose` mode
@@ -173,7 +173,7 @@ This list is kept up-to-date based on the latest release we've published startin
 ### Why not use import maps?
 
 Yarn Plug'n'Play provides semantic errors (explaining you the exact reason why a package isn't reachable from another) and a [sensible JS API](/advanced/pnpapi) to solve various shortcomings with `require.resolve`. These are features that import maps wouldn't solve by themselves.
-This is answered in more detail in [this thread](https://github.com/nodejs/modules/issues/477#issuecomment-578091424). 
+This is answered in more detail in [this thread](https://github.com/nodejs/modules/issues/477#issuecomment-578091424).
 
 A main reason we're in this mess today is that the original `node_modules` design tried to abstract packages away in order to provide a generic system that would work without any notion of packages. This became a challenge that prompted many implementers to come up with their own interpretations. Import maps suffer from the same flaw.
 
