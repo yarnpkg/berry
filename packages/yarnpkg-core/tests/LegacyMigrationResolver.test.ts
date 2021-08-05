@@ -28,9 +28,9 @@ describe(`LegacyMigrationResolver`, () => {
     },
     // Taobao registry
     {
-      version: `4.17.15`,
-      resolved: `https://registry.nlark.com/lodash/download/lodash-4.17.15.tgz`,
-      expected: `npm:4.17.15`,
+      version: `12.0.5`,
+      resolved: `https://registry.npm.taobao.org/yargs/download/yargs-12.0.5.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fyargs%2Fdownload%2Fyargs-12.0.5.tgz#05f5997b609647b64f66b81e3b4b10a368e7ad13`,
+      expected: `npm:12.0.5`,
     },
     // https://github.com/yarnpkg/berry/issues/902#issuecomment-588579962
     {
