@@ -65,6 +65,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Bugfixes
 
 - Yarn now has a proper [governance model](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md).
+- Paths resolution using spaces will no longer throw when using `pnpify`.
 - The `node-modules` linker will now ensure that the generated install layouts are terminal, by doing several rounds when needed.
 - The `node-modules` linker will no longer print warnings about postinstall scripts when a workspace depends on another workspace listing install scripts.
 - Peer dependencies depending on their own parent are now properly hoisted by the node-modules linker.
