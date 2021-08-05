@@ -6,7 +6,7 @@ import {MessageName, Project, FetchResult, Installer}                      from 
 import {PortablePath, npath, ppath, toFilename, Filename}                  from '@yarnpkg/fslib';
 import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                     from '@yarnpkg/fslib';
 import {getLibzipPromise}                                                  from '@yarnpkg/libzip';
-import {buildNodeModulesTree}                                              from '@yarnpkg/nm';
+import {buildNodeModulesTree, getArchivePath}                              from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits} from '@yarnpkg/nm';
 import {parseSyml}                                                         from '@yarnpkg/parsers';
 import {jsInstallUtils}                                                    from '@yarnpkg/plugin-pnp';
@@ -15,6 +15,7 @@ import cmdShim                                                             from 
 import {UsageError}                                                        from 'clipanion';
 import crypto                                                              from 'crypto';
 import fs                                                                  from 'fs';
+import unzipper                                                            from 'unzipper';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -939,7 +940,23 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
-          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, packageChecksum});
+          const archivePath = getArchivePath(srcDir);
+          if (archivePath) {
+            await xfs.createReadStream(archivePath)
+              .pipe(unzipper.Parse())
+              .on(`entry`, async entry => {
+                const relativePath = entry.path.split(`/`).slice(entry.path.startsWith(`node_modules/@`) ? 3 : 2).join(`/`);
+                const fullPath = ppath.join(dstDir, relativePath);
+                if (entry.type === `Directory`) {
+                  await xfs.mkdirPromise(fullPath, {recursive: true});
+                } else {
+                  await xfs.mkdirPromise(ppath.dirname(fullPath), {recursive: true});
+                  entry.pipe(fs.createWriteStream(fullPath));
+                }
+              }).promise();
+          } else {
+            await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, packageChecksum});
+          }
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;

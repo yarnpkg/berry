@@ -12,7 +12,8 @@
     "@zkochan/cmd-shim": "^5.1.0",
     "clipanion": "^3.0.1",
     "micromatch": "^4.0.2",
-    "tslib": "^1.13.0"
+    "tslib": "^1.13.0",
+    "unzipper": "^0.10.11"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "^3.0.1-rc.1",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
+    "@types/unzipper": "^0",
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",
     "@yarnpkg/plugin-stage": "workspace:*"
