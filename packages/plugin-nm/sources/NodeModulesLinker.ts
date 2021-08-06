@@ -15,7 +15,8 @@ import cmdShim                                                             from 
 import {UsageError}                                                        from 'clipanion';
 import crypto                                                              from 'crypto';
 import fs                                                                  from 'fs';
-import unzipper                                                            from 'unzipper';
+
+const uzip = require('uzip');
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -941,19 +942,27 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           const archivePath = getArchivePath(srcDir);
+          const createdDirs = new Set();
           if (archivePath && nmMode.value !== NodeModulesMode.HARDLINKS_GLOBAL) {
-            await xfs.createReadStream(archivePath)
-              .pipe(unzipper.Parse())
-              .on(`entry`, async entry => {
-                const relativePath = entry.path.split(`/`).slice(entry.path.startsWith(`node_modules/@`) ? 3 : 2).join(`/`);
-                const fullPath = ppath.join(dstDir, relativePath);
-                if (entry.type === `Directory`) {
-                  await xfs.mkdirPromise(fullPath, {recursive: true});
-                } else {
+            const unpacked = uzip.parse(await xfs.readFilePromise(archivePath));
+            for (const entryPath of Object.keys(unpacked)) {
+              const entryPathParts = entryPath.split(`/`);
+              const relativePath = ppath.join(...entryPathParts.slice(entryPath.startsWith(`node_modules/@`) ? 3 : 2) as Filename[]);
+              const fullPath = ppath.join(dstDir, relativePath)
+              if (unpacked[entryPath].length > 0) {
+                const dir = ppath.dirname(fullPath);
+                if (!createdDirs.has(dir)) {
                   await xfs.mkdirPromise(ppath.dirname(fullPath), {recursive: true});
-                  entry.pipe(fs.createWriteStream(fullPath));
+                  createdDirs.add(dir);
                 }
-              }).promise();
+                await xfs.writeFilePromise(fullPath, unpacked[entryPath]);
+              } else {
+                if (!createdDirs.has(fullPath)) {
+                  await xfs.mkdirPromise(fullPath, {recursive: true});
+                  createdDirs.add(fullPath);
+                }
+              }
+            }
           } else {
             await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, packageChecksum});
           }
