@@ -591,4 +591,34 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should support saving an empty zip archive`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+    zipFs.saveAndClose();
+
+    expect(xfs.existsSync(archive)).toStrictEqual(true);
+    expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
+  it(`should support saving an empty zip archive (unlink after write)`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.unlinkSync(`/foo.txt` as PortablePath);
+
+    zipFs.saveAndClose();
+
+    expect(xfs.existsSync(archive)).toStrictEqual(true);
+    expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
 });

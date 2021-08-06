@@ -49,6 +49,17 @@ function toUnixTimestamp(time: Date | string | number) {
   throw new Error(`Invalid time`);
 }
 
+function makeEmptyArchive() {
+  return Buffer.from([
+    0x50, 0x4B, 0x05, 0x06,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00,
+  ]);
+}
+
 export class ZipFS extends BasePortableFakeFS {
   private readonly libzip: Libzip;
 
@@ -95,16 +106,7 @@ export class ZipFS extends BasePortableFakeFS {
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
 
-    if (source === null) {
-      source = Buffer.from([
-        0x50, 0x4B, 0x05, 0x06,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00,
-      ]);
-    }
+    source ??= makeEmptyArchive();
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -312,6 +314,10 @@ export class ZipFS extends BasePortableFakeFS {
     const rc = this.libzip.close(this.zip);
     if (rc === -1)
       throw this.makeLibzipError(this.libzip.getError(this.zip));
+
+    // zip_close doesn't persist empty archives
+    if (!this.baseFs.existsSync(this.path))
+      this.baseFs.writeFileSync(this.path, makeEmptyArchive());
 
     // this.libzip overrides the chmod when writing the archive, which is a weird
     // behavior I don't totally understand (plus the umask seems bogus in some
