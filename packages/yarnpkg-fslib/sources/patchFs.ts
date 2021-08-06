@@ -9,6 +9,7 @@ const SYNC_IMPLEMENTATIONS = new Set([
   `accessSync`,
   `appendFileSync`,
   `createReadStream`,
+  `createWriteStream`,
   `chmodSync`,
   `chownSync`,
   `closeSync`,
