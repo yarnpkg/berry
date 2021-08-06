@@ -10,7 +10,7 @@ import {Filename, npath}      from '../sources/path';
 import {xfs}                  from '../sources/xfs';
 import {statUtils, ZipOpenFS} from '../sources';
 
-import {ZIP_FILE1}            from "./ZipOpenFS.test";
+import {ZIP_FILE1, ZIP_DIR1}  from "./ZipOpenFS.test";
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
@@ -120,5 +120,27 @@ describe(`patchedFs`, () => {
     } finally {
       patchedFs.closeSync(fd);
     }
+  });
+
+  it(`should support passing null as the second argument to readdir`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+
+    const tmpdir = npath.fromPortablePath(xfs.mktempSync());
+
+    expect(patchedFs.readdirSync(tmpdir, null)).toHaveLength(0);
+    await expect(new Promise((resolve, reject) =>
+      patchedFs.readdir(tmpdir, null, (err, files) =>
+        err ? reject(err) : resolve(files)
+      )
+    )).resolves.toHaveLength(0);
+    await expect(patchedFs.promises.readdir(tmpdir, null)).resolves.toHaveLength(0);
+
+    expect(patchedFs.readdirSync(ZIP_DIR1, null)).toStrictEqual([`foo.txt`]);
+    await expect(new Promise((resolve, reject) =>
+      patchedFs.readdir(ZIP_DIR1, null, (err, files) =>
+        err ? reject(err) : resolve(files)
+      )
+    )).resolves.toStrictEqual([`foo.txt`]);
+    await expect(patchedFs.promises.readdir(ZIP_DIR1, null)).resolves.toStrictEqual([`foo.txt`]);
   });
 });
