@@ -1,4 +1,4 @@
-name: 'Close stale issues'
+https://github.com/M1cal-net/berry/blob/84627d8dbfa7cc9f9f8e5c22ecf0683aa8e7aeb6/.editorconfigname: 'Close stale issues'
 on:
   schedule:
   - cron: '0 * * * *'
