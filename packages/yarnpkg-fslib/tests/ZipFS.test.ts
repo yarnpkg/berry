@@ -1,7 +1,7 @@
 import {getLibzipSync}                 from '@yarnpkg/libzip';
 import fs                              from 'fs';
 
-import {ZipFS}                         from '../sources/ZipFS';
+import {makeEmptyArchive, ZipFS}       from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
@@ -620,5 +620,16 @@ describe(`ZipFS`, () => {
 
     expect(xfs.existsSync(archive)).toStrictEqual(true);
     expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
+  it(`should support getting the buffer from an empty in-memory zip archive`, () => {
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(null, {libzip});
+    const buffer = zipFs.getBufferAndClose();
+
+    expect(buffer).toStrictEqual(makeEmptyArchive());
+
+    expect(new ZipFS(buffer, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
   });
 });

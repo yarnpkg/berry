@@ -49,7 +49,7 @@ function toUnixTimestamp(time: Date | string | number) {
   throw new Error(`Invalid time`);
 }
 
-function makeEmptyArchive() {
+export function makeEmptyArchive() {
   return Buffer.from([
     0x50, 0x4B, 0x05, 0x06,
     0x00, 0x00, 0x00, 0x00,
