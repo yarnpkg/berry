@@ -316,7 +316,7 @@ export class ZipFS extends BasePortableFakeFS {
       throw this.makeLibzipError(this.libzip.getError(this.zip));
 
     // zip_close doesn't persist empty archives
-    if (!this.baseFs.existsSync(this.path))
+    if (this.entries.size === 0)
       this.baseFs.writeFileSync(this.path, makeEmptyArchive());
 
     // this.libzip overrides the chmod when writing the archive, which is a weird

@@ -47472,7 +47472,6 @@ function toUnixTimestamp(time) {
 function makeEmptyArchive() {
   return Buffer.from([0x50, 0x4B, 0x05, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 }
-
 class ZipFS extends BasePortableFakeFS {
   constructor(source, opts) {
     super();
@@ -47662,7 +47661,7 @@ class ZipFS extends BasePortableFakeFS {
     const rc = this.libzip.close(this.zip);
     if (rc === -1) throw this.makeLibzipError(this.libzip.getError(this.zip)); // zip_close doesn't persist empty archives
 
-    if (!this.baseFs.existsSync(this.path)) this.baseFs.writeFileSync(this.path, makeEmptyArchive()); // this.libzip overrides the chmod when writing the archive, which is a weird
+    if (this.entries.size === 0) this.baseFs.writeFileSync(this.path, makeEmptyArchive()); // this.libzip overrides the chmod when writing the archive, which is a weird
     // behavior I don't totally understand (plus the umask seems bogus in some
     // weird cases - maybe related to emscripten?)
     //
