@@ -941,7 +941,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
           const archivePath = getArchivePath(srcDir);
-          if (archivePath) {
+          if (archivePath && nmMode.value !== NodeModulesMode.HARDLINKS_GLOBAL) {
             await xfs.createReadStream(archivePath)
               .pipe(unzipper.Parse())
               .on(`entry`, async entry => {
