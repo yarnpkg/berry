@@ -42,7 +42,7 @@ function isExternal(path: string, externals: Array<External>): boolean {
 
 async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
   return {
-    contents: await fs.promises.readFile(args.path, `utf8`),
+    contents: await fs.promises.readFile(args.path),
     loader: `default`,
   };
 }
