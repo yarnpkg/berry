@@ -307,30 +307,23 @@ export class ZipFS extends BasePortableFakeFS {
       return;
     }
 
-    const previousMod = this.baseFs.existsSync(this.path)
-      ? this.baseFs.statSync(this.path).mode & 0o777
-      : null;
+    const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === statUtils.DEFAULT_MODE
+      ? undefined
+      : this.stats.mode;
 
     // zip_close doesn't persist empty archives
     if (this.entries.size === 0) {
       this.discardAndClose();
-      this.baseFs.writeFileSync(this.path, makeEmptyArchive());
+      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), {mode: newMode});
     } else {
       const rc = this.libzip.close(this.zip);
-      if (rc === -1) {
+      if (rc === -1)
         throw this.makeLibzipError(this.libzip.getError(this.zip));
+
+      if (typeof newMode !== `undefined`) {
+        this.baseFs.chmodSync(this.path, newMode);
       }
     }
-
-    // this.libzip overrides the chmod when writing the archive, which is a weird
-    // behavior I don't totally understand (plus the umask seems bogus in some
-    // weird cases - maybe related to emscripten?)
-    //
-    // See also https://github.com/nih-at/libzip/issues/77
-    if (previousMod === null)
-      this.baseFs.chmodSync(this.path, this.stats.mode);
-    else if (previousMod !== (this.baseFs.statSync(this.path).mode & 0o777))
-      this.baseFs.chmodSync(this.path, previousMod);
 
     this.ready = false;
   }
