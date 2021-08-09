@@ -60,7 +60,7 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
           versionToWrite = matchingWorkspace.manifest.version ?? `0.0.0`;
         // For workspace:~ and workspace:^ we add selector in front of workspace version
         else if (range.selector === `~` || range.selector === `^`)
-          versionToWrite =  `${range.selector}${matchingWorkspace.manifest.version}`;
+          versionToWrite =  `${range.selector}${matchingWorkspace.manifest.version ?? `0.0.0`}`;
         else
           // for workspace:version we simply strip the protocol
           versionToWrite = range.selector;
