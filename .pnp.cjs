@@ -48333,6 +48333,7 @@ class ZipFS extends BasePortableFakeFS {
   async writeFilePromise(p, content, opts) {
     const {
       encoding,
+      mode,
       index,
       resolvedP
     } = this.prepareWriteFile(p, opts);
@@ -48341,24 +48342,27 @@ class ZipFS extends BasePortableFakeFS {
     }), Buffer.from(content)]);
     if (encoding !== null) content = content.toString(encoding);
     const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index) this.registerEntry(resolvedP, newIndex);
 
-    if (newIndex !== index) {
-      this.registerEntry(resolvedP, newIndex);
+    if (mode !== null) {
+      await this.chmodPromise(resolvedP, mode);
     }
   }
 
   writeFileSync(p, content, opts) {
     const {
       encoding,
+      mode,
       index,
       resolvedP
     } = this.prepareWriteFile(p, opts);
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`)) content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
     if (encoding !== null) content = content.toString(encoding);
     const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index) this.registerEntry(resolvedP, newIndex);
 
-    if (newIndex !== index) {
-      this.registerEntry(resolvedP, newIndex);
+    if (mode !== null) {
+      this.chmodSync(resolvedP, mode);
     }
   }
 
@@ -48367,11 +48371,22 @@ class ZipFS extends BasePortableFakeFS {
     if (this.readOnly) throw EROFS(`open '${p}'`);
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (this.listings.has(resolvedP)) throw EISDIR(`open '${p}'`);
-    let encoding = null;
-    if (typeof opts === `string`) encoding = opts;else if (typeof opts === `object` && opts.encoding) encoding = opts.encoding;
+    let encoding = null,
+        mode = null;
+
+    if (typeof opts === `string`) {
+      encoding = opts;
+    } else if (typeof opts === `object`) {
+      ({
+        encoding = null,
+        mode = null
+      } = opts);
+    }
+
     const index = this.entries.get(resolvedP);
     return {
       encoding,
+      mode,
       resolvedP,
       index
     };
