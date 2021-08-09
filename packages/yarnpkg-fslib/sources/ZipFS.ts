@@ -1363,18 +1363,18 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<statUtils.DirEntry>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<statUtils.DirEntry>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<statUtils.DirEntry>> {
-    return this.readdirSync(p, {withFileTypes: withFileTypes as any});
+  async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<statUtils.DirEntry>> {
+    return this.readdirSync(p, opts as any);
   }
 
   readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false} | null): Array<Filename>;
   readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<statUtils.DirEntry>;
   readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<statUtils.DirEntry>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<statUtils.DirEntry> {
+  readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<statUtils.DirEntry> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
@@ -1384,7 +1384,7 @@ export class ZipFS extends BasePortableFakeFS {
       throw errors.ENOTDIR(`scandir '${p}'`);
 
     const entries = [...directoryListing];
-    if (!withFileTypes)
+    if (!opts?.withFileTypes)
       return entries;
 
     return entries.map(name => {

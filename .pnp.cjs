@@ -46433,11 +46433,9 @@ class NodeFS extends BasePortableFakeFS {
     return this.realFs.readFileSync(fsNativePath, encoding);
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
+  async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      if (withFileTypes) {
+      if (opts === null || opts === void 0 ? void 0 : opts.withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), {
           withFileTypes: true
         }, this.makeCallback(resolve, reject));
@@ -46447,10 +46445,8 @@ class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
-    if (withFileTypes) {
+  readdirSync(p, opts) {
+    if (opts === null || opts === void 0 ? void 0 : opts.withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), {
         withFileTypes: true
       });
@@ -46751,20 +46747,12 @@ class ProxiedFS extends FakeFS {
     }
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
-    return this.baseFs.readdirPromise(this.mapToBase(p), {
-      withFileTypes: withFileTypes
-    });
+  async readdirPromise(p, opts) {
+    return this.baseFs.readdirPromise(this.mapToBase(p), opts);
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
-    return this.baseFs.readdirSync(this.mapToBase(p), {
-      withFileTypes: withFileTypes
-    });
+  readdirSync(p, opts) {
+    return this.baseFs.readdirSync(this.mapToBase(p), opts);
   }
 
   async readlinkPromise(p) {
@@ -48516,23 +48504,17 @@ class ZipFS extends BasePortableFakeFS {
     return this.getFileSource(entry, opts);
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
-    return this.readdirSync(p, {
-      withFileTypes: withFileTypes
-    });
+  async readdirPromise(p, opts) {
+    return this.readdirSync(p, opts);
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
+  readdirSync(p, opts) {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) throw ENOENT(`scandir '${p}'`);
     const directoryListing = this.listings.get(resolvedP);
     if (!directoryListing) throw ENOTDIR(`scandir '${p}'`);
     const entries = [...directoryListing];
-    if (!withFileTypes) return entries;
+    if (!(opts === null || opts === void 0 ? void 0 : opts.withFileTypes)) return entries;
     return entries.map(name => {
       return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
         name
@@ -49407,37 +49389,25 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async readdirPromise(p, {
-    withFileTypes
-  } = {}) {
+  async readdirPromise(p, opts) {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.readdirPromise(p, {
-        withFileTypes: withFileTypes
-      });
+      return await this.baseFs.readdirPromise(p, opts);
     }, async (zipFs, {
       subPath
     }) => {
-      return await zipFs.readdirPromise(subPath, {
-        withFileTypes: withFileTypes
-      });
+      return await zipFs.readdirPromise(subPath, opts);
     }, {
       requireSubpath: false
     });
   }
 
-  readdirSync(p, {
-    withFileTypes
-  } = {}) {
+  readdirSync(p, opts) {
     return this.makeCallSync(p, () => {
-      return this.baseFs.readdirSync(p, {
-        withFileTypes: withFileTypes
-      });
+      return this.baseFs.readdirSync(p, opts);
     }, (zipFs, {
       subPath
     }) => {
-      return zipFs.readdirSync(subPath, {
-        withFileTypes: withFileTypes
-      });
+      return zipFs.readdirSync(subPath, opts);
     }, {
       requireSubpath: false
     });
