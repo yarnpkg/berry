@@ -311,13 +311,16 @@ export class ZipFS extends BasePortableFakeFS {
       ? this.baseFs.statSync(this.path).mode & 0o777
       : null;
 
-    const rc = this.libzip.close(this.zip);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-
     // zip_close doesn't persist empty archives
-    if (this.entries.size === 0)
+    if (this.entries.size === 0) {
+      this.discardAndClose();
       this.baseFs.writeFileSync(this.path, makeEmptyArchive());
+    } else {
+      const rc = this.libzip.close(this.zip);
+      if (rc === -1) {
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      }
+    }
 
     // this.libzip overrides the chmod when writing the archive, which is a weird
     // behavior I don't totally understand (plus the umask seems bogus in some
