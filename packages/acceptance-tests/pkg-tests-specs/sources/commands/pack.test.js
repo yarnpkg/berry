@@ -327,14 +327,26 @@ describe(`Commands`, () => {
     test(
       `it should replace the workspace: protocol correctly`,
       makeTemporaryEnv({
-        workspaces: [`./dependency`, `./dependant`],
+        workspaces: [`./dependency`, `./dependant`, `./foo`, `./bar`],
       }, async({path, run, source}) => {
         const dependency = `@test/dependency`;
         const dependant = `@test/dependant`;
+        const foo = `@test/foo`;
+        const bar = `@test/bar`;
 
         await fsUtils.writeJson(`${path}/dependency/package.json`, {
           name: dependency,
           version: `1.0.0`,
+        });
+
+        await fsUtils.writeJson(`${path}/foo/package.json`, {
+          name: foo,
+          version: `2.0.0`,
+        });
+
+        await fsUtils.writeJson(`${path}/bar/package.json`, {
+          name: bar,
+          version: `3.0.0`,
         });
 
         await fsUtils.writeJson(`${path}/dependant/package.json`, {
@@ -342,6 +354,8 @@ describe(`Commands`, () => {
           version: `1.0.0`,
           dependencies: {
             [dependency]: `workspace:*`,
+            [foo]: `workspace:^`,
+            [bar]: `workspace:~`,
           },
           devDependencies: {
             [dependency]: `workspace:^1.0.0`,
@@ -359,11 +373,15 @@ describe(`Commands`, () => {
 
         expect(packedManifest.dependencies[dependency]).toBe(`1.0.0`);
         expect(packedManifest.devDependencies[dependency]).toBe(`^1.0.0`);
+        expect(packedManifest.dependencies[foo]).toBe(`^2.0.0`);
+        expect(packedManifest.dependencies[bar]).toBe(`~3.0.0`);
 
         const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
 
         expect(originalManifest.dependencies[dependency]).toBe(`workspace:*`);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
+        expect(originalManifest.dependencies[foo]).toBe(`workspace:^`);
+        expect(originalManifest.dependencies[bar]).toBe(`workspace:~`);
       }),
     );
 
