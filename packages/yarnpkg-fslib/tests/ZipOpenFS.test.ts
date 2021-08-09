@@ -6,17 +6,17 @@ import {ZipOpenFS}              from '../sources';
 
 import {useFakeTime}            from './utils';
 
-const ZIP_DIR1 = ppath.join(
+export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/foo.zip` as Filename
 );
-const ZIP_DIR2 = ppath.join(
+export const ZIP_DIR2 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/folder.zip/foo.zip` as Filename
 );
 
 export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
-const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
+export const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
 
 describe(`getArchivePart`, () => {
   const tests = [
