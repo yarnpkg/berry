@@ -37,6 +37,8 @@ jobs:
 
         cd berry-angular
 
+        yarn link -A "$HERE_DIR"
+
         yarn add @yarnpkg/pnpify@portal:"$HERE_DIR/../packages/yarnpkg-pnpify" @angular-devkit/core@next @babel/preset-env @babel/core -D
 
         yarn unplug -AR @angular/platform-browser @angular/core @angular/common @angular/compiler-cli
