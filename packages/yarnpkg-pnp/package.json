@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "3.0.0",
+  "version": "3.0.1-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.5.0",
+    "@yarnpkg/fslib": "workspace:^2.5.1-rc.1",
     "resolve.exports": "^1.0.2",
     "tslib": "^1.13.0"
   },
@@ -40,5 +40,6 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "3.0.0"
 }
