@@ -14,9 +14,14 @@ export const ZIP_DIR2 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/folder.zip/foo.zip` as Filename
 );
+export const ZIP_DIR3 = ppath.join(
+  npath.toPortablePath(__dirname),
+  `fixtures/foo.hiddenzip` as Filename
+);
 
 export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
 export const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
+export const ZIP_FILE3 = ppath.join(ZIP_DIR3, `foo.txt` as Filename);
 
 describe(`getArchivePart`, () => {
   const tests = [
@@ -37,7 +42,7 @@ describe(`getArchivePart`, () => {
 
   for (const [path, result] of tests) {
     test(`getArchivePart(${JSON.stringify(path)}) === ${JSON.stringify(result)}`, () => {
-      expect(getArchivePart(path)).toStrictEqual(result);
+      expect(getArchivePart(path, `.zip`)).toStrictEqual(result);
     });
   }
 });
@@ -55,6 +60,24 @@ describe(`ZipOpenFS`, () => {
     const fs = new ZipOpenFS({libzip: getLibzipSync()});
 
     expect(fs.readFileSync(ZIP_FILE2, `utf8`)).toEqual(`foo\n`);
+
+    fs.discardAndClose();
+  });
+
+  it(`can read from a zip file with an unusual extension if so configured`, () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), fileExtensions: [`.hiddenzip`]});
+
+    expect(fs.readFileSync(ZIP_FILE3, `utf8`)).toEqual(`foo\n`);
+
+    fs.discardAndClose();
+  });
+
+  it(`throws when reading from a zip file with an unusual extension`, () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync()});
+
+    expect(() => {
+      fs.readFileSync(ZIP_FILE3, `utf8`);
+    }).toThrowError();
 
     fs.discardAndClose();
   });
