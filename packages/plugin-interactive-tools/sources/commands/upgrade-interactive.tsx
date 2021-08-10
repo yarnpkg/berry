@@ -6,7 +6,7 @@ import {ScrollableItems}                                                        
 import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
 import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                                 from 'clipanion';
+import {Command, Usage, Option}                                                                                                         from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import {Box, Text}                                                                                                                      from 'ink';
 import React, {useEffect, useRef, useState}                                                                                             from 'react';
@@ -17,6 +17,7 @@ const DEFAULT_WINDOW_SIZE = 10;
 
 type UpgradeSuggestion = {value: string | null, label: string};
 type UpgradeSuggestions = Array<UpgradeSuggestion>;
+type Dependency = {descriptor: Descriptor, workspace: string};
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
@@ -33,7 +34,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     examples: [[
       `Open the upgrade window`,
       `yarn upgrade-interactive`,
+    ], [
+      `Open the upgrade window with corresponding workspaces`,
+      `yarn upgrade-interactive --show-workspaces`,
     ]],
+  });
+
+  showWorkspaces = Option.Boolean(`--show-workspaces`, false, {
+    description: `Show dependencies workspaces`,
   });
 
   async execute() {
@@ -179,9 +187,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const Header = () => {
+      const headerSpaceWidth = this.showWorkspaces ? 70 : 50;
+
       return (
         <Box flexDirection="row" paddingTop={1} paddingBottom={1}>
-          <Box width={50}>
+          <Box width={headerSpaceWidth}>
             <Text bold>
               <Text color="greenBright">?</Text> Pick the packages you want to upgrade.
             </Text>
@@ -193,19 +203,29 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       );
     };
 
-    const UpgradeEntry = ({active, descriptor, suggestions}: {active: boolean, descriptor: Descriptor, suggestions: Array<UpgradeSuggestion>}) => {
+    const UpgradeEntry = ({active, dependency, suggestions}: {active: boolean, dependency: Dependency, suggestions: Array<UpgradeSuggestion>}) => {
+      const {descriptor, workspace} = dependency;
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
 
       const packageIdentifier = structUtils.stringifyIdent(descriptor);
-      const padLength = Math.max(0, 45 - packageIdentifier.length);
+      const packagePadLength = Math.max(0, 45 - packageIdentifier.length);
+      const workspacePadLength = Math.max(0, 20 - workspace?.length);
+
       return <>
         <Box>
           <Box width={45}>
             <Text bold>
               {structUtils.prettyIdent(configuration, descriptor)}
             </Text>
-            <Pad active={active} length={padLength}/>
+            <Pad active={active} length={packagePadLength}/>
           </Box>
+          {this.showWorkspaces && <Box width={20}>
+            <Text bold color="gray">
+              {workspace}
+            </Text>
+            <Pad active={active} length={workspacePadLength}/>
+          </Box>
+          }
           {suggestions !== null
             ? <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
             : <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
@@ -214,8 +234,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </>;
     };
 
-    const UpgradeEntries = ({dependencies}: { dependencies: Array<Descriptor> }) => {
-      const [suggestions, setSuggestions] = useState<Array<readonly [Descriptor, UpgradeSuggestions]> | null>(null);
+    const UpgradeEntries = ({dependencies}: { dependencies: Array<Dependency> }) => {
+      const [suggestions, setSuggestions] = useState<Array<readonly [Dependency, UpgradeSuggestions]> | null>(null);
       const mountedRef = useRef<boolean>(true);
 
       useEffect(() => {
@@ -225,11 +245,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       });
 
       useEffect(() => {
-        Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
+        Promise.all(dependencies.map(dependency => fetchSuggestions(dependency.descriptor)))
           .then(allSuggestions => {
-            const mappedToSuggestions = dependencies.map((descriptor, i) => {
+            const mappedToSuggestions = dependencies.map((dependency, i) => {
               const suggestionsForDescriptor = allSuggestions[i];
-              return [descriptor, suggestionsForDescriptor] as const;
+              return [dependency, suggestionsForDescriptor] as const;
             }).filter(([_, suggestions]) => {
               return suggestions.filter(suggestion => suggestion.label !== ``).length > 1;
             });
@@ -247,24 +267,31 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       if (!suggestions.length)
         return <Text>No upgrades found</Text>;
 
-      return <ScrollableItems radius={DEFAULT_WINDOW_SIZE} children={suggestions.map(([descriptor, upgrades]) => {
-        return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} suggestions={upgrades} />;
+      return <ScrollableItems radius={DEFAULT_WINDOW_SIZE} children={suggestions.map(([dependency, upgrades]) => {
+        return <UpgradeEntry key={dependency.descriptor.descriptorHash} active={false} dependency={dependency} suggestions={upgrades} />;
       })} />;
     };
 
     const GlobalListApp: SubmitInjectedComponent<Map<string, string | null>> = ({useSubmit}) => {
       useSubmit(useMinistore());
 
-      const allDependencies = new Map<DescriptorHash, Descriptor>();
+      const allDependencies = new Map<DescriptorHash, Dependency>();
 
-      for (const workspace of project.workspaces)
-        for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>)
-          for (const descriptor of workspace.manifest[dependencyType].values())
-            if (project.tryWorkspaceByDescriptor(descriptor) === null)
-              allDependencies.set(descriptor.descriptorHash, descriptor);
+      for (const workspace of project.workspaces) {
+        for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>) {
+          for (const descriptor of workspace.manifest[dependencyType].values()) {
+            if (project.tryWorkspaceByDescriptor(descriptor) === null) {
+              allDependencies.set(descriptor.descriptorHash, {
+                descriptor,
+                workspace: workspace.manifest.name ? workspace.manifest.name.name : ``,
+              });
+            }
+          }
+        }
+      }
 
-      const sortedDependencies = miscUtils.sortMap(allDependencies.values(), descriptor => {
-        return structUtils.stringifyDescriptor(descriptor);
+      const sortedDependencies = miscUtils.sortMap(allDependencies.values(), dependency => {
+        return structUtils.stringifyDescriptor(dependency.descriptor);
       });
 
       return <Box flexDirection={`column`}>
