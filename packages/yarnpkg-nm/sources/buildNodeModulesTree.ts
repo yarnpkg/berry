@@ -248,8 +248,20 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
+    if (!node) {
+      node = {
+        name,
+        identName: locator.name,
+        reference: locator.reference,
+        dependencies: new Set(),
+        peerNames: pkg.packagePeers,
+      };
+
+      nodes.set(nodeKey, node);
+    }
+
     let hoistPriority;
+    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
     if (isExternalSoftLinkPackage)
       // External soft link dependencies have the highest priority - we don't want to install inside them
       hoistPriority = 2;
@@ -258,19 +270,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       hoistPriority = 1;
     else
       hoistPriority = 0;
-
-    if (!node) {
-      node = {
-        name,
-        identName: locator.name,
-        reference: locator.reference,
-        dependencies: new Set(),
-        peerNames: pkg.packagePeers,
-        hoistPriority,
-      };
-
-      nodes.set(nodeKey, node);
-    }
+    node.hoistPriority = Math.max(node.hoistPriority || 0, hoistPriority);
 
     if (isHoistBorder && !isExternalSoftLinkPackage) {
       const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
