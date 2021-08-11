@@ -875,7 +875,7 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
       seenNodes.add(node);
       for (const dep of node.dependencies.values()) {
         const entry = getOrCreatePreferenceEntry(dep);
-        entry.hoistPriority = Math.max(entry.hoistPriority, node.hoistPriority);
+        entry.hoistPriority = Math.max(entry.hoistPriority, dep.hoistPriority);
         if (node.peerNames.has(dep.name)) {
           entry.peerDependents.add(node.ident);
         } else {

@@ -259,7 +259,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     else
       hoistPriority = 0;
 
-
     if (!node) {
       node = {
         name,
