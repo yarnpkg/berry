@@ -1310,7 +1310,7 @@ describe(`Node_Modules`, () => {
       {
         workspaces: [`ws1`, `ws2`],
         dependencies: {
-          [`one-fixed-dep`]: `1.0.0`
+          [`one-fixed-dep`]: `1.0.0`,
         },
       },
       {
