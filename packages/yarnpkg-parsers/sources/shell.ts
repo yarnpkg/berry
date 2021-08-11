@@ -85,13 +85,13 @@ export function stringifyValueArgument(argument: ValueArgument): string {
 export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): string {
   const doubleQuoteIfRequested = (string: string, quote: boolean) => quote ? `"${string}"` : string;
   const quoteIfNeeded = (string: string) => {
-    if (!string.match(/[(){}<>$|&; \t"']/))
+    if (!string.match(/[(){}<>$|&; \t"'!\\]/))
       return string;
 
-    if (!string.match(/[$"]/))
+    if (!string.match(/[$"!]/))
       return `"${string}"`;
 
-    return `'${string.replace(/[']/g, `\\'`)}'`;
+    return `'${string.replace(/[']/g, `'"'"'`)}'`;
   };
 
   switch (argumentSegment.type) {

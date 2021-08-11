@@ -101,6 +101,8 @@ describe(`Shell parser`, () => {
 });
 
 const STRINGIFIER_TESTS: Array<[string, string]> = [
+  [`echo ''`, `echo `],
+  [`echo ""`, `echo `],
   [`echo foo`, `echo foo`],
   [`echo foo; echo bar`, `echo foo; echo bar`],
   [`echo foo; echo bar;`, `echo foo; echo bar`],
@@ -118,6 +120,14 @@ const STRINGIFIER_TESTS: Array<[string, string]> = [
   [`{echo foo && echo bar}`, `{ echo foo && echo bar; }`],
   [`FOO=bar echo foo`, `FOO=bar echo foo`],
   [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
+  [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
+  // echo "\"\!'" -> echo '"!'"'"''
+  [`echo "\\"\\!'"`, `echo '"!'"'"''`],
+  // echo "\'"
+  [`echo "\\'"`, `echo "\\'"`],
+  [`echo '\\'`, `echo "\\"`],
+  [`echo \\\\u001b\\[35m\\\\u001b\\[1mPink`, `echo "\\u001b[35m\\u001b[1mPink"`],
+  [`echo "\\u001b[35m\\u001b[1mPink'\\''"`, `echo "\\u001b[35m\\u001b[1mPink'\\''"`],
 ];
 
 describe(`Shell stringifier`, () => {

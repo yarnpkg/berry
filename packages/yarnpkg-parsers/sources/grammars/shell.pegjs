@@ -94,10 +94,10 @@ PlainStringSegment
   / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
-  = chars:('\\' c:. { return c } / [^'])* { return chars.join(``) }
+  = chars:('\\' c:[^u0'] { return c } / [^'])* { return chars.join(``) }
 
 DblQuoteStringText
-  = chars:('\\' c:. { return c } / [^$"])+ { return chars.join(``) }
+  = chars:('\\' c:[^u0'] { return c } / [^$"])+ { return chars.join(``) }
 
 PlainStringText
   = chars:('\\' c:. { return c } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
