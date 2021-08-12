@@ -1,6 +1,6 @@
 releases:
-  "@yarnpkg/cli": major
-  "@yarnpkg/plugin-pack": minor
+  "@yarnpkg/cli": patch
+  "@yarnpkg/plugin-pack": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
