@@ -47,7 +47,7 @@ cd ~/path/to/project
 yarn set version berry
 ```
 
-> "Berry" is the codename for the Yarn 2 release line. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
+> "Berry" is the codename for all versions of Yarn from 2 onwards: 2.x, 3.x, etc. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
 
 4. Commit new & updated files. See: [Which files should be gitignored?](/getting-started/qa#which-files-should-be-gitignored)
 
