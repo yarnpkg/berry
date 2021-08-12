@@ -153,12 +153,31 @@ const areRealLocatorsEqual = (a: Locator, b: Locator) => {
  * @returns package tree, packages info and locators
  */
 const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
-  const pnpRoots = pnp.getDependencyTreeRoots();
+  const pnpRoots = pnp.getDependencyTreeRoots().map(x => structUtils.parseLocator(stringifyLocator(x)));
+
+  // We don't want to ruin Yarn core idea about relationships between workspaces, except when they are not explicitely referenced
+  // If they are not explicitely reference, we have no other choice than to add them to the dependency graph at the root
+  const unreferencedPnpRoots = new Set([...pnpRoots]);
+  for (const parentWorkspaceLocator of pnpRoots) {
+    const pkg = pnp.getPackageInformation(parentWorkspaceLocator)!;
+    for (const childWorkspaceLocator of unreferencedPnpRoots) {
+      if (childWorkspaceLocator !== parentWorkspaceLocator) {
+        const referencish = pkg.packageDependencies.get(childWorkspaceLocator.name);
+        if (referencish) {
+          const reference = Array.isArray(referencish) ? referencish[1] : referencish;
+          const parentDependencyLocator = structUtils.parseLocator(stringifyLocator({name: childWorkspaceLocator.name, reference}))
+          if (areRealLocatorsEqual(childWorkspaceLocator, parentDependencyLocator)) {
+            unreferencedPnpRoots.delete(childWorkspaceLocator);
+          }
+        }
+      }
+    }
+  }
+
   const errors: NodeModulesTreeErrors = [];
   let preserveSymlinksRequired = false;
 
   const hoistingLimits = new Map<LocatorKey, Set<string>>();
-  const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -168,57 +187,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
-  const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation);
-
-  const topLocatorKey = stringifyLocator(topLocator);
-
-  if (options.project) {
-    const workspaceTree: WorkspaceTree = {children: new Map()};
-    const cwdSegments = options.project.cwd.split(ppath.sep);
-    for (const [cwd, workspace] of options.project.workspacesByCwd) {
-      const segments = cwd.split(ppath.sep).slice(cwdSegments.length);
-      let node = workspaceTree;
-      for (const segment of segments) {
-        let nextNode = node.children.get(segment as Filename);
-        if (!nextNode) {
-          nextNode = {children: new Map()};
-          node.children.set(segment as Filename, nextNode);
-        }
-        node = nextNode;
-      }
-      node.workspaceLocator = {name: structUtils.stringifyIdent(workspace.anchoredLocator), reference: workspace.anchoredLocator.reference};
-    }
-
-    const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
-      if (node.workspaceLocator) {
-        const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
-        let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
-        if (!dependencies) {
-          dependencies = new Set();
-          workspaceDependenciesMap.set(parentLocatorKey, dependencies);
-        }
-        dependencies.add(node.workspaceLocator);
-      }
-      for (const child of node.children.values()) {
-        addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
-      }
-    };
-
-    for (const child of workspaceTree.children.values()) {
-      addWorkspace(child, workspaceTree.workspaceLocator!);
-    }
-  } else {
-    for (const locator of pnpRoots) {
-      if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
-        let dependencies = workspaceDependenciesMap.get(topLocatorKey);
-        if (!dependencies) {
-          dependencies = new Set();
-          workspaceDependenciesMap.set(topLocatorKey, dependencies);
-        }
-        dependencies.add(locator);
-      }
-    }
-  }
+  const topPkgPortableLocation = npath.toPortablePath(npath.resolve(topPkg.packageLocation));
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
@@ -271,31 +240,11 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     }
 
     const allDependencies = new Map(pkg.packageDependencies);
-
-    if (options.project) {
-      const workspace = options.project.workspacesByCwd.get(npath.toPortablePath(pkg.packageLocation.slice(0, -1)));
-      if (workspace) {
-        const peerCandidates = new Set([
-          ...Array.from(workspace.manifest.peerDependencies.values(), x => structUtils.stringifyIdent(x)),
-          ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
-        ]);
-        for (const peerName of peerCandidates) {
-          if (!allDependencies.has(peerName)) {
-            allDependencies.set(peerName, parentDependencies.get(peerName) || null);
-            node.peerNames.add(peerName);
-          }
-        }
+    if (pkg === topPkg) {
+      for (const locator of unreferencedPnpRoots) {
+        allDependencies.set(`${locator.name}${WORKSPACE_NAME_SUFFIX}`, locator.reference)
       }
     }
-
-    const locatorKey = stringifyLocator(locator);
-    const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
-    if (workspaceDependencies) {
-      for (const workspaceLocator of workspaceDependencies) {
-        allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
-      }
-    }
-
     parent.dependencies.add(node);
 
     if (!isSeen) {
@@ -370,6 +319,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
+  console.log(require('util').inspect(packageTree, false, null));
   return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };
 
