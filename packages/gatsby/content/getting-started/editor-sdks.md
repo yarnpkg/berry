@@ -5,7 +5,7 @@ title: "Editor SDKs"
 description: An overview of the editor SDKs used to bring PnP compatibility to editors.
 ---
 
-Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work. This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
+Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work when using [Plug'n'Play installs](https://yarnpkg.com/features/pnp). This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
 
 The editor SDKs and settings can be generated using `yarn dlx @yarnpkg/sdks` (or `yarn sdks` if you added `@yarnpkg/sdks` to your dependencies). Its detailed documentation can be found on the [dedicated page](/sdks/cli/default).
 Generally speaking:

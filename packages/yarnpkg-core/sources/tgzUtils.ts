@@ -127,8 +127,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       case `Directory`: {
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
 
-        targetFs.mkdirSync(mappedPath);
-        targetFs.chmodSync(mappedPath, mode);
+        targetFs.mkdirSync(mappedPath, {mode});
         targetFs.utimesSync(mappedPath, safeTime, safeTime);
       } break;
 
@@ -136,8 +135,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       case `File`: {
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
 
-        targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable));
-        targetFs.chmodSync(mappedPath, mode);
+        targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable), {mode});
         targetFs.utimesSync(mappedPath, safeTime, safeTime);
       } break;
 
