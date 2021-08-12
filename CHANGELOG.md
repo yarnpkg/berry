@@ -17,6 +17,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - `hardlinks-global` node modules mode is automatically downgraded to `hardlinks-local` when global cache and install folder are on a different devices and the install continues normally. Warning is produced to the user with mitigation steps provided in documentation.
 
+## 3.0.1
+
+- Fixes an edge case with the PnP loader when calling `readdir` with `null` as second parameter (instead of `undefined`).
+
 ## 3.0.0
 
 ### **Breaking Changes**
