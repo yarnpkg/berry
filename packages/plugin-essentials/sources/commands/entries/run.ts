@@ -1,9 +1,10 @@
-import {CommandContext, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                from '@yarnpkg/fslib';
-import {Command, Option}             from 'clipanion';
+import {BaseCommand}  from '@yarnpkg/cli';
+import {structUtils}  from '@yarnpkg/core';
+import {npath, ppath} from '@yarnpkg/fslib';
+import {Option}       from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class EntryCommand extends Command<CommandContext> {
+export default class EntryCommand extends BaseCommand {
   leadingArgument = Option.String();
   args = Option.Proxy();
 

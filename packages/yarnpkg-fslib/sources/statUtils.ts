@@ -4,6 +4,8 @@ import * as nodeUtils                      from 'util';
 import {S_IFDIR, S_IFLNK, S_IFMT, S_IFREG} from './constants';
 import {Filename}                          from './path';
 
+export const DEFAULT_MODE = S_IFREG | 0o644;
+
 export class DirEntry {
   public name: Filename = `` as Filename;
   public mode: number = 0;
@@ -56,7 +58,7 @@ export class StatEntry {
 
   dev = 0;
   ino = 0;
-  mode = S_IFREG | 0o644;
+  mode = DEFAULT_MODE;
   nlink = 1;
   rdev = 0;
   blocks = 1;
@@ -114,7 +116,7 @@ export class BigIntStatsEntry {
 
   dev = BigInt(0);
   ino = BigInt(0);
-  mode = BigInt(S_IFREG | 0o644);
+  mode = BigInt(DEFAULT_MODE);
   nlink = BigInt(1);
   rdev = BigInt(0);
   blocks = BigInt(1);

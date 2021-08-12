@@ -169,11 +169,15 @@ Imagine the case of `react`. Your application depends on it (you listed it yours
 
 ### Unplugged Package
 
-In Yarn 2, most packages are kept within their zip archives rather than being unpacked on the disk. The archives are then mounted on the filesystem at runtime, and transparently accessed. The mounts are read-only so that the archives don't get corrupted if something tries to write into them.
+With Yarn PnP, most packages are kept within their zip archives rather than being unpacked on the disk. The archives are then mounted on the filesystem at runtime, and transparently accessed. The mounts are read-only so that the archives don't get corrupted if something tries to write into them.
 
 In some cases, however, keeping the package read-only may be difficult (such as when a package lists postinstall scripts - the build steps will often need to generate build artifacts, making read-only folders impractical). For those situations, Yarn can unpack specific packages and keep them into their own individual folders. Such packages are referred to as "unplugged".
 
-Packages are unplugged in two cases: either explicitly when the [`unplugged` field](/configuration/manifest#dependenciesMeta.unplugged) is set to `true`, or implicitly when the package lists postinstall scripts.
+Packages are unplugged in a few scenarios:
+- explicitly by setting the [`unplugged` field](/configuration/manifest#dependenciesMeta.unplugged) to `true`
+- explicitly when the package set its [`preferUnplugged` field](/configuration/manifest#preferUnplugged) to `true`
+- implicitly when the package lists postinstall scripts
+- implicitly when the package contains native files
 
 ### Virtual Package
 

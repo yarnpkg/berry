@@ -228,12 +228,10 @@ export class Wrapper {
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
-    const absPackagePath = await this.writeFile(relPackagePath, options);
-
-    await xfs.chmodPromise(absPackagePath, 0o755);
+    await this.writeFile(relPackagePath, {...options, mode: 0o755});
   }
 
-  async writeFile(relPackagePath: PortablePath, options: TemplateOptions = {}) {
+  async writeFile(relPackagePath: PortablePath, options: TemplateOptions & {mode?: number} = {}) {
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
@@ -244,7 +242,9 @@ export class Wrapper {
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
 
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), options));
+    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), options), {
+      mode: options.mode,
+    });
 
     this.paths.set(relPackagePath, relProjectPath);
 

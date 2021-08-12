@@ -5,6 +5,34 @@ const {writeJson} = fs;
 
 describe(`Protocols`, () => {
   describe(`workspace:`, () => {
+    test(`it should recognize ^ and ~`, makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`util`, `config`, `core`],
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/util/package.json` as PortablePath, {
+          name: `util`,
+          private: true,
+          dependencies: {
+            config: `workspace:^`,
+          },
+        });
+        await writeJson(`${path}/core/package.json` as PortablePath, {
+          name: `core`,
+          private: true,
+          dependencies: {
+            config: `workspace:~`,
+          },
+        });
+        await writeJson(`${path}/config/package.json` as PortablePath, {
+          name: `config`,
+          version: `1.0.0`,
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+      }
+    ));
     test(
       `it should recognize prereleases in wildcard ranges`,
       makeTemporaryEnv(
