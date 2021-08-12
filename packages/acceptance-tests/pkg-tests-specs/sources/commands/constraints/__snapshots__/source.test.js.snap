@@ -846,7 +846,7 @@ Object {
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
 workspace('.').
-workspace_ident('.', 'root-workspace-0b6124').
+workspace_ident('.', 'foo').
 workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
@@ -877,7 +877,7 @@ Object {
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
 workspace('.').
-workspace_ident('.', 'root-workspace-0b6124').
+workspace_ident('.', 'foo').
 workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
@@ -908,7 +908,7 @@ Object {
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
 workspace('.').
-workspace_ident('.', 'root-workspace-0b6124').
+workspace_ident('.', 'foo').
 workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
@@ -939,7 +939,7 @@ Object {
 dependency_type(devDependencies).
 dependency_type(peerDependencies).
 workspace('.').
-workspace_ident('.', 'root-workspace-0b6124').
+workspace_ident('.', 'foo').
 workspace_version('.', []).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
