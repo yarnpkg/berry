@@ -422,6 +422,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  enableStrictSettings: {
+    description: `If true, unknown settings will cause Yarn to abort`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   enableImmutableCache: {
     description: `If true, the cache is reputed immutable and actions that would modify it will throw`,
     type: SettingsType.BOOLEAN,
@@ -540,6 +545,7 @@ export interface ConfigurationValueMap {
 
   // Settings related to security
   enableScripts: boolean;
+  enableStrictSettings: boolean;
   enableImmutableCache: boolean;
   checksumBehavior: string;
 
@@ -909,12 +915,7 @@ export class Configuration {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
-    const rcFiles: Array<{
-      path: PortablePath;
-      cwd: PortablePath;
-      data: any;
-      strict?: boolean
-    }> = await Configuration.findRcFiles(startingCwd);
+    const rcFiles = await Configuration.findRcFiles(startingCwd);
 
     const homeRcFile = await Configuration.findHomeRcFile();
     if (homeRcFile) {
@@ -1080,7 +1081,12 @@ export class Configuration {
 
   static async findRcFiles(startingCwd: PortablePath) {
     const rcFilename = getRcFilename();
-    const rcFiles = [];
+    const rcFiles: Array<{
+      path: PortablePath;
+      cwd: PortablePath;
+      data: any;
+      strict?: boolean
+    }> = [];
 
     let nextCwd = startingCwd;
     let currentCwd = null;
@@ -1255,7 +1261,9 @@ export class Configuration {
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
-    for (const key of Object.keys(data)) {
+    strict = strict && this.get(`enableStrictSettings`);
+
+    for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
       const value = data[key];
       if (typeof value === `undefined`)
         continue;
@@ -1291,6 +1299,11 @@ export class Configuration {
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
+      }
+
+      if (key === `enableStrictSettings` && source !== `<environment>`) {
+        strict = parsed as boolean;
+        continue;
       }
 
       if (definition.type === SettingsType.MAP) {
