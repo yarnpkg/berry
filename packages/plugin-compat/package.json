@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^3.0.0",
+    "@yarnpkg/core": "^3.1.0-rc.1",
     "@yarnpkg/plugin-patch": "^3.0.0"
   },
   "devDependencies": {

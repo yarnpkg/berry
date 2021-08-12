@@ -1,0 +1,52 @@
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'The pull request to update'
+        required: true
+
+name: 'Smart master merge'
+jobs:
+  merge:
+    name: 'Merge master into the PR'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+      with:
+        ref: master
+        token: ${{secrets.YARNBOT_TOKEN}}
+
+    - name: 'Install Node'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Update, commit, and upload the hook'
+      run: |
+        git fetch origin pull/'${{github.event.inputs.branch}}'/head:local
+        git checkout local
+
+        git merge origin/master
+
+        if git diff --name-only --diff-filter=U | grep .pnp.cjs; then
+          # We use a prebuilt binary so that we don't have to deal with new/removed dependencies
+          YARN_ENABLE_STRICT_SETTINGS=0 YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js
+        fi
+
+        if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/hook.js; then
+          git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
+          yarn update:pnp:hook
+        fi
+
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+
+        git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
+        git commit -m 'Auto-merge with master'
+
+        git push origin local

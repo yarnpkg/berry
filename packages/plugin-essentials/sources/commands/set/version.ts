@@ -179,8 +179,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   await xfs.removePromise(ppath.dirname(absolutePath));
   await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
 
-  await xfs.writeFilePromise(absolutePath, bundleBuffer);
-  await xfs.chmodPromise(absolutePath, 0o755);
+  await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
 
   if (updateConfig) {
     await Configuration.updateConfiguration(projectCwd, {

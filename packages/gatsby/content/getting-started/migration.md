@@ -277,6 +277,7 @@ nmHoistingLimits: workspaces
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
 | ------------------ | -------------------------- | ----------------------------- |
+| `yarn audit`    | `yarn npm audit`           ||
 | `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
@@ -288,19 +289,14 @@ nmHoistingLimits: workspaces
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
 | `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
 
-### Deprecated
-
-| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
-| ------------------ | ----------------------------- |
-| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
-
 ### Removed from core
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn audit`    | Relied on an undocumented proprietary protocol; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
 | `yarn import`   | First import to Classic, then migrate to 2.x |
 | `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
+| `yarn versions` | Use `yarn --version` and `node -p process.versions` |
 
 ### Not implemented yet
 

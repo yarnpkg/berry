@@ -9,7 +9,7 @@ import * as semverUtils                                  from './semverUtils';
 import * as structUtils                                  from './structUtils';
 import {DescriptorHash, Descriptor, Locator}             from './types';
 
-const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
+export const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls
   [/^(git(?:\+(?:https|ssh))?:\/\/.*(?:\.git)?)#(.*)$/, (version, $0, $1, $2) => `${$1}#commit=${$2}`],
 
@@ -21,7 +21,7 @@ const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>
   // Note: /download/ is used by custom registries like Taobao
   [/^https?:\/\/[^/]+\/(?:[^/]+\/)*(?:@.+(?:\/|(?:%2f)))?([^/]+)\/(?:-|download)\/\1-[^/]+\.tgz(?:#|$)/, version => `npm:${version}`],
   // The GitHub package registry uses a different style of URLs
-  [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)$/, version => `npm:${version}`],
+  [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)(?:#|$)/, version => `npm:${version}`],
   // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
   [/^https:\/\/npm\.fontawesome\.com\/(?:@[^/]+)\/([^/]+)\/-\/([^/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
   // JFrog
