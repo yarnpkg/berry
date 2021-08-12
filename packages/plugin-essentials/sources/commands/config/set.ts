@@ -66,6 +66,10 @@ export default class ConfigSetCommand extends BaseCommand {
     const name = this.name.replace(/[.[].*$/, ``);
     const path = this.name.replace(/^[^.[]*\.?/, ``);
 
+
+    if (name === `enableStrictSettings`)
+      throw new UsageError(`This setting only affects the file it's in, and thus cannot be set from the CLI`);
+
     const setting = configuration.settings.get(name);
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
