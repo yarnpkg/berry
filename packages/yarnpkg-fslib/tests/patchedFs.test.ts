@@ -1,16 +1,16 @@
-import {getLibzipPromise}     from '@yarnpkg/libzip';
-import fs                     from 'fs';
-import {pathToFileURL}        from 'url';
-import {promisify}            from 'util';
+import {getLibzipPromise, getLibzipSync} from '@yarnpkg/libzip';
+import fs                                from 'fs';
+import {pathToFileURL}                   from 'url';
+import {promisify}                       from 'util';
 
-import {NodeFS}               from '../sources/NodeFS';
-import {PosixFS}              from '../sources/PosixFS';
-import {extendFs}             from '../sources/patchFs';
-import {Filename, npath}      from '../sources/path';
-import {xfs}                  from '../sources/xfs';
-import {statUtils, ZipOpenFS} from '../sources';
+import {NodeFS}                          from '../sources/NodeFS';
+import {PosixFS}                         from '../sources/PosixFS';
+import {extendFs}                        from '../sources/patchFs';
+import {Filename, npath, PortablePath}   from '../sources/path';
+import {xfs}                             from '../sources/xfs';
+import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
 
-import {ZIP_FILE1, ZIP_DIR1}  from "./ZipOpenFS.test";
+import {ZIP_FILE1, ZIP_DIR1}             from "./ZipOpenFS.test";
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
@@ -142,5 +142,61 @@ describe(`patchedFs`, () => {
       )
     )).resolves.toStrictEqual([`foo.txt`]);
     await expect(patchedFs.promises.readdir(ZIP_DIR1, null)).resolves.toStrictEqual([`foo.txt`]);
+  });
+
+  it(`should support createReadStream`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const nativeTmpdir = npath.fromPortablePath(tmpdir);
+
+    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {libzip: getLibzipSync(), create: true});
+    await zipFs.writeFilePromise(`/a.txt` as PortablePath, `foo`);
+
+    zipFs.saveAndClose();
+
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+
+    const readStream = patchedFs.createReadStream(`${nativeTmpdir}/archive.zip/a.txt`);
+
+    await expect(new Promise((resolve, reject) => {
+      const chunks: Array<Buffer> = [];
+
+      readStream.on(`data`, chunk => {
+        chunks.push(chunk);
+      });
+
+      readStream.on(`close`, () => {
+        resolve(Buffer.concat(chunks).toString());
+      });
+      readStream.on(`error`, err => {
+        reject(err);
+      });
+    })).resolves.toStrictEqual(`foo`);
+  });
+
+  it(`should support createWriteStream`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const nativeTmpdir = npath.fromPortablePath(tmpdir);
+
+    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {libzip: getLibzipSync(), create: true});
+    await zipFs.writeFilePromise(`/a.txt` as PortablePath, ``);
+
+    zipFs.saveAndClose();
+
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+
+    const writeStream = patchedFs.createWriteStream(`${nativeTmpdir}/archive.zip/a.txt`);
+
+    await new Promise<void>((resolve, reject) => {
+      writeStream.write(`foo`, err => {
+        if (err) {
+          reject(err);
+        } else {
+          writeStream.destroy();
+          resolve();
+        }
+      });
+    });
+
+    expect(patchedFs.readFileSync(`${nativeTmpdir}/archive.zip/a.txt`, `utf8`)).toStrictEqual(`foo`);
   });
 });
