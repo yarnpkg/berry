@@ -26,7 +26,7 @@ jobs:
       run: |
         node ./scripts/run-yarn.js build:cli
 
-    - name: 'Build the standard bundle'
+    - name: 'Update, commit, and upload the hook'
       run: |
         git fetch origin pull/'${{github.event.inputs.branch}}'/head:local
         git checkout local
@@ -40,7 +40,7 @@ jobs:
 
         if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/hook.js; then
           git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
-          yarn build:pnp:hook && yarn
+          yarn update:pnp:hook
         fi
 
         git config user.name "Yarn Bot"
