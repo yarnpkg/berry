@@ -11,6 +11,8 @@ const queries = {
   [`custom predicate`]: `custom_predicate(DependencyType).`,
   [`filter w/ workspace_field_test/3`]: `workspace(WorkspaceCwd), workspace_field_test(WorkspaceCwd, 'name', '$$ === "workspace-a"').`,
   [`filter w/ workspace_field_test/4`]: `workspace(WorkspaceCwd), workspace_field_test(WorkspaceCwd, 'name', '$$ === $0', ['workspace-b']).`,
+  [`workspace_field w/ object FieldValue`]: `workspace_field('.', 'repository', FieldValue).`,
+  [`workspace_field w/ array FieldValue`]: `workspace_field('.', 'files', FieldValue).`,
 };
 
 const constraintsFile = `
