@@ -1,11 +1,18 @@
 import {getLibzipSync}                 from '@yarnpkg/libzip';
+import {S_IFREG}                       from 'constants';
 import fs                              from 'fs';
 
-import {ZipFS}                         from '../sources/ZipFS';
+import {makeEmptyArchive, ZipFS}       from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
 import {useFakeTime}                   from './utils';
+
+const isNotWin32 = process.platform !== `win32`;
+
+const ifNotWin32It = isNotWin32
+  ? it
+  : it.skip;
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -590,6 +597,140 @@ describe(`ZipFS`, () => {
     ).toBe(false);
 
     zipFs.discardAndClose();
+  });
+
+  it(`should support saving an empty zip archive`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+    zipFs.saveAndClose();
+
+    expect(xfs.existsSync(archive)).toStrictEqual(true);
+    expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
+  it(`should support saving an empty zip archive (unlink after write)`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.unlinkSync(`/foo.txt` as PortablePath);
+
+    zipFs.saveAndClose();
+
+    expect(xfs.existsSync(archive)).toStrictEqual(true);
+    expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
+  it(`should support getting the buffer from an empty in-memory zip archive`, () => {
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(null, {libzip});
+    const buffer = zipFs.getBufferAndClose();
+
+    expect(buffer).toStrictEqual(makeEmptyArchive());
+
+    expect(new ZipFS(buffer, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
+  ifNotWin32It(`should preserve the umask`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
+
+    const zipFs = new ZipFS(archive, {libzip});
+    await zipFs.writeFilePromise(`/foo.txt` as PortablePath, `foo`);
+
+    zipFs.saveAndClose();
+
+    expect((await xfs.statPromise(archive)).mode & 0o777).toStrictEqual(0o754);
+  });
+
+  ifNotWin32It(`should preserve the umask (empty archive)`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
+
+    const zipFs = new ZipFS(archive, {libzip});
+
+    zipFs.saveAndClose();
+
+    expect((await xfs.statPromise(archive)).mode & 0o777).toStrictEqual(0o754);
+  });
+
+  ifNotWin32It(`should preserve the umask if the archive is unlinked before being closed`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
+
+    const zipFs = new ZipFS(archive, {libzip});
+    await zipFs.writeFilePromise(`/foo.txt` as PortablePath, `foo`);
+
+    await xfs.unlinkPromise(archive);
+
+    zipFs.saveAndClose();
+
+    expect((await xfs.statPromise(archive)).mode & 0o777).toStrictEqual(0o754);
+  });
+
+  ifNotWin32It(`should preserve the umask if the archive is unlinked before being closed (empty archive)`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
+
+    const zipFs = new ZipFS(archive, {libzip});
+
+    await xfs.unlinkPromise(archive);
+
+    zipFs.saveAndClose();
+
+    expect((await xfs.statPromise(archive)).mode & 0o777).toStrictEqual(0o754);
+  });
+
+  ifNotWin32It(`should create archives with -rw-r--r--`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+    await zipFs.writeFilePromise(`/foo.txt` as PortablePath, `foo`);
+
+    zipFs.saveAndClose();
+
+    expect((await xfs.statPromise(archive)).mode).toStrictEqual(S_IFREG | 0o644);
+  });
+
+  ifNotWin32It(`should create archives with -rw-r--r-- (empty archive)`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(archive, {libzip, create: true});
+
+    zipFs.saveAndClose();
+
+    expect((await xfs.statPromise(archive)).mode).toStrictEqual(S_IFREG | 0o644);
   });
 
   it(`should support chmod`, async () => {

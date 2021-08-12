@@ -49,6 +49,17 @@ function toUnixTimestamp(time: Date | string | number) {
   throw new Error(`Invalid time`);
 }
 
+export function makeEmptyArchive() {
+  return Buffer.from([
+    0x50, 0x4B, 0x05, 0x06,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00,
+  ]);
+}
+
 export class ZipFS extends BasePortableFakeFS {
   private readonly libzip: Libzip;
 
@@ -95,16 +106,7 @@ export class ZipFS extends BasePortableFakeFS {
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
 
-    if (source === null) {
-      source = Buffer.from([
-        0x50, 0x4B, 0x05, 0x06,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00,
-      ]);
-    }
+    source ??= makeEmptyArchive();
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -305,23 +307,23 @@ export class ZipFS extends BasePortableFakeFS {
       return;
     }
 
-    const previousMod = this.baseFs.existsSync(this.path)
-      ? this.baseFs.statSync(this.path).mode & 0o777
-      : null;
+    const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === statUtils.DEFAULT_MODE
+      ? undefined
+      : this.stats.mode;
 
-    const rc = this.libzip.close(this.zip);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    // zip_close doesn't persist empty archives
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), {mode: newMode});
+    } else {
+      const rc = this.libzip.close(this.zip);
+      if (rc === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
 
-    // this.libzip overrides the chmod when writing the archive, which is a weird
-    // behavior I don't totally understand (plus the umask seems bogus in some
-    // weird cases - maybe related to emscripten?)
-    //
-    // See also https://github.com/nih-at/libzip/issues/77
-    if (previousMod === null)
-      this.baseFs.chmodSync(this.path, this.stats.mode);
-    else if (previousMod !== (this.baseFs.statSync(this.path).mode & 0o777))
-      this.baseFs.chmodSync(this.path, previousMod);
+      if (typeof newMode !== `undefined`) {
+        this.baseFs.chmodSync(this.path, newMode);
+      }
+    }
 
     this.ready = false;
   }
