@@ -8,7 +8,7 @@ on:
 name: 'Smart master merge'
 jobs:
   merge:
-    name: 'Validating Rollup'
+    name: 'Merge master into the PR'
     runs-on: ubuntu-latest
 
     steps:
