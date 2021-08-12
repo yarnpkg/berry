@@ -81,6 +81,7 @@ export type WatchFileOptions = Partial<{
 
 export type ChangeFileOptions = Partial<{
   automaticNewlines: boolean,
+  mode: number,
 }>;
 
 export type WatchCallback = (
@@ -452,13 +453,13 @@ export abstract class FakeFS<P extends Path> {
   async changeFilePromise(p: P, content: string, opts?: ChangeFileOptions): Promise<void>;
   async changeFilePromise(p: P, content: Buffer | string, opts: ChangeFileOptions = {}) {
     if (Buffer.isBuffer(content)) {
-      return this.changeFileBufferPromise(p, content);
+      return this.changeFileBufferPromise(p, content, opts);
     } else {
       return this.changeFileTextPromise(p, content, opts);
     }
   }
 
-  private async changeFileBufferPromise(p: P, content: Buffer) {
+  private async changeFileBufferPromise(p: P, content: Buffer, {mode}: ChangeFileOptions = {}) {
     let current = Buffer.alloc(0);
     try {
       current = await this.readFilePromise(p);
@@ -469,10 +470,10 @@ export abstract class FakeFS<P extends Path> {
     if (Buffer.compare(current, content) === 0)
       return;
 
-    await this.writeFilePromise(p, content);
+    await this.writeFilePromise(p, content, {mode});
   }
 
-  private async changeFileTextPromise(p: P, content: string, {automaticNewlines}: ChangeFileOptions = {}) {
+  private async changeFileTextPromise(p: P, content: string, {automaticNewlines, mode}: ChangeFileOptions = {}) {
     let current = ``;
     try {
       current = await this.readFilePromise(p, `utf8`);
@@ -487,20 +488,20 @@ export abstract class FakeFS<P extends Path> {
     if (current === normalizedContent)
       return;
 
-    await this.writeFilePromise(p, normalizedContent);
+    await this.writeFilePromise(p, normalizedContent, {mode});
   }
 
   changeFileSync(p: P, content: Buffer): void;
   changeFileSync(p: P, content: string, opts?: ChangeFileOptions): void;
   changeFileSync(p: P, content: Buffer | string, opts: ChangeFileOptions = {}) {
     if (Buffer.isBuffer(content)) {
-      return this.changeFileBufferSync(p, content);
+      return this.changeFileBufferSync(p, content, opts);
     } else {
       return this.changeFileTextSync(p, content, opts);
     }
   }
 
-  private changeFileBufferSync(p: P, content: Buffer) {
+  private changeFileBufferSync(p: P, content: Buffer, {mode}: ChangeFileOptions = {}) {
     let current = Buffer.alloc(0);
     try {
       current = this.readFileSync(p);
@@ -511,10 +512,10 @@ export abstract class FakeFS<P extends Path> {
     if (Buffer.compare(current, content) === 0)
       return;
 
-    this.writeFileSync(p, content);
+    this.writeFileSync(p, content, {mode});
   }
 
-  private changeFileTextSync(p: P, content: string, {automaticNewlines = false}: ChangeFileOptions = {}) {
+  private changeFileTextSync(p: P, content: string, {automaticNewlines = false, mode}: ChangeFileOptions = {}) {
     let current = ``;
     try {
       current = this.readFileSync(p, `utf8`);
@@ -529,7 +530,7 @@ export abstract class FakeFS<P extends Path> {
     if (current === normalizedContent)
       return;
 
-    this.writeFileSync(p, normalizedContent);
+    this.writeFileSync(p, normalizedContent, {mode});
   }
 
   async movePromise(fromP: P, toP: P) {

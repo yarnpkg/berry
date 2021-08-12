@@ -1102,7 +1102,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content as any)]);
@@ -1111,13 +1111,16 @@ export class ZipFS extends BasePortableFakeFS {
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index) {
+    if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
+
+    if (mode !== null) {
+      await this.chmodPromise(resolvedP, mode);
     }
   }
 
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
@@ -1126,8 +1129,11 @@ export class ZipFS extends BasePortableFakeFS {
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index) {
+    if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
+
+    if (mode !== null) {
+      this.chmodSync(resolvedP, mode);
     }
   }
 
@@ -1142,17 +1148,22 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.listings.has(resolvedP))
       throw errors.EISDIR(`open '${p}'`);
 
-    let encoding = null;
+    let encoding = null, mode = null;
 
-    if (typeof opts === `string`)
+    if (typeof opts === `string`) {
       encoding = opts;
-    else if (typeof opts === `object` && opts.encoding)
-      encoding = opts.encoding;
+    } else if (typeof opts === `object`) {
+      ({
+        encoding = null,
+        mode = null,
+      } = opts);
+    }
 
     const index = this.entries.get(resolvedP);
 
     return {
       encoding,
+      mode,
       resolvedP,
       index,
     };

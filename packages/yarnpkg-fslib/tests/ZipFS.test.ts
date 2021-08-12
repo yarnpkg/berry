@@ -591,4 +591,54 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should support chmod`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+    zipFs.chmodSync(`/foo.txt` as Filename, 0o754);
+    expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
+
+    await zipFs.writeFilePromise(`/bar.txt` as Filename, `bar`);
+    await zipFs.chmodPromise(`/bar.txt` as Filename, 0o754);
+    expect((await zipFs.statPromise(`/bar.txt` as Filename)).mode & 0o777).toBe(0o754);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support writeFile mode`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`, {mode: 0o754});
+    expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
+
+    await zipFs.writeFilePromise(`/bar.txt` as Filename, `bar`, {mode: 0o754});
+    expect((await zipFs.statPromise(`/bar.txt` as Filename)).mode & 0o777).toBe(0o754);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support appendFile mode`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.appendFileSync(`/foo.txt` as Filename, `foo`, {mode: 0o754});
+    expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
+
+    await zipFs.appendFilePromise(`/bar.txt` as Filename, `bar`, {mode: 0o754});
+    expect((await zipFs.statPromise(`/bar.txt` as Filename)).mode & 0o777).toBe(0o754);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support mkdir mode`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.mkdirSync(`/foo` as Filename, {mode: 0o754});
+    expect(zipFs.statSync(`/foo` as Filename).mode & 0o777).toBe(0o754);
+
+    await zipFs.mkdirPromise(`/bar` as Filename, {mode: 0o754});
+    expect((await zipFs.statPromise(`/bar` as Filename)).mode & 0o777).toBe(0o754);
+
+    zipFs.discardAndClose();
+  });
 });
