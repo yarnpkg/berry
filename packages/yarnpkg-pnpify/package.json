@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -8,7 +8,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^3.0.0",
-    "@yarnpkg/fslib": "workspace:^2.5.0",
+    "@yarnpkg/fslib": "workspace:^2.5.1",
     "@yarnpkg/nm": "workspace:^2.4.1",
     "clipanion": "^3.0.1",
     "cross-spawn": "7.0.3",

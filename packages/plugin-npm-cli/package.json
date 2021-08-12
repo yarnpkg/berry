@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0",
+    "@yarnpkg/fslib": "workspace:^2.5.1",
     "clipanion": "^3.0.1",
     "enquirer": "^2.3.6",
     "semver": "^7.1.2",
@@ -12,7 +12,7 @@
     "typanion": "^3.3.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0",
+    "@yarnpkg/cli": "^3.0.1",
     "@yarnpkg/core": "^3.0.0",
     "@yarnpkg/plugin-npm": "^2.5.0",
     "@yarnpkg/plugin-pack": "^3.0.0"

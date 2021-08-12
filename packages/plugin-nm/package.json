@@ -3,19 +3,19 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.0",
+    "@yarnpkg/fslib": "workspace:^2.5.1",
     "@yarnpkg/libzip": "workspace:^2.2.2",
     "@yarnpkg/nm": "workspace:^2.4.1",
     "@yarnpkg/parsers": "workspace:^2.4.0",
-    "@yarnpkg/plugin-pnp": "workspace:^3.0.0",
-    "@yarnpkg/pnp": "workspace:^3.0.0",
+    "@yarnpkg/plugin-pnp": "workspace:^3.0.1",
+    "@yarnpkg/pnp": "workspace:^3.0.1",
     "@zkochan/cmd-shim": "^5.1.0",
     "clipanion": "^3.0.1",
     "micromatch": "^4.0.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.0",
+    "@yarnpkg/cli": "^3.0.1",
     "@yarnpkg/core": "^3.0.0"
   },
   "devDependencies": {
