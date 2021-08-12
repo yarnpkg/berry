@@ -97,7 +97,7 @@ export class Workspace {
     if (protocol === WorkspaceResolver.protocol && ppath.normalize(pathname as PortablePath) === this.relativeCwd)
       return true;
 
-    if (protocol === WorkspaceResolver.protocol && pathname === `*`)
+    if (protocol === WorkspaceResolver.protocol && (pathname === `*` || pathname === `^` || pathname === `~`))
       return true;
 
     const semverRange = semverUtils.validRange(pathname);
