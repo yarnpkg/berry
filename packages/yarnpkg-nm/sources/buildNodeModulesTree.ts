@@ -68,8 +68,6 @@ const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
 
-type WorkspaceTree = {workspaceLocator?: PhysicalPackageLocator, children: Map<Filename, WorkspaceTree>};
-
 /**
  * Returns path to archive, if package location is inside the archive.
  *
@@ -155,25 +153,6 @@ const areRealLocatorsEqual = (a: Locator, b: Locator) => {
 const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
   const pnpRoots = pnp.getDependencyTreeRoots().map(x => structUtils.parseLocator(stringifyLocator(x)));
 
-  // We don't want to ruin Yarn core idea about relationships between workspaces, except when they are not explicitely referenced
-  // If they are not explicitely reference, we have no other choice than to add them to the dependency graph at the root
-  const unreferencedPnpRoots = new Set([...pnpRoots]);
-  for (const parentWorkspaceLocator of pnpRoots) {
-    const pkg = pnp.getPackageInformation(parentWorkspaceLocator)!;
-    for (const childWorkspaceLocator of unreferencedPnpRoots) {
-      if (childWorkspaceLocator !== parentWorkspaceLocator) {
-        const referencish = pkg.packageDependencies.get(childWorkspaceLocator.name);
-        if (referencish) {
-          const reference = Array.isArray(referencish) ? referencish[1] : referencish;
-          const parentDependencyLocator = structUtils.parseLocator(stringifyLocator({name: childWorkspaceLocator.name, reference}))
-          if (areRealLocatorsEqual(childWorkspaceLocator, parentDependencyLocator)) {
-            unreferencedPnpRoots.delete(childWorkspaceLocator);
-          }
-        }
-      }
-    }
-  }
-
   const errors: NodeModulesTreeErrors = [];
   let preserveSymlinksRequired = false;
 
@@ -188,6 +167,26 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
   const topPkgPortableLocation = npath.toPortablePath(npath.resolve(topPkg.packageLocation));
+
+  // We don't want to ruin Yarn core idea about relationships between workspaces, except when they are not explicitely referenced
+  // If they are not explicitely reference, we have no other choice than to add them to the dependency graph at the root
+  const unreferencedPnpRoots = new Set([...pnpRoots]);
+  unreferencedPnpRoots.delete(structUtils.parseLocator(stringifyLocator(topLocator)));
+  for (const parentWorkspaceLocator of pnpRoots) {
+    const pkg = pnp.getPackageInformation(parentWorkspaceLocator)!;
+    for (const childWorkspaceLocator of unreferencedPnpRoots) {
+      if (childWorkspaceLocator !== parentWorkspaceLocator) {
+        const referencish = pkg.packageDependencies.get(childWorkspaceLocator.name);
+        if (referencish) {
+          const reference = Array.isArray(referencish) ? referencish[1] : referencish;
+          const parentDependencyLocator = structUtils.parseLocator(stringifyLocator({name: childWorkspaceLocator.name, reference}));
+          if (areRealLocatorsEqual(childWorkspaceLocator, parentDependencyLocator)) {
+            unreferencedPnpRoots.delete(childWorkspaceLocator);
+          }
+        }
+      }
+    }
+  }
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
@@ -242,7 +241,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const allDependencies = new Map(pkg.packageDependencies);
     if (pkg === topPkg) {
       for (const locator of unreferencedPnpRoots) {
-        allDependencies.set(`${locator.name}${WORKSPACE_NAME_SUFFIX}`, locator.reference)
+        allDependencies.set(`${locator.name}${WORKSPACE_NAME_SUFFIX}`, locator.reference);
       }
     }
     parent.dependencies.add(node);
@@ -319,7 +318,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
-  console.log(require('util').inspect(packageTree, false, null));
+  console.log(require(`util`).inspect(packageTree, false, null));
   return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };
 
