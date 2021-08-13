@@ -262,10 +262,7 @@ class NodeModulesInstaller implements Installer {
           ? this.opts.project.topLevelWorkspace.anchoredLocator
           : structUtils.makeLocator(structUtils.parseIdent(pnpLocator.name), pnpLocator.reference);
         const slot = this.localStore.get(locator.locatorHash);
-        if (typeof slot === `undefined`)
-          throw new Error(`Assertion failed: Expected the package reference to have been registered`);
-
-        return slot.pnpNode;
+        return typeof slot === `undefined` ? null : slot.pnpNode;
       },
       findPackageLocator: location => {
         const workspace = this.opts.project.tryWorkspaceByCwd(npath.toPortablePath(location));

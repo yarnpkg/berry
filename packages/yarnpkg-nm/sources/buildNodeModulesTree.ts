@@ -168,10 +168,12 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
+  const workspaceRoots = new Map<PhysicalPackageLocator, PhysicalPackageLocator>();
   const unreferencedWorkspaces = new Map<LocatorHash, PhysicalPackageLocator>();
   for (const pnpRoot of pnpRoots) {
     const locator = structUtils.parseLocator(stringifyLocator(pnpRoot));
     unreferencedWorkspaces.set(locator.locatorHash, pnpRoot);
+    workspaceRoots.set(pnpRoot, pnpRoot);
   }
   unreferencedWorkspaces.delete(structUtils.parseLocator(stringifyLocator(topLocator)).locatorHash);
 
@@ -183,9 +185,11 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         if (referencish) {
           const reference = Array.isArray(referencish) ? referencish[1] : referencish;
           const workspaceLocator = structUtils.parseLocator(stringifyLocator(childWorkspaceLocator));
-          const parentDependencyLocator = structUtils.parseLocator(stringifyLocator({name: childWorkspaceLocator.name, reference}));
+          const physicalParentDependencyLocator = {name: childWorkspaceLocator.name, reference};
+          const parentDependencyLocator = structUtils.parseLocator(stringifyLocator(physicalParentDependencyLocator));
           if (areRealLocatorsEqual(workspaceLocator, parentDependencyLocator)) {
             unreferencedWorkspaces.delete(childLocatorHash);
+            workspaceRoots.set(childWorkspaceLocator, physicalParentDependencyLocator);
           }
         }
       }
@@ -209,21 +213,18 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       }
       node = nextNode;
     }
-    node.workspaceLocator = locator;
+    node.workspaceLocator = workspaceRoots.get(locator);
   }
 
   const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
     if (node.workspaceLocator) {
-      const locator = structUtils.parseLocator(stringifyLocator(node.workspaceLocator));
-      if (unreferencedWorkspaces.has(locator.locatorHash)) {
-        const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
-        let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
-        if (!dependencies) {
-          dependencies = new Set();
-          workspaceDependenciesMap.set(parentLocatorKey, dependencies);
-        }
-        dependencies.add(node.workspaceLocator);
+      const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
+      let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
+      if (!dependencies) {
+        dependencies = new Set();
+        workspaceDependenciesMap.set(parentLocatorKey, dependencies);
       }
+      dependencies.add(node.workspaceLocator);
     }
     for (const child of node.children.values()) {
       addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
@@ -305,6 +306,10 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
     if (workspaceDependencies) {
       for (const workspaceLocator of workspaceDependencies) {
+        const reference = allDependencies.get(workspaceLocator.name);
+        if (reference === workspaceLocator.reference)
+          allDependencies.delete(workspaceLocator.name);
+
         allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
       }
     }
@@ -317,10 +322,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         if (referencish !== null) {
           const depLocator = pnp.getLocator(depName, referencish);
           const pkgLocator = pnp.getLocator(depName.replace(WORKSPACE_NAME_SUFFIX, ``), referencish);
+          const virtualDepLocator = structUtils.parseLocator(stringifyLocator(pkgLocator));
+          const realDepLocator = structUtils.isVirtualLocator(virtualDepLocator) ? structUtils.devirtualizeLocator(virtualDepLocator) : virtualDepLocator;
 
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
+          const realDepPkg = pnp.getPackageInformation(pnp.getLocator(pkgLocator.name, realDepLocator.reference));
           const isExternalSoftLinkDep = isExternalSoftLink(depPkg, depLocator);
 
           if (options.validateExternalSoftLinks && options.project && isExternalSoftLinkDep) {
@@ -369,7 +377,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           }
 
           const parentHoistingLimits = options.hoistingLimitsByCwd?.get(parentRelativeCwd);
-          const relativeDepCwd = isExternalSoftLinkDep ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath(depPkg.packageLocation)) || PortablePath.dot;
+          const relativeDepCwd = isExternalSoftLinkDep ? parentRelativeCwd : ppath.relative(topPkgPortableLocation, npath.toPortablePath((realDepPkg || depPkg).packageLocation)) || PortablePath.dot;
           const depHoistingLimits = options.hoistingLimitsByCwd?.get(relativeDepCwd);
           const isHoistBorder = parentHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
