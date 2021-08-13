@@ -19,7 +19,7 @@ const images = {
   yarn: IcoYarn,
   gitlab: IcoGitlab,
   bitbucket: IcoBitbucket,
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   generic_repo: IcoGit,
 };
 

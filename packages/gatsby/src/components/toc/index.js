@@ -175,6 +175,7 @@ export const Toc = ({headingSelector, getTitle, getDepth, ...rest}) => {
       const timeoutId = setTimeout(unpause, 1000);
       return () => clearTimeout(timeoutId);
     }
+    return undefined;
   }, [pauseScrollUpdate, isMounted]);
 
 
@@ -211,6 +212,7 @@ export const Toc = ({headingSelector, getTitle, getDepth, ...rest}) => {
 
       // delay it slightly to ensure scrolling doesn't interfere
       setTimeout(() => isMounted && setHashUpdated(false), 100);
+      return undefined;
     } else {
       // Throttling the scrollHandler saves computation and hence battery life.
       const scrollHandler = throttle(() => {

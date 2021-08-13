@@ -375,7 +375,7 @@ export class Details extends Component {
       get({
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}/repository/commits?per_page=1`,
         type: `json`,
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       }).then(([{committed_date}]) => {
         const timeDistance = formatDistance(new Date(committed_date), new Date());
         this.setState({

@@ -71,7 +71,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
       }
 
       if (command.options.length > 0) {
-        const addAnchor = definition => `<h3 id="${encodeURIComponent((`options-${definition}`).replace(/\-+/g, `-`))}" class="header-code"><code class="language-text">${definition}</code></h3>`;
+        const addAnchor = definition => `<h3 id="${encodeURIComponent((`options-${definition}`).replace(/-+/g, `-`))}" class="header-code"><code class="language-text">${definition}</code></h3>`;
         sections.push([
           `## Options\n`,
           `\n`,

@@ -9,6 +9,18 @@ import {prefixURL, isKnownRepositoryHost} from '../util';
 marked.Lexer.rules.gfm.heading = marked.Lexer.rules.normal.heading;
 marked.Lexer.rules.tables.heading = marked.Lexer.rules.normal.heading;
 
+// manually ask for sanitation of svgs, otherwise it will have wrong content-type
+function sanitizeSvg(href) {
+  if (
+    href.indexOf(`//`) === -1 &&
+        String.prototype.endsWith &&
+        href.endsWith(`.svg`)
+  )
+    return `${href}?sanitize=true`;
+
+  return href;
+}
+
 const renderAndEscapeMarkdown = ({source, repository}) => {
   const renderer = new marked.Renderer();
 
@@ -57,18 +69,6 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
           head: `blob/${head || `master`}`,
           path,
         });
-
-    // manually ask for sanitation of svgs, otherwise it will have wrong content-type
-    function sanitizeSvg(href) {
-      if (
-        href.indexOf(`//`) === -1 &&
-        String.prototype.endsWith &&
-        href.endsWith(`.svg`)
-      )
-        return `${href}?sanitize=true`;
-
-      return href;
-    }
 
     renderer.image = (href, title, text) =>
       `<img src="${prefixImage(
