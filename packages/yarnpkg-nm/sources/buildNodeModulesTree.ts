@@ -1,4 +1,4 @@
-import {structUtils, Project, MessageName, Locator}                           from '@yarnpkg/core';
+import {structUtils, Project, MessageName, Locator, LocatorHash}              from '@yarnpkg/core';
 import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
@@ -67,6 +67,8 @@ const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
 
 /** Package locator key for usage inside maps */
 type LocatorKey = string;
+
+type WorkspaceTree = {workspaceLocator?: PhysicalPackageLocator, children: Map<Filename, WorkspaceTree>};
 
 /**
  * Returns path to archive, if package location is inside the archive.
@@ -151,12 +153,12 @@ const areRealLocatorsEqual = (a: Locator, b: Locator) => {
  * @returns package tree, packages info and locators
  */
 const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
-  const pnpRoots = pnp.getDependencyTreeRoots().map(x => structUtils.parseLocator(stringifyLocator(x)));
-
+  const pnpRoots = pnp.getDependencyTreeRoots();
   const errors: NodeModulesTreeErrors = [];
   let preserveSymlinksRequired = false;
 
   const hoistingLimits = new Map<LocatorKey, Set<string>>();
+  const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -166,27 +168,70 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
-  const topPkgPortableLocation = npath.toPortablePath(npath.resolve(topPkg.packageLocation));
+  const unreferencedWorkspaces = new Map<LocatorHash, PhysicalPackageLocator>();
+  for (const pnpRoot of pnpRoots) {
+    const locator = structUtils.parseLocator(stringifyLocator(pnpRoot));
+    unreferencedWorkspaces.set(locator.locatorHash, pnpRoot);
+  }
+  unreferencedWorkspaces.delete(structUtils.parseLocator(stringifyLocator(topLocator)).locatorHash);
 
-  // We don't want to ruin Yarn core idea about relationships between workspaces, except when they are not explicitely referenced
-  // If they are not explicitely reference, we have no other choice than to add them to the dependency graph at the root
-  const unreferencedPnpRoots = new Set([...pnpRoots]);
-  unreferencedPnpRoots.delete(structUtils.parseLocator(stringifyLocator(topLocator)));
   for (const parentWorkspaceLocator of pnpRoots) {
     const pkg = pnp.getPackageInformation(parentWorkspaceLocator)!;
-    for (const childWorkspaceLocator of unreferencedPnpRoots) {
+    for (const [childLocatorHash, childWorkspaceLocator] of unreferencedWorkspaces) {
       if (childWorkspaceLocator !== parentWorkspaceLocator) {
         const referencish = pkg.packageDependencies.get(childWorkspaceLocator.name);
         if (referencish) {
           const reference = Array.isArray(referencish) ? referencish[1] : referencish;
+          const workspaceLocator = structUtils.parseLocator(stringifyLocator(childWorkspaceLocator));
           const parentDependencyLocator = structUtils.parseLocator(stringifyLocator({name: childWorkspaceLocator.name, reference}));
-          if (areRealLocatorsEqual(childWorkspaceLocator, parentDependencyLocator)) {
-            unreferencedPnpRoots.delete(childWorkspaceLocator);
+          if (areRealLocatorsEqual(workspaceLocator, parentDependencyLocator)) {
+            unreferencedWorkspaces.delete(childLocatorHash);
           }
         }
       }
     }
   }
+
+  const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation.slice(0, -1));
+
+  const workspaceTree: WorkspaceTree = {children: new Map()};
+  const cwdSegments = topPkgPortableLocation.split(ppath.sep);
+  for (const locator of pnpRoots) {
+    const pkg = pnp.getPackageInformation(locator)!;
+    const location = npath.toPortablePath(pkg.packageLocation.slice(0, -1));
+    const segments = location.split(ppath.sep).slice(cwdSegments.length);
+    let node = workspaceTree;
+    for (const segment of segments) {
+      let nextNode = node.children.get(segment as Filename);
+      if (!nextNode) {
+        nextNode = {children: new Map()};
+        node.children.set(segment as Filename, nextNode);
+      }
+      node = nextNode;
+    }
+    node.workspaceLocator = locator;
+  }
+
+  const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
+    if (node.workspaceLocator) {
+      const locator = structUtils.parseLocator(stringifyLocator(node.workspaceLocator));
+      if (unreferencedWorkspaces.has(locator.locatorHash)) {
+        const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
+        let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
+        if (!dependencies) {
+          dependencies = new Set();
+          workspaceDependenciesMap.set(parentLocatorKey, dependencies);
+        }
+        dependencies.add(node.workspaceLocator);
+      }
+    }
+    for (const child of node.children.values()) {
+      addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
+    }
+  };
+
+  for (const child of workspaceTree.children.values())
+    addWorkspace(child, workspaceTree.workspaceLocator!);
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
@@ -239,11 +284,31 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     }
 
     const allDependencies = new Map(pkg.packageDependencies);
-    if (pkg === topPkg) {
-      for (const locator of unreferencedPnpRoots) {
-        allDependencies.set(`${locator.name}${WORKSPACE_NAME_SUFFIX}`, locator.reference);
+
+    if (options.project) {
+      const workspace = options.project.workspacesByCwd.get(npath.toPortablePath(pkg.packageLocation.slice(0, -1)));
+      if (workspace) {
+        const peerCandidates = new Set([
+          ...Array.from(workspace.manifest.peerDependencies.values(), x => structUtils.stringifyIdent(x)),
+          ...Array.from(workspace.manifest.peerDependenciesMeta.keys()),
+        ]);
+        for (const peerName of peerCandidates) {
+          if (!allDependencies.has(peerName)) {
+            allDependencies.set(peerName, parentDependencies.get(peerName) || null);
+            node.peerNames.add(peerName);
+          }
+        }
       }
     }
+
+    const locatorKey = stringifyLocator(locator);
+    const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
+    if (workspaceDependencies) {
+      for (const workspaceLocator of workspaceDependencies) {
+        allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
+      }
+    }
+
     parent.dependencies.add(node);
 
     if (!isSeen) {
@@ -318,7 +383,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
 
-  console.log(require(`util`).inspect(packageTree, false, null));
   return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };
 
