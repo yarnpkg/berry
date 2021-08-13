@@ -38,7 +38,7 @@ export default [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `es2018`}),
+      esbuild({tsconfig: false, target: `node12`}),
       cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
       wrapOutput(),
     ],
