@@ -184,7 +184,7 @@ This situation usually happens after you've modified the zip archives from your 
 
 A file from the cache has been detected unused by `yarn cache clean`.
 
-After removing or upgrading a dependency you'll find that Yarn won't automatically remove the now obsolete files from your cache (this is because your cache might be shared by multiple projects, and in order to keep the history less messy). Running `yarn cache clean` will cause Yarn to try to figure out which packages from the cache aren't referenced by the current lockfile.
+Running `yarn cache clean` will cause Yarn to remove everything inside `.yarn/cache`.
 
 ## YN0020 - `MISSING_LOCKFILE_ENTRY`
 
