@@ -13,7 +13,7 @@ const compilerOptions = ts.parseJsonSourceFileConfigFileContent(
   path.dirname(tsconfigFile.fileName),
 );
 
-const compilerHost = ts.createCompilerHost(compilerOptions,);
+const compilerHost = ts.createCompilerHost(compilerOptions);
 const program = ts.createProgram(compilerOptions.fileNames, compilerOptions, compilerHost);
 const moduleSpecifierResolutionHost = ts.createModuleSpecifierResolutionHost(program, compilerHost);
 const rootSourceFile = program.getSourceFile(require.resolve(`@yarnpkg/core/sources/Project.ts`));

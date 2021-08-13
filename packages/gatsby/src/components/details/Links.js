@@ -3,7 +3,6 @@ import React                           from 'react';
 
 import IcoBitbucket                    from '../../images/search/ico-bitbucket.svg';
 import IcoGit                          from '../../images/search/ico-git.svg';
-
 import IcoGithub                       from '../../images/search/ico-github.svg';
 import IcoGitlab                       from '../../images/search/ico-gitlab.svg';
 import IcoHome                         from '../../images/search/ico-home.svg';

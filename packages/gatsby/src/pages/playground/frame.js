@@ -1,7 +1,6 @@
 import React, {useEffect}     from 'react';
 
 import {Layout}               from '../../components/layout';
-
 import Playground             from '../../components/playground/Playground';
 import {SANDBOX_URL}          from '../../components/playground/constants';
 import {SEO, defaultKeywords} from '../../components/seo';

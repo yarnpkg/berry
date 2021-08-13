@@ -222,7 +222,7 @@ export const Toc = ({headingSelector, getTitle, getDepth, ...rest}) => {
         const offsets = nodes.map(el => accumulateOffsetTop(el));
 
         const activeIndex = offsets.findIndex(
-          offset => offset > window.scrollY + HEADER_HEIGHT + 1
+          offset => offset > window.scrollY + HEADER_HEIGHT + 1,
         );
 
         !pauseScrollUpdate && isMounted && setActive(activeIndex === -1 ? titles.length - 1 : activeIndex - 1);

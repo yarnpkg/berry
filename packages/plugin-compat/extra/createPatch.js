@@ -1,4 +1,4 @@
-const {readFileSync,writeFileSync} = require(`fs`);
+const {readFileSync, writeFileSync} = require(`fs`);
 const {brotliCompressSync} = require(`zlib`);
 
 const patchContent = readFileSync(process.argv[2]);

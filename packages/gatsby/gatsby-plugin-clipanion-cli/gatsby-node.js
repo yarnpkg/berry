@@ -78,7 +78,7 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
           `| <div style="width:180px">Definition</div> | Description |\n`,
           `| ---------- | ----------- |\n`,
           ...command.options.map(
-            ({definition, description}) => `| ${addAnchor(definition)} | ${description} |\n`
+            ({definition, description}) => `| ${addAnchor(definition)} | ${description} |\n`,
           ),
         ].join(``));
       }

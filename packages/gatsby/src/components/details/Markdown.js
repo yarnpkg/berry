@@ -72,7 +72,7 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
 
     renderer.image = (href, title, text) =>
       `<img src="${prefixImage(
-        sanitizeSvg(href)
+        sanitizeSvg(href),
       )}" title="${title || ``}" alt="${text}"/>`;
 
     renderer.link = (href, title, text) => {
@@ -94,7 +94,7 @@ const renderAndEscapeMarkdown = ({source, repository}) => {
         (match, type, href) =>
           `${type}="${
             type === `href` ? prefixLink(href) : prefixImage(sanitizeSvg(href))
-          }`
+          }`,
       );
     };
   }
