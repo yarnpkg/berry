@@ -127,7 +127,6 @@ class NodeModulesInstaller implements Installer {
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult) {
-    console.log('installPackage', pkg.locatorHash);
     const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
 
     let customPackageData = this.customData.store.get(pkg.locatorHash);
@@ -262,11 +261,9 @@ class NodeModulesInstaller implements Installer {
         const locator = pnpLocator.reference === null
           ? this.opts.project.topLevelWorkspace.anchoredLocator
           : structUtils.makeLocator(structUtils.parseIdent(pnpLocator.name), pnpLocator.reference);
-        let slot = this.localStore.get(locator.locatorHash);
-        if (typeof slot === `undefined`) {
-          console.log('getPkgInfo', pnpLocator, 'locator', locator)
+        const slot = this.localStore.get(locator.locatorHash);
+        if (typeof slot === `undefined`)
           throw new Error(`Assertion failed: Expected the package reference to have been registered`);
-        }
 
         return slot.pnpNode;
       },
