@@ -585,15 +585,15 @@ describe(`ZipFS`, () => {
     expect(
       statUtils.areStatsEqual(
         zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
-        zipFs.statSync(`/foo` as PortablePath, {bigint: true})
-      )
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
+      ),
     ).toBe(true);
 
     expect(
       statUtils.areStatsEqual(
         zipFs.statSync(`/foo` as PortablePath, {bigint: false}),
-        zipFs.statSync(`/foo` as PortablePath, {bigint: true})
-      )
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
+      ),
     ).toBe(false);
 
     zipFs.discardAndClose();

@@ -114,8 +114,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -140,8 +140,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -182,8 +182,8 @@ describe(`Commands`, () => {
 
 
           expect(isInterlaced).toBe(true);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -220,8 +220,8 @@ describe(`Commands`, () => {
           expect(order.slice(2)).toMatchSnapshot();
 
           await expect({code, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -246,8 +246,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -272,8 +272,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -298,8 +298,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -327,8 +327,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     // Clipanion doesn't support this yet
@@ -344,8 +344,8 @@ describe(`Commands`, () => {
 
           await run(`install`);
           await expect(run(`workspaces`, `foreach`, `--jobs`, `2`, `run`, `print`)).rejects.toThrowError(/parallel must be set/);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -360,8 +360,8 @@ describe(`Commands`, () => {
 
           await run(`install`);
           await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `1`, `run`, `print`)).rejects.toThrowError(/expected to be at least 2 \(got 1\)/);
-        }
-      )
+        },
+      ),
     );
 
     test(`can run on public workspaces only`, makeTemporaryEnv(
@@ -410,7 +410,7 @@ describe(`Commands`, () => {
         }
 
         await expect({code, stdout, stderr}).toMatchSnapshot();
-      }
+      },
     ));
 
     test(
@@ -432,8 +432,8 @@ describe(`Commands`, () => {
           }
 
           expect(code).toBe(1);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -461,8 +461,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -491,8 +491,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -517,8 +517,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -543,8 +543,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
   });
 });

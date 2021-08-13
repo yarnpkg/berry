@@ -1310,14 +1310,14 @@ export class Configuration {
         const previousValue = this.values.get(key) as Map<string, any>;
         this.values.set(key, new Map(overwrite
           ? [...previousValue, ...parsed as Map<string, any>]
-          : [...parsed as Map<string, any>, ...previousValue]
+          : [...parsed as Map<string, any>, ...previousValue],
         ));
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else if (definition.isArray && definition.concatenateValues) {
         const previousValue = this.values.get(key) as Array<unknown>;
         this.values.set(key, overwrite
           ? [...previousValue, ...parsed as Array<unknown>]
-          : [...parsed as Array<unknown>, ...previousValue]
+          : [...parsed as Array<unknown>, ...previousValue],
         );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {

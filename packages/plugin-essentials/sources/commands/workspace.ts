@@ -42,8 +42,8 @@ export default class WorkspaceCommand extends BaseCommand {
         (workspace): [string, Workspace] => {
           const ident = structUtils.convertToIdent(workspace.locator);
           return [structUtils.stringifyIdent(ident), workspace];
-        }
-      )
+        },
+      ),
     );
 
     const workspace = candidatesByName.get(this.workspaceName);

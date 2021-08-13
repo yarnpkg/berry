@@ -234,7 +234,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`)
+            source(`require('pnpapi').resolveRequest('fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`),
           ).resolves.toEqual(
             null,
           );
@@ -247,7 +247,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`require('pnpapi').resolveRequest('node:fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`)
+            source(`require('pnpapi').resolveRequest('node:fs', ${JSON.stringify(`${npath.fromPortablePath(path)}/`)})`),
           ).resolves.toEqual(
             null,
           );
@@ -336,7 +336,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           const reference = await source(
-            `require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies.get('no-deps')`
+            `require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies.get('no-deps')`,
           );
 
           await expect(
@@ -357,7 +357,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           const reference = await source(
-            `require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies.get('self')`
+            `require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies.get('self')`,
           );
 
           await expect(

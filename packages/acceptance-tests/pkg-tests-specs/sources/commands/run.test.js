@@ -134,8 +134,8 @@ describe(`Commands`, () => {
         async ({path, run, source}) => {
           const {code, stdout, stderr} = await run(`run`);
           expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
   });
 });

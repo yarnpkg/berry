@@ -457,7 +457,7 @@ export class ZipFS extends BasePortableFakeFS {
         },
         bytesRead: 0,
         path: p,
-      }
+      },
     );
 
     const immediate = setImmediate(async () => {
@@ -509,7 +509,7 @@ export class ZipFS extends BasePortableFakeFS {
         close() {
           stream.destroy();
         },
-      }
+      },
     );
 
     stream.on(`data`, chunk => {

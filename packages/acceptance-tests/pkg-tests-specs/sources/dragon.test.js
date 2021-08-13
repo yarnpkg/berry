@@ -392,7 +392,7 @@ describe(`Dragon tests`, () => {
         await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`)).resolves.toBeTruthy();
         // C@X should be hoisted from . -> D -> B@X
         await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`)).resolves.toBeFalsy();
-      }
+      },
     ),
   );
 
@@ -441,7 +441,7 @@ describe(`Dragon tests`, () => {
         await expect(run(`install`)).resolves.toBeTruthy();
 
         await expect(source(`require('dragon-test-8-a').dependencies['dragon-test-8-b'] === require('dragon-test-8-b')`)).resolves.toEqual(true);
-      }
+      },
     ),
   );
 
@@ -485,7 +485,7 @@ describe(`Dragon tests`, () => {
 
         // The virtual descriptors should be different but the virtual package should be the same
         await expect(source(`require('first') === require('second')`)).resolves.toEqual(true);
-      }
+      },
     ),
   );
 
@@ -543,7 +543,7 @@ describe(`Dragon tests`, () => {
         // The virtual descriptors should be different but the virtual package should be the same
         const cPath = npath.fromPortablePath(ppath.join(path, `packages/c/package.json`));
         await expect(source(`(createRequire = require('module').createRequire, createRequire(createRequire(${JSON.stringify(cPath)}).resolve('b/package.json')).resolve('c/package.json'))`)).resolves.toEqual(cPath);
-      }
+      },
     ),
   );
 });

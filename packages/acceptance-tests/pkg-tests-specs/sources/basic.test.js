@@ -443,7 +443,7 @@ describe(`Basic tests`, () => {
         await run(`install`);
 
         await expect(xfs.existsPromise(`${path}/node_modules/no-deps`)).resolves.toEqual(true);
-      }
-    )
+      },
+    ),
   );
 });

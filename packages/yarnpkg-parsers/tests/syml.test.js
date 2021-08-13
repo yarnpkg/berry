@@ -27,7 +27,7 @@ describe(`Syml parser`, () => {
       
       "lodash@npm:^4.17.20":
         version: 4.17.20
-      `)
+      `),
     ).toEqual({'lodash@npm:^4.17.20': {version: `4.17.20`}});
   });
 });

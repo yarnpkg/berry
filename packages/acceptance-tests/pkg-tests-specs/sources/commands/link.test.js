@@ -202,8 +202,8 @@ describe(`Commands`, () => {
             code: 1,
             stdout: expect.stringContaining(`Can't link the project to itself`),
           });
-        }
-      )
+        },
+      ),
     );
   });
 });

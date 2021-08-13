@@ -10,7 +10,7 @@ describe(`Commands`, () => {
           code: 1,
           stdout: expect.stringContaining(`Usage Error: Couldn't find a script named "foo"`),
         });
-      })
+      }),
     );
 
     test(
@@ -21,7 +21,7 @@ describe(`Commands`, () => {
           code: 0,
           stdout: `${npath.fromPortablePath(path)}/package.json\n`,
         });
-      })
+      }),
     );
 
     test(
@@ -46,7 +46,7 @@ describe(`Commands`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      })
+      }),
     );
   });
 });

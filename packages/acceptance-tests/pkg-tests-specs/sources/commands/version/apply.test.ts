@@ -25,8 +25,8 @@ describe(`Commands`, () => {
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
             version: `0.0.1`,
           });
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -73,8 +73,8 @@ describe(`Commands`, () => {
           await expect(xfs.readJsonPromise(ppath.join(pkgB, Filename.manifest))).resolves.toMatchObject({
             version: `1.0.1`,
           });
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -125,8 +125,8 @@ describe(`Commands`, () => {
           await expect(xfs.readJsonPromise(ppath.join(pkgB, Filename.manifest))).resolves.toMatchObject({
             version: `1.0.1`,
           });
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -152,8 +152,8 @@ describe(`Commands`, () => {
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
             version: `0.0.0`,
           });
-        }
-      )
+        },
+      ),
     );
 
     const alternatives = [
@@ -214,8 +214,8 @@ describe(`Commands`, () => {
             await expect(xfs.readJsonPromise(ppath.join(pkgB, Filename.manifest))).resolves.toMatchObject({
               version: `1.0.1`,
             });
-          }
-        )
+          },
+        ),
       );
     }
   });
