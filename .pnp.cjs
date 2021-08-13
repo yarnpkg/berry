@@ -7700,6 +7700,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/bytes", [
+        ["npm:3.1.1", {
+          "packageLocation": "./.yarn/cache/@types-bytes-npm-3.1.1-bd68448932-29c543019d.zip/node_modules/@types/bytes/",
+          "packageDependencies": [
+            ["@types/bytes", "npm:3.1.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/cacheable-request", [
         ["npm:6.0.1", {
           "packageLocation": "./.yarn/cache/@types-cacheable-request-npm-6.0.1-067bf7714d-c25b1bfa2f.zip/node_modules/@types/cacheable-request/",
@@ -8294,10 +8303,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@types/prop-types", [
-        ["npm:15.5.8", {
-          "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.5.8-ed72e782b0-f2ec087b59.zip/node_modules/@types/prop-types/",
+        ["npm:15.7.4", {
+          "packageLocation": "./.yarn/cache/@types-prop-types-npm-15.7.4-592896a9fe-ef6e1899e5.zip/node_modules/@types/prop-types/",
           "packageDependencies": [
-            ["@types/prop-types", "npm:15.5.8"]
+            ["@types/prop-types", "npm:15.7.4"]
           ],
           "linkType": "HARD",
         }]
@@ -8307,6 +8316,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-q-npm-1.5.1-29b49b9eca-931a01f5df.zip/node_modules/@types/q/",
           "packageDependencies": [
             ["@types/q", "npm:1.5.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@types/qs", [
+        ["npm:6.9.7", {
+          "packageLocation": "./.yarn/cache/@types-qs-npm-6.9.7-4a3e6ca0d0-7fd6f9c250.zip/node_modules/@types/qs/",
+          "packageDependencies": [
+            ["@types/qs", "npm:6.9.7"]
           ],
           "linkType": "HARD",
         }]
@@ -8335,7 +8353,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-react-npm-16.9.2-9cbf87ef87-9ebe62c5c4.zip/node_modules/@types/react/",
           "packageDependencies": [
             ["@types/react", "npm:16.9.2"],
-            ["@types/prop-types", "npm:15.5.8"],
+            ["@types/prop-types", "npm:15.7.4"],
             ["csstype", "npm:2.6.10"]
           ],
           "linkType": "HARD",
@@ -10385,12 +10403,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rehooks/component-size", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.0.3"],
             ["@strictsoftware/typedoc-plugin-monorepo", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=916087&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["@types/babel__core", "npm:7.1.3"],
+            ["@types/bytes", "npm:3.1.1"],
             ["@types/dedent", "npm:0.7.0"],
             ["@types/indent-string", "npm:4.0.1"],
             ["@types/json-schema", "npm:7.0.7"],
             ["@types/loadable__component", "npm:5.10.0"],
             ["@types/lodash", "npm:4.14.168"],
             ["@types/marked", "npm:1.1.0"],
+            ["@types/prop-types", "npm:15.7.4"],
+            ["@types/qs", "npm:6.9.7"],
             ["@types/react", "npm:16.9.2"],
             ["@types/react-helmet", "npm:6.1.0"],
             ["@types/react-scroll-into-view-if-needed", "npm:2.1.0"],
@@ -33923,7 +33944,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/react-scroll-into-view-if-needed-virtual-62da9c8a36/0/cache/react-scroll-into-view-if-needed-npm-2.1.7-27d82a1caa-d2f025060b.zip/node_modules/react-scroll-into-view-if-needed/",
           "packageDependencies": [
             ["react-scroll-into-view-if-needed", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.7"],
-            ["@types/prop-types", null],
+            ["@types/prop-types", "npm:15.7.4"],
             ["@types/react", "npm:16.9.2"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.13.1"]
