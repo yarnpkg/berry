@@ -9,7 +9,7 @@
   },
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.5.1-rc.1",
+    "@yarnpkg/fslib": "workspace:^2.5.1",
     "clipanion": "^3.0.1",
     "lodash": "^4.17.15",
     "node-emoji": "^1.8.1",
@@ -17,7 +17,7 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.1-rc.2",
+    "@yarnpkg/cli": "^3.0.1",
     "@yarnpkg/core": "^3.1.0-rc.1"
   },
   "devDependencies": {

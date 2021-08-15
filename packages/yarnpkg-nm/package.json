@@ -7,7 +7,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^3.1.0-rc.1",
-    "@yarnpkg/fslib": "workspace:^2.5.1-rc.1"
+    "@yarnpkg/fslib": "workspace:^2.5.1"
   },
   "devDependencies": {
     "@yarnpkg/pnp": "workspace:*"

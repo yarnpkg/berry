@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/builder": "workspace:^3.0.2-rc.1",
-    "@yarnpkg/fslib": "workspace:^2.5.1-rc.1",
+    "@yarnpkg/fslib": "workspace:^2.5.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
