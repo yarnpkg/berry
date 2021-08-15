@@ -14,52 +14,64 @@ const IGNORED_VERSIONS = new Set([
   `3.3.3333`,
 ]);
 
-const SLICES = [{
-  from: `5d50de3`,
-  to: `426f5a7`,
-  onto: `e39bdc3`,
-  range: `>=3.2 <3.5`,
-}, {
-  from: `5d50de3`,
-  to: `426f5a7`,
-  onto: `cf7b2d4`,
-  range: `>=3.5 <=3.6`,
-}, {
-  from: `5d50de3`,
-  to: `426f5a7`,
-  onto: `cda54b8`,
-  range: `>3.6 <3.7`,
-}, {
-  from: `5d50de3`,
-  to: `2f85932`,
-  onto: `e39bdc3`,
-  range: `>=3.7 <3.9`,
-}, {
-  from: `5d50de3`,
-  to: `3af06df`,
-  onto: `551f0dd`,
-  range: `>=3.9 <4.0`,
-}, {
-  from: `6dbdd2f`,
-  to: `6dbdd2f`,
-  onto: `56865f7`,
-  range: `>=4.0 <4.1`,
-}, {
-  from: `746d79b`,
-  to: `746d79b`,
-  onto: `69972a3`,
-  range: `>=4.1 <4.2`,
-}, {
-  from: `8e0e870`,
-  to: `58bf162`,
-  onto: `bfc55b5`,
-  range: `>=4.2 <4.3`,
-}, {
-  from: `ef7f019`,
-  to: `ef7f019`,
-  onto: `28e3e6f`,
-  range: `>=4.3`,
-}];
+const SLICES = [
+  {
+    from: `5d50de3`,
+    to: `426f5a7`,
+    onto: `e39bdc3`,
+    range: `>=3.2 <3.5`,
+  },
+  {
+    from: `5d50de3`,
+    to: `426f5a7`,
+    onto: `cf7b2d4`,
+    range: `>=3.5 <=3.6`,
+  },
+  {
+    from: `5d50de3`,
+    to: `426f5a7`,
+    onto: `cda54b8`,
+    range: `>3.6 <3.7`,
+  },
+  {
+    from: `5d50de3`,
+    to: `2f85932`,
+    onto: `e39bdc3`,
+    range: `>=3.7 <3.9`,
+  },
+  {
+    from: `5d50de3`,
+    to: `3af06df`,
+    onto: `551f0dd`,
+    range: `>=3.9 <4.0`,
+  },
+  {
+    from: `6dbdd2f`,
+    to: `6dbdd2f`,
+    onto: `56865f7`,
+    range: `>=4.0 <4.1`,
+  },
+  {
+    from: `746d79b`,
+    to: `746d79b`,
+    onto: `69972a3`,
+    range: `>=4.1 <4.2`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.2
+  {
+    from: `8e0e8703b9c95013aec7819e4593d099cdf7763a`,
+    to: `61a0f0088a4d0cd89f113d40ac089cb2978c5ea0`,
+    onto: `bfc55b5762443c37ecdef08a3b5a4e057b4d1e85`,
+    range: `>=4.2 <4.3`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.3
+  {
+    from: `530aad19e4ac19d35cb6b200168c91ce86cb0050`,
+    to: `cece814b81e51816f6803df887c425ba75833797`,
+    onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
+    range: `>=4.3 <4.4`,
+  },
+];
 
 async function fetch(url) {
   return new Promise((resolve, reject) => {
@@ -172,6 +184,7 @@ async function cloneRepository() {
   if (!fs.existsSync(TS_REPO)) {
     await execFile(`git`, [`clone`, `https://github.com/arcanis/typescript`, TS_REPO]);
     await execFile(`git`, [`remote`, `add`, `upstream`, `https://github.com/microsoft/typescript`], TS_REPO_SPAWN);
+    await execFile(`git`, [`remote`, `add`, `upstream2`, `https://github.com/merceyz/typescript`], TS_REPO_SPAWN);
   }
 
   try {
@@ -183,6 +196,7 @@ async function cloneRepository() {
 
   await execFile(`git`, [`fetch`, `origin`], TS_REPO_SPAWN);
   await execFile(`git`, [`fetch`, `upstream`], TS_REPO_SPAWN);
+  await execFile(`git`, [`fetch`, `upstream2`], TS_REPO_SPAWN);
 }
 
 async function resetGit(hash) {
