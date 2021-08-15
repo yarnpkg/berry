@@ -71,6 +71,13 @@ const SLICES = [
     onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
     range: `>=4.3 <4.4`,
   },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.4
+  {
+    from: `0fc83b4d571df33a3c40c20c0eba68965fb52aca`,
+    to: `98866a5a740b487c20046d4ffaa36aa1f202dde9`,
+    onto: `55dd850009603aafa6ef8cc88020fa30d217d5b6`,
+    range: `>=4.4`,
+  },
 ];
 
 async function fetch(url) {
