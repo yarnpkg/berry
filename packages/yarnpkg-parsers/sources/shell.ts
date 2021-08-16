@@ -84,14 +84,20 @@ export function stringifyValueArgument(argument: ValueArgument): string {
 
 export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): string {
   const doubleQuoteIfRequested = (string: string, quote: boolean) => quote ? `"${string}"` : string;
-  const quoteIfNeeded = (string: string) => {
-    if (!string.match(/[(){}<>$|&; \t"']/))
-      return string;
-
-    if (!string.match(/[$"]/))
-      return `"${string}"`;
-
-    return `'${string.replace(/[']/g, `\\'`)}'`;
+  const quoteIfNeeded = (text: string) => {
+    if (text === ``)
+      return `""`;
+    if (!text.match(/[(){}<>$|&; \t"']/))
+      return text;
+    return `$'${text
+      .replace(/\\/g, `\\\\`)
+      .replace(/'/g, `\\'`)
+      .replace(/\f/g, `\\f`)
+      .replace(/\n/g, `\\n`)
+      .replace(/\r/g, `\\r`)
+      .replace(/\t/g, `\\t`)
+      .replace(/\v/g, `\\v`)
+      .replace(/\0/g, `\\0`)}'`;
   };
 
   switch (argumentSegment.type) {

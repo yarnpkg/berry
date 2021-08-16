@@ -1,0 +1,3 @@
+releases:
+  "@yarnpkg/parsers": patch
+  "@yarnpkg/shell": patch
