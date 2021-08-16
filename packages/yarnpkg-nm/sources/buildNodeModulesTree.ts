@@ -304,15 +304,9 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     const locatorKey = stringifyLocator(locator);
     const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
-    if (workspaceDependencies) {
-      for (const workspaceLocator of workspaceDependencies) {
-        const reference = allDependencies.get(workspaceLocator.name);
-        if (reference === workspaceLocator.reference)
-          allDependencies.delete(workspaceLocator.name);
-
+    if (workspaceDependencies)
+      for (const workspaceLocator of workspaceDependencies)
         allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
-      }
-    }
 
     parent.dependencies.add(node);
 
