@@ -277,7 +277,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             if (pack.code !== 0)
               return pack.code;
 
-            const packOutput = (await packPromise).toString().trim();
+            const packOutput = (await packPromise).toString().trim().replace(/^.*\n/s, ``);
             const packTarget = ppath.resolve(cwd, npath.toPortablePath(packOutput));
 
             // Only then can we move the pack to its rightful location
