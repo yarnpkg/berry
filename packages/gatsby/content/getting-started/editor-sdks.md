@@ -80,6 +80,8 @@ With the `.yarn/sdks` in place TypeScript support should work out of the box wit
 
 ##### Supporting go-to-definition et al.
 
+> **Note:** Due to a bug in [Neovim's URI handling](https://github.com/neovim/neovim/pull/14959) go-to-definition is only supported in neovim-nightly.
+
 As well as the [vim-rzip](https://github.com/lbrayner/vim-rzip) plugin you'll also need the following snippet to handle Yarn PnP's URIs emitted from [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server). See [lbrayner/vim-rzip#15](https://github.com/lbrayner/vim-rzip/issues/15) for further details.
 
 ```vim

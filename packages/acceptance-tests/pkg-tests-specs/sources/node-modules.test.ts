@@ -1302,4 +1302,38 @@ describe(`Node_Modules`, () => {
       }
     )
   );
+
+  test(`should give priority to direct workspace dependencies over indirect regular dependencies`,
+    // Despite 'one-fixed-dep' and 'has-bin-entries' depend on 'no-deps:1.0.0',
+    // the 'no-deps:2.0.0' should be hoisted to the top-level
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/ws1/package.json`, {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+        await writeJson(`${path}/ws2/package.json`, {
+          dependencies: {
+            [`has-bin-entries`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+          version: `2.0.0`,
+        });
+      }
+    )
+  );
 });

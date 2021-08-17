@@ -20,7 +20,8 @@
     "onLanguage:zip",
     "onFileSystem:zip",
     "onCommand:zipfs.mountZipFile",
-    "onCommand:zipfs.mountZipEditor"
+    "onCommand:zipfs.mountZipEditor",
+    "onStartupFinished"
   ],
   "main": "./build/index.js",
   "sideEffects": false,

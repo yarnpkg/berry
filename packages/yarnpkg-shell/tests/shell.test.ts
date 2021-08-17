@@ -1734,6 +1734,29 @@ describe(`Shell`, () => {
       });
     });
 
+    it(`should has left associativity`, async () => {
+      await expect(bufferResult(
+        `echo $(( 7 - 2 - 3 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `2\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 32 / 4 / 8 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `1\n`,
+      });
+
+      await expect(bufferResult(
+        `echo $(( 32 + 64 * 2 / 4 / 8 - 9 ))`,
+      )).resolves.toMatchObject({
+        exitCode: 0,
+        stdout: `27\n`,
+      });
+    });
+
     it(`should support arguments`, async () => {
       await expect(bufferResult(
         `echo $(( $0 + 2 ))`,

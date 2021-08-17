@@ -96,6 +96,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (empty project / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (multiple workspaces / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -214,6 +241,35 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: workspace-a must have a field _name set to \\"workspace-a\\", but doesn't
+➤ YN0037: workspace-b must have a field _name set to \\"workspace-b\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints test (one regular dependency / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -312,6 +368,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (one regular dependency / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (two development dependencies / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -405,6 +488,33 @@ Object {
   "stderr": "",
   "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
 ➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -507,6 +617,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints test (two regular dependencies, two development dependencies / empty constraints) 1`] = `
 Object {
   "code": 0,
@@ -601,6 +738,159 @@ Object {
   "code": 1,
   "stderr": "",
   "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / empty constraints) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0053: foo must depend on no-deps via conflicting ranges 1.0.0 and 2.0.0 (in dependencies)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (extraneous2)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0023: foo must depend on no-deps (via 2.0.0), but doesn't (in dependencies)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0023: foo must depend on one-fixed-dep (via 1.0.0), but doesn't (in peerDependencies)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (ambiguous)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0053: foo must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (extraneous)) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (incompatible)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: foo must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (missing)) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: foo must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: foo must have a field _files set to [\\"/a\\",\\"/b\\",\\"/c\\"], but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: foo must have a field _repository set to {\\"type\\":\\"git\\",\\"url\\":\\"ssh://git@github.com/yarnpkg/berry.git\\",\\"directory\\":\\".\\"}, but doesn't
+➤ YN0000: Failed with errors
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0037: foo must have a field _name set to \\"foo\\", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
