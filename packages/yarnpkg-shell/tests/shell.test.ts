@@ -114,6 +114,23 @@ describe(`Shell`, () => {
       });
     });
 
+    it(`should support a escaped arguments`, async () => {
+      await expect(bufferResult(
+        `echo "\\x1b[1;31m red text \\x1b[0m"`,
+      )).resolves.toMatchObject({
+        stdout: `\x1b[1;31m red text \x1b[0m\n`,
+      });
+    });
+
+    // TODO:
+    // it(`should support a empty arguments`, async () => {
+    //   await expect(bufferResult(
+    //     `bash -c "echo \\$1" "" 1`,
+    //   )).resolves.toMatchObject({
+    //     stdout: `1\n`,
+    //   });
+    // });
+
     it(`should exit with an exit code 0 when everything looks fine`, async () => {
       await expect(bufferResult(
         `echo hello`,

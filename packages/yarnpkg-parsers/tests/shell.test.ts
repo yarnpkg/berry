@@ -119,6 +119,9 @@ const STRINGIFIER_TESTS: Array<[string, string]> = [
   [`{echo foo && echo bar}`, `{ echo foo && echo bar; }`],
   [`FOO=bar echo foo`, `FOO=bar echo foo`],
   [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
+  [`FOO="\\x09"`, `FOO=$'\\t'`],
+  [`FOO="\\u0027"`, `FOO=$'\\''`],
+  [`FOO="\\U0001F601"`, `FOO=😁`],
 ];
 
 describe(`Shell stringifier`, () => {

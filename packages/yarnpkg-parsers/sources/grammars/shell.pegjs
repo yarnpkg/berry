@@ -94,10 +94,29 @@ PlainStringSegment
   / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
-  = chars:('\\' c:. { return c } / [^'])* { return chars.join(``) }
+  = chars:(EscapedChar / HexCodeString / '\\' c:[\\'] { return c } / [^'])* { return chars.join(``) }
 
 DblQuoteStringText
-  = chars:('\\' c:. { return c } / [^$"])+ { return chars.join(``) }
+  = chars:(EscapedChar / HexCodeString / '\\' c:[\\$"] { return c } / [^$"])+ { return chars.join(``) }
+
+EscapedChar
+  = '\\0' { return '\0' }
+  / '\\a' { return '\a' }
+  / '\\b' { return '\b' }
+  / '\\e' { return '\x1b' }
+  / '\\f' { return '\f' }
+  / '\\n' { return '\n' }
+  / '\\r' { return '\r' }
+  / '\\t' { return '\t' }
+  / '\\v' { return '\v' }
+
+HexCodeString
+  = char:('\\x' c:$(HexCodeChar HexCodeChar) { return String.fromCharCode(parseInt(c, 16)) })
+  / utf8:('\\u' c:$(HexCodeChar HexCodeChar HexCodeChar HexCodeChar) { return String.fromCharCode(parseInt(c, 16)) })
+  / utf16:('\\U' c:$(HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar) { return String.fromCodePoint(parseInt(c, 16)) })
+
+HexCodeChar
+  = [0-9a-fA-f]
 
 PlainStringText
   = chars:('\\' c:. { return c } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
