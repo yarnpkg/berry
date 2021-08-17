@@ -28,7 +28,7 @@ jobs:
 
     - name: 'Update, commit, and upload the hook'
       run: |
-        git fetch origin pull/'${{github.event.inputs.branch}}'/head:local
+        git fetch origin pull/'${{github.event.inputs.pr}}'/head:local
         git checkout local
 
         git merge origin/master
