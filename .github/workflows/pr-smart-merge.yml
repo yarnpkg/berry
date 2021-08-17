@@ -31,8 +31,8 @@ jobs:
       run: |
         PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{github.event.inputs.pr}}')
         
-        PR_REPO=$(jq .head.repo.full_name <<< "$PR_META")
-        PR_REF=$(jq .head.ref <<< "$PR_META")
+        PR_REPO=$(jq -r .head.repo.full_name <<< "$PR_META")
+        PR_REF=$(jq -r .head.ref <<< "$PR_META")
 
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
