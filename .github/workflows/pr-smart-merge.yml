@@ -38,6 +38,8 @@ jobs:
         # We know that there's a risk of conflict (that's why we're here), so we ignore it
         git merge origin/master || true
 
+        export YARN_ENABLE_IMMUTABLE_INSTALLS=0
+
         if git diff --name-only --diff-filter=U | grep .pnp.cjs; then
           # We use a prebuilt binary so that we don't have to deal with new/removed dependencies
           YARN_ENABLE_STRICT_SETTINGS=0 YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js
