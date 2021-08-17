@@ -32,7 +32,7 @@ jobs:
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
 
-        git fetch --set-upstream origin pull/'${{github.event.inputs.pr}}'/head:local
+        git fetch origin pull/'${{github.event.inputs.pr}}'/head:local
         git checkout local
 
         # We know that there's a risk of conflict (that's why we're here), so we ignore it
@@ -53,4 +53,4 @@ jobs:
         git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
         git commit -m 'Auto-merge with master'
 
-        git push origin local
+        git push origin local:pull/'${{github.event.inputs.pr}}'/head
