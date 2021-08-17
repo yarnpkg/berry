@@ -182,7 +182,7 @@ This situation usually happens after you've modified the zip archives from your 
 
 ## YN0019 - `UNUSED_CACHE_ENTRY`
 
-A file from the cache has been detected unused by `yarn cache clean`.
+A file from the cache has been detected unused while installing dependencies.
 
 Running `yarn cache clean` will cause Yarn to remove everything inside `.yarn/cache`.
 
