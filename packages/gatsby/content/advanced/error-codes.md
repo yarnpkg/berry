@@ -182,9 +182,9 @@ This situation usually happens after you've modified the zip archives from your 
 
 ## YN0019 - `UNUSED_CACHE_ENTRY`
 
-A file from the cache has been detected unused by `yarn cache clean`.
+A file from the cache has been detected unused while installing dependencies.
 
-After removing or upgrading a dependency you'll find that Yarn won't automatically remove the now obsolete files from your cache (this is because your cache might be shared by multiple projects, and in order to keep the history less messy). Running `yarn cache clean` will cause Yarn to try to figure out which packages from the cache aren't referenced by the current lockfile.
+Running `yarn cache clean` will cause Yarn to remove everything inside `.yarn/cache`.
 
 ## YN0020 - `MISSING_LOCKFILE_ENTRY`
 
@@ -342,3 +342,19 @@ to start the application in order for portal dependency to find its subdependenc
 ## YN0074 - `NM_HARDLINKS_MODE_DOWNGRADED`
 
 `nmMode` has been downgraded to `hardlinks-local` due to global cache and install folder being on different devices. Consider changing `globalFolder` setting and place the global cache on the same device as your project, if you want `hardlinks-global` to take effect.
+
+## YN0075 - `PROLOG_INSTANTIATION_ERROR`
+
+This error appears when a Prolog predicate is called with an invalid signature. Specifically, it means that some of the predicate parameters are non-instantiated (ie have no defined value), when the predicate would expect some. This doesn't mean that you need to hardcode a value, just that you need to assign one before calling the predicate. In the case of the `WorkspaceCwd` parameter from most of the Yarn predicates, it means that instead of calling:
+
+```
+workspace_field(WorkspaceCwd, 'name', _).
+```
+
+You would also use the `workspace/1` predicate to let Prolog "fill" the `WorkspaceCwd` parameter prior to using it in `workspace_field/3`:
+
+```
+workspace(WorkspaceCwd), workspace_field(WorkspaceCwd, 'name', _).
+```
+
+For more information about the parameters that must be instantiated when calling the predicate reported by the error message, consult the [dedicated page](/features/constraints#query-predicate) from our documentation.

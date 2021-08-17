@@ -1,4 +1,6 @@
-import {xfs} from '@yarnpkg/fslib';
+import {xfs}          from '@yarnpkg/fslib';
+
+import {environments} from './environments';
 
 describe(`Commands`, () => {
   const config = {
@@ -86,6 +88,56 @@ describe(`Commands`, () => {
 
       expect(fixedManifest.scripts).toMatchObject({echo: `echo`});
       expect(fixedManifest.unparsedKey).toBe(`foo`);
+    }));
+
+    test(`test apply fix to string fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      environments[`various field types`](path);
+
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_field(WorkspaceCwd, '_name', FieldValue) :- workspace_field(WorkspaceCwd, 'name', FieldValue).
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest._name).toStrictEqual(`foo`);
+    }));
+
+    test(`test apply fix to object fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      environments[`various field types`](path);
+
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_field(WorkspaceCwd, '_repository', FieldValue) :- workspace_field(WorkspaceCwd, 'repository', FieldValue).
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest._repository).toStrictEqual({
+        type: `git`,
+        url: `ssh://git@github.com/yarnpkg/berry.git`,
+        directory: `.`,
+      });
+    }));
+
+    test(`test apply fix to array fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
+      environments[`various field types`](path);
+
+      await xfs.writeFilePromise(`${path}/constraints.pro`, `
+      gen_enforced_field(WorkspaceCwd, '_files', FieldValue) :- workspace_field(WorkspaceCwd, 'files', FieldValue).
+      `);
+
+      await run(`constraints`, `--fix`);
+
+      const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
+
+      expect(fixedManifest._files).toStrictEqual([
+        `/a`,
+        `/b`,
+        `/c`,
+      ]);
     }));
   });
 });

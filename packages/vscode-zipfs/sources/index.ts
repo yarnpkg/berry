@@ -16,6 +16,7 @@ function mount(uri: vscode.Uri) {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  // Until a more specific activation event exists this requires onStartupFinished
   context.subscriptions.push(registerTerminalLinkProvider());
 
   context.subscriptions.push(vscode.workspace.registerFileSystemProvider(`zip`, new ZipFSProvider(), {
