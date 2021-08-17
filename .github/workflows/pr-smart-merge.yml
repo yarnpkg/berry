@@ -42,22 +42,21 @@ jobs:
         git fetch pr-source "$PR_REF":local
         git checkout local
 
-        # We know that there's a risk of conflict (that's why we're here), so we ignore it
-        git merge origin/master || true
+        if ! git merge origin/master; then
+          export YARN_ENABLE_IMMUTABLE_INSTALLS=0
 
-        export YARN_ENABLE_IMMUTABLE_INSTALLS=0
+          if git diff --name-only --diff-filter=U | grep .pnp.cjs; then
+            # We use a prebuilt binary so that we don't have to deal with new/removed dependencies
+            YARN_ENABLE_STRICT_SETTINGS=0 YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js
+          fi
 
-        if git diff --name-only --diff-filter=U | grep .pnp.cjs; then
-          # We use a prebuilt binary so that we don't have to deal with new/removed dependencies
-          YARN_ENABLE_STRICT_SETTINGS=0 YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js
+          if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/hook.js; then
+            git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
+            yarn update:pnp:hook
+          fi
+
+          git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
+          git commit -m 'Auto-merge with master'
         fi
-
-        if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/hook.js; then
-          git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
-          yarn update:pnp:hook
-        fi
-
-        git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
-        git commit -m 'Auto-merge with master'
 
         git push pr-source local:"$PR_REF"
