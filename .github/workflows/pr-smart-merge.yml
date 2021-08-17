@@ -37,7 +37,7 @@ jobs:
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
         
-        git remote add pr-source git@github.com:"$PR_REPO"
+        git remote add pr-source https://'${{secrets.YARNBOT_TOKEN}}'@github.com/"$PR_REPO".git
 
         git fetch pr-source "$PR_REF":local
         git checkout local
