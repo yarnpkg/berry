@@ -335,7 +335,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:1.0.0`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -357,7 +357,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:^`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -379,7 +379,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:~`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -401,7 +401,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:*`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -424,7 +424,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:^`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -447,7 +447,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:~`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -470,7 +470,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:*`,
           },
         });
-      })
+      }),
     );
 
     test(

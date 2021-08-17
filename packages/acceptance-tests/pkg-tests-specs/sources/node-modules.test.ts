@@ -1333,7 +1333,7 @@ describe(`Node_Modules`, () => {
         await expect(source(`require('no-deps')`)).resolves.toMatchObject({
           version: `2.0.0`,
         });
-      }
-    )
+      },
+    ),
   );
 });

@@ -11,4 +11,5 @@
 
 /packages/*/lib/**
 /packages/*/bin/**
+/packages/*/build/**
 /packages/**/*fixtures*/**
