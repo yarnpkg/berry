@@ -782,4 +782,22 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should support fd in writeFile and readFile`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.mkdirPromise(`/dir` as PortablePath);
+    zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
+
+    const fd = zipFs.openSync(`/dir/file` as PortablePath, `r`);
+    zipFs.writeFileSync(fd, `new content`);
+
+    expect(zipFs.readFilePromise(fd, `utf8`)).resolves.toEqual(`new content`);
+
+    await zipFs.writeFilePromise(fd, `new new content`);
+
+    expect(zipFs.readFileSync(fd, `utf8`)).toEqual(`new new content`);
+
+    zipFs.discardAndClose();
+  });
 });

@@ -1103,6 +1103,14 @@ export class ZipFS extends BasePortableFakeFS {
     return this.writeFileSync(p, content, opts);
   }
 
+  private fdToPath(fd: number, reason: string) {
+    const path = this.fds.get(fd)?.p;
+    if (typeof path === `undefined`)
+      throw errors.EBADF(reason);
+
+    return path;
+  }
+
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
     const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
@@ -1140,8 +1148,8 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private prepareWriteFile(p: FSPath<PortablePath>, opts?: WriteFileOptions) {
-    if (typeof p !== `string`)
-      throw errors.EBADF(`read`);
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
 
     if (this.readOnly)
       throw errors.EROFS(`open '${p}'`);
@@ -1330,7 +1338,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: PortablePath, encoding?: string) {
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-expect-error
@@ -1342,7 +1350,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
   readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: PortablePath, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-expect-error
@@ -1352,11 +1360,14 @@ export class ZipFS extends BasePortableFakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  private readFileBuffer(p: PortablePath): Buffer
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: false}): Buffer
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: true}): Promise<Buffer>
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
+  private readFileBuffer(p: FSPath<PortablePath>): Buffer
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: false}): Buffer
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: true}): Promise<Buffer>
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
+
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`open '${p}'`);
