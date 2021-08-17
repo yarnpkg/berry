@@ -29,6 +29,9 @@ jobs:
 
     - name: 'Update, commit, and upload the hook'
       run: |
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+
         git fetch origin pull/'${{github.event.inputs.pr}}'/head:local
         git checkout local
 
@@ -43,9 +46,6 @@ jobs:
           git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
           yarn update:pnp:hook
         fi
-
-        git config user.name "Yarn Bot"
-        git config user.email nison.mael+yarnbot@gmail.com
 
         git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
         git commit -m 'Auto-merge with master'
