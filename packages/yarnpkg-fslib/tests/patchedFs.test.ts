@@ -10,7 +10,7 @@ import {Filename, npath, PortablePath}   from '../sources/path';
 import {xfs}                             from '../sources/xfs';
 import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
 
-import {ZIP_FILE1, ZIP_DIR1}             from "./ZipOpenFS.test";
+import {ZIP_FILE1, ZIP_DIR1}             from './ZipOpenFS.test';
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {

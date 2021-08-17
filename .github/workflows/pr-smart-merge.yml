@@ -16,6 +16,7 @@ jobs:
       with:
         ref: master
         token: ${{secrets.YARNBOT_TOKEN}}
+        fetch-depth: 0
 
     - name: 'Install Node'
       uses: actions/setup-node@master
@@ -28,10 +29,23 @@ jobs:
 
     - name: 'Update, commit, and upload the hook'
       run: |
-        git fetch origin pull/'${{github.event.inputs.branch}}'/head:local
+        PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{github.event.inputs.pr}}')
+        
+        PR_REPO=$(jq -r .head.repo.full_name <<< "$PR_META")
+        PR_REF=$(jq -r .head.ref <<< "$PR_META")
+
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+        
+        git remote add pr-source https://'${{secrets.YARNBOT_TOKEN}}'@github.com/"$PR_REPO".git
+
+        git fetch pr-source "$PR_REF":local
         git checkout local
 
-        git merge origin/master
+        # We know that there's a risk of conflict (that's why we're here), so we ignore it
+        git merge origin/master || true
+
+        export YARN_ENABLE_IMMUTABLE_INSTALLS=0
 
         if git diff --name-only --diff-filter=U | grep .pnp.cjs; then
           # We use a prebuilt binary so that we don't have to deal with new/removed dependencies
@@ -43,10 +57,7 @@ jobs:
           yarn update:pnp:hook
         fi
 
-        git config user.name "Yarn Bot"
-        git config user.email nison.mael+yarnbot@gmail.com
-
         git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
         git commit -m 'Auto-merge with master'
 
-        git push origin local
+        git push pr-source local:"$PR_REF"

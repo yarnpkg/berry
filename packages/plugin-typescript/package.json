@@ -10,7 +10,7 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.0.1-rc.2",
+    "@yarnpkg/cli": "^3.0.1",
     "@yarnpkg/core": "^3.1.0-rc.1",
     "@yarnpkg/plugin-essentials": "^3.0.1-rc.1"
   },
