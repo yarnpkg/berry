@@ -107,8 +107,9 @@ export default class VersionCommand extends BaseCommand {
     versionFile.releases.set(workspace, releaseStrategy as any);
     await versionFile.saveAll();
 
-    if (!deferred) {
-      await this.cli.run([`version`, `apply`]);
-    }
+    if (!deferred)
+      return await this.cli.run([`version`, `apply`]);
+
+    return 0;
   }
 }
