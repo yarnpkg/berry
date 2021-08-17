@@ -1,4 +1,4 @@
-import {Report, Workspace, scriptUtils, tgzUtils}                  from '@yarnpkg/core';
+import {Manifest, Report, Workspace, scriptUtils, tgzUtils}        from '@yarnpkg/core';
 import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath} from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                       from '@yarnpkg/plugin-stage';
 import mm                                                          from 'micromatch';
@@ -57,6 +57,10 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
 
   try {
+    const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
+    if (await xfs.existsPromise(manifestPath))
+      await workspace.manifest.loadFile(manifestPath, {baseFs: xfs});
+
     await cb();
   } finally {
     await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
