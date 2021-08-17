@@ -16,6 +16,7 @@ jobs:
       with:
         ref: master
         token: ${{secrets.YARNBOT_TOKEN}}
+        fetch-depth: 0
 
     - name: 'Install Node'
       uses: actions/setup-node@master
