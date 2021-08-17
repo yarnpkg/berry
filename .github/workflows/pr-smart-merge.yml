@@ -29,10 +29,17 @@ jobs:
 
     - name: 'Update, commit, and upload the hook'
       run: |
+        PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{github.event.inputs.pr}}')
+        
+        PR_REPO=$(jq .head.repo.full_name <<< "$PR_META")
+        PR_REF=$(jq .head.ref <<< "$PR_META")
+
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
+        
+        git remote add pr-source git@github.com:"$PR_REPO"
 
-        git fetch origin pull/'${{github.event.inputs.pr}}'/head:local
+        git fetch pr-source "$PR_REF":local
         git checkout local
 
         # We know that there's a risk of conflict (that's why we're here), so we ignore it
@@ -53,4 +60,4 @@ jobs:
         git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js
         git commit -m 'Auto-merge with master'
 
-        git push origin local:pull/'${{github.event.inputs.pr}}'/head
+        git push pr-source local:"$PR_REF"
