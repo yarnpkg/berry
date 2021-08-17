@@ -342,3 +342,19 @@ to start the application in order for portal dependency to find its subdependenc
 ## YN0074 - `NM_HARDLINKS_MODE_DOWNGRADED`
 
 `nmMode` has been downgraded to `hardlinks-local` due to global cache and install folder being on different devices. Consider changing `globalFolder` setting and place the global cache on the same device as your project, if you want `hardlinks-global` to take effect.
+
+## YN0075 - `PROLOG_INSTANTIATION_ERROR`
+
+This error appears when a Prolog predicate is called with an invalid signature. Specifically, it means that some of the predicate parameters are non-instantiated (ie have no defined value), when the predicate would expect some. This doesn't mean that you need to hardcode a value, just that you need to assign one before calling the predicate. In the case of the `WorkspaceCwd` parameter from most of the Yarn predicates, it means that instead of calling:
+
+```
+workspace_field(WorkspaceCwd, 'name', _).
+```
+
+You would also use the `workspace/1` predicate to let Prolog "fill" the `WorkspaceCwd` parameter prior to using it in `workspace_field/3`:
+
+```
+workspace(WorkspaceCwd), workspace_field(WorkspaceCwd, 'name', _).
+```
+
+For more information about the parameters that must be instantiated when calling the predicate reported by the error message, consult the [dedicated page](/features/constraints#query-predicate) from our documentation.

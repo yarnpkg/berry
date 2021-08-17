@@ -35,7 +35,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     const [descriptorIdent, descriptorRange, workspaceCwd] = atom.args;
 
     if (!isAtom(descriptorIdent) || !isAtom(descriptorRange)) {
-      thread.throwError(pl.error.instantiation(atom.indicator));
+      thread.throw_error(pl.error.instantiation(atom.indicator));
       return;
     }
 
@@ -65,7 +65,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     const [workspaceCwd, fieldName, fieldValue] = atom.args;
 
     if (!isAtom(workspaceCwd) || !isAtom(fieldName)) {
-      thread.throwError(pl.error.instantiation(atom.indicator));
+      thread.throw_error(pl.error.instantiation(atom.indicator));
       return;
     }
 
@@ -109,7 +109,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     const [workspaceCwd, fieldName, checkCode, checkArgv] = atom.args;
 
     if (!isAtom(workspaceCwd) || !isAtom(fieldName) || !isAtom(checkCode) || !isInstantiatedList(checkArgv)) {
-      thread.throwError(pl.error.instantiation(atom.indicator));
+      thread.throw_error(pl.error.instantiation(atom.indicator));
       return;
     }
 

@@ -691,7 +691,7 @@ exports[`Commands constraints query test with an unknown predicate 1`] = `
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0044: Existence error: procedure hello_word/1 not found
+  "stdout": "➤ YN0044: Existence error: procedure hello_word/1 not found (in top_level/0)
 ➤ YN0000: Failed with errors
 ",
 }

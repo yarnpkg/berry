@@ -5836,7 +5836,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^2.4.0"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.1"
     "@yarnpkg/plugin-stage": "workspace:*"
-    "@yarnpkg/pnp": "workspace:^3.0.1-rc.1"
+    "@yarnpkg/pnp": "workspace:^3.0.1"
     "@zkochan/cmd-shim": ^5.1.0
     clipanion: ^3.0.1
     micromatch: ^4.0.2
@@ -6033,7 +6033,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/pnp@workspace:*, @yarnpkg/pnp@workspace:^3.0.1, @yarnpkg/pnp@workspace:^3.0.1-rc.1, @yarnpkg/pnp@workspace:packages/yarnpkg-pnp":
+"@yarnpkg/pnp@workspace:*, @yarnpkg/pnp@workspace:^3.0.1, @yarnpkg/pnp@workspace:packages/yarnpkg-pnp":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
