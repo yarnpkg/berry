@@ -86,7 +86,7 @@ const tauModule = new pl.type.Module(`constraints`, {
 
     prependGoals(thread, point, [new pl.type.Term(`=`, [
       fieldValue,
-      new pl.type.Term(String(value)),
+      new pl.type.Term(JSON.stringify(value)),
     ])]);
   },
 

@@ -60,6 +60,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (empty project / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (empty project / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (empty project / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints query test (multiple workspaces / combined predicates) 1`] = `
 Object {
   "code": 0,
@@ -148,6 +175,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (multiple workspaces / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (multiple workspaces / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints query test (one regular dependency / combined predicates) 1`] = `
 Object {
   "code": 0,
@@ -207,6 +261,33 @@ Object {
 ➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -277,6 +358,33 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (two development dependencies / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two development dependencies / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands constraints query test (two regular dependencies / combined predicates) 1`] = `
 Object {
   "code": 0,
@@ -339,6 +447,33 @@ Object {
 ➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
 ",
 }
 `;
@@ -410,6 +545,123 @@ Object {
   "stdout": "➤ YN0000: DependencyType = dependencies
 ➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / combined predicates) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / custom predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / filter w/ workspace_field_test/3) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / filter w/ workspace_field_test/4) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / single predicate with ignored variable) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: WorkspaceName = foo
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / single predicate) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: DependencyType = dependencies
+➤ YN0000: DependencyType = devDependencies
+➤ YN0000: DependencyType = peerDependencies
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / workspace_field w/ array FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: FieldValue = '[\\"/a\\",\\"/b\\",\\"/c\\"]'
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / workspace_field w/ object FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: FieldValue = '{\\"type\\":\\"git\\",\\"url\\":\\"ssh://git@github.com/yarnpkg/berry.git\\",\\"directory\\":\\".\\"}'
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (various field types / workspace_field w/ string FieldValue) 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: FieldValue = '\\"foo\\"'
 ➤ YN0000: Done
 ",
 }
