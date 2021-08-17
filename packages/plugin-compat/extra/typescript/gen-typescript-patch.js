@@ -67,14 +67,14 @@ const SLICES = [
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.3
   {
     from: `530aad19e4ac19d35cb6b200168c91ce86cb0050`,
-    to: `cece814b81e51816f6803df887c425ba75833797`,
+    to: `8f569da31e6ea242a4bc9cf18f841ad0c122893c`,
     onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
     range: `>=4.3 <4.4`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.4
   {
     from: `0fc83b4d571df33a3c40c20c0eba68965fb52aca`,
-    to: `98866a5a740b487c20046d4ffaa36aa1f202dde9`,
+    to: `3f4e1516e0a956e1e0d46d9caf2a1f896fb77aaa`,
     onto: `55dd850009603aafa6ef8cc88020fa30d217d5b6`,
     range: `>=4.4`,
   },
