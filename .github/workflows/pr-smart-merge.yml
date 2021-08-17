@@ -32,7 +32,7 @@ jobs:
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
 
-        git fetch origin pull/'${{github.event.inputs.pr}}'/head:local
+        git fetch --set-upstream origin pull/'${{github.event.inputs.pr}}'/head:local
         git checkout local
 
         # We know that there's a risk of conflict (that's why we're here), so we ignore it
