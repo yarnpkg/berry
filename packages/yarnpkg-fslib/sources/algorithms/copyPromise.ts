@@ -1,10 +1,10 @@
 import fs, {Stats}         from 'fs';
 
 import {FakeFS}            from '../FakeFS';
+import * as constants      from '../constants';
 import {Path, convertPath} from '../path';
 
-// 1980-01-01, like Fedora
-const defaultTime = new Date(315532800 * 1000);
+const defaultTime = new Date(constants.SAFE_TIME * 1000);
 
 export enum LinkStrategy {
   Allow = `allow`,
