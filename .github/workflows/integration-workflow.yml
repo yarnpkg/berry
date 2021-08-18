@@ -58,7 +58,7 @@ jobs:
 
     - name: 'Check that the PnP hook is consistent with a fresh build (fix w/ "git merge master && yarn update:pnp:hook")'
       run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-pnp/sources/hook.js | wc -l) -gt 0 ]]; then
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-{fslib,libzip,pnp}/sources/**/*' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js build:pnp:hook
           [[ $(git diff --name-only packages/yarnpkg-pnp/sources/hook.js | wc -l) -eq 0 ]]
         fi
