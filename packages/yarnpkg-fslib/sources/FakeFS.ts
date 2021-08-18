@@ -112,8 +112,6 @@ export type ExtractHintOptions = {
 export type SymlinkType = 'file' | 'dir' | 'junction';
 
 export abstract class FakeFS<P extends Path> {
-  static DEFAULT_TIME = 315532800;
-
   public readonly pathUtils: PathUtils<P>;
 
   protected constructor(pathUtils: PathUtils<P>) {

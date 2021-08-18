@@ -1,11 +1,11 @@
-import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                 from '@yarnpkg/libzip';
-import {PassThrough, Readable}                                                            from 'stream';
-import tar                                                                                from 'tar';
+import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                            from '@yarnpkg/libzip';
+import {PassThrough, Readable}                                                                       from 'stream';
+import tar                                                                                           from 'tar';
 
-import {WorkerPool}                                                                       from './WorkerPool';
-import * as miscUtils                                                                     from './miscUtils';
-import {getContent as getZipWorkerSource, ConvertToZipPayload}                            from './worker-zip';
+import {WorkerPool}                                                                                  from './WorkerPool';
+import * as miscUtils                                                                                from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                                       from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>,
@@ -13,15 +13,6 @@ interface MakeArchiveFromDirectoryOptions {
   compressionLevel?: ZipCompression,
   inMemory?: boolean,
 }
-
-// 1984-06-22T21:50:00.000Z
-//
-// It needs to be after 1980-01-01 because that's what Zip supports, and it
-// needs to have a slight offset to account for different timezones (because
-// zip assumes that all times are local to whoever writes the file, which is
-// really silly).
-//
-export const safeTime = 456789000;
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
   const libzip = await getLibzipPromise();
@@ -125,25 +116,25 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
 
     switch (entry.type) {
       case `Directory`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
 
         targetFs.mkdirSync(mappedPath, {mode});
-        targetFs.utimesSync(mappedPath, safeTime, safeTime);
+        targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
       } break;
 
       case `OldFile`:
       case `File`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
 
         targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable), {mode});
-        targetFs.utimesSync(mappedPath, safeTime, safeTime);
+        targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
       } break;
 
       case `SymbolicLink`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [safeTime, safeTime]});
+        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
 
         targetFs.symlinkSync((entry as any).linkpath, mappedPath);
-        targetFs.lutimesSync?.(mappedPath, safeTime, safeTime);
+        targetFs.lutimesSync?.(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
       } break;
     }
   }
