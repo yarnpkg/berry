@@ -34,9 +34,9 @@ jobs:
         yarn add -D gulp
 
         # Test running Gulp with a simple default task.
-        echo "const gulp = require('gulp'); const defaultTaskPrintCheck = (cb) => { console.log('Successfully ran gulp task'); cb(); }; exports.default = defaultTaskPrintCheck;" | tee gulp-test.js
+        echo "const gulp = require('gulp'); const defaultTaskPrintCheck = (cb) => { console.log('Success: ran gulp task'); cb(); }; exports.default = defaultTaskPrintCheck;" | tee gulp-test.js
         yarn gulp
 
         # Test using the Gulp API and run public task via CLI.
-        echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptVinyl = gulp.src('./gulpfile.js'); if (scriptVinyl) { console.log('Successfully tested gulp API by finding script with src.'); } cb(); } exports.testGulpAPI = testGulpAPI;" | tee gulp-test.js
+        echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptFile = gulp.src('./gulpfile.js'); if (scriptFile) { console.log('Success: used gulp API import.'); } cb(); } exports.testGulpAPI = testGulpAPI;" | tee gulp-test.js
         yarn gulp testGulpAPI
