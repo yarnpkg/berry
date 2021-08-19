@@ -128,6 +128,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | Create-React-App | Starting from 2.0+ |
 | ESLint | Some compatibility issues w/ shared configs |
 | Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
+| Gulp | Supported with version 4.0+ | 
 | Husky | Starting from 4.0.0-1+ |
 | Jest | Starting from 24.1+ |
 | Next.js | Starting from 9.1.2+ |
