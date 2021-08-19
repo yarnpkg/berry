@@ -7537,14 +7537,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["@strictsoftware/typedoc-plugin-monorepo", [
         ["patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=916087&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {
-          "packageLocation": "./.yarn/cache/@strictsoftware-typedoc-plugin-monorepo-patch-bc7c13cee1-b7a09743fd.zip/node_modules/@strictsoftware/typedoc-plugin-monorepo/",
+          "packageLocation": "./.yarn/cache/@strictsoftware-typedoc-plugin-monorepo-patch-bc7c13cee1-a1ce9b8f68.zip/node_modules/@strictsoftware/typedoc-plugin-monorepo/",
           "packageDependencies": [
             ["@strictsoftware/typedoc-plugin-monorepo", "patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=916087&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"]
           ],
           "linkType": "SOFT",
         }],
         ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=916087&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {
-          "packageLocation": "./.yarn/__virtual__/@strictsoftware-typedoc-plugin-monorepo-virtual-a3e5c29962/0/cache/@strictsoftware-typedoc-plugin-monorepo-patch-bc7c13cee1-b7a09743fd.zip/node_modules/@strictsoftware/typedoc-plugin-monorepo/",
+          "packageLocation": "./.yarn/__virtual__/@strictsoftware-typedoc-plugin-monorepo-virtual-a3e5c29962/0/cache/@strictsoftware-typedoc-plugin-monorepo-patch-bc7c13cee1-a1ce9b8f68.zip/node_modules/@strictsoftware/typedoc-plugin-monorepo/",
           "packageDependencies": [
             ["@strictsoftware/typedoc-plugin-monorepo", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=916087&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],
             ["@types/typedoc", null],
@@ -34951,7 +34951,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["resolve", [
         ["patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=d4691f", {
-          "packageLocation": "./.yarn/cache/resolve-patch-1091fa2a87-bed00be983.zip/node_modules/resolve/",
+          "packageLocation": "./.yarn/cache/resolve-patch-1091fa2a87-028141533a.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=d4691f"],
             ["is-core-module", "npm:2.4.0"],
@@ -34960,7 +34960,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }],
         ["patch:resolve@npm%3A1.9.0#~builtin<compat/resolve>::version=1.9.0&hash=d4691f", {
-          "packageLocation": "./.yarn/cache/resolve-patch-a5ce53c89f-d608d2915f.zip/node_modules/resolve/",
+          "packageLocation": "./.yarn/cache/resolve-patch-a5ce53c89f-ded24fe4f7.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "patch:resolve@npm%3A1.9.0#~builtin<compat/resolve>::version=1.9.0&hash=d4691f"],
             ["path-parse", "npm:1.0.6"]
@@ -34968,7 +34968,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }],
         ["patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=d4691f", {
-          "packageLocation": "./.yarn/cache/resolve-patch-7c215afcd4-eb88c5e538.zip/node_modules/resolve/",
+          "packageLocation": "./.yarn/cache/resolve-patch-7c215afcd4-2b145f11f7.zip/node_modules/resolve/",
           "packageDependencies": [
             ["resolve", "patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=d4691f"],
             ["is-core-module", "npm:2.4.0"],
@@ -38421,21 +38421,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["typescript", [
         ["patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=6454cb", {
-          "packageLocation": "./.yarn/cache/typescript-patch-8e852309b9-fb62f24bfd.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-8e852309b9-6a82cb02b2.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=6454cb"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=6454cb", {
-          "packageLocation": "./.yarn/cache/typescript-patch-c728ca43af-ac6b67d951.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-c728ca43af-bfea14f536.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=6454cb"]
           ],
           "linkType": "HARD",
         }],
         ["patch:typescript@npm%3A4.3.2#~builtin<compat/typescript>::version=4.3.2&hash=6454cb", {
-          "packageLocation": "./.yarn/cache/typescript-patch-a6e5645c81-3d3dec06ba.zip/node_modules/typescript/",
+          "packageLocation": "./.yarn/cache/typescript-patch-a6e5645c81-120b3cc2f0.zip/node_modules/typescript/",
           "packageDependencies": [
             ["typescript", "patch:typescript@npm%3A4.3.2#~builtin<compat/typescript>::version=4.3.2&hash=6454cb"]
           ],
@@ -40798,7 +40798,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],
       ["yoga-layout-prebuilt", [
         ["patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=8c2d4c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A.", {
-          "packageLocation": "./.yarn/cache/yoga-layout-prebuilt-patch-bccb1b8a59-704a9fee9d.zip/node_modules/yoga-layout-prebuilt/",
+          "packageLocation": "./.yarn/cache/yoga-layout-prebuilt-patch-bccb1b8a59-e659d239b6.zip/node_modules/yoga-layout-prebuilt/",
           "packageDependencies": [
             ["yoga-layout-prebuilt", "patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=8c2d4c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],
             ["@types/yoga-layout", "npm:1.9.2"]

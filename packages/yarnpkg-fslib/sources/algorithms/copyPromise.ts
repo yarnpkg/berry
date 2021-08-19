@@ -31,7 +31,11 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   const prelayout: Operations = [];
   const postlayout: Operations = [];
 
-  await destinationFs.mkdirPromise(destinationFs.pathUtils.dirname(destination), {recursive: true});
+  const referenceTime = opts.stableTime
+    ? {mtime: defaultTime, atime: defaultTime} as const
+    : await sourceFs.lstatPromise(normalizedSource);
+
+  await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [referenceTime.atime, referenceTime.mtime]});
 
   const updateTime = typeof destinationFs.lutimesPromise === `function`
     ? destinationFs.lutimesPromise.bind(destinationFs)
