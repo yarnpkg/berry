@@ -60,7 +60,7 @@ const SLICES = [
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.2
   {
     from: `8e0e8703b9c95013aec7819e4593d099cdf7763a`,
-    to: `61a0f0088a4d0cd89f113d40ac089cb2978c5ea0`,
+    to: `d1cd11e8d50d3bab758cc898b46867171c5e33ed`,
     onto: `bfc55b5762443c37ecdef08a3b5a4e057b4d1e85`,
     range: `>=4.2 <4.3`,
   },

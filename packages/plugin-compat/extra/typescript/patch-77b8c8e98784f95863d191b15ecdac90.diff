@@ -299,7 +299,7 @@ semver exclusivity >=4.2 <4.3
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index a1d0a7a17..ce5eda2cd 100644
+index a1d0a7a17..e142cf0ca 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -794,7 +794,7 @@ semver exclusivity >=4.2 <4.3
                  }
                  return statement;
              });
-@@ -154903,6 +155122,37 @@ var ts;
+@@ -154903,6 +155122,39 @@ var ts;
                  return this.projectReferences;
              };
              ConfiguredProject.prototype.updateReferences = function (refs) {
@@ -820,7 +820,9 @@ semver exclusivity >=4.2 <4.3
 +                    var getPnpPath_1 = function (path) {
 +                        try {
 +                            var targetLocator = pnpApi_1.findPackageLocator(path + "/");
-+                            return pnpApi_1.resolveToUnqualified(targetLocator.name, basePath_1 + "/");
++                            var packageLocation = pnpApi_1.getPackageInformation(targetLocator).packageLocation;
++                            var request = ts.combinePaths(targetLocator.name, ts.getRelativePathFromDirectory(packageLocation, path, false));
++                            return pnpApi_1.resolveToUnqualified(request, basePath_1 + "/");
 +                        }
 +                        catch (_a) {
 +                            // something went wrong with the resolution, try not to fail
@@ -832,7 +834,7 @@ semver exclusivity >=4.2 <4.3
                  this.projectReferences = refs;
                  this.potentialProjectReferences = undefined;
              };
-@@ -155532,6 +155782,7 @@ var ts;
+@@ -155532,6 +155784,7 @@ var ts;
                          watchDirectory: ts.returnNoopFileWatcher,
                      } :
                      ts.getWatchFactory(this.host, watchLogLevel, log, getDetailWatchInfo);
@@ -840,7 +842,7 @@ semver exclusivity >=4.2 <4.3
              }
              ProjectService.prototype.toPath = function (fileName) {
                  return ts.toPath(fileName, this.currentDirectory, this.toCanonicalFileName);
-@@ -157270,7 +157521,7 @@ var ts;
+@@ -157270,7 +157523,7 @@ var ts;
              };
              ProjectService.prototype.setHostConfiguration = function (args) {
                  var _this = this;
@@ -849,7 +851,7 @@ semver exclusivity >=4.2 <4.3
                  if (args.file) {
                      var info = this.getScriptInfoForNormalizedPath(server.toNormalizedPath(args.file));
                      if (info) {
-@@ -157288,7 +157539,7 @@ var ts;
+@@ -157288,7 +157541,7 @@ var ts;
                          this.logger.info("Format host information updated");
                      }
                      if (args.preferences) {
@@ -858,7 +860,7 @@ semver exclusivity >=4.2 <4.3
                          this.hostConfiguration.preferences = __assign(__assign({}, this.hostConfiguration.preferences), args.preferences);
                          if (lazyConfiguredProjectsFromExternalProject && !this.hostConfiguration.preferences.lazyConfiguredProjectsFromExternalProject) {
                              // Load configured projects for external projects that are pending reload
-@@ -157314,6 +157565,8 @@ var ts;
+@@ -157314,6 +157567,8 @@ var ts;
                      if (args.watchOptions) {
                          this.hostConfiguration.watchOptions = (_a = convertWatchOptions(args.watchOptions)) === null || _a === void 0 ? void 0 : _a.watchOptions;
                          this.logger.info("Host watch options changed to " + JSON.stringify(this.hostConfiguration.watchOptions) + ", it will be take effect for next watches.");
@@ -867,7 +869,7 @@ semver exclusivity >=4.2 <4.3
                      }
                  }
              };
-@@ -158293,6 +158546,25 @@ var ts;
+@@ -158293,6 +158548,25 @@ var ts;
                  });
              };
              /*@internal*/
@@ -893,7 +895,7 @@ semver exclusivity >=4.2 <4.3
              ProjectService.prototype.watchPackageJsonFile = function (path) {
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
-@@ -163000,6 +163272,9 @@ var ts;
+@@ -163000,6 +163274,9 @@ var ts;
                          }
                          try {
                              var args = [ts.combinePaths(__dirname, "watchGuard.js"), path];
@@ -903,7 +905,7 @@ semver exclusivity >=4.2 <4.3
                              if (logger.hasLevel(server.LogLevel.verbose)) {
                                  logger.info("Starting " + process.execPath + " with args:" + server.stringifyIndented(args));
                              }
-@@ -163329,6 +163604,9 @@ var ts;
+@@ -163329,6 +163606,9 @@ var ts;
                              break;
                          }
                      }
@@ -927,7 +929,7 @@ semver exclusivity >=4.2 <4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index e8537e466..425fe49f0 100644
+index e8537e466..b7dccf966 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1422,7 +1424,7 @@ semver exclusivity >=4.2 <4.3
                  }
                  return statement;
              });
-@@ -155097,6 +155316,37 @@ var ts;
+@@ -155097,6 +155316,39 @@ var ts;
                  return this.projectReferences;
              };
              ConfiguredProject.prototype.updateReferences = function (refs) {
@@ -1448,7 +1450,9 @@ semver exclusivity >=4.2 <4.3
 +                    var getPnpPath_1 = function (path) {
 +                        try {
 +                            var targetLocator = pnpApi_1.findPackageLocator(path + "/");
-+                            return pnpApi_1.resolveToUnqualified(targetLocator.name, basePath_1 + "/");
++                            var packageLocation = pnpApi_1.getPackageInformation(targetLocator).packageLocation;
++                            var request = ts.combinePaths(targetLocator.name, ts.getRelativePathFromDirectory(packageLocation, path, false));
++                            return pnpApi_1.resolveToUnqualified(request, basePath_1 + "/");
 +                        }
 +                        catch (_a) {
 +                            // something went wrong with the resolution, try not to fail
@@ -1460,7 +1464,7 @@ semver exclusivity >=4.2 <4.3
                  this.projectReferences = refs;
                  this.potentialProjectReferences = undefined;
              };
-@@ -155726,6 +155976,7 @@ var ts;
+@@ -155726,6 +155978,7 @@ var ts;
                          watchDirectory: ts.returnNoopFileWatcher,
                      } :
                      ts.getWatchFactory(this.host, watchLogLevel, log, getDetailWatchInfo);
@@ -1468,7 +1472,7 @@ semver exclusivity >=4.2 <4.3
              }
              ProjectService.prototype.toPath = function (fileName) {
                  return ts.toPath(fileName, this.currentDirectory, this.toCanonicalFileName);
-@@ -157464,7 +157715,7 @@ var ts;
+@@ -157464,7 +157717,7 @@ var ts;
              };
              ProjectService.prototype.setHostConfiguration = function (args) {
                  var _this = this;
@@ -1477,7 +1481,7 @@ semver exclusivity >=4.2 <4.3
                  if (args.file) {
                      var info = this.getScriptInfoForNormalizedPath(server.toNormalizedPath(args.file));
                      if (info) {
-@@ -157482,7 +157733,7 @@ var ts;
+@@ -157482,7 +157735,7 @@ var ts;
                          this.logger.info("Format host information updated");
                      }
                      if (args.preferences) {
@@ -1486,7 +1490,7 @@ semver exclusivity >=4.2 <4.3
                          this.hostConfiguration.preferences = __assign(__assign({}, this.hostConfiguration.preferences), args.preferences);
                          if (lazyConfiguredProjectsFromExternalProject && !this.hostConfiguration.preferences.lazyConfiguredProjectsFromExternalProject) {
                              // Load configured projects for external projects that are pending reload
-@@ -157508,6 +157759,8 @@ var ts;
+@@ -157508,6 +157761,8 @@ var ts;
                      if (args.watchOptions) {
                          this.hostConfiguration.watchOptions = (_a = convertWatchOptions(args.watchOptions)) === null || _a === void 0 ? void 0 : _a.watchOptions;
                          this.logger.info("Host watch options changed to " + JSON.stringify(this.hostConfiguration.watchOptions) + ", it will be take effect for next watches.");
@@ -1495,7 +1499,7 @@ semver exclusivity >=4.2 <4.3
                      }
                  }
              };
-@@ -158487,6 +158740,25 @@ var ts;
+@@ -158487,6 +158742,25 @@ var ts;
                  });
              };
              /*@internal*/
