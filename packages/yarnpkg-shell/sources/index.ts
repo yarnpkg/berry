@@ -454,9 +454,12 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
       if (segment.quoted) {
         push(raw);
       } else {
-        for (const part of split(raw)) {
-          pushAndClose(part);
-        }
+        const parts = split(raw);
+
+        for (let t = 0; t < parts.length - 1; ++t)
+          pushAndClose(parts[t]);
+
+        push(parts[parts.length - 1]);
       }
     } break;
   }
