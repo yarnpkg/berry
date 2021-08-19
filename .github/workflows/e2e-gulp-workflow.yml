@@ -38,5 +38,5 @@ jobs:
         yarn gulp
 
         # Test using the Gulp API and run public task via CLI.
-        echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptFile = gulp.src('./gulpfile.js'); if (scriptFile) { console.log('Success: used gulp API import.'); } cb(); } exports.testGulpAPI = testGulpAPI;" | tee gulpfile.js
+        echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptFile = gulp.src('./gulpfile.js'); if (scriptFile) { console.log('Success: used gulp API import.'); } cb(); }; exports.testGulpAPI = testGulpAPI;" | tee gulpfile.js
         yarn gulp testGulpAPI
