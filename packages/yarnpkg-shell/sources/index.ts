@@ -430,24 +430,36 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
     default: {
       const argIndex = parseInt(segment.name, 10);
 
+      let raw;
       if (Number.isFinite(argIndex)) {
         if (argIndex >= 0 && argIndex < opts.args.length) {
-          push(opts.args[argIndex]);
+          raw = opts.args[argIndex];
         } else if (segment.defaultValue) {
-          push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+          raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
         } else {
           throw new ShellError(`Unbound argument #${argIndex}`);
         }
       } else {
         if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
-          push(state.variables[segment.name]);
+          raw = state.variables[segment.name];
         } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
-          push(state.environment[segment.name]);
+          raw = state.environment[segment.name];
         } else if (segment.defaultValue) {
-          push((await interpolateArguments(segment.defaultValue, opts, state)).join(` `));
+          raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
         } else {
           throw new ShellError(`Unbound variable "${segment.name}"`);
         }
+      }
+
+      if (segment.quoted) {
+        push(raw);
+      } else {
+        const parts = split(raw);
+
+        for (let t = 0; t < parts.length - 1; ++t)
+          pushAndClose(parts[t]);
+
+        push(parts[parts.length - 1]);
       }
     } break;
   }
