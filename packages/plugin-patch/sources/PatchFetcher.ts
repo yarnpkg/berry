@@ -58,8 +58,6 @@ export class PatchFetcher implements Fetcher {
       level: opts.project.configuration.get(`compressionLevel`),
     });
 
-    await initialCopy.mkdirpPromise(prefixPath);
-
     await miscUtils.releaseAfterUseAsync(async () => {
       await initialCopy.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
     }, sourceFetch.releaseFs);
