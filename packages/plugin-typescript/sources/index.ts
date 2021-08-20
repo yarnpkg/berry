@@ -1,7 +1,8 @@
+import {structUtils, ThrowReport, miscUtils, semverUtils, Hooks as CoreHooks}                              from '@yarnpkg/core';
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
-import {structUtils, ThrowReport, miscUtils, semverUtils}                                                  from '@yarnpkg/core';
-import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
+import {xfs, ppath, Filename}                                                                              from '@yarnpkg/fslib';
 import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
+import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
 import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
 import semver                                                                                              from 'semver';
 
@@ -128,8 +129,50 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
-const plugin: Plugin<EssentialsHooks & PackHooks> = {
+const plugin: Plugin<EssentialsHooks & PackHooks & CoreHooks> = {
   hooks: {
+    async afterAllInstalled(project) {
+      for (const workspace of project.workspaces) {
+        const referencedWorkspaces = miscUtils.mapAndFilter(workspace.dependencies, ([identHash, descriptor]) => {
+          const dependingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+          if (!dependingWorkspace || dependingWorkspace === workspace)
+            return miscUtils.mapAndFilter.skip;
+
+          return ppath.relative(workspace.cwd, dependingWorkspace.cwd);
+        });
+
+        let configChanged = false;
+
+        let tsconfig: {references?: Array<{path: string}>} = {};
+        try {
+          tsconfig = await xfs.readJsonPromise(ppath.join(workspace.cwd, `tsconfig.json` as Filename));
+        } catch {
+          configChanged = true;
+        }
+
+        if (referencedWorkspaces.length === 0) {
+          if (typeof tsconfig.references !== `undefined`) {
+            configChanged = true;
+            tsconfig.references = undefined;
+          }
+        } else {
+          const oldReferences = new Set(tsconfig.references?.map(ref => ref.path));
+
+          tsconfig.references = [];
+
+          for (const relativePath of referencedWorkspaces) {
+            if (!oldReferences.has(relativePath))
+              configChanged = true;
+
+            tsconfig.references.push({path: relativePath});
+          }
+        }
+
+        if (configChanged) {
+          await xfs.writeJsonPromise(ppath.join(workspace.cwd, `tsconfig.json` as Filename), tsconfig);
+        }
+      }
+    },
     afterWorkspaceDependencyAddition,
     afterWorkspaceDependencyRemoval,
     beforeWorkspacePacking,
