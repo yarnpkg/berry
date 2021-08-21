@@ -552,4 +552,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'magic-string': `^0.25.7`,
     },
   }],
+  // https://github.com/elm-community/elm-webpack-loader/pull/202
+  [`elm-webpack-loader@*`, {
+    dependencies: {
+      temp: `^0.9.4`,
+    },
+  }],
 ];
