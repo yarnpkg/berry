@@ -528,4 +528,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       tar: `^6.1.0`,
     },
   }],
+  // https://github.com/npm/metavuln-calculator/pull/8
+  [`@npmcli/metavuln-calculator@*`, {
+    dependencies: {
+      'json-parse-even-better-errors': `^2.3.1`,
+    },
+  }],
 ];
