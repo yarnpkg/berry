@@ -540,4 +540,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'mkdirp-infer-owner': `^1.0.2`,
     },
   }],
+  // https://github.com/snowpackjs/rollup-plugin-polyfill-node/pull/30
+  [`rollup-plugin-polyfill-node@*`, {
+    peerDependencies: {
+      rollup: `^1.20.0 || ^2.0.0`,
+    },
+  }],
 ];
