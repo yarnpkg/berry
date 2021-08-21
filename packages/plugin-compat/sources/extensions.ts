@@ -534,4 +534,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'json-parse-even-better-errors': `^2.3.1`,
     },
   }],
+  // https://github.com/npm/bin-links/pull/17
+  [`bin-links@*`, {
+    dependencies: {
+      'mkdirp-infer-owner': `^1.0.2`,
+    },
+  }],
 ];
