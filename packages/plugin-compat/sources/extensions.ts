@@ -558,4 +558,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       temp: `^0.9.4`,
     },
   }],
+  // https://github.com/winstonjs/winston-transport/pull/58
+  [`winston-transport@<=4.4.0`, {
+    dependencies: {
+      logform: `^2.2.0`,
+    },
+  }],
 ];
