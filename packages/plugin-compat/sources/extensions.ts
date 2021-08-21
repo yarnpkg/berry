@@ -522,4 +522,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       redux: `^4.0.0`,
     },
   }],
+  // https://github.com/snowpackjs/snowpack/pull/3556
+  [`skypack@<=0.3.2`, {
+    dependencies: {
+      tar: `^6.1.0`,
+    },
+  }],
 ];
