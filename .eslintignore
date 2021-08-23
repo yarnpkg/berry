@@ -13,3 +13,4 @@
 /packages/*/bin/**
 /packages/*/build/**
 /packages/**/*fixtures*/**
+packages/yarnpkg-libzip/artifacts/**

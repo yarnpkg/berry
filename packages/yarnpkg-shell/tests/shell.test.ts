@@ -503,7 +503,7 @@ describe(`Shell`, () => {
 
       it(`should split variables when referenced outside of quotes`, async () => {
         await expect(bufferResult(
-          `FOO="hello world"; echo-arguments $FOO`
+          `FOO="hello world"; echo-arguments $FOO`,
         )).resolves.toMatchObject({
           stdout: `"hello"\n"world"\n`,
         });
@@ -511,7 +511,7 @@ describe(`Shell`, () => {
 
       it(`should keep variables unified when referenced within double quotes`, async () => {
         await expect(bufferResult(
-          `FOO="hello   world"; echo-arguments "$FOO"`
+          `FOO="hello   world"; echo-arguments "$FOO"`,
         )).resolves.toMatchObject({
           stdout: `"hello   world"\n`,
         });
@@ -519,7 +519,7 @@ describe(`Shell`, () => {
 
       it(`should ignore variables when referenced within single quotes`, async () => {
         await expect(bufferResult(
-          `FOO="hello   world"; echo-arguments '$FOO'`
+          `FOO="hello   world"; echo-arguments '$FOO'`,
         )).resolves.toMatchObject({
           stdout: `"$FOO"\n`,
         });
