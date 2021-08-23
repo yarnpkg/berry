@@ -1,4 +1,7 @@
+import * as constants from './constants';
 import * as statUtils from './statUtils';
+
+export {constants};
 
 export {LinkStrategy} from './algorithms/copyPromise';
 export {opendir}      from './algorithms/opendir';
