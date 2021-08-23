@@ -37,6 +37,7 @@ export interface PublishConfig {
 
 export interface InstallConfig {
   hoistingLimits?: string;
+  selfReferences?: boolean;
 }
 
 export class Manifest {
@@ -553,6 +554,12 @@ export class Manifest {
             this.installConfig.hoistingLimits = data.installConfig.hoistingLimits;
           } else {
             errors.push(new Error(`Invalid hoisting limits definition`));
+          }
+        } else if (key == `selfReferences`) {
+          if (typeof data.installConfig.selfReferences == `boolean`) {
+            this.installConfig.selfReferences = data.installConfig.selfReferences;
+          } else {
+            errors.push(new Error(`Invalid selfReferences definition, must be a boolean value`));
           }
         } else {
           errors.push(new Error(`Unrecognized installConfig key: ${key}`));

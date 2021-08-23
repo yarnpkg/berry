@@ -511,6 +511,34 @@ describe(`Node_Modules`, () => {
     )
   );
 
+  test(`should respect self references settings`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmSelfReferences: false,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+          installConfig: {
+            selfReferences: true,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
+          name: `ws2`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(false);
+      },
+    )
+  );
+
   test(`should not hoist multiple packages past workspace hoist border`,
     // . -> workspace -> dep1 -> dep2
     // should be hoisted to:

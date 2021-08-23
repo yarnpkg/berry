@@ -53,6 +53,7 @@ export interface NodeModulesTreeOptions {
   pnpifyFs?: boolean;
   validateExternalSoftLinks?: boolean;
   hoistingLimitsByCwd?: Map<PortablePath, NodeModulesHoistingLimits>;
+  selfReferencesByCwd?: Map<PortablePath, Boolean>;
   project?: Project;
 }
 
@@ -305,7 +306,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       }
     }
 
-    parent.dependencies.add(node);
+    if (pkg !== parentPkg || pkg.linkType !== LinkType.SOFT || !options.selfReferencesByCwd || options.selfReferencesByCwd.get(parentRelativeCwd))
+      parent.dependencies.add(node);
 
     if (!isSeen) {
       const siblingPortalDependencyMap = new Map<string, {target: DependencyTarget, portal: PhysicalPackageLocator}>();
