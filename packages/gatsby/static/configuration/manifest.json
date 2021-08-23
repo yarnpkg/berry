@@ -337,7 +337,7 @@
           "default": true
         }
       },
-      "_exampleKeys": ["hoistingLimits"],
+      "_exampleKeys": ["hoistingLimits", "selfReferences"],
       "_margin": true
     }
   }
