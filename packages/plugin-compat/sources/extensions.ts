@@ -522,4 +522,46 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       redux: `^4.0.0`,
     },
   }],
+  // https://github.com/snowpackjs/snowpack/pull/3556
+  [`skypack@<=0.3.2`, {
+    dependencies: {
+      tar: `^6.1.0`,
+    },
+  }],
+  // https://github.com/npm/metavuln-calculator/pull/8
+  [`@npmcli/metavuln-calculator@*`, {
+    dependencies: {
+      'json-parse-even-better-errors': `^2.3.1`,
+    },
+  }],
+  // https://github.com/npm/bin-links/pull/17
+  [`bin-links@*`, {
+    dependencies: {
+      'mkdirp-infer-owner': `^1.0.2`,
+    },
+  }],
+  // https://github.com/snowpackjs/rollup-plugin-polyfill-node/pull/30
+  [`rollup-plugin-polyfill-node@*`, {
+    peerDependencies: {
+      rollup: `^1.20.0 || ^2.0.0`,
+    },
+  }],
+  // https://github.com/snowpackjs/snowpack/pull/3673
+  [`snowpack@*`, {
+    dependencies: {
+      'magic-string': `^0.25.7`,
+    },
+  }],
+  // https://github.com/elm-community/elm-webpack-loader/pull/202
+  [`elm-webpack-loader@*`, {
+    dependencies: {
+      temp: `^0.9.4`,
+    },
+  }],
+  // https://github.com/winstonjs/winston-transport/pull/58
+  [`winston-transport@<=4.4.0`, {
+    dependencies: {
+      logform: `^2.2.0`,
+    },
+  }],
 ];
