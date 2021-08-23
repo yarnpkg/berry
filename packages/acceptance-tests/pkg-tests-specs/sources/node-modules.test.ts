@@ -539,6 +539,31 @@ describe(`Node_Modules`, () => {
     )
   );
 
+  test(`should not create self-reference symlinks for workspaces excluded from focus`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`)],
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+        });
+        await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
+          name: `ws2`,
+        });
+
+        await run(`workspaces`, `focus`, `ws2`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(true);
+      },
+    )
+  );
+
   test(`should not hoist multiple packages past workspace hoist border`,
     // . -> workspace -> dep1 -> dep2
     // should be hoisted to:
