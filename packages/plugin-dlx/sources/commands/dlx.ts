@@ -22,6 +22,9 @@ export default class DlxCommand extends BaseCommand {
     examples: [[
       `Use create-react-app to create a new React app`,
       `yarn dlx create-react-app ./my-app`,
+    ], [
+      `Install multiple packages for a single command`,
+      `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
     ]],
   });
 
