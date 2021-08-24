@@ -86,7 +86,7 @@ export default class WorkspacesFocus extends BaseCommand {
           workspace.manifest.devDependencies.clear();
         }
       } else {
-        workspace.manifest.setRawField(`_excluded`, true);
+        workspace.manifest.setRawField(`_evictedFromFocusedInstall`, true);
         workspace.manifest.dependencies.clear();
         workspace.manifest.devDependencies.clear();
         workspace.manifest.peerDependencies.clear();
