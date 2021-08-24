@@ -182,7 +182,12 @@ class PnpmInstaller implements Installer {
         }
 
         await xfs.mkdirpPromise(ppath.dirname(depDstPath));
-        await xfs.symlinkPromise(depLinkPath, depDstPath);
+
+        if (process.platform == `win32`) {
+          await xfs.symlinkPromise(depLinkPath, depDstPath, `junction`);
+        } else {
+          await xfs.symlinkPromise(ppath.relative(ppath.dirname(depDstPath), depLinkPath), depDstPath);
+        }
       }));
     }
 
