@@ -1038,6 +1038,8 @@ export class Project {
       }
     }
 
+    await Promise.all(installPromises);
+
     // Step 2: Link packages together
 
     const externalDependents: Map<LocatorHash, Array<PortablePath>> = new Map();
