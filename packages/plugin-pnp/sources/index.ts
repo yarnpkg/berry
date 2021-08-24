@@ -4,7 +4,6 @@ import {Hooks as StageHooks}                               from '@yarnpkg/plugin
 import semver                                              from 'semver';
 
 import {PnpLinker}                                         from './PnpLinker';
-import {PnpmLinker}                                        from './PnpmLinker';
 import unplug                                              from './commands/unplug';
 import * as jsInstallUtils                                 from './jsInstallUtils';
 import * as pnpUtils                                       from './pnpUtils';
@@ -114,7 +113,6 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
   },
   linkers: [
     PnpLinker,
-    PnpmLinker,
   ],
   commands: [
     unplug,

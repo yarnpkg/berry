@@ -13,6 +13,7 @@ export type BuildDirective = [BuildType, string];
 export type InstallStatus = {
   packageLocation: PortablePath | null,
   buildDirective: Array<BuildDirective> | null,
+  installPromise?: Promise<void>,
 };
 
 export type FinalizeInstallStatus = {
@@ -58,6 +59,9 @@ export interface Installer {
    * This key will be used to save and restore the installer's custom data. You
    * typically will want to return the installer's name, but you can be fancy
    * and send a stringified JSON payload that include the cache version, etc.
+   *
+   * TODO (Yarn 4): Move this method into `Linker` so that linkers can use it
+   * to save some state useful to findPackageLocator (cf PnpmLinker).
    */
   getCustomDataKey(): string;
 

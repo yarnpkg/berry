@@ -51,6 +51,7 @@ const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
 
 const FETCHER_CONCURRENCY = 32;
+const INSTALL_CONCURRENCY = 10;
 
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
@@ -947,7 +948,14 @@ export class Project {
 
     // Step 1: Installing the packages on the disk
 
+    const installPromises = new Set<Promise<void>>();
+
     for (const locatorHash of this.accessibleLocators) {
+      // If we already have a bunch of installs in progress,
+      // wait a bit for one of them to finish.
+      if (installPromises.size === INSTALL_CONCURRENCY)
+        await Promise.race(installPromises);
+
       const pkg = this.storedPackages.get(locatorHash);
       if (typeof pkg === `undefined`)
         throw new Error(`Assertion failed: The locator should have been registered`);
@@ -976,9 +984,7 @@ export class Project {
             }
           }
         } finally {
-          if (fetchResult.releaseFs) {
-            fetchResult.releaseFs();
-          }
+          fetchResult.releaseFs?.();
         }
 
         const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
@@ -1004,19 +1010,30 @@ export class Project {
         try {
           installStatus = await installer.installPackage(pkg, fetchResult);
         } finally {
-          if (fetchResult.releaseFs) {
-            fetchResult.releaseFs();
+          // We don't close the archive if the linker is still installing things; it
+          // will be closed once its install promise resolves
+          if (!installStatus?.installPromise) {
+            fetchResult.releaseFs?.();
           }
         }
 
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.buildDirective && installStatus.packageLocation) {
+        if (installStatus.buildDirective && installStatus.buildDirective.length > 0 && installStatus.packageLocation) {
           packageBuildDirectives.set(pkg.locatorHash, {
             directives: installStatus.buildDirective,
             buildLocations: [installStatus.packageLocation],
           });
+        }
+
+        if (installStatus.installPromise) {
+          const wrappedInstallPromise = installStatus.installPromise.then(() => {
+            installPromises.delete(wrappedInstallPromise);
+            fetchResult.releaseFs?.();
+          });
+
+          installPromises.add(wrappedInstallPromise);
         }
       }
     }

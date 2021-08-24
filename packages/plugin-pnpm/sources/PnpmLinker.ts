@@ -1,6 +1,13 @@
-import {Descriptor, FetchResult, Installer, Linker, LinkOptions, LinkType, Locator, LocatorHash, MinimalLinkOptions, Package, Project, structUtils} from '@yarnpkg/core';
-import {Filename, LinkStrategy, PortablePath, ppath, xfs}                                                                                           from '@yarnpkg/fslib';
-import {Dirent}                                                                                                                                     from 'fs';
+import {Descriptor, FetchResult, formatUtils, Installer, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, structUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs}                                                                                                                                             from '@yarnpkg/fslib';
+import {jsInstallUtils}                                                                                                                                                                 from '@yarnpkg/plugin-pnp';
+import {UsageError}                                                                                                                                                                     from 'clipanion';
+import {Dirent}                                                                                                                                                                         from 'fs';
+import pLimit                                                                                                                                                                           from 'p-limit';
+
+export type PnpmCustomData = {
+  locatorByPath: Map<string, string>,
+};
 
 export class PnpmLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
@@ -12,8 +19,33 @@ export class PnpmLinker implements Linker {
     return getPackageLocation(locator, {project: opts.project});
   }
 
-  async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator> {
-    throw new Error(`Not implemented yet`);
+  async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null> {
+    const customDataKey = getCustomDataKey();
+    const customData = opts.project.installersCustomData.get(customDataKey) as any;
+    if (!customData)
+      throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+
+    const nmRootLocation = location.match(/(^.*\/node_modules\/(@[^/]*\/)?[^/]+)(\/.*$)/);
+    if (nmRootLocation) {
+      const nmLocator = customData.locatorByPath.get(nmRootLocation[1]);
+      if (nmLocator) {
+        return nmLocator;
+      }
+    }
+
+    let nextPath = location;
+    let currentPath = location;
+    do {
+      currentPath = nextPath;
+      nextPath = ppath.dirname(currentPath);
+
+      const locator = customData.locatorByPath.get(currentPath);
+      if (locator) {
+        return locator;
+      }
+    } while (nextPath !== currentPath);
+
+    return null;
   }
 
   makeInstaller(opts: LinkOptions) {
@@ -30,13 +62,12 @@ class PnpmInstaller implements Installer {
   }
 
   getCustomDataKey() {
-    return JSON.stringify({
-      name: `PnpmInstaller`,
-      version: 1,
-    });
+    return getCustomDataKey();
   }
 
-  private customData: {} = {};
+  private customData: PnpmCustomData = {
+    locatorByPath: new Map(),
+  };
 
   attachCustomData(customData: any) {
     this.customData = customData;
@@ -65,19 +96,39 @@ class PnpmInstaller implements Installer {
     const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
     this.locations.set(pkg.locatorHash, pkgPath);
 
+    this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
+
     // Copy the package source into the <root>/n_m/.store/<hash> directory, so
     // that we can then create symbolic links to it later.
-    this.pendingCopies.push(Promise.resolve().then(async () => {
+    const installPromise = Promise.resolve().then(async () => {
       await xfs.mkdirPromise(pkgPath, {recursive: true});
       await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
         baseFs: fetchResult.packageFs,
         overwrite: false,
       });
-    }));
+    });
+
+    // Just to avoid the promise being reported as uncaught, since the core
+    // will manage it once we return anyway.
+    installPromise.catch(() => {});
+
+    const isVirtual = structUtils.isVirtualLocator(pkg);
+    const devirtualizedLocator: Locator = isVirtual ? structUtils.devirtualizeLocator(pkg) : pkg;
+
+    const buildConfig = {
+      manifest: await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest(),
+      misc: {
+        hasBindingGyp: jsInstallUtils.hasBindingGyp(fetchResult),
+      },
+    };
+
+    const dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
+    const buildScripts = jsInstallUtils.extractBuildScripts(pkg, buildConfig, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
 
     return {
       packageLocation: pkgPath,
-      buildDirective: null,
+      buildDirective: buildScripts,
+      installPromise,
     };
   }
 
@@ -101,9 +152,11 @@ class PnpmInstaller implements Installer {
 
     for (const [descriptor, dependency] of dependencies) {
       // Downgrade virtual workspaces (cf isPnpmVirtualCompatible's documentation)
-      const targetDependency = !isPnpmVirtualCompatible(dependency, {project: this.opts.project})
-        ? structUtils.devirtualizeLocator(dependency)
-        : dependency;
+      let targetDependency = dependency;
+      if (!isPnpmVirtualCompatible(dependency, {project: this.opts.project})) {
+        this.opts.report.reportWarning(MessageName.UNNAMED, `The pnpm linker doesn't support providing different versions to workspaces' peer dependencies`);
+        targetDependency = structUtils.devirtualizeLocator(dependency);
+      }
 
       const depSrcPath = this.locations.get(targetDependency.locatorHash);
       if (typeof depSrcPath === `undefined`)
@@ -147,9 +200,20 @@ class PnpmInstaller implements Installer {
   }
 }
 
+function getCustomDataKey() {
+  return JSON.stringify({
+    name: `PnpmInstaller`,
+    version: 1,
+  });
+}
+
+function getStoreLocation(project: Project) {
+  return ppath.join(project.cwd, Filename.nodeModules, `.store` as Filename);
+}
+
 function getPackageLocation(locator: Locator, {project}: {project: Project}) {
   const pkgKey = structUtils.slugifyLocator(locator);
-  const pkgPath = ppath.join(project.cwd, Filename.nodeModules, `.store` as Filename, pkgKey);
+  const pkgPath = ppath.join(getStoreLocation(project), pkgKey);
 
   return pkgPath;
 }
