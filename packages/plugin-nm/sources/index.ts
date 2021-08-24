@@ -43,7 +43,7 @@ const plugin: Plugin<Hooks> = {
       default: NodeModulesMode.CLASSIC,
     },
     nmSelfReferences: {
-      description: `If set to 'false' the workspace will not be allowed to require itself and correspoding self-referncing symlink will not be created`,
+      description: `If set to 'false' the workspace will not be allowed to require itself and corresponding self-referencing symlink will not be created`,
       type: SettingsType.BOOLEAN,
       default: true,
     },
