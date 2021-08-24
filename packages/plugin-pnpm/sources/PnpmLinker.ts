@@ -1,9 +1,7 @@
 import {Descriptor, FetchResult, formatUtils, Installer, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, structUtils} from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                                                                                                                                             from '@yarnpkg/fslib';
+import {Dirent, Filename, PortablePath, ppath, xfs}                                                                                                                                     from '@yarnpkg/fslib';
 import {jsInstallUtils}                                                                                                                                                                 from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                     from 'clipanion';
-import {Dirent}                                                                                                                                                                         from 'fs';
-import pLimit                                                                                                                                                                           from 'p-limit';
 
 export type PnpmCustomData = {
   locatorByPath: Map<string, string>,
@@ -55,7 +53,7 @@ export class PnpmLinker implements Linker {
 
 class PnpmInstaller implements Installer {
   private locations = new Map<LocatorHash, PortablePath>();
-  private pendingCopies: Array<Promise<void>> = [];
+  private pendingPromises: Array<Promise<void>> = [];
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
@@ -133,8 +131,10 @@ class PnpmInstaller implements Installer {
   }
 
   async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
-    await Promise.all(this.pendingCopies);
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`)
+      return;
 
+    // We don't install those packages at all, because they can't be used anyway
     if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
@@ -143,7 +143,8 @@ class PnpmInstaller implements Installer {
       throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
 
     const nmPath = ppath.join(pkgPath, Filename.nodeModules);
-    await xfs.mkdirpPromise(nmPath);
+    if (dependencies.length > 0)
+      await xfs.mkdirpPromise(nmPath);
 
     // Retrieve what's currently inside the package's true nm folder. We
     // will use that to figure out what are the extraneous entries we'll
@@ -170,21 +171,23 @@ class PnpmInstaller implements Installer {
       const existing = extraneous.get(name);
       extraneous.delete(name);
 
-      // No need to update the symlink if it's already the correct one
-      if (existing) {
-        if (existing.isSymbolicLink() && await xfs.readlinkPromise(depDstPath) === depLinkPath) {
-          continue;
-        } else {
-          await xfs.removePromise(depDstPath);
+      this.pendingPromises.push(Promise.resolve().then(async () => {
+        // No need to update the symlink if it's already the correct one
+        if (existing) {
+          if (existing.isSymbolicLink() && await xfs.readlinkPromise(depDstPath) === depLinkPath) {
+            return;
+          } else {
+            await xfs.removePromise(depDstPath);
+          }
         }
-      }
 
-      await xfs.mkdirpPromise(ppath.dirname(depDstPath));
-      await xfs.symlinkPromise(depLinkPath, depDstPath);
+        await xfs.mkdirpPromise(ppath.dirname(depDstPath));
+        await xfs.symlinkPromise(depLinkPath, depDstPath);
+      }));
     }
 
     for (const name of extraneous.keys()) {
-      await xfs.removePromise(ppath.join(nmPath, name));
+      this.pendingPromises.push(xfs.removePromise(ppath.join(nmPath, name)));
     }
   }
 
@@ -193,10 +196,8 @@ class PnpmInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`)
-      return undefined;
-
-    return null as any;
+    await Promise.all(this.pendingPromises);
+    return undefined;
   }
 }
 
@@ -237,8 +238,17 @@ function isPnpmVirtualCompatible(locator: Locator, {project}: {project: Project}
 async function getNodeModulesListing(nmPath: PortablePath) {
   const listing = new Map<PortablePath, Dirent>();
 
+  let fsListing: Array<Dirent> = [];
   try {
-    for (const entry of await xfs.readdirPromise(nmPath, {withFileTypes: true})) {
+    fsListing = await xfs.readdirPromise(nmPath, {withFileTypes: true});
+  } catch (err) {
+    if (err.code !== `ENOENT`) {
+      throw err;
+    }
+  }
+
+  try {
+    for (const entry of fsListing) {
       if (entry.name.startsWith(`.`))
         continue;
 
