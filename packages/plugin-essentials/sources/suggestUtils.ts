@@ -3,6 +3,8 @@ import {formatUtils, structUtils}                                               
 import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
 import semver                                                                                                                                      from 'semver';
 
+const WORKSPACE_PROTOCOL = `workspace:`;
+
 export type Suggestion = {
   descriptor: Descriptor,
   name: string,
@@ -30,6 +32,12 @@ export enum Modifier {
   CARET = `^`,
   TILDE = `~`,
   EXACT = ``,
+}
+
+export enum WorkspaceModifier {
+  CARET = `^`,
+  TILDE = `~`,
+  EXACT = `*`,
 }
 
 export enum Strategy {
@@ -89,6 +97,23 @@ export function applyModifier(descriptor: Descriptor, modifier: Modifier) {
     selector = `${modifier}${descriptor.range}`;
 
   return structUtils.makeDescriptor(descriptor, structUtils.makeRange({protocol, source, params, selector}));
+}
+
+export function toWorkspaceModifier(modifier: Modifier): WorkspaceModifier {
+  switch (modifier) {
+    case Modifier.CARET:
+      return WorkspaceModifier.CARET;
+    case Modifier.TILDE:
+      return WorkspaceModifier.TILDE;
+    case Modifier.EXACT:
+      return WorkspaceModifier.EXACT;
+    default:
+      throw new Error(`Assertion failed: Unknown modifier: "${modifier}"`);
+  }
+}
+
+export function makeWorkspaceDescriptor(workspace: Workspace, modifier: Modifier) {
+  return structUtils.makeDescriptor(workspace.anchoredDescriptor, `${WORKSPACE_PROTOCOL}${toWorkspaceModifier(modifier)}`);
 }
 
 export async function findProjectDescriptors(ident: Ident, {project, target}: {project: Project, target: Target}) {
@@ -273,10 +298,12 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
           if (candidateWorkspace === null)
             return;
 
+          const workspaceDescriptor = makeWorkspaceDescriptor(candidateWorkspace, modifier);
+
           suggested.push({
-            descriptor: candidateWorkspace.anchoredDescriptor,
-            name: `Attach ${structUtils.prettyWorkspace(project.configuration, candidateWorkspace)}`,
-            reason: `(local workspace at ${candidateWorkspace.cwd})`,
+            descriptor: workspaceDescriptor,
+            name: `Attach ${structUtils.prettyDescriptor(project.configuration, workspaceDescriptor)}`,
+            reason: `(local workspace at ${formatUtils.pretty(project.configuration, candidateWorkspace.relativeCwd, formatUtils.Type.PATH)})`,
           });
         });
       } break;

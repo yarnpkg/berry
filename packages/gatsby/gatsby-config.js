@@ -95,6 +95,10 @@ module.exports = {
             binary: `${__dirname}/../../scripts/run-pnpify.js`,
           },
           {
+            namespace: `sdks`,
+            binary: `${__dirname}/../../scripts/run-sdks.js`,
+          },
+          {
             namespace: `builder`,
             binary: `${__dirname}/../../scripts/run-builder.js`,
           },

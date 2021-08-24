@@ -1,8 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                                               from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
-import {Command, Option, Usage}                                                             from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                             from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode} from '@yarnpkg/core';
+import {xfs, ppath, Filename}                                                                            from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                        from '@yarnpkg/parsers';
+import {Command, Option, Usage}                                                                          from 'clipanion';
+import * as t                                                                                            from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -34,7 +35,11 @@ export default class YarnCommand extends BaseCommand {
 
       If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
 
-      If the \`--skip-builds\` option is set, Yarn will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+      If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
+
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+
+      - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
     `,
     examples: [[
       `Install the project`,
@@ -68,8 +73,9 @@ export default class YarnCommand extends BaseCommand {
     description: `Verbosely print the output of the build steps of dependencies`,
   });
 
-  skipBuilds = Option.Boolean(`--skip-builds`, false, {
-    description: `Skip the build step altogether`,
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   // Legacy flags; will emit errors or warnings when used
@@ -309,7 +315,7 @@ export default class YarnCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable, skipBuild: this.skipBuilds});
+      await project.install({cache, report, immutable, mode: this.mode});
     });
 
     return report.exitCode();

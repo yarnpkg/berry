@@ -79,6 +79,15 @@ async function setupWorkspaces(path) {
       [`workspace-e`]: `workspace:*`,
     },
   });
+
+  await writeJson(`${path}/packages/workspace-c/packages/workspace-g/package.json`, {
+    name: `workspace-g`,
+    version: `1.0.0`,
+    scripts: {
+      print: `echo Test Workspace G`,
+    },
+    dependencies: {},
+  });
 }
 
 describe(`Commands`, () => {
@@ -198,7 +207,19 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
-          await expect({code, stdout, stderr}).toMatchSnapshot();
+          const extractWorkspaces = output => {
+            const relevantOutput = output.split(`\n`).filter(output => output.includes(`Test Workspace`));
+            return relevantOutput.map(output => output.match(/Workspace (?<name>\w+)/).groups.name);
+          };
+
+          const order = extractWorkspaces(stdout);
+
+          // A and G have the same precedence
+          expect([order[0], order[1]]).toEqual(expect.arrayContaining([`A`, `G`]));
+
+          expect(order.slice(2)).toMatchSnapshot();
+
+          await expect({code, stderr}).toMatchSnapshot();
         }
       )
     );
@@ -491,6 +512,32 @@ describe(`Commands`, () => {
           try {
             await run(`install`);
             ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--recursive`, `--topological`, `run`, `print`, {cwd: `${path}/packages/workspace-b`}));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should include dependencies of workspaces matching the from filter if using --from and --recursive`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--recursive`, `--topological`, `--from`, `{workspace-a,workspace-b,workspace-g}`, `run`, `print`, {cwd: path}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

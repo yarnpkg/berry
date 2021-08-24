@@ -1704,6 +1704,8 @@ describe(`Plug'n'Play`, () => {
       await mkdirp(`${path}/foo`);
       await writeFile(`${path}/foo/index.js`, ``);
 
+      await run(`install`);
+
       await expect(source(`require.resolve('./foo')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo.js`));
       await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
     }),
@@ -2002,6 +2004,78 @@ describe(`Plug'n'Play`, () => {
         await expect(run(`test`)).resolves.toMatchObject({
           code: 0,
           stdout: `1\n0\n`,
+        });
+      }
+    )
+  );
+
+  test(
+    `it should pick the most specific locator`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/sub-project`);
+        await xfs.writeJsonPromise(`${path}/sub-project/package.json`, {
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+        await xfs.writeFilePromise(`${path}/sub-project/yarn.lock`, ``);
+
+        await expect(run(`install`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/sub-project/index.js`, `
+          const path = require('path');
+          require.resolve('no-deps', {paths: [path.resolve(__dirname, '..'), __filename]});
+          require.resolve('no-deps', {paths: [path.resolve(__dirname, '..'), __filename]});
+        `);
+
+        await expect(run(`node`, `./index.js`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
+      }
+    )
+  );
+
+  test(
+    `it should load modules that haven't been loaded`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/foo.js`, `
+          module.exports.foo = 42;
+        `);
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          import('./foo.js').then((mod) => console.log(mod.foo));
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      }
+    )
+  );
+
+  test(
+    `it should support circular requires`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/foo.js`, `
+          module.exports.foo = 42;
+          require('./index.js');
+        `);
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          console.log(require('./foo.js').foo);
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
         });
       }
     )

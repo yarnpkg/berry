@@ -1,8 +1,8 @@
-import {FakeFS, Filename, NativePath, PortablePath, VirtualFS, npath, ppath, xfs} from '@yarnpkg/fslib';
-import fs                                                                         from 'fs';
-import {Module}                                                                   from 'module';
+import {FakeFS, Filename, NativePath, PortablePath, VirtualFS, npath, ppath} from '@yarnpkg/fslib';
+import fs                                                                    from 'fs';
+import {Module}                                                              from 'module';
 
-import {PnpApi}                                                                   from '../types';
+import {PnpApi}                                                              from '../types';
 
 export type ApiMetadata = {
   cache: typeof Module._cache,
@@ -96,28 +96,43 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   }
 
   function findApiPathFor(modulePath: NativePath) {
-    const controlledBy: Array<PortablePath> = [];
+    let bestCandidate: {
+      packageLocation: NativePath,
+      apiPaths: Array<PortablePath>,
+    } | null = null;
+
     for (const [apiPath, apiEntry] of apiMetadata) {
       const locator = apiEntry.instance.findPackageLocator(modulePath);
+      if (!locator)
+        continue;
 
-      if (locator) {
-        if (apiMetadata.size === 1) {
-          return apiPath;
-        } else {
-          controlledBy.push(apiPath);
-        }
+      // No need to go the slow way when there's a single API
+      if (apiMetadata.size === 1)
+        return apiPath;
+
+      const packageInformation = apiEntry.instance.getPackageInformation(locator);
+      if (!packageInformation)
+        throw new Error(`Assertion failed: Couldn't get package information for '${modulePath}'`);
+
+      if (!bestCandidate)
+        bestCandidate = {packageLocation: packageInformation.packageLocation, apiPaths: []};
+
+      if (packageInformation.packageLocation === bestCandidate.packageLocation) {
+        bestCandidate.apiPaths.push(apiPath);
+      } else if (packageInformation.packageLocation.length > bestCandidate.packageLocation.length) {
+        bestCandidate = {packageLocation: packageInformation.packageLocation, apiPaths: [apiPath]};
       }
     }
 
-    if (controlledBy.length !== 0) {
-      if (controlledBy.length === 1)
-        return controlledBy[0];
+    if (bestCandidate) {
+      if (bestCandidate.apiPaths.length === 1)
+        return bestCandidate.apiPaths[0];
 
-      throw new Error(
-        `Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\nThis is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${controlledBy
-          .map(pnpPath => `  ${npath.fromPortablePath(pnpPath)}`)
-          .join(`\n`)}`
-      );
+      const controlSegment = bestCandidate.apiPaths
+        .map(apiPath => `  ${npath.fromPortablePath(apiPath)}`)
+        .join(`\n`);
+
+      throw new Error(`Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\nThis is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${controlSegment}\n`);
     }
 
     const start = ppath.resolve(npath.toPortablePath(modulePath));
@@ -133,13 +148,13 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
         return addToCacheAndReturn(start, curr, cached);
 
       const cjsCandidate = ppath.join(curr, Filename.pnpCjs);
-      if (xfs.existsSync(cjsCandidate) && xfs.statSync(cjsCandidate).isFile())
+      if (opts.fakeFs.existsSync(cjsCandidate) && opts.fakeFs.statSync(cjsCandidate).isFile())
         return addToCacheAndReturn(start, curr, cjsCandidate);
 
       // We still support .pnp.js files to improve multi-project compatibility.
       // TODO: Remove support for .pnp.js files after they stop being used.
       const legacyCjsCandidate = ppath.join(curr, Filename.pnpJs);
-      if (xfs.existsSync(legacyCjsCandidate) && xfs.statSync(legacyCjsCandidate).isFile())
+      if (opts.fakeFs.existsSync(legacyCjsCandidate) && opts.fakeFs.statSync(legacyCjsCandidate).isFile())
         return addToCacheAndReturn(start, curr, legacyCjsCandidate);
 
       next = ppath.dirname(curr);

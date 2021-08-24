@@ -7,7 +7,7 @@ import {PROTOCOL}                                               from './constant
 import * as execUtils                                           from './execUtils';
 
 // We use this for the generators to be regenerated without bumping the whole cache
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 
 export class ExecResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -79,7 +79,7 @@ export class ExecResolver implements Resolver {
 
       version: manifest.version || `0.0.0`,
 
-      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      languageName: manifest.languageName || opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
 
       dependencies: manifest.dependencies,

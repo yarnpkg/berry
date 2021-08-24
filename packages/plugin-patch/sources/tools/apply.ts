@@ -1,10 +1,8 @@
 import {miscUtils, semverUtils}                              from '@yarnpkg/core';
-import {FakeFS, ppath, NodeFS, PortablePath}                 from '@yarnpkg/fslib';
+import {FakeFS, ppath, NodeFS, PortablePath, constants}      from '@yarnpkg/fslib';
 
 import {UnmatchedHunkError}                                  from './UnmatchedHunkError';
 import {ParsedPatchFile, FilePatch, Hunk, PatchMutationType} from './parse';
-
-const DEFAULT_TIME = 315532800;
 
 async function preserveTime(baseFs: FakeFS<PortablePath>, p: PortablePath, cb: () => Promise<PortablePath | void>) {
   const stat = await baseFs.lstatPromise(p);
@@ -69,10 +67,10 @@ export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new Nod
             : ``;
 
           // Todo: the parent of the first directory thus created will still see its mtime changed
-          await baseFs.mkdirpPromise(ppath.dirname(eff.path), {chmod: 0o755, utimes: [DEFAULT_TIME, DEFAULT_TIME]});
+          await baseFs.mkdirpPromise(ppath.dirname(eff.path), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
 
           await baseFs.writeFilePromise(eff.path, fileContents, {mode: eff.mode});
-          await baseFs.utimesPromise(eff.path, DEFAULT_TIME, DEFAULT_TIME);
+          await baseFs.utimesPromise(eff.path, constants.SAFE_TIME, constants.SAFE_TIME);
         }
       } break;
 

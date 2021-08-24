@@ -4,9 +4,11 @@ on:
     - master
     paths:
     - 'packages/plugin-compat/**'
+    - '!packages/plugin-compat/sources/extensions.ts'
   pull_request:
     paths:
     - 'packages/plugin-compat/**'
+    - '!packages/plugin-compat/sources/extensions.ts'
 
 name: 'plugin-compat'
 jobs:

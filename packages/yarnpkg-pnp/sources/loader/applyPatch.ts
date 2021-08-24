@@ -13,6 +13,11 @@ export type ApplyPatchOptions = {
   manager: Manager,
 };
 
+type PatchedModule = Module & {
+  load(path: NativePath): void;
+  isLoading?: boolean;
+};
+
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
@@ -124,15 +129,31 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = entry.cache[modulePath];
-    if (cacheEntry)
+    const cacheEntry = entry.cache[modulePath] as PatchedModule;
+    if (cacheEntry) {
+      // When a dynamic import is used in CJS files Node adds the module
+      // to the cache but doesn't load it so we do it here.
+      //
+      // Keep track of and check if the module is already loading to
+      // handle circular requires.
+      //
+      // The explicit checks are required since `@babel/register` et al.
+      // create modules without the `loaded` and `load` properties
+      if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
+        try {
+          cacheEntry.isLoading = true;
+          cacheEntry.load(modulePath);
+        } finally {
+          cacheEntry.isLoading = false;
+        }
+      }
+
       return cacheEntry.exports;
+    }
 
     // Create a new module and store it into the cache
 
-    // @ts-expect-error
-    const module = new Module(modulePath, parent);
-    // @ts-expect-error
+    const module = new Module(modulePath, parent ?? undefined) as PatchedModule;
     module.pnpApiPath = moduleApiPath;
 
     entry.cache[modulePath] = module;
@@ -149,10 +170,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
-    // @ts-expect-error
+      module.isLoading = true;
       module.load(modulePath);
       hasThrown = false;
     } finally {
+      module.isLoading = false;
       if (hasThrown) {
         delete Module._cache[modulePath];
       }

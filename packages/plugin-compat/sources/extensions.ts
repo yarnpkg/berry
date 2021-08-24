@@ -102,7 +102,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/xz64/license-webpack-plugin/pull/100
-  [`license-webpack-plugin@*`, {
+  [`license-webpack-plugin@<2.3.18`, {
     peerDependenciesMeta: {
       [`webpack`]: optionalPeerDep,
     },
@@ -312,6 +312,256 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`@ant-design/react-slick@<=0.28.3`, {
     peerDependencies: {
       react: `>=16.0.0`,
+    },
+  }],
+  // https://github.com/mqttjs/MQTT.js/pull/1266
+  [`mqtt@<4.2.7`, {
+    dependencies: {
+      duplexify: `^4.1.1`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`vue-cli-plugin-vuetify@<=2.0.3`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+      'vuetify-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/152
+  [`vue-cli-plugin-vuetify@<=2.0.4`, {
+    dependencies: {
+      'null-loader': `^3.0.0`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
+  [`@vuetify/cli-plugin-utils@<=0.0.4`, {
+    dependencies: {
+      semver: `^6.3.0`,
+    },
+    peerDependenciesMeta: {
+      'sass-loader': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6060/files#diff-857cfb6f3e9a676b0de4a00c2c712297068c038a7d5820c133b8d6aa8cceb146R28
+  [`@vue/cli-plugin-typescript@<=5.0.0-alpha.0`, {
+    dependencies: {
+      'babel-loader': `^8.1.0`,
+    },
+  }],
+  // https://github.com/vuejs/vue-cli/pull/6456
+  [`@vue/cli-plugin-typescript@<=5.0.0-beta.0`, {
+    dependencies: {
+      '@babel/core': `^7.12.16`,
+    },
+    peerDependencies: {
+      'vue-template-compiler': `^2.0.0`,
+    },
+    peerDependenciesMeta: {
+      'vue-template-compiler': optionalPeerDep,
+    },
+  }],
+  // https://github.com/apache/cordova-ios/pull/1105
+  [`cordova-ios@<=6.3.0`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
+  // https://github.com/apache/cordova-lib/pull/871
+  [`cordova-lib@<=10.0.1`, {
+    dependencies: {
+      underscore: `^1.9.2`,
+    },
+  }],
+  // https://github.com/creationix/git-node-fs/pull/8
+  [`git-node-fs@*`, {
+    peerDependencies: {
+      'js-git': `^0.7.8`,
+    },
+    peerDependenciesMeta: {
+      'js-git': optionalPeerDep,
+    },
+  }],
+  // https://github.com/tj/consolidate.js/pull/339
+  [`consolidate@*`, {
+    peerDependencies: {
+      velocityjs: `^2.0.1`,
+      tinyliquid: `^0.2.34`,
+      'liquid-node': `^3.0.1`,
+      jade: `^1.11.0`,
+      'then-jade': `*`,
+      dust: `^0.3.0`,
+      'dustjs-helpers': `^1.7.4`,
+      'dustjs-linkedin': `^2.7.5`,
+      swig: `^1.4.2`,
+      'swig-templates': `^2.0.3`,
+      'razor-tmpl': `^1.3.1`,
+      atpl: `>=0.7.6`,
+      liquor: `^0.0.5`,
+      twig: `^1.15.2`,
+      ejs: `^3.1.5`,
+      eco: `^1.1.0-rc-3`,
+      jazz: `^0.0.18`,
+      jqtpl: `~1.1.0`,
+      hamljs: `^0.6.2`,
+      hamlet: `^0.3.3`,
+      whiskers: `^0.4.0`,
+      'haml-coffee': `^1.14.1`,
+      'hogan.js': `^3.0.2`,
+      templayed: `>=0.2.3`,
+      handlebars: `^4.7.6`,
+      underscore: `^1.11.0`,
+      lodash: `^4.17.20`,
+      pug: `^3.0.0`,
+      'then-pug': `*`,
+      qejs: `^3.0.5`,
+      walrus: `^0.10.1`,
+      mustache: `^4.0.1`,
+      just: `^0.1.8`,
+      ect: `^0.5.9`,
+      mote: `^0.2.0`,
+      toffee: `^0.3.6`,
+      dot: `^1.1.3`,
+      'bracket-template': `^1.1.5`,
+      ractive: `^1.3.12`,
+      nunjucks: `^3.2.2`,
+      htmling: `^0.0.8`,
+      'babel-core': `^6.26.3`,
+      plates: `~0.4.11`,
+      'react-dom': `^16.13.1`,
+      react: `^16.13.1`,
+      'arc-templates': `^0.5.3`,
+      vash: `^0.13.0`,
+      slm: `^2.0.0`,
+      marko: `^3.14.4`,
+      teacup: `^2.0.0`,
+      'coffee-script': `^1.12.7`,
+      squirrelly: `^5.1.0`,
+      twing: `^5.0.2`,
+    },
+    peerDependenciesMeta: {
+      velocityjs: optionalPeerDep,
+      tinyliquid: optionalPeerDep,
+      'liquid-node': optionalPeerDep,
+      jade: optionalPeerDep,
+      'then-jade': optionalPeerDep,
+      dust: optionalPeerDep,
+      'dustjs-helpers': optionalPeerDep,
+      'dustjs-linkedin': optionalPeerDep,
+      swig: optionalPeerDep,
+      'swig-templates': optionalPeerDep,
+      'razor-tmpl': optionalPeerDep,
+      atpl: optionalPeerDep,
+      liquor: optionalPeerDep,
+      twig: optionalPeerDep,
+      ejs: optionalPeerDep,
+      eco: optionalPeerDep,
+      jazz: optionalPeerDep,
+      jqtpl: optionalPeerDep,
+      hamljs: optionalPeerDep,
+      hamlet: optionalPeerDep,
+      whiskers: optionalPeerDep,
+      'haml-coffee': optionalPeerDep,
+      'hogan.js': optionalPeerDep,
+      templayed: optionalPeerDep,
+      handlebars: optionalPeerDep,
+      underscore: optionalPeerDep,
+      lodash: optionalPeerDep,
+      pug: optionalPeerDep,
+      'then-pug': optionalPeerDep,
+      qejs: optionalPeerDep,
+      walrus: optionalPeerDep,
+      mustache: optionalPeerDep,
+      just: optionalPeerDep,
+      ect: optionalPeerDep,
+      mote: optionalPeerDep,
+      toffee: optionalPeerDep,
+      dot: optionalPeerDep,
+      'bracket-template': optionalPeerDep,
+      ractive: optionalPeerDep,
+      nunjucks: optionalPeerDep,
+      htmling: optionalPeerDep,
+      'babel-core': optionalPeerDep,
+      plates: optionalPeerDep,
+      'react-dom': optionalPeerDep,
+      react: optionalPeerDep,
+      'arc-templates': optionalPeerDep,
+      vash: optionalPeerDep,
+      slm: optionalPeerDep,
+      marko: optionalPeerDep,
+      teacup: optionalPeerDep,
+      'coffee-script': optionalPeerDep,
+      squirrelly: optionalPeerDep,
+      twing: optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/vue-loader/pull/1853
+  [`vue-loader@<=16.3.1`, {
+    peerDependencies: {
+      '@vue/compiler-sfc': `^3.0.8`,
+      webpack: `^4.1.0 || ^5.0.0-0`,
+    },
+  }],
+  // https://github.com/salesforce-ux/scss-parser/pull/43
+  [`scss-parser@*`, {
+    dependencies: {
+      lodash: `^4.17.21`,
+    },
+  }],
+  // https://github.com/salesforce-ux/query-ast/pull/25
+  [`query-ast@*`, {
+    dependencies: {
+      lodash: `^4.17.21`,
+    },
+  }],
+  // https://github.com/reduxjs/redux-thunk/pull/251
+  [`redux-thunk@<=2.3.0`, {
+    peerDependencies: {
+      redux: `^4.0.0`,
+    },
+  }],
+  // https://github.com/snowpackjs/snowpack/pull/3556
+  [`skypack@<=0.3.2`, {
+    dependencies: {
+      tar: `^6.1.0`,
+    },
+  }],
+  // https://github.com/npm/metavuln-calculator/pull/8
+  [`@npmcli/metavuln-calculator@*`, {
+    dependencies: {
+      'json-parse-even-better-errors': `^2.3.1`,
+    },
+  }],
+  // https://github.com/npm/bin-links/pull/17
+  [`bin-links@*`, {
+    dependencies: {
+      'mkdirp-infer-owner': `^1.0.2`,
+    },
+  }],
+  // https://github.com/snowpackjs/rollup-plugin-polyfill-node/pull/30
+  [`rollup-plugin-polyfill-node@*`, {
+    peerDependencies: {
+      rollup: `^1.20.0 || ^2.0.0`,
+    },
+  }],
+  // https://github.com/snowpackjs/snowpack/pull/3673
+  [`snowpack@*`, {
+    dependencies: {
+      'magic-string': `^0.25.7`,
+    },
+  }],
+  // https://github.com/elm-community/elm-webpack-loader/pull/202
+  [`elm-webpack-loader@*`, {
+    dependencies: {
+      temp: `^0.9.4`,
+    },
+  }],
+  // https://github.com/winstonjs/winston-transport/pull/58
+  [`winston-transport@<=4.4.0`, {
+    dependencies: {
+      logform: `^2.2.0`,
     },
   }],
 ];

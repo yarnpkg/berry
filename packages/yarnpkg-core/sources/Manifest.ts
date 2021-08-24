@@ -49,6 +49,7 @@ export class Manifest {
 
   public type: string | null = null;
 
+  public packageManager: string | null = null;
   public ["private"]: boolean = false;
   public license: string | null = null;
 
@@ -232,6 +233,11 @@ export class Manifest {
       this.type = data.type;
     else
       this.type = null;
+
+    if (typeof data.packageManager === `string`)
+      this.packageManager = data.packageManager;
+    else
+      this.packageManager = null;
 
     if (typeof data.private === `boolean`)
       this.private = data.private;
@@ -747,6 +753,11 @@ export class Manifest {
       data.type = this.type;
     else
       delete data.type;
+
+    if (this.packageManager !== null)
+      data.packageManager = this.packageManager;
+    else
+      delete data.packageManager;
 
     if (this.private)
       data.private = true;

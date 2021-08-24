@@ -31,6 +31,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
+      - If \`--from\` is set, Yarn will use the packages matching the 'from' glob as the starting point for any recursive search.
+
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
       Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
@@ -44,13 +46,21 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       `Run build script on current and all descendant packages`,
       `yarn workspaces foreach run build`,
     ], [
-      `Run build script on current and all descendant packages in parallel, building dependent packages first`,
+      `Run build script on current and all descendant packages in parallel, building package dependencies first`,
       `yarn workspaces foreach -pt run build`,
+    ],
+    [
+      `Run build script on several packages and all their dependencies, building dependencies first`,
+      `yarn workspaces foreach -ptR --from '{workspace-a,workspace-b}' run build`,
     ]],
   });
 
   recursive = Option.Boolean(`-R,--recursive`, false, {
     description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
+  });
+
+  from = Option.Array(`--from`, [], {
+    description: `An array of glob pattern idents from which to base any recursion`,
   });
 
   all = Option.Boolean(`-A,--all`, false, {
@@ -116,9 +126,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
+    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);
+    const fromCandidates: Array<Workspace> = this.from.length > 0
+      ? [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceChildren()].filter(fromPredicate)
+      : [rootWorkspace];
+
     const candidates = this.recursive
-      ? [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceDependencies()]
-      : [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceChildren()];
+      ? [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceDependencies()]).flat()]
+      : [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceChildren()]).flat()];
 
     const workspaces: Array<Workspace> = [];
 

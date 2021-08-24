@@ -8,6 +8,7 @@ const VALID_COMMANDS = [
   ...[
     `echo foo >& 1`,
     `echo foo >&1`,
+    `echo foo 2> bar`,
   ],
 
   // Groups
@@ -65,6 +66,38 @@ describe(`Shell parser`, () => {
       });
     }
   });
+
+  describe(`Redirections`, () => {
+    describe(`fd`, () => {
+      it(`shouldn't parse fds that aren't single digits as part of the redirection`, () => {
+        expect(parseShell(`echo 10> /dev/null`)).toStrictEqual([expect.objectContaining({
+          command: expect.objectContaining({
+            chain: expect.objectContaining({
+              args: [
+                expect.anything(),
+                {type: `argument`, segments: [{type: `text`, text: `10`}]},
+                expect.objectContaining({fd: null}),
+              ],
+            }),
+          }),
+        })]);
+      });
+
+      it(`shouldn't parse fds that aren't directly next to the redirection as part of the redirection`, () => {
+        expect(parseShell(`echo 1 > /dev/null`)).toStrictEqual([expect.objectContaining({
+          command: expect.objectContaining({
+            chain: expect.objectContaining({
+              args: [
+                expect.anything(),
+                {type: `argument`, segments: [{type: `text`, text: `1`}]},
+                expect.objectContaining({fd: null}),
+              ],
+            }),
+          }),
+        })]);
+      });
+    });
+  });
 });
 
 const STRINGIFIER_TESTS: Array<[string, string]> = [
@@ -80,11 +113,15 @@ const STRINGIFIER_TESTS: Array<[string, string]> = [
   [`echo foo > bar`, `echo foo > bar`],
   [`echo a$B"c"'d'`, `echo a\${B}cd`],
   [`echo a$B"c"'d'`, `echo a\${B}cd`],
-  [`echo $(( 1 + 2 * 3 - 4 / 5 ))`, `echo $(( 1 + ( ( 2 * 3 ) - ( 4 / 5 ) ) ))`],
+  [`echo $(( 1 + 2 * 3 - 4 / 5 ))`, `echo $(( ( 1 + ( 2 * 3 ) ) - ( 4 / 5 ) ))`],
+  [`echo $(( 7 - 2 - 3 * 5 / 6 ))`, `echo $(( ( 7 - 2 ) - ( ( 3 * 5 ) / 6 ) ))`],
   [`(echo foo && echo bar)`, `(echo foo && echo bar)`],
   [`{echo foo && echo bar}`, `{ echo foo && echo bar; }`],
   [`FOO=bar echo foo`, `FOO=bar echo foo`],
   [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
+  [`FOO="\\x09"`, `FOO=$'\\t'`],
+  [`FOO="\\u0027"`, `FOO=$'\\''`],
+  [`FOO="\\U0001F601"`, `FOO=😁`],
 ];
 
 describe(`Shell stringifier`, () => {

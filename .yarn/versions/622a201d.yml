@@ -1,5 +1,0 @@
-releases:
-  "@yarnpkg/eslint-config": minor
-
-declined:
-  - "@yarnpkg/fslib"

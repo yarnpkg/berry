@@ -94,7 +94,7 @@ We have a [dedicated documentation](/getting-started/editor-sdks), but if you're
 
 1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode extension
 2. Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the *top level* of the project (rather than in a random workspace)
-3. Run `yarn dlx @yarnpkg/pnpify --sdk vscode`
+3. Run `yarn dlx @yarnpkg/sdks vscode`
 4. Commit the changes - this way contributors won't have to follow the same procedure
 5. For TypeScript, don't forget to select [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript) in VSCode
 
@@ -251,7 +251,7 @@ So how to replace them? There are different ways:
 
 Despite our best efforts some tools don't work at all under Plug'n'Play environments, and we don't have the resources to update them ourselves. There are only two notorious ones on our list: Flow, and React Native.
 
-In such a radical case, you can enable the built-in [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules) by adding the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file before running a fresh `yarn install`:
+In such a radical case, you can enable the built-in [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm) by adding the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file before running a fresh `yarn install`:
 
 ```yaml
 nodeLinker: node-modules
@@ -277,6 +277,7 @@ nmHoistingLimits: workspaces
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
 | ------------------ | -------------------------- | ----------------------------- |
+| `yarn audit`    | `yarn npm audit`           ||
 | `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
@@ -288,19 +289,14 @@ nmHoistingLimits: workspaces
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
 | `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
 
-### Deprecated
-
-| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
-| ------------------ | ----------------------------- |
-| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
-
 ### Removed from core
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn audit`    | Relied on an undocumented proprietary protocol; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1187) |
+| `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
 | `yarn import`   | First import to Classic, then migrate to 2.x |
 | `yarn licenses` | Perfect use case for plugins; [read more on GitHub](https://github.com/yarnpkg/berry/issues/1164) |
+| `yarn versions` | Use `yarn --version` and `node -p process.versions` |
 
 ### Not implemented yet
 

@@ -170,9 +170,10 @@ export const prefixURL = (url, {base, user, project, head, path}) => {
     return url;
   } else {
     return new URL(
-      (path ? `${path.replace(/^\//, ``)}/` : ``) +
-        url.replace(/^(\.?\/?)/, ``),
-      `${base}/${user}/${project}/${path ? `` : `${head}/`}`
+      url.replace(/^\//, ``),
+      `${base}/${user}/${project}/${
+        path ? `` : `${head}/${path ? `${path.replace(/^\//, ``)}/` : ``}`
+      }`
     );
   }
 };

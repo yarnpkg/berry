@@ -3,6 +3,7 @@
 /cli /cli/install 301
 /advanced /advanced/architecture 301
 /pnpify/cli /pnpify/cli/run 301
+/sdks/cli /sdks/cli/default 301
 /builder/cli /builder/cli/build/plugin 301
 /package/* /package 200
 /advanced/qa /getting-started/qa 301

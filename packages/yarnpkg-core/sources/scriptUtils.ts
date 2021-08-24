@@ -39,8 +39,9 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
     await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
   }
 
-  await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
-  await xfs.chmodPromise(ppath.join(location, name), 0o755);
+  await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`, {
+    mode: 0o755,
+  });
 }
 
 async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
@@ -82,15 +83,21 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
   // binaries for the dependencies of the active package
   scriptEnv.BERRY_BIN_FOLDER = npath.fromPortablePath(nBinFolder);
 
+  // Otherwise we'd override the Corepack binaries, and thus break the detection
+  // of the `packageManager` field when running Yarn in other directories.
+  const yarnBin = process.env.COREPACK_ROOT
+    ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
+    : process.argv[1];
+
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
   await Promise.all([
     makePathWrapper(binFolder, `node` as Filename, process.execPath),
     ...YarnVersion !== null ? [
-      makePathWrapper(binFolder, `run` as Filename, process.execPath, [process.argv[1], `run`]),
-      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [process.argv[1]]),
-      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [process.argv[1]]),
-      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [process.argv[1], `run`, `--top-level`, `node-gyp`]),
+      makePathWrapper(binFolder, `run` as Filename, process.execPath, [yarnBin, `run`]),
+      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [yarnBin]),
+      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [yarnBin]),
+      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [yarnBin, `run`, `--top-level`, `node-gyp`]),
     ] : [],
   ]);
 
@@ -270,7 +277,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             if (pack.code !== 0)
               return pack.code;
 
-            const packOutput = (await packPromise).toString().trim();
+            const packOutput = (await packPromise).toString().trim().replace(/^.*\n/s, ``);
             const packTarget = ppath.resolve(cwd, npath.toPortablePath(packOutput));
 
             // Only then can we move the pack to its rightful location

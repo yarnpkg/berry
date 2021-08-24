@@ -7,7 +7,7 @@ description: An in-depth guide to Yarn's workspaces, a feature that provides an 
 
 The Yarn workspaces aim to make working with [monorepos](/advanced/lexicon#monorepository) easy, solving one of the main use cases for `yarn link` in a more declarative way. In short, they allow multiple of your projects to live together in the same repository AND to cross-reference each others - any modification to one's source code being instantly applied to the others.
 
-First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a specific named package stored anywhere within the project. Finally, a *worktree* is the name given to packages that list their own child workspaces. A project contains one or more worktrees, which may themselves contain any number of workspaces.
+First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a local package made up from your own sources from that same project. Finally, a *worktree* is the name given to workspaces that list their own child workspaces. A project contains one or more worktrees, which may themselves contain any number of workspaces. Any project contains at least one workspace: the root one.
 
 ```toc
 # This code block gets replaced with the Table of Contents
@@ -50,17 +50,19 @@ Note that the second flavor is experimental and we advise against using it for n
 
 When a workspace is packed into an archive (whether it's through `yarn pack` or one of the publish commands like `yarn npm publish`), we dynamically replace any `workspace:` dependency by:
 
-  - The corresponding version in the target workspace (if you use `*` or a project-relative path)
+  - The corresponding version in the target workspace (if you use `*`, `^`, `~`, or a project-relative path)
   - The associated semver range (for any other range type)
 
-So for example, if we assume we have three workspaces whose current version is `1.5.0`, the following:
+So for example, if we assume we have the following workspaces whose current version is `1.5.0`, the following:
 
 ```json
 {
   "dependencies": {
-    "foo": "workspace:*",
-    "bar": "workspace:^1.2.3",
-    "baz": "workspace:path/to/baz"
+    "star": "workspace:*",
+    "caret": "workspace:^",
+    "tilde": "workspace:~",
+    "range": "workspace:^1.2.3",
+    "path": "workspace:path/to/baz"
   }
 }
 ```
@@ -70,9 +72,11 @@ Will be transformed into:
 ```json
 {
   "dependencies": {
-    "foo": "1.5.0",
-    "bar": "^1.2.3",
-    "baz": "1.5.0"
+    "star": "1.5.0",
+    "caret": "^1.5.0",
+    "tilde": "~1.5.0",
+    "range": "^1.2.3",
+    "path": "1.5.0"
   }
 }
 ```

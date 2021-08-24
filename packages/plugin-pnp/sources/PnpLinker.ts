@@ -40,7 +40,7 @@ export class PnpLinker implements Linker {
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
     });
 
     const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
@@ -58,7 +58,7 @@ export class PnpLinker implements Linker {
       return null;
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequireNoCache(pnpPath);
+      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
     });
 
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
@@ -108,14 +108,14 @@ export class PnpInstaller implements Installer {
     const key1 = structUtils.stringifyIdent(pkg);
     const key2 = pkg.reference;
 
-    const isWorkspace =
-      !!this.opts.project.tryWorkspaceByLocator(pkg);
+    const isWorkspace = !!this.opts.project.tryWorkspaceByLocator(pkg);
+    const isVirtual = structUtils.isVirtualLocator(pkg);
 
     const hasVirtualInstances =
       // Only packages with peer dependencies have virtual instances
       pkg.peerDependencies.size > 0 &&
       // Only packages with peer dependencies have virtual instances
-      !structUtils.isVirtualLocator(pkg);
+      !isVirtual;
 
     const mayNeedToBeBuilt =
       // Virtual instance templates don't need to be built, since they don't truly exist
@@ -133,16 +133,17 @@ export class PnpInstaller implements Installer {
     let dependencyMeta: DependencyMeta | undefined;
 
     if (mayNeedToBeBuilt || mayNeedToBeUnplugged) {
-      customPackageData = this.customData.store.get(pkg.locatorHash);
+      const devirtualizedLocator: Locator = isVirtual ? structUtils.devirtualizeLocator(pkg) : pkg;
+      customPackageData = this.customData.store.get(devirtualizedLocator.locatorHash);
 
       if (typeof customPackageData === `undefined`) {
-        customPackageData = await extractCustomPackageData(pkg, fetchResult);
+        customPackageData = await extractCustomPackageData(fetchResult);
         if (pkg.linkType === LinkType.HARD) {
-          this.customData.store.set(pkg.locatorHash, customPackageData);
+          this.customData.store.set(devirtualizedLocator.locatorHash, customPackageData);
         }
       }
 
-      dependencyMeta = this.opts.project.getDependencyMeta(pkg, pkg.version);
+      dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
     }
 
     const buildScripts = mayNeedToBeBuilt
@@ -166,13 +167,13 @@ export class PnpInstaller implements Installer {
     // workspaces are a special case because the original packages are kept in
     // the dependency tree even after being virtualized; so in their case we
     // just ignore their declared peer dependencies.
-    if (structUtils.isVirtualLocator(pkg)) {
+    if (isVirtual) {
       for (const descriptor of pkg.peerDependencies.values()) {
         packageDependencies.set(structUtils.stringifyIdent(descriptor), null);
         packagePeers.add(structUtils.stringifyIdent(descriptor));
       }
 
-      if (!this.opts.project.tryWorkspaceByLocator(pkg)) {
+      if (!isWorkspace) {
         const devirtualized = structUtils.devirtualizeLocator(pkg);
         this.virtualTemplates.set(devirtualized.locatorHash, {
           location: normalizeDirectoryPath(this.opts.project.cwd, VirtualFS.resolveVirtual(packageRawLocation)),
@@ -223,7 +224,7 @@ export class PnpInstaller implements Installer {
     const pnpPath = getPnpPath(this.opts.project);
 
     if (xfs.existsSync(pnpPath.cjsLegacy)) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use PnPify SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn pnpify --sdk`, formatUtils.Type.CODE)}.`);
+      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use Editor SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn sdks`, formatUtils.Type.CODE)}.`);
 
       await xfs.removePromise(pnpPath.cjsLegacy);
     }
@@ -300,19 +301,25 @@ export class PnpInstaller implements Installer {
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);
 
-      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath.cjs, 0o755);
+      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {
+        automaticNewlines: true,
+        mode: 0o755,
+      });
 
       await xfs.removePromise(pnpDataPath);
     } else {
       const dataLocation = ppath.relative(ppath.dirname(pnpPath.cjs), pnpDataPath);
       const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
 
-      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpPath.cjs, 0o755);
+      await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {
+        automaticNewlines: true,
+        mode: 0o755,
+      });
 
-      await xfs.changeFilePromise(pnpDataPath, dataFile, {automaticNewlines: true});
-      await xfs.chmodPromise(pnpDataPath, 0o644);
+      await xfs.changeFilePromise(pnpDataPath, dataFile, {
+        automaticNewlines: true,
+        mode: 0o644,
+      });
     }
 
     const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
@@ -445,7 +452,7 @@ function normalizeDirectoryPath(root: PortablePath, folder: PortablePath) {
 type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U: never;
 type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData>>;
 
-async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) {
+async function extractCustomPackageData(fetchResult: FetchResult) {
   const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest();
 
   const preservedScripts = new Set([`preinstall`, `install`, `postinstall`]);

@@ -6,7 +6,7 @@ import * as patchUtils                                                          
 
 // We use this to for the patches to be regenerated without bumping the whole
 // cache, like when the libzip had incorrect mtime in some cases
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 
 export class PatchResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

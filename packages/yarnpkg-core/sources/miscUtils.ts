@@ -1,7 +1,15 @@
-import {PortablePath, npath} from '@yarnpkg/fslib';
-import {UsageError}          from 'clipanion';
-import micromatch            from 'micromatch';
-import {Readable, Transform} from 'stream';
+import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
+import {UsageError}               from 'clipanion';
+import micromatch                 from 'micromatch';
+import semver                     from 'semver';
+import {Readable, Transform}      from 'stream';
+
+/**
+ * @internal
+ */
+export function isTaggedYarnVersion(version: string) {
+  return semver.valid(version) && version.match(/^[^-]+(-rc\.[0-9]+)?$/);
+}
 
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
@@ -15,8 +23,10 @@ export function assertNever(arg: never): never {
 }
 
 export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
-  if (!Object.values(def).includes(value as any))
-    throw new Error(`Assertion failed: Invalid value for enumeration`);
+  const values = Object.values(def);
+
+  if (!values.includes(value as any))
+    throw new UsageError(`Invalid value for enumeration: ${JSON.stringify(value)} (expected one of ${values.map(value => JSON.stringify(value)).join(`, `)})`);
 
   return value as any as T;
 }
@@ -234,19 +244,26 @@ export class DefaultStream extends Transform {
 // code that simply throws when called. It's all fine and dandy in the context
 // of a web application, but is quite annoying when working with Node projects!
 
-export const dynamicRequire: NodeRequire = eval(`require`);
+const realRequire: NodeRequire = eval(`require`);
 
-export function dynamicRequireNoCache(path: PortablePath) {
+function dynamicRequireNode(path: string) {
+  return realRequire(npath.fromPortablePath(path));
+}
+
+/**
+ * Requires a module without using the module cache
+ */
+function dynamicRequireNoCache(path: string) {
   const physicalPath = npath.fromPortablePath(path);
 
-  const currentCacheEntry = dynamicRequire.cache[physicalPath];
-  delete dynamicRequire.cache[physicalPath];
+  const currentCacheEntry = realRequire.cache[physicalPath];
+  delete realRequire.cache[physicalPath];
 
   let result;
   try {
-    result = dynamicRequire(physicalPath);
+    result = dynamicRequireNode(physicalPath);
 
-    const freshCacheEntry = dynamicRequire.cache[physicalPath];
+    const freshCacheEntry = realRequire.cache[physicalPath];
 
     const dynamicModule = eval(`module`) as NodeModule;
     const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);
@@ -255,10 +272,55 @@ export function dynamicRequireNoCache(path: PortablePath) {
       dynamicModule.children.splice(freshCacheIndex, 1);
     }
   } finally {
-    dynamicRequire.cache[physicalPath] = currentCacheEntry;
+    realRequire.cache[physicalPath] = currentCacheEntry;
   }
 
   return result;
+}
+
+const dynamicRequireFsTimeCache = new Map<PortablePath, {
+  mtime: number;
+  instance: any;
+}>();
+
+/**
+ * Requires a module without using the cache if it has changed since the last time it was loaded
+ */
+function dynamicRequireFsTime(path: PortablePath) {
+  const cachedInstance = dynamicRequireFsTimeCache.get(path);
+  const stat = xfs.statSync(path);
+
+  if (cachedInstance?.mtime === stat.mtimeMs)
+    return cachedInstance.instance;
+
+  const instance = dynamicRequireNoCache(path);
+  dynamicRequireFsTimeCache.set(path, {mtime: stat.mtimeMs, instance});
+  return instance;
+}
+
+export enum CachingStrategy {
+  NoCache,
+  FsTime,
+  Node,
+}
+
+export function dynamicRequire(path: string, opts?: {cachingStrategy?: CachingStrategy}): any;
+export function dynamicRequire(path: PortablePath, opts: {cachingStrategy: CachingStrategy.FsTime}): any;
+export function dynamicRequire(path: string | PortablePath, {cachingStrategy = CachingStrategy.Node}: {cachingStrategy?: CachingStrategy} = {}) {
+  switch (cachingStrategy) {
+    case CachingStrategy.NoCache:
+      return dynamicRequireNoCache(path);
+
+    case CachingStrategy.FsTime:
+      return dynamicRequireFsTime(path as PortablePath);
+
+    case CachingStrategy.Node:
+      return dynamicRequireNode(path);
+
+    default: {
+      throw new Error(`Unsupported caching strategy`);
+    }
+  }
 }
 
 // This function transforms an iterable into an array and sorts it according to

@@ -988,6 +988,40 @@ describe(`Node_Modules`, () => {
       })
   );
 
+  test(`should not error out if one of two same-parent portals has unresolved peer dependency, while the other has resolved dependency with the same name`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget1 => {
+          await xfs.mktempPromise(async portalTarget2 => {
+            await xfs.writeJsonPromise(`${portalTarget1}/package.json` as PortablePath, {
+              name: `portal1`,
+              peerDependencies: {
+                'no-deps': `2.0.0`,
+              },
+            });
+            await xfs.writeJsonPromise(`${portalTarget2}/package.json` as PortablePath, {
+              name: `portal2`,
+              dependencies: {
+                'no-deps': `1.0.0`,
+              },
+            });
+
+            await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+              dependencies: {
+                portal1: `portal:${portalTarget1}`,
+                portal2: `portal:${portalTarget2}`,
+              },
+            });
+
+            await expect(run(`install`)).resolves.not.toThrow();
+          });
+        });
+      })
+  );
+
   test(
     `should not warn when depending on workspaces with postinstall`,
     makeTemporaryEnv(
@@ -1032,8 +1066,35 @@ describe(`Node_Modules`, () => {
         },
       });
 
-      await expect(async () => await run(`install`)).not.toThrow();
+      await expect(run(`install`)).resolves.not.toThrow();
     })
+  );
+
+  test(`should give a priority to direct portal dependencies over indirect regular dependencies`,
+    makeTemporaryEnv({},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              'no-deps': `2.0.0`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+              'one-fixed-dep': `1.0.0`,
+              'one-range-dep': `1.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.not.toThrow();
+        });
+      })
   );
 
   test(
@@ -1238,6 +1299,40 @@ describe(`Node_Modules`, () => {
 
         const depContent = await xfs.readFilePromise(depNmPath, `utf8`);
         expect(depContent).toEqual(originalContent);
+      }
+    )
+  );
+
+  test(`should give priority to direct workspace dependencies over indirect regular dependencies`,
+    // Despite 'one-fixed-dep' and 'has-bin-entries' depend on 'no-deps:1.0.0',
+    // the 'no-deps:2.0.0' should be hoisted to the top-level
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(`${path}/ws1/package.json`, {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+        await writeJson(`${path}/ws2/package.json`, {
+          dependencies: {
+            [`has-bin-entries`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+          version: `2.0.0`,
+        });
       }
     )
   );

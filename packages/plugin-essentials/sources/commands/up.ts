@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
 import {IdentHash, structUtils}                                                                                     from '@yarnpkg/core';
-import {Project, StreamReport, Workspace}                                                                           from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, InstallMode}                                                              from '@yarnpkg/core';
 import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                                                                         from 'clipanion';
 import {prompt}                                                                                                     from 'enquirer';
@@ -26,6 +26,12 @@ export default class UpCommand extends BaseCommand {
       If \`-i,--interactive\` is set (or if the \`preferInteractive\` settings is toggled on) the command will offer various choices, depending on the detected upgrade paths. Some upgrades require this flag in order to resolve ambiguities.
 
       The, \`-C,--caret\`, \`-E,--exact\` and  \`-T,--tilde\` options have the same meaning as in the \`add\` command (they change the modifier used when the range is missing or a tag, and are ignored when the range is explicitly set).
+
+      If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
+
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+
+      - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
 
       Generally you can see \`yarn up\` as a counterpart to what was \`yarn upgrade --latest\` in Yarn 1 (ie it ignores the ranges previously listed in your manifests), but unlike \`yarn upgrade\` which only upgraded dependencies in the current workspace, \`yarn up\` will upgrade all workspaces at the same time.
 
@@ -72,6 +78,11 @@ export default class UpCommand extends BaseCommand {
 
   recursive = Option.Boolean(`-R,--recursive`, false, {
     description: `Resolve again ALL resolutions for those packages`,
+  });
+
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   patterns = Option.Rest();
@@ -328,7 +339,7 @@ export default class UpCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      await project.install({cache, report});
+      await project.install({cache, report, mode: this.mode});
     });
 
     return installReport.exitCode();

@@ -49,6 +49,17 @@ function toUnixTimestamp(time: Date | string | number) {
   throw new Error(`Invalid time`);
 }
 
+export function makeEmptyArchive() {
+  return Buffer.from([
+    0x50, 0x4B, 0x05, 0x06,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00,
+  ]);
+}
+
 export class ZipFS extends BasePortableFakeFS {
   private readonly libzip: Libzip;
 
@@ -95,16 +106,7 @@ export class ZipFS extends BasePortableFakeFS {
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
 
-    if (source === null) {
-      source = Buffer.from([
-        0x50, 0x4B, 0x05, 0x06,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00,
-      ]);
-    }
+    source ??= makeEmptyArchive();
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -305,23 +307,23 @@ export class ZipFS extends BasePortableFakeFS {
       return;
     }
 
-    const previousMod = this.baseFs.existsSync(this.path)
-      ? this.baseFs.statSync(this.path).mode & 0o777
-      : null;
+    const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === statUtils.DEFAULT_MODE
+      ? undefined
+      : this.stats.mode;
 
-    const rc = this.libzip.close(this.zip);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    // zip_close doesn't persist empty archives
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), {mode: newMode});
+    } else {
+      const rc = this.libzip.close(this.zip);
+      if (rc === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
 
-    // this.libzip overrides the chmod when writing the archive, which is a weird
-    // behavior I don't totally understand (plus the umask seems bogus in some
-    // weird cases - maybe related to emscripten?)
-    //
-    // See also https://github.com/nih-at/libzip/issues/77
-    if (previousMod === null)
-      this.baseFs.chmodSync(this.path, this.stats.mode);
-    else if (previousMod !== (this.baseFs.statSync(this.path).mode & 0o777))
-      this.baseFs.chmodSync(this.path, previousMod);
+      if (typeof newMode !== `undefined`) {
+        this.baseFs.chmodSync(this.path, newMode);
+      }
+    }
 
     this.ready = false;
   }
@@ -1101,8 +1103,16 @@ export class ZipFS extends BasePortableFakeFS {
     return this.writeFileSync(p, content, opts);
   }
 
+  private fdToPath(fd: number, reason: string) {
+    const path = this.fds.get(fd)?.p;
+    if (typeof path === `undefined`)
+      throw errors.EBADF(reason);
+
+    return path;
+  }
+
   async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content as any)]);
@@ -1111,13 +1121,16 @@ export class ZipFS extends BasePortableFakeFS {
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index) {
+    if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
+
+    if (mode !== null) {
+      await this.chmodPromise(resolvedP, mode);
     }
   }
 
   writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
-    const {encoding, index, resolvedP} = this.prepareWriteFile(p, opts);
+    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
@@ -1126,14 +1139,17 @@ export class ZipFS extends BasePortableFakeFS {
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index) {
+    if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
+
+    if (mode !== null) {
+      this.chmodSync(resolvedP, mode);
     }
   }
 
   private prepareWriteFile(p: FSPath<PortablePath>, opts?: WriteFileOptions) {
-    if (typeof p !== `string`)
-      throw errors.EBADF(`read`);
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
 
     if (this.readOnly)
       throw errors.EROFS(`open '${p}'`);
@@ -1142,17 +1158,22 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.listings.has(resolvedP))
       throw errors.EISDIR(`open '${p}'`);
 
-    let encoding = null;
+    let encoding = null, mode = null;
 
-    if (typeof opts === `string`)
+    if (typeof opts === `string`) {
       encoding = opts;
-    else if (typeof opts === `object` && opts.encoding)
-      encoding = opts.encoding;
+    } else if (typeof opts === `object`) {
+      ({
+        encoding = null,
+        mode = null,
+      } = opts);
+    }
 
     const index = this.entries.get(resolvedP);
 
     return {
       encoding,
+      mode,
       resolvedP,
       index,
     };
@@ -1317,7 +1338,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: PortablePath, encoding?: string) {
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-expect-error
@@ -1329,7 +1350,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
   readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: PortablePath, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-expect-error
@@ -1339,11 +1360,14 @@ export class ZipFS extends BasePortableFakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  private readFileBuffer(p: PortablePath): Buffer
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: false}): Buffer
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: true}): Promise<Buffer>
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
-  private readFileBuffer(p: PortablePath, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
+  private readFileBuffer(p: FSPath<PortablePath>): Buffer
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: false}): Buffer
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: true}): Promise<Buffer>
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer
+  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
+
     const resolvedP = this.resolveFilename(`open '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`open '${p}'`);
@@ -1363,18 +1387,18 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<statUtils.DirEntry>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<statUtils.DirEntry>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<statUtils.DirEntry>> {
-    return this.readdirSync(p, {withFileTypes: withFileTypes as any});
+  async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<statUtils.DirEntry>> {
+    return this.readdirSync(p, opts as any);
   }
 
   readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false} | null): Array<Filename>;
   readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<statUtils.DirEntry>;
   readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<statUtils.DirEntry>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<statUtils.DirEntry> {
+  readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<statUtils.DirEntry> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
@@ -1384,7 +1408,7 @@ export class ZipFS extends BasePortableFakeFS {
       throw errors.ENOTDIR(`scandir '${p}'`);
 
     const entries = [...directoryListing];
-    if (!withFileTypes)
+    if (!opts?.withFileTypes)
       return entries;
 
     return entries.map(name => {

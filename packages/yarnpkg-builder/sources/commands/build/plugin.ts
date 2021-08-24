@@ -2,7 +2,7 @@ import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from
 import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath, xfs}                                                         from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                 from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild-wasm';
+import {build, Plugin}                                                      from 'esbuild';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
 
@@ -57,7 +57,7 @@ export default class BuildPluginCommand extends Command {
     const portableBaseDir = npath.toPortablePath(basedir);
     const configuration = Configuration.create(portableBaseDir);
 
-    const {name: rawName} = require(`${basedir}/package.json`);
+    const {name: rawName, main} = require(`${basedir}/package.json`);
     const name = getNormalizedName(rawName);
     const prettyName = structUtils.prettyIdent(configuration, structUtils.parseIdent(name));
     const output = path.join(basedir, `bundles/${name}.js`);
@@ -109,7 +109,7 @@ export default class BuildPluginCommand extends Command {
               `};`,
             ].join(`\n`),
           },
-          entryPoints: [path.join(basedir, `sources/index`)],
+          entryPoints: [path.resolve(basedir, main ?? `sources/index`)],
           bundle: true,
           outfile: output,
           logLevel: `silent`,

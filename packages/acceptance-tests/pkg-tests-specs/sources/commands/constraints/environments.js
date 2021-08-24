@@ -79,4 +79,19 @@ exports.environments = {
       },
     });
   },
+  [`various field types`]: async path => {
+    await writeJson(`${path}/package.json`, {
+      name: `foo`,
+      repository: {
+        type: `git`,
+        url: `ssh://git@github.com/yarnpkg/berry.git`,
+        directory: `.`,
+      },
+      files: [
+        `/a`,
+        `/b`,
+        `/c`,
+      ],
+    });
+  },
 };
