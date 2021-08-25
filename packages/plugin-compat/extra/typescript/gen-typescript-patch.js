@@ -60,21 +60,21 @@ const SLICES = [
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.2
   {
     from: `8e0e8703b9c95013aec7819e4593d099cdf7763a`,
-    to: `d1cd11e8d50d3bab758cc898b46867171c5e33ed`,
+    to: `545d5a8c5409dac447a668d4e7d315702fd115d6`,
     onto: `bfc55b5762443c37ecdef08a3b5a4e057b4d1e85`,
     range: `>=4.2 <4.3`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.3
   {
     from: `530aad19e4ac19d35cb6b200168c91ce86cb0050`,
-    to: `8f569da31e6ea242a4bc9cf18f841ad0c122893c`,
+    to: `6d7d4d2ce0df8e65a2c86a20c014c053ef530ea3`,
     onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
     range: `>=4.3 <4.4`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.4
   {
     from: `0fc83b4d571df33a3c40c20c0eba68965fb52aca`,
-    to: `3f4e1516e0a956e1e0d46d9caf2a1f896fb77aaa`,
+    to: `10a61d069439e79c07890b519caf2cb7f3b6abdf`,
     onto: `55dd850009603aafa6ef8cc88020fa30d217d5b6`,
     range: `>=4.4`,
   },
