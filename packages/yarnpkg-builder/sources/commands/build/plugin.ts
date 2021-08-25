@@ -113,7 +113,7 @@ export default class BuildPluginCommand extends Command {
           bundle: true,
           outfile: output,
           logLevel: `silent`,
-          platform: 'node',
+          platform: `node`,
           plugins: [dynamicLibResolver, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
