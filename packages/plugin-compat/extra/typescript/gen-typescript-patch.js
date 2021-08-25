@@ -288,21 +288,24 @@ async function run({from, to, onto, range}) {
 }
 
 async function validate(version, patchFile) {
-  const code = Math.floor(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
-  const tmpDir = path.join(TMP_DIR, `${code}`);
-
-  const data = await fetch(`https://registry.yarnpkg.com/typescript/-/typescript-${version}.tgz`);
-  const tarball = path.join(tmpDir, `typescript.tgz`);
+  const tmpDir = path.join(TMP_DIR, `v${version}`);
+  const tarball = path.join(tmpDir, `package.tgz`);
 
   await fs.promises.mkdir(tmpDir, {recursive: true});
-  await fs.promises.writeFile(tarball, data);
+
+  if (!fs.existsSync(tarball)) {
+    const data = await fetch(`https://registry.yarnpkg.com/typescript/-/typescript-${version}.tgz`);
+    await fs.promises.writeFile(tarball, data);
+  }
+
+  if (!fs.existsSync(path.join(tmpDir, `package`)))
+    await execFile(`tar`, [`xvf`, tarball], {cwd: tmpDir});
 
   let patch = await fs.promises.readFile(patchFile, `utf8`);
   patch = patch.replace(/^semver .*\n/gm, ``);
   await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patch);
 
-  await execFile(`tar`, [`xvf`, tarball], {cwd: tmpDir});
-  await execFile(`git`, [`apply`, `../patch.diff`], {cwd: path.join(tmpDir, `package`)});
+  await execFile(`git`, [`apply`, `--check`, `../patch.diff`], {cwd: path.join(tmpDir, `package`)});
 }
 
 async function main() {
