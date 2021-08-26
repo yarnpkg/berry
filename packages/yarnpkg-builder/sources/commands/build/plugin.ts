@@ -113,6 +113,7 @@ export default class BuildPluginCommand extends Command {
           bundle: true,
           outfile: output,
           logLevel: `silent`,
+          format: `iife`,
           platform: `node`,
           plugins: [dynamicLibResolver, pnpPlugin()],
           minify: !this.noMinify,
