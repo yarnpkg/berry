@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`npmPublishUtils.getGitHead it should detect the gitHead for this repo 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: package.json
+➤ YN0000: Package archive published
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`npmPublishUtils.getGitHead it should not detect the gitHead for this repo 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: package.json
+➤ YN0000: Package archive published
+➤ YN0000: Done
+",
+}
+`;
