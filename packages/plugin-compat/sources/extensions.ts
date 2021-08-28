@@ -577,4 +577,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       pug: optionalPeerDep,
     },
   }],
+  // https://github.com/rt2zz/redux-persist/pull/1336
+  [`redux-persist@*`, {
+    peerDependencies: {
+      react: `>=16`,
+    },
+    peerDependenciesMeta: {
+      react: optionalPeerDep,
+    },
+  }],
 ];
