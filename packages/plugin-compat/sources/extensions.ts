@@ -564,4 +564,17 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       logform: `^2.2.0`,
     },
   }],
+  // https://github.com/vire/jest-vue-preprocessor/pull/177
+  [`jest-vue-preprocessor@*`, {
+    dependencies: {
+      '@babel/core': `7.8.7`,
+      '@babel/template': `7.8.6`,
+    },
+    peerDependencies: {
+      pug: `^2.0.4`,
+    },
+    peerDependenciesMeta: {
+      pug: optionalPeerDep,
+    },
+  }],
 ];
