@@ -1,13 +1,10 @@
+import {execUtils}              from '@yarnpkg/core';
 import {Workspace, structUtils} from '@yarnpkg/core';
-import {PortablePath, npath}    from '@yarnpkg/fslib';
+import {PortablePath}           from '@yarnpkg/fslib';
 import {packUtils}              from '@yarnpkg/plugin-pack';
-import {execFile}               from 'child_process';
 import {createHash}             from 'crypto';
 import ssri                     from 'ssri';
 import {URL}                    from 'url';
-import {promisify}              from 'util';
-
-const execFilePromise = promisify(execFile);
 
 export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: {access: string | undefined, tag: string, registry: string, gitHead: string | undefined}) {
   const configuration = workspace.project.configuration;
@@ -50,7 +47,6 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
         length: buffer.length,
       },
     },
-    gitHead,
     name,
     access,
 
@@ -66,6 +62,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
 
         name,
         version,
+        gitHead,
 
         dist: {
           shasum,
@@ -79,11 +76,11 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   };
 }
 
-// This is based on the npm implementation here:
-// https://github.com/npm/read-package-json/blob/v3.0.1/read-json.js#L345-L384
 export async function getGitHead (workingDir: PortablePath) {
   try {
-    const {stdout} = await execFilePromise(`git`, [`rev-parse`, `--revs-only`, `HEAD`], {cwd: npath.fromPortablePath(workingDir)});
+    const {stdout} = await execUtils.execvp(`git`, [`rev-parse`, `--revs-only`, `HEAD`], {cwd: workingDir});
+    if (stdout.trim() === ``)
+      return undefined;
     return stdout.trim();
   } catch {
     return undefined;
