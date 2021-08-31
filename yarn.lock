@@ -4238,10 +4238,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.136, @types/lodash@npm:^4.14.165, @types/lodash@npm:^4.14.92":
-  version: 4.14.168
-  resolution: "@types/lodash@npm:4.14.168"
-  checksum: 3326966ee089debde7a7d819e13b64991756e879945852c3357df14a7be837130f697c2cb451be9dd599eb7213fed0975bc9ca0f8f56b46fa73c46a83815b79c
+"@types/lodash-es@npm:4.17.4":
+  version: 4.17.4
+  resolution: "@types/lodash-es@npm:4.17.4"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: acffe910e8cffe475b854d74f4372549ec700ac00d9ed885fd85ec34c3f9af1a262bf667000ea9126dc39a05a75f64593d8a5f312cfd7d90e91294d458be08a7
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.136, @types/lodash@npm:^4.14.165, @types/lodash@npm:^4.14.92":
+  version: 4.14.172
+  resolution: "@types/lodash@npm:4.14.172"
+  checksum: 5fc51ea40d7e455bd1c760bcc60c9e81f82d85988666d4d4969bd8311367c63bbf1fe2be48755ba87836710e45fff94014ec164ebe6ccaa72815014981152434
   languageName: node
   linkType: hard
 
@@ -5234,7 +5243,7 @@ __metadata:
     terser-webpack-plugin: ^3.0.4
     ts-loader: ^7.0.5
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
     val-loader: ^2.1.1
     webpack: ^5.1.1
     webpack-merge: ^4.2.2
@@ -5282,7 +5291,7 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typanion: ^3.3.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
     yup: ^0.32.9
   peerDependencies:
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -5359,7 +5368,7 @@ __metadata:
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5492,7 +5501,7 @@ __metadata:
     typedoc: next
     typedoc-neo-theme: ^1.0.7
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
-    typescript: ^4.3.2
+    typescript: ^4.4.2
     unescape-html: ^1.1.0
     unfetch: ^4.1.0
     unified: ^7.1.0
@@ -5570,7 +5579,7 @@ __metadata:
     jest-junit: ^10.0.0
     micromatch: ^4.0.2
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   dependenciesMeta:
     core-js:
       built: false
@@ -5618,6 +5627,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
+    "@types/lodash-es": 4.17.4
     "@types/resolve": ^1.17.1
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
@@ -5647,7 +5657,7 @@ __metadata:
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/cli": ^3.1.0-rc.1
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -5706,7 +5716,7 @@ __metadata:
     "@yarnpkg/core": "workspace:*"
     "@yarnpkg/fslib": "workspace:^2.6.0-rc.1"
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/core": ^3.1.0-rc.2
   languageName: unknown
@@ -5803,7 +5813,7 @@ __metadata:
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/cli": ^3.1.0-rc.1
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -5957,7 +5967,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.6.0-rc.1"
     clipanion: ^3.0.1
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/cli": ^3.1.0-rc.1
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -5978,7 +5988,7 @@ __metadata:
     algoliasearch: ^4.2.0
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/cli": ^3.1.0-rc.1
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -6005,7 +6015,7 @@ __metadata:
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/cli": ^3.1.0-rc.1
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -6026,7 +6036,7 @@ __metadata:
     p-limit: ^2.2.0
     tslib: ^1.13.0
     typanion: ^3.3.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
   peerDependencies:
     "@yarnpkg/cli": ^3.1.0-rc.1
     "@yarnpkg/core": ^3.1.0-rc.2
@@ -6044,7 +6054,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:*"
     resolve.exports: ^1.0.2
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
     webpack: ^5.1.1
     webpack-cli: ^4.0.0-beta.8
   languageName: unknown
@@ -25745,19 +25755,19 @@ typescript@^3.8.3:
   languageName: node
   linkType: hard
 
-typescript@^4.3.2:
-  version: 4.3.2
-  resolution: "typescript@npm:4.3.2"
+typescript@^4.4.2:
+  version: 4.4.2
+  resolution: "typescript@npm:4.4.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: c2a86fa03ce03b255adc13ccd70a55173ca6539ae12114feca59f34a4e9bb69f14fb7cd5adc6c2416e568cff05c870b89d1366768ec55fce04fbdffb429a1cee
+  checksum: 194e08e9d1971d667d6fd1a0554616b7022312a2319d70e81a64e502a265992061ee7817ed9a69b52bbabe7a9b85e7938cb8c11c433e40a516b277f8c4dacd51
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@3.7.x#~builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=6454cb"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#~builtin<compat/typescript>::version=3.7.5&hash=ddd1e8"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25767,7 +25777,7 @@ typescript@^4.3.2:
 
 "typescript@patch:typescript@^3.8.3#~builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=6454cb"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#~builtin<compat/typescript>::version=3.9.5&hash=ddd1e8"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25775,13 +25785,13 @@ typescript@^4.3.2:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.3.2#~builtin<compat/typescript>":
-  version: 4.3.2
-  resolution: "typescript@patch:typescript@npm%3A4.3.2#~builtin<compat/typescript>::version=4.3.2&hash=6454cb"
+"typescript@patch:typescript@^4.4.2#~builtin<compat/typescript>":
+  version: 4.4.2
+  resolution: "typescript@patch:typescript@npm%3A4.4.2#~builtin<compat/typescript>::version=4.4.2&hash=ddd1e8"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 120b3cc2f092ec537837a88a996f2bb4147cf775617322be0030451dc80f39fc3af509b6a1cfebdc43679d466784312189ab2e8c6180c33d603f3d55bbe6d576
+  checksum: 1f30617046271a94d6821fe9da9c4705111e0a2f5479269c82f65aa76b2421ff90def8838dd35b1aa464d015248b06c89ff867bd282f4822b5ee18b7f92f95ee
   languageName: node
   linkType: hard
 
@@ -26660,7 +26670,7 @@ typescript@^4.3.2:
     "@yarnpkg/pnpify": "workspace:*"
     ts-loader: ^7.0.5
     tslib: ^1.13.0
-    typescript: ^4.3.2
+    typescript: ^4.4.2
     vsce: ^1.85.1
     webpack: ^5.1.1
     webpack-cli: ^4.0.0-beta.8
