@@ -4446,6 +4446,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash-es@npm:4.17.4":
+  version: 4.17.4
+  resolution: "@types/lodash-es@npm:4.17.4"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 5a56261030df09302229a6bbabfcb5a0a63a290bdcc0ca9ee6a96a4fbf7a34101fae4b772fedf5dc4a2b49212ddaf9019b3f014b8c7c84adfea500ece157ec1b
+  languageName: node
+  linkType: hard
+
 "@types/lodash.sample@npm:^4.2.6":
   version: 4.2.6
   resolution: "@types/lodash.sample@npm:4.2.6"
@@ -5773,6 +5782,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
+    "@types/lodash-es": 4.17.4
     "@types/resolve": ^1.17.1
     "@yarnpkg/cli": "workspace:^2.4.2"
     "@yarnpkg/core": "workspace:^2.4.0"
@@ -26495,7 +26505,7 @@ typescript@4.1.0-beta:
 
 "typescript@patch:typescript@3.7.x#builtin<compat/typescript>":
   version: 3.7.5
-  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=ddfc1b"
+  resolution: "typescript@patch:typescript@npm%3A3.7.5#builtin<compat/typescript>::version=3.7.5&hash=8133ad"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26505,7 +26515,7 @@ typescript@4.1.0-beta:
 
 "typescript@patch:typescript@4.1.0-beta#builtin<compat/typescript>":
   version: 4.1.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=ddfc1b"
+  resolution: "typescript@patch:typescript@npm%3A4.1.0-beta#builtin<compat/typescript>::version=4.1.0-beta&hash=8133ad"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -26515,7 +26525,7 @@ typescript@4.1.0-beta:
 
 "typescript@patch:typescript@^3.8.3#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>":
   version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=ddfc1b"
+  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=8133ad"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver

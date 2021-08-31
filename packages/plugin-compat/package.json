@@ -8,6 +8,7 @@
     "@yarnpkg/plugin-patch": "^2.1.2"
   },
   "devDependencies": {
+    "@types/lodash-es": "4.17.4",
     "@types/resolve": "^1.17.1",
     "@yarnpkg/cli": "workspace:^2.4.2",
     "@yarnpkg/core": "workspace:^2.4.0",
