@@ -37,7 +37,7 @@ export class LinkFetcher implements Fetcher {
     // If the package fs publicized its "original location" (for example like
     // in the case of "file:" packages), we use it to derive the real location.
     const effectiveParentFetch: FetchResult = parentFetch.localPath
-      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
+      ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath), localPath: PortablePath.root}
       : parentFetch;
 
     // Discard the parent fs unless we really need it to access the files
@@ -45,7 +45,11 @@ export class LinkFetcher implements Fetcher {
       parentFetch.releaseFs();
 
     const sourceFs = effectiveParentFetch.packageFs;
-    const sourcePath = ppath.join(effectiveParentFetch.prefixPath, path);
+    const sourcePath = ppath.resolve(
+      effectiveParentFetch.localPath ?? effectiveParentFetch.packageFs.getRealPath(),
+      effectiveParentFetch.prefixPath,
+      path
+    );
 
     if (parentFetch.localPath) {
       return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, localPath: sourcePath};

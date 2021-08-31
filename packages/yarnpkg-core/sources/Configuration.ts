@@ -1425,7 +1425,7 @@ export class Configuration {
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
       if (!semverUtils.validRange(descriptor.range))
-        throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
+        throw new Error(`Only semver ranges are allowed as keys for the packageExtensions setting`);
 
       const extension = new Manifest();
       extension.load(extensionData, {yamlCompatibilityMode: true});
