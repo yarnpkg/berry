@@ -586,4 +586,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: optionalPeerDep,
     },
   }],
+  // https://github.com/paixaop/node-sodium/pull/159
+  [`sodium@>=3`, {
+    dependencies: {
+      'node-gyp': `^3.8.0`,
+    },
+  }],
 ];
