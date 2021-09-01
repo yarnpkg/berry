@@ -592,4 +592,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'node-gyp': `^3.8.0`,
     },
   }],
+  // https://github.com/gajus/babel-plugin-graphql-tag/pull/63
+  [`babel-plugin-graphql-tag@<=3.1.0`, {
+    peerDependencies: {
+      graphql: `^14.0.0 || ^15.0.0`,
+    },
+  }],
 ];
