@@ -315,7 +315,9 @@ describe(`Plug'n'Play - ESM`, () => {
     )
   );
 
-  test(
+  // Requires the ESM loader to be loaded but currently that enters ESM
+  // mode and would test the incorrect code path
+  test.skip(
     `it should work with dynamic imports in commonjs mode`,
     makeTemporaryEnv(
       {
