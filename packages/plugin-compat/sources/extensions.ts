@@ -598,4 +598,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       graphql: `^14.0.0 || ^15.0.0`,
     },
   }],
+  // https://github.com/microsoft/playwright/pull/8501
+  [`@playwright/test@<=1.14.1`, {
+    dependencies: {
+      'jest-matcher-utils': `^26.4.2`,
+    },
+  }],
 ];
