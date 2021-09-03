@@ -5294,7 +5294,7 @@ __metadata:
     typescript: ^4.4.2
     yup: ^0.32.9
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5638,8 +5638,8 @@ __metadata:
     resolve: ^1.17.0
     semver: ^7.1.2
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
-    "@yarnpkg/plugin-patch": ^3.0.1-rc.1
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-patch": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5659,8 +5659,8 @@ __metadata:
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5675,8 +5675,8 @@ __metadata:
     clipanion: ^3.0.1
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5703,8 +5703,8 @@ __metadata:
     tslib: ^1.13.0
     typanion: ^3.3.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5718,7 +5718,7 @@ __metadata:
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5730,7 +5730,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.6.0-rc.2"
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5746,7 +5746,7 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5759,8 +5759,8 @@ __metadata:
     "@yarnpkg/plugin-git": "workspace:*"
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
-    "@yarnpkg/plugin-git": ^2.4.0
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5772,7 +5772,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.6.0-rc.2"
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5788,8 +5788,8 @@ __metadata:
     lodash: ^4.17.15
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5815,9 +5815,9 @@ __metadata:
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
-    "@yarnpkg/plugin-essentials": ^3.1.0-rc.2
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-essentials": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5829,7 +5829,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^2.6.0-rc.2"
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5852,8 +5852,8 @@ __metadata:
     micromatch: ^4.0.2
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5874,10 +5874,10 @@ __metadata:
     tslib: ^1.13.0
     typanion: ^3.3.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
-    "@yarnpkg/plugin-npm": ^2.5.0
-    "@yarnpkg/plugin-pack": ^3.1.0-rc.2
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-npm": "workspace:^"
+    "@yarnpkg/plugin-pack": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5895,8 +5895,8 @@ __metadata:
     ssri: ^6.0.1
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/core": ^3.1.0-rc.3
-    "@yarnpkg/plugin-pack": ^3.1.0-rc.2
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-pack": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5915,8 +5915,8 @@ __metadata:
     tar-stream: ^2.0.1
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5931,8 +5931,8 @@ __metadata:
     clipanion: ^3.0.1
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5952,8 +5952,8 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5969,8 +5969,8 @@ __metadata:
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5990,9 +5990,9 @@ __metadata:
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
-    "@yarnpkg/plugin-essentials": ^3.1.0-rc.2
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-essentials": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -6017,8 +6017,8 @@ __metadata:
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -6038,8 +6038,8 @@ __metadata:
     typanion: ^3.3.0
     typescript: ^4.4.2
   peerDependencies:
-    "@yarnpkg/cli": ^3.1.0-rc.2
-    "@yarnpkg/core": ^3.1.0-rc.3
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
