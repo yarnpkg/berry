@@ -14,8 +14,7 @@
     "declaration": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "skipLibCheck": true,
-    "useUnknownInCatchVariables": false
+    "skipLibCheck": true
   },
   "exclude": [
     "packages/*/lib",
