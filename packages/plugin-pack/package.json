@@ -1,18 +1,18 @@
 {
   "name": "@yarnpkg/plugin-pack",
-  "version": "3.1.0-rc.1",
+  "version": "3.1.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.1",
+    "@yarnpkg/fslib": "workspace:^2.6.0-rc.2",
     "clipanion": "^3.0.1",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.1.0-rc.1",
-    "@yarnpkg/core": "^3.1.0-rc.2"
+    "@yarnpkg/cli": "^3.1.0-rc.2",
+    "@yarnpkg/core": "^3.1.0-rc.3"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
