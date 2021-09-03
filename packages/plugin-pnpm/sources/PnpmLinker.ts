@@ -52,11 +52,17 @@ export class PnpmLinker implements Linker {
 }
 
 class PnpmInstaller implements Installer {
-  private locations = new Map<LocatorHash, PortablePath>();
   private pendingPromises: Array<Promise<void>> = [];
+  private packageLocations = new Map<LocatorHash, PortablePath>();
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
+  }
+
+  getInstallerSettings() {
+    return {
+      installPackageConcurrency: 10,
+    };
   }
 
   getCustomDataKey() {
@@ -82,7 +88,7 @@ class PnpmInstaller implements Installer {
 
   async installPackageSoft(pkg: Package, fetchResult: FetchResult) {
     const pkgPath = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
-    this.locations.set(pkg.locatorHash, pkgPath);
+    this.packageLocations.set(pkg.locatorHash, pkgPath);
 
     return {
       packageLocation: pkgPath,
@@ -92,23 +98,18 @@ class PnpmInstaller implements Installer {
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult) {
     const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
-    this.locations.set(pkg.locatorHash, pkgPath);
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
+    this.packageLocations.set(pkg.locatorHash, pkgPath);
+
+    await xfs.mkdirPromise(pkgPath, {recursive: true});
 
     // Copy the package source into the <root>/n_m/.store/<hash> directory, so
     // that we can then create symbolic links to it later.
-    const installPromise = Promise.resolve().then(async () => {
-      await xfs.mkdirPromise(pkgPath, {recursive: true});
-      await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
-        baseFs: fetchResult.packageFs,
-        overwrite: false,
-      });
+    await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
+      baseFs: fetchResult.packageFs,
+      overwrite: false,
     });
-
-    // Just to avoid the promise being reported as uncaught, since the core
-    // will manage it once we return anyway.
-    installPromise.catch(() => {});
 
     const isVirtual = structUtils.isVirtualLocator(pkg);
     const devirtualizedLocator: Locator = isVirtual ? structUtils.devirtualizeLocator(pkg) : pkg;
@@ -126,7 +127,6 @@ class PnpmInstaller implements Installer {
     return {
       packageLocation: pkgPath,
       buildDirective: buildScripts,
-      installPromise,
     };
   }
 
@@ -138,7 +138,7 @@ class PnpmInstaller implements Installer {
     if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
-    const pkgPath = this.locations.get(locator.locatorHash);
+    const pkgPath = this.packageLocations.get(locator.locatorHash);
     if (typeof pkgPath === `undefined`)
       throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
 
@@ -159,7 +159,7 @@ class PnpmInstaller implements Installer {
         targetDependency = structUtils.devirtualizeLocator(dependency);
       }
 
-      const depSrcPath = this.locations.get(targetDependency.locatorHash);
+      const depSrcPath = this.packageLocations.get(targetDependency.locatorHash);
       if (typeof depSrcPath === `undefined`)
         throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
@@ -201,6 +201,23 @@ class PnpmInstaller implements Installer {
   }
 
   async finalizeInstall() {
+    this.pendingPromises.push(Promise.resolve().then(async () => {
+      const storeLocation = getStoreLocation(this.opts.project);
+
+      const expectedEntries = new Set<Filename>();
+      for (const packageLocation of this.packageLocations.values())
+        expectedEntries.add(ppath.basename(packageLocation));
+
+      const removals: Array<Promise<void>> = [];
+
+      const storeRecords = await xfs.readdirPromise(storeLocation);
+      for (const record of storeRecords)
+        if (!expectedEntries.has(record))
+          removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
+
+      await Promise.all(removals);
+    }));
+
     await Promise.all(this.pendingPromises);
     return undefined;
   }
