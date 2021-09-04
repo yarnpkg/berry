@@ -8,8 +8,8 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^3.1.0-rc.3",
-    "@yarnpkg/plugin-git": "^2.4.0"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
     "@yarnpkg/core": "workspace:*",
