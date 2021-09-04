@@ -1,4 +1,4 @@
-import {BaseCommand} from "@yarnpkg/cli";
+import {BaseCommand} from '@yarnpkg/cli';
 
 // eslint-disable-next-line arca/no-default-export
 export default class HelpCommand extends BaseCommand {

@@ -1,4 +1,4 @@
-import {useLayoutEffect, useRef} from "react";
+import {useLayoutEffect, useRef} from 'react';
 
 const useScroll = () => {
   const ref = useRef();

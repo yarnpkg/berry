@@ -1,7 +1,7 @@
-import {WorkspaceRequiredError, BaseCommand} from "@yarnpkg/cli";
-import {Configuration, Project, Workspace}   from "@yarnpkg/core";
-import {structUtils}                         from "@yarnpkg/core";
-import {Command, Option, Usage, UsageError}  from "clipanion";
+import {WorkspaceRequiredError, BaseCommand} from '@yarnpkg/cli';
+import {Configuration, Project, Workspace}   from '@yarnpkg/core';
+import {structUtils}                         from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}  from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspaceCommand extends BaseCommand {

@@ -1,4 +1,4 @@
-import {TAG_REGEXP} from "../sources/ProtocolResolver";
+import {TAG_REGEXP} from '../sources/ProtocolResolver';
 
 describe(`ProtocolResolver`, () => {
   describe(`TAG_REGEXP`, () => {
