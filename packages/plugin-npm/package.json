@@ -11,8 +11,8 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^3.1.0-rc.3",
-    "@yarnpkg/plugin-pack": "^3.1.0-rc.2"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-pack": "workspace:^"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",

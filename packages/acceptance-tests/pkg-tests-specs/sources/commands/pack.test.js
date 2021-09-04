@@ -360,6 +360,11 @@ describe(`Commands`, () => {
           devDependencies: {
             [dependency]: `workspace:^1.0.0`,
           },
+          peerDependencies: {
+            [dependency]: `workspace:*`,
+            [foo]: `workspace:^`,
+            [bar]: `workspace:~`,
+          },
         });
 
         await run(`install`);
@@ -375,6 +380,9 @@ describe(`Commands`, () => {
         expect(packedManifest.devDependencies[dependency]).toBe(`^1.0.0`);
         expect(packedManifest.dependencies[foo]).toBe(`^2.0.0`);
         expect(packedManifest.dependencies[bar]).toBe(`~3.0.0`);
+        expect(packedManifest.peerDependencies[dependency]).toBe(`1.0.0`);
+        expect(packedManifest.peerDependencies[foo]).toBe(`^2.0.0`);
+        expect(packedManifest.peerDependencies[bar]).toBe(`~3.0.0`);
 
         const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
 
@@ -382,6 +390,9 @@ describe(`Commands`, () => {
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
         expect(originalManifest.dependencies[foo]).toBe(`workspace:^`);
         expect(originalManifest.dependencies[bar]).toBe(`workspace:~`);
+        expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:*`);
+        expect(originalManifest.peerDependencies[foo]).toBe(`workspace:^`);
+        expect(originalManifest.peerDependencies[bar]).toBe(`workspace:~`);
       }),
     );
 
