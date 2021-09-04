@@ -31636,7 +31636,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["semver", "npm:7.3.5"],
             ["serve-static", "npm:1.14.1"],
             ["super-resolve", "npm:1.0.0"],
-            ["tar-fs", "npm:1.16.3"]
+            ["tar-fs", "npm:1.16.3"],
+            ["tslib", "npm:1.13.0"]
           ],
           "linkType": "SOFT",
         }]
