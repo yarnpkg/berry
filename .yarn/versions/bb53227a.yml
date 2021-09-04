@@ -11,6 +11,7 @@ declined:
   - "@yarnpkg/plugin-file"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
+  - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
