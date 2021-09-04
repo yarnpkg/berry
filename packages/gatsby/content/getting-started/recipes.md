@@ -55,4 +55,4 @@ nodeLinker: node-modules
 pnpIgnorePatterns:
   - ./nm-packages/**
 ```
-- You can now run `cd nm-package/myproj && yarn install` and the project will be isolated from your pnp root.
+- You can now run `yarn` and the project will be isolated from your PnP root.
