@@ -647,4 +647,16 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       got: `8.3.2`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/32861
+  [`gatsby-plugin-gatsby-cloud@<=3.1.0-next.0`, {
+    dependencies: {
+      'gatsby-core-utils': `^2.13.0-next.0`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/31837
+  [`gatsby-plugin-gatsby-cloud@<=3.2.0-next.1`, {
+    peerDependencies: {
+      webpack: `*`,
+    },
+  }],
 ];
