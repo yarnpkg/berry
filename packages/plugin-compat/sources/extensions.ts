@@ -659,4 +659,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       webpack: `*`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/31837
+  [`babel-plugin-remove-graphql-queries@<=3.14.0-next.1`, {
+    dependencies: {
+      'gatsby-core-utils': `^2.8.0-next.1`,
+    },
+  }],
 ];
