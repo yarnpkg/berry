@@ -665,4 +665,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'gatsby-core-utils': `^2.8.0-next.1`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/32861
+  [`gatsby-plugin-netlify@3.13.0-next.1`, {
+    dependencies: {
+      'gatsby-core-utils': `^2.13.0-next.0`,
+    },
+  }],
 ];
