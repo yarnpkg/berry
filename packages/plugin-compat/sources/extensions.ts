@@ -640,4 +640,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       },
     },
   ]),
+  // Originally fixed in https://github.com/gatsbyjs/gatsby/pull/31837 (https://github.com/gatsbyjs/gatsby/commit/6378692d7ec1eb902520720e27aca97e8eb42c21)
+  // Version updated and added in https://github.com/gatsbyjs/gatsby/pull/32928
+  [`gatsby-core-utils@<2.14.0-next.1`, {
+    dependencies: {
+      got: `8.3.2`,
+    },
+  }],
 ];
