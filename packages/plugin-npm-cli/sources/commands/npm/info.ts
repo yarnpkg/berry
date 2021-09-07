@@ -5,7 +5,6 @@ import {StreamReport, MessageName, semverUtils}          from '@yarnpkg/core';
 import {Filename, npath, ppath}                          from '@yarnpkg/fslib';
 import {npmHttpUtils}                                    from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage, UsageError}              from 'clipanion';
-import path                                              from 'path';
 import semver                                            from 'semver';
 import {inspect}                                         from 'util';
 
