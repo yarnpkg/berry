@@ -17,10 +17,13 @@ export enum Decision {
   PRERELEASE = `prerelease`,
 }
 
-export type Releases =
-  Map<Workspace, Exclude<Decision, Decision.UNDECIDED>>;
+export type Releases = Map<Workspace, string>;
 
-export function validateReleaseDecision(decision: unknown) {
+export function validateReleaseDecision(decision: unknown): string {
+  const semverDecision = semver.valid(decision as string);
+  if (semverDecision)
+    return semverDecision;
+
   return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
 }
 
@@ -289,7 +292,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     releases: releaseStore,
 
     async saveAll() {
-      const releases: {[key: string]: Exclude<Decision, Decision.UNDECIDED | Decision.DECLINE>} = {};
+      const releases: {[key: string]: string} = {};
       const declined: Array<string> = [];
       const undecided: Array<string> = [];
 
@@ -304,7 +307,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
         if (decision === Decision.DECLINE) {
           declined.push(identStr);
         } else if (typeof decision !== `undefined`) {
-          releases[identStr] = decision;
+          releases[identStr] = validateReleaseDecision(decision);
         } else if (changedWorkspaces.has(workspace)) {
           undecided.push(identStr);
         }
