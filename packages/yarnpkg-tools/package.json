@@ -1,0 +1,27 @@
+{
+  "name": "@yarnpkg/tools",
+  "version": "1.0.0",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\"",
+    "release": "yarn npm publish",
+    "test": "run test:unit \"$(pwd)\""
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-tools"
+  },
+  "engines": {
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  }
+}
