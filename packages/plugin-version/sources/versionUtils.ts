@@ -17,6 +17,8 @@ export enum Decision {
   PRERELEASE = `prerelease`,
 }
 
+export type IncrementDecision = Exclude<Decision, Decision.UNDECIDED | Decision.DECLINE>;
+
 export type Releases = Map<Workspace, string>;
 
 export function validateReleaseDecision(decision: unknown): string {

@@ -13,8 +13,6 @@ import semver                                                                   
 
 import * as versionUtils                                                                        from '../../versionUtils';
 
-type Releases = Map<Workspace, Exclude<versionUtils.Decision, versionUtils.Decision.UNDECIDED>>;
-
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCheckCommand extends BaseCommand {
   static paths = [
@@ -98,7 +96,7 @@ export default class VersionCheckCommand extends BaseCommand {
       );
     };
 
-    const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: versionUtils.Decision, setDecision: (decision: versionUtils.Decision) => void}) => {
+    const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: string, setDecision: (decision: versionUtils.Decision) => void}) => {
       const currentVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
       if (currentVersion === null)
         throw new Error(`Assertion failed: The version should have been set (${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
@@ -125,7 +123,11 @@ export default class VersionCheckCommand extends BaseCommand {
         ? <Text color="yellow">{currentVersion}</Text>
         : decision === versionUtils.Decision.DECLINE
           ? <Text color="green">{currentVersion}</Text>
-          : <Text><Text color="magenta">{currentVersion}</Text> → <Text color="green">{semver.inc(currentVersion, decision)}</Text></Text>;
+          : <Text><Text color="magenta">{currentVersion}</Text> → <Text color="green">{
+            semver.valid(decision)
+              ? decision
+              : semver.inc(currentVersion, decision as versionUtils.IncrementDecision)
+          }</Text></Text>;
 
       return (
         <Box flexDirection={`column`}>
@@ -150,7 +152,7 @@ export default class VersionCheckCommand extends BaseCommand {
       );
     };
 
-    const getRelevancy = (releases: Releases) => {
+    const getRelevancy = (releases: versionUtils.Releases) => {
       // Now, starting from all the workspaces that changed, we'll detect
       // which ones are affected by the choices that the user picked. By
       // doing this we'll "forget" all choices that aren't relevant any
@@ -197,8 +199,8 @@ export default class VersionCheckCommand extends BaseCommand {
       };
     };
 
-    const useReleases = (): [Releases, (workspace: Workspace, decision: versionUtils.Decision) => void] => {
-      const [releases, setReleases] = useState<Releases>(() => new Map(versionFile.releases));
+    const useReleases = (): [versionUtils.Releases, (workspace: Workspace, decision: versionUtils.Decision) => void] => {
+      const [releases, setReleases] = useState<versionUtils.Releases>(() => new Map(versionFile.releases));
 
       const setWorkspaceRelease = useCallback((workspace: Workspace, decision: versionUtils.Decision) => {
         const copy = new Map(releases);
@@ -215,7 +217,7 @@ export default class VersionCheckCommand extends BaseCommand {
       return [releases, setWorkspaceRelease];
     };
 
-    const Stats = ({workspaces, releases}: {workspaces: Set<Workspace>, releases: Releases}) => {
+    const Stats = ({workspaces, releases}: {workspaces: Set<Workspace>, releases: versionUtils.Releases}) => {
       const parts = [];
       parts.push(`${workspaces.size} total`);
 
@@ -237,7 +239,7 @@ export default class VersionCheckCommand extends BaseCommand {
       return <Text color="yellow">{parts.join(`, `)}</Text>;
     };
 
-    const App = ({useSubmit}: {useSubmit: (value: Releases) => void}) => {
+    const App = ({useSubmit}: {useSubmit: (value: versionUtils.Releases) => void}) => {
       const [releases, setWorkspaceRelease] = useReleases();
       useSubmit(releases);
 
@@ -323,7 +325,7 @@ export default class VersionCheckCommand extends BaseCommand {
       );
     };
 
-    const decisions = await renderForm<Releases>(App, {versionFile});
+    const decisions = await renderForm<versionUtils.Releases>(App, {versionFile});
     if (typeof decisions === `undefined`)
       return 1;
 
