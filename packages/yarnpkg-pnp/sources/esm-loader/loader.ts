@@ -7,12 +7,11 @@ import {fileURLToPath, pathToFileURL, URL} from 'url';
 import * as nodeUtils                      from '../loader/nodeUtils';
 import {PnpApi}                            from '../types';
 
-function isValidURL(str: string) {
+function tryParseURL(str: string) {
   try {
-    new URL(str);
-    return true;
+    return new URL(str);
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -34,24 +33,26 @@ export async function resolve(
   defaultResolver: any
 ) {
   const {findPnpApi} = (moduleExports as unknown as { findPnpApi?: (path: NativePath) => null | PnpApi });
-  if (!findPnpApi)
+  if (!findPnpApi || builtins.has(originalSpecifier))
     return defaultResolver(originalSpecifier, context, defaultResolver);
 
   let specifier = originalSpecifier;
-  let validURL: boolean | undefined;
-  if (builtins.has(specifier) || (validURL = isValidURL(specifier))) {
-    if (!validURL || pathToFileURL(specifier).protocol !== `file:`) {
+  const url = tryParseURL(specifier);
+  if (url) {
+    if (url.protocol !== `file:`)
       return defaultResolver(originalSpecifier, context, defaultResolver);
-    } else {
-      specifier = fileURLToPath(specifier);
-    }
+
+    specifier = fileURLToPath(specifier);
   }
 
   const {parentURL, conditions = []} = context;
 
   const issuer = parentURL ? fileURLToPath(parentURL) : process.cwd();
 
-  const pnpapi = findPnpApi(issuer) ?? (validURL ? findPnpApi(specifier) : null);
+  // Get the pnpapi of either the issuer or the specifier.
+  // The latter is required when the specifier is an absolute path to a
+  // zip file and the issuer doesn't belong to a pnpapi
+  const pnpapi = findPnpApi(issuer) ?? (url ? findPnpApi(specifier) : null);
   if (!pnpapi)
     return defaultResolver(originalSpecifier, context, defaultResolver);
 
@@ -80,23 +81,24 @@ export async function resolve(
   });
 
   if (!result)
-    throw new Error(`Resolution failed`);
+    throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);
 
   return {
     url: pathToFileURL(result).href,
   };
 }
 
+// The default `getFormat` doesn't support reading from zip files
 export async function getFormat(
   resolved: string,
   context: any,
   defaultGetFormat: any
 ) {
-  const parsedURL = new URL(resolved);
-  if (parsedURL.protocol !== `file:`)
+  const url = tryParseURL(resolved);
+  if (url?.protocol !== `file:`)
     return defaultGetFormat(resolved, context, defaultGetFormat);
 
-  const ext = path.extname(parsedURL.pathname);
+  const ext = path.extname(url.pathname);
   switch (ext) {
     case `.mjs`: {
       return {
@@ -110,6 +112,7 @@ export async function getFormat(
     }
     case `.json`: {
       // TODO: Enable if --experimental-json-modules is present
+      // Waiting on https://github.com/nodejs/node/issues/36935
       throw new Error(
         `Unknown file extension ".json" for ${fileURLToPath(resolved)}`
       );
@@ -127,14 +130,14 @@ export async function getFormat(
   return defaultGetFormat(resolved, context, defaultGetFormat);
 }
 
-
+// The default `getSource` doesn't support reading from zip files
 export async function getSource(
   urlString: string,
   context: any,
   defaultGetSource: any
 ) {
-  const url = new URL(urlString);
-  if (url.protocol !== `file:`)
+  const url = tryParseURL(urlString);
+  if (url?.protocol !== `file:`)
     return defaultGetSource(url, context, defaultGetSource);
 
   return {

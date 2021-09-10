@@ -1,7 +1,7 @@
 import fs from 'fs';
 import moduleExports from 'module';
 import path from 'path';
-import { pathToFileURL, fileURLToPath, URL } from 'url';
+import { fileURLToPath, pathToFileURL, URL } from 'url';
 
 var PathType;
 (function(PathType2) {
@@ -87,12 +87,11 @@ function readPackage(requestPath) {
   return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
 }
 
-function isValidURL(str) {
+function tryParseURL(str) {
   try {
-    new URL(str);
-    return true;
+    return new URL(str);
   } catch {
-    return false;
+    return null;
   }
 }
 const builtins = new Set([...moduleExports.builtinModules]);
@@ -108,20 +107,18 @@ async function exists(path2) {
 async function resolve(originalSpecifier, context, defaultResolver) {
   var _a;
   const {findPnpApi} = moduleExports;
-  if (!findPnpApi)
+  if (!findPnpApi || builtins.has(originalSpecifier))
     return defaultResolver(originalSpecifier, context, defaultResolver);
   let specifier = originalSpecifier;
-  let validURL;
-  if (builtins.has(specifier) || (validURL = isValidURL(specifier))) {
-    if (!validURL || pathToFileURL(specifier).protocol !== `file:`) {
+  const url = tryParseURL(specifier);
+  if (url) {
+    if (url.protocol !== `file:`)
       return defaultResolver(originalSpecifier, context, defaultResolver);
-    } else {
-      specifier = fileURLToPath(specifier);
-    }
+    specifier = fileURLToPath(specifier);
   }
   const {parentURL, conditions = []} = context;
   const issuer = parentURL ? fileURLToPath(parentURL) : process.cwd();
-  const pnpapi = (_a = findPnpApi(issuer)) != null ? _a : validURL ? findPnpApi(specifier) : null;
+  const pnpapi = (_a = findPnpApi(issuer)) != null ? _a : url ? findPnpApi(specifier) : null;
   if (!pnpapi)
     return defaultResolver(originalSpecifier, context, defaultResolver);
   const dependencyNameMatch = specifier.match(pathRegExp);
@@ -141,17 +138,17 @@ async function resolve(originalSpecifier, context, defaultResolver) {
     extensions: allowLegacyResolve ? void 0 : []
   });
   if (!result)
-    throw new Error(`Resolution failed`);
+    throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);
   return {
     url: pathToFileURL(result).href
   };
 }
 async function getFormat(resolved, context, defaultGetFormat) {
   var _a;
-  const parsedURL = new URL(resolved);
-  if (parsedURL.protocol !== `file:`)
+  const url = tryParseURL(resolved);
+  if ((url == null ? void 0 : url.protocol) !== `file:`)
     return defaultGetFormat(resolved, context, defaultGetFormat);
-  const ext = path.extname(parsedURL.pathname);
+  const ext = path.extname(url.pathname);
   switch (ext) {
     case `.mjs`: {
       return {
@@ -178,8 +175,8 @@ async function getFormat(resolved, context, defaultGetFormat) {
   return defaultGetFormat(resolved, context, defaultGetFormat);
 }
 async function getSource(urlString, context, defaultGetSource) {
-  const url = new URL(urlString);
-  if (url.protocol !== `file:`)
+  const url = tryParseURL(urlString);
+  if ((url == null ? void 0 : url.protocol) !== `file:`)
     return defaultGetSource(url, context, defaultGetSource);
   return {
     source: await fs.promises.readFile(fileURLToPath(urlString), `utf8`)

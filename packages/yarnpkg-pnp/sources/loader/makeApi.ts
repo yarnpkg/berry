@@ -235,7 +235,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       require: conditions.size === 0 ? true : conditions.has(`require`),
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      // @ts-expect-error - Type should be Set | Array
+      // @ts-expect-error - Type should be Iterable<string>
       conditions,
     });
 
