@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/plugin-pack": "workspace:^3.1.0-rc.2",
+    "@yarnpkg/plugin-pack": "workspace:^3.1.0-rc.3",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"

@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "version": "3.0.1-rc.2",
+  "version": "3.0.1-rc.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.2",
+    "@yarnpkg/fslib": "workspace:^2.6.0-rc.3",
     "@yarnpkg/plugin-stage": "workspace:^3.0.0",
-    "@yarnpkg/pnp": "workspace:^3.0.1-rc.2",
+    "@yarnpkg/pnp": "workspace:^3.0.1-rc.3",
     "clipanion": "^3.0.1",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
