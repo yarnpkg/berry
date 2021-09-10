@@ -110,11 +110,9 @@ All of this and more is documented in the following sections. In general, we adv
 
 ## General Advices
 
-### Upgrade to Node 10.19 or newer
+### Upgrade to Node.js 12.x or newer
 
-Node 8 reached its official End of Life in December 2019 and won't receive any further update. Yarn consequently doesn't support it anymore.
-
-Note that Node 10 itself will reach its own End of Life on May 2021, so support for it will likely be removed from Yarn 3. As a result we recommend upgrading to Node 12 or 14 whenever you can.
+Node.js 10.x reached its official End of Life in April 2021 and won't receive any further update. Yarn consequently doesn't support it anymore.
 
 ### Fix dependencies with `packageExtensions`
 
