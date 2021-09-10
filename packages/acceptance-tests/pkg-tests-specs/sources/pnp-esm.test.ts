@@ -228,7 +228,7 @@ describe(`Plug'n'Play - ESM`, () => {
     makeTemporaryEnv(
       { },
       {
-        enableExperimentalEsmLoader: true,
+        pnpEnableExperimentalEsm: true,
       },
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log(typeof require === 'undefined')`);
@@ -326,7 +326,7 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       {
-        enableExperimentalEsmLoader: true,
+        pnpEnableExperimentalEsm: true,
       },
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import('no-deps').then(() => console.log(42))`);
