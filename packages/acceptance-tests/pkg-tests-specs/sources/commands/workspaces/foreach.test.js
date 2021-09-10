@@ -85,6 +85,7 @@ async function setupWorkspaces(path) {
     version: `1.0.0`,
     scripts: {
       print: `echo Test Workspace G`,
+      'g:echo': `echo Test Workspace G`,
     },
     dependencies: {},
   });
@@ -486,6 +487,35 @@ describe(`Commands`, () => {
           try {
             await run(`install`);
             ({code, stdout, stderr} = await run(`test:foo`));
+          } catch (error) {
+            ({code, stdout, stderr} = error);
+          }
+
+          await expect({code, stdout, stderr}).toMatchSnapshot();
+        }
+      )
+    );
+
+    test(
+      `should handle global scripts getting downgraded to a normal script`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+          scripts: {
+            [`g:echo`]: `echo root workspace`,
+          },
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          let code;
+          let stdout;
+          let stderr;
+
+          try {
+            await run(`install`);
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `g:echo`));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
