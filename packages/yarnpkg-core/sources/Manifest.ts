@@ -2,11 +2,12 @@ import {FakeFS, Filename, NodeFS, PortablePath, ppath}    from '@yarnpkg/fslib';
 import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
 import semver                                             from 'semver';
 
+import {WorkspaceResolver}                                from './WorkspaceResolver';
 import * as miscUtils                                     from './miscUtils';
 import * as semverUtils                                   from './semverUtils';
 import * as structUtils                                   from './structUtils';
-import {IdentHash}                                        from './types';
 import {Ident, Descriptor}                                from './types';
+import {IdentHash}                                        from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -363,7 +364,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== `string` || !semverUtils.validRange(range)) {
+        if (typeof range !== `string` || (!range.startsWith(WorkspaceResolver.protocol) && !semverUtils.validRange(range))) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }

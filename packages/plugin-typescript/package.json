@@ -4,15 +4,15 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/plugin-pack": "workspace:^3.1.0-rc.1",
+    "@yarnpkg/plugin-pack": "workspace:^3.1.0-rc.3",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.1.0-rc.1",
-    "@yarnpkg/core": "^3.1.0-rc.2",
-    "@yarnpkg/plugin-essentials": "^3.1.0-rc.1"
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "devDependencies": {
     "@algolia/requester-common": "4.0.0-beta.14",
@@ -21,7 +21,7 @@
     "@yarnpkg/cli": "workspace:*",
     "@yarnpkg/core": "workspace:*",
     "@yarnpkg/plugin-essentials": "workspace:*",
-    "typescript": "^4.3.2"
+    "typescript": "^4.4.2"
   },
   "scripts": {
     "build:plugin-typescript": "builder build plugin",

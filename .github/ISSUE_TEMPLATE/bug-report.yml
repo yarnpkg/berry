@@ -43,8 +43,9 @@ body:
   - type: textarea
     attributes:
       label: Environment
+      render: shell
       description: |
-        **Tip:** you can run `yarn dlx -q envinfo --preset jest` and paste the result below:
+        Run `yarn dlx -q envinfo --preset jest` and paste the result into the form
       placeholder: |
         System:
           OS: macOS 11.4

@@ -123,5 +123,34 @@ describe(`Protocols`, () => {
         });
       }),
     );
+
+    test(
+      `it should support nested portals`,
+      makeTemporaryEnv({ }, async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/a`);
+        await xfs.writeJsonPromise(`${path}/a/package.json`, {
+          name: `a`,
+        });
+
+        await xfs.mkdirPromise(`${path}/b`);
+        await xfs.writeJsonPromise(`${path}/b/package.json`, {
+          name: `b`,
+          dependencies: {
+            a: `portal:../a`,
+          },
+        });
+
+        await xfs.writeJsonPromise(`${path}/package.json`, {
+          name: `c`,
+          dependencies: {
+            b: `portal:./b`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+        });
+      }),
+    );
   });
 });

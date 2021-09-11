@@ -22,7 +22,7 @@ const pkgJsonVersion = (basedir: string): string => {
 
 const suggestHash = async (basedir: string) => {
   try {
-    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
+    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%h`, `--date=short`], {cwd: basedir});
     return `git.${unique.stdout.trim().replace(/-/g, ``).replace(`.`, `.hash-`)}`;
   } catch {
     return null;
@@ -121,6 +121,8 @@ export default class BuildBundleCommand extends Command {
           define: {YARN_VERSION: JSON.stringify(version)},
           outfile: output,
           logLevel: `silent`,
+          format: `iife`,
+          platform: `node`,
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
