@@ -218,9 +218,14 @@ class PnpmInstaller implements Installer {
     for (const packageLocation of this.packageLocations.values())
       expectedEntries.add(ppath.basename(packageLocation));
 
-    const removals: Array<Promise<void>> = [];
+    let storeRecords: Array<Filename>;
+    try {
+      storeRecords = await xfs.readdirPromise(storeLocation);
+    } catch {
+      storeRecords = [];
+    }
 
-    const storeRecords = await xfs.readdirPromise(storeLocation);
+    const removals: Array<Promise<void>> = [];
     for (const record of storeRecords)
       if (!expectedEntries.has(record))
         removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
