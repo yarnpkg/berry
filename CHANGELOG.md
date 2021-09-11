@@ -136,6 +136,24 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - Reporting for HTTP errors has been improved, which should help you investigate registry issues.
 
+
+## 2.4.3
+
+```
+yarn set version 2.4.3
+```
+
+- Updated TypeScript patch to cover TypeScript 4.4.
+- Removed `useUnknownInCatchVariables` from `tsconfig.json`.
+
+## 2.4.2
+
+```
+yarn set version 2.4.2
+```
+
+- Updated TypeScript patch to cover TypeScript 4.3.
+
 ## 2.4.1
 
 ```
