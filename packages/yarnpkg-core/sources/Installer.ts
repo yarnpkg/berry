@@ -133,5 +133,5 @@ export interface Installer {
   /**
    * Finalize the install by writing miscellaneous files to the disk.
    */
-  finalizeInstall(): Promise<FinalizeInstallData | undefined>;
+  finalizeInstall(): Promise<FinalizeInstallData | void | undefined>;
 }
