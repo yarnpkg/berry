@@ -136,7 +136,6 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - Reporting for HTTP errors has been improved, which should help you investigate registry issues.
 
-
 ## 2.4.3
 
 ```
