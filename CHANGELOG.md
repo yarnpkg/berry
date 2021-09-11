@@ -143,7 +143,6 @@ yarn set version 2.4.3
 ```
 
 - Updated TypeScript patch to cover TypeScript 4.4.
-- Removed `useUnknownInCatchVariables` from `tsconfig.json`.
 
 ## 2.4.2
 
