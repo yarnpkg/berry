@@ -671,4 +671,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'gatsby-core-utils': `^2.13.0-next.0`,
     },
   }],
+  // https://github.com/paul-soporan/clipanion-v3-codemod/pull/1
+  [`clipanion-v3-codemod@<=0.2.0`, {
+    peerDependencies: {
+      jscodeshift: `^0.11.0`,
+    },
+  }],
 ];
