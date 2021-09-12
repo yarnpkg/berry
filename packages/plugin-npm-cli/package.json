@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/plugin-npm-cli",
-  "version": "3.0.0",
+  "version": "3.0.1-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.3",
+    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
     "clipanion": "^3.0.1",
     "enquirer": "^2.3.6",
     "semver": "^7.1.2",
@@ -43,5 +43,6 @@
   ],
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "3.0.0"
 }

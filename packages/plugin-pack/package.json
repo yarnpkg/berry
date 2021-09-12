@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/plugin-pack",
-  "version": "3.1.0-rc.3",
+  "version": "3.1.0-rc.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.3",
+    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
     "clipanion": "^3.0.1",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1",
