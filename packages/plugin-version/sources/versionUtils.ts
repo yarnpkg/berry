@@ -489,7 +489,7 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
       : null;
 
     report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
-    report.reportJson({cwd: workspace.cwd, ident: identString, oldVersion, newVersion});
+    report.reportJson({cwd: npath.fromPortablePath(workspace.cwd), ident: identString, oldVersion, newVersion});
 
     const dependents = allDependents.get(workspace);
     if (typeof dependents === `undefined`)
