@@ -179,8 +179,8 @@ describe(`Commands`, () => {
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
             version: `3.4.5`,
           });
-        }
-      )
+        },
+      ),
     );
 
     const alternatives = [

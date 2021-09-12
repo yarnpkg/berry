@@ -521,8 +521,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
