@@ -296,7 +296,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           return;
 
         xfs.detachTemp(logDir);
-        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)})`);
       });
     });
   });
@@ -476,7 +476,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
   await xfs.mktempPromise(async logDir => {
     const logFile = ppath.join(logDir, `${lifecycleScriptName}.log` as PortablePath);
 
-    const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${workspace.cwd}")\n`;
+    const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${npath.fromPortablePath(workspace.cwd)}")\n`;
 
     const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {
       report,
