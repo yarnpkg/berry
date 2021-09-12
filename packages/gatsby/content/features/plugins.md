@@ -73,4 +73,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**outdated**](https://github.com/mskelton/yarn-plugin-outdated) by [**Mark Skelton**](https://github.com/mskelton) - lists outdated dependencies similar to the Yarn 1.x `outdated` command
 
+- [**engines**](https://github.com/devoto13/yarn-plugin-engines) by [**Yaroslav Admin**](https://github.com/devoto13) - enforces a Node version range specified in the `package.json`'s `engines.node` field
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
