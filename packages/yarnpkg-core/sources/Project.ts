@@ -14,7 +14,7 @@ import zlib                                                             from 'zl
 import {Cache}                                                          from './Cache';
 import {Configuration}                                                  from './Configuration';
 import {Fetcher}                                                        from './Fetcher';
-import {Installer, BuildDirective, BuildType}                           from './Installer';
+import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
 import {Linker}                                                         from './Linker';
 import {LockfileResolver}                                               from './LockfileResolver';
@@ -946,6 +946,8 @@ export class Project {
       return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
     })));
 
+    const pendingPromises: Array<Promise<void>> = [];
+
     // Step 1: Installing the packages on the disk
 
     for (const locatorHash of this.accessibleLocators) {
@@ -957,8 +959,12 @@ export class Project {
       if (typeof fetchResult === `undefined`)
         throw new Error(`Assertion failed: The fetch result should have been registered`);
 
-      const workspace = this.tryWorkspaceByLocator(pkg);
+      const holdPromises: Array<Promise<void>> = [];
+      const holdFetchResult = (promise: Promise<void>) => {
+        holdPromises.push(promise);
+      };
 
+      const workspace = this.tryWorkspaceByLocator(pkg);
       if (workspace !== null) {
         const buildScripts: Array<BuildDirective> = [];
         const {scripts} = workspace.manifest;
@@ -970,14 +976,20 @@ export class Project {
         try {
           for (const [linker, installer] of installers) {
             if (linker.supportsPackage(pkg, linkerOptions)) {
-              const result = await installer.installPackage(pkg, fetchResult);
+              const result = await installer.installPackage(pkg, fetchResult, {holdFetchResult});
               if (result.buildDirective !== null) {
                 throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
               }
             }
           }
         } finally {
-          fetchResult.releaseFs?.();
+          if (holdPromises.length === 0) {
+            fetchResult.releaseFs?.();
+          } else {
+            pendingPromises.push(Promise.all(holdPromises).catch(() => {}).then(() => {
+              fetchResult.releaseFs?.();
+            }));
+          }
         }
 
         const location = ppath.join(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
@@ -999,11 +1011,17 @@ export class Project {
         if (!installer)
           throw new Error(`Assertion failed: The installer should have been registered`);
 
-        let installStatus;
+        let installStatus: InstallStatus;
         try {
-          installStatus = await installer.installPackage(pkg, fetchResult);
+          installStatus = await installer.installPackage(pkg, fetchResult, {holdFetchResult});
         } finally {
-          fetchResult.releaseFs?.();
+          if (holdPromises.length === 0) {
+            fetchResult.releaseFs?.();
+          } else {
+            pendingPromises.push(Promise.all(holdPromises).then(() => {}).then(() => {
+              fetchResult.releaseFs?.();
+            }));
+          }
         }
 
         packageLinkers.set(pkg.locatorHash, linker);
@@ -1124,6 +1142,8 @@ export class Project {
     }
 
     this.installersCustomData = installersCustomData;
+
+    await Promise.all(pendingPromises);
 
     // Step 4: Build the packages in multiple steps
 
