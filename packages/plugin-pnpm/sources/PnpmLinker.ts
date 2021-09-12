@@ -60,12 +60,6 @@ class PnpmInstaller implements Installer {
     // Nothing to do
   }
 
-  getInstallerSettings() {
-    return {
-      installPackageConcurrency: 10,
-    };
-  }
-
   getCustomDataKey() {
     return getCustomDataKey();
   }

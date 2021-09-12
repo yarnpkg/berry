@@ -10,10 +10,6 @@ export enum BuildType {
 
 export type BuildDirective = [BuildType, string];
 
-export type InstallerSettings = {
-  installPackageConcurrency: number;
-};
-
 export type InstallStatus = {
   packageLocation: PortablePath | null,
   buildDirective: Array<BuildDirective> | null,
@@ -74,16 +70,7 @@ export type InstallPackageExtraApi = {
   holdFetchResult: (promise: Promise<void>) => void;
 };
 
-export const defaultInstallerSettings: InstallerSettings = {
-  installPackageConcurrency: 1,
-};
-
 export interface Installer {
-  /**
-   * Return the configuration.
-   */
-  getInstallerSettings?(): Partial<InstallerSettings>;
-
   /**
    * Return an arbitrary key.
    *
