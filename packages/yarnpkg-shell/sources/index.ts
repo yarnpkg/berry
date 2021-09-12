@@ -257,7 +257,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
                   write(chunk, encoding, callback) {
                     setImmediate(callback);
                   },
-                })
+                }),
               );
             } else {
               pushOutput(opts.baseFs.createWriteStream(outputPath, type === `>>` ? {flags: `a`} : undefined));
@@ -812,7 +812,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
           if ((state.stdout as any).isTTY) {
             state.stdout.write(`Job ${prefix}, '${colorizer(stringifyCommandChain(node))}' has ended\n`);
           }
-        })
+        }),
     );
 
     return 0;

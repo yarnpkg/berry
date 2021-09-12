@@ -23,7 +23,7 @@ describe(`Node_Modules`, () => {
           await source(`require.resolve('resolve')`),
         );
       },
-    )
+    ),
   );
 
   testIf(
@@ -46,7 +46,7 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
       },
-    )
+    ),
   );
 
   test(
@@ -469,7 +469,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/peer-deps-lvl1` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/peer-deps-lvl2` as PortablePath)).toEqual(true);
       },
-    )
+    ),
   );
 
 
@@ -508,7 +508,7 @@ describe(`Node_Modules`, () => {
         // workspace symlink should NOT be hoisted to the top
         expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
-    )
+    ),
   );
 
   test(`should not hoist multiple packages past workspace hoist border`,
@@ -553,7 +553,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep2` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
-    )
+    ),
   );
 
   test(`should support dependencies hoist border`,
@@ -611,7 +611,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep3` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
-    )
+    ),
   );
 
   test(`should create symlink if workspace is a dependency AND it has hoist borders at the same time`,
@@ -649,7 +649,7 @@ describe(`Node_Modules`, () => {
         // workspace symlink should be present at the top
         expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(true);
       },
-    )
+    ),
   );
 
   test(`should warn about 'nohoist' usage and retain nohoist field in the manifest`,
@@ -669,7 +669,7 @@ describe(`Node_Modules`, () => {
         expect(stdout).toMatch(new RegExp(`'nohoist' is deprecated.*`));
         expect(await readJson(`${path}/package.json`)).toHaveProperty(`workspaces.nohoist`);
       },
-    )
+    ),
   );
 
   test(`should inherit workspace peer dependencies from upper-level workspaces`,
@@ -713,7 +713,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/bar` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/foo/node_modules/bar` as PortablePath)).toEqual(true);
       },
-    )
+    ),
   );
 
   test(`should install dependencies in scoped workspaces`,
@@ -739,7 +739,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/@scope/foo` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toEqual(true);
       },
-    )
+    ),
   );
 
   test(`should survive interrupted install`,
@@ -770,7 +770,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/index.js` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/foo/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
       },
-    )
+    ),
   );
 
   test(`should respect peerDependencies with defaults in workspaces`,
@@ -802,7 +802,7 @@ describe(`Node_Modules`, () => {
           version: `1.0.0`,
         });
       },
-    )
+    ),
   );
 
   test(`should allow running binaries unrelated to incompatible package`,
@@ -875,7 +875,7 @@ describe(`Node_Modules`, () => {
           expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
           expect((await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode).toEqual(binScriptMode);
         });
-      })
+      }),
   );
 
   test(`should still hoist direct dependencies from portal target to parent with nmHoistingLimits: dependencies`,
@@ -907,7 +907,7 @@ describe(`Node_Modules`, () => {
           expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
           expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toBeFalsy();
         });
-      })
+      }),
   );
 
   test(`should error out on external portal requiring a dependency that conflicts with parent package`,
@@ -944,7 +944,7 @@ describe(`Node_Modules`, () => {
 
           expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
         });
-      })
+      }),
   );
 
   test(`should error out if two same-parent portals have conflict between their direct dependencies`,
@@ -985,7 +985,7 @@ describe(`Node_Modules`, () => {
             expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:1.0.0 conflicts with dependency no-deps@npm:2.0.0 from sibling portal portal1`));
           });
         });
-      })
+      }),
   );
 
   test(`should not error out if one of two same-parent portals has unresolved peer dependency, while the other has resolved dependency with the same name`,
@@ -1019,7 +1019,7 @@ describe(`Node_Modules`, () => {
             await expect(run(`install`)).resolves.not.toThrow();
           });
         });
-      })
+      }),
   );
 
   test(
@@ -1045,7 +1045,7 @@ describe(`Node_Modules`, () => {
         const {stdout} = await run(`install`);
 
         expect(stdout).not.toContain(`YN0006`);
-      })
+      }),
   );
 
   test(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
@@ -1067,7 +1067,7 @@ describe(`Node_Modules`, () => {
       });
 
       await expect(run(`install`)).resolves.not.toThrow();
-    })
+    }),
   );
 
   test(`should give a priority to direct portal dependencies over indirect regular dependencies`,
@@ -1094,7 +1094,7 @@ describe(`Node_Modules`, () => {
 
           await expect(run(`install`)).resolves.not.toThrow();
         });
-      })
+      }),
   );
 
   test(
@@ -1129,8 +1129,8 @@ describe(`Node_Modules`, () => {
         await expect(xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-a/workspace-b/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -1181,8 +1181,8 @@ describe(`Node_Modules`, () => {
         expect((await run(`run`, `wb`)).stdout.trim()).toContain(`workspace-b`);
         expect((await run(`run`, `wa`)).stdout.trim()).toContain(`workspace-a`);
         expect((await run(`run`, `wc`)).stdout.trim()).toContain(`workspace-c`);
-      }
-    )
+      },
+    ),
   );
 
   test(`should honor transparently nmMode: hardlinks during subsequent installs`,
@@ -1226,8 +1226,8 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
-      }
-    )
+      },
+    ),
   );
 
   test(`should wire via hardlinks files having the same content when in nmMode: hardlinks-global`,
@@ -1263,8 +1263,8 @@ describe(`Node_Modules`, () => {
         const stats2 = await xfs.statPromise(`${path}/node_modules/dep2/index.js` as PortablePath);
 
         expect(stats1.ino).toEqual(stats2.ino);
-      }
-    )
+      },
+    ),
   );
 
   test(`should recover from changes to the store on next install in nmMode: cas`,
@@ -1299,8 +1299,8 @@ describe(`Node_Modules`, () => {
 
         const depContent = await xfs.readFilePromise(depNmPath, `utf8`);
         expect(depContent).toEqual(originalContent);
-      }
-    )
+      },
+    ),
   );
 
   test(`should give priority to direct workspace dependencies over indirect regular dependencies`,
@@ -1333,7 +1333,7 @@ describe(`Node_Modules`, () => {
         await expect(source(`require('no-deps')`)).resolves.toMatchObject({
           version: `2.0.0`,
         });
-      }
-    )
+      },
+    ),
   );
 });

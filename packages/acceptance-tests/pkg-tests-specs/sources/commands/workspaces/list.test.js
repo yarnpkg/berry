@@ -46,8 +46,8 @@ describe(`Commands`, () => {
               mismatchedWorkspaceDependencies: [],
             },
           });
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -97,8 +97,8 @@ describe(`Commands`, () => {
               mismatchedWorkspaceDependencies: [],
             },
           });
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -145,8 +145,8 @@ describe(`Commands`, () => {
               mismatchedWorkspaceDependencies: [],
             },
           });
-        }
-      )
+        },
+      ),
     );
   });
 });

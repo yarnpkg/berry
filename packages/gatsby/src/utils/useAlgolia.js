@@ -2,6 +2,7 @@ import algoliasearch             from 'algoliasearch/lite';
 import {graphql, useStaticQuery} from 'gatsby';
 import {useEffect, useState}     from 'react';
 
+// eslint-disable-next-line arca/no-default-export
 export default function useAlgolia() {
   const [client, setClient] = useState(null);
   const [index, setIndex] = useState(null);

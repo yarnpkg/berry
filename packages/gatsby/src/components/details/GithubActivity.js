@@ -12,7 +12,7 @@ const commitsLastThreeMonths = ({weeklyData}) =>
 const countCommitsLastThreeMonths = ({weeklyData}) =>
   commitsLastThreeMonths({weeklyData}).reduce(
     (acc, {total}) => acc + total,
-    0
+    0,
   );
 
 const commitsPerWeekLastThreeMonths = ({weeklyData}) =>
@@ -23,7 +23,7 @@ const weeksAgoSinceLastCommit = ({weeklyData}) =>
     weeklyData
       .slice()
       .reverse()
-      .findIndex(({total}) => total !== 0)
+      .findIndex(({total}) => total !== 0),
   );
 
 const formatWeeksSinceLastCommit = weeks => {
@@ -50,7 +50,7 @@ export const GithubActivity = ({data = [], repository}) => {
       commitsLastThreeMonths={countCommitsLastThreeMonths({weeklyData: data})}
       graphData={commitsPerWeekLastThreeMonths({weeklyData: data})}
       graphLink={`https://github.com/${encode(repository.user)}/${encode(
-        repository.project
+        repository.project,
       )}/graphs/commit-activity`}
     />
   );

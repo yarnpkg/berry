@@ -379,8 +379,8 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
 
   await Promise.all(
     Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
-      makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath])
-    )
+      makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
+    ),
   );
 
   // When operating under PnP, `initializePackageEnvironment`
@@ -432,8 +432,8 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
 
     await Promise.all(
       Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath])
-      )
+        makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
+      ),
     );
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
@@ -631,8 +631,8 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
     await Promise.all(
       Array.from(packageAccessibleBinaries!, ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath])
-      )
+        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]),
+      ),
     );
 
     let result;

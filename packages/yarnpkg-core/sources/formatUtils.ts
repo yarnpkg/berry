@@ -1,7 +1,7 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import {CIRCLE as isCircleCI}                                               from 'ci-info';
-import micromatch                                                           from "micromatch";
+import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';

@@ -273,7 +273,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (optionNames.size > 0) {
         throw makeError(
           ErrorCode.UNSUPPORTED,
-          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`
+          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`,
         );
       }
     }

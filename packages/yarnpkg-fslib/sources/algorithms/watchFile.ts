@@ -9,7 +9,7 @@ export function watchFile<P extends Path>(
   fakeFs: FakeFS<P>,
   path: P,
   a: WatchFileOptions | WatchFileCallback,
-  b?: WatchFileCallback
+  b?: WatchFileCallback,
 ) {
   let bigint: boolean;
   let persistent: boolean;

@@ -96,7 +96,7 @@ export const getFilledGithubBugReportTemplate = async (input, output) => {
 
   return template.replace(
     indentString(getPreview(`// Sherlock reproduction`), 2),
-    indentString(getShareableMarkdownDigest(input, output), 2)
+    indentString(getShareableMarkdownDigest(input, output), 2),
   );
 };
 

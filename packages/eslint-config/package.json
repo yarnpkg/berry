@@ -4,10 +4,10 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@rushstack/eslint-patch": "^1.0.6",
-    "@typescript-eslint/eslint-plugin": "^4.11.1",
-    "@typescript-eslint/parser": "^4.11.1",
-    "eslint-plugin-arca": "^0.10.0",
-    "eslint-plugin-react": "^7.20.0"
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint-plugin-arca": "^0.11.1",
+    "eslint-plugin-react": "^7.25.1"
   },
   "peerDependencies": {
     "eslint": "*",

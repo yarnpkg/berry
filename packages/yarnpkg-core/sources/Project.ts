@@ -862,8 +862,8 @@ export class Project {
 
             return structUtils.stringifyLocator(pkg);
           },
-        ])
-      )
+        ]),
+      ),
     );
 
     // In "dependency update" mode, we won't trigger the link step. As a
@@ -1724,7 +1724,7 @@ export class Project {
         MessageName.UNUSED_CACHE_ENTRY,
         entriesRemoved > 1
           ? `${entriesRemoved} packages appeared to be unused and were removed`
-          : `${lastEntryRemoved} appeared to be unused and was removed`
+          : `${lastEntryRemoved} appeared to be unused and was removed`,
       );
     }
 

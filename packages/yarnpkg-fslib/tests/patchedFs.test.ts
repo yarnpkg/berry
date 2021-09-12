@@ -130,16 +130,16 @@ describe(`patchedFs`, () => {
     expect(patchedFs.readdirSync(tmpdir, null)).toHaveLength(0);
     await expect(new Promise((resolve, reject) =>
       patchedFs.readdir(tmpdir, null, (err, files) =>
-        err ? reject(err) : resolve(files)
-      )
+        err ? reject(err) : resolve(files),
+      ),
     )).resolves.toHaveLength(0);
     await expect(patchedFs.promises.readdir(tmpdir, null)).resolves.toHaveLength(0);
 
     expect(patchedFs.readdirSync(ZIP_DIR1, null)).toStrictEqual([`foo.txt`]);
     await expect(new Promise((resolve, reject) =>
       patchedFs.readdir(ZIP_DIR1, null, (err, files) =>
-        err ? reject(err) : resolve(files)
-      )
+        err ? reject(err) : resolve(files),
+      ),
     )).resolves.toStrictEqual([`foo.txt`]);
     await expect(patchedFs.promises.readdir(ZIP_DIR1, null)).resolves.toStrictEqual([`foo.txt`]);
   });

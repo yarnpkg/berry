@@ -84,7 +84,7 @@ describe(`"exports" field`, () => {
         [`$PKG`, `index.js`],
         [`$PKG/file`, `file.js`],
       ],
-    })
+    }),
   );
 
   test(
@@ -100,7 +100,7 @@ describe(`"exports" field`, () => {
         [`$PKG`, `file.js`],
         [`$PKG/index`, `index.js`],
       ],
-    })
+    }),
   );
 
   test(
@@ -116,7 +116,7 @@ describe(`"exports" field`, () => {
         [`$PKG`, `file.js`],
         [`$PKG/index`, `index.js`],
       ],
-    })
+    }),
   );
 
   test(
@@ -132,7 +132,7 @@ describe(`"exports" field`, () => {
         [`$PKG`, `index.js`],
         [`$PKG/file`, `file.js`],
       ],
-    })
+    }),
   );
 
   test(
@@ -150,7 +150,7 @@ describe(`"exports" field`, () => {
       fail: [
         [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -171,7 +171,7 @@ describe(`"exports" field`, () => {
         [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
         [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -200,7 +200,7 @@ describe(`"exports" field`, () => {
         [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -232,7 +232,7 @@ describe(`"exports" field`, () => {
         [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -263,7 +263,7 @@ describe(`"exports" field`, () => {
         [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -297,7 +297,7 @@ describe(`"exports" field`, () => {
         [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -329,7 +329,7 @@ describe(`"exports" field`, () => {
         [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -364,7 +364,7 @@ describe(`"exports" field`, () => {
         [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -388,7 +388,7 @@ describe(`"exports" field`, () => {
         [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -415,7 +415,7 @@ describe(`"exports" field`, () => {
         [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -441,7 +441,7 @@ describe(`"exports" field`, () => {
         [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -470,7 +470,7 @@ describe(`"exports" field`, () => {
         [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
         [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -494,7 +494,7 @@ describe(`"exports" field`, () => {
         [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
         [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -521,7 +521,7 @@ describe(`"exports" field`, () => {
         [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
         [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -556,7 +556,7 @@ describe(`"exports" field`, () => {
           pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
         }],
       ],
-    })
+    }),
   );
 
   test(
@@ -594,7 +594,7 @@ describe(`"exports" field`, () => {
           pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
         }],
       ],
-    })
+    }),
   );
 
   // Deprecated by Node, will eventually be removed
@@ -631,7 +631,7 @@ describe(`"exports" field`, () => {
           pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
         }],
       ],
-    })
+    }),
   );
 
   // Deprecated by Node, will eventually be removed
@@ -671,7 +671,7 @@ describe(`"exports" field`, () => {
           pnpCode: `QUALIFIED_PATH_RESOLUTION_FAILED`,
         }],
       ],
-    })
+    }),
   );
 
   test(
@@ -692,7 +692,7 @@ describe(`"exports" field`, () => {
       fail: [
         [`$PKG`, `No known conditions for "." entry in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -715,7 +715,7 @@ describe(`"exports" field`, () => {
       fail: [
         [`$PKG`, `No known conditions for "." entry in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -730,7 +730,7 @@ describe(`"exports" field`, () => {
       fail: [
         [`$PKG/package.json`, `Missing "./package.json" export in "$PKG" package`],
       ],
-    })
+    }),
   );
 
   test(
@@ -754,7 +754,7 @@ describe(`"exports" field`, () => {
           message: expect.stringContaining(`Missing "./bar" export in "pkg" package`),
         },
       });
-    })
+    }),
   );
 
   test(
@@ -791,7 +791,7 @@ describe(`"exports" field`, () => {
 
       await expect(source(`require.resolve('linked')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/linked/main.js`));
       await expect(source(`require.resolve('linked/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/linked/bar.js`));
-    })
+    }),
   );
 
   test(
@@ -828,7 +828,7 @@ describe(`"exports" field`, () => {
 
       await expect(source(`require.resolve('linked')`)).resolves.toStrictEqual(npath.fromPortablePath(`${tmp}/main.js`));
       await expect(source(`require.resolve('linked/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${tmp}/bar.js`));
-    })
+    }),
   );
 
   test(
