@@ -14,6 +14,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Usage of `pnpify` inside directories containing spaces is now possible.
 - Hoisting algorithm speedup, impacts recurrent `node_modules` installs time.
 - CLI bundles built from sources output `commit` hash instead of `tree` hash as part of their version
+- `workspaces foreach run` now handles the fact that a script containing `:` only becomes global if it exists in one workspace.
 
 ### Installs
 
