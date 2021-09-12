@@ -63,8 +63,6 @@ describe(`Features`, () => {
 
           await expect(lockfile).toMatchSnapshot();
           await expect(run(`install`)).resolves.toMatchSnapshot();
-
-          throw new Error(`foo`);
         },
       ),
     );
