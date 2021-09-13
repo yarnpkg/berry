@@ -17,7 +17,7 @@ export type {PluginConfiguration, SettingsDefinition, MapConfigurationValue, Pac
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                           from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                     from './Fetcher';
 export {BuildType}                                                                                        from './Installer';
-export type {Installer, BuildDirective, InstallStatus, FinalizeInstallStatus}                             from './Installer';
+export type {Installer, BuildDirective, InstallStatus, InstallPackageExtraApi, FinalizeInstallStatus}     from './Installer';
 export {LightReport}                                                                                      from './LightReport';
 export type {Linker, LinkOptions, MinimalLinkOptions}                                                     from './Linker';
 export {Manifest}                                                                                         from './Manifest';

@@ -1336,4 +1336,49 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+
+  test(
+    `it should fallback to dependencies if the parent doesn't provide the peer dependency`,
+    makeTemporaryEnv(
+      {},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        const appPath = ppath.join(path, `lib-1` as Filename);
+        const libPath = ppath.join(path, `lib-2` as Filename);
+
+        await xfs.mkdirPromise(libPath);
+        await xfs.writeJsonPromise(ppath.join(libPath, Filename.manifest), {
+          dependencies: {
+            [`no-deps`]: `*`,
+          },
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await xfs.mkdirPromise(appPath);
+        await xfs.writeJsonPromise(ppath.join(appPath, Filename.manifest), {
+          dependencies: {
+            [`lib`]: `portal:${libPath}`,
+          },
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+
+        await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
+          dependencies: {
+            [`app`]: `portal:${appPath}`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(xfs.existsPromise(ppath.join(path, `node_modules/no-deps` as PortablePath))).resolves.toEqual(true);
+      },
+    ),
+  );
 });

@@ -112,7 +112,15 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
   let updated = false;
 
   if (destinationStat === null) {
-    prelayout.push(async () => destinationFs.mkdirPromise(destination, {mode: sourceStat.mode}));
+    prelayout.push(async () => {
+      try {
+        await destinationFs.mkdirPromise(destination, {mode: sourceStat.mode});
+      } catch (err) {
+        if (err.code !== `EEXIST`) {
+          throw err;
+        }
+      }
+    });
     updated = true;
   }
 

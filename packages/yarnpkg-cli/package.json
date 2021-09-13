@@ -23,6 +23,7 @@
     "@yarnpkg/plugin-pack": "workspace:^3.1.0-rc.4",
     "@yarnpkg/plugin-patch": "workspace:^3.0.1-rc.3",
     "@yarnpkg/plugin-pnp": "workspace:^3.0.1-rc.4",
+    "@yarnpkg/plugin-pnpm": "workspace:^0.0.0",
     "@yarnpkg/shell": "workspace:^3.1.0-rc.1",
     "chalk": "^3.0.0",
     "ci-info": "^2.0.0",
@@ -80,7 +81,8 @@
         "@yarnpkg/plugin-npm-cli",
         "@yarnpkg/plugin-pack",
         "@yarnpkg/plugin-patch",
-        "@yarnpkg/plugin-pnp"
+        "@yarnpkg/plugin-pnp",
+        "@yarnpkg/plugin-pnpm"
       ]
     }
   },

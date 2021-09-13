@@ -5313,6 +5313,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^3.1.0-rc.4"
     "@yarnpkg/plugin-patch": "workspace:^3.0.1-rc.3"
     "@yarnpkg/plugin-pnp": "workspace:^3.0.1-rc.4"
+    "@yarnpkg/plugin-pnpm": "workspace:^0.0.0"
     "@yarnpkg/pnpify": "workspace:*"
     "@yarnpkg/shell": "workspace:^3.1.0-rc.1"
     chalk: ^3.0.0
@@ -5984,6 +5985,24 @@ __metadata:
     clipanion: ^3.0.1
     micromatch: ^4.0.2
     semver: ^7.1.2
+    tslib: ^1.13.0
+  peerDependencies:
+    "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-pnpm@workspace:^0.0.0, @yarnpkg/plugin-pnpm@workspace:packages/plugin-pnpm":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-pnpm@workspace:packages/plugin-pnpm"
+  dependencies:
+    "@yarnpkg/cli": "workspace:*"
+    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4"
+    "@yarnpkg/plugin-pnp": "workspace:^3.0.1-rc.4"
+    "@yarnpkg/plugin-stage": "workspace:^3.0.0"
+    clipanion: ^3.0.1
+    p-limit: ^2.2.0
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
