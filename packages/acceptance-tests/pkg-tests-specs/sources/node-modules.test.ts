@@ -1352,26 +1352,26 @@ describe(`Node_Modules`, () => {
         await xfs.mkdirPromise(libPath);
         await xfs.writeJsonPromise(ppath.join(libPath, Filename.manifest), {
           dependencies: {
-            'no-deps': `*`,
+            [`no-deps`]: `*`,
           },
           peerDependencies: {
-            'no-deps': `*`,
+            [`no-deps`]: `*`,
           },
         });
 
         await xfs.mkdirPromise(appPath);
         await xfs.writeJsonPromise(ppath.join(appPath, Filename.manifest), {
           dependencies: {
-            'lib': `portal:${libPath}`,
+            [`lib`]: `portal:${libPath}`,
           },
           peerDependencies: {
-            'no-deps': `*`,
+            [`no-deps`]: `*`,
           },
         });
 
         await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
           dependencies: {
-            'app': `portal:${appPath}`,
+            [`app`]: `portal:${appPath}`,
           },
         });
 

@@ -474,8 +474,8 @@ describe(`Basic tests`, () => {
                 },
               },
             });
-          }
-        )
+          },
+        ),
       );
 
       test(
