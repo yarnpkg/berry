@@ -1,6 +1,6 @@
+const brotli = require(`brotli/decompress`);
 const zlib = require(`zlib`);
 
-if (!zlib.brotliDecompressSync)
-  zlib.brotliDecompressSync = require(`brotli/decompress`);
+zlib.brotliDecompressSync = (buffer: Buffer) => Buffer.from(brotli(buffer));
 
 export {};
