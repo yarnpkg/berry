@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/libui": "workspace:^2.2.0-rc.1",
+    "@yarnpkg/libui": "workspace:^",
     "algoliasearch": "^4.2.0",
     "clipanion": "^3.0.1",
     "diff": "^4.0.1",
@@ -23,10 +23,10 @@
     "@types/diff": "^4.0.2",
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:*",
-    "@yarnpkg/cli": "workspace:*",
-    "@yarnpkg/core": "workspace:*",
-    "@yarnpkg/plugin-essentials": "workspace:*",
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-essentials": "workspace:^",
     "typescript": "^4.4.2"
   },
   "repository": {
