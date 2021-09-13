@@ -1,8 +1,9 @@
 import {useKeypress} from './useKeypress';
 
-export const useListInput = function <T>(value: T, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
+export const useListInput = function <T>(value: unknown, values: Array<T>, {active, minus, plus, set, loop = true}: {active: boolean, minus: string, plus: string, set: (value: T) => void, loop?: boolean}) {
   useKeypress({active}, (ch, key) => {
-    const index = values.indexOf(value);
+    // It's fine if the value doesn't exist inside the list
+    const index = values.indexOf(value as T);
     switch (key.name) {
       case minus: {
         const nextValueIndex = index - 1;

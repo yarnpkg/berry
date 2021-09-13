@@ -72,5 +72,3 @@ export const Pagination = ({pagination}) => (
     )}
   </PaginationContainer>
 );
-
-

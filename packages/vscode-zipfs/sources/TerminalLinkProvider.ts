@@ -72,7 +72,7 @@ export function registerTerminalLinkProvider() {
         vscode.Uri.parse(`zip:${link.data.substr(0, matchIndex).replace(/^\/?/, `/`)}`),
         {
           selection,
-        }
+        },
       );
     },
   };

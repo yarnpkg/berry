@@ -25,7 +25,8 @@
     "semver": "^7.1.2",
     "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
-    "tar-fs": "^1.16.0"
+    "tar-fs": "^1.16.0",
+    "tslib": "^1.13.0"
   },
   "repository": {
     "type": "git",

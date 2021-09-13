@@ -4,7 +4,7 @@ import {FakeFS}                        from '@yarnpkg/fslib';
 import {generateSerializedState}       from './generateSerializedState';
 import {hydrateRuntimeState}           from './loader/hydrateRuntimeState';
 import {makeApi}                       from './loader/makeApi';
-import {PnpSettings, PnpApi}           from "./types";
+import {PnpSettings, PnpApi}           from './types';
 
 export const makeRuntimeApi = (settings: PnpSettings, basePath: string, fakeFs: FakeFS<PortablePath>): PnpApi => {
   const data = generateSerializedState(settings);

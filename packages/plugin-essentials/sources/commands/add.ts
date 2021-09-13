@@ -111,6 +111,8 @@ export default class AddCommand extends BaseCommand {
     validator: t.isEnum(InstallMode),
   });
 
+  silent = Option.Boolean(`--silent`, {hidden: true});
+
   packages = Option.Rest();
 
   async execute() {

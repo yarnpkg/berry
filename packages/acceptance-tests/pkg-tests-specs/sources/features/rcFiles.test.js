@@ -49,7 +49,7 @@ describe(`Features`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await xfs.writeFilePromise(
           `${path}/.yarnrc.yml`,
-          `unknownConfigKey: 42\n`
+          `unknownConfigKey: 42\n`,
         );
         await xfs.mkdirPromise(`${path}/project`);
         await xfs.writeJsonPromise(`${path}/project/package.json`, {});
@@ -62,9 +62,9 @@ describe(`Features`, () => {
               HOME: npath.fromPortablePath(path),
               USERPROFILE: npath.fromPortablePath(path),
             },
-          })
+          }),
         ).resolves.toMatchObject({code: 0});
-      })
+      }),
     );
   });
 });

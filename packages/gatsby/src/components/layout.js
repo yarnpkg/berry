@@ -7,6 +7,7 @@
 
 import './layout.css';
 
+// eslint-disable-next-line arca/import-ordering
 import PropTypes from 'prop-types';
 import {Helmet}  from 'react-helmet';
 import React     from 'react';

@@ -61,8 +61,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -87,8 +87,8 @@ describe(`Commands`, () => {
           }
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
   });
 });

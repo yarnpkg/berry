@@ -19,7 +19,7 @@ const searchStateToQueryString = searchState => ({
 const searchStateToUrl = searchState =>
   searchState
     ? `${withPrefix(`/`)}?${qs.stringify(
-      searchStateToQueryString(searchState)
+      searchStateToQueryString(searchState),
     )}`
     : ``;
 
@@ -74,14 +74,14 @@ export const withUrlSync = App =>
         window.history.pushState(
           null,
           `Search packages | Yarn`,
-          this.originalHref
+          this.originalHref,
         );
       } else {
         this.debouncedSetState = setTimeout(() => {
           window.history.pushState(
             searchState,
             `Search packages | Yarn`,
-            searchStateToUrl(searchState)
+            searchStateToUrl(searchState),
           );
         }, updateAfter);
       }

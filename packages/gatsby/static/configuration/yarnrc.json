@@ -104,7 +104,7 @@
     },
     "enableGlobalCache": {
       "_package": "@yarnpkg/core",
-      "description": "If true, Yarn will disregard the `cacheFolder` settings and will store the cache files into a folder shared by all local projects sharing the same configuration. Note that enabling the global cache isn't advised on OSX: it opens the door to some subtle incompatibilities while not providing significant size improvements (this is because the OSX default filesystem supports Copy-on-Write, so each file in your cache is already a light pointer to a single global file).",
+      "description": "If true, Yarn will disregard the `cacheFolder` settings and will store the cache files into a folder shared by all local projects sharing the same configuration.",
       "type": "boolean",
       "default": false
     },

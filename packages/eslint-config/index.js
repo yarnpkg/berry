@@ -13,11 +13,11 @@ module.exports = {
 
   env: {
     node: true,
-    es6: true,
+    es2017: true,
   },
 
   parserOptions: {
-    ecmaVersion: 6,
+    ecmaVersion: 2019,
     sourceType: `module`,
     ecmaFeatures: {
       modules: true,

@@ -31,7 +31,7 @@ module.exports = makeConfig({
           for (const chunk of chunks) {
             for (const file of chunk.files) {
               compilation.assets[file] = new webpack.sources.RawSource(
-                `let hook;\n\nmodule.exports = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(compilation.assets[file].source().replace(/\r\n/g, `\n`)).toString(`base64`)}', 'base64')).toString();\n\n  return hook;\n};\n`
+                `let hook;\n\nmodule.exports = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(compilation.assets[file].source().replace(/\r\n/g, `\n`)).toString(`base64`)}', 'base64')).toString();\n\n  return hook;\n};\n`,
               );
             }
           }

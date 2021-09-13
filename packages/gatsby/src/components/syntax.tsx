@@ -227,7 +227,7 @@ export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithCh
         <div style={{width: `100%`}}>
           {React.cloneElement(child as JSX.Element, {suffix: theme.arrays.suffix})}
         </div>
-      </div>
+      </div>,
     )}
   </div>
   <div>{theme.arrays.trailing}{suffix}</div>
@@ -244,7 +244,7 @@ export const Dictionary = ({theme, name, suffix, anchorTarget, children, margin}
     {React.Children.map(children, (child, index) =>
       <React.Fragment key={index}>
         {React.cloneElement(child as JSX.Element, {suffix: theme.dictionaries.suffix})}
-      </React.Fragment>
+      </React.Fragment>,
     )}
   </div>
   <div>{theme.dictionaries.trailing}{suffix}</div>

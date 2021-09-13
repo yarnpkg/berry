@@ -19,6 +19,17 @@ Object {
 }
 `;
 
+exports[`Commands workspace foreach should handle global scripts getting downgraded to a normal script 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: root workspace
+➤ YN0000: Test Workspace G
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should include dependencies if using --recursive 1`] = `
 Object {
   "code": 0,

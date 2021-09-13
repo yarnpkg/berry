@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 export const schema = {
   activity: Array.from({length: 12}, () => ({total: 0})),
   changelogFilename: ``,
@@ -12,9 +11,11 @@ export const schema = {
   downloadsRatio: 0,
   jsDelivrHits: 0,
   github: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     stargazers_count: 0,
   },
   gitlab: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     star_count: 0,
   },
   bundlesize: undefined,

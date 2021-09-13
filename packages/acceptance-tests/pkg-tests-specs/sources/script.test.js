@@ -88,7 +88,7 @@ describe(`Scripts tests`, () => {
       })).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
       });
-    })
+    }),
   );
 
   test(
@@ -116,7 +116,7 @@ describe(`Scripts tests`, () => {
       })).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(path)}\n`,
       });
-    })
+    }),
   );
 
   test(
@@ -137,7 +137,7 @@ describe(`Scripts tests`, () => {
       await expect(run(`run`, `ws:foo2`)).resolves.toMatchObject({
         stdout: `1\n`,
       });
-    })
+    }),
   );
 
   test(
@@ -158,7 +158,7 @@ describe(`Scripts tests`, () => {
         npm_package_name: `helloworld`,
         npm_package_version: `1.2.3`,
       });
-    })
+    }),
   );
 
   test(
@@ -194,7 +194,7 @@ describe(`Scripts tests`, () => {
       await expect(run(`test`)).resolves.toMatchObject({
         stdout: `ok\n`,
       });
-    })
+    }),
   );
 
   test(
@@ -214,8 +214,8 @@ describe(`Scripts tests`, () => {
         await expect(run(`test`)).resolves.toMatchObject({
           stdout: `ok\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(

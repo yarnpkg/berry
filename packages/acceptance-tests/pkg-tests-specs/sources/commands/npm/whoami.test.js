@@ -28,7 +28,7 @@ describe(`Commands`, () => {
         }
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     test(
@@ -47,7 +47,7 @@ describe(`Commands`, () => {
         }
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     test(
@@ -75,14 +75,14 @@ describe(`Commands`, () => {
         }
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     test(
       `it should throw an error when no auth config is found`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/No authentication configured/);
-      })
+      }),
     );
 
     test(
@@ -90,7 +90,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthToken: "${INVALID_AUTH_TOKEN}"\n`);
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
-      })
+      }),
     );
 
     test(
@@ -98,7 +98,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await writeFile(`${path}/.yarnrc.yml`, `npmAuthIdent: "${INVALID_AUTH_IDENT}"\n`);
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
-      })
+      }),
     );
 
     test(
@@ -117,7 +117,7 @@ describe(`Commands`, () => {
 
         await expect(run(`npm`, `whoami`, `--scope`, `testScope`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
         await expect(run(`npm`, `whoami`)).rejects.toThrowError(/Invalid authentication \(as an unknown user\)/);
-      })
+      }),
     );
   });
 });

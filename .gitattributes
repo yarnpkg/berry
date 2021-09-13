@@ -1,10 +1,14 @@
 # This line does two things:
-# - enable git's CRLF -> LF modification
+# - forces git to use LF
 # - tell git to guess whether files are text or binary
-*                       text=auto
+*                       text=auto eol=lf
 
-# Mark .pnp.cjs as binary to prevent git from trying to merge it
-/.pnp.*                 binary linguist-generated
+# Mark generated files as binary to prevent git from trying to merge them
+/.pnp.*                                               binary linguist-generated
+packages/yarnpkg-pnp/sources/hook.js                  binary linguist-generated
+packages/yarnpkg-core/sources/worker-zip/index.js     binary linguist-generated
+packages/yarnpkg-libzip/sources/libzipAsync.js        binary linguist-generated
+packages/yarnpkg-libzip/sources/libzipSync.js         binary linguist-generated
 
 # Set the language for these files to json5 to ensure GitHub doesn't show the comments as errors
 /.vscode/*.json         linguist-language=JSON5

@@ -17,7 +17,7 @@ const Hits = connectHits(({hits, onTagClick, onOwnerClick, searchState}) =>
       key={hit.objectID}
       searchState={searchState}
     />
-  ))
+  )),
 );
 
 const ResultsContainer = styled.div`

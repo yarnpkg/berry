@@ -19,7 +19,7 @@ describe(`Commands`, () => {
         await expect(run(`dedupe`, `--check`)).rejects.toMatchObject({
           stdout: expect.stringContaining(`2 packages can be deduped using the highest strategy`),
         });
-      })
+      }),
     );
 
     describe(`strategies`, () => {
@@ -49,7 +49,7 @@ describe(`Commands`, () => {
                 },
               },
             });
-          })
+          }),
         );
 
         it(
@@ -80,7 +80,7 @@ describe(`Commands`, () => {
                 },
               },
             });
-          })
+          }),
         );
       });
     });
@@ -110,7 +110,7 @@ describe(`Commands`, () => {
               },
             },
           });
-        })
+        }),
       );
 
       it(
@@ -137,7 +137,7 @@ describe(`Commands`, () => {
               },
             },
           });
-        })
+        }),
       );
 
       it(
@@ -164,7 +164,7 @@ describe(`Commands`, () => {
               },
             },
           });
-        })
+        }),
       );
 
       it(
@@ -191,7 +191,7 @@ describe(`Commands`, () => {
               },
             },
           });
-        })
+        }),
       );
     });
 
@@ -209,7 +209,7 @@ describe(`Commands`, () => {
             await expect(run(`dedupe`, `--check`)).rejects.toMatchObject({
               code: 1,
             });
-          })
+          }),
         );
 
         it(
@@ -224,7 +224,7 @@ describe(`Commands`, () => {
             await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
               code: 0,
             });
-          })
+          }),
         );
       });
 
@@ -247,7 +247,7 @@ describe(`Commands`, () => {
           });
 
           expect.assertions(1);
-        })
+        }),
       );
 
       test(
@@ -262,7 +262,7 @@ describe(`Commands`, () => {
           await expect(run(`dedupe`, `--check`, `--strategy`, `highest`)).rejects.toMatchObject({
             code: 1,
           });
-        })
+        }),
       );
     });
   });

@@ -1,5 +1,5 @@
 import {execUtils, scriptUtils, structUtils, tgzUtils}         from '@yarnpkg/core';
-import {Locator}                                               from '@yarnpkg/core';
+import {Locator, formatUtils}                                  from '@yarnpkg/core';
 import {Fetcher, FetchOptions, MinimalFetchOptions}            from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs, NativePath} from '@yarnpkg/fslib';
 
@@ -154,7 +154,7 @@ export class ExecFetcher implements Fetcher {
         const {code} = await execUtils.pipevp(process.execPath, [`--require`, npath.fromPortablePath(runtimeFile), npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
         if (code !== 0) {
           xfs.detachTemp(logDir);
-          throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${logFile})`);
+          throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${formatUtils.pretty(opts.project.configuration, logFile, formatUtils.Type.PATH)})`);
         }
       });
     });

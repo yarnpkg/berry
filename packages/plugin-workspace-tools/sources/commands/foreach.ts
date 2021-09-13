@@ -137,8 +137,21 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
     const workspaces: Array<Workspace> = [];
 
+    // A script containing `:` becomes global if it exists in only one workspace.
+    let isGlobalScript = false;
+    if (scriptName?.includes(`:`)) {
+      for (const workspace of project.workspaces) {
+        if (workspace.manifest.scripts.has(scriptName)) {
+          isGlobalScript = !isGlobalScript;
+          if (isGlobalScript === false) {
+            break;
+          }
+        }
+      }
+    }
+
     for (const workspace of candidates) {
-      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !scriptName.includes(`:`))
+      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript)
         continue;
 
       // Prevents infinite loop in the case of configuring a script as such:

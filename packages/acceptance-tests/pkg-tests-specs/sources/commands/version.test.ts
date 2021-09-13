@@ -303,5 +303,45 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `it should successfully apply a version bump that can't be described by a strategy`,
+      makeTemporaryEnv({
+        version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
+        await expect(run(`version`, `3.4.5`)).resolves.toMatchObject({
+          code: 0,
+        });
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          version: `3.4.5`,
+        });
+      }),
+    );
+
+    test(
+      `it should successfully apply a version bump that can't be described by a strategy on top of the stored version`,
+      makeTemporaryEnv({
+        version: `1.0.0`,
+      }, {
+        plugins: [
+          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+        ],
+      }, async ({path, run, source}) => {
+        await run(`version`, `major`, `--deferred`);
+
+        await expect(run(`version`, `3.4.5`)).resolves.toMatchObject({
+          code: 0,
+        });
+
+        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          version: `3.4.5`,
+        });
+      }),
+    );
   });
 });

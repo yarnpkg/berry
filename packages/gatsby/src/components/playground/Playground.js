@@ -12,7 +12,6 @@ import PlaygroundNotice                         from './PlaygroundNotice';
 import PlaygroundOutput                         from './PlaygroundOutput';
 import PlaygroundSelect                         from './PlaygroundSelect';
 import PlaygroundStatus                         from './PlaygroundStatus';
-
 import {DEFAULT_OUTPUT, SELECT_OPTIONS, LABELS} from './constants';
 
 const Container = styled.div`

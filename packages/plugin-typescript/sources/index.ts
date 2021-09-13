@@ -17,7 +17,7 @@ const afterWorkspaceDependencyAddition = async (
   workspace: Workspace,
   dependencyTarget: suggestUtils.Target,
   descriptor: Descriptor,
-  strategies: Array<suggestUtils.Strategy>
+  strategies: Array<suggestUtils.Strategy>,
 ) => {
   if (descriptor.scope === `types`)
     return;
