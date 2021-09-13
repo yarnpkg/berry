@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/libzip": "workspace:^2.2.2",
+    "@yarnpkg/libzip": "workspace:^",
     "tslib": "^1.13.0"
   },
   "scripts": {

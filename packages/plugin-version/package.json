@@ -4,9 +4,9 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
-    "@yarnpkg/libui": "workspace:^2.2.0-rc.1",
-    "@yarnpkg/parsers": "workspace:^2.4.1-rc.4",
+    "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/libui": "workspace:^",
+    "@yarnpkg/parsers": "workspace:^",
     "clipanion": "^3.0.1",
     "ink": "^3.0.8",
     "lodash": "^4.17.15",
@@ -22,9 +22,9 @@
     "@types/lodash": "^4.14.136",
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:*",
-    "@yarnpkg/cli": "workspace:*",
-    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
     "typescript": "^4.4.2"
   },
   "scripts": {

@@ -7,12 +7,12 @@
     "pkg-tests-specs"
   ],
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:*",
-    "@yarnpkg/core": "workspace:*",
-    "@yarnpkg/fslib": "workspace:*",
-    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/monorepo": "workspace:^",
     "is-wsl": "^2.1.1",
-    "pkg-tests-core": "workspace:*"
+    "pkg-tests-core": "workspace:^"
   },
   "scripts": {
     "test:integration": "run test:unit --config \"$(pwd)/jest.config.js\""
