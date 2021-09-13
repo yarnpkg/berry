@@ -73,7 +73,7 @@ describe(`Commands`, () => {
         });
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     it(
@@ -129,7 +129,7 @@ describe(`Commands`, () => {
         });
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     it(
@@ -177,7 +177,7 @@ describe(`Commands`, () => {
         });
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     it(
@@ -223,7 +223,7 @@ describe(`Commands`, () => {
         });
 
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
   });
 });

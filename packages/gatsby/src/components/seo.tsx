@@ -34,7 +34,7 @@ export function SEO({description, lang = `en`, meta = [], keywords = [], title}:
           }
         }
       }
-    `
+    `,
   );
 
   const metaDescription = description ?? site.siteMetadata.description;
@@ -102,7 +102,7 @@ export function SEO({description, lang = `en`, meta = [], keywords = [], title}:
               name: `keywords`,
               content: keywords.join(`, `),
             }
-            : []
+            : [],
         )
         .concat(meta)}
     />

@@ -70,7 +70,7 @@ jobs:
 
     - name: 'Check that the Zip worker is consistent with a fresh build (fix w/ "git merge master && yarn update:zip:worker")'
       run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/yarnpkg-core/sources/worker-zip/index.js | wc -l) -gt 0 ]]; then
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-{fslib,libzip,core}/sources/**/*' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js build:zip:worker
           [[ $(git diff --name-only packages/yarnpkg-core/sources/worker-zip/index.js | wc -l) -eq 0 ]]
         fi

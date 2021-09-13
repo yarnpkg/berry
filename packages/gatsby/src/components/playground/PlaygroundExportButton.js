@@ -6,7 +6,6 @@ import React                             from 'react';
 import * as playgroundUtils              from '../../utils/playgroundUtils';
 
 import PlaygroundButton                  from './PlaygroundButton';
-
 import {REPO_URL, LABELS}                from './constants';
 
 

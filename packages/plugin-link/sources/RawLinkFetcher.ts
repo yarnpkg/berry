@@ -48,7 +48,7 @@ export class RawLinkFetcher implements Fetcher {
     const sourcePath = ppath.resolve(
       effectiveParentFetch.localPath ?? effectiveParentFetch.packageFs.getRealPath(),
       effectiveParentFetch.prefixPath,
-      path
+      path,
     );
 
     if (parentFetch.localPath) {

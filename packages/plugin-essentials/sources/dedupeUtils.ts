@@ -149,7 +149,7 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
                 structUtils.prettyLocator(configuration, currentPackage)
               } to ${
                 structUtils.prettyLocator(configuration, updatedPackage)
-              }`
+              }`,
             );
 
             report.reportJson({
@@ -160,8 +160,8 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
 
             project.storedResolutions.set(descriptor.descriptorHash, updatedPackage.locatorHash);
           })
-          .finally(() => progress.tick())
-      )
+          .finally(() => progress.tick()),
+      ),
     );
 
     let packages: string;

@@ -87,8 +87,8 @@ export default class NewPluginCommand extends Command {
       compilerOptions: {
         experimentalDecorators: true,
         module: `commonjs`,
-        target: `es2018`,
-        lib: [`es2018`],
+        target: `ES2019`,
+        lib: [`ES2019`],
       },
       include: [
         `sources/**/*.ts`,

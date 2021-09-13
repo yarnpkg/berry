@@ -1,6 +1,6 @@
 import styled                    from '@emotion/styled';
 import {navigate}                from 'gatsby';
-import {IoIosSearch, IoIosClose} from "react-icons/io";
+import {IoIosSearch, IoIosClose} from 'react-icons/io';
 import {connectSearchBox}        from 'react-instantsearch-dom';
 import React, {useState}         from 'react';
 

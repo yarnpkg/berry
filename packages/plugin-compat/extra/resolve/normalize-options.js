@@ -21,7 +21,7 @@ module.exports = function (_, opts) {
 
   const runPnpResolution = (request, basedir) => {
     // Extract the name of the package being requested (1=package name, 2=internal path)
-    const parts = request.match(/^((?:@[^\/]+\/)?[^\/]+)(\/.*)?/);
+    const parts = request.match(/^((?:@[^/]+\/)?[^/]+)(\/.*)?/);
     if (!parts)
       throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`);
 
@@ -93,7 +93,7 @@ module.exports = function (_, opts) {
     let nodeModules = path.dirname(resolution.packagePath);
 
     // Strip the scope named folder if needed
-    if (request.match(/^@[^\/]+\//))
+    if (request.match(/^@[^/]+\//))
       nodeModules = path.dirname(nodeModules);
 
     return [nodeModules];

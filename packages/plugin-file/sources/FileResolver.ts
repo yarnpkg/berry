@@ -62,9 +62,9 @@ export class FileResolver implements Resolver {
           params: {
             locator: structUtils.stringifyLocator(parentLocator),
           },
-        })
+        }),
       ),
-      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
+      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions},
     );
 
     const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);

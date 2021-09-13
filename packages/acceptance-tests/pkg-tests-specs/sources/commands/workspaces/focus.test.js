@@ -25,8 +25,8 @@ describe(`Commands`, () => {
             `.gitignore`,
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -53,8 +53,8 @@ describe(`Commands`, () => {
             expect.stringContaining(`no-deps-npm-1.0.0-`),
             expect.stringContaining(`no-deps-npm-2.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -80,8 +80,8 @@ describe(`Commands`, () => {
             `.gitignore`,
             expect.stringContaining(`no-deps-npm-2.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -104,8 +104,8 @@ describe(`Commands`, () => {
             expect.stringContaining(`no-deps-npm-1.0.0-`),
             expect.stringContaining(`no-deps-npm-2.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -127,8 +127,8 @@ describe(`Commands`, () => {
             `.gitignore`,
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -155,8 +155,8 @@ describe(`Commands`, () => {
             expect.stringContaining(`no-deps-bins-npm-1.0.0-`),
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -182,8 +182,8 @@ describe(`Commands`, () => {
             `.gitignore`,
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -202,8 +202,8 @@ describe(`Commands`, () => {
 
           await expect(xfs.existsSync(ppath.join(path, `packages/foo/postinstall.log`))).toBeTruthy();
           await expect(xfs.existsSync(ppath.join(path, `packages/qux/postinstall.log`))).toBeFalsy();
-        }
-      )
+        },
+      ),
     );
   });
 });

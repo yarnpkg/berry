@@ -84,7 +84,7 @@ describe(`Commands`, () => {
         await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
           stdout: `1.0.0\n`,
         });
-      })
+      }),
     );
 
     test(
@@ -105,7 +105,7 @@ describe(`Commands`, () => {
         await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
           stdout: `1.0.0\n`,
         });
-      })
+      }),
     );
 
     test(
@@ -128,7 +128,7 @@ describe(`Commands`, () => {
         await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
           stdout: `1.0.0\n`,
         });
-      })
+      }),
     );
 
     test(
@@ -150,7 +150,7 @@ describe(`Commands`, () => {
         await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
           stdout: `1.0.0\n`,
         });
-      })
+      }),
     );
   });
 });

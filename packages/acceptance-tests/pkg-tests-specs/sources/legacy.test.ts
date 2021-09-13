@@ -38,7 +38,7 @@ describe(`Legacy tests`, () => {
           version: `1.0.0`,
         });
       },
-    )
+    ),
   );
 
   test(
@@ -56,7 +56,7 @@ describe(`Legacy tests`, () => {
           version: `2.0.0`,
         });
       },
-    )
+    ),
   );
 
   test(
@@ -77,7 +77,7 @@ describe(`Legacy tests`, () => {
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/no-deps/-/no-deps-2.0.0.tgz#39453512f8241e2d20307975e8d9eb6314f7bf62"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
-`.replace(/^\n+/g, ``)
+`.replace(/^\n+/g, ``),
         );
         await run(`install`);
 
@@ -86,6 +86,6 @@ describe(`Legacy tests`, () => {
           version: `2.0.0`,
         });
       },
-    )
+    ),
   );
 });

@@ -19,7 +19,6 @@ import IcoStargazers      from '../../images/detail/ico-stargazers.svg';
 import {algolia}          from '../config';
 import {ifDesktop}        from '../responsive';
 import {schema}           from '../schema';
-
 import {prefixURL, get}   from '../util';
 
 import {Aside}            from './Aside';
@@ -359,7 +358,7 @@ export class Details extends Component {
         // E.g (https://gitlab.com/janslow/gitlab-fetch/raw/master/CHANGELOG.md) -> (https://gitlab.com/api/v4/projects/janslow%2Fgitlab-fetch/repository/files/CHANGELOG.md?ref=master)
         // Once gitlab adds support, we can get rid of this workaround.
         const apiUrl = `https://gitlab.com/api/v4/projects/${user}%2F${project}/repository/files/${encodeURIComponent(
-          filePath
+          filePath,
         )}?ref=${branch}`;
         return get({
           url: apiUrl,
@@ -376,7 +375,7 @@ export class Details extends Component {
       get({
         url: `https://gitlab.com/api/v4/projects/${user}%2F${project}/repository/commits?per_page=1`,
         type: `json`,
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       }).then(([{committed_date}]) => {
         const timeDistance = formatDistance(new Date(committed_date), new Date());
         this.setState({
@@ -403,11 +402,11 @@ export class Details extends Component {
         // Extract information from raw url
         // See comment in getGitlabFile
         const [, user, project, branch, filePath] = changelogFilename.match(
-          /^https?:\/\/gitlab.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.*)$/i
+          /^https?:\/\/gitlab.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.*)$/i,
         );
 
         getGitlabFile({user, project, branch, filePath}).then(res =>
-          this.setState({changelog: res})
+          this.setState({changelog: res}),
         );
       }
     } else if (host === `bitbucket.org`) {
@@ -667,7 +666,7 @@ export class Details extends Component {
       null,
       null,
       window.location.pathname +
-        qs.stringify(search, {addQueryPrefix: true, strictNullHandling: true})
+        qs.stringify(search, {addQueryPrefix: true, strictNullHandling: true}),
     );
   };
 
