@@ -5,14 +5,14 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
+    "@yarnpkg/fslib": "workspace:^",
     "resolve.exports": "^1.0.2",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:*",
-    "@yarnpkg/libzip": "workspace:*",
-    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/libzip": "workspace:^",
+    "@yarnpkg/monorepo": "workspace:^",
     "typescript": "^4.4.2",
     "webpack": "^5.1.1",
     "webpack-cli": "^4.0.0-beta.8"

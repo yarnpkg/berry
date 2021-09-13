@@ -4,14 +4,14 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
+    "@yarnpkg/fslib": "workspace:^",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/core": "workspace:^"
   },
   "repository": {
     "type": "git",

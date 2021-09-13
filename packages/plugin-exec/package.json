@@ -4,15 +4,15 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/builder": "workspace:^3.1.0-rc.1",
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:*",
+    "@yarnpkg/core": "workspace:^",
     "typescript": "^4.4.2"
   },
   "scripts": {

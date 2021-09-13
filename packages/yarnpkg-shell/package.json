@@ -5,8 +5,8 @@
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4",
-    "@yarnpkg/parsers": "workspace:^2.4.1-rc.4",
+    "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/parsers": "workspace:^",
     "chalk": "^3.0.0",
     "clipanion": "^3.0.1",
     "cross-spawn": "7.0.3",
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
     "@types/micromatch": "^4.0.1",
-    "@yarnpkg/monorepo": "workspace:*",
+    "@yarnpkg/monorepo": "workspace:^",
     "strip-ansi": "^6.0.0"
   },
   "scripts": {
