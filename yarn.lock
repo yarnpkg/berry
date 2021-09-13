@@ -5436,7 +5436,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/fslib@workspace:*, @yarnpkg/fslib@workspace:^2.6.0-rc.3, @yarnpkg/fslib@workspace:^2.6.0-rc.4, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
+"@yarnpkg/fslib@workspace:*, @yarnpkg/fslib@workspace:^2.6.0-rc.4, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
@@ -5971,7 +5971,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-pnp@workspace:*, @yarnpkg/plugin-pnp@workspace:^3.0.1-rc.3, @yarnpkg/plugin-pnp@workspace:^3.0.1-rc.4, @yarnpkg/plugin-pnp@workspace:packages/plugin-pnp":
+"@yarnpkg/plugin-pnp@workspace:*, @yarnpkg/plugin-pnp@workspace:^3.0.1-rc.4, @yarnpkg/plugin-pnp@workspace:packages/plugin-pnp":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
@@ -5998,8 +5998,8 @@ __metadata:
   dependencies:
     "@yarnpkg/cli": "workspace:*"
     "@yarnpkg/core": "workspace:*"
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.3"
-    "@yarnpkg/plugin-pnp": "workspace:^3.0.1-rc.3"
+    "@yarnpkg/fslib": "workspace:^2.6.0-rc.4"
+    "@yarnpkg/plugin-pnp": "workspace:^3.0.1-rc.4"
     "@yarnpkg/plugin-stage": "workspace:^3.0.0"
     clipanion: ^3.0.1
     p-limit: ^2.2.0
