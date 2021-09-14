@@ -203,9 +203,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     }
   };
 
-  for (const child of workspaceTree.children.values()) {
+  for (const child of workspaceTree.children.values())
     addWorkspace(child, workspaceTree.workspaceLocator!);
-  }
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
@@ -245,7 +244,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
-        isWorkspace: pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX)
+        isWorkspace: pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX),
       };
 
       nodes.set(nodeKey, node);
@@ -287,7 +286,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       }
     }
 
-    const locatorKey = stringifyLocator({name: locator.name.replace(WORKSPACE_NAME_SUFFIX, ''), reference: locator.reference});
+    const locatorKey = stringifyLocator({name: locator.name.replace(WORKSPACE_NAME_SUFFIX, ``), reference: locator.reference});
     const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
     if (workspaceDependencies) {
       for (const workspaceLocator of workspaceDependencies) {
@@ -297,7 +296,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     parent.dependencies.add(node);
 
-    const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && locator.name.startsWith('workspace:') && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
+    const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && locator.name.startsWith(`workspace:`) && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
 
     if (!isSeen && !isWorkspaceDependency) {
       const siblingPortalDependencyMap = new Map<string, {target: DependencyTarget, portal: PhysicalPackageLocator}>();
@@ -468,7 +467,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
       let isAnonymousWorkspace = false;
       if (leafNode.linkType === LinkType.SOFT && options.project) {
         const workspace = options.project.workspacesByCwd.get(leafNode.target.slice(0, -1) as PortablePath);
-        isAnonymousWorkspace = workspace && !workspace.manifest.name ? true : false;
+        isAnonymousWorkspace = !!(workspace && !workspace.manifest.name);
       }
 
       if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isAnonymousWorkspace) {
