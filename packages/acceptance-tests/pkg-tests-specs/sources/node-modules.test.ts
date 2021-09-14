@@ -1339,13 +1339,14 @@ describe(`Node_Modules`, () => {
 
 
   test(
-    `it should fallback to dependencies if the parent doesn't provide the peer dependency`,
+    `should fallback to dependencies if the parent doesn't provide the peer dependency`,
     makeTemporaryEnv(
       {},
       {
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
+        console.log(path);
         const appPath = ppath.join(path, `lib-1` as Filename);
         const libPath = ppath.join(path, `lib-2` as Filename);
 

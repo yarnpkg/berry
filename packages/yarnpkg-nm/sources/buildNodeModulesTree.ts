@@ -168,56 +168,43 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   if (topLocator === null)
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
-  const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation);
+  const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation.slice(0, -1));
 
-  const topLocatorKey = stringifyLocator(topLocator);
-
-  if (options.project) {
-    const workspaceTree: WorkspaceTree = {children: new Map()};
-    const cwdSegments = options.project.cwd.split(ppath.sep);
-    for (const [cwd, workspace] of options.project.workspacesByCwd) {
-      const segments = cwd.split(ppath.sep).slice(cwdSegments.length);
-      let node = workspaceTree;
-      for (const segment of segments) {
-        let nextNode = node.children.get(segment as Filename);
-        if (!nextNode) {
-          nextNode = {children: new Map()};
-          node.children.set(segment as Filename, nextNode);
-        }
-        node = nextNode;
+  const workspaceTree: WorkspaceTree = {children: new Map()};
+  const cwdSegments = topPkgPortableLocation.split(ppath.sep);
+  for (const locator of pnpRoots) {
+    const pkg = pnp.getPackageInformation(locator)!;
+    const location = npath.toPortablePath(pkg.packageLocation.slice(0, -1));
+    const segments = location.split(ppath.sep).slice(cwdSegments.length);
+    let node = workspaceTree;
+    for (const segment of segments) {
+      let nextNode = node.children.get(segment as Filename);
+      if (!nextNode) {
+        nextNode = {children: new Map()};
+        node.children.set(segment as Filename, nextNode);
       }
-      node.workspaceLocator = {name: structUtils.stringifyIdent(workspace.anchoredLocator), reference: workspace.anchoredLocator.reference};
+      node = nextNode;
     }
+    node.workspaceLocator = locator;
+  }
 
-    const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
-      if (node.workspaceLocator) {
-        const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
-        let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
-        if (!dependencies) {
-          dependencies = new Set();
-          workspaceDependenciesMap.set(parentLocatorKey, dependencies);
-        }
-        dependencies.add(node.workspaceLocator);
+  const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
+    if (node.workspaceLocator) {
+      const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
+      let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
+      if (!dependencies) {
+        dependencies = new Set();
+        workspaceDependenciesMap.set(parentLocatorKey, dependencies);
       }
-      for (const child of node.children.values()) {
-        addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
-      }
-    };
+      dependencies.add(node.workspaceLocator);
+    }
+    for (const child of node.children.values()) {
+      addWorkspace(child, node.workspaceLocator || parentWorkspaceLocator);
+    }
+  };
 
-    for (const child of workspaceTree.children.values()) {
-      addWorkspace(child, workspaceTree.workspaceLocator!);
-    }
-  } else {
-    for (const locator of pnpRoots) {
-      if (locator.name !== topLocator.name || locator.reference !== topLocator.reference) {
-        let dependencies = workspaceDependenciesMap.get(topLocatorKey);
-        if (!dependencies) {
-          dependencies = new Set();
-          workspaceDependenciesMap.set(topLocatorKey, dependencies);
-        }
-        dependencies.add(locator);
-      }
-    }
+  for (const child of workspaceTree.children.values()) {
+    addWorkspace(child, workspaceTree.workspaceLocator!);
   }
 
   const packageTree: HoisterTree = {
@@ -226,6 +213,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
+    isWorkspace: true,
   };
 
   const nodes = new Map<string, HoisterTree>();
@@ -248,6 +236,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
+    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
+
     if (!node) {
       node = {
         name,
@@ -255,13 +245,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         reference: locator.reference,
         dependencies: new Set(),
         peerNames: pkg.packagePeers,
+        isWorkspace: pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX)
       };
 
       nodes.set(nodeKey, node);
     }
 
     let hoistPriority;
-    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
     if (isExternalSoftLinkPackage)
       // External soft link dependencies have the highest priority - we don't want to install inside them
       hoistPriority = 2;
@@ -297,7 +287,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       }
     }
 
-    const locatorKey = stringifyLocator(locator);
+    const locatorKey = stringifyLocator({name: locator.name.replace(WORKSPACE_NAME_SUFFIX, ''), reference: locator.reference});
     const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
     if (workspaceDependencies) {
       for (const workspaceLocator of workspaceDependencies) {
@@ -307,7 +297,9 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
     parent.dependencies.add(node);
 
-    if (!isSeen) {
+    const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && locator.name.startsWith('workspace:') && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
+
+    if (!isSeen && !isWorkspaceDependency) {
       const siblingPortalDependencyMap = new Map<string, {target: DependencyTarget, portal: PhysicalPackageLocator}>();
       for (const [depName, referencish] of allDependencies) {
         if (referencish !== null) {
@@ -471,7 +463,15 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
       const nodePath = `${parentNodePath}/${locator.name}`;
       const leafNode = makeLeafNode(locator, parentNodePath, references.slice(1));
-      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX)) {
+
+      // We don't want to create self-referencing symlinks for anonymous workspaces
+      let isAnonymousWorkspace = false;
+      if (leafNode.linkType === LinkType.SOFT && options.project) {
+        const workspace = options.project.workspacesByCwd.get(leafNode.target.slice(0, -1) as PortablePath);
+        isAnonymousWorkspace = workspace && !workspace.manifest.name ? true : false;
+      }
+
+      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isAnonymousWorkspace) {
         const prevNode = tree.get(nodeModulesLocation);
         if (prevNode) {
           if (prevNode.dirList) {
