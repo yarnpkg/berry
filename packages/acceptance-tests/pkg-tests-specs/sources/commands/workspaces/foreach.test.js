@@ -361,8 +361,8 @@ describe(`Commands`, () => {
 
           await run(`install`);
           await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `0`, `run`, `print`)).rejects.toThrowError(/to be at least 1 \(got 0\)/);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -382,8 +382,8 @@ describe(`Commands`, () => {
           const first7Lines = stdout.split(`\n`).slice(0, 7).sort().join(`\n`);
 
           await expect({code, first7Lines, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(`can run on public workspaces only`, makeTemporaryEnv(
