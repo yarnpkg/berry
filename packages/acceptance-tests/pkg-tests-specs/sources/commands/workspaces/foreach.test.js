@@ -135,12 +135,16 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, {cwd: `${path}/packages/workspace-d`}));
+            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, {cwd: `${path}/packages/workspace-c`}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
 
-          await expect({code, stdout, stderr}).toMatchSnapshot();
+          const orderedStdout = stdout.trim().split(`\n`);
+          expect(orderedStdout.pop()).toContain(`Done`);
+          // The exact order is unstable, so just make sure all the workspaces we expect to be there, are.
+          orderedStdout.sort();
+          await expect({code, orderedStdout, stderr}).toMatchSnapshot();
         },
       ),
     );

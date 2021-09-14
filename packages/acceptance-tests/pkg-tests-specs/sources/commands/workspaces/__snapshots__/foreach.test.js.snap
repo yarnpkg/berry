@@ -13,9 +13,15 @@ Object {
 
 exports[`Commands workspace foreach should execute 'node' command 1`] = `
 Object {
-  "code": "ENOENT",
+  "code": 0,
+  "orderedStdout": Array [
+    "➤ YN0000: workspace-c",
+    "➤ YN0000: workspace-d",
+    "➤ YN0000: workspace-e",
+    "➤ YN0000: workspace-f",
+    "➤ YN0000: workspace-g",
+  ],
   "stderr": "",
-  "stdout": "",
 }
 `;
 
