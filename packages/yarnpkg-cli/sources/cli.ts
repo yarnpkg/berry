@@ -6,7 +6,11 @@ import {YarnVersion}            from '@yarnpkg/core';
 import {main}                   from './main';
 import {getPluginConfiguration} from './tools/getPluginConfiguration';
 
-main({
-  binaryVersion: YarnVersion || `<unknown>`,
-  pluginConfiguration: getPluginConfiguration(),
-});
+export {getDynamicLibs} from "./tools/getDynamicLibs";
+
+if (process.argv[1]) {
+  main({
+    binaryVersion: YarnVersion || `<unknown>`,
+    pluginConfiguration: getPluginConfiguration(),
+  });
+}
