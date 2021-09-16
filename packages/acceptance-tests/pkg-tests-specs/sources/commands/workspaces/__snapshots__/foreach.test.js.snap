@@ -215,3 +215,17 @@ Object {
 ",
 }
 `;
+
+exports[`Commands workspace foreach should start all the processes at once when --jobs is unlimited 1`] = `
+Object {
+  "code": 0,
+  "first7Lines": "➤ YN0000: [workspace-a]: Process started
+➤ YN0000: [workspace-b]: Process started
+➤ YN0000: [workspace-c]: Process started
+➤ YN0000: [workspace-d]: Process started
+➤ YN0000: [workspace-e]: Process started
+➤ YN0000: [workspace-f]: Process started
+➤ YN0000: [workspace-g]: Process started",
+  "stderr": "",
+}
+`;

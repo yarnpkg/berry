@@ -350,7 +350,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `should throw an error when using --jobs with a value lower than 2`,
+      `should throw an error when using --jobs with a value lower than 1`,
       makeTemporaryEnv(
         {
           private: true,
@@ -360,7 +360,28 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
 
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `1`, `run`, `print`)).rejects.toThrowError(/expected to be at least 2 \(got 1\)/);
+          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `0`, `run`, `print`)).rejects.toThrowError(/to be at least 1 \(got 0\)/);
+        },
+      ),
+    );
+
+    test(
+      `should start all the processes at once when --jobs is unlimited`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+
+          await run(`install`);
+          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `unlimited`, `--verbose`, `run`, `print`);
+
+          // We don't care what order they start in, just that they all started at the beginning.
+          const first7Lines = stdout.split(`\n`).slice(0, 7).sort().join(`\n`);
+
+          await expect({code, first7Lines, stderr}).toMatchSnapshot();
         },
       ),
     );
