@@ -34,7 +34,7 @@ describe(`ResolvePatch`, () => {
     ).toEqual(__filename);
   });
 
-  it(`can require dependency in paths`, () => {
+  it(`can require a dependency from paths`, () => {
     expect(
       resolve.sync(`got`, {
         paths: [require.resolve(`@yarnpkg/core`)],
@@ -44,6 +44,21 @@ describe(`ResolvePatch`, () => {
     expect(
       resolve.sync(`got`, {
         paths: [require.resolve(`@yarnpkg/core`)],
+        __skipPackageIterator: true,
+      } as any),
+    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+  });
+
+  it(`can require a dependency from basedir`, () => {
+    expect(
+      resolve.sync(`got`, {
+        basedir: require.resolve(`@yarnpkg/core`),
+      }),
+    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+
+    expect(
+      resolve.sync(`got`, {
+        basedir: require.resolve(`@yarnpkg/core`),
         __skipPackageIterator: true,
       } as any),
     ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
