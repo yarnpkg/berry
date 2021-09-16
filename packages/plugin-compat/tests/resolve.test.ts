@@ -1,35 +1,37 @@
 import path    from 'path';
 import resolve from 'resolve';
 
+const FILENAME = path.basename(__filename);
+
 describe(`ResolvePatch`, () => {
-  it(`works on local file`, () => {
-    expect(
-      resolve.sync(path.basename(__filename), {extensions: [`.ts`]}),
-    ).toEqual(__filename);
+  it(`should not match a local file that matches the specifier`, () => {
+    expect(() =>
+      resolve.sync(FILENAME, {extensions: [`.ts`]}),
+    ).toThrow(`Cannot find module '${FILENAME}'`);
 
     expect(
-      resolve.sync(path.basename(__filename), {
+      () => resolve.sync(FILENAME, {
         extensions: [`.ts`],
         __skipPackageIterator: true,
       } as any),
-    ).toEqual(__filename);
+    ).toThrow(`Cannot find module '${FILENAME}'`);
   });
 
-  it(`works on local file with paths option`, () => {
+  it(`should match a local file when using the paths option`, () => {
     expect(
-      resolve.sync(`extensions.ts`, {
-        paths: [path.join(__dirname, `../sources`)],
+      resolve.sync(FILENAME, {
+        paths: [__dirname],
         extensions: [`.ts`],
       }),
-    ).toEqual(path.join(__dirname, `../sources/extensions.ts`));
+    ).toEqual(__filename);
 
     expect(
-      resolve.sync(`extensions.ts`, {
-        paths: [path.join(__dirname, `../sources`)],
+      resolve.sync(FILENAME, {
+        paths: [__dirname],
         extensions: [`.ts`],
         __skipPackageIterator: true,
       } as any),
-    ).toEqual(path.join(__dirname, `../sources/extensions.ts`));
+    ).toEqual(__filename);
   });
 
   it(`can require dependency in paths`, () => {
