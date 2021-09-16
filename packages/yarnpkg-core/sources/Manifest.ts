@@ -929,11 +929,9 @@ export class Manifest {
     if (this.scripts !== null && this.scripts.size > 0) {
       data.scripts ??= {};
 
-      Object.keys(data.scripts).forEach(existingScriptName => {
-        if (!this.scripts.has(existingScriptName)) {
+      for (const existingScriptName of Object.keys(data.scripts))
+        if (!this.scripts.has(existingScriptName))
           delete data.scripts[existingScriptName];
-        }
-      });
 
       for (const [name, content] of this.scripts.entries()) {
         // Set one at a time in order to preserve implicitly-preserved ordering of existing scripts.
