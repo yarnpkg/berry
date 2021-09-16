@@ -63,4 +63,22 @@ describe(`ResolvePatch`, () => {
       } as any),
     ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
   });
+
+  it(`non-absolute paths should return non-absolute result if it can be found from the cwd`, () => {
+    // This test covers https://github.com/yarnpkg/berry/issues/897
+    // The behaviour is odd but the patch shouldn't change it
+    // The cwd when this test runs is the repo root
+    expect(
+      resolve.sync(`run-yarn.js`, {
+        paths: [`scripts`],
+      }),
+    ).toEqual(`scripts${path.sep}run-yarn.js`);
+
+    expect(
+      resolve.sync(`run-yarn.js`, {
+        paths: [`scripts`],
+        __skipPackageIterator: true,
+      } as any),
+    ).toEqual(`scripts${path.sep}run-yarn.js`);
+  });
 });
