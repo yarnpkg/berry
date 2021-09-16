@@ -286,7 +286,7 @@ nmHoistingLimits: workspaces
 | `yarn tag`      | `yarn npm tag`             ||
 | `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
 | `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
-| `yarn install --verbose` | `env CI=true yarn install` ||
+| `yarn install --verbose` | `YARN_ENABLE_INLINE_BUILDS=true yarn install` ||
 
 ### Removed from core
 
