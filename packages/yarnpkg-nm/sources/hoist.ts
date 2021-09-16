@@ -454,15 +454,9 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     }
   }
 
-  if (isHoistable && node.isWorkspace) {
-    for (let idx = nodePath.length - 1; idx >= 0; idx--) {
-      const parent = nodePath[idx];
-      if (parent.isWorkspace) {
-        isHoistable = false;
-        reason = ` - cannot hoist over parent: ${prettyPrintLocator(parent.locator)}`;
-        break;
-      }
-    }
+  if (isHoistable) {
+    isHoistable = !node.isWorkspace;
+    reason = `- workspace`;
   }
 
   if (isHoistable) {

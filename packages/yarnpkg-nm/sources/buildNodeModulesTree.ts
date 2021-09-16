@@ -145,21 +145,20 @@ const areRealLocatorsEqual = (a: Locator, b: Locator) => {
   return structUtils.areLocatorsEqual(realA, realB);
 };
 
+type WorkspaceMap = Map<LocatorKey, Set<PhysicalPackageLocator>>;
+
+const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, pnp: PnpApi, topPkgPortableLocation: PortablePath) => {
+  if (pkg.linkType !== LinkType.SOFT)
+    return false;
+
+  const realSoftLinkPath = npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation);
+  return ppath.contains(topPkgPortableLocation, realSoftLinkPath) === null;
+};
+
 /**
- * Traverses PnP tree and produces input for the `RawHoister`
- *
- * @param pnp PnP API
- *
- * @returns package tree, packages info and locators
+ * Builds a map representing layout of nested workspaces and internal portals on the file system.
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
-  const pnpRoots = pnp.getDependencyTreeRoots();
-  const errors: NodeModulesTreeErrors = [];
-  let preserveSymlinksRequired = false;
-
-  const hoistingLimits = new Map<LocatorKey, Set<string>>();
-  const workspaceDependenciesMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
-
+const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
     throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
@@ -169,10 +168,41 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
 
   const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation.slice(0, -1));
+  const workspaceMap = new Map<LocatorKey, Set<PhysicalPackageLocator>>();
 
   const workspaceTree: WorkspaceTree = {children: new Map()};
+  const pnpRoots = pnp.getDependencyTreeRoots();
+  // Workspace and internal portal locations to locators map
+  const workspaceLikeLocators = new Map<NativePath, PhysicalPackageLocator>();
+
+  const seen = new Set();
+  const visit = (locator: PhysicalPackageLocator) => {
+    const locatorKey = stringifyLocator(locator);
+    if (seen.has(locatorKey))
+      return;
+
+    seen.add(locatorKey);
+
+    const pkg = pnp.getPackageInformation(locator);
+    if (pkg) {
+      if (pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation))
+        workspaceLikeLocators.set(pkg.packageLocation, locator);
+
+      for (const [name, referencish] of pkg.packageDependencies) {
+        if (referencish !== null) {
+          if (!pkg.packagePeers.has(name)) {
+            visit(pnp.getLocator(name, referencish));
+          }
+        }
+      }
+    }
+  };
+
+  for (const locator of pnpRoots)
+    visit(locator);
+
   const cwdSegments = topPkgPortableLocation.split(ppath.sep);
-  for (const locator of pnpRoots) {
+  for (const locator of workspaceLikeLocators.values()) {
     const pkg = pnp.getPackageInformation(locator)!;
     const location = npath.toPortablePath(pkg.packageLocation.slice(0, -1));
     const segments = location.split(ppath.sep).slice(cwdSegments.length);
@@ -191,10 +221,10 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
   const addWorkspace = (node: WorkspaceTree, parentWorkspaceLocator: PhysicalPackageLocator) => {
     if (node.workspaceLocator) {
       const parentLocatorKey = stringifyLocator(parentWorkspaceLocator);
-      let dependencies = workspaceDependenciesMap.get(parentLocatorKey);
+      let dependencies = workspaceMap.get(parentLocatorKey);
       if (!dependencies) {
         dependencies = new Set();
-        workspaceDependenciesMap.set(parentLocatorKey, dependencies);
+        workspaceMap.set(parentLocatorKey, dependencies);
       }
       dependencies.add(node.workspaceLocator);
     }
@@ -205,6 +235,34 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   for (const child of workspaceTree.children.values())
     addWorkspace(child, workspaceTree.workspaceLocator!);
+
+  return workspaceMap;
+};
+
+/**
+ * Traverses PnP tree and produces input for the `RawHoister`
+ *
+ * @param pnp PnP API
+ *
+ * @returns package tree, packages info and locators
+ */
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
+  const errors: NodeModulesTreeErrors = [];
+  let preserveSymlinksRequired = false;
+
+  const hoistingLimits = new Map<LocatorKey, Set<string>>();
+  const workspaceMap = buildWorkspaceMap(pnp);
+  console.log(`workspace map`, require(`util`).inspect(workspaceMap, false, null));
+
+  const topPkg = pnp.getPackageInformation(pnp.topLevel);
+  if (topPkg === null)
+    throw new Error(`Assertion failed: Expected the top-level package to have been registered`);
+
+  const topLocator = pnp.findPackageLocator(topPkg.packageLocation!);
+  if (topLocator === null)
+    throw new Error(`Assertion failed: Expected the top-level package to have a physical locator`);
+
+  const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation.slice(0, -1));
 
   const packageTree: HoisterTree = {
     name: topLocator.name,
@@ -217,14 +275,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const nodes = new Map<string, HoisterTree>();
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => `${stringifyLocator(locator)}:${name}`;
-  const isExternalSoftLink = (pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator) => {
-    if (pkg.linkType !== LinkType.SOFT || !options.project)
-      return false;
-
-    const realSoftLinkPath = npath.toPortablePath(pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`) ? pnp.resolveVirtual(pkg.packageLocation)! : pkg.packageLocation);
-    return ppath.contains(options.project.cwd, realSoftLinkPath) === null;
-  };
-
   const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
@@ -235,7 +285,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, packageTree);
     }
 
-    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
+    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation);
 
     if (!node) {
       node = {
@@ -287,16 +337,16 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     }
 
     const locatorKey = stringifyLocator({name: locator.name.replace(WORKSPACE_NAME_SUFFIX, ``), reference: locator.reference});
-    const workspaceDependencies = workspaceDependenciesMap.get(locatorKey);
-    if (workspaceDependencies) {
-      for (const workspaceLocator of workspaceDependencies) {
+    const innerWorkspaces = workspaceMap.get(locatorKey);
+    if (innerWorkspaces) {
+      for (const workspaceLocator of innerWorkspaces) {
         allDependencies.set(`${workspaceLocator.name}${WORKSPACE_NAME_SUFFIX}`, workspaceLocator.reference);
       }
     }
 
     parent.dependencies.add(node);
 
-    const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && locator.name.startsWith(`workspace:`) && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
+    const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isExternalSoftLinkPackage;
 
     if (!isSeen && !isWorkspaceDependency) {
       const siblingPortalDependencyMap = new Map<string, {target: DependencyTarget, portal: PhysicalPackageLocator}>();
@@ -308,7 +358,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
           const depPkg = pnp.getPackageInformation(pkgLocator);
           if (depPkg === null)
             throw new Error(`Assertion failed: Expected the package to have been registered`);
-          const isExternalSoftLinkDep = isExternalSoftLink(depPkg, depLocator);
+          const isExternalSoftLinkDep = isExternalSoftLink(depPkg, depLocator, pnp, topPkgPortableLocation);
 
           if (options.validateExternalSoftLinks && options.project && isExternalSoftLinkDep) {
             if (depPkg.packageDependencies.size > 0)
@@ -370,6 +420,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg, topPkg.packageDependencies, PortablePath.dot, false);
 
+  console.log(`package tree`, require(`util`).inspect(packageTree, false, null));
   return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };
 
