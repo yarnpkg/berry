@@ -1382,4 +1382,27 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  it(`should not create self-referencing symlinks for anonymous workspaces`,
+    makeTemporaryEnv(
+      {
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        const entries = await xfs.readdirPromise(ppath.join(path, `node_modules` as Filename), {withFileTypes: true});
+        let symlinkCount = 0;
+        for (const entry of entries) {
+          if (entry.isSymbolicLink()) {
+            symlinkCount++;
+          }
+        }
+
+        expect(symlinkCount).toBe(0);
+      },
+    ),
+  );
 });
