@@ -81,7 +81,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
   jobs = Option.String(`-j,--jobs`, {
     description: `The maximum number of parallel tasks that the execution will be limited to`,
-    validator: t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(2)]),
+    validator: t.isOneOf([t.isEnum([`unlimited`]), t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(1)])]),
   });
 
   topological = Option.Boolean(`-t,--topological`, false, {
@@ -171,17 +171,21 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       workspaces.push(workspace);
     }
 
-    let interlaced = this.interlaced;
+    const concurrency = this.parallel ?
+      (this.jobs === `unlimited`
+        ? Infinity
+        : this.jobs || Math.max(1, cpus().length / 2))
+      : 1;
 
+    // No need to parallelize if we were explicitly asked for one job
+    const parallel = concurrency === 1 ? false : this.parallel;
     // No need to buffer the output if we're executing the commands sequentially
-    if (!this.parallel)
-      interlaced = true;
+    const interlaced = parallel ? this.interlaced : true;
+
+    const limit = pLimit(concurrency);
 
     const needsProcessing = new Map<LocatorHash, Workspace>();
     const processing = new Set<DescriptorHash>();
-
-    const concurrency = this.parallel ? Math.max(1, cpus().length / 2) : 1;
-    const limit = pLimit(this.jobs || concurrency);
 
     let commandCount = 0;
     let finalExitCode: number | null = null;
@@ -196,7 +200,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         if (abortNextCommands)
           return -1;
 
-        if (!this.parallel && this.verbose && commandIndex > 1)
+        if (!parallel && this.verbose && commandIndex > 1)
           report.reportSeparator();
 
         const prefix = getPrefix(workspace, {configuration, verbose: this.verbose, commandIndex});
@@ -296,7 +300,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           // If we're not executing processes in parallel we can just wait for it
           // to finish outside of this loop (it'll then reenter it anyway)
-          if (!this.parallel) {
+          if (!parallel) {
             break;
           }
         }
