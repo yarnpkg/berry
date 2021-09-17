@@ -14,11 +14,18 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Usage of `pnpify` inside directories containing spaces is now possible.
 - Hoisting algorithm speedup, impacts recurrent `node_modules` installs time.
 - CLI bundles built from sources output `commit` hash instead of `tree` hash as part of their version
+- `workspaces foreach run` now handles the fact that a script containing `:` only becomes global if it exists in one workspace.
+- The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
 
 ### Installs
 
 - `hardlinks-global` node modules mode is automatically downgraded to `hardlinks-local` when global cache and install folder are on a different devices and the install continues normally. Warning is produced to the user with mitigation steps provided in documentation.
 - The nm linker maximizes chances to end-up with only one top-level node_modules in the case of using workspaces
+
+## 3.0.2
+
+- Updated TypeScript patch to cover TypeScript 4.4.
+- Fixed `VirtualFS.mapToBase` to preserve `.` characters (was converting them to empty strings).
 
 ## 3.0.1
 
@@ -130,6 +137,22 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Miscellaneous
 
 - Reporting for HTTP errors has been improved, which should help you investigate registry issues.
+
+## 2.4.3
+
+```
+yarn set version 2.4.3
+```
+
+- Updated TypeScript patch to cover TypeScript 4.4.
+
+## 2.4.2
+
+```
+yarn set version 2.4.2
+```
+
+- Updated TypeScript patch to cover TypeScript 4.3.
 
 ## 2.4.1
 
@@ -274,7 +297,7 @@ The following changes only apply to the `node-modules` linker:
 
 - Updated the VSCode SDK to take into account changes in the TypeScript server protocol.
 - Added a few builtin extensions to improve compatibility with packages that weren't correctly listing their dependencies.
-- Updatedd the TypeScript patch to cover TypeScript 4.1.
+- Updated the TypeScript patch to cover TypeScript 4.1.
 
 ## 2.2.0
 
@@ -482,7 +505,7 @@ To see a comprehensive documentation about each possible field, please check our
 
     - The `dependenciesMeta` field covers dependencies declared in either of the `dependencies` and `devDependencies` fields.
 
-    - The `dependenciesMeta` field accepts two types of keys: either a generatic package name (`lodash`), or a specialized package **version** (`lodash@1.2.3`). This later syntax only works for the top-level manifest and *will thus be ignored when seen in a dependency / transitive dependency*.
+    - The `dependenciesMeta` field accepts two types of keys: either a generic package name (`lodash`), or a specialized package **version** (`lodash@1.2.3`). This later syntax only works for the top-level manifest and *will thus be ignored when seen in a dependency / transitive dependency*.
 
   - The `dependenciesMeta[].comment` field is expected to be a string field. Even though it isn't actually used anywhere at the moment, we suggest you to write comments regarding the reason why some packages are used here rather than anywhere else. This might prove useful for plugin authors.
 

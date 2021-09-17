@@ -77,5 +77,5 @@ global.yarn = async (...args) => {
  * }`))
  */
 global.node = async (source, opts = {}) => {
-  return JSON.parse(await yarn(`node`, `-e`, `Promise.resolve().then(async () => ${source}).catch(err => err).then(res => console.log(JSON.stringify(res)))`, opts));
+  return JSON.parse(await global.yarn(`node`, `-e`, `Promise.resolve().then(async () => ${source}).catch(err => err).then(res => console.log(JSON.stringify(res)))`, opts));
 };

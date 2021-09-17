@@ -260,7 +260,7 @@ describe(`Plug'n'Play`, () => {
 
         expect(filter(rootMessage)).not.toEqual(filter(dependencyMessage));
       },
-    )
+    ),
   );
 
   test(
@@ -287,7 +287,7 @@ describe(`Plug'n'Play`, () => {
 
         expect(filter(workspaceMessage)).toEqual(filter(rootMessage));
       },
-    )
+    ),
   );
 
   test(
@@ -323,8 +323,8 @@ describe(`Plug'n'Play`, () => {
           name: `@types/no-deps`,
           version: `1.0.0`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -404,7 +404,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
         expect(stdout).not.toEqual(expect.stringContaining(`YN0060`));
-      }
+      },
     ),
   );
 
@@ -649,7 +649,7 @@ describe(`Plug'n'Play`, () => {
               `${npath.fromPortablePath(path)}/workspace-b`,
               ``,
             ])}}))`,
-            {cwd: `${path}/workspace-a`}
+            {cwd: `${path}/workspace-a`},
           ),
         ).resolves.toMatchObject({
           name: `no-deps`,
@@ -1751,7 +1751,7 @@ describe(`Plug'n'Play`, () => {
 
         await xfs.writeFilePromise(
           `${portalTarget}/index.js`,
-          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`
+          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`,
         );
 
         await xfs.writeJsonPromise(`${path}/package.json`, {
@@ -1764,7 +1764,7 @@ describe(`Plug'n'Play`, () => {
 
         await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
       });
-    })
+    }),
   );
 
   test(
@@ -1783,7 +1783,7 @@ describe(`Plug'n'Play`, () => {
 
         await xfs.writeFilePromise(
           `${portalTarget}/index.js`,
-          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`
+          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`,
         );
 
         await xfs.writeJsonPromise(`${path}/package.json`, {
@@ -1797,7 +1797,7 @@ describe(`Plug'n'Play`, () => {
 
         await expect(source(`require('portal')`)).resolves.toMatch(`no-deps-npm-2.0.0-`);
       });
-    })
+    }),
   );
 
   test(
@@ -1828,7 +1828,7 @@ describe(`Plug'n'Play`, () => {
           stderr: expect.stringContaining(`is controlled by multiple pnpapi instances`),
         });
       });
-    })
+    }),
   );
 
   test(
@@ -1842,7 +1842,7 @@ describe(`Plug'n'Play`, () => {
       await run(`install`);
 
       await expect(source(`require('./ignored/index.js')`)).resolves.toBe(42);
-    })
+    }),
   );
 
   test(
@@ -1867,7 +1867,7 @@ describe(`Plug'n'Play`, () => {
       await run(`install`);
 
       await expect(source(`require('./index.js')`)).resolves.toMatch(/no-deps(\\|\/)index.js/);
-    })
+    }),
   );
 
   test(
@@ -1882,8 +1882,8 @@ describe(`Plug'n'Play`, () => {
         await run(`install`);
 
         await expect(source(`require('module').findPnpApi(require('path').resolve('ignored'))`)).resolves.toBe(null);
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -1898,8 +1898,8 @@ describe(`Plug'n'Play`, () => {
         await run(`install`);
 
         await expect(source(`require('module').findPnpApi(require('path').resolve('ignored/node_modules/.cache'))`)).resolves.toBe(null);
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -1927,8 +1927,8 @@ describe(`Plug'n'Play`, () => {
           code: 0,
           stdout: expect.stringContaining(`YN0007`),
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -1975,8 +1975,8 @@ describe(`Plug'n'Play`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -2005,8 +2005,8 @@ describe(`Plug'n'Play`, () => {
           code: 0,
           stdout: `1\n0\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -2032,8 +2032,8 @@ describe(`Plug'n'Play`, () => {
         `);
 
         await expect(run(`node`, `./index.js`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -2054,8 +2054,8 @@ describe(`Plug'n'Play`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -2077,7 +2077,7 @@ describe(`Plug'n'Play`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 });

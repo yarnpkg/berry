@@ -22,39 +22,11 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, Depende
     ).
 
 % This rule will prevent workspaces from depending on non-workspace versions of available workspaces
-gen_enforced_dependency(WorkspaceCwd, DependencyIdent, WorkspaceRange, DependencyType) :-
+gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:^', DependencyType) :-
   % Iterates over all dependencies from all workspaces
     workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
   % Only consider those that target something that could be a workspace
-    workspace_ident(DependencyCwd, DependencyIdent),
-  % Obtain the version from the dependency
-    workspace_field(DependencyCwd, 'version', DependencyVersion),
-  % Quirk: we must discard the workspaces that don't declare a version
-    atom(DependencyVersion),
-  % Only proceed if the dependency isn't satisfied by a workspace
-    \+ project_workspaces_by_descriptor(DependencyIdent, DependencyRange, DependencyCwd),
-  % Derive the expected range from the version
-    (
-      DependencyType = 'peerDependencies' ->
-        atom_concat('^', DependencyVersion, WorkspaceRange)
-      ;
-      DependencyType = 'devDependencies' ->
-        WorkspaceRange = 'workspace:*'
-      ;
-        atom_concat('workspace:^', DependencyVersion, WorkspaceRange)
-    ).
-
-% This rule enforces that all workspaces must depend on other workspaces using `workspace:*` in devDependencies
-gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:*', 'devDependencies') :-
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, 'devDependencies'),
-  % Only consider those that target something that could be a workspace
-  workspace_ident(DependencyCwd, DependencyIdent).
-
-% This rule enforces that all workspaces must depend on other workspaces using `workspace:^` in peerDependencies
-gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:^', 'peerDependencies') :-
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, 'peerDependencies'),
-  % Only consider those that target something that could be a workspace
-  workspace_ident(DependencyCwd, DependencyIdent).
+    workspace_ident(DependencyCwd, DependencyIdent).
 
 % This rule enforces that all packages must not depend on inquirer - we use enquirer instead
 gen_enforced_dependency(WorkspaceCwd, 'inquirer', null, DependencyType) :-

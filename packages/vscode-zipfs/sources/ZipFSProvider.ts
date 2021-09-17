@@ -10,7 +10,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
         useCache: true,
         maxOpenFiles: 80,
       }),
-    })
+    }),
   );
 
   stat(uri: vscode.Uri): vscode.FileStat {

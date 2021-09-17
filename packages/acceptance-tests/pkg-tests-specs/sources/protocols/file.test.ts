@@ -29,7 +29,7 @@ describe(`Protocols`, () => {
         await run(`install`);
 
         await expect(source(`require('pkg')`)).resolves.toEqual(100);
-      })
+      }),
     );
   });
 });

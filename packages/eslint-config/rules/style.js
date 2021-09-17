@@ -42,6 +42,8 @@ module.exports = {
 
     '@typescript-eslint/type-annotation-spacing': 2,
 
+    'arca/import-quotes': 2,
+
     'arca/curly': 2,
 
     'arca/import-align': [2, {

@@ -185,7 +185,7 @@ const Repository = ({repository, name}) => {
       provider={provider}
       title={`${provider} repository of ${name}`}
       href={`https://${repository.host}/${encode(repository.user)}/${encode(
-        repository.project
+        repository.project,
       )}${repository.path || ``}`}
     >
       {provider}
@@ -327,7 +327,7 @@ export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
     >
       {`{time_distance} ago`.replace(
         `{time_distance}`,
-        formatDistance(new Date(hit.modified), new Date())
+        formatDistance(new Date(hit.modified), new Date()),
       )}
     </HitLastUpdate>
     {isEmpty(hit.keywords) ? null : (
@@ -336,7 +336,7 @@ export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
           hit.keywords,
           hit._highlightResult.keywords,
           4,
-          onTagClick
+          onTagClick,
         )}
       </HitHiddenKeywords>
     )}

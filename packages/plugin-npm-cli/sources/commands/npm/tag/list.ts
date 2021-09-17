@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
 import {Configuration, Project, Ident, structUtils, formatUtils, treeUtils, miscUtils} from '@yarnpkg/core';
-import {ppath, Filename}                                                               from '@yarnpkg/fslib';
+import {ppath, Filename, npath}                                                        from '@yarnpkg/fslib';
 import {npmHttpUtils}                                                                  from '@yarnpkg/plugin-npm';
 import {Command, UsageError, Usage, Option}                                            from 'clipanion';
 
@@ -42,7 +42,7 @@ export default class NpmTagListCommand extends BaseCommand {
         throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
       if (!workspace.manifest.name)
-        throw new UsageError(`Missing 'name' field in ${ppath.join(workspace.cwd, Filename.manifest)}`);
+        throw new UsageError(`Missing 'name' field in ${npath.fromPortablePath(ppath.join(workspace.cwd, Filename.manifest))}`);
 
       ident = workspace.manifest.name;
     }
