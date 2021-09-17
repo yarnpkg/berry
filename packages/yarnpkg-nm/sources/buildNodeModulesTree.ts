@@ -287,13 +287,16 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation);
 
     if (!node) {
+      const isWorkspace = pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
       node = {
         name,
         identName: locator.name,
         reference: locator.reference,
         dependencies: new Set(),
-        peerNames: pkg.packagePeers,
-        isWorkspace: pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX),
+        // View peer dependencies as regular dependencies for workspaces
+        // (meeting workspace peer dependency constraints is sometimes hard, sometimes impossible for the nm linker)
+        peerNames: isWorkspace ? new Set() : pkg.packagePeers,
+        isWorkspace,
       };
 
       nodes.set(nodeKey, node);
