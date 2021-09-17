@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/core": patch
+  "@yarnpkg/fslib": patch
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/pnp": patch
