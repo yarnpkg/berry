@@ -1,4 +1,4 @@
-import {Filename, PortablePath, ppath, xfs} from "@yarnpkg/fslib";
+import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -15,15 +15,15 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import noDeps from 'no-deps/index.js';\nconsole.log(noDeps)`
+          `import noDeps from 'no-deps/index.js';\nconsole.log(noDeps)`,
         );
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `{ name: 'no-deps', version: '1.0.0' }\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -37,7 +37,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import foo from './foo.js';\nconsole.log(foo)`
+          `import foo from './foo.js';\nconsole.log(foo)`,
         );
         await xfs.writeFilePromise(ppath.join(path, `foo.js` as Filename), `export default 42`);
 
@@ -45,8 +45,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -60,18 +60,18 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import './foo';`
+          `import './foo';`,
         );
         await xfs.writeFilePromise(ppath.join(path, `foo.js` as Filename), ``);
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(
-            `none of those files can be found on the disk`
+            `none of those files can be found on the disk`,
           ),
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -85,7 +85,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import './foo.json';`
+          `import './foo.json';`,
         );
         await xfs.writeFilePromise(ppath.join(path, `foo.json` as Filename), `{"name": "foo"}`);
 
@@ -93,8 +93,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension`),
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -111,15 +111,15 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import {foo} from 'no-deps-exports';\nconsole.log(foo)`
+          `import {foo} from 'no-deps-exports';\nconsole.log(foo)`,
         );
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -133,19 +133,19 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
-          `import foo from './foo.cjs';\nconsole.log(foo)`
+          `import foo from './foo.cjs';\nconsole.log(foo)`,
         );
         await xfs.writeFilePromise(
           ppath.join(path, `foo.cjs` as Filename),
-          `module.exports.default = 42`
+          `module.exports.default = 42`,
         );
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `{ default: 42 }\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -174,8 +174,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -200,8 +200,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: `42\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -219,8 +219,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension ""`),
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -239,8 +239,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: `false\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -276,8 +276,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: `foo\n`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -290,8 +290,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: expect.stringMatching(/\n42\n$/),
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -311,8 +311,8 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: expect.stringMatching(`42\n`),
         });
-      }
-    )
+      },
+    ),
   );
 
   // Requires the ESM loader to be loaded but currently that enters ESM
@@ -337,7 +337,7 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: expect.stringMatching(`42\n`),
         });
-      }
-    )
+      },
+    ),
   );
 });

@@ -30,7 +30,7 @@ async function exists(path: string) {
 export async function resolve(
   originalSpecifier: string,
   context: any,
-  defaultResolver: any
+  defaultResolver: any,
 ) {
   const {findPnpApi} = (moduleExports as unknown as { findPnpApi?: (path: NativePath) => null | PnpApi });
   if (!findPnpApi || builtins.has(originalSpecifier))
@@ -92,7 +92,7 @@ export async function resolve(
 export async function getFormat(
   resolved: string,
   context: any,
-  defaultGetFormat: any
+  defaultGetFormat: any,
 ) {
   const url = tryParseURL(resolved);
   if (url?.protocol !== `file:`)
@@ -114,7 +114,7 @@ export async function getFormat(
       // TODO: Enable if --experimental-json-modules is present
       // Waiting on https://github.com/nodejs/node/issues/36935
       throw new Error(
-        `Unknown file extension ".json" for ${fileURLToPath(resolved)}`
+        `Unknown file extension ".json" for ${fileURLToPath(resolved)}`,
       );
     }
     case `.js`: {
@@ -134,7 +134,7 @@ export async function getFormat(
 export async function getSource(
   urlString: string,
   context: any,
-  defaultGetSource: any
+  defaultGetSource: any,
 ) {
   const url = tryParseURL(urlString);
   if (url?.protocol !== `file:`)

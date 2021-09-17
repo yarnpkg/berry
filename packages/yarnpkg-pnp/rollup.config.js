@@ -28,7 +28,7 @@ export default {
         const outputBundle = bundle[bundles[0]];
 
         outputBundle.code = `let hook;\n\nmodule.exports = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(
-          outputBundle.code.replace(/\r\n/g, `\n`)
+          outputBundle.code.replace(/\r\n/g, `\n`),
         ).toString(`base64`)}', 'base64')).toString();\n\n  return hook;\n};\n`;
       },
     },
