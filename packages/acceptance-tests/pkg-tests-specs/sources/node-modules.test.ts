@@ -1345,8 +1345,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
-        console.log(path);
+      async ({path, run}) => {
         const appPath = ppath.join(path, `lib-1` as Filename);
         const libPath = ppath.join(path, `lib-2` as Filename);
 
