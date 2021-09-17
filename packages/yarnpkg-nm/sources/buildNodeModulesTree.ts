@@ -173,7 +173,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   const workspaceTree: WorkspaceTree = {children: new Map()};
   const pnpRoots = pnp.getDependencyTreeRoots();
   // Workspace and internal portal locations to locators map
-  const workspaceLikeLocators = new Map<NativePath, PhysicalPackageLocator>();
+  const workspaceLikeLocators = new Map<PortablePath, PhysicalPackageLocator>();
 
   const seen = new Set();
   const visit = (locator: PhysicalPackageLocator) => {
@@ -186,7 +186,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
     const pkg = pnp.getPackageInformation(locator);
     if (pkg) {
       if (pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation))
-        workspaceLikeLocators.set(pkg.packageLocation, locator);
+        workspaceLikeLocators.set(getRealPackageLocation(pkg, locator, pnp), locator);
 
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null) {
@@ -252,7 +252,6 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   const hoistingLimits = new Map<LocatorKey, Set<string>>();
   const workspaceMap = buildWorkspaceMap(pnp);
-  console.log(`workspace map`, require(`util`).inspect(workspaceMap, false, null));
 
   const topPkg = pnp.getPackageInformation(pnp.topLevel);
   if (topPkg === null)
@@ -420,9 +419,17 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
 
   addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg, topPkg.packageDependencies, PortablePath.dot, false);
 
-  console.log(`package tree`, require(`util`).inspect(packageTree, false, null));
   return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };
+
+
+function getRealPackageLocation(pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, pnp: PnpApi): PortablePath {
+  const realPath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`)
+    ? pnp.resolveVirtual(pkg.packageLocation)
+    : pkg.packageLocation;
+
+  return npath.toPortablePath(realPath || pkg.packageLocation);
+}
 
 function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, options: NodeModulesTreeOptions): {linkType: LinkType, target: PortablePath} {
   const pkgLocator = pnp.getLocator(locator.name.replace(WORKSPACE_NAME_SUFFIX, ``), locator.reference);
@@ -442,11 +449,7 @@ function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, opti
     target = npath.toPortablePath(info.packageLocation);
     linkType = LinkType.SOFT;
   } else {
-    const truePath = pnp.resolveVirtual && locator.reference && locator.reference.startsWith(`virtual:`)
-      ? pnp.resolveVirtual(info.packageLocation)
-      : info.packageLocation;
-
-    target = npath.toPortablePath(truePath || info.packageLocation);
+    target = getRealPackageLocation(info, locator, pnp);
     linkType = info.linkType;
   }
   return {linkType, target};

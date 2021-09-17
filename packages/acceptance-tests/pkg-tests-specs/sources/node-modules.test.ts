@@ -1405,4 +1405,53 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  it(`should properly hoist nested workspaces`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`, `ws/nested1`, `ws/nested1/nested2`],
+        dependencies: {
+          ws: `workspace:*`,
+          nested1: `workspace:*`,
+          nested2: `workspace:*`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirpPromise(ppath.join(path, `ws/nested1/nested2` as PortablePath));
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}` as PortablePath), {
+          name: `ws`,
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/${Filename.manifest}` as PortablePath), {
+          name: `nested1`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/nested2/${Filename.manifest}` as PortablePath), {
+          name: `nested2`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
+        await expect(source(`require('module').createRequire(require.resolve('nested1/package.json') + '/..')('no-deps')`)).resolves.toMatchObject({
+          version: `2.0.0`,
+        });
+      },
+    ),
+  );
 });
