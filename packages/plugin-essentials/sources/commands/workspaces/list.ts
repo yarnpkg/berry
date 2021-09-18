@@ -1,6 +1,7 @@
 import {BaseCommand}                                                                        from '@yarnpkg/cli';
 import {Configuration, Manifest, Project, StreamReport, structUtils, Descriptor, Workspace} from '@yarnpkg/core';
-import {Command, Option, Usage}                                                             from 'clipanion';
+import {gitUtils}                                                                           from '@yarnpkg/plugin-git';
+import {Command, Option, Usage, UsageError}                                                 from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesListCommand extends BaseCommand {
@@ -16,6 +17,11 @@ export default class WorkspacesListCommand extends BaseCommand {
     `,
   });
 
+  since = Option.String(`--since`, {
+    description: `Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the default branch.`,
+    tolerateBoolean: true,
+  });
+
   verbose = Option.Boolean(`-v,--verbose`, false, {
     description: `Also return the cross-dependencies between workspaces`,
   });
@@ -28,12 +34,24 @@ export default class WorkspacesListCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
+    if (configuration.projectCwd === null)
+      throw new UsageError(`This command can only be run from within a Yarn project`);
+
+    const root = await gitUtils.fetchRoot(configuration.projectCwd);
+    const base = root !== null
+      ? await gitUtils.fetchBase(root, {baseRefs: [typeof this.since === `string` ? this.since : await gitUtils.fetchDefaultBranch(root)]})
+      : null;
+
     const report = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      for (const workspace of project.workspaces) {
+      const workspaces = this.since && root !== null
+        ? await gitUtils.fetchChangedWorkspaces(root, {base: base!.hash, project})
+        : project.workspaces;
+
+      for (const workspace of workspaces) {
         const {manifest} = workspace;
 
         let extra;

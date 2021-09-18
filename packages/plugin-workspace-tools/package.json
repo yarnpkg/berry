@@ -13,13 +13,15 @@
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^",
     "typescript": "^4.4.2"
   },
   "scripts": {

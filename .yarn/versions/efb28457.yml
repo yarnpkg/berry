@@ -1,0 +1,11 @@
+releases:
+  "@yarnpkg/plugin-essentials": minor
+  "@yarnpkg/plugin-git": patch
+  "@yarnpkg/plugin-version": patch
+  "@yarnpkg/plugin-workspace-tools": minor
+
+declined:
+  - "@yarnpkg/plugin-github"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/cli"

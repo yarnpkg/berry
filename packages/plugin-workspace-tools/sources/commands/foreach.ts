@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
 import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
+import {gitUtils}                                          from '@yarnpkg/plugin-git';
 import {Command, Option, Usage, UsageError}                from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
@@ -104,6 +105,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     description: `Avoid running the command on private workspaces`,
   });
 
+  since = Option.String(`--since`, {
+    description: `Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the default branch.`,
+    tolerateBoolean: true,
+  });
+
   commandName = Option.String();
   args = Option.Proxy();
 
@@ -126,14 +132,27 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
+    if (configuration.projectCwd === null)
+      throw new UsageError(`This command can only be run from within a Yarn project`);
+
+    const root = await gitUtils.fetchRoot(configuration.projectCwd);
+    const base = root !== null
+      ? await gitUtils.fetchBase(root, {baseRefs: [typeof this.since === `string` ? this.since : await gitUtils.fetchDefaultBranch(root)]})
+      : null;
+
+    const prospectiveWorkspaces = this.since && root !== null
+      ? Array.from(await gitUtils.fetchChangedWorkspaces(root, {base: base!.hash, project}))
+      : rootWorkspace.getRecursiveWorkspaceChildren();
+
     const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);
     const fromCandidates: Array<Workspace> = this.from.length > 0
-      ? [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceChildren()].filter(fromPredicate)
-      : [rootWorkspace];
+      ? prospectiveWorkspaces.filter(fromPredicate)
+      : prospectiveWorkspaces;
 
-    const candidates = this.recursive
+    const candidates = new Set(this.recursive
       ? [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceDependencies()]).flat()]
-      : [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceChildren()]).flat()];
+      : [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceChildren()]).flat()],
+    );
 
     const workspaces: Array<Workspace> = [];
 
