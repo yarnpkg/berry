@@ -154,7 +154,7 @@ describe(`ZipFS`, () => {
     const fd = zipFs.openSync(p, `r`);
     try {
       zipFs.readSync(fd, buffer);
-      expect(buffer.slice(0, buffer.indexOf('\0')).toString()).toEqual(`file content`);
+      expect(buffer.slice(0, buffer.indexOf(`\0`)).toString()).toEqual(`file content`);
     } finally {
       zipFs.closeSync(fd);
     }
