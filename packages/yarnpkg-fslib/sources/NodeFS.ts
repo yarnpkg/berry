@@ -8,18 +8,24 @@ import {ENOSYS}                                                                 
 import {FSPath, PortablePath, Filename, ppath, npath}                                                                             from './path';
 
 export class NodeFS extends BasePortableFakeFS {
-  private readonly realFs: typeof fs;
+  private readonly originalFs = {...fs};
 
-  constructor(realFs: typeof fs = fs) {
+  private realFs: typeof fs;
+
+  constructor() {
     super();
 
-    this.realFs = realFs;
+    this.realFs = {...this.originalFs};
 
     // @ts-expect-error
     if (typeof this.realFs.lutimes !== `undefined`) {
       this.lutimesPromise = this.lutimesPromiseImpl;
       this.lutimesSync = this.lutimesSyncImpl;
     }
+  }
+
+  patchRealFs(fsFn: (originalFs: typeof fs) => typeof fs) {
+    this.realFs = fsFn({...this.originalFs});
   }
 
   getExtractHint() {

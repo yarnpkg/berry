@@ -46648,14 +46648,22 @@ class LibzipError extends Error {
 
 
 class NodeFS extends BasePortableFakeFS {
-  constructor(realFs = (external_fs_default())) {
+  constructor() {
     super();
-    this.realFs = realFs; // @ts-expect-error
+    this.originalFs = { ...(external_fs_default())
+    };
+    this.realFs = { ...this.originalFs
+    }; // @ts-expect-error
 
     if (typeof this.realFs.lutimes !== `undefined`) {
       this.lutimesPromise = this.lutimesPromiseImpl;
       this.lutimesSync = this.lutimesSyncImpl;
     }
+  }
+
+  patchRealFs(fsFn) {
+    this.realFs = fsFn({ ...this.originalFs
+    });
   }
 
   getExtractHint() {
@@ -52304,13 +52312,7 @@ function makeManager(pnpapi, opts) {
 
 
 
- // We must copy the fs into a local, because otherwise
-// 1. we would make the NodeFS instance use the function that we patched (infinite loop)
-// 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
-
-const localFs = { ...(external_fs_default())
-};
-const nodeFs = new NodeFS(localFs);
+const nodeFs = new NodeFS();
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename; // We create a virtual filesystem that will do three things:
 // 1. all requests inside a folder named "__virtual___" will be remapped according the virtual folder rules
@@ -52358,6 +52360,9 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       fakeFs: defaultFsLayer,
       manager
     });
+  },
+  patchNodeFs: fsFn => {
+    nodeFs.patchRealFs(fsFn);
   }
 });
 manager = makeManager(defaultApi, {

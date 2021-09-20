@@ -14,11 +14,7 @@ import {Manager, makeManager}                                           from './
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
 
-// We must copy the fs into a local, because otherwise
-// 1. we would make the NodeFS instance use the function that we patched (infinite loop)
-// 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
-const localFs: typeof fs = {...fs};
-const nodeFs = new NodeFS(localFs);
+const nodeFs = new NodeFS();
 
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
@@ -73,6 +69,10 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       fakeFs: defaultFsLayer,
       manager,
     });
+  },
+
+  patchNodeFs: (fsFn: (originalFs: typeof fs) => typeof fs) => {
+    nodeFs.patchRealFs(fsFn);
   },
 });
 

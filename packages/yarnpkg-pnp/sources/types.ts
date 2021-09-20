@@ -1,4 +1,5 @@
 import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
+import fs                               from 'fs';
 
 // Note: most of those types are useless for most users. Just check the
 // PnpSettings and PnpApi types at the end and you'll be fine.
@@ -117,4 +118,5 @@ export type PnpApi = {
   // Extension methods
   resolveVirtual?: (p: NativePath) => NativePath | null,
   getAllLocators?: () => Array<PhysicalPackageLocator>,
+  patchNodeFs?: (fsFn: (originalFs: typeof fs) => typeof fs) => void,
 };

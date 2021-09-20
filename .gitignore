@@ -39,3 +39,5 @@ package.tgz
 /vscode-case-study
 
 .idea
+
+.DS_Store
