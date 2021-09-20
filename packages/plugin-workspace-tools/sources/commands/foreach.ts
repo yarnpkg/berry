@@ -34,6 +34,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`--from\` is set, Yarn will use the packages matching the 'from' glob as the starting point for any recursive search.
 
+      - If \`--since\` is set, Yarn will only run the command on workspaces that have been modified since the specified ref. By default yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
+
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
       Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
@@ -106,7 +108,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   });
 
   since = Option.String(`--since`, {
-    description: `Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the default branch.`,
+    description: `Only include workspaces that have been changed since the specified ref.`,
     tolerateBoolean: true,
   });
 
@@ -135,9 +137,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (configuration.projectCwd === null)
       throw new UsageError(`This command can only be run from within a Yarn project`);
 
-    const root = await gitUtils.fetchRoot(configuration.projectCwd);
-    const base = root !== null
-      ? await gitUtils.fetchBase(root, {baseRefs: [typeof this.since === `string` ? this.since : await gitUtils.fetchDefaultBranch(root)]})
+    const root = this.since ? await gitUtils.fetchRoot(configuration.projectCwd) : null;
+    const base = this.since && root !== null
+      ? await gitUtils.fetchBase(root, {baseRefs: typeof this.since === `string` ? [this.since] : configuration.get(`changesetBaseRefs`)})
       : null;
 
     const prospectiveWorkspaces = this.since && root !== null

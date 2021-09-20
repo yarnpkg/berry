@@ -338,13 +338,6 @@ export async function fetchRoot(initialCwd: PortablePath) {
   return match;
 }
 
-export async function fetchDefaultBranch(root: PortablePath) {
-  const {stdout: symbolicRef} = await execUtils.execvp(`git`, [`symbolic-ref`, `refs/remotes/origin/HEAD`], {cwd: root});
-  const {stdout: shortName} = await execUtils.execvp(`git`, [`for-each-ref`, `--format=%(refname:short)`, symbolicRef.trim()], {cwd: root});
-
-  return shortName.trim();
-}
-
 export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
   if (baseRefs.length === 0)
     throw new UsageError(`Can't run this command with zero base refs specified.`);

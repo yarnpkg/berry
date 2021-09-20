@@ -13,12 +13,16 @@ export default class WorkspacesListCommand extends BaseCommand {
     category: `Workspace-related commands`,
     description: `list all available workspaces`,
     details: `
-      This command will print the list of all workspaces in the project. If both the \`-v,--verbose\` and \`--json\` options are set, Yarn will also return the cross-dependencies between each workspaces (useful when you wish to automatically generate Buck / Bazel rules).
+      This command will print the list of all workspaces in the project.
+
+      - If both the \`-v,--verbose\` and \`--json\` options are set, Yarn will also return the cross-dependencies between each workspaces (useful when you wish to automatically generate Buck / Bazel rules).
+
+      - If \`--since\` is set, Yarn will only list workspaces that have been modified since the specified ref. By default yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
     `,
   });
 
   since = Option.String(`--since`, {
-    description: `Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the default branch.`,
+    description: `Only include workspaces that have been changed since the specified ref.`,
     tolerateBoolean: true,
   });
 
@@ -37,9 +41,9 @@ export default class WorkspacesListCommand extends BaseCommand {
     if (configuration.projectCwd === null)
       throw new UsageError(`This command can only be run from within a Yarn project`);
 
-    const root = await gitUtils.fetchRoot(configuration.projectCwd);
-    const base = root !== null
-      ? await gitUtils.fetchBase(root, {baseRefs: [typeof this.since === `string` ? this.since : await gitUtils.fetchDefaultBranch(root)]})
+    const root = this.since ? await gitUtils.fetchRoot(configuration.projectCwd) : null;
+    const base = this.since && root !== null
+      ? await gitUtils.fetchBase(root, {baseRefs: typeof this.since === `string` ? [this.since] : configuration.get(`changesetBaseRefs`)})
       : null;
 
     const report = await StreamReport.start({
