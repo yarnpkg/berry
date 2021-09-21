@@ -8,9 +8,12 @@ import {getPluginConfiguration} from './tools/getPluginConfiguration';
 
 export {getDynamicLibs} from "./tools/getDynamicLibs";
 
-if (process.argv[1]) {
+export function run() {
   main({
     binaryVersion: YarnVersion || `<unknown>`,
     pluginConfiguration: getPluginConfiguration(),
   });
 }
+
+if (require.main === module)
+  run();

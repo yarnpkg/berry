@@ -19,7 +19,9 @@ require.cache[require.resolve(PLUGIN_CONFIG_MODULE)] = {exports: {getPluginConfi
 
 const micromatch = require(`micromatch`);
 
-module.exports = require(`./cli`);
+const cli = require(`./cli`);
+cli.run();
+module.exports = cli;
 
 function getPluginConfiguration() {
   const folders = fs.readdirSync(`${__dirname}/../../`);
