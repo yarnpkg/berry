@@ -397,7 +397,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
     const pattern = filter.get(`pattern`);
     if (typeof pattern !== `undefined`) {
-      logFiltersByPatternMatcher.push([micromatch.matcher(pattern), level]);
+      logFiltersByPatternMatcher.push([micromatch.matcher(pattern, {contains: true}), level]);
     }
   }
 

@@ -382,7 +382,7 @@ export class ZipFS extends BasePortableFakeFS {
     return this.readSync(fd, buffer, offset, length, position);
   }
 
-  readSync(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {
+  readSync(fd: number, buffer: Buffer, offset: number = 0, length: number = buffer.byteLength, position: number | null = -1) {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`)
       throw errors.EBADF(`read`);
