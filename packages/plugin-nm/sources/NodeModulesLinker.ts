@@ -910,7 +910,9 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
       locatorLocations.set(node.locator, locations);
     }
 
-    syncNodeWithDisk(workspaceRoot, NODE_MODULES, node, refinedNode, new Set());
+    if (node.children.has(NODE_MODULES)) {
+      syncNodeWithDisk(workspaceRoot, NODE_MODULES, node, refinedNode, new Set());
+    }
   }
 
   return {locationTree: refinedLocationTree, binSymlinks: refinedBinSymlinks, locatorLocations, installChangedByUser};
