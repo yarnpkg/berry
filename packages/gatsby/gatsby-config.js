@@ -78,6 +78,26 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        extensions: [`.md`, `.mdx`],
+        gatsbyRemarkPlugins: [
+          {
+            resolve: require.resolve(`gatsby-remark-table-of-contents`),
+          },
+          {
+            resolve: require.resolve(`gatsby-remark-autolink-headers`),
+            options: {
+              offsetY: `100`,
+            },
+          },
+          {
+            resolve: require.resolve(`gatsby-remark-prismjs`),
+          },
+        ],
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content`,
@@ -106,26 +126,6 @@ module.exports = {
           {
             namespace: `builder`,
             binary: `${__dirname}/../../scripts/run-builder.js`,
-          },
-        ],
-      },
-    },
-    {
-      resolve: `gatsby-plugin-mdx`,
-      options: {
-        extensions: [`.md`, `.mdx`],
-        gatsbyRemarkPlugins: [
-          {
-            resolve: require.resolve(`gatsby-remark-table-of-contents`),
-          },
-          {
-            resolve: require.resolve(`gatsby-remark-autolink-headers`),
-            options: {
-              offsetY: `100`,
-            },
-          },
-          {
-            resolve: require.resolve(`gatsby-remark-prismjs`),
           },
         ],
       },

@@ -37,6 +37,16 @@ for (const redirectLine of redirectLines) {
 
 /** @type {import('gatsby').GatsbyNode} */
 module.exports = {
+  createSchemaCustomization: ({actions}) => {
+    const {createTypes} = actions;
+    const typeDefs = `
+      type Mdx implements Node {
+        fileAbsolutePath: String
+      }
+    `;
+    createTypes(typeDefs);
+  },
+
   onCreateWebpackConfig: ({actions}) => {
     const gatsbyReq = createRequire(require.resolve(`gatsby/package.json`));
     const webpack = gatsbyReq(`webpack`);
