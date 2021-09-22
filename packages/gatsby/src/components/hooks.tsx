@@ -19,7 +19,7 @@ export function Hooks() {
       render={data => <>
         {data.yarnIntrospection.value.map(({name, comment, definition}) => (
           <div key={name}>
-            <h3><code>{name}</code></h3>
+            <h3 id={`hook-${name}`}><code>{name}</code></h3>
             {comment.split(/\n\n/).map((text, index) => (
               <p key={index}>{text}</p>
             ))}
