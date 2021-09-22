@@ -18,6 +18,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Nested workspaces are properly hoisted by `node-modules` linker.
 - Self-referencing symlinks are not created for anonymous workspaces by `node-modules` linker, since they cannot be used anyway from the code.
 - The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
+- `logFilters` using `pattern` matchers now match any part of the log entry
 
 ### Installs
 
