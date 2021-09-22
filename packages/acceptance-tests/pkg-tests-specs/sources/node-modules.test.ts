@@ -690,19 +690,17 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
           name: `foo`,
-          version: `1.0.0`,
           workspaces: [`bar`],
           dependencies: {
+            bar: `workspace:*`,
             'no-deps': `1.0.0`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/foo/bar/package.json`), {
           name: `bar`,
-          version: `1.0.0`,
-          workspaces: [`bar`],
           peerDependencies: {
             'no-deps': `*`,
           },
