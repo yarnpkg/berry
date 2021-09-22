@@ -462,7 +462,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
     // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
     isHoistable = !parentNode.isWorkspace || node.hoistedFrom.length > 0 || rootNodePathLocators.size === 1;
-    reason = `- direct workspace dependencym hoistable to the root workspace only`;
+    reason = parentNode.reasons.get(node.name) || `- direct workspace dependency, hoistable to the root workspace only`;
   }
 
   if (isHoistable) {
