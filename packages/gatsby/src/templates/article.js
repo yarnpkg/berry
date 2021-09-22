@@ -24,12 +24,12 @@ function getGitPageUrl(postAbsolutePath) {
 
 // eslint-disable-next-line arca/no-default-export
 export default function Template({data, pageContext: {category}}) {
-  const {allMarkdownRemark, markdownRemark} = data;
-  const {frontmatter, html, fileAbsolutePath} = markdownRemark;
+  const {allMdx, mdx} = data;
+  const {frontmatter, body, fileAbsolutePath} = mdx;
 
   return <>
     <Global styles={GlobalStyleOverrides} />
-    <LayoutContentNav items={allMarkdownRemark.edges.map(({node}) => ({
+    <LayoutContentNav items={allMdx.edges.map(({node}) => ({
       to: node.frontmatter.path,
       name: node.frontmatter.title,
     }))}>
@@ -39,7 +39,7 @@ export default function Template({data, pageContext: {category}}) {
         keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split(`/`).reverse()[0]]}
       />
       <PrerenderedMarkdown title={frontmatter.title} editUrl={getGitPageUrl(fileAbsolutePath)}>
-        {html}
+        {body}
       </PrerenderedMarkdown>
     </LayoutContentNav>
   </>;
@@ -47,7 +47,7 @@ export default function Template({data, pageContext: {category}}) {
 
 export const pageQuery = graphql`
   query($path: String!, $category: String) {
-    allMarkdownRemark(
+    allMdx(
       filter: {frontmatter: {category: {eq: $category}, hidden: {ne: true}}}
       sort: {order: ASC, fields: [frontmatter___title]}
     ) {
@@ -60,8 +60,9 @@ export const pageQuery = graphql`
         }
       }
     }
-    markdownRemark(frontmatter: {category: {eq: $category}, path: {eq: $path}}) {
-      html
+
+    mdx(frontmatter: {category: {eq: $category}, path: {eq: $path}}) {
+      body
       fileAbsolutePath
       frontmatter {
         path

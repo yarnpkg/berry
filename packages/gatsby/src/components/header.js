@@ -308,7 +308,7 @@ export const Header = ({children}) => {
       <NewsContainer>
         <NewsOverlay href={`https://classic.yarnpkg.com`}/>
         <NewsInner>
-          <NewsLine><Highlight>Important:</Highlight> This documentation covers Yarn 2.</NewsLine> <NewsLine>For 1.x docs, see classic.yarnpkg.com.</NewsLine>
+          <NewsLine><Highlight>Important:</Highlight> This documentation covers modern versions of Yarn.</NewsLine> <NewsLine>For 1.x docs, see classic.yarnpkg.com.</NewsLine>
         </NewsInner>
       </NewsContainer>
 

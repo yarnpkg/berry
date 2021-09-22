@@ -61,7 +61,7 @@ module.exports = {
 
   createPages: async ({actions: {createPage, createRedirect}, graphql}) => {
     const everything = await graphql(`{
-      allMarkdownRemark {
+      allMdx {
         edges {
           node {
             frontmatter {
@@ -73,7 +73,7 @@ module.exports = {
       }
     }`);
 
-    for (const {node} of everything.data.allMarkdownRemark.edges) {
+    for (const {node} of everything.data.allMdx.edges) {
       createPage({
         path: node.frontmatter.path,
         component: `${__dirname}/src/templates/article.js`,

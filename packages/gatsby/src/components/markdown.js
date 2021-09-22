@@ -1,10 +1,6 @@
-import styled   from '@emotion/styled';
-import React    from 'react';
-import html     from 'remark-html';
-import markdown from 'remark-parse';
-import unified  from 'unified';
-
-import useCache from '../utils/useCache';
+import styled        from '@emotion/styled';
+import {MDXRenderer} from 'gatsby-plugin-mdx';
+import React         from 'react';
 
 const Container = styled.article`
   line-height: 1.7;
@@ -66,6 +62,10 @@ const Content = styled.div`
     &:hover {
       color: #62b0ca;
     }
+  }
+
+  .anchor {
+    margin-right: 10px;
   }
 
   .toc, p, ul, table {
@@ -181,22 +181,10 @@ export const PrerenderedMarkdown = ({title, children, editUrl}) => <>
       </Title>
       {editUrl && <EditLink target="_blank" href={editUrl}>Edit this page on GitHub</EditLink>}
     </TitleContainer>
-    <Content dangerouslySetInnerHTML={{__html: children}} />
+    <Content>
+      <MDXRenderer>
+        {children}
+      </MDXRenderer>
+    </Content>
   </Container>
 </>;
-
-export const Markdown = ({title, children}) => {
-  const document = useCache(() => {
-    return unified().use(markdown).use(html, {
-      sanitize: true,
-    }).process(children);
-  }, [
-    children,
-  ]);
-
-  return document ? <>
-    <PrerenderedMarkdown title={title}>
-      {String(document)}
-    </PrerenderedMarkdown>
-  </> : null;
-};

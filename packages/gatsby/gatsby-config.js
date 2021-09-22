@@ -1,3 +1,5 @@
+require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
+
 module.exports = {
   pathPrefix: process.env.NETLIFY ? `/` : `/berry`,
   siteMetadata: {
@@ -83,6 +85,9 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-yarn-introspection`,
+    },
+    {
       resolve: `gatsby-plugin-clipanion-cli`,
       options: {
         binaries: [
@@ -106,19 +111,22 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: `gatsby-plugin-mdx`,
       options: {
-        plugins: [
+        extensions: [`.md`, `.mdx`],
+        gatsbyRemarkPlugins: [
           {
-            resolve: `gatsby-remark-table-of-contents`,
+            resolve: require.resolve(`gatsby-remark-table-of-contents`),
           },
           {
-            resolve: `gatsby-remark-autolink-headers`,
+            resolve: require.resolve(`gatsby-remark-autolink-headers`),
             options: {
               offsetY: `100`,
             },
           },
-          `gatsby-remark-prismjs`,
+          {
+            resolve: require.resolve(`gatsby-remark-prismjs`),
+          },
         ],
       },
     },
