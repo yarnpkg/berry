@@ -448,15 +448,28 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     reason = `- self-reference`;
 
   if (isHoistable) {
+    isHoistable = !node.isWorkspace;
+    reason = `- workspace`;
+  }
+
+  if (isHoistable) {
+    // Direct workspace dependencies must be hoisted to any common ancestor workspace of all the
+    // graph paths that include the dependency, because otherwise running app with
+    // `--preserve-symlinks` will become broken (without this flag the Node.js will pick dependency
+    // from the ancestor on the file system and with this flag it will pick ancestor from the graph
+    // and if these ancestors are different, the behavious of the application will be different).
+    // It is difficult to find all common ancestors, but there is one easy to find common ancestor -
+    // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
+    // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
+    isHoistable = !parentNode.isWorkspace || node.hoistedFrom.length > 0 || rootNodePathLocators.size === 1;
+    reason = `- direct workspace dependencym hoistable to the root workspace only`;
+  }
+
+  if (isHoistable) {
     isHoistable = !rootNode.peerNames.has(node.name);
     if (outputReason && !isHoistable) {
       reason = `- cannot shadow peer: ${prettyPrintLocator(rootNode.originalDependencies.get(node.name)!.locator)} at ${reasonRoot}`;
     }
-  }
-
-  if (isHoistable) {
-    isHoistable = !node.isWorkspace;
-    reason = `- workspace`;
   }
 
   if (isHoistable) {
