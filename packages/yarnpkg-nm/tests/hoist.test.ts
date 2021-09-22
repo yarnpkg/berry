@@ -535,22 +535,20 @@ describe(`hoist`, () => {
   });
 
   it(`should not create multiple hoisting layouts for the same workspace`, () => {
-    // . -> W1 -> W3 -> A@X
-    //         -> A@Y
-    //   -> W2 -> W3 -> A@X
+    // . -> W1(w) -> W2(w) -> W3(w)-> A@X
+    //            -> A@Y
+    //   -> W3
     //   -> A@Z
-    // The A@X must not be hoisted into W2, because W3 is a workspace and hence a single location
-    // on disk, it cannot have multiple different hoisting layouts
+    // The A@X must not be hoisted into W2(w)
+    // otherwise accessing A via . -> W3 with --preserve-symlinks will result in A@Z,
+    // but accessing it via W3(w) will result in A@Y
     const tree = {
-      '.': {dependencies: [`W1`, `W2`, `A@Z`], isWorkspace: true},
-      W1: {dependencies: [`W3`, `A@Y`], isWorkspace: true},
+      '.': {dependencies: [`W1`, `W3`, `A@Z`], isWorkspace: true},
+      W1: {dependencies: [`W2`, `A@Y`], isWorkspace: true},
       W2: {dependencies: [`W3`], isWorkspace: true},
       W3: {dependencies: [`A@X`], isWorkspace: true},
     };
 
-    const hoistedTree = hoist(toTree(tree), {check: true});
-    const W2xW3Dependencies = Array.from(Array.from(hoistedTree.dependencies).filter(x => x.name === `W2`)[0].dependencies).filter(x => x.name === `W3`)[0].dependencies;
-
-    expect(W2xW3Dependencies.size).toEqual(1);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(5);
   });
 });
