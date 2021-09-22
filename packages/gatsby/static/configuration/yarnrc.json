@@ -324,9 +324,9 @@
     },
     "networkConcurrency": {
       "_package": "@yarnpkg/core",
-      "description": "Defines how many requests are allowed to run at the same time. By default Yarn doesn't put limits on it, but it may sometimes be required when working behind proxies that don't handle large amounts of requests very well.",
+      "description": "Defines how many requests are allowed to run at the same time. Yarn defaults to 50 concurrent requests but it may be required to limit it even more when working behind proxies that can't handle large amounts of concurrent requests.",
       "type": "number",
-      "default": "Infinity",
+      "default": 50,
       "examples": [8]
     },
     "networkSettings": {
