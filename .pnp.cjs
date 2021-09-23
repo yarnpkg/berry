@@ -47853,12 +47853,10 @@ class CustomStatWatcher extends external_events_namespaceObject.EventEmitter {
         bigint: this.bigint
       });
     } catch (error) {
-      if (error.code === `ENOENT`) {
-        const statInstance = this.bigint ? new BigIntStatsEntry() : new StatEntry();
-        return clearStats(statInstance);
-      } else {
-        throw error;
-      }
+      // From observation, all errors seem to be mostly ignored by Node.
+      // Checked with ENOENT, ENOTDIR, EPERM
+      const statInstance = this.bigint ? new BigIntStatsEntry() : new StatEntry();
+      return clearStats(statInstance);
     }
   }
   /**
@@ -49223,12 +49221,12 @@ class ZipFS extends BasePortableFakeFS {
   }
 
   watchFile(p, a, b) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const resolvedP = ppath.resolve(PortablePath.root, p);
     return watchFile(this, resolvedP, a, b);
   }
 
   unwatchFile(p, cb) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const resolvedP = ppath.resolve(PortablePath.root, p);
     return unwatchFile(this, resolvedP, cb);
   }
 
