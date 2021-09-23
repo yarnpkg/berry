@@ -460,7 +460,7 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
           pushAndClose(parts[t]);
 
         const part = parts[parts.length - 1];
-        if (part) {
+        if (typeof part !== `undefined`) {
           push(part);
         }
       }
