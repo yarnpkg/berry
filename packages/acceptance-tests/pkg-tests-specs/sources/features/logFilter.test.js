@@ -1,3 +1,5 @@
+import {xfs} from '@yarnpkg/fslib';
+
 const makeCodeFilter = level => JSON.stringify([{
   code: `YN0005`,
   level,
@@ -179,6 +181,35 @@ describe(`Features`, () => {
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
+    }));
+
+    test(`it should match any part of the log entry using patterns`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, `
+        packageExtensions:
+          'no-deps@*':
+            peerDependencies:
+              '@types/no-deps': '*'
+      `);
+
+      // sanity check
+      await expect(run(`install`)).resolves.toMatchObject({
+        code: 0,
+        stdout: expect.stringContaining(`doesn't provide`),
+      });
+
+      await run(`config`, `set`, `logFilters`, `--json`, JSON.stringify([{
+        pattern: `doesn't provide*`,
+        level: `discard`,
+      }]));
+
+      await expect(run(`install`)).resolves.toMatchObject({
+        code: 0,
+        stdout: expect.not.stringContaining(`doesn't provide`),
+      });
     }));
   });
 });

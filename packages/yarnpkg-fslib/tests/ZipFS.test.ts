@@ -143,6 +143,24 @@ describe(`ZipFS`, () => {
     zipFs2.discardAndClose();
   });
 
+  it(`defaults the readSync read length to the buffer size`, async () => {
+    const p = `/dir/file` as PortablePath;
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+    await zipFs.mkdirPromise(`/dir` as PortablePath);
+    zipFs.writeFileSync(p, `file content`);
+
+    const buffer = Buffer.alloc(8192);
+    const fd = zipFs.openSync(p, `r`);
+    try {
+      zipFs.readSync(fd, buffer);
+      expect(buffer.slice(0, buffer.indexOf(`\0`)).toString()).toEqual(`file content`);
+    } finally {
+      zipFs.closeSync(fd);
+    }
+    zipFs.discardAndClose();
+  });
+
   it(`can create a zip file in memory`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});

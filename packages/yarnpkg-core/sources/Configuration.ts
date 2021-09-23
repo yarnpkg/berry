@@ -325,7 +325,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   networkConcurrency: {
     description: `Maximal number of concurrent requests`,
     type: SettingsType.NUMBER,
-    default: Infinity,
+    default: 50,
   },
   networkSettings: {
     description: `Network settings per hostname (glob patterns are supported)`,
