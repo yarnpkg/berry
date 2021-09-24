@@ -509,6 +509,14 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`shouldn't turn empty variables into arguments when referenced outside of quotes`, async () => {
+        await expect(bufferResult(
+          `FOO=""; echo-arguments $FOO`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+      });
+
       it(`should keep variables unified when referenced within double quotes`, async () => {
         await expect(bufferResult(
           `FOO="hello   world"; echo-arguments "$FOO"`,
@@ -522,6 +530,14 @@ describe(`Shell`, () => {
           `FOO="hello   world"; echo-arguments '$FOO'`,
         )).resolves.toMatchObject({
           stdout: `"$FOO"\n`,
+        });
+      });
+
+      it(`should turn empty variables into an empty argument when referenced within double quotes`, async () => {
+        await expect(bufferResult(
+          `FOO=""; echo-arguments "$FOO"`,
+        )).resolves.toMatchObject({
+          stdout: `""\n`,
         });
       });
     });
