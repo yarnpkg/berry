@@ -441,6 +441,35 @@ describe(`ZipFS`, () => {
     // The watcher shouldn't keep the process running after the file is unwatched
   });
 
+  it(`should accept invalid paths on watchFile (ENOTDIR)`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt/package.json` as PortablePath;
+
+    // Should cause a ENOTDIR error to trigger, but watchFile doesn't care
+    zipFs.writeFileSync(ppath.dirname(file), ``);
+
+    const emptyStats = statUtils.makeEmptyStats();
+
+    const changeListener = jest.fn();
+    const stopListener = jest.fn();
+
+    jest.useFakeTimers();
+
+    const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
+    statWatcher.on(`stop`, stopListener);
+
+    expect(changeListener).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(3);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledWith(emptyStats, emptyStats);
+
+    zipFs.discardAndClose();
+  });
+
   it(`closes the fd created in createReadStream when the stream is closed early`, async () => {
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
     zipFs.writeFileSync(`/foo.txt` as Filename, `foo`.repeat(10000));
