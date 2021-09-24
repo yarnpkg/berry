@@ -40,6 +40,8 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 ### VSCode
 
+To support features like go-to-definition a plugin like [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) is needed.
+
 1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
