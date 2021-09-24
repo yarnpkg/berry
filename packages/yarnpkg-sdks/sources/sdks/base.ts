@@ -120,6 +120,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       function fromEditorPath(str) {
         switch (hostInfo) {
           case \`coc-nvim\`:
+          case \`neovim\`: {
             str = str.replace(/\\.zip::/, \`.zip/\`);
             // The path for coc-nvim is in format of /<pwd>/zipfile:/<pwd>/.yarn/...
             // So in order to convert it back, we use .* to match all the thing
@@ -127,15 +128,14 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             return process.platform === \`win32\`
               ? str.replace(/^.*zipfile:\\//, \`\`)
               : str.replace(/^.*zipfile:/, \`\`);
-          case \`neovim\`:
-            str = str.replace(/\\.zip::/, \`.zip/\`);
-            return process.platform === \`win32\`
-              ? str.replace(/^\\^?zipfile:\\//, \`\`)
-              : str.replace(/^\\^?zipfile:/, \`\`);
-          default:
+          } break;
+
+          case \`vscode\`:
+          default: {
             return process.platform === \`win32\`
               ? str.replace(/^\\^?zip:\\//, \`\`)
               : str.replace(/^\\^?zip:/, \`\`);
+          } break;
         }
       }
 
