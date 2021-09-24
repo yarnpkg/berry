@@ -8,6 +8,7 @@ import useLocalStorage                          from '../../utils/useLocalStorag
 import PlaygroundButton                         from './PlaygroundButton';
 import PlaygroundExportButton                   from './PlaygroundExportButton';
 import PlaygroundInput                          from './PlaygroundInput';
+import PlaygroundNodeVersion                    from './PlaygroundNodeVersion';
 import PlaygroundNotice                         from './PlaygroundNotice';
 import PlaygroundOutput                         from './PlaygroundOutput';
 import PlaygroundSelect                         from './PlaygroundSelect';
@@ -102,6 +103,7 @@ const Playground = () => {
         <PlaygroundButton onClick={runInput} children={`Run`} />
         <PlaygroundExportButton input={input} output={output} label={label} />
         <PlaygroundStatus label={label} />
+        <PlaygroundNodeVersion setLabel={setLabel} />
         <PlaygroundNotice />
       </Toolbar>
       <Display>
