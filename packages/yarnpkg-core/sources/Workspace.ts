@@ -158,6 +158,29 @@ export class Workspace {
   }
 
   /**
+   * Find workspaces which include the current workspace as a dependency/devDependency recursively.
+   *
+   * @returns all the workspaces marked as dependents
+   */
+  async getRecursiveWorkspaceDependents() {
+    await this.project.restoreInstallState();
+
+    const workspaceList = new Set<Workspace>();
+
+    const visitWorkspace = (workspace: Workspace) => {
+      this.project.workspaces.filter(projectWorkspace => projectWorkspace.dependencies.has(workspace.anchoredLocator.identHash)).forEach(dependentWorkspace => {
+        if (!workspaceList.has(dependentWorkspace)) {
+          workspaceList.add(dependentWorkspace);
+          visitWorkspace(dependentWorkspace);
+        }
+      });
+    };
+
+    visitWorkspace(this);
+    return workspaceList;
+  }
+
+  /**
    * Retrieves all the child workspaces of a given root workspace recursively
    *
    * @param rootWorkspace root workspace

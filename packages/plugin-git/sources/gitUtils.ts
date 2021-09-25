@@ -1,10 +1,10 @@
-import {Configuration, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                  from '@yarnpkg/fslib';
-import {UsageError}                                                                                 from 'clipanion';
-import GitUrlParse                                                                                  from 'git-url-parse';
-import querystring                                                                                  from 'querystring';
-import semver                                                                                       from 'semver';
-import urlLib                                                                                       from 'url';
+import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils} from '@yarnpkg/core';
+import {Filename, npath, PortablePath, ppath, xfs}                                                         from '@yarnpkg/fslib';
+import {UsageError}                                                                                        from 'clipanion';
+import GitUrlParse                                                                                         from 'git-url-parse';
+import querystring                                                                                         from 'querystring';
+import semver                                                                                              from 'semver';
+import urlLib                                                                                              from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -375,17 +375,25 @@ export async function fetchChangedFiles(root: PortablePath, {base, project}: {ba
   return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
 }
 
-// Note: .pnp.cjs and lockfile are excluded from workspace change detection
+// Note: yarn artifacts are excluded from workspace change detection
 // as they can be modified by changes to any workspace manifest file.
 export async function fetchChangedWorkspaces(root: PortablePath, {base, project}: {base: string, project: Project}) {
-  const ignoredFiles = [`.pnp.cjs`, project.configuration.get(`lockfileFilename`)];
+  const ignoredPaths = [ppath.resolve(project.cwd, project.configuration.get(`lockfileFilename`))];
+  await project.configuration.triggerHook((hooks: Hooks) => {
+    return hooks.populateYarnPaths;
+  }, project, (path: PortablePath | null) => {
+    if (path != null) {
+      ignoredPaths.push(path);
+    }
+  });
+
   const changedFiles = await fetchChangedFiles(root, {base, project});
 
   return new Set(miscUtils.mapAndFilter(changedFiles, file => {
     const workspace = project.tryWorkspaceByFilePath(file);
     if (workspace === null)
       return miscUtils.mapAndFilter.skip;
-    if (workspace.computeCandidateName() === project.topLevelWorkspace.computeCandidateName() && ignoredFiles.some(ignoredFile => file.includes(ignoredFile)))
+    if (ignoredPaths.some(ignoredPath => file.startsWith(ignoredPath)))
       return miscUtils.mapAndFilter.skip;
 
     return workspace;

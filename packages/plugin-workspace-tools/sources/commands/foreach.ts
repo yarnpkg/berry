@@ -151,10 +151,13 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? prospectiveWorkspaces.filter(fromPredicate)
       : prospectiveWorkspaces;
 
-    const candidates = new Set(this.recursive
-      ? [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceDependencies()]).flat()]
-      : [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceChildren()]).flat()],
-    );
+    const candidates = new Set([...fromCandidates, ...(await Promise.all(fromCandidates.map(async candidate => [...(
+      this.recursive
+        ? this.since
+          ? await candidate.getRecursiveWorkspaceDependents()
+          : candidate.getRecursiveWorkspaceDependencies()
+        : candidate.getRecursiveWorkspaceChildren()
+    )]))).flat()]);
 
     const workspaces: Array<Workspace> = [];
 
