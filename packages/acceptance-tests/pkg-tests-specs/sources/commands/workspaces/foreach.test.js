@@ -1,4 +1,5 @@
 const {
+  exec: {execFile},
   fs: {writeJson, writeFile},
 } = require(`pkg-tests-core`);
 
@@ -469,6 +470,72 @@ describe(`Commands`, () => {
         },
       ),
     );
+
+    // FIXME: figure out why test thinks `--since` option is invalid
+    test.skip(
+      `--since runs on no workspaces if there have been no changes`,
+      makeWorkspacesForeachSinceEnv(async ({run}) => {
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+      }),
+    );
+
+    // FIXME: figure out why test thinks `--since` option is invalid
+    test.skip(
+      `--since runs only on changed workspaces`,
+      makeWorkspacesForeachSinceEnv(async ({path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+      }),
+    );
+
+    // FIXME: figure out why test thinks `--since` option is invalid
+    test.skip(
+      `--since runs on no workspaces if there are no staged or unstaged changes on the default branch`,
+      makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+      }),
+    );
+
+    // FIXME: figure out why test thinks `--since` option is invalid
+    test.skip(
+      `--since runs on workspaces changed since commit`,
+      makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+
+        const ref = (await git(`rev-parse`, `HEAD`)).stdout.trim();
+
+        await writeJson(`${path}/packages/workspace-b/delta.json`, {});
+        await writeJson(`${path}/packages/workspace-c/delta.json`, {});
+
+        await expect(run(`workspaces`, `foreach`, `--since=${ref}`, `run`, `print`)).resolves.toMatchSnapshot();
+      }),
+    );
+
+    // FIXME: figure out why test thinks `--since` option is invalid
+    test.skip(
+      `--since runs on workspaces changed since branching from the default branch`,
+      makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+        await git(`checkout`, `-b`, `feature`);
+
+        await writeJson(`${path}/packages/workspace-b/delta.json`, {});
+        await writeJson(`${path}/packages/workspace-c/delta.json`, {});
+
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+      }),
+    );
   });
 });
 
@@ -505,4 +572,34 @@ function getClientContent(mutex, name) {
 
     main();
   `;
+}
+
+function makeWorkspacesForeachSinceEnv(cb) {
+  return makeTemporaryEnv({
+    private: true,
+    workspaces: [`packages/*`],
+  }, {
+    plugins: [
+      require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+      require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
+    ],
+  }, async ({path, run, ...rest}) => {
+    await setupWorkspaces();
+
+    const git = (...args) => execFile(`git`, args, {cwd: path});
+
+    await run(`install`);
+
+    await git(`init`, `.`);
+
+    // Otherwise we can't always commit
+    await git(`config`, `user.name`, `John Doe`);
+    await git(`config`, `user.email`, `john.doe@example.org`);
+    await git(`config`, `commit.gpgSign`, `false`);
+
+    await git(`add`, `.`);
+    await git(`commit`, `-m`, `First commit`);
+
+    await cb({path, run, ...rest, git});
+  });
 }

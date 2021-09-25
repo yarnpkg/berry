@@ -171,7 +171,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   if (configuration.projectCwd === null)
     throw new UsageError(`This command can only be run from within a Yarn project`);
 
-  const root = await gitUtils.fetchRoot(configuration.projectCwd);
+  const root = await gitUtils.getRoot(configuration.projectCwd);
 
   const base = root !== null
     ? await gitUtils.fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)})

@@ -17,7 +17,7 @@ export default class WorkspacesListCommand extends BaseCommand {
 
       - If both the \`-v,--verbose\` and \`--json\` options are set, Yarn will also return the cross-dependencies between each workspaces (useful when you wish to automatically generate Buck / Bazel rules).
 
-      - If \`--since\` is set, Yarn will only list workspaces that have been modified since the specified ref. By default yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
+      - If \`--since\` is set, Yarn will only list workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
     `,
   });
 
@@ -41,7 +41,7 @@ export default class WorkspacesListCommand extends BaseCommand {
     if (configuration.projectCwd === null)
       throw new UsageError(`This command can only be run from within a Yarn project`);
 
-    const root = this.since ? await gitUtils.fetchRoot(configuration.projectCwd) : null;
+    const root = this.since ? await gitUtils.getRoot(configuration.projectCwd) : null;
     const base = this.since && root !== null
       ? await gitUtils.fetchBase(root, {baseRefs: typeof this.since === `string` ? [this.since] : configuration.get(`changesetBaseRefs`)})
       : null;

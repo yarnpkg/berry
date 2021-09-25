@@ -319,7 +319,7 @@ export async function clone(url: string, configuration: Configuration) {
   });
 }
 
-export async function fetchRoot(initialCwd: PortablePath) {
+export async function getRoot(initialCwd: PortablePath) {
   // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
   // it may return long paths even when the cwd uses short paths, and we have no
   // way to detect it from Node (not even realpath).

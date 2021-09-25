@@ -1,4 +1,5 @@
 const {
+  exec: {execFile},
   fs: {writeJson},
   misc: {parseJsonStream},
 } = require(`pkg-tests-core`);
@@ -148,5 +149,163 @@ describe(`Commands`, () => {
         },
       ),
     );
+
+    test(
+      `--since returns no workspaces if there have been no changes`,
+      makeWorkspacesListSinceEnv(async ({run}) => {
+        await expect(
+          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout.trim(),
+        ).toEqual(``);
+      }),
+    );
+
+    test(
+      `--since returns only changed workspaces`,
+      makeWorkspacesListSinceEnv(async ({path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await expect(parseJsonStream(
+          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout,
+          `location`,
+        )).toEqual({
+          [`packages/workspace-a`]: {
+            location: `packages/workspace-a`,
+            name: `workspace-a`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+        });
+      }),
+    );
+
+    test(
+      `--since returns no workspaces if there are no staged or unstaged changes on the default branch`,
+      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+
+        await expect(
+          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout.trim(),
+        ).toEqual(``);
+      }),
+    );
+
+    test(
+      `--since returns workspaces changed since commit`,
+      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+
+        const ref = (await git(`rev-parse`, `HEAD`)).stdout.trim();
+
+        await writeJson(`${path}/packages/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+        });
+        await writeJson(`${path}/packages/workspace-c/package.json`, {
+          name: `workspace-c`,
+          version: `1.0.0`,
+        });
+
+        await expect(parseJsonStream(
+          (await run(`workspaces`, `list`, `--since=${ref}`, `-v`, `--json`)).stdout,
+          `location`,
+        )).toEqual({
+          [`packages/workspace-b`]: {
+            location: `packages/workspace-b`,
+            name: `workspace-b`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-c`]: {
+            location: `packages/workspace-c`,
+            name: `workspace-c`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+        });
+      }),
+    );
+
+    test(
+      `--since returns workspaces changed since branching from the default branch`,
+      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+        await git(`checkout`, `-b`, `feature`);
+
+        await writeJson(`${path}/packages/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+        });
+        await writeJson(`${path}/packages/workspace-c/package.json`, {
+          name: `workspace-c`,
+          version: `1.0.0`,
+        });
+
+        await expect(parseJsonStream(
+          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout,
+          `location`,
+        )).toEqual({
+          [`packages/workspace-b`]: {
+            location: `packages/workspace-b`,
+            name: `workspace-b`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-c`]: {
+            location: `packages/workspace-c`,
+            name: `workspace-c`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+        });
+      }),
+    );
   });
 });
+
+function makeWorkspacesListSinceEnv(cb) {
+  return makeTemporaryEnv({
+    private: true,
+    workspaces: [`packages/*`],
+  }, {
+    plugins: [
+      require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
+    ],
+  }, async ({path, run, ...rest}) => {
+    const git = (...args) => execFile(`git`, args, {cwd: path});
+
+    await run(`install`);
+
+    await git(`init`, `.`);
+
+    // Otherwise we can't always commit
+    await git(`config`, `user.name`, `John Doe`);
+    await git(`config`, `user.email`, `john.doe@example.org`);
+    await git(`config`, `commit.gpgSign`, `false`);
+
+    await git(`add`, `.`);
+    await git(`commit`, `-m`, `First commit`);
+
+    await cb({path, run, ...rest, git});
+  });
+}
