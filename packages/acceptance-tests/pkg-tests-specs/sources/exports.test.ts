@@ -899,10 +899,10 @@ describe(`"exports" field`, () => {
       await expect(source(`require('pnpapi')`)).resolves.toHaveProperty(`VERSIONS`);
 
       // require.resolve goes through Module._resolveFilename which calls resolveRequest
-      await expect(source(`require.resolve('pnpapi')`)).resolves.toStrictEqual(`${path}/.pnp.cjs`);
+      await expect(source(`require.resolve('pnpapi')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/.pnp.cjs`));
 
-      await expect(source(`require('pnpapi').resolveToUnqualified('pnpapi')`)).resolves.toStrictEqual(`${path}/.pnp.cjs`);
-      await expect(source(`require('pnpapi').resolveRequest('pnpapi')`)).resolves.toStrictEqual(`${path}/.pnp.cjs`);
+      await expect(source(`require('pnpapi').resolveToUnqualified('pnpapi')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/.pnp.cjs`));
+      await expect(source(`require('pnpapi').resolveRequest('pnpapi')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/.pnp.cjs`));
     }),
   );
 });
