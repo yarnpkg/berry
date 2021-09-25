@@ -839,6 +839,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+
+    // If the request is the pnpapi, we can just return the unqualifiedPath
+    // without having to apply the exports resolution or the extension resolution
+    // (opts.pnpapiResolution is always a full path - makeManager enforces this by stat-ing it)
+    if (request === `pnpapi`)
+      return unqualifiedPath;
+
     if (unqualifiedPath === null)
       return null;
 
