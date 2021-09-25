@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/core": patch
   "@yarnpkg/plugin-essentials": minor
   "@yarnpkg/plugin-git": patch
   "@yarnpkg/plugin-version": patch
