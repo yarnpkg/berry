@@ -471,16 +471,14 @@ describe(`Commands`, () => {
       ),
     );
 
-    // FIXME: figure out why test thinks `--since` option is invalid
-    test.skip(
+    test(
       `--since runs on no workspaces if there have been no changes`,
       makeWorkspacesForeachSinceEnv(async ({run}) => {
         await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
       }),
     );
 
-    // FIXME: figure out why test thinks `--since` option is invalid
-    test.skip(
+    test(
       `--since runs only on changed workspaces`,
       makeWorkspacesForeachSinceEnv(async ({path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
@@ -489,8 +487,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    // FIXME: figure out why test thinks `--since` option is invalid
-    test.skip(
+    test(
       `--since runs on no workspaces if there are no staged or unstaged changes on the default branch`,
       makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
@@ -502,8 +499,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    // FIXME: figure out why test thinks `--since` option is invalid
-    test.skip(
+    test(
       `--since runs on workspaces changed since commit`,
       makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
@@ -520,8 +516,7 @@ describe(`Commands`, () => {
       }),
     );
 
-    // FIXME: figure out why test thinks `--since` option is invalid
-    test.skip(
+    test(
       `--since runs on workspaces changed since branching from the default branch`,
       makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
@@ -584,7 +579,7 @@ function makeWorkspacesForeachSinceEnv(cb) {
       require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
     ],
   }, async ({path, run, ...rest}) => {
-    await setupWorkspaces();
+    await setupWorkspaces(path);
 
     const git = (...args) => execFile(`git`, args, {cwd: path});
 
