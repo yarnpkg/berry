@@ -1,7 +1,7 @@
 import {BaseCommand}                                                                        from '@yarnpkg/cli';
 import {Configuration, Manifest, Project, StreamReport, structUtils, Descriptor, Workspace} from '@yarnpkg/core';
 import {gitUtils}                                                                           from '@yarnpkg/plugin-git';
-import {Command, Option, Usage, UsageError}                                                 from 'clipanion';
+import {Command, Option, Usage}                                                             from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesListCommand extends BaseCommand {
