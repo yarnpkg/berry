@@ -134,14 +134,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
-    const prospectiveWorkspaces = this.since
+    const rootCandidates = this.since
       ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
       : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
 
     const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);
     const fromCandidates: Array<Workspace> = this.from.length > 0
-      ? prospectiveWorkspaces.filter(fromPredicate)
-      : prospectiveWorkspaces;
+      ? rootCandidates.filter(fromPredicate)
+      : rootCandidates;
 
     const candidates = new Set([...fromCandidates, ...(await Promise.all(fromCandidates.map(async candidate => [...(
       this.recursive
