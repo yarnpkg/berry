@@ -38,21 +38,13 @@ export default class WorkspacesListCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
-    if (configuration.projectCwd === null)
-      throw new UsageError(`This command can only be run from within a Yarn project`);
-
-    const root = this.since ? await gitUtils.fetchRoot(configuration.projectCwd) : null;
-    const base = this.since && root !== null
-      ? await gitUtils.fetchBase(root, {baseRefs: typeof this.since === `string` ? [this.since] : configuration.get(`changesetBaseRefs`)})
-      : null;
-
     const report = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      const workspaces = this.since && root !== null
-        ? await gitUtils.fetchChangedWorkspaces(root, {base: base!.hash, project})
+      const workspaces = this.since
+        ? await gitUtils.fetchChangedWorkspaces({ref: this.since, project})
         : project.workspaces;
 
       for (const workspace of workspaces) {

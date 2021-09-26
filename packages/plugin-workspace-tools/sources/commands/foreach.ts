@@ -134,16 +134,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
-    if (configuration.projectCwd === null)
-      throw new UsageError(`This command can only be run from within a Yarn project`);
-
-    const root = this.since ? await gitUtils.fetchRoot(configuration.projectCwd) : null;
-    const base = this.since && root !== null
-      ? await gitUtils.fetchBase(root, {baseRefs: typeof this.since === `string` ? [this.since] : configuration.get(`changesetBaseRefs`)})
-      : null;
-
-    const prospectiveWorkspaces = this.since && root !== null
-      ? Array.from(await gitUtils.fetchChangedWorkspaces(root, {base: base!.hash, project}))
+    const prospectiveWorkspaces = this.since
+      ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
       : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
 
     const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);

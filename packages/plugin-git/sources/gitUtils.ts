@@ -377,7 +377,10 @@ export async function fetchChangedFiles(root: PortablePath, {base, project}: {ba
 
 // Note: yarn artifacts are excluded from workspace change detection
 // as they can be modified by changes to any workspace manifest file.
-export async function fetchChangedWorkspaces(root: PortablePath, {base, project}: {base: string, project: Project}) {
+export async function fetchChangedWorkspaces({ref, project}: {ref: boolean | string, project: Project}) {
+  if (project.configuration.projectCwd === null)
+    throw new UsageError(`This command can only be run from within a Yarn project`);
+
   const ignoredPaths = [
     ppath.resolve(project.cwd, project.configuration.get(`cacheFolder`)),
     ppath.resolve(project.cwd, project.configuration.get(`installStatePath`)),
@@ -392,7 +395,13 @@ export async function fetchChangedWorkspaces(root: PortablePath, {base, project}
     }
   });
 
-  const changedFiles = await fetchChangedFiles(root, {base, project});
+  const root = await fetchRoot(project.configuration.projectCwd);
+  const base = root !== null
+    ? await fetchBase(root, {baseRefs: typeof ref === `string` ? [ref] : project.configuration.get(`changesetBaseRefs`)})
+    : null;
+  const changedFiles = root !== null && base !== null
+    ? await fetchChangedFiles(root, {base: base.hash, project})
+    : [];
 
   return new Set(miscUtils.mapAndFilter(changedFiles, file => {
     const workspace = project.tryWorkspaceByFilePath(file);
