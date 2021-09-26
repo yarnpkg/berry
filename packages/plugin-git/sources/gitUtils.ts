@@ -377,7 +377,7 @@ export async function fetchChangedFiles(root: PortablePath, {base, project}: {ba
 
 // Note: yarn artifacts are excluded from workspace change detection
 // as they can be modified by changes to any workspace manifest file.
-export async function fetchChangedWorkspaces({ref, project}: {ref: boolean | string, project: Project}) {
+export async function fetchChangedWorkspaces({ref, project}: {ref: string | true, project: Project}) {
   if (project.configuration.projectCwd === null)
     throw new UsageError(`This command can only be run from within a Yarn project`);
 
