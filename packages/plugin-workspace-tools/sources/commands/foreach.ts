@@ -137,7 +137,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (configuration.projectCwd === null)
       throw new UsageError(`This command can only be run from within a Yarn project`);
 
-    const root = this.since ? await gitUtils.getRoot(configuration.projectCwd) : null;
+    const root = this.since ? await gitUtils.fetchRoot(configuration.projectCwd) : null;
     const base = this.since && root !== null
       ? await gitUtils.fetchBase(root, {baseRefs: typeof this.since === `string` ? [this.since] : configuration.get(`changesetBaseRefs`)})
       : null;

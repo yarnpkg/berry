@@ -319,7 +319,7 @@ export async function clone(url: string, configuration: Configuration) {
   });
 }
 
-export async function getRoot(initialCwd: PortablePath) {
+export async function fetchRoot(initialCwd: PortablePath) {
   // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
   // it may return long paths even when the cwd uses short paths, and we have no
   // way to detect it from Node (not even realpath).
@@ -378,7 +378,12 @@ export async function fetchChangedFiles(root: PortablePath, {base, project}: {ba
 // Note: yarn artifacts are excluded from workspace change detection
 // as they can be modified by changes to any workspace manifest file.
 export async function fetchChangedWorkspaces(root: PortablePath, {base, project}: {base: string, project: Project}) {
-  const ignoredPaths = [ppath.resolve(project.cwd, project.configuration.get(`lockfileFilename`))];
+  const ignoredPaths = [
+    ppath.resolve(project.cwd, project.configuration.get(`cacheFolder`)),
+    ppath.resolve(project.cwd, project.configuration.get(`installStatePath`)),
+    ppath.resolve(project.cwd, project.configuration.get(`lockfileFilename`)),
+    ppath.resolve(project.cwd, project.configuration.get(`virtualFolder`)),
+  ];
   await project.configuration.triggerHook((hooks: Hooks) => {
     return hooks.populateYarnPaths;
   }, project, (path: PortablePath | null) => {
