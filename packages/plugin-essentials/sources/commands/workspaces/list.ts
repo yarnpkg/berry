@@ -15,15 +15,21 @@ export default class WorkspacesListCommand extends BaseCommand {
     details: `
       This command will print the list of all workspaces in the project.
 
-      - If both the \`-v,--verbose\` and \`--json\` options are set, Yarn will also return the cross-dependencies between each workspaces (useful when you wish to automatically generate Buck / Bazel rules).
-
       - If \`--since\` is set, Yarn will only list workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
+
+      - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
+
+      - If both the \`-v,--verbose\` and \`--json\` options are set, Yarn will also return the cross-dependencies between each workspaces (useful when you wish to automatically generate Buck / Bazel rules).
     `,
   });
 
   since = Option.String(`--since`, {
     description: `Only include workspaces that have been changed since the specified ref.`,
     tolerateBoolean: true,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
   });
 
   verbose = Option.Boolean(`-v,--verbose`, false, {
@@ -43,9 +49,14 @@ export default class WorkspacesListCommand extends BaseCommand {
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      const workspaces = this.since
+      const candidates = this.since
         ? await gitUtils.fetchChangedWorkspaces({ref: this.since, project})
         : project.workspaces;
+
+      const workspaces = new Set([...candidates, ...(this.recursive
+        ? (await Promise.all([...candidates].map(async candidate => [...(await candidate.getRecursiveWorkspaceDependents())]))).flat()
+        : []
+      )]);
 
       for (const workspace of workspaces) {
         const {manifest} = workspace;
