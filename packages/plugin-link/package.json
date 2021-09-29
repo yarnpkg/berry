@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-link",
-  "version": "2.2.0-rc.4",
+  "version": "2.2.0-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {

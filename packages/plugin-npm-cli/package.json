@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-npm-cli",
-  "version": "3.0.1-rc.4",
+  "version": "3.0.1-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
