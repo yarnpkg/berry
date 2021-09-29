@@ -53,10 +53,11 @@ export default class WorkspacesListCommand extends BaseCommand {
         ? await gitUtils.fetchChangedWorkspaces({ref: this.since, project})
         : project.workspaces;
 
-      const workspaces = new Set([...candidates, ...(this.recursive
-        ? (await Promise.all([...candidates].map(async candidate => [...(await candidate.getRecursiveWorkspaceDependents())]))).flat()
-        : []
-      )]);
+      const workspaces = new Set(candidates);
+      if (this.recursive)
+        for (const dependents of await Promise.all(candidate => candidate.getRecursiveWorkspaceDependents()))
+          for (const dependent of dependents)
+            workspaces.add(dependent);
 
       for (const workspace of workspaces) {
         const {manifest} = workspace;
