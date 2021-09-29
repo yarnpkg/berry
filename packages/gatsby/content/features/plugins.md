@@ -75,4 +75,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**engines**](https://github.com/devoto13/yarn-plugin-engines) by [**Yaroslav Admin**](https://github.com/devoto13) - enforces a Node version range specified in the `package.json`'s `engines.node` field
 
+- [**@liuli-util/yarn-plugin-changed**](https://github.com/rxliuli/liuli-tools/blob/master/libs/yarn-plugin-changed) by [rxliuli](https://github.com/rxliuli/) - Calculate the cache based on git and file hash to ensure that the same command will only be actually run in the changed module every time you run it.
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
