@@ -5414,7 +5414,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.11.20"
     tslib: ^1.13.0
   peerDependencies:
-    esbuild: ">=0.8.36"
+    esbuild: ">=0.10.0"
   languageName: unknown
   linkType: soft
 
