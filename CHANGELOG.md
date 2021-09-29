@@ -18,7 +18,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
 - `logFilters` using `pattern` matchers now match any part of the log entry
 - The cache is now fully atomic when moving files across devices and in general more efficient.
-- When using PnP, `require.resolve('pnpapi')` will be handled correctly when using `exports`
+- The PnP patch now picks up changes to the `fs` module, allowing users to patch it.
+- When using PnP, `require.resolve('pnpapi')` will be handled correctly even when using `exports`.
 
 ### Installs
 
