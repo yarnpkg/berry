@@ -1953,4 +1953,60 @@ describe(`Shell`, () => {
       });
     });
   });
+
+  describe(`Builtins`, () => {
+    describe(`cd`, () => {
+      it(`should throw recoverable errors when the target is not a directory`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await xfs.writeFilePromise(`${tmpDir}/file` as PortablePath, ``);
+
+          await expect(bufferResult(
+            `cd file && echo OK || echo KO`,
+            [],
+            {cwd: tmpDir},
+          )).resolves.toMatchObject({
+            exitCode: 0,
+            stdout: `KO\n`,
+            stderr: `cd: not a directory: file\n`,
+          });
+        });
+      });
+
+      it(`should throw recoverable errors when the target does not exist`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `cd doesnt-exist && echo OK || echo KO`,
+            [],
+            {cwd: tmpDir},
+          )).resolves.toMatchObject({
+            exitCode: 0,
+            stdout: `KO\n`,
+            stderr: `cd: no such file or directory: doesnt-exist\n`,
+          });
+        });
+      });
+    });
+
+    describe(`sleep`, () => {
+      it(`should throw recoverable errors when the operand is missing`, async () => {
+        await expect(bufferResult(
+          `sleep && echo OK || echo KO`,
+        )).resolves.toMatchObject({
+          exitCode: 0,
+          stdout: `KO\n`,
+          stderr: `sleep: missing operand\n`,
+        });
+      });
+
+      it(`should throw recoverable errors when the operand is an invalid time interval`, async () => {
+        await expect(bufferResult(
+          `sleep invalid && echo OK || echo KO`,
+        )).resolves.toMatchObject({
+          exitCode: 0,
+          stdout: `KO\n`,
+          stderr: `sleep: invalid time interval 'invalid'\n`,
+        });
+      });
+    });
+  });
 });
