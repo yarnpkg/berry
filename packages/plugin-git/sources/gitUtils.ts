@@ -363,16 +363,22 @@ export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array
   return {hash, title};
 }
 
-// Note: This returns all changed files from the git diff, which can include
-// files not belonging to a workspace
+// Note: This returns all changed files from the git diff,
+// which can include files not belonging to a workspace
 export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
+  const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
+
   const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
   const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
   const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
-  return [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+  const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+
+  return ignorePattern
+    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
+    : changedFiles;
 }
 
 // Note: yarn artifacts are excluded from workspace change detection
@@ -396,12 +402,12 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
   });
 
   const root = await fetchRoot(project.configuration.projectCwd);
-  const base = root !== null
-    ? await fetchBase(root, {baseRefs: typeof ref === `string` ? [ref] : project.configuration.get(`changesetBaseRefs`)})
-    : null;
-  const changedFiles = root !== null && base !== null
-    ? await fetchChangedFiles(root, {base: base.hash, project})
-    : [];
+
+  if (root == null)
+    throw new UsageError(`This command can only be run on Git repositories`);
+
+  const base = await fetchBase(root, {baseRefs: typeof ref === `string` ? [ref] : project.configuration.get(`changesetBaseRefs`)});
+  const changedFiles = await fetchChangedFiles(root, {base: base.hash, project});
 
   return new Set(miscUtils.mapAndFilter(changedFiles, file => {
     const workspace = project.tryWorkspaceByFilePath(file);

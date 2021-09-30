@@ -143,13 +143,16 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? rootCandidates.filter(fromPredicate)
       : rootCandidates;
 
-    const candidates = new Set([...fromCandidates, ...(await Promise.all(fromCandidates.map(async candidate => [...(
+    if (this.recursive && this.since)
+      await project.restoreInstallState();
+
+    const candidates = new Set([...fromCandidates, ...(fromCandidates.map(candidate => [...(
       this.recursive
         ? this.since
-          ? await candidate.getRecursiveWorkspaceDependents()
+          ? candidate.getRecursiveWorkspaceDependents()
           : candidate.getRecursiveWorkspaceDependencies()
         : candidate.getRecursiveWorkspaceChildren()
-    )]))).flat()]);
+    )])).flat()]);
 
     const workspaces: Array<Workspace> = [];
 

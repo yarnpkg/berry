@@ -280,6 +280,124 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `--since --recursive returns workspaces changed and their dependents`,
+      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          version: `1.0.0`,
+        });
+
+        await writeJson(`${path}/packages/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+          dependencies: {
+            [`workspace-a`]: `workspace:*`,
+            [`workspace-c`]: `workspace:*`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-c/package.json`, {
+          name: `workspace-c`,
+          version: `1.0.0`,
+          workspaces: [`packages/*`],
+          dependencies: {
+            [`workspace-a`]: `workspace:*`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-c/packages/workspace-d/package.json`, {
+          name: `workspace-d`,
+          version: `1.0.0`,
+          workspaces: [`packages/*`],
+          dependencies: {
+            [`workspace-b`]: `workspace:*`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-c/packages/workspace-d/packages/workspace-e/package.json`, {
+          name: `workspace-e`,
+          version: `1.0.0`,
+          dependencies: {
+            [`workspace-d`]: `workspace:*`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-c/packages/workspace-f/package.json`, {
+          name: `workspace-f`,
+          version: `1.0.0`,
+          dependencies: {
+            [`workspace-e`]: `workspace:*`,
+          },
+        });
+
+        await writeJson(`${path}/packages/workspace-c/packages/workspace-g/package.json`, {
+          name: `workspace-g`,
+          version: `1.0.0`,
+        });
+
+        await run(`install`);
+
+        await git(`add`, `.`);
+        await git(`commit`, `-m`, `wip`);
+
+        await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await expect(parseJsonStream(
+          (await run(`workspaces`, `list`, `--since`, `--recursive`, `-v`, `--json`)).stdout,
+          `location`,
+        )).toEqual({
+          [`packages/workspace-a`]: {
+            location: `packages/workspace-a`,
+            name: `workspace-a`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-b`]: {
+            location: `packages/workspace-b`,
+            name: `workspace-b`,
+            workspaceDependencies: [
+              `packages/workspace-a`,
+              `packages/workspace-c`,
+            ],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-c/packages/workspace-d`]: {
+            location: `packages/workspace-c/packages/workspace-d`,
+            name: `workspace-d`,
+            workspaceDependencies: [
+              `packages/workspace-b`,
+            ],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-c/packages/workspace-d/packages/workspace-e`]: {
+            location: `packages/workspace-c/packages/workspace-d/packages/workspace-e`,
+            name: `workspace-e`,
+            workspaceDependencies: [
+              `packages/workspace-c/packages/workspace-d`,
+            ],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-c/packages/workspace-f`]: {
+            location: `packages/workspace-c/packages/workspace-f`,
+            name: `workspace-f`,
+            workspaceDependencies: [
+              `packages/workspace-c/packages/workspace-d/packages/workspace-e`,
+            ],
+            mismatchedWorkspaceDependencies: [],
+          },
+          [`packages/workspace-c`]: {
+            location: `packages/workspace-c`,
+            name: `workspace-c`,
+            workspaceDependencies: [
+              `packages/workspace-a`,
+            ],
+            mismatchedWorkspaceDependencies: [],
+          },
+        });
+      }),
+    );
   });
 });
 

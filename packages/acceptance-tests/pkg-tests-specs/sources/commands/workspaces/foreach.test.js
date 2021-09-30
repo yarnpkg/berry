@@ -531,6 +531,15 @@ describe(`Commands`, () => {
         await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
       }),
     );
+
+    test(
+      `--since --recursive runs on workspaces changed and their dependents`,
+      makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
+        await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await expect(run(`workspaces`, `foreach`, `--since`, `--recursive`, `run`, `print`)).resolves.toMatchSnapshot();
+      }),
+    );
   });
 });
 

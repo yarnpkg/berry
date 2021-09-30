@@ -30,16 +30,6 @@ export function validateReleaseDecision(decision: unknown): string {
   return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
 }
 
-export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
-  const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
-
-  const changedFiles = await gitUtils.fetchChangedFiles(root, {base, project});
-
-  return ignorePattern
-    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
-    : changedFiles;
-}
-
 export type VersionFile = {
   project: Project,
 
@@ -178,7 +168,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     : null;
 
   const changedFiles = root !== null
-    ? await fetchChangedFiles(root, {base: base!.hash, project})
+    ? await gitUtils.fetchChangedFiles(root, {base: base!.hash, project})
     : [];
 
   const deferredVersionFolder = configuration.get(`deferredVersionFolder`);

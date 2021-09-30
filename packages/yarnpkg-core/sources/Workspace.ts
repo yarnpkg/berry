@@ -162,9 +162,7 @@ export class Workspace {
    *
    * @returns all the workspaces marked as dependents
    */
-  async getRecursiveWorkspaceDependents() {
-    await this.project.restoreInstallState();
-
+  getRecursiveWorkspaceDependents() {
     const workspaceList = new Set<Workspace>();
 
     const visitWorkspace = (workspace: Workspace) => {
