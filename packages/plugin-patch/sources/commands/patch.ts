@@ -14,7 +14,7 @@ export default class PatchCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `prepare a package for patching`,
     details: `
-      This command will cause a package to be extracted in a temporary directory. This folder will be editable at will; once it's ready, run \`yarn patch-commit -s <path>\`, which will then cause Yarn to generate a patchfile (in \`.yarn/patches\`) and register it into your top-level manifest (cf the [\`patch:\` protocol](https://yarnpkg.com/features/protocols#patch)).
+      This command will cause a package to be extracted in a temporary directory. This folder will be editable at will; once it's ready, run \`yarn patch-commit -s <path>\`, which will then cause Yarn to generate a patchfile (in \`.yarn/patches\` [by default](https://yarnpkg.com/api/modules/plugin_patch.html#plugin.configuration.patchfolder)) and register it into your top-level manifest (cf the [\`patch:\` protocol](https://yarnpkg.com/features/protocols#patch)).
     `,
   });
 
