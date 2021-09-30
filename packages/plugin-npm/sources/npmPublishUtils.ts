@@ -34,7 +34,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   // While the npm registry ignores the provided tarball URL, it's used by
   // other registries such as verdaccio.
   const tarballName = `${name}-${version}.tgz`;
-  const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
+  const tarballURL = new URL(`${registry}/${name}/-/${tarballName}`);
 
   return {
     _id: name,
