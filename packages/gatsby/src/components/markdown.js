@@ -64,10 +64,6 @@ const Content = styled.div`
     }
   }
 
-  .anchor {
-    margin-right: 10px;
-  }
-
   .toc, p, ul, table {
     margin: 1.5em 0;
   }
