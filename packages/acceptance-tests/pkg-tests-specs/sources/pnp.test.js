@@ -2080,4 +2080,36 @@ describe(`Plug'n'Play`, () => {
       },
     ),
   );
+
+  test(
+    `it should support user patched fs`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs')
+
+          fs.realpathSync = (file) => file;
+
+          fs.readFileSync = () => {
+            return 'module.exports = 42';
+          }
+
+          const originalStatSync = fs.statSync;
+          fs.statSync = () => {
+            return originalStatSync(__filename);
+          }
+
+          console.log(require('${path}/does/not/exist.js'))
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
 });

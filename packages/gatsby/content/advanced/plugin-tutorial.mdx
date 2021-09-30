@@ -66,12 +66,12 @@ module.exports = {
     const {Command} = require(`clipanion`);
 
     class HelloWorldCommand extends Command {
+      static paths = [[`hello`]];
+
       async execute() {
         this.context.stdout.write(`This is my very own plugin 😎\n`);
       }
     }
-
-    HelloWorldCommand.addPath(`hello`);
 
     return {
       commands: [
@@ -82,51 +82,41 @@ module.exports = {
 };
 ```
 
-Now, try to run `yarn hello`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`yup`](https://github.com/jquense/yup) library, which we provide. Here's an example where we only accept email addresses as parameter:
+Now, try to run `yarn hello`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`typanion`](https://github.com/arcanis/typanion) library, which we provide. Here's an example where we only accept numbers as parameter:
 
 ```js
 module.exports = {
-  name: `plugin-hello-world`,
+  name: `plugin-addition`,
   factory: require => {
-    const {Command} = require(`clipanion`);
-    const yup = require(`yup`);
+    const {Command, Option} = require(`clipanion`);
+    const t = require(`typanion`);
 
-    class HelloWorldCommand extends Command {
+    class AdditionCommand extends Command {
+      static paths = [[`addition`]];
+
+      // Show descriptive usage for a --help argument passed to this command
+      static usage = Command.Usage({
+        description: `hello world!`,
+        details: `
+          This command will print a nice message.
+        `,
+        examples: [[
+          `Add two numbers together`,
+          `yarn addition 42 10`,
+        ]],
+      });
+
+      a = Option.String({validator: t.isNumber()});
+      b = Option.String({validator: t.isNumber()});
+
       async execute() {
-        this.context.stdout.write(`Hello ${this.email} 💌\n`);
+        this.context.stdout.write(`${this.a}+${this.b}=${this.a + this.b}\n`);
       }
     }
 
-    // Note: This curious syntax is because @Command.String is actually
-    // a decorator! But since they aren't supported in native JS at the
-    // moment, we need to call them manually.
-    HelloWorldCommand.addOption(`email`, Command.String(`--email`));
-
-    // Similarly we would be able to use a decorator here too, but since
-    // we're writing our code in JS-only we need to go through "addPath".
-    HelloWorldCommand.addPath(`hello`);
-
-    // Similarly, native JS doesn't support member variable as of today,
-    // hence the awkward writing.
-    HelloWorldCommand.schema = yup.object().shape({
-      email: yup.string().required().email(),
-    });
-
-    // Show descriptive usage for a --help argument passed to this command
-    HelloWorldCommand.usage = Command.Usage({
-      description: `hello world!`,
-      details: `
-        This command will print a nice message.
-      `,
-      examples: [[
-        `Say hello to an email user`,
-        `yarn hello --email acidburn@example.com`,
-      ]],
-    });
-
     return {
       commands: [
-        HelloWorldCommand,
+        AdditionCommand,
       ],
     };
   },

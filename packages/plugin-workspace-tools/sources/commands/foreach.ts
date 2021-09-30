@@ -21,7 +21,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     details: `
       This command will run a given sub-command on current and all its descendant workspaces. Various flags can alter the exact behavior of the command:
 
-      - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`.
+      - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`, or disabled by setting \`-j unlimited\`.
 
       - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
@@ -80,7 +80,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   });
 
   jobs = Option.String(`-j,--jobs`, {
-    description: `The maximum number of parallel tasks that the execution will be limited to`,
+    description: `The maximum number of parallel tasks that the execution will be limited to; or \`unlimited\``,
     validator: t.isOneOf([t.isEnum([`unlimited`]), t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(1)])]),
   });
 

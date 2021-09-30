@@ -1,15 +1,15 @@
-import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ZipOpenFS} from '@yarnpkg/fslib';
-import {getLibzipSync}                                                  from '@yarnpkg/libzip';
-import fs                                                               from 'fs';
-import Module                                                           from 'module';
-import StringDecoder                                                    from 'string_decoder';
+import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ZipOpenFS, ProxiedFS, ppath} from '@yarnpkg/fslib';
+import {getLibzipSync}                                                                    from '@yarnpkg/libzip';
+import fs                                                                                 from 'fs';
+import Module                                                                             from 'module';
+import StringDecoder                                                                      from 'string_decoder';
 
-import {RuntimeState, PnpApi}                                           from '../types';
+import {RuntimeState, PnpApi}                                                             from '../types';
 
-import {applyPatch}                                                     from './applyPatch';
-import {hydrateRuntimeState}                                            from './hydrateRuntimeState';
-import {MakeApiOptions, makeApi}                                        from './makeApi';
-import {Manager, makeManager}                                           from './makeManager';
+import {applyPatch}                                                                       from './applyPatch';
+import {hydrateRuntimeState}                                                              from './hydrateRuntimeState';
+import {MakeApiOptions, makeApi}                                                          from './makeApi';
+import {Manager, makeManager}                                                             from './makeManager';
 
 declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
@@ -36,10 +36,28 @@ const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
   }),
 });
 
+class DynamicFS extends ProxiedFS<PortablePath, PortablePath> {
+  baseFs = defaultFsLayer;
+
+  constructor() {
+    super(ppath);
+  }
+
+  protected mapToBase(p: PortablePath): PortablePath {
+    return p;
+  }
+
+  protected mapFromBase(p: PortablePath): PortablePath {
+    return p;
+  }
+}
+
+const dynamicFsLayer = new DynamicFS();
+
 let manager: Manager;
 
 const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
-  fakeFs: defaultFsLayer,
+  fakeFs: dynamicFsLayer,
   pnpapiResolution: defaultPnpapiResolution,
 }), {
   /**
@@ -49,7 +67,7 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
    */
   makeApi: ({
     basePath = undefined,
-    fakeFs = defaultFsLayer,
+    fakeFs = dynamicFsLayer,
     pnpapiResolution = defaultPnpapiResolution,
     ...rest
   }: Partial<MakeApiOptions> & {basePath?: NativePath}) => {
@@ -73,11 +91,16 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       fakeFs: defaultFsLayer,
       manager,
     });
+
+    // Now that the `fs` module is patched we can swap the `baseFs` to
+    // a NodeFS with a live `fs` binding to pick up changes to the `fs`
+    // module allowing users to patch it
+    dynamicFsLayer.baseFs = new NodeFS(fs);
   },
 });
 
 manager = makeManager(defaultApi, {
-  fakeFs: defaultFsLayer,
+  fakeFs: dynamicFsLayer,
 });
 
 // eslint-disable-next-line arca/no-default-export

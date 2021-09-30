@@ -1509,13 +1509,13 @@ export class ZipFS extends BasePortableFakeFS {
   watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
   watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
   watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const resolvedP = ppath.resolve(PortablePath.root, p);
 
     return watchFile(this, resolvedP, a, b);
   }
 
   unwatchFile(p: PortablePath, cb?: WatchFileCallback): void {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const resolvedP = ppath.resolve(PortablePath.root, p);
 
     return unwatchFile(this, resolvedP, cb);
   }
