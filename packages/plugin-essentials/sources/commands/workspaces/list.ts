@@ -55,7 +55,6 @@ export default class WorkspacesListCommand extends BaseCommand {
 
       const workspaces = new Set(candidates);
       if (this.recursive) {
-        await project.restoreInstallState();
         for (const dependents of [...candidates].map(candidate => candidate.getRecursiveWorkspaceDependents())) {
           for (const dependent of dependents) {
             workspaces.add(dependent);

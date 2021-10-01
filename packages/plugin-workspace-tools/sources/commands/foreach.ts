@@ -143,9 +143,6 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? rootCandidates.filter(fromPredicate)
       : rootCandidates;
 
-    if (this.recursive && this.since)
-      await project.restoreInstallState();
-
     const candidates = new Set([...fromCandidates, ...(fromCandidates.map(candidate => [...(
       this.recursive
         ? this.since
