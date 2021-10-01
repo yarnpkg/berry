@@ -677,4 +677,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       jscodeshift: `^0.11.0`,
     },
   }],
+  // https://github.com/FormidableLabs/react-live/pull/180
+  [`react-live@*`, {
+    peerDependencies: {
+      'react-dom': `*`,
+      react: `*`,
+    },
+  }],
 ];
