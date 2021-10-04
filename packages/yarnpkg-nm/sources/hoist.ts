@@ -449,7 +449,9 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
 
   if (isHoistable) {
     isHoistable = !node.isWorkspace;
-    reason = `- workspace`;
+    if (outputReason && !isHoistable) {
+      reason = `- workspace`;
+    }
   }
 
   if (isHoistable) {
@@ -465,7 +467,9 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
     // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
     isHoistable = !parentNode.isWorkspace || node.hoistedFrom.length > 0 || rootNodePathLocators.size === 1;
-    reason = parentNode.reasons.get(node.name) || `- direct workspace dependency, hoistable to the root workspace only`;
+    if (outputReason && !isHoistable) {
+      reason = parentNode.reasons.get(node.name)!;
+    }
   }
 
   if (isHoistable) {
@@ -709,6 +713,7 @@ const selfCheck = (tree: HoisterWorkTree): string => {
         if (!dep) {
           log.push(`${prettyPrintTreePath()} - broken require promise: no required dependency ${origDep.locator} found`);
         } else if (dep.ident !== origDep.ident) {
+          console.log(node.name, node.ident, node.locator);
           log.push(`${prettyPrintTreePath()} - broken require promise for ${origDep.name}: expected ${origDep.ident}, but found: ${dep.ident}`);
         }
       }
