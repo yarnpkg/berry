@@ -536,7 +536,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(true);
         expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(false);
       },
-    )
+    ),
   );
 
   test(`should not create self-reference symlinks for workspaces excluded from focus`,
@@ -561,7 +561,7 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(true);
       },
-    )
+    ),
   );
 
   test(`should not hoist multiple packages past workspace hoist border`,
