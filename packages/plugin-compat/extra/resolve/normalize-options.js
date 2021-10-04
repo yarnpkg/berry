@@ -21,7 +21,7 @@ module.exports = function (_, opts) {
 
   const runPnpResolution = (request, basedir) => {
     // Extract the name of the package being requested (1=package name, 2=internal path)
-    const parts = request.match(/^((?:@[^\/]+\/)?[^\/]+)(\/.*)?/);
+    const parts = request.match(/^((?:@[^/]+\/)?[^/]+)(\/.*)?/);
     if (!parts)
       throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`);
 
@@ -71,11 +71,8 @@ module.exports = function (_, opts) {
   const packageIterator = (request, basedir, getCandidates, opts) => {
     const pathsToTest = [basedir].concat(originalPaths);
     const resolution = runPnpResolutionOnArray(request, pathsToTest);
-    if (typeof resolution === `undefined`)
+    if (resolution == null)
       return getCandidates();
-
-    if (resolution === null)
-      return pathsToTest.map(file => path.join(file, request));
 
     return [resolution.unqualifiedPath];
   };
@@ -83,17 +80,14 @@ module.exports = function (_, opts) {
   const paths = (request, basedir, getNodeModulePaths, opts) => {
     const pathsToTest = [basedir].concat(originalPaths);
     const resolution = runPnpResolutionOnArray(request, pathsToTest);
-    if (typeof resolution === `undefined`)
-      return getNodeModulePaths();
-
-    if (resolution === null)
-      return pathsToTest;
+    if (resolution == null)
+      return getNodeModulePaths().concat(originalPaths);
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
 
     // Strip the scope named folder if needed
-    if (request.match(/^@[^\/]+\//))
+    if (request.match(/^@[^/]+\//))
       nodeModules = path.dirname(nodeModules);
 
     return [nodeModules];
@@ -116,7 +110,7 @@ module.exports = function (_, opts) {
 
   opts.paths = function (request, basedir, getNodeModulePaths, opts) {
     if (isInsideIterator)
-      return getNodeModulePaths();
+      return getNodeModulePaths().concat(originalPaths);
 
     return paths(request, basedir, getNodeModulePaths, opts);
   };

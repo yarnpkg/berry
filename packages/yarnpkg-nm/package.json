@@ -1,16 +1,16 @@
 {
   "name": "@yarnpkg/nm",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.9",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "types": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/core": "workspace:^3.1.0-rc.2",
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.1"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/pnp": "workspace:*"
+    "@yarnpkg/pnp": "workspace:^"
   },
   "scripts": {
     "postpack": "rm -rf lib",

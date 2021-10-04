@@ -1,4 +1,4 @@
-import {Configuration, Ident} from "@yarnpkg/core";
+import {Configuration, Ident} from '@yarnpkg/core';
 
 export type Hooks = {
   getNpmAuthenticationHeader?: (currentHeader: string | undefined, registry: string, {

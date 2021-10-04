@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
-  "version": "3.0.0",
+  "version": "3.1.0-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/libui": "workspace:^2.1.2",
+    "@yarnpkg/libui": "workspace:^",
     "algoliasearch": "^4.2.0",
     "clipanion": "^3.0.1",
     "diff": "^4.0.1",
@@ -15,19 +15,19 @@
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^3.1.0-rc.1",
-    "@yarnpkg/core": "^3.1.0-rc.2",
-    "@yarnpkg/plugin-essentials": "^3.1.0-rc.1"
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "devDependencies": {
     "@types/diff": "^4.0.2",
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
-    "@yarnpkg/builder": "workspace:*",
-    "@yarnpkg/cli": "workspace:*",
-    "@yarnpkg/core": "workspace:*",
-    "@yarnpkg/plugin-essentials": "workspace:*",
-    "typescript": "^4.3.2"
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-essentials": "workspace:^",
+    "typescript": "^4.4.2"
   },
   "repository": {
     "type": "git",
@@ -49,5 +49,6 @@
   ],
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "3.0.0"
 }

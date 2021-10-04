@@ -5,17 +5,17 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/semver": "^7.1.0",
-    "@yarnpkg/fslib": "workspace:^2.6.0-rc.1",
+    "@yarnpkg/fslib": "workspace:^",
     "git-url-parse": "11.1.2",
     "semver": "^7.1.2",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "^3.1.0-rc.2"
+    "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
     "@types/git-url-parse": "^9.0.0",
-    "@yarnpkg/core": "workspace:*"
+    "@yarnpkg/core": "workspace:^"
   },
   "repository": {
     "type": "git",

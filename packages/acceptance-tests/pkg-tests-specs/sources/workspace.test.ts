@@ -33,7 +33,7 @@ describe(`Workspaces tests`, () => {
         `packages/baz`,
         `packages/foo`,
       ]);
-    })
+    }),
   );
 
   test(
@@ -53,7 +53,7 @@ describe(`Workspaces tests`, () => {
         `packages/bar`,
         `packages/baz`,
       ]);
-    })
+    }),
   );
 
   test(

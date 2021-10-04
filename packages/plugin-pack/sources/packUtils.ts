@@ -1,11 +1,11 @@
-import {Manifest, Report, Workspace, scriptUtils, tgzUtils}        from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath} from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                       from '@yarnpkg/plugin-stage';
-import mm                                                          from 'micromatch';
-import tar                                                         from 'tar-stream';
-import {createGzip}                                                from 'zlib';
+import {Manifest, Report, Workspace, scriptUtils}                             from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath, constants} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                                  from '@yarnpkg/plugin-stage';
+import mm                                                                     from 'micromatch';
+import tar                                                                    from 'tar-stream';
+import {createGzip}                                                           from 'zlib';
 
-import {Hooks}                                                     from './';
+import {Hooks}                                                                from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -90,8 +90,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
       const opts = {
         name: dest,
-        // 1984-06-22T21:50:00.000Z
-        mtime: new Date(tgzUtils.safeTime * 1000),
+        mtime: new Date(constants.SAFE_TIME * 1000),
       };
 
       const mode = executableFiles.has(file)

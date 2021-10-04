@@ -91,7 +91,7 @@ describe(`Commands`, () => {
         await xfs.removePromise(`${path}/.yarn/cache`);
 
         await run(`install`, `--immutable`);
-      })
+      }),
     );
 
     test(
@@ -100,7 +100,7 @@ describe(`Commands`, () => {
         dependencies: {},
       }, async ({path, run, source}) => {
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrowError(/Cache path does not exist/);
-      })
+      }),
     );
 
     test(
@@ -113,7 +113,7 @@ describe(`Commands`, () => {
         // Ensure the cache directory exists
         await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
-      })
+      }),
     );
 
     test(
@@ -130,7 +130,7 @@ describe(`Commands`, () => {
         await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
 
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
-      })
+      }),
     );
 
     test(
@@ -147,7 +147,7 @@ describe(`Commands`, () => {
         }, null, 2));
 
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
-      })
+      }),
     );
 
     test(
@@ -226,8 +226,8 @@ describe(`Commands`, () => {
         },
         async ({path, run, source}) => {
           await expect(run(`install`)).resolves.toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -245,8 +245,8 @@ describe(`Commands`, () => {
           });
 
           await expect(run(`install`)).resolves.toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -272,8 +272,8 @@ describe(`Commands`, () => {
           });
 
           await expect(run(`install`)).resolves.toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -296,8 +296,8 @@ describe(`Commands`, () => {
 
           expect(code).toEqual(1);
           expect(stdout.match(/YN0009/g).length).toEqual(1);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -314,8 +314,8 @@ describe(`Commands`, () => {
             code: 1,
             stdout: expect.not.stringContaining(`foo`),
           });
-        }
-      )
+        },
+      ),
     );
 
     test(

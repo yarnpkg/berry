@@ -325,7 +325,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   networkConcurrency: {
     description: `Maximal number of concurrent requests`,
     type: SettingsType.NUMBER,
-    default: Infinity,
+    default: 50,
   },
   networkSettings: {
     description: `Network settings per hostname (glob patterns are supported)`,
@@ -1310,14 +1310,14 @@ export class Configuration {
         const previousValue = this.values.get(key) as Map<string, any>;
         this.values.set(key, new Map(overwrite
           ? [...previousValue, ...parsed as Map<string, any>]
-          : [...parsed as Map<string, any>, ...previousValue]
+          : [...parsed as Map<string, any>, ...previousValue],
         ));
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else if (definition.isArray && definition.concatenateValues) {
         const previousValue = this.values.get(key) as Array<unknown>;
         this.values.set(key, overwrite
           ? [...previousValue, ...parsed as Array<unknown>]
-          : [...parsed as Array<unknown>, ...previousValue]
+          : [...parsed as Array<unknown>, ...previousValue],
         );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {
@@ -1425,7 +1425,7 @@ export class Configuration {
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
       if (!semverUtils.validRange(descriptor.range))
-        throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
+        throw new Error(`Only semver ranges are allowed as keys for the packageExtensions setting`);
 
       const extension = new Manifest();
       extension.load(extensionData, {yamlCompatibilityMode: true});

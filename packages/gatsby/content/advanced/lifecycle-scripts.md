@@ -15,7 +15,7 @@ Packages can define in the `scripts` field of their manifest various actions tha
 
 - **prepublish** is called before `yarn npm publish` and similar commands (even before the package has been packed). This is the place where you'll want to check that the project is in an ok state. Because it's only called on prepublish, **the prepublish hook shouldn't have side effects.** In particular don't transpile the package sources in prepublish, as people consuming directly your repository (such as through the [`git:` protocol](/features/protocols#git)) wouldn't be able to use your project.
 
-- **postinstall** is called after a package got successfully installed on the disk. It is guaranteed to be called in topological order (in other words, your dependencies' postinstalls will always run before yours). For backwards compatibility, **preinstall** and **install** are called as part of **postinstall**.
+- **postinstall** is called after a package's dependency tree changes are written to the disk -- e.g. after a dependency or transitive dependency is added, removed, or changed. It is guaranteed to be called in topological order (in other words, your dependencies' postinstalls will always run before yours). For backwards compatibility, **preinstall** and **install** are called as part of **postinstall**.
 
 Note that we don't support every single lifecycle script originally present in npm. This is a deliberate decision based on the observation that too many lifecycle scripts make it difficult to know which one to use in which circumstances, leading to confusion and mistakes. We are open to add the missing ones on a case-by-case basis if compelling use cases are provided.
 

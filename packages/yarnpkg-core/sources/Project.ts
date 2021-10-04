@@ -1,5 +1,5 @@
-import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}       from '@yarnpkg/fslib';
 import {npath}                                                          from '@yarnpkg/fslib';
+import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}       from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                       from '@yarnpkg/parsers';
 import {UsageError}                                                     from 'clipanion';
 import {createHash}                                                     from 'crypto';
@@ -14,7 +14,7 @@ import zlib                                                             from 'zl
 import {Cache}                                                          from './Cache';
 import {Configuration}                                                  from './Configuration';
 import {Fetcher}                                                        from './Fetcher';
-import {Installer, BuildDirective, BuildType}                           from './Installer';
+import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
 import {Linker}                                                         from './Linker';
 import {LockfileResolver}                                               from './LockfileResolver';
@@ -25,6 +25,7 @@ import {Report, ReportError}                                            from './
 import {ResolveOptions, Resolver}                                       from './Resolver';
 import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
 import {ThrowReport}                                                    from './ThrowReport';
+import {WorkspaceResolver}                                              from './WorkspaceResolver';
 import {Workspace}                                                      from './Workspace';
 import {isFolderInside}                                                 from './folderUtils';
 import * as formatUtils                                                 from './formatUtils';
@@ -33,9 +34,9 @@ import * as miscUtils                                                   from './
 import * as scriptUtils                                                 from './scriptUtils';
 import * as semverUtils                                                 from './semverUtils';
 import * as structUtils                                                 from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './types';
-import {Descriptor, Ident, Locator, Package}                            from './types';
 import {LinkType}                                                       from './types';
+import {Descriptor, Ident, Locator, Package}                            from './types';
+import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -861,8 +862,8 @@ export class Project {
 
             return structUtils.stringifyLocator(pkg);
           },
-        ])
-      )
+        ]),
+      ),
     );
 
     // In "dependency update" mode, we won't trigger the link step. As a
@@ -945,6 +946,8 @@ export class Project {
       return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
     })));
 
+    const pendingPromises: Array<Promise<void>> = [];
+
     // Step 1: Installing the packages on the disk
 
     for (const locatorHash of this.accessibleLocators) {
@@ -956,8 +959,12 @@ export class Project {
       if (typeof fetchResult === `undefined`)
         throw new Error(`Assertion failed: The fetch result should have been registered`);
 
-      const workspace = this.tryWorkspaceByLocator(pkg);
+      const holdPromises: Array<Promise<void>> = [];
+      const holdFetchResult = (promise: Promise<void>) => {
+        holdPromises.push(promise);
+      };
 
+      const workspace = this.tryWorkspaceByLocator(pkg);
       if (workspace !== null) {
         const buildScripts: Array<BuildDirective> = [];
         const {scripts} = workspace.manifest;
@@ -969,15 +976,19 @@ export class Project {
         try {
           for (const [linker, installer] of installers) {
             if (linker.supportsPackage(pkg, linkerOptions)) {
-              const result = await installer.installPackage(pkg, fetchResult);
+              const result = await installer.installPackage(pkg, fetchResult, {holdFetchResult});
               if (result.buildDirective !== null) {
                 throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
               }
             }
           }
         } finally {
-          if (fetchResult.releaseFs) {
-            fetchResult.releaseFs();
+          if (holdPromises.length === 0) {
+            fetchResult.releaseFs?.();
+          } else {
+            pendingPromises.push(Promise.all(holdPromises).catch(() => {}).then(() => {
+              fetchResult.releaseFs?.();
+            }));
           }
         }
 
@@ -1000,19 +1011,23 @@ export class Project {
         if (!installer)
           throw new Error(`Assertion failed: The installer should have been registered`);
 
-        let installStatus;
+        let installStatus: InstallStatus;
         try {
-          installStatus = await installer.installPackage(pkg, fetchResult);
+          installStatus = await installer.installPackage(pkg, fetchResult, {holdFetchResult});
         } finally {
-          if (fetchResult.releaseFs) {
-            fetchResult.releaseFs();
+          if (holdPromises.length === 0) {
+            fetchResult.releaseFs?.();
+          } else {
+            pendingPromises.push(Promise.all(holdPromises).then(() => {}).then(() => {
+              fetchResult.releaseFs?.();
+            }));
           }
         }
 
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.buildDirective && installStatus.packageLocation) {
+        if (installStatus.buildDirective && installStatus.buildDirective.length > 0 && installStatus.packageLocation) {
           packageBuildDirectives.set(pkg.locatorHash, {
             directives: installStatus.buildDirective,
             buildLocations: [installStatus.packageLocation],
@@ -1057,11 +1072,11 @@ export class Project {
 
           const isWorkspaceDependency = dependencyLinker === null;
 
-          if (dependencyLinker === packageLinker || isWorkspace || isWorkspaceDependency) {
+          if (dependencyLinker === packageLinker || isWorkspaceDependency) {
             if (packageLocations.get(dependency.locatorHash) !== null) {
               internalDependencies.push([descriptor, dependency] as [Descriptor, Locator]);
             }
-          } else if (packageLocation !== null) {
+          } else if (!isWorkspace && packageLocation !== null) {
             const externalEntry = miscUtils.getArrayWithDefault(externalDependents, resolution);
             externalEntry.push(packageLocation);
           }
@@ -1127,6 +1142,8 @@ export class Project {
     }
 
     this.installersCustomData = installersCustomData;
+
+    await Promise.all(pendingPromises);
 
     // Step 4: Build the packages in multiple steps
 
@@ -1723,7 +1740,7 @@ export class Project {
         MessageName.UNUSED_CACHE_ENTRY,
         entriesRemoved > 1
           ? `${entriesRemoved} packages appeared to be unused and were removed`
-          : `${lastEntryRemoved} appeared to be unused and was removed`
+          : `${lastEntryRemoved} appeared to be unused and was removed`,
       );
     }
 
@@ -2133,6 +2150,7 @@ function applyVirtualResolutionMutations({
   enum WarningType {
     NotProvided,
     NotCompatible,
+    NotWorkspace,
   }
 
   type Warning = {
@@ -2216,6 +2234,16 @@ function applyVirtualResolutionMutations({
           }
 
           const satisfiesAll = [...ranges].every(range => {
+            if (range.startsWith(WorkspaceResolver.protocol)) {
+              if (!project.tryWorkspaceByLocator(peerResolution))
+                return false;
+
+              range = range.slice(WorkspaceResolver.protocol.length);
+              if (range === `^` || range === `~`) {
+                range = `*`;
+              }
+            }
+
             return semverUtils.satisfiesWithPrereleases(peerVersion, range);
           });
 

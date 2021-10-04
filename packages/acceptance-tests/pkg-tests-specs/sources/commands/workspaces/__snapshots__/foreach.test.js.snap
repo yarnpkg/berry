@@ -13,9 +13,26 @@ Object {
 
 exports[`Commands workspace foreach should execute 'node' command 1`] = `
 Object {
-  "code": "ENOENT",
+  "code": 0,
+  "orderedStdout": Array [
+    "➤ YN0000: workspace-c",
+    "➤ YN0000: workspace-d",
+    "➤ YN0000: workspace-e",
+    "➤ YN0000: workspace-f",
+    "➤ YN0000: workspace-g",
+  ],
   "stderr": "",
-  "stdout": "",
+}
+`;
+
+exports[`Commands workspace foreach should handle global scripts getting downgraded to a normal script 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: root workspace
+➤ YN0000: Test Workspace G
+➤ YN0000: Done
+",
 }
 `;
 
@@ -202,5 +219,19 @@ Object {
 ➤ YN0000: packages/workspace-c/packages/workspace-g
 ➤ YN0000: Done
 ",
+}
+`;
+
+exports[`Commands workspace foreach should start all the processes at once when --jobs is unlimited 1`] = `
+Object {
+  "code": 0,
+  "first7Lines": "➤ YN0000: [workspace-a]: Process started
+➤ YN0000: [workspace-b]: Process started
+➤ YN0000: [workspace-c]: Process started
+➤ YN0000: [workspace-d]: Process started
+➤ YN0000: [workspace-e]: Process started
+➤ YN0000: [workspace-f]: Process started
+➤ YN0000: [workspace-g]: Process started",
+  "stderr": "",
 }
 `;

@@ -1,4 +1,4 @@
-import {useLayoutEffect, useRef} from "react";
+import {useLayoutEffect, useRef} from 'react';
 
 const useScroll = () => {
   const ref = useRef();
@@ -21,4 +21,5 @@ const useScroll = () => {
   return ref;
 };
 
+// eslint-disable-next-line arca/no-default-export
 export default useScroll;

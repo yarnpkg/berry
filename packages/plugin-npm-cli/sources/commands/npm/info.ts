@@ -2,9 +2,9 @@ import * as npm                                          from '@npm/types';
 import {BaseCommand}                                     from '@yarnpkg/cli';
 import {Project, Configuration, structUtils, Descriptor} from '@yarnpkg/core';
 import {StreamReport, MessageName, semverUtils}          from '@yarnpkg/core';
+import {Filename, npath, ppath}                          from '@yarnpkg/fslib';
 import {npmHttpUtils}                                    from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage, UsageError}              from 'clipanion';
-import path                                              from 'path';
 import semver                                            from 'semver';
 import {inspect}                                         from 'util';
 
@@ -105,7 +105,7 @@ export default class InfoCommand extends BaseCommand {
         if (identStr === `.`) {
           const workspace = project.topLevelWorkspace;
           if (!workspace.manifest.name)
-            throw new UsageError(`Missing 'name' field in ${path.join(workspace.cwd, `package.json`)}`);
+            throw new UsageError(`Missing 'name' field in ${npath.fromPortablePath(ppath.join(workspace.cwd, Filename.manifest))}`);
 
           descriptor = structUtils.makeDescriptor(workspace.manifest.name, `unknown`);
         } else {

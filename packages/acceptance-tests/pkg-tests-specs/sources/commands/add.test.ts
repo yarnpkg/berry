@@ -233,7 +233,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
         await expect(
-          run(`add`, `no-deps`, `-D`)
+          run(`add`, `no-deps`, `-D`),
         ).rejects.toThrowError(/already listed as a regular dependency/);
       }),
     );
@@ -243,7 +243,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
         await expect(
-          run(`add`, `no-deps`, `-P`)
+          run(`add`, `no-deps`, `-P`),
         ).rejects.toThrowError(/already listed as a regular dependency/);
       }),
     );
@@ -253,7 +253,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-P`);
         await expect(
-          run(`add`, `no-deps`)
+          run(`add`, `no-deps`),
         ).rejects.toThrowError(/already listed as a peer dependency/);
       }),
     );
@@ -312,7 +312,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:packages/no-deps`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -335,7 +335,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:1.0.0`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -357,7 +357,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:^`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -379,7 +379,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:~`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -401,7 +401,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:*`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -424,7 +424,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:^`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -447,7 +447,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:~`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -470,7 +470,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `workspace:*`,
           },
         });
-      })
+      }),
     );
 
     test(
@@ -485,7 +485,7 @@ describe(`Commands`, () => {
             [`no-deps`]: `^2.0.0`,
           },
         });
-      })
+      }),
     );
 
     test(`it should clean the cache when cache lives inside the project`, makeTemporaryEnv({

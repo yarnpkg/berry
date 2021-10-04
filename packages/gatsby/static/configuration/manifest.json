@@ -127,7 +127,7 @@
       "_exampleKeys": ["fsevents"]
     },
     "devDependencies": {
-      "description": "Similar to the `dependencies` field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package. Note that because that would lead to different install trees depending on whether the install is made in \"production\" or \"development\" mode, Yarn doesn't offer a way to prevent the installation of dev dependencies at the moment.",
+      "description": "Similar to the `dependencies` field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
