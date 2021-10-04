@@ -15,6 +15,7 @@ declined:
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
