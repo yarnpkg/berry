@@ -238,9 +238,10 @@ class NodeModulesInstaller implements Installer {
 
     const selfReferencesByCwd = new Map(this.opts.project.workspaces.map(workspace => {
       let selfReferences = this.opts.project.configuration.get(`nmSelfReferences`);
-      selfReferences = workspace.manifest.raw._evictedFromFocusedInstall ? false : workspace.manifest.installConfig?.selfReferences ?? selfReferences;
+      selfReferences = workspace.manifest.installConfig?.selfReferences ?? selfReferences;
       return [workspace.relativeCwd, selfReferences];
     }));
+    console.log(selfReferencesByCwd);
 
     const pnpApi: PnpApi = {
       VERSIONS: {
