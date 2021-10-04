@@ -241,7 +241,6 @@ class NodeModulesInstaller implements Installer {
       selfReferences = workspace.manifest.installConfig?.selfReferences ?? selfReferences;
       return [workspace.relativeCwd, selfReferences];
     }));
-    console.log(selfReferencesByCwd);
 
     const pnpApi: PnpApi = {
       VERSIONS: {
