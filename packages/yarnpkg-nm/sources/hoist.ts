@@ -551,9 +551,9 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
       const usedDep = usedDependencies.get(origDep.name);
       if (!usedDep || origDep.ident !== usedDep.ident) {
         isHoistable = false;
-        if (outputReason) {
+        if (outputReason)
           reason = `- previously hoisted dependency mismatch, needed: ${prettyPrintLocator(origDep.locator)}, available: ${prettyPrintLocator(usedDep?.locator)}`;
-        }
+
         break;
       }
     }
@@ -728,8 +728,8 @@ const selfCheck = (tree: HoisterWorkTree): string => {
       } else {
         const hoistedFrom = parent.hoistedFrom.get(node.name);
         const originalHoistedTo = node.hoistedTo.get(origDep.name);
-        const prettyHoistedFrom = `${hoistedFrom ? ' hoisted from ' + hoistedFrom.join(', ') : ''}`
-        const prettyOriginalHoistedTo = `${originalHoistedTo ? ' hoisted to ' + originalHoistedTo : ''}`;
+        const prettyHoistedFrom = `${hoistedFrom ? ` hoisted from ${hoistedFrom.join(`, `)}` : ``}`;
+        const prettyOriginalHoistedTo = `${originalHoistedTo ? ` hoisted to ${originalHoistedTo}` : ``}`;
         const prettyNodePath = `${prettyPrintTreePath()}${prettyHoistedFrom}`;
         if (!dep) {
           log.push(`${prettyNodePath} - broken require promise: no required dependency ${origDep.name}${prettyOriginalHoistedTo} found`);
@@ -943,7 +943,7 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
 
 const prettyPrintLocator = (locator?: Locator) => {
   if (!locator)
-    return 'none';
+    return `none`;
 
   const idx = locator.indexOf(`@`, 1);
   let name = locator.substring(0, idx);
