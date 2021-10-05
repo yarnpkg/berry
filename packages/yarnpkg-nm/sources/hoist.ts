@@ -691,7 +691,7 @@ const selfCheck = (tree: HoisterWorkTree): string => {
   const seenNodes = new Set();
   const parents = new Set<HoisterWorkTree>();
 
-  const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>) => {
+  const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>, parent: HoisterWorkTree) => {
     if (seenNodes.has(node))
       return;
     seenNodes.add(node);
@@ -713,10 +713,15 @@ const selfCheck = (tree: HoisterWorkTree): string => {
           log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${origDep!.ident} but found ${parentDep ? parentDep.ident : parentDep}`);
         }
       } else {
+        const hoistedFrom = parent.hoistedFrom.get(node.name);
+        const originalHoistedTo = node.hoistedTo.get(origDep.name);
+        const prettyHoistedFrom = `${hoistedFrom ? ' hoisted from ' + hoistedFrom.join(', ') : ''}`
+        const prettyOriginalHoistedTo = `${originalHoistedTo ? ' hoisted to ' + originalHoistedTo : ''}`;
+        const prettyNodePath = `${prettyPrintTreePath()}${prettyHoistedFrom}`;
         if (!dep) {
-          log.push(`${prettyPrintTreePath()} - broken require promise: no required dependency ${origDep.locator} found`);
+          log.push(`${prettyNodePath} - broken require promise: no required dependency ${origDep.name}${prettyOriginalHoistedTo} found`);
         } else if (dep.ident !== origDep.ident) {
-          log.push(`${prettyPrintTreePath()} - broken require promise for ${origDep.name}: expected ${origDep.ident}, but found: ${dep.ident}`);
+          log.push(`${prettyNodePath} - broken require promise for ${origDep.name}${prettyOriginalHoistedTo}: expected ${origDep.ident}, but found: ${dep.ident}`);
         }
       }
     }
@@ -724,13 +729,13 @@ const selfCheck = (tree: HoisterWorkTree): string => {
     parents.add(node);
     for (const dep of node.dependencies.values()) {
       if (!node.peerNames.has(dep.name)) {
-        checkNode(dep, dependencies);
+        checkNode(dep, dependencies, node);
       }
     }
     parents.delete(node);
   };
 
-  checkNode(tree, tree.dependencies);
+  checkNode(tree, tree.dependencies, tree);
 
   return log.join(`\n`);
 };
