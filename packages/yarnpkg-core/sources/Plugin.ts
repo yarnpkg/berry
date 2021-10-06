@@ -34,7 +34,7 @@ export interface ResolverPlugin {
   new(): Resolver;
 }
 
-export type Hooks = {
+export interface Hooks {
   /**
    * Called when the package extensions are setup. Can be used to inject new
    * ones (for example, that's what the compat plugin uses to workaround
@@ -142,7 +142,7 @@ export type Hooks = {
   cleanGlobalArtifacts?: (
     configuration: Configuration,
   ) => Promise<void>;
-};
+}
 
 export type Plugin<PluginHooks = any> = {
   configuration?: Partial<ConfigurationDefinitionMap>,

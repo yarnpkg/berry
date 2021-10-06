@@ -7,6 +7,11 @@ import * as packUtils                                       from './packUtils';
 export {packUtils};
 
 export interface Hooks {
+  /**
+   * Called before a workspace is packed. The `rawManifest` value passed in
+   * parameter is allowed to be mutated at will, with the changes being only
+   * applied to the packed manifest (the original one won't be mutated).
+   */
   beforeWorkspacePacking?: (
     workspace: Workspace,
     rawManifest: object,
