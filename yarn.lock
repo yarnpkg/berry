@@ -3910,13 +3910,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ci-info@npm:^2":
-  version: 2.0.0
-  resolution: "@types/ci-info@npm:2.0.0"
-  checksum: ff163e52b8885f8f254e8ab96414c55276c4a303c288ad99fe57b865156fc953c1d2ae9c4b5b59fa7caa749680d113366ec9949826124b9eaf14e0bcb12f57c2
-  languageName: node
-  linkType: hard
-
 "@types/color-name@npm:^1.1.1":
   version: 1.1.1
   resolution: "@types/color-name@npm:1.1.1"
@@ -5289,7 +5282,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
-    "@types/ci-info": ^2
     "@types/semver": ^7.1.0
     "@types/yup": ^0
     "@yarnpkg/builder": "workspace:^"
@@ -5337,7 +5329,6 @@ __metadata:
     "@arcanis/slice-ansi": ^1.0.2
     "@rollup/plugin-commonjs": ^18.0.0
     "@rollup/plugin-node-resolve": ^11.0.1
-    "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
     "@types/lodash": ^4.14.136
@@ -5719,7 +5710,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
-    "@types/ci-info": ^2
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0

@@ -41,7 +41,6 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "@types/ci-info": "^2",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",
     "@types/lodash": "^4.14.136",

@@ -34,7 +34,6 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@types/ci-info": "^2",
     "@types/semver": "^7.1.0",
     "@types/yup": "^0",
     "@yarnpkg/builder": "workspace:^",
