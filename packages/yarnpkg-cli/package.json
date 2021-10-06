@@ -26,7 +26,7 @@
     "@yarnpkg/plugin-pnpm": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "chalk": "^3.0.0",
-    "ci-info": "^2.0.0",
+    "ci-info": "^3.2.0",
     "clipanion": "^3.0.1",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",
@@ -34,7 +34,6 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@types/ci-info": "^2",
     "@types/semver": "^7.1.0",
     "@types/yup": "^0",
     "@yarnpkg/builder": "workspace:^",

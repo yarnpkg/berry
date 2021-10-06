@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                                                            from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                        from '@yarnpkg/parsers';
+import CI                                                                                                from 'ci-info';
 import {Command, Option, Usage}                                                                          from 'clipanion';
 import * as t                                                                                            from 'typanion';
 
@@ -94,9 +95,6 @@ export default class YarnCommand extends BaseCommand {
     if (typeof this.inlineBuilds !== `undefined`)
       configuration.useWithSource(`<cli>`, {enableInlineBuilds: this.inlineBuilds}, configuration.startingCwd, {overwrite: true});
 
-    const isZeitNow = !!process.env.NOW_BUILDER;
-    const isNetlify = !!process.env.NETLIFY;
-
     // These variables are used in Google Cloud Platform environment
     // in process of deploying Google Cloud Functions and
     // Google App Engine
@@ -130,7 +128,7 @@ export default class YarnCommand extends BaseCommand {
     // it would definitely be a configuration setting.
     if (typeof this.ignoreEngines !== `undefined`) {
       const exitCode = await reportDeprecation(`The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`, {
-        error: !isZeitNow,
+        error: !CI.VERCEL,
       });
 
       if (exitCode !== null) {
@@ -160,7 +158,7 @@ export default class YarnCommand extends BaseCommand {
     // let someone implement this "resolver-that-reads-the-cache" logic.
     if (typeof this.preferOffline !== `undefined`) {
       const exitCode = await reportDeprecation(`The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`, {
-        error: !isZeitNow,
+        error: !CI.VERCEL,
       });
 
       if (exitCode !== null) {
@@ -211,7 +209,7 @@ export default class YarnCommand extends BaseCommand {
     // Yarn commands would use different caches, causing unexpected behaviors.
     if (typeof this.cacheFolder !== `undefined`) {
       const exitCode = await reportDeprecation(`The cache-folder option has been deprecated; use rc settings instead`, {
-        error: !isNetlify,
+        error: !CI.NETLIFY,
       });
 
       if (exitCode !== null) {
