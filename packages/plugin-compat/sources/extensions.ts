@@ -164,7 +164,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/pull/507
-  [`fork-ts-checker-webpack-plugin@*`, {
+  [`fork-ts-checker-webpack-plugin@<=6.3.4`, {
     peerDependencies: {
       eslint: `>= 6`,
       typescript: `>= 2.7`,
