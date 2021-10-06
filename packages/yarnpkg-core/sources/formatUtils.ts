@@ -59,7 +59,7 @@ const chalkOptions = process.env.GITHUB_ACTIONS
     : {level: 0};
 
 export const supportsColor = chalkOptions.level !== 0;
-export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS && !isCircleCI;
+export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS && !isCircleCI && !process.env.GITLAB_CI;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 
