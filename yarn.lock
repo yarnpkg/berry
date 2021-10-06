@@ -5317,7 +5317,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
     chalk: ^3.0.0
-    ci-info: ^2.0.0
+    ci-info: ^3.2.0
     clipanion: ^3.0.1
     micromatch: ^4.0.2
     semver: ^7.1.2
@@ -5359,7 +5359,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^"
     camelcase: ^5.3.1
     chalk: ^3.0.0
-    ci-info: ^2.0.0
+    ci-info: ^3.2.0
     clipanion: ^3.0.1
     cross-spawn: 7.0.3
     diff: ^4.0.1
@@ -5729,7 +5729,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/json-proxy": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
-    ci-info: ^2.0.0
+    ci-info: ^3.2.0
     clipanion: ^3.0.1
     enquirer: ^2.3.6
     lodash: ^4.17.15
@@ -8374,6 +8374,13 @@ __metadata:
   version: 2.0.0
   resolution: "ci-info@npm:2.0.0"
   checksum: 3b374666a85ea3ca43fa49aa3a048d21c9b475c96eb13c133505d2324e7ae5efd6a454f41efe46a152269e9b6a00c9edbe63ec7fa1921957165aae16625acd67
+  languageName: node
+  linkType: hard
+
+"ci-info@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "ci-info@npm:3.2.0"
+  checksum: c68995a94e95ce3f233ff845e62dfc56f2e8ff1e3f5c1361bcdd520cbbc9726d8a54cbc1a685cb9ee19c3c5e71a1dade6dda23eb364b59b8e6c32508a9b761bc
   languageName: node
   linkType: hard
 
