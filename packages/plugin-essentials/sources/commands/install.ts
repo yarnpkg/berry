@@ -88,6 +88,7 @@ export default class YarnCommand extends BaseCommand {
   production = Option.Boolean(`--production`, {hidden: true});
   registry = Option.String(`--registry`, {hidden: true});
   silent = Option.Boolean(`--silent`, {hidden: true});
+  networkTimeout = Option.String(`--network-timeout`, {hidden: true});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
