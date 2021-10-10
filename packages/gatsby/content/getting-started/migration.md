@@ -321,7 +321,7 @@ This error appears when Node is executed without the proper environment variable
 
 Some packages don't properly list their actual dependencies for a reason or another. Now that we've fully switched to Plug'n'Play and enforce boundaries between the various branches of the dependency tree, this kind of issue will start to become more apparent than it previously was.
 
-The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take sometime before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting](/configuration/yarnrc#packageExtensions) to add the missing dependency to the relevant packages. Once you're done, run `yarn install` to apply your changes and voilà!
+The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take some time before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting](/configuration/yarnrc#packageExtensions) to add the missing dependency to the relevant packages. Once you're done, run `yarn install` to apply your changes and voilà!
 
 ```yaml
 packageExtensions:
