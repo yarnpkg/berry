@@ -2,6 +2,7 @@ import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Pa
 import {Filename, PortablePath, ppath, xfs}                                            from '@yarnpkg/fslib';
 import LinkPlugin                                                                      from '@yarnpkg/plugin-link';
 import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
+import v8                                                                              from 'v8';
 
 const getConfiguration = (p: PortablePath) => {
   return Configuration.create(p, p, new Map([
@@ -127,15 +128,27 @@ describe(`Project`, () => {
         }));
       };
 
-      expect({
+      // Jest does a lot of magic with global values and comparisons. One of
+      // them is seemingly to inject special Map/Set constructors. Since the
+      // v8.deserialize function reconstructs data using its own copy of the
+      // constructor (which doesn't match the one provided by Jest), the
+      // toEqual comparison crashes.
+      //
+      // This fixes the problem by making sure that both input and expected
+      // output go through the same constructors (ie the v8 ones).
+      const fixPrototypes = (data: unknown) => v8.deserialize(v8.serialize(data));
+
+      expect(fixPrototypes({
+        lockfileChecksum: project1.lockFileChecksum,
         packages: clean(project1.storedPackages),
         descriptors: project1.storedDescriptors,
         resolutions: project1.storedResolutions,
-      }).toEqual({
+      })).toEqual(fixPrototypes({
+        lockfileChecksum: project2.lockFileChecksum,
         packages: clean(project2.storedPackages),
         descriptors: project2.storedDescriptors,
         resolutions: project2.storedResolutions,
-      });
+      }));
     });
   });
 
