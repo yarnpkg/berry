@@ -28,7 +28,7 @@ export type FetchResult = {
 
   /**
    * The path where the package can be found within the `packageFs`. This is
-   * typically the "node_modules/<scope>/<name>` path.
+   * typically the `node_modules/<scope>/<name>` path.
    */
   prefixPath: PortablePath,
 
