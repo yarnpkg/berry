@@ -102,21 +102,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `run`, `print`, {cwd: `${path}/packages/workspace-c`}));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `run`, `print`, {cwd: `${path}/packages/workspace-c`})).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -128,21 +118,19 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
+          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, {cwd: `${path}/packages/workspace-c`});
 
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, {cwd: `${path}/packages/workspace-d`}));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
+          const orderedStdout = stdout.trim().split(`\n`);
+          expect(orderedStdout.pop()).toContain(`Done`);
 
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          // The exact order is unstable, so just make sure all the workspaces we expect to be there, are.
+          orderedStdout.sort();
+
+          await expect({code, orderedStdout, stderr}).toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -154,17 +142,9 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--interlaced`, `--jobs`, `2`, `run`, `start`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
+          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--interlaced`, `--jobs`, `2`, `run`, `start`);
 
           const lines = stdout.trim().split(`\n`);
           const firstLine = lines[0];
@@ -181,10 +161,9 @@ describe(`Commands`, () => {
             if (firstLine !== lines[i])
               isInterlaced = true;
 
-
           expect(isInterlaced).toBe(true);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -196,17 +175,9 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `--jobs`, `2`, `run`, `print`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
+          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `--jobs`, `2`, `run`, `print`);
 
           const extractWorkspaces = output => {
             const relevantOutput = output.split(`\n`).filter(output => output.includes(`Test Workspace`));
@@ -221,8 +192,8 @@ describe(`Commands`, () => {
           expect(order.slice(2)).toMatchSnapshot();
 
           await expect({code, stderr}).toMatchSnapshot();
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -234,21 +205,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `run`, `print`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `run`, `print`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -260,21 +221,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `run`, `print`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -286,21 +237,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `run`, `print`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -315,21 +256,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`print`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`print`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     // Clipanion doesn't support this yet
@@ -342,15 +273,15 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
-
           await run(`install`);
+
           await expect(run(`workspaces`, `foreach`, `--jobs`, `2`, `run`, `print`)).rejects.toThrowError(/parallel must be set/);
-        }
-      )
+        },
+      ),
     );
 
     test(
-      `should throw an error when using --jobs with a value lower than 2`,
+      `should throw an error when using --jobs with a value lower than 1`,
       makeTemporaryEnv(
         {
           private: true,
@@ -358,11 +289,32 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
-
           await run(`install`);
-          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `1`, `run`, `print`)).rejects.toThrowError(/expected to be at least 2 \(got 1\)/);
-        }
-      )
+
+          await expect(run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `0`, `run`, `print`)).rejects.toThrowError(/to be at least 1 \(got 0\)/);
+        },
+      ),
+    );
+
+    test(
+      `should start all the processes at once when --jobs is unlimited`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+          await run(`install`);
+
+          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--jobs`, `unlimited`, `--verbose`, `run`, `print`);
+
+          // We don't care what order they start in, just that they all started at the beginning.
+          const first7Lines = stdout.split(`\n`).slice(0, 7).sort().join(`\n`);
+
+          await expect({code, first7Lines, stderr}).toMatchSnapshot();
+        },
+      ),
     );
 
     test(`can run on public workspaces only`, makeTemporaryEnv(
@@ -399,19 +351,10 @@ describe(`Commands`, () => {
           },
         });
 
-        let code;
-        let stdout;
-        let stderr;
+        await run(`install`);
 
-        try {
-          await run(`install`);
-          ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--no-private`, `run`, `print`));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        await expect({code, stdout, stderr}).toMatchSnapshot();
-      }
+        await expect(run(`workspaces`, `foreach`, `--no-private`, `run`, `print`)).resolves.toMatchSnapshot();
+      },
     ));
 
     test(
@@ -424,17 +367,17 @@ describe(`Commands`, () => {
         async ({path, run}) => {
           await setupWorkspaces(path);
 
-          let code;
+          let code = 0;
           try {
             await run(`install`);
-            ({code} = await run(`workspaces`, `foreach`, `run`, `testExit`));
+            await run(`workspaces`, `foreach`, `run`, `testExit`);
           } catch (error) {
             ({code} = error);
           }
 
           expect(code).toBe(1);
-        }
-      )
+        },
+      ),
     );
 
     test(
@@ -449,21 +392,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -479,21 +412,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`test:foo`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`test:foo`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -508,21 +431,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--topological`, `run`, `g:echo`));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--topological`, `run`, `g:echo`)).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -534,21 +447,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--recursive`, `--topological`, `run`, `print`, {cwd: `${path}/packages/workspace-b`}));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological`, `run`, `print`, {cwd: `${path}/packages/workspace-b`})).resolves.toMatchSnapshot();
+        },
+      ),
     );
 
     test(
@@ -560,21 +463,11 @@ describe(`Commands`, () => {
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
+          await run(`install`);
 
-          let code;
-          let stdout;
-          let stderr;
-
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspaces`, `foreach`, `--recursive`, `--topological`, `--from`, `{workspace-a,workspace-b,workspace-g}`, `run`, `print`, {cwd: path}));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
-        }
-      )
+          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological`, `--from`, `{workspace-a,workspace-b,workspace-g}`, `run`, `print`, {cwd: path})).resolves.toMatchSnapshot();
+        },
+      ),
     );
   });
 });

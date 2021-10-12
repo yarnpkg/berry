@@ -8,15 +8,15 @@ import {useFakeTime}            from './utils';
 
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
-  `fixtures/foo.zip` as Filename
+  `fixtures/foo.zip` as Filename,
 );
 export const ZIP_DIR2 = ppath.join(
   npath.toPortablePath(__dirname),
-  `fixtures/folder.zip/foo.zip` as Filename
+  `fixtures/folder.zip/foo.zip` as Filename,
 );
 export const ZIP_DIR3 = ppath.join(
   npath.toPortablePath(__dirname),
-  `fixtures/foo.hiddenzip` as Filename
+  `fixtures/foo.hiddenzip` as Filename,
 );
 
 export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);

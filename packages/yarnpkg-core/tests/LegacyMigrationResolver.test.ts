@@ -1,4 +1,4 @@
-import {IMPORTED_PATTERNS} from "../sources/LegacyMigrationResolver";
+import {IMPORTED_PATTERNS} from '../sources/LegacyMigrationResolver';
 
 describe(`LegacyMigrationResolver`, () => {
   const tests: Array<{version: string, resolved: string, expected: string}> = [

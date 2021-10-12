@@ -9,7 +9,7 @@ describe(`miscUtils`, () => {
             return miscUtils.mapAndFind.skip;
 
           return n;
-        })
+        }),
       ).toEqual(2);
     });
 
@@ -20,7 +20,7 @@ describe(`miscUtils`, () => {
             return miscUtils.mapAndFind.skip;
 
           return n;
-        })
+        }),
       ).toEqual(1);
     });
 
@@ -31,7 +31,7 @@ describe(`miscUtils`, () => {
             return miscUtils.mapAndFind.skip;
 
           return n;
-        })
+        }),
       ).toBeUndefined();
     });
   });

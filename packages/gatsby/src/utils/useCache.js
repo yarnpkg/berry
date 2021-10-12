@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 
+// eslint-disable-next-line arca/no-default-export
 export default function useCache(cb, dependencies) {
   const [state, setState] = useState();
 

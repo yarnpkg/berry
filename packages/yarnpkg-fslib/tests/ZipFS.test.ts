@@ -143,6 +143,24 @@ describe(`ZipFS`, () => {
     zipFs2.discardAndClose();
   });
 
+  it(`defaults the readSync read length to the buffer size`, async () => {
+    const p = `/dir/file` as PortablePath;
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+    await zipFs.mkdirPromise(`/dir` as PortablePath);
+    zipFs.writeFileSync(p, `file content`);
+
+    const buffer = Buffer.alloc(8192);
+    const fd = zipFs.openSync(p, `r`);
+    try {
+      zipFs.readSync(fd, buffer);
+      expect(buffer.slice(0, buffer.indexOf(`\0`)).toString()).toEqual(`file content`);
+    } finally {
+      zipFs.closeSync(fd);
+    }
+    zipFs.discardAndClose();
+  });
+
   it(`can create a zip file in memory`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
@@ -423,6 +441,35 @@ describe(`ZipFS`, () => {
     // The watcher shouldn't keep the process running after the file is unwatched
   });
 
+  it(`should accept invalid paths on watchFile (ENOTDIR)`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const file = `/foo.txt/package.json` as PortablePath;
+
+    // Should cause a ENOTDIR error to trigger, but watchFile doesn't care
+    zipFs.writeFileSync(ppath.dirname(file), ``);
+
+    const emptyStats = statUtils.makeEmptyStats();
+
+    const changeListener = jest.fn();
+    const stopListener = jest.fn();
+
+    jest.useFakeTimers();
+
+    const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
+    statWatcher.on(`stop`, stopListener);
+
+    expect(changeListener).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(3);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledWith(emptyStats, emptyStats);
+
+    zipFs.discardAndClose();
+  });
+
   it(`closes the fd created in createReadStream when the stream is closed early`, async () => {
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
     zipFs.writeFileSync(`/foo.txt` as Filename, `foo`.repeat(10000));
@@ -585,15 +632,15 @@ describe(`ZipFS`, () => {
     expect(
       statUtils.areStatsEqual(
         zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
-        zipFs.statSync(`/foo` as PortablePath, {bigint: true})
-      )
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
+      ),
     ).toBe(true);
 
     expect(
       statUtils.areStatsEqual(
         zipFs.statSync(`/foo` as PortablePath, {bigint: false}),
-        zipFs.statSync(`/foo` as PortablePath, {bigint: true})
-      )
+        zipFs.statSync(`/foo` as PortablePath, {bigint: true}),
+      ),
     ).toBe(false);
 
     zipFs.discardAndClose();

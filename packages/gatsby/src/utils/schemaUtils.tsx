@@ -245,7 +245,7 @@ export const convertSchemaToConfiguration = (schema: JSONSchema7, {mode}: {mode:
         {renderMarkdown(combinedSchema.description)}
       </Main>
       {Object.entries(combinedSchema.properties).map(
-        ([name, definition]) => renderProperty(name, definition, {mode, pathSegments: [name], renderAnchor: true})
+        ([name, definition]) => renderProperty(name, definition, {mode, pathSegments: [name], renderAnchor: true}),
       )}
     </Container>
   );

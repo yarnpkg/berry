@@ -114,15 +114,17 @@ function cloneState(state: ShellState, mergeWith: Partial<ShellState> = {}) {
 const BUILTINS = new Map<string, ShellBuiltin>([
   [`cd`, async ([target = homedir(), ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
     const resolvedTarget = ppath.resolve(state.cwd, npath.toPortablePath(target));
-    const stat = await opts.baseFs.statPromise(resolvedTarget);
+    const stat = await opts.baseFs.statPromise(resolvedTarget).catch(error => {
+      throw error.code === `ENOENT`
+        ? new ShellError(`cd: no such file or directory: ${target}`)
+        : error;
+    });
 
-    if (!stat.isDirectory()) {
-      state.stderr.write(`cd: not a directory\n`);
-      return 1;
-    } else {
-      state.cwd = resolvedTarget;
-      return 0;
-    }
+    if (!stat.isDirectory())
+      throw new ShellError(`cd: not a directory: ${target}`);
+
+    state.cwd = resolvedTarget;
+    return 0;
   }],
 
   [`pwd`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
@@ -152,17 +154,13 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   }],
 
   [`sleep`, async ([time]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    if (typeof time === `undefined`) {
-      state.stderr.write(`sleep: missing operand\n`);
-      return 1;
-    }
+    if (typeof time === `undefined`)
+      throw new ShellError(`sleep: missing operand`);
 
     // TODO: make it support unit suffixes
     const seconds = Number(time);
-    if (Number.isNaN(seconds)) {
-      state.stderr.write(`sleep: invalid time interval '${time}'\n`);
-      return 1;
-    }
+    if (Number.isNaN(seconds))
+      throw new ShellError(`sleep: invalid time interval '${time}'`);
 
     return await setTimeoutPromise(1000 * seconds, 0);
   }],
@@ -257,7 +255,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
                   write(chunk, encoding, callback) {
                     setImmediate(callback);
                   },
-                })
+                }),
               );
             } else {
               pushOutput(opts.baseFs.createWriteStream(outputPath, type === `>>` ? {flags: `a`} : undefined));
@@ -459,7 +457,10 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
         for (let t = 0; t < parts.length - 1; ++t)
           pushAndClose(parts[t]);
 
-        push(parts[parts.length - 1]);
+        const part = parts[parts.length - 1];
+        if (typeof part !== `undefined`) {
+          push(part);
+        }
       }
     } break;
   }
@@ -812,7 +813,7 @@ async function executeCommandChain(node: CommandChain, opts: ShellOptions, state
           if ((state.stdout as any).isTTY) {
             state.stdout.write(`Job ${prefix}, '${colorizer(stringifyCommandChain(node))}' has ended\n`);
           }
-        })
+        }),
     );
 
     return 0;

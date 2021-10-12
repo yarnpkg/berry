@@ -31,7 +31,7 @@ describe(`Protocols`, () => {
         });
 
         await expect(run(`install`)).resolves.toBeTruthy();
-      }
+      },
     ));
     test(
       `it should recognize prereleases in wildcard ranges`,
@@ -71,7 +71,7 @@ describe(`Protocols`, () => {
         },
       }, async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toBeTruthy();
-      })
+      }),
     );
 
     test(
@@ -87,7 +87,7 @@ describe(`Protocols`, () => {
         },
       }, async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toBeTruthy();
-      })
+      }),
     );
   });
 });

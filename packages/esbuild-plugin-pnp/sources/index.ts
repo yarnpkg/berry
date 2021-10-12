@@ -49,10 +49,11 @@ async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
 
 type OnResolveParams = {
   resolvedPath: string | null;
+  watchFiles: Array<string>
   error?: Error;
 };
 
-async function defaultOnResolve(args: OnResolveArgs, {resolvedPath, error}: OnResolveParams): Promise<OnResolveResult> {
+async function defaultOnResolve(args: OnResolveArgs, {resolvedPath, error, watchFiles}: OnResolveParams): Promise<OnResolveResult> {
   const problems = error ? [{text: error.message}] : [];
 
   // Sometimes dynamic resolve calls might be wrapped in a try / catch,
@@ -73,9 +74,9 @@ async function defaultOnResolve(args: OnResolveArgs, {resolvedPath, error}: OnRe
   }
 
   if (resolvedPath !== null) {
-    return {namespace: `pnp`, path: resolvedPath};
+    return {namespace: `pnp`, path: resolvedPath, watchFiles};
   } else {
-    return {external: true, ...mergeWith};
+    return {external: true, ...mergeWith, watchFiles};
   }
 }
 
@@ -128,7 +129,20 @@ export function pnpPlugin({
           error = e;
         }
 
-        return onResolve(args, {resolvedPath: path, error});
+        const watchFiles: Array<string> = [pnpApi.resolveRequest(`pnpapi`, null)!];
+
+        if (path) {
+          const locator = pnpApi.findPackageLocator(path);
+          if (locator) {
+            const info = pnpApi.getPackageInformation(locator);
+
+            if (info?.linkType === `SOFT`) {
+              watchFiles.push(pnpApi.resolveVirtual?.(path) ?? path);
+            }
+          }
+        }
+
+        return onResolve(args, {resolvedPath: path, error, watchFiles});
       });
 
       // We register on the build to prevent ESBuild from reading the files

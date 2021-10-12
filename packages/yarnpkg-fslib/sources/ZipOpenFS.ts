@@ -508,7 +508,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(oldP, () => {
       return this.makeCallSync(newP, () => {
         return this.baseFs.renameSync(oldP, newP);
-      }, async () => {
+      }, () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
       });
     }, (zipFsO, {subPath: subPathO}) => {
