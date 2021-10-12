@@ -35,12 +35,12 @@
     },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-version",
-      "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, and upstream/master. Supports git branches, tags, and commits.",
+      "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, upstream/master, main, origin/main, and upstream/main. Supports git branches, tags, and commits.",
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": ["master", "origin/master", "upstream/master"]
+      "default": ["master", "origin/master", "upstream/master", "main", "origin/main", "upstream/main"]
     },
     "changesetIgnorePatterns": {
       "_package": "@yarnpkg/plugin-version",

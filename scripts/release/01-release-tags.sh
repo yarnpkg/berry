@@ -69,6 +69,9 @@ yarn workspaces foreach \
 cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js \
    "$REPO_DIR"/packages/berry-cli/bin/berry.js
 
+# In case the PnP hook got updated run an install to update the `.pnp.cjs` file
+YARN_ENABLE_IMMUTABLE_INSTALLS=0 yarn
+
 git add "$REPO_DIR"
 git commit -m "$COMMIT_MESSAGE"
 

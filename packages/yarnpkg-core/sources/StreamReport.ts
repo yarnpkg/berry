@@ -1,4 +1,5 @@
 import sliceAnsi                                  from '@arcanis/slice-ansi';
+import CI                                         from 'ci-info';
 import {Writable}                                 from 'stream';
 
 import {Configuration}                            from './Configuration';
@@ -26,11 +27,11 @@ const PROGRESS_INTERVAL = 80;
 const BASE_FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED, MessageName.UNUSED_CACHE_ENTRY]);
 const BASE_FORGETTABLE_BUFFER_SIZE = 5;
 
-const GROUP = process.env.GITHUB_ACTIONS
+const GROUP = CI.GITHUB_ACTIONS
   ? {start: (what: string) => `::group::${what}\n`, end: (what: string) => `::endgroup::\n`}
-  : process.env.TRAVIS
+  : CI.TRAVIS
     ? {start: (what: string) => `travis_fold:start:${what}\n`, end: (what: string) => `travis_fold:end:${what}\n`}
-    : process.env.GITLAB_CI
+    : CI.GITLAB
       ? {start: (what: string) => `section_start:${Math.floor(Date.now() / 1000)}:${what.toLowerCase().replace(/\W+/g, `_`)}[collapsed=true]\r\x1b[0K${what}\n`, end: (what: string) => `section_end:${Math.floor(Date.now() / 1000)}:${what.toLowerCase().replace(/\W+/g, `_`)}\r\x1b[0K`}
       : null;
 
