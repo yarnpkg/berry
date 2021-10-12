@@ -87,8 +87,16 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               //
               // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
               //
+              // Update Oct 8 2021: VSCode changed their format in 1.61.
+              // Before | ^zip:/c:/foo/bar.zip/package.json
+              // After  | ^/zip//c:/foo/bar.zip/package.json
+              //
               case \`vscode\`: {
-                str = \`^zip:\${str}\`;
+                if (process.env.VSCODE_IPC_HOOK?.match(/Code\\/1\\.[1-5][0-9]\\./)) {
+                  str = \`^zip:\${str}\`;
+                } else {
+                  str = \`^/zip/\${str}\`;
+                }
               } break;
 
               // To make "go to definition" work,
@@ -133,8 +141,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           case \`vscode\`:
           default: {
             return process.platform === \`win32\`
-              ? str.replace(/^\\^?zip:\\//, \`\`)
-              : str.replace(/^\\^?zip:/, \`\`);
+              ? str.replace(/^\\^?(zip:|\\/zip\\/+)/, \`\`)
+              : str.replace(/^\\^?(zip:|\\/zip)\\/+/, \`/\`);
           } break;
         }
       }
