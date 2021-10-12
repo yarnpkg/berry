@@ -6,6 +6,8 @@ import {createHash}             from 'crypto';
 import ssri                     from 'ssri';
 import {URL}                    from 'url';
 
+import {normalizeRegistry}      from './npmConfigUtils';
+
 export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: {access: string | undefined, tag: string, registry: string, gitHead: string | undefined}) {
   const configuration = workspace.project.configuration;
 
@@ -36,7 +38,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   // While the npm registry ignores the provided tarball URL, it's used by
   // other registries such as verdaccio.
   const tarballName = `${name}-${version}.tgz`;
-  const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
+  const tarballURL = new URL(`${normalizeRegistry(registry)}/${name}/-/${tarballName}`);
 
   return {
     _id: name,

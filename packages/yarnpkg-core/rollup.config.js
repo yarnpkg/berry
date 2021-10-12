@@ -15,7 +15,7 @@ function wrapOutput() {
       const outputBundle = bundle[bundles[0]];
 
       outputBundle.code = `let hook;\n\nmodule.exports.getContent = () => {\n  if (typeof hook === \`undefined\`)\n    hook = require('zlib').brotliDecompressSync(Buffer.from('${brotliCompressSync(
-        outputBundle.code.replace(/\r\n/g, `\n`)
+        outputBundle.code.replace(/\r\n/g, `\n`),
       ).toString(`base64`)}', 'base64')).toString();\n\n  return hook;\n};\n`;
     },
   };
@@ -38,7 +38,7 @@ export default [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `es2018`}),
+      esbuild({tsconfig: false, target: `node12`}),
       cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
       wrapOutput(),
     ],

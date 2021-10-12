@@ -27,7 +27,7 @@ done
 
 
 # Bump the packages, and store which ones have been bumped (and thus need to be re-released)
-RELEASE_DETAILS=$(yarn version apply --all --json "${APPLY_OPTIONS}")
+RELEASE_DETAILS=$(yarn version apply --all --json ${APPLY_OPTIONS})
 RELEASE_SIZE=$(wc -l <<< "$RELEASE_DETAILS")
 
 if [[ $RELEASE_SIZE -eq 0 ]]; then
@@ -68,6 +68,9 @@ yarn workspaces foreach \
 # The v1 still uses the "berry.js" file path when using "policies set-version"
 cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js \
    "$REPO_DIR"/packages/berry-cli/bin/berry.js
+
+# In case the PnP hook got updated run an install to update the `.pnp.cjs` file
+YARN_ENABLE_IMMUTABLE_INSTALLS=0 yarn
 
 git add "$REPO_DIR"
 git commit -m "$COMMIT_MESSAGE"

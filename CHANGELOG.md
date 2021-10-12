@@ -4,9 +4,39 @@
 
 Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 
-## Master (soon-to-be 3.0)
+## Master
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
+
+### Bugfixes
+
+- Direct portal dependencies for `node_modules` install are given priority during hoisting now, to prevent cases when indirect regular dependencies take place in the install tree first and block the way for direct portal dependencies.
+- Usage of `pnpify` inside directories containing spaces is now possible.
+- Hoisting algorithm speedup, impacts recurrent `node_modules` installs time.
+- CLI bundles built from sources output `commit` hash instead of `tree` hash as part of their version
+- `workspaces foreach run` now handles the fact that a script containing `:` only becomes global if it exists in one workspace.
+- The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
+- `logFilters` using `pattern` matchers now match any part of the log entry
+- The cache is now fully atomic when moving files across devices and in general more efficient.
+- The PnP patch now picks up changes to the `fs` module, allowing users to patch it.
+- When using PnP, `require.resolve('pnpapi')` will be handled correctly even when using `exports`.
+- The install state will no longer be invalidated after running commands that modify the lockfile; this should bring a significant performance improvement when running commands such as `yarn run` immediately after adding or removing dependencies inside large monorepos.
+
+### Installs
+
+- `hardlinks-global` node modules mode is automatically downgraded to `hardlinks-local` when global cache and install folder are on a different devices and the install continues normally. Warning is produced to the user with mitigation steps provided in documentation.
+- The nm linker maximizes chances to end-up with only one top-level node_modules in the case of using workspaces
+
+## 3.0.2
+
+- Updated TypeScript patch to cover TypeScript 4.4.
+- Fixed `VirtualFS.mapToBase` to preserve `.` characters (was converting them to empty strings).
+
+## 3.0.1
+
+- Fixes an edge case with the PnP loader when calling `readdir` with `null` as second parameter (instead of `undefined`).
+
+## 3.0.0
 
 ### **Breaking Changes**
 
@@ -20,6 +50,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The virtual folder (used to disambiguate peer dependencies) got renamed from `$$virtual` into `__virtual__`.
 - The `-a` alias flag of `yarn workspaces foreach` got removed; use `-A,--all` instead, which is strictly the same.
 - The old PnPify SDK folder (`.vscode/pnpify`) won't be cleaned up anymore.
+- The `--skip-builds` flag from `yarn install` got renamed into `--mode=skip-build`.
 - The `bstatePath` configuration option has been removed. The build state (`.yarn/build-state.yml`) has been moved into the install state (`.yarn/install-state.gz`)
 - The cache files need to be regenerated. We had to change their timestamps in order to account for a flaw in the zip spec that was causing problems with some third-party tools.
 - `@yarnpkg/pnpify` has been refactored into 3 packages:
@@ -34,20 +65,22 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `structUtils.requirableIdent` got removed; use `structUtils.stringifyIdent` instead, which is strictly the same.
 - `configuration.format` got removed; use `formatUtils.pretty` instead, which is strictly the same, but type-safe.
 - `httpUtils.Options['json']` got removed; use `httpUtils.Options['jsonResponse']` instead, which is strictly the same.
-- `PackageExtension['description]` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
+- `PackageExtension['description']` got removed, use `formatUtils.json(packageExtension, formatUtils.Type.PACKAGE_EXTENSION)` instead, which is strictly the same.
 - `Project.generateBuildStateFile` has been removed, the build state is now in `Project.storedBuildState`.
 - `Project.tryWorkspaceByDescriptor` and `Project.getWorkspaceByDescriptor` now match on virtual descriptors.
 
 ### Installs
+
+- Workspaces now get self-references even when under the `node-modules` linker (just like how it already worked with the `pnp` linker). This means that a workspace called `foo` can now safely assume that calls to `require('foo/package.json')` will always work, removing the need for [absolute aliases](https://nextjs.org/docs/advanced-features/module-path-aliases) in the majority of cases.
 
 - The node-modules linker now does its best to support the `portal:` protocol. This support comes with two important limitations:
   - Projects that make use of such dependencies will have to be run with the `--preserve-symlinks` Node option if they wish to access their dependencies.
   - Because Yarn installs will never modify files outside of the project due to security reasons, sub-dependencies of packages with `portal:` must be hoisted outside of the portal. Failing that (for example if the portal package depends on something incompatible with the version hoisted via another package), the linker will produce an error and abandon the install.
 
 - The node-modules linker can now utilize hardlinks. The new setting `nmMode: classic | hardlinks-local | hardlinks-global` specifies which `node_modules` strategy should be used:
- - `classic` - standard `node_modules` layout, without hardlinks
- - `hardlinks-local` - standard `node_modules` layout with hardlinks inside the project only
- - `hardlinks-global` - standard `node_modules` layout with hardlinks pointing to global content storage across all the projects using this option
+  - `classic` - standard `node_modules` layout, without hardlinks
+  - `hardlinks-local` - standard `node_modules` layout with hardlinks inside the project only
+  - `hardlinks-global` - standard `node_modules` layout with hardlinks pointing to global content storage across all the projects using this option
 
 ### Bugfixes
 
@@ -76,16 +109,18 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn init` and `yarn set version` will set the [`packageManager`]() field.
 - `yarn set version` now downloads binaries from the official Yarn website (rather than GitHub).
 - `yarn set version from sources` will now upgrade the builtin plugins as well unless `--skip-plugins` is set.
-- `yarn version apply` now support a new `--prerelease` flag which replaces how prerelease were previously handled.
+- `yarn version apply` now supports a new `--prerelease` flag which replaces how prereleases were previously handled.
 - `yarn run` should be significantly faster to boot on large projects.
 - `yarn workspaces foreach --verbose` will now print when processes start and end, even if they don't have an output.
+- `yarn workspaces foreach` now supports a `--from <glob>` flag, which when combined with `-R` will target workspaces reachable from the 'from' glob.
 - `yarn patch-commit` can now be used as many times as you want on the same patch folder.
-- `yarn patch-commit` now support a new `-s,--save` flag which will save the patch instead of just printing it.
-- `yarn up` now support a new `-R,--recursive` flag which will upgrade the specified package, regardless where it is.
+- `yarn patch-commit` now supports a new `-s,--save` flag which will save the patch instead of just printing it.
+- `yarn up` now supports a new `-R,--recursive` flag which will upgrade the specified package, regardless where it is.
 - `yarn config unset` is a new command that will remove a setting from the local configuration (or home if `-H` is set).
 - `yarn exec` got support for running shell scripts using Yarn's portable shell.
 - `yarn plugin import` can now install specific versions of the official plugins.
 - `yarn plugin import` will now download plugins compatible with the current CLI by default.
+- `yarn unlink` has been added which removes resolutions previously set by `yarn link`.
 
 ### Builtin Shell
 
@@ -107,6 +142,22 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Miscellaneous
 
 - Reporting for HTTP errors has been improved, which should help you investigate registry issues.
+
+## 2.4.3
+
+```
+yarn set version 2.4.3
+```
+
+- Updated TypeScript patch to cover TypeScript 4.4.
+
+## 2.4.2
+
+```
+yarn set version 2.4.2
+```
+
+- Updated TypeScript patch to cover TypeScript 4.3.
 
 ## 2.4.1
 
@@ -251,7 +302,7 @@ The following changes only apply to the `node-modules` linker:
 
 - Updated the VSCode SDK to take into account changes in the TypeScript server protocol.
 - Added a few builtin extensions to improve compatibility with packages that weren't correctly listing their dependencies.
-- Updatedd the TypeScript patch to cover TypeScript 4.1.
+- Updated the TypeScript patch to cover TypeScript 4.1.
 
 ## 2.2.0
 
@@ -459,7 +510,7 @@ To see a comprehensive documentation about each possible field, please check our
 
     - The `dependenciesMeta` field covers dependencies declared in either of the `dependencies` and `devDependencies` fields.
 
-    - The `dependenciesMeta` field accepts two types of keys: either a generatic package name (`lodash`), or a specialized package **version** (`lodash@1.2.3`). This later syntax only works for the top-level manifest and *will thus be ignored when seen in a dependency / transitive dependency*.
+    - The `dependenciesMeta` field accepts two types of keys: either a generic package name (`lodash`), or a specialized package **version** (`lodash@1.2.3`). This later syntax only works for the top-level manifest and *will thus be ignored when seen in a dependency / transitive dependency*.
 
   - The `dependenciesMeta[].comment` field is expected to be a string field. Even though it isn't actually used anywhere at the moment, we suggest you to write comments regarding the reason why some packages are used here rather than anywhere else. This might prove useful for plugin authors.
 

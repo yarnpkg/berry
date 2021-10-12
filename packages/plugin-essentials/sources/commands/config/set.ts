@@ -70,6 +70,9 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
 
+    if (name === `enableStrictSettings`)
+      throw new UsageError(`This setting only affects the file it's in, and thus cannot be set from the CLI`);
+
     const value: unknown = this.json
       ? JSON.parse(this.value)
       : this.value;

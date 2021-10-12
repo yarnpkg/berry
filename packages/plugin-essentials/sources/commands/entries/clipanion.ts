@@ -1,5 +1,6 @@
-import {CommandContext, Configuration}                   from '@yarnpkg/core';
-import {Command, Cli, Definition as ClipanionDefinition} from 'clipanion';
+import {BaseCommand}                            from '@yarnpkg/cli';
+import {Configuration}                          from '@yarnpkg/core';
+import {Cli, Definition as ClipanionDefinition} from 'clipanion';
 
 type ExtendedDefinition = ClipanionDefinition & {
   plugin: {
@@ -9,7 +10,7 @@ type ExtendedDefinition = ClipanionDefinition & {
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default class ClipanionCommand extends Command<CommandContext> {
+export default class ClipanionCommand extends BaseCommand {
   static paths = [
     [`--clipanion=definitions`],
   ];

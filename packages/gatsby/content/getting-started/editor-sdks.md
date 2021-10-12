@@ -5,7 +5,7 @@ title: "Editor SDKs"
 description: An overview of the editor SDKs used to bring PnP compatibility to editors.
 ---
 
-Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work. This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
+Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work when using [Plug'n'Play installs](https://yarnpkg.com/features/pnp). This page intends to be a collection of settings for each editor we've worked with - please contribute to this list!
 
 The editor SDKs and settings can be generated using `yarn dlx @yarnpkg/sdks` (or `yarn sdks` if you added `@yarnpkg/sdks` to your dependencies). Its detailed documentation can be found on the [dedicated page](/sdks/cli/default).
 Generally speaking:
@@ -40,6 +40,8 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 ### VSCode
 
+To support features like go-to-definition a plugin like [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) is needed.
+
 1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
@@ -73,12 +75,14 @@ yarn dlx @yarnpkg/sdks vim
 Run the following command, which will generate a new directory called `.yarn/sdks`:
 
 ```bash
-yarn dlx @yarnpkg/pnpify --sdk base
+yarn dlx @yarnpkg/sdks base
 ```
 
 With the `.yarn/sdks` in place TypeScript support should work out of the box with [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) and [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server).
 
 ##### Supporting go-to-definition et al.
+
+> **Note:** Due to a bug in [Neovim's URI handling](https://github.com/neovim/neovim/pull/14959) go-to-definition is only supported in neovim-nightly.
 
 As well as the [vim-rzip](https://github.com/lbrayner/vim-rzip) plugin you'll also need the following snippet to handle Yarn PnP's URIs emitted from [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server). See [lbrayner/vim-rzip#15](https://github.com/lbrayner/vim-rzip/issues/15) for further details.
 
@@ -135,28 +139,8 @@ yarn dlx @yarnpkg/sdks base
 
 ```lisp
 ((typescript-mode
-  . (
-     ;; Enable typescript-language-server and eslint LSP clients.
-     (lsp-enabled-clients . (ts-ls eslint))
-     (eval . (lexical-let ((project-directory (car (dir-locals-find-file default-directory))))
-               (set (make-local-variable 'flycheck-javascript-eslint-executable)
-                    (concat project-directory ".yarn/sdks/eslint/bin/eslint.js"))
-
-               (eval-after-load 'lsp-clients
-                 '(progn
-                    (plist-put lsp-deps-providers
-                               :local (list :path (lambda (path) (concat project-directory ".yarn/sdks/" path))))))
-
-               (lsp-dependency 'typescript-language-server
-                               '(:local "typescript-language-server/lib/cli.js"))
-               (lsp-dependency 'typescript
-                               '(:local "typescript/bin/tsserver"))
-
-               ;; Re-(start) LSP to pick up the dependency changes above. Or use
-               ;; `hack-local-variables-hook` as proposed in lsp-mode's FAQ:
-               ;; https://emacs-lsp.github.io/lsp-mode/page/faq/
-               ;; (lsp)
-               )))))
+  . ((eval . (let ((project-directory (car (dir-locals-find-file default-directory))))
+                (setq lsp-clients-typescript-server-args `("--tsserver-path" ,(concat project-directory ".yarn/sdks/typescript/bin/tsserver") "--stdio")))))))
 ```
 
 3. Do note, that you can rename `:local` as you'd like in case you have SDKs stored elsewhere (other than `.yarn/sdks/...`) in other projects.

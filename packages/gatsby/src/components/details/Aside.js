@@ -2,7 +2,6 @@ import styled                                   from '@emotion/styled';
 import React                                    from 'react';
 
 import {ifDesktop}                              from '../responsive';
-
 import {packageJSONLink, isKnownRepositoryHost} from '../util';
 
 import {Activity}                               from './Activity';

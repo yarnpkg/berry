@@ -41,7 +41,7 @@ describe(`Commands`, () => {
 
         expect(cleanFileContent).toMatchSnapshot();
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     test(
@@ -75,7 +75,7 @@ describe(`Commands`, () => {
 
         expect(cleanFileContent).toMatchSnapshot();
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     test(
@@ -87,9 +87,9 @@ describe(`Commands`, () => {
               TEST_NPM_USER: `anotherTestUser`,
               TEST_NPM_PASSWORD: `incorrect password`,
             },
-          })
+          }),
         ).rejects.toThrowError(/Invalid authentication \(attempted as anotherTestUser\)/);
-      })
+      }),
     );
 
     test(
@@ -102,9 +102,9 @@ describe(`Commands`, () => {
               TEST_NPM_PASSWORD: `password`,
               TEST_NPM_2FA_TOKEN: `incorrect OTP`,
             },
-          })
+          }),
         ).rejects.toThrowError(/Invalid authentication \(attempted as testUser\)/);
-      })
+      }),
     );
 
     test(
@@ -142,7 +142,7 @@ describe(`Commands`, () => {
 
         expect(cleanFileContent).toMatchSnapshot();
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
 
     test(
@@ -183,7 +183,7 @@ describe(`Commands`, () => {
 
         expect(cleanFileContent).toMatchSnapshot();
         expect({code, stdout, stderr}).toMatchSnapshot();
-      })
+      }),
     );
   });
 });

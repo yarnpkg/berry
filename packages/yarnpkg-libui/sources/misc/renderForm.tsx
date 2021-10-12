@@ -29,7 +29,7 @@ export async function renderForm<T, C = React.ComponentType>(UserComponent: Subm
   const {waitUntilExit} = render(
     <Application>
       <UserComponent {...props} useSubmit={useSubmit}/>
-    </Application>
+    </Application>,
   );
 
   await waitUntilExit();

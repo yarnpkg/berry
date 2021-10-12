@@ -77,8 +77,8 @@ require('./.pnp.cjs').setup();
 As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
 
 ```
-node -r ./.pnp.js ./server.js
-NODE_OPTIONS="--require $(pwd)/.pnp.js" node ./server.js
+node -r ./.pnp.cjs ./server.js
+NODE_OPTIONS="--require $(pwd)/.pnp.cjs" node ./server.js
 ```
 
 ## PnP `loose` mode
@@ -128,6 +128,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | Create-React-App | Starting from 2.0+ |
 | ESLint | Some compatibility issues w/ shared configs |
 | Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
+| Gulp | Supported with version 4.0+ | 
 | Husky | Starting from 4.0.0-1+ |
 | Jest | Starting from 24.1+ |
 | Next.js | Starting from 9.1.2+ |

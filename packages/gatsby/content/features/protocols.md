@@ -65,11 +65,11 @@ The `patch:` protocol is meant to be used with [`yarn patch`](/cli/patch) and [`
 1. Find a package you want to patch (let's say `lodash@^1.0.0`)
 2. Run `yarn patch lodash`
 3. Edit the folder the command generated
-4. Once you're done, run `yarn patch-commit <path> > my-patch.diff`
+4. Once you're done, run `yarn patch-commit -s <path>`
 5. In your manifest, change the dependency from `^1.0.0` to:
 
 ```
-patch:lodash@^1.0.0#./my-patch.diff
+patch:lodash@^1.0.0#path/to/generated/file.patch
 ```
 
 Note that if you wish to update a transitive dependency (ie not directly yours), it's perfectly possible to use the [`resolutions` field](/configuration/manifest#resolutions).

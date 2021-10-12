@@ -110,6 +110,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Angular%20over%20PnPify/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-pnpify-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gulp-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-preact-cli-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-vue-cli-workflow.yml)<br/>

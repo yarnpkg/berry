@@ -3,7 +3,6 @@ import React                           from 'react';
 
 import IcoBitbucket                    from '../../images/search/ico-bitbucket.svg';
 import IcoGit                          from '../../images/search/ico-git.svg';
-
 import IcoGithub                       from '../../images/search/ico-github.svg';
 import IcoGitlab                       from '../../images/search/ico-gitlab.svg';
 import IcoHome                         from '../../images/search/ico-home.svg';
@@ -20,7 +19,7 @@ const images = {
   yarn: IcoYarn,
   gitlab: IcoGitlab,
   bitbucket: IcoBitbucket,
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   generic_repo: IcoGit,
 };
 

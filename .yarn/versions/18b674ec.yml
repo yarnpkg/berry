@@ -1,8 +1,0 @@
-releases:
-  "@yarnpkg/pnpify": minor
-
-declined:
-  - "@yarnpkg/plugin-nm"
-  - vscode-zipfs
-  - "@yarnpkg/builder"
-  - "@yarnpkg/cli"

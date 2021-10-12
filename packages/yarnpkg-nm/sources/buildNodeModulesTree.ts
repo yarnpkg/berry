@@ -238,7 +238,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     return ppath.contains(options.project.cwd, realSoftLinkPath) === null;
   };
 
-  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
+  const addPackageToTree = (name: string, pkg: PackageInformation<NativePath>, locator: PhysicalPackageLocator, parent: HoisterTree, parentPkg: PackageInformation<NativePath>, parentDependencies: Map<string, DependencyTarget>, parentRelativeCwd: PortablePath, isHoistBorder: boolean) => {
     const nodeKey = getNodeKey(name, locator);
     let node = nodes.get(nodeKey);
 
@@ -260,7 +260,19 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       nodes.set(nodeKey, node);
     }
 
-    if (isHoistBorder && !isExternalSoftLink(pkg, locator)) {
+    let hoistPriority;
+    const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator);
+    if (isExternalSoftLinkPackage)
+      // External soft link dependencies have the highest priority - we don't want to install inside them
+      hoistPriority = 2;
+    else if (parentPkg.linkType === LinkType.SOFT)
+      // Internal soft link dependencies should have priority over transitive dependencies - to maximize chances having only one top-level node_modules
+      hoistPriority = 1;
+    else
+      hoistPriority = 0;
+    node.hoistPriority = Math.max(node.hoistPriority || 0, hoistPriority);
+
+    if (isHoistBorder && !isExternalSoftLinkPackage) {
       const parentLocatorKey = stringifyLocator({name: parent.identName, reference: parent.reference});
       const dependencyBorders = hoistingLimits.get(parentLocatorKey) || new Set();
       hoistingLimits.set(parentLocatorKey, dependencyBorders);
@@ -359,13 +371,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
 
-          addPackageToTree(stringifyLocator(depLocator) === stringifyLocator(locator) ? name : depName, depPkg, depLocator, node, allDependencies, relativeDepCwd, isHoistBorder);
+          addPackageToTree(stringifyLocator(depLocator) === stringifyLocator(locator) ? name : depName, depPkg, depLocator, node, pkg, allDependencies, relativeDepCwd, isHoistBorder);
         }
       }
     }
   };
 
-  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg.packageDependencies, PortablePath.dot, false);
+  addPackageToTree(topLocator.name, topPkg, topLocator, packageTree, topPkg, topPkg.packageDependencies, PortablePath.dot, false);
 
   return {packageTree, hoistingLimits, errors, preserveSymlinksRequired};
 };

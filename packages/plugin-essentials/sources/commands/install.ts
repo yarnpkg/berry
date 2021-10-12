@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode} from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                                                            from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                        from '@yarnpkg/parsers';
+import CI                                                                                                from 'ci-info';
 import {Command, Option, Usage}                                                                          from 'clipanion';
 import * as t                                                                                            from 'typanion';
 
@@ -15,15 +16,15 @@ export default class YarnCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `install the project dependencies`,
     details: `
-      This command setup your project if needed. The installation is splitted in four different steps that each have their own characteristics:
+      This command sets up your project if needed. The installation is split into four different steps that each have their own characteristics:
 
       - **Resolution:** First the package manager will resolve your dependencies. The exact way a dependency version is privileged over another isn't standardized outside of the regular semver guarantees. If a package doesn't resolve to what you would expect, check that all dependencies are correctly declared (also check our website for more information: ).
 
-      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where are stored the cache files).
+      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where the cache files are stored).
 
-      - **Link:** Then we send the dependency tree information to internal plugins tasked from writing them on the disk in some form (for example by generating the .pnp.cjs file you might know).
+      - **Link:** Then we send the dependency tree information to internal plugins tasked with writing them on the disk in some form (for example by generating the .pnp.cjs file you might know).
 
-      - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another.
+      - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another. See https://yarnpkg.com/advanced/lifecycle-scripts for detail.
 
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.cjs file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
@@ -87,15 +88,13 @@ export default class YarnCommand extends BaseCommand {
   production = Option.Boolean(`--production`, {hidden: true});
   registry = Option.String(`--registry`, {hidden: true});
   silent = Option.Boolean(`--silent`, {hidden: true});
+  networkTimeout = Option.String(`--network-timeout`, {hidden: true});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     if (typeof this.inlineBuilds !== `undefined`)
       configuration.useWithSource(`<cli>`, {enableInlineBuilds: this.inlineBuilds}, configuration.startingCwd, {overwrite: true});
-
-    const isZeitNow = !!process.env.NOW_BUILDER;
-    const isNetlify = !!process.env.NETLIFY;
 
     // These variables are used in Google Cloud Platform environment
     // in process of deploying Google Cloud Functions and
@@ -130,7 +129,7 @@ export default class YarnCommand extends BaseCommand {
     // it would definitely be a configuration setting.
     if (typeof this.ignoreEngines !== `undefined`) {
       const exitCode = await reportDeprecation(`The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`, {
-        error: !isZeitNow,
+        error: !CI.VERCEL,
       });
 
       if (exitCode !== null) {
@@ -160,7 +159,7 @@ export default class YarnCommand extends BaseCommand {
     // let someone implement this "resolver-that-reads-the-cache" logic.
     if (typeof this.preferOffline !== `undefined`) {
       const exitCode = await reportDeprecation(`The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`, {
-        error: !isZeitNow,
+        error: !CI.VERCEL,
       });
 
       if (exitCode !== null) {
@@ -211,7 +210,7 @@ export default class YarnCommand extends BaseCommand {
     // Yarn commands would use different caches, causing unexpected behaviors.
     if (typeof this.cacheFolder !== `undefined`) {
       const exitCode = await reportDeprecation(`The cache-folder option has been deprecated; use rc settings instead`, {
-        error: !isNetlify,
+        error: !CI.NETLIFY,
       });
 
       if (exitCode !== null) {

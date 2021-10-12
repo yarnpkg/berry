@@ -37,6 +37,8 @@ describe(`Features`, () => {
         plugins: [`./plugin-a.js`],
       }));
 
+      await run(`install`);
+
       await expect(run(`node`, `-e`, ``)).resolves.toMatchObject({
         stdout: `Booting A\nBooting A\n`,
       });
@@ -49,6 +51,8 @@ describe(`Features`, () => {
       await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
         plugins: [`./plugin-a.js`],
       }));
+
+      await run(`install`);
 
       await expect(run(`a`)).resolves.toMatchObject({
         stdout: `Executing A\n`,
@@ -63,6 +67,8 @@ describe(`Features`, () => {
         plugins: [`./plugin-a.js`],
       }));
 
+      await run(`install`);
+
       await expect(run(`node`, `-e`, ``)).resolves.toMatchObject({
         stdout: `Booting A\nBooting A\n`,
       });
@@ -76,6 +82,8 @@ describe(`Features`, () => {
       await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
         plugins: [`./plugin-a.js`, `./plugin-b.js`],
       }));
+
+      await run(`install`);
 
       await expect(run(`node`, `-e`, ``)).resolves.toMatchObject({
         stdout: `Booting A\nBooting B\nBooting A\nBooting B\n`,

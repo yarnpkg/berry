@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "lib": ["DOM", "ESNext"],
+    "target": "ESNext",
     "noEmit": true
   },
   "exclude": []

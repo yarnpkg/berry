@@ -1,13 +1,14 @@
 import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
 import {UsageError}               from 'clipanion';
 import micromatch                 from 'micromatch';
+import semver                     from 'semver';
 import {Readable, Transform}      from 'stream';
 
 /**
  * @internal
  */
 export function isTaggedYarnVersion(version: string) {
-  return version.match(/^[^-]+(-rc\.[0-9]+)?$/);
+  return semver.valid(version) && version.match(/^[^-]+(-rc\.[0-9]+)?$/);
 }
 
 export function escapeRegExp(str: string) {
@@ -22,8 +23,10 @@ export function assertNever(arg: never): never {
 }
 
 export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
-  if (!Object.values(def).includes(value as any))
-    throw new Error(`Assertion failed: Invalid value for enumeration`);
+  const values = Object.values(def);
+
+  if (!values.includes(value as any))
+    throw new UsageError(`Invalid value for enumeration: ${JSON.stringify(value)} (expected one of ${values.map(value => JSON.stringify(value)).join(`, `)})`);
 
   return value as any as T;
 }

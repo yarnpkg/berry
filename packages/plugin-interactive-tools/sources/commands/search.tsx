@@ -153,7 +153,7 @@ export default class SearchCommand extends BaseCommand {
                 {` `}<Gem active={action === target} />{` `}
                 <Text bold>{target}</Text>
               </Text>
-            </Box>
+            </Box>,
         )}
       </Box>;
     };
@@ -240,7 +240,7 @@ export default class SearchCommand extends BaseCommand {
           </Box>
           {selectedPackages.length ?
             selectedPackages.map(
-              name => <SelectedEntry key={name} name={name} active={false}/>
+              name => <SelectedEntry key={name} name={name} active={false}/>,
             ) : <Text color="gray">No selected packages...</Text>
           }
           <PoweredByAlgolia />

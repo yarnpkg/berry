@@ -39,8 +39,9 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
     await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
   }
 
-  await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`);
-  await xfs.chmodPromise(ppath.join(location, name), 0o755);
+  await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`, {
+    mode: 0o755,
+  });
 }
 
 async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
@@ -276,7 +277,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             if (pack.code !== 0)
               return pack.code;
 
-            const packOutput = (await packPromise).toString().trim();
+            const packOutput = (await packPromise).toString().trim().replace(/^.*\n/s, ``);
             const packTarget = ppath.resolve(cwd, npath.toPortablePath(packOutput));
 
             // Only then can we move the pack to its rightful location
@@ -295,7 +296,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           return;
 
         xfs.detachTemp(logDir);
-        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${logFile})`);
+        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)})`);
       });
     });
   });
@@ -378,8 +379,8 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
 
   await Promise.all(
     Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
-      makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath])
-    )
+      makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
+    ),
   );
 
   // When operating under PnP, `initializePackageEnvironment`
@@ -431,8 +432,8 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
 
     await Promise.all(
       Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath])
-      )
+        makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
+      ),
     );
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
@@ -475,7 +476,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
   await xfs.mktempPromise(async logDir => {
     const logFile = ppath.join(logDir, `${lifecycleScriptName}.log` as PortablePath);
 
-    const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${workspace.cwd}")\n`;
+    const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${npath.fromPortablePath(workspace.cwd)}")\n`;
 
     const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {
       report,
@@ -630,8 +631,8 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
     await Promise.all(
       Array.from(packageAccessibleBinaries!, ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath])
-      )
+        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]),
+      ),
     );
 
     let result;

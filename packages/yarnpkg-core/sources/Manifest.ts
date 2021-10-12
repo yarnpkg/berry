@@ -2,11 +2,12 @@ import {FakeFS, Filename, NodeFS, PortablePath, ppath}    from '@yarnpkg/fslib';
 import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
 import semver                                             from 'semver';
 
+import {WorkspaceResolver}                                from './WorkspaceResolver';
 import * as miscUtils                                     from './miscUtils';
 import * as semverUtils                                   from './semverUtils';
 import * as structUtils                                   from './structUtils';
-import {IdentHash}                                        from './types';
 import {Ident, Descriptor}                                from './types';
+import {IdentHash}                                        from './types';
 
 export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
 export type HardDependencies = 'dependencies' | 'devDependencies';
@@ -272,7 +273,7 @@ export class Manifest {
         for (const [key, value] of Object.entries(data.browser)) {
           this.browser.set(
             normalizeSlashes(key),
-            typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
+            typeof value === `string` ? normalizeSlashes(value) : (value as boolean),
           );
         }
       }
@@ -363,7 +364,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== `string` || !semverUtils.validRange(range)) {
+        if (typeof range !== `string` || (!range.startsWith(WorkspaceResolver.protocol) && !semverUtils.validRange(range))) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }
@@ -500,7 +501,7 @@ export class Manifest {
           for (const [key, value] of Object.entries(data.publishConfig.browser)) {
             this.publishConfig.browser.set(
               normalizeSlashes(key),
-              typeof value === `string` ? normalizeSlashes(value) : (value as boolean)
+              typeof value === `string` ? normalizeSlashes(value) : (value as boolean),
             );
           }
         }
@@ -924,6 +925,21 @@ export class Manifest {
       data.preferUnplugged = this.preferUnplugged;
     else
       delete data.preferUnplugged;
+
+    if (this.scripts !== null && this.scripts.size > 0) {
+      data.scripts ??= {};
+
+      for (const existingScriptName of Object.keys(data.scripts))
+        if (!this.scripts.has(existingScriptName))
+          delete data.scripts[existingScriptName];
+
+      for (const [name, content] of this.scripts.entries()) {
+        // Set one at a time in order to preserve implicitly-preserved ordering of existing scripts.
+        data.scripts[name] = content;
+      }
+    } else {
+      delete data.scripts;
+    }
 
     return data;
   }

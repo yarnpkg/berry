@@ -6,15 +6,16 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["esnext", "esnext.asynciterable"],
+    "lib": ["ES2019"],
     "module": "commonjs",
     "noImplicitReturns": true,
     "strict": true,
-    "target": "ES2018",
+    "target": "ES2019",
     "declaration": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "useUnknownInCatchVariables": false
   },
   "exclude": [
     "packages/*/lib",

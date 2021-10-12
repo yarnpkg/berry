@@ -41,20 +41,25 @@ function extractErrorImpl(value: any): any {
     return value.value;
 
   if (value instanceof pl.type.Term) {
-    if (value.args.length === 0)
-      return value.id;
-
     switch (value.indicator) {
       case `throw/1`:
         return extractErrorImpl(value.args[0]);
       case `error/1`:
         return extractErrorImpl(value.args[0]);
       case `error/2`:
-        return Object.assign(extractErrorImpl(value.args[0]), ...extractErrorImpl(value.args[1]));
+        if (value.args[0] instanceof pl.type.Term && value.args[0].indicator === `syntax_error/1`) {
+          return Object.assign(extractErrorImpl(value.args[0]), ...extractErrorImpl(value.args[1]));
+        } else {
+          const err = extractErrorImpl(value.args[0]);
+          err.message += ` (in ${extractErrorImpl(value.args[1])})`;
+          return err;
+        }
       case `syntax_error/1`:
         return new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${extractErrorImpl(value.args[0])}`);
       case `existence_error/2`:
         return new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`);
+      case `instantiation_error/0`:
+        return new ReportError(MessageName.PROLOG_INSTANTIATION_ERROR, `Instantiation error: an argument is variable when an instantiated argument was expected`);
       case `line/1`:
         return {line: extractErrorImpl(value.args[0])};
       case `column/1`:
@@ -65,6 +70,8 @@ function extractErrorImpl(value: any): any {
         return [extractErrorImpl(value.args[0])].concat(extractErrorImpl(value.args[1]));
       case `//2`:
         return `${extractErrorImpl(value.args[0])}/${extractErrorImpl(value.args[1])}`;
+      default:
+        return value.id;
     }
   }
 

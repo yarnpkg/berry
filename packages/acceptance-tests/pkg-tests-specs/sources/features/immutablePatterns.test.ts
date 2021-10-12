@@ -32,7 +32,7 @@ describe(`Features`, () => {
 
           await run(`install`);
         },
-      )
+      ),
     );
 
     it(`shouldn't allow specific paths to be created when the immutable flag is used`,
@@ -51,7 +51,7 @@ describe(`Features`, () => {
 
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \.pnp\.cjs has been modified by this install/);
         },
-      )
+      ),
     );
 
     it(`shouldn't allow specific paths to be updated when the immutable flag is used`,
@@ -84,7 +84,7 @@ describe(`Features`, () => {
 
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \.pnp\.cjs has been modified by this install/);
         },
-      )
+      ),
     );
 
     it(`should detect changes within folders`,
@@ -120,7 +120,7 @@ describe(`Features`, () => {
 
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for \*\*\/node_modules has been modified by this install/);
         },
-      )
+      ),
     );
 
     it(`should prevent reformatting of manifests when so configured`,
@@ -138,7 +138,7 @@ describe(`Features`, () => {
           await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {dependencies: {}});
           await expect(run(`install`, `--immutable`)).rejects.toThrow(/The checksum for package.json has been modified by this install/);
         },
-      )
+      ),
     );
 
     it(`shouldn't fail when a folder didn't change`,
@@ -157,7 +157,7 @@ describe(`Features`, () => {
           await run(`install`);
           await run(`install`, `--immutable`);
         },
-      )
+      ),
     );
   });
 });

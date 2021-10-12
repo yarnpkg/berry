@@ -124,10 +124,11 @@ function fromPortablePath(p: Path): NativePath {
   if (process.platform !== `win32`)
     return p as NativePath;
 
-  if (p.match(PORTABLE_PATH_REGEXP))
-    p = p.replace(PORTABLE_PATH_REGEXP, `$1`);
-  else if (p.match(UNC_PORTABLE_PATH_REGEXP))
-    p = p.replace(UNC_PORTABLE_PATH_REGEXP, (match, p1, p2) => `\\\\${p1 ? `.\\` : ``}${p2}`);
+  let portablePathMatch, uncPortablePathMatch;
+  if ((portablePathMatch = p.match(PORTABLE_PATH_REGEXP)))
+    p = portablePathMatch[1];
+  else if ((uncPortablePathMatch = p.match(UNC_PORTABLE_PATH_REGEXP)))
+    p = `\\\\${uncPortablePathMatch[1] ? `.\\` : ``}${uncPortablePathMatch[2]}`;
   else
     return p as NativePath;
 
@@ -140,10 +141,11 @@ function toPortablePath(p: Path): PortablePath {
   if (process.platform !== `win32`)
     return p as PortablePath;
 
-  if (p.match(WINDOWS_PATH_REGEXP))
-    p = p.replace(WINDOWS_PATH_REGEXP, `/$1`);
-  else if (p.match(UNC_WINDOWS_PATH_REGEXP))
-    p = p.replace(UNC_WINDOWS_PATH_REGEXP, (match, p1, p2) => `/unc/${p1 ? `.dot/` : ``}${p2}`);
+  let windowsPathMatch, uncWindowsPathMatch;
+  if ((windowsPathMatch = p.match(WINDOWS_PATH_REGEXP)))
+    p = `/${windowsPathMatch[1]}`;
+  else if ((uncWindowsPathMatch = p.match(UNC_WINDOWS_PATH_REGEXP)))
+    p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
 
   return p.replace(/\\/g, `/`) as PortablePath;
 }

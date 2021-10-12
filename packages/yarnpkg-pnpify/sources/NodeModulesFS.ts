@@ -486,10 +486,10 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
+  async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<Dirent>> {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
       let fsDirList: Array<Filename> = [];
@@ -499,7 +499,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         // Ignore errors
       }
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
-      if (!withFileTypes)
+      if (!opts?.withFileTypes)
         return entries;
 
       return entries.map(name => {
@@ -508,15 +508,15 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         });
       });
     } else {
-      return await this.baseFs.readdirPromise(pnpPath.resolvedPath, {withFileTypes: withFileTypes as any});
+      return await this.baseFs.readdirPromise(pnpPath.resolvedPath, opts as any);
     }
   }
 
   readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false} | null): Array<Filename>;
   readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<Dirent>;
   readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
+  readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<Dirent> {
     const pnpPath = this.resolvePath(p);
     if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
       let fsDirList: Array<Filename> = [];
@@ -526,7 +526,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         // Ignore errors
       }
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
-      if (!withFileTypes)
+      if (!opts?.withFileTypes)
         return entries;
 
       return entries.map(name => {
@@ -535,7 +535,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         });
       });
     } else {
-      return this.baseFs.readdirSync(pnpPath.resolvedPath, {withFileTypes: withFileTypes as any});
+      return this.baseFs.readdirSync(pnpPath.resolvedPath, opts as any);
     }
   }
 

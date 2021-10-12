@@ -51,8 +51,9 @@ class PnpLooseInstaller extends PnpInstaller {
     const root = ppath.join(this.opts.project.cwd, Filename.nodeModules);
 
     const entry = tree.get(root);
+    // If there's no root junction point, it means that there are no dependencies to add to the fallback pool
     if (typeof entry === `undefined`)
-      throw new Error(`Assertion failed: Expected a root junction point`);
+      return;
 
     if (`target` in entry)
       throw new Error(`Assertion failed: Expected the root junction point to be a directory`);

@@ -1,5 +1,6 @@
 import './polyfills';
 
+// eslint-disable-next-line arca/import-ordering
 import {YarnVersion}            from '@yarnpkg/core';
 
 import {main}                   from './main';

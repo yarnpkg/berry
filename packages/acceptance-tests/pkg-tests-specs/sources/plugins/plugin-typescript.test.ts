@@ -23,7 +23,7 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `^2`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -37,7 +37,7 @@ describe(`Plugins`, () => {
               [`left-pad`]: `^1.0.0`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -54,7 +54,7 @@ describe(`Plugins`, () => {
               [`@types/iarna__toml`]: `^1`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -68,7 +68,7 @@ describe(`Plugins`, () => {
               [`resolve`]: `^1.9.0`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -82,7 +82,7 @@ describe(`Plugins`, () => {
               [`one-fixed-dep-with-types`]: `^1.0.0`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -99,7 +99,7 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `^1`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -128,7 +128,7 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `1.0.0`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -160,7 +160,7 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `1.0.0`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -189,7 +189,7 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `^2`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -212,7 +212,7 @@ describe(`Plugins`, () => {
               [`is-number`]: `^1.0.0`,
             },
           });
-        })
+        }),
       );
 
       test(
@@ -249,7 +249,7 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `1.0.0`,
             },
           });
-        })
+        }),
       );
     });
 
@@ -270,7 +270,7 @@ describe(`Plugins`, () => {
             await run(`remove`, `is-number`);
 
             await expect(readManifest(path)).resolves.not.toHaveProperty(`${type}.@types/is-number`);
-          })
+          }),
         );
       }
 
@@ -288,7 +288,7 @@ describe(`Plugins`, () => {
           await run(`remove`, `@iarna/toml`);
 
           await expect(readManifest(path)).resolves.not.toHaveProperty(`devDependencies.@types/iarna__toml`);
-        })
+        }),
       );
     });
 

@@ -1,6 +1,6 @@
 import {VirtualFS}                            from '../sources/VirtualFS';
 import {Filename, npath, ppath, PortablePath} from '../sources/path';
-import {xfs}                                  from '../sources';
+import {CwdFS, xfs}                           from '../sources';
 
 describe(`VirtualFS`, () => {
   it(`should ignore non-hash virtual components`, () => {
@@ -61,6 +61,16 @@ describe(`VirtualFS`, () => {
 
     const virtualFs = new VirtualFS();
     expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
+  });
+
+  it(`should preserve dots when mapping`, () => {
+    const virtualFs = new VirtualFS();
+    expect(virtualFs.mapToBase(PortablePath.dot)).toEqual(PortablePath.dot);
+  });
+
+  it(`should preserve empty strings when mapping`, () => {
+    const virtualFs = new VirtualFS();
+    expect(virtualFs.mapToBase(`` as PortablePath)).toEqual(``);
   });
 
   it(`should allow access to a directory through its virtual subfolder`, () => {
@@ -159,5 +169,17 @@ describe(`VirtualFS`, () => {
 
     const virtualFs = new VirtualFS();
     expect(virtualFs.realpathSync(virtualEntry)).toEqual(virtualEntry);
+  });
+
+  it(`should work when the path is a dot`, () => {
+    const virtualFs = new VirtualFS({baseFs: new CwdFS(npath.toPortablePath(__dirname))});
+
+    expect(virtualFs.readdirSync(PortablePath.dot)).toContain(`VirtualFS.test.ts`);
+  });
+
+  it(`should throw when the path is an empty string`, () => {
+    const virtualFs = new VirtualFS();
+
+    expect(() => virtualFs.readdirSync(`` as PortablePath)).toThrow(`ENOENT`);
   });
 });

@@ -1,0 +1,42 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/workflows/e2e-gulp-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Gulp'
+jobs:
+  chore:
+    name: 'Validating Gulp'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: 'Install Node'
+      uses: actions/setup-node@master
+      with:
+        node-version: 14.x
+
+    - name: 'Build the standard bundle'
+      run: |
+        node ./scripts/run-yarn.js build:cli
+
+    - name: 'Run Gulp E2E test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn init -p
+        yarn add -D gulp
+
+        # Test running Gulp with a simple default task.
+        echo "const gulp = require('gulp'); const defaultTaskPrintCheck = (cb) => { console.log('Success: ran gulp task'); cb(); }; exports.default = defaultTaskPrintCheck;" | tee gulpfile.js
+        yarn gulp
+
+        # Test using the Gulp API and run public task via CLI.
+        echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptFile = gulp.src('./gulpfile.js'); if (scriptFile) { console.log('Success: used gulp API import.'); } cb(); }; exports.testGulpAPI = testGulpAPI;" | tee gulpfile.js
+        yarn gulp testGulpAPI

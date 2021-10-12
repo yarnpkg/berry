@@ -94,10 +94,29 @@ PlainStringSegment
   / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
-  = chars:('\\' c:. { return c } / [^'])* { return chars.join(``) }
+  = chars:(EscapedChar / HexCodeString / '\\' c:[\\'] { return c } / [^'])* { return chars.join(``) }
 
 DblQuoteStringText
-  = chars:('\\' c:. { return c } / [^$"])+ { return chars.join(``) }
+  = chars:(EscapedChar / HexCodeString / '\\' c:[\\$"] { return c } / [^$"])+ { return chars.join(``) }
+
+EscapedChar
+  = '\\0' { return '\0' }
+  / '\\a' { return '\a' }
+  / '\\b' { return '\b' }
+  / '\\e' { return '\x1b' }
+  / '\\f' { return '\f' }
+  / '\\n' { return '\n' }
+  / '\\r' { return '\r' }
+  / '\\t' { return '\t' }
+  / '\\v' { return '\v' }
+
+HexCodeString
+  = char:('\\x' c:$(HexCodeChar HexCodeChar) { return String.fromCharCode(parseInt(c, 16)) })
+  / utf8:('\\u' c:$(HexCodeChar HexCodeChar HexCodeChar HexCodeChar) { return String.fromCharCode(parseInt(c, 16)) })
+  / utf16:('\\U' c:$(HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar) { return String.fromCodePoint(parseInt(c, 16)) })
+
+HexCodeChar
+  = [0-9a-fA-f]
 
 PlainStringText
   = chars:('\\' c:. { return c } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
@@ -110,14 +129,14 @@ ArithmeticPrimary
   / '(' S* value:ArithmeticExpression S* ')' { return value }
 
 ArithmeticTimesExpression
-  = left:ArithmeticPrimary S* '*' S* right:ArithmeticTimesExpression { return { type: `multiplication`, left, right } }
-  / left:ArithmeticPrimary S* '/' S* right:ArithmeticTimesExpression { return { type: `division`, left, right } }
-  / ArithmeticPrimary
+  = left:ArithmeticPrimary rest:(S* op:('*' / '/') S* right:ArithmeticPrimary { return { type: op === `*` ? `multiplication` : `division`, right } })* {
+    return rest.reduce((left, right) => ({ left, ...right }), left)
+  }
 
 ArithmeticExpression
-  = left:ArithmeticTimesExpression S* '+' S* right:ArithmeticExpression { return { type: `addition`, left, right } }
-  / left:ArithmeticTimesExpression S* '-' S* right:ArithmeticExpression { return { type: `subtraction`, left, right } }
-  / ArithmeticTimesExpression
+  = left:ArithmeticTimesExpression rest:(S* op:('+' / '-') S* right:ArithmeticTimesExpression { return { type: op === `+` ? `addition` : `subtraction`, right } })* {
+    return rest.reduce((left, right) => ({ left, ...right }), left)
+  }
 
 Arithmetic
   = '$((' S* arithmetic:ArithmeticExpression S* '))' { return arithmetic }
