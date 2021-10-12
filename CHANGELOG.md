@@ -15,6 +15,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Hoisting algorithm speedup, impacts recurrent `node_modules` installs time.
 - CLI bundles built from sources output `commit` hash instead of `tree` hash as part of their version
 - `workspaces foreach run` now handles the fact that a script containing `:` only becomes global if it exists in one workspace.
+- Nested workspaces are properly hoisted by `node-modules` linker.
+- Self-referencing symlinks are not created for anonymous workspaces by `node-modules` linker, since they cannot be used anyway from the code.
 - The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
 - `logFilters` using `pattern` matchers now match any part of the log entry
 - The cache is now fully atomic when moving files across devices and in general more efficient.

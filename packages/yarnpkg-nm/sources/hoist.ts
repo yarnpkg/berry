@@ -46,11 +46,11 @@
  * until you run out of candidates for current tree root.
  */
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number};
+export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number, isWorkspace?: boolean};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Array<string>, hoistPriority: number};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Map<PackageName, Array<string>>, hoistedTo: Map<PackageName, string>, hoistPriority: number, isWorkspace: boolean};
 
 /**
  * Mapping which packages depend on a given package alias + ident. It is used to determine hoisting weight,
@@ -237,7 +237,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistPriority} = node;
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistPriority, isWorkspace, hoistedFrom, hoistedTo} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
@@ -254,7 +254,9 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
     decoupled: true,
     isHoistBorder,
     hoistPriority,
-    hoistedFrom: [],
+    isWorkspace,
+    hoistedFrom: new Map(hoistedFrom),
+    hoistedTo: new Map(hoistedTo),
   };
   const selfDep = clone.dependencies.get(name);
   if (selfDep && selfDep.ident == clone.ident)
@@ -432,7 +434,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
   return {anotherRoundNeeded, isGraphChanged};
 };
 
-const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason}: {outputReason: boolean}): HoistInfo => {
+const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason, fastLookupPossible}: {outputReason: boolean, fastLookupPossible: boolean}): HoistInfo => {
   let reasonRoot;
   let reason: string | null = null;
   let dependsOn: Set<HoisterWorkTree> | null = new Set();
@@ -445,6 +447,31 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
   let isHoistable = !isSelfReference;
   if (outputReason && !isHoistable)
     reason = `- self-reference`;
+
+  if (isHoistable) {
+    isHoistable = !node.isWorkspace;
+    if (outputReason && !isHoistable) {
+      reason = `- workspace`;
+    }
+  }
+
+  if (isHoistable) {
+    // Direct workspace dependencies must be hoisted to any common ancestor workspace of all the
+    // graph paths that include the dependency, because otherwise running app with
+    // `--preserve-symlinks` will become broken (without this flag the Node.js will pick dependency
+    // from the ancestor on the file system and with this flag it will pick ancestor from the graph
+    // and if these ancestors are different, the behavious of the application will be different).
+    // Another problem, which is prevented - is a creation of multiple hoisting layouts
+    // for the same workspace, because different dependencies of the same workspace might be hoisted
+    // differently, depending on the recepient workspace.
+    // It is difficult to find all common ancestors, but there is one easy to find common ancestor -
+    // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
+    // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
+    isHoistable = !parentNode.isWorkspace || parentNode.hoistedFrom.has(node.name) || rootNodePathLocators.size === 1;
+    if (outputReason && !isHoistable) {
+      reason = parentNode.reasons.get(node.name)!;
+    }
+  }
 
   if (isHoistable) {
     isHoistable = !rootNode.peerNames.has(node.name);
@@ -519,6 +546,19 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     isHoistable = arePeerDepsSatisfied;
   }
 
+  if (isHoistable && !fastLookupPossible) {
+    for (const origDep of node.hoistedDependencies.values()) {
+      const usedDep = usedDependencies.get(origDep.name);
+      if (!usedDep || origDep.ident !== usedDep.ident) {
+        isHoistable = false;
+        if (outputReason)
+          reason = `- previously hoisted dependency mismatch, needed: ${prettyPrintLocator(origDep.locator)}, available: ${prettyPrintLocator(usedDep?.locator)}`;
+
+        break;
+      }
+    }
+  }
+
   if (dependsOn !== null && dependsOn.size > 0) {
     return {isHoistable: Hoistable.DEPENDS, dependsOn, reason};
   } else {
@@ -549,7 +589,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
     const dependantTree = new Map<PackageName, Set<PackageName>>();
     const hoistInfos = new Map<HoisterWorkTree, HoistInfo>();
     for (const subDependency of getSortedRegularDependencies(parentNode)) {
-      const hoistInfo = getNodeHoistInfo(rootNode, rootNodePathLocators, [rootNode, ...nodePath, parentNode], subDependency, usedDependencies, hoistIdents, hoistIdentMap, shadowedNodes, {outputReason: options.debugLevel >= DebugLevel.REASONS});
+      const hoistInfo = getNodeHoistInfo(rootNode, rootNodePathLocators, [rootNode, ...nodePath, parentNode], subDependency, usedDependencies, hoistIdents, hoistIdentMap, shadowedNodes, {outputReason: options.debugLevel >= DebugLevel.REASONS, fastLookupPossible: options.fastLookupPossible});
 
       hoistInfos.set(subDependency, hoistInfo);
       if (hoistInfo.isHoistable === Hoistable.DEPENDS) {
@@ -588,25 +628,27 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
         parentNode.reasons.delete(node.name);
 
         const hoistedNode = rootNode.dependencies.get(node.name);
-        let hoistedFrom: string | null = null;
-        if (options.debugLevel >= DebugLevel.REASONS)
-          hoistedFrom = Array.from(locatorPath).concat([parentNode.locator]).map(x => prettyPrintLocator(x)).join(`→`);
+        if (options.debugLevel >= DebugLevel.REASONS) {
+          const hoistedFrom = Array.from(locatorPath).concat([parentNode.locator]).map(x => prettyPrintLocator(x)).join(`→`);
+          let hoistedFromArray = rootNode.hoistedFrom.get(node.name);
+          if (!hoistedFromArray) {
+            hoistedFromArray = [];
+            rootNode.hoistedFrom.set(node.name, hoistedFromArray);
+          }
+          hoistedFromArray.push(hoistedFrom!);
+
+          parentNode.hoistedTo.set(node.name, Array.from(rootNodePath).map(x => prettyPrintLocator(x.locator)).join(`→`));
+        }
         // Add hoisted node to root node, in case it is not already there
         if (!hoistedNode) {
           // Avoid adding other version of root node to itself
           if (rootNode.ident !== node.ident) {
             rootNode.dependencies.set(node.name, node);
-            if (options.debugLevel >= DebugLevel.REASONS)
-              node.hoistedFrom.push(hoistedFrom!);
-
             newNodes.add(node);
           }
         } else {
           for (const reference of node.references) {
             hoistedNode.references.add(reference);
-            if (options.debugLevel >= DebugLevel.REASONS) {
-              hoistedNode.hoistedFrom.push(hoistedFrom!);
-            }
           }
         }
       }
@@ -662,7 +704,7 @@ const selfCheck = (tree: HoisterWorkTree): string => {
   const seenNodes = new Set();
   const parents = new Set<HoisterWorkTree>();
 
-  const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>) => {
+  const checkNode = (node: HoisterWorkTree, parentDeps: Map<PackageName, HoisterWorkTree>, parent: HoisterWorkTree) => {
     if (seenNodes.has(node))
       return;
     seenNodes.add(node);
@@ -684,10 +726,15 @@ const selfCheck = (tree: HoisterWorkTree): string => {
           log.push(`${prettyPrintTreePath()} - broken peer promise: expected ${origDep!.ident} but found ${parentDep ? parentDep.ident : parentDep}`);
         }
       } else {
+        const hoistedFrom = parent.hoistedFrom.get(node.name);
+        const originalHoistedTo = node.hoistedTo.get(origDep.name);
+        const prettyHoistedFrom = `${hoistedFrom ? ` hoisted from ${hoistedFrom.join(`, `)}` : ``}`;
+        const prettyOriginalHoistedTo = `${originalHoistedTo ? ` hoisted to ${originalHoistedTo}` : ``}`;
+        const prettyNodePath = `${prettyPrintTreePath()}${prettyHoistedFrom}`;
         if (!dep) {
-          log.push(`${prettyPrintTreePath()} - broken require promise: no required dependency ${origDep.locator} found`);
+          log.push(`${prettyNodePath} - broken require promise: no required dependency ${origDep.name}${prettyOriginalHoistedTo} found`);
         } else if (dep.ident !== origDep.ident) {
-          log.push(`${prettyPrintTreePath()} - broken require promise for ${origDep.name}: expected ${origDep.ident}, but found: ${dep.ident}`);
+          log.push(`${prettyNodePath} - broken require promise for ${origDep.name}${prettyOriginalHoistedTo}: expected ${origDep.ident}, but found: ${dep.ident}`);
         }
       }
     }
@@ -695,13 +742,13 @@ const selfCheck = (tree: HoisterWorkTree): string => {
     parents.add(node);
     for (const dep of node.dependencies.values()) {
       if (!node.peerNames.has(dep.name)) {
-        checkNode(dep, dependencies);
+        checkNode(dep, dependencies, node);
       }
     }
     parents.delete(node);
   };
 
-  checkNode(tree, tree.dependencies);
+  checkNode(tree, tree.dependencies, tree);
 
   return log.join(`\n`);
 };
@@ -726,7 +773,9 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     decoupled: true,
     isHoistBorder: true,
     hoistPriority: 0,
-    hoistedFrom: [],
+    isWorkspace: true,
+    hoistedFrom: new Map(),
+    hoistedTo: new Map(),
   };
 
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
@@ -735,7 +784,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
-      const {name, identName, reference, peerNames, hoistPriority} = node;
+      const {name, identName, reference, peerNames, hoistPriority, isWorkspace} = node;
       const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
@@ -750,7 +799,9 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         decoupled: true,
         isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
         hoistPriority: hoistPriority || 0,
-        hoistedFrom: [],
+        isWorkspace: isWorkspace || false,
+        hoistedFrom: new Map(),
+        hoistedTo: new Map(),
       };
       seenNodes.set(node, workNode);
     }
@@ -890,7 +941,10 @@ const buildPreferenceMap = (rootNode: HoisterWorkTree): PreferenceMap => {
   return preferenceMap;
 };
 
-const prettyPrintLocator = (locator: Locator) => {
+const prettyPrintLocator = (locator?: Locator) => {
+  if (!locator)
+    return `none`;
+
   const idx = locator.indexOf(`@`, 1);
   let name = locator.substring(0, idx);
   if (name.endsWith(`$wsroot$`))
@@ -941,7 +995,8 @@ const dumpDepTree = (tree: HoisterWorkTree) => {
       if (!pkg.peerNames.has(dep.name) && dep !== pkg) {
         const reason = pkg.reasons.get(dep.name);
         const identName = getIdentName(dep.locator);
-        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) +  prettyPrintLocator(dep.locator) + (reason ? ` ${reason}` : ``) + (dep !== pkg && dep.hoistedFrom.length > 0 ? `, hoisted from: ${dep.hoistedFrom.join(`, `)}` : ``)}\n`;
+        const hoistedFrom = pkg.hoistedFrom.get(dep.name) || [];
+        str += `${prefix}${idx < dependencies.length - 1 ? `├─` : `└─`}${(parents.has(dep) ? `>` : ``) + (identName !== dep.name ? `a:${dep.name}:` : ``) +  prettyPrintLocator(dep.locator) + (reason ? ` ${reason}` : ``) + (dep !== pkg && hoistedFrom.length > 0 ? `, hoisted from: ${hoistedFrom.join(`, `)}` : ``)}\n`;
         str += dumpPackage(dep, parents, `${prefix}${idx < dependencies.length - 1 ? `│ ` : `  `}`);
       }
     }
