@@ -114,7 +114,7 @@ const moduleWrapper = tsserver => {
       case `vscode`:
       default: {
         return process.platform === `win32`
-          ? str.replace(/^\^?(zip:|\/zip\/+)/, ``)
+          ? str.replace(/^\^?(zip:|\/zip)\/+/, ``)
           : str.replace(/^\^?(zip:|\/zip)\/+/, `/`);
       } break;
     }
