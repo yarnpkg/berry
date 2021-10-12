@@ -78,7 +78,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   };
 }
 
-export async function getGitHead (workingDir: PortablePath) {
+export async function getGitHead(workingDir: PortablePath) {
   try {
     const {stdout} = await execUtils.execvp(`git`, [`rev-parse`, `--revs-only`, `HEAD`], {cwd: workingDir});
     if (stdout.trim() === ``)

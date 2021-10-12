@@ -333,7 +333,6 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       request.on(`data`, chunk => rawData += chunk);
       request.on(`end`, () => {
         let body;
-
         try {
           body = JSON.parse(rawData);
         } catch (e) {
@@ -366,18 +365,18 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       request.on(`data`, chunk => rawData += chunk);
       request.on(`end`, () => {
         let body;
-
         try {
           body = JSON.parse(rawData);
         } catch (e) {
           return processError(response, 401, `Invalid`);
         }
-        const [version] = Object.keys(body.versions);
-        if (!body.versions[version].gitHead && name === `requires-githead`)
-          return processError(response, 402, `Missing gitHead`);
 
-        if (body.versions[version].gitHead && name === `not-requires-githead`)
-          return processError(response, 403, `unexpected gitHead`);
+        const [version] = Object.keys(body.versions);
+        if (!body.versions[version].gitHead && name === `githead-required`)
+          return processError(response, 400, `Missing gitHead`);
+
+        if (typeof body.versions[version].gitHead !== `undefined` && name === `githead-forbidden`)
+          return processError(response, 400, `Unexpected gitHead`);
 
         response.writeHead(200, {[`Content-Type`]: `application/json`});
         return response.end(rawData);
@@ -454,6 +453,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
   const needsAuth = (parsedRequest: Request): boolean => {
     switch (parsedRequest.type) {
+      case RequestType.Publish:
       case RequestType.Whoami:
         return true;
 
@@ -512,8 +512,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     const listener: http.RequestListener = (req, res) =>
       void (async () => {
         try {
-          const parsedRequest = parseRequest(req.url!, req.method);
-
+          const parsedRequest = parseRequest(req.url!, req.method!);
           if (parsedRequest == null) {
             processError(res, 404, `Invalid route: ${req.url}`);
             return;
