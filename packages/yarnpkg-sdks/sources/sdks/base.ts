@@ -91,12 +91,12 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               // Before | ^zip:/c:/foo/bar.zip/package.json
               // After  | ^/zip//c:/foo/bar.zip/package.json
               //
+              case \`vscode <1.61\`: {
+                str = \`^zip:\${str}\`;
+              } break;
+
               case \`vscode\`: {
-                if (process.env.VSCODE_IPC_HOOK?.match(/Code\\/1\\.[1-5][0-9]\\./)) {
-                  str = \`^zip:\${str}\`;
-                } else {
-                  str = \`^/zip/\${str}\`;
-                }
+                str = \`^/zip/\${str}\`;
               } break;
 
               // To make "go to definition" work,
@@ -180,6 +180,9 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             typeof parsedMessage.arguments.hostInfo === \`string\`
           ) {
             hostInfo = parsedMessage.arguments.hostInfo;
+            if (hostInfo === \`vscode\` && process.env.VSCODE_IPC_HOOK?.match(/Code\\/1\\.[1-5][0-9]\\./)) {
+              hostInfo += \` <1.61\`;
+            }
           }
 
           return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
