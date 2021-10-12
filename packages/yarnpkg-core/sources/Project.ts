@@ -1635,10 +1635,8 @@ export class Project {
     }
 
     const newContent = this.generateLockfile();
-
     const normalizedContent = normalizeLineEndings(currentContent, newContent);
-
-    if (currentContent === normalizedContent)
+    if (normalizedContent === currentContent)
       return;
 
     await xfs.writeFilePromise(lockfilePath, normalizedContent);
