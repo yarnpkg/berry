@@ -23,6 +23,7 @@ releases:
   "@yarnpkg/plugin-pack": minor
   "@yarnpkg/plugin-patch": minor
   "@yarnpkg/plugin-pnp": minor
+  "@yarnpkg/plugin-pnpm": minor
   "@yarnpkg/plugin-stage": minor
   "@yarnpkg/plugin-typescript": minor
   "@yarnpkg/plugin-version": minor
