@@ -2,23 +2,21 @@ import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
 import crypto                            from 'crypto';
 import finalhandler                      from 'finalhandler';
 import https                             from 'https';
-import http                              from 'http';
 import {IncomingMessage, ServerResponse} from 'http';
+import http                              from 'http';
 import invariant                         from 'invariant';
 import {AddressInfo}                     from 'net';
 import pem                               from 'pem';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
 import {promisify}                       from 'util';
+import {Gzip}                            from 'zlib';
+
+import {ExecResult}                      from './exec';
+import * as fsUtils                      from './fs';
 
 const deepResolve = require(`super-resolve`);
-
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
-
-import {Gzip}       from 'zlib';
-
-import {ExecResult} from './exec';
-import * as fsUtils from './fs';
 
 export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
 export type PackageRegistry = Map<string, PackageEntry>;
@@ -192,6 +190,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     PackageTarball = `packageTarball`,
     Whoami = `whoami`,
     Repository = `repository`,
+    Publish = `publish`,
   }
 
   type Request = {
@@ -211,6 +210,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     login: Login
   } | {
     type: RequestType.Repository;
+  } | {
+    type: RequestType.Publish;
+    scope?: string;
+    localName: string;
   };
 
   const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
@@ -330,7 +333,6 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       request.on(`data`, chunk => rawData += chunk);
       request.on(`end`, () => {
         let body;
-
         try {
           body = JSON.parse(rawData);
         } catch (e) {
@@ -351,6 +353,35 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));
     },
+    async [RequestType.Publish](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.Publish)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {scope, localName} = parsedRequest;
+      const name = scope ? `${scope}/${localName}` : localName;
+
+      let rawData = ``;
+
+      request.on(`data`, chunk => rawData += chunk);
+      request.on(`end`, () => {
+        let body;
+        try {
+          body = JSON.parse(rawData);
+        } catch (e) {
+          return processError(response, 401, `Invalid`);
+        }
+
+        const [version] = Object.keys(body.versions);
+        if (!body.versions[version].gitHead && name === `githead-required`)
+          return processError(response, 400, `Missing gitHead`);
+
+        if (typeof body.versions[version].gitHead !== `undefined` && name === `githead-forbidden`)
+          return processError(response, 400, `Unexpected gitHead`);
+
+        response.writeHead(200, {[`Content-Type`]: `application/json`});
+        return response.end(rawData);
+      });
+    },
   };
 
   const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
@@ -365,7 +396,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     sendError(res, statusCode, errorMessage);
   };
 
-  const parseRequest = (url: string): Request | null => {
+  const parseRequest = (url: string, method: string): Request | null => {
     let match: RegExpMatchArray | null;
 
     url = url.replace(/%2f/g, `/`);
@@ -386,6 +417,14 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         type: RequestType.Whoami,
         // Set later when login is parsed
         login: null as any,
+      };
+    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method == `PUT`) {
+      const [, scope, localName] = match;
+
+      return {
+        type: RequestType.Publish,
+        scope,
+        localName,
       };
     } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
       const [, scope, localName] = match;
@@ -414,6 +453,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
   const needsAuth = (parsedRequest: Request): boolean => {
     switch (parsedRequest.type) {
+      case RequestType.Publish:
       case RequestType.Whoami:
         return true;
 
@@ -472,8 +512,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     const listener: http.RequestListener = (req, res) =>
       void (async () => {
         try {
-          const parsedRequest = parseRequest(req.url!);
-
+          const parsedRequest = parseRequest(req.url!, req.method!);
           if (parsedRequest == null) {
             processError(res, 404, `Invalid route: ${req.url}`);
             return;
