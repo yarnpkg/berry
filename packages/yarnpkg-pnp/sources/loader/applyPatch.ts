@@ -396,6 +396,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   // Specifying the `--experimental-loader` flag makes Node enter ESM mode so we change it to not do that
   // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L72-L81
+  // Tested by https://github.com/yarnpkg/berry/blob/d80ee2dc5298d31eb864288d77671a2264713371/packages/acceptance-tests/pkg-tests-specs/sources/pnp-esm.test.ts#L226-L244
+  // Upstream issue https://github.com/nodejs/node/issues/33226
   const originalRunMain = moduleExports.runMain;
   moduleExports.runMain = function (main = process.argv[1]) {
     const resolvedMain = nodeUtils.resolveMainPath(main);
