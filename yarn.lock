@@ -276,7 +276,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.14.3, @babel/core@npm:^7.1.0, @babel/core@npm:^7.10.2, @babel/core@npm:^7.14.3, @babel/core@npm:^7.7.5":
+"@babel/core@npm:^7.1.0, @babel/core@npm:^7.10.2, @babel/core@npm:^7.14.3, @babel/core@npm:^7.7.5":
   version: 7.14.3
   resolution: "@babel/core@npm:7.14.3"
   dependencies:
@@ -7390,7 +7390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-queue@npm:3.8.10, better-queue@npm:^3.8.10":
+"better-queue@npm:^3.8.10":
   version: 3.8.10
   resolution: "better-queue@npm:3.8.10"
   dependencies:
@@ -16169,7 +16169,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-resolve@npm:26.0.1, jest-resolve@npm:^26.0.1":
+"jest-resolve@npm:^26.0.1":
   version: 26.0.1
   resolution: "jest-resolve@npm:26.0.1"
   dependencies:
@@ -25585,7 +25585,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"typedoc-neo-theme@npm:1.0.7, typedoc-neo-theme@npm:^1.0.7":
+"typedoc-neo-theme@npm:^1.0.7":
   version: 1.0.7
   resolution: "typedoc-neo-theme@npm:1.0.7"
   dependencies:
@@ -26883,7 +26883,7 @@ typescript@^4.4.2:
   languageName: node
   linkType: hard
 
-"webpack@npm:4.43.0, webpack@npm:^4.5.0":
+"webpack@npm:^4.5.0":
   version: 4.43.0
   resolution: "webpack@npm:4.43.0"
   dependencies:
