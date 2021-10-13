@@ -1,10 +1,10 @@
 import styled                                              from '@emotion/styled';
 import githubIcon                                          from '@iconify/icons-logos/github-icon';
 import {InlineIcon}                                        from '@iconify/react';
-import discordIcon                                         from '../images/logos/discord.svg';
 import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
 import PropTypes                                           from 'prop-types';
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
+import discordIcon                                         from '../images/logos/discord.svg';
 
 import {Logo}                                              from './logo';
 import {ifDesktop, ifMobile}                               from './responsive';
