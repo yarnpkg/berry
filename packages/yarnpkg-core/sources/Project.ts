@@ -1867,18 +1867,18 @@ function applyVirtualResolutionMutations({
     return pkg;
   };
 
-  const resolvePeerDependencies = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
+  const resolvePeerDependencies = (parentDescriptor: Descriptor, parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
     if (resolutionStack.length > 1000)
       reportStackOverflow();
 
     resolutionStack.push(parentLocator);
-    const result = resolvePeerDependenciesImpl(parentLocator, peerSlots, {top, optional});
+    const result = resolvePeerDependenciesImpl(parentDescriptor, parentLocator, peerSlots, {top, optional});
     resolutionStack.pop();
 
     return result;
   };
 
-  const resolvePeerDependenciesImpl = (parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
+  const resolvePeerDependenciesImpl = (parentDescriptor: Descriptor, parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
 
@@ -1954,7 +1954,7 @@ function applyVirtualResolutionMutations({
         throw new Error(`Assertion failed: The package (${resolution}, resolved from ${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       if (pkg.peerDependencies.size === 0) {
-        resolvePeerDependencies(pkg, new Map(), {top, optional: isOptional});
+        resolvePeerDependencies(descriptor, pkg, new Map(), {top, optional: isOptional});
         continue;
       }
 
@@ -1995,14 +1995,8 @@ function applyVirtualResolutionMutations({
         for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
           let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
-          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
-            peerDescriptor = structUtils.convertLocatorToDescriptor(parentLocator);
-
-            allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
-            allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
-
-            volatileDescriptors.delete(peerDescriptor.descriptorHash);
-          }
+          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest))
+            peerDescriptor = parentDescriptor;
 
           // If the peerRequest isn't provided by the parent then fall back to dependencies
           if ((!peerDescriptor || peerDescriptor.range === `missing:`) && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
@@ -2043,7 +2037,7 @@ function applyVirtualResolutionMutations({
         const next = typeof current !== `undefined` ? current + 1 : 1;
 
         virtualStack.set(pkg.locatorHash, next);
-        resolvePeerDependencies(virtualizedPackage, nextPeerSlots, {top, optional: isOptional});
+        resolvePeerDependencies(virtualizedDescriptor, virtualizedPackage, nextPeerSlots, {top, optional: isOptional});
         virtualStack.set(pkg.locatorHash, next - 1);
       });
 
@@ -2158,7 +2152,7 @@ function applyVirtualResolutionMutations({
     const locator = workspace.anchoredLocator;
 
     volatileDescriptors.delete(workspace.anchoredDescriptor.descriptorHash);
-    resolvePeerDependencies(locator, new Map(), {top: locator.locatorHash, optional: false});
+    resolvePeerDependencies(workspace.anchoredDescriptor, locator, new Map(), {top: locator.locatorHash, optional: false});
   }
 
   enum WarningType {
