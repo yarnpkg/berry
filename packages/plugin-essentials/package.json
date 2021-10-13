@@ -7,7 +7,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/json-proxy": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
-    "ci-info": "^2.0.0",
+    "ci-info": "^3.2.0",
     "clipanion": "^3.0.1",
     "enquirer": "^2.3.6",
     "lodash": "^4.17.15",
@@ -21,7 +21,6 @@
     "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
-    "@types/ci-info": "^2",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",

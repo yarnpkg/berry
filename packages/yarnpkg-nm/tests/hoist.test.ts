@@ -10,6 +10,7 @@ const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => 
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
+      isWorkspace: (obj[key] || {}).isWorkspace,
     };
     nodes.set(key, node);
 
@@ -531,5 +532,23 @@ describe(`hoist`, () => {
       B: {dependencies: [`A`], peerNames: [`A`]},
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
+
+  it(`should avoid hoisting direct workspace dependencies into non-root workspace`, () => {
+    // . -> W1(w) -> W2(w) -> W3(w)-> A@X
+    //            -> A@Y
+    //   -> W3
+    //   -> A@Z
+    // The A@X must not be hoisted into W2(w)
+    // otherwise accessing A via . -> W3 with --preserve-symlinks will result in A@Z,
+    // but accessing it via W3(w) will result in A@Y
+    const tree = {
+      '.': {dependencies: [`W1(w)`, `W3`, `A@Z`], isWorkspace: true},
+      'W1(w)': {dependencies: [`W2(w)`, `A@Y`], isWorkspace: true},
+      'W2(w)': {dependencies: [`W3(w)`], isWorkspace: true},
+      'W3(w)': {dependencies: [`A@X`], isWorkspace: true},
+    };
+
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(5);
   });
 });

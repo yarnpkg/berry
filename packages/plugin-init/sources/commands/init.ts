@@ -93,8 +93,6 @@ export default class InitCommand extends BaseCommand {
     if (versionExitCode !== 0)
       return versionExitCode;
 
-    this.context.stdout.write(`\n`);
-
     const args: Array<string> = [];
     if (this.private)
       args.push(`-p`);

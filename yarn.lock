@@ -3910,13 +3910,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ci-info@npm:^2":
-  version: 2.0.0
-  resolution: "@types/ci-info@npm:2.0.0"
-  checksum: ff163e52b8885f8f254e8ab96414c55276c4a303c288ad99fe57b865156fc953c1d2ae9c4b5b59fa7caa749680d113366ec9949826124b9eaf14e0bcb12f57c2
-  languageName: node
-  linkType: hard
-
 "@types/color-name@npm:^1.1.1":
   version: 1.1.1
   resolution: "@types/color-name@npm:1.1.1"
@@ -5289,7 +5282,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
-    "@types/ci-info": ^2
     "@types/semver": ^7.1.0
     "@types/yup": ^0
     "@yarnpkg/builder": "workspace:^"
@@ -5317,7 +5309,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
     chalk: ^3.0.0
-    ci-info: ^2.0.0
+    ci-info: ^3.2.0
     clipanion: ^3.0.1
     micromatch: ^4.0.2
     semver: ^7.1.2
@@ -5337,7 +5329,6 @@ __metadata:
     "@arcanis/slice-ansi": ^1.0.2
     "@rollup/plugin-commonjs": ^18.0.0
     "@rollup/plugin-node-resolve": ^11.0.1
-    "@types/ci-info": ^2
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
     "@types/lodash": ^4.14.136
@@ -5359,7 +5350,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^"
     camelcase: ^5.3.1
     chalk: ^3.0.0
-    ci-info: ^2.0.0
+    ci-info: ^3.2.0
     clipanion: ^3.0.1
     cross-spawn: 7.0.3
     diff: ^4.0.1
@@ -5719,7 +5710,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
-    "@types/ci-info": ^2
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
@@ -5729,7 +5719,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/json-proxy": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
-    ci-info: ^2.0.0
+    ci-info: ^3.2.0
     clipanion: ^3.0.1
     enquirer: ^2.3.6
     lodash: ^4.17.15
@@ -8374,6 +8364,13 @@ __metadata:
   version: 2.0.0
   resolution: "ci-info@npm:2.0.0"
   checksum: 3b374666a85ea3ca43fa49aa3a048d21c9b475c96eb13c133505d2324e7ae5efd6a454f41efe46a152269e9b6a00c9edbe63ec7fa1921957165aae16625acd67
+  languageName: node
+  linkType: hard
+
+"ci-info@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "ci-info@npm:3.2.0"
+  checksum: c68995a94e95ce3f233ff845e62dfc56f2e8ff1e3f5c1361bcdd520cbbc9726d8a54cbc1a685cb9ee19c3c5e71a1dade6dda23eb364b59b8e6c32508a9b761bc
   languageName: node
   linkType: hard
 

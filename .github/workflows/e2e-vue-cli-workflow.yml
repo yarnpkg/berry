@@ -33,5 +33,5 @@ jobs:
 
         echo '{"useTaobaoRegistry": false}' | tee ~/.vuerc
 
-        yarn dlx @vue/cli create -d my-vue && cd my-vue
-        yarn build
+        YARN_PNP_FALLBACK_MODE="dependencies-only" yarn dlx @vue/cli create -d my-vue && cd my-vue
+        YARN_PNP_FALLBACK_MODE="dependencies-only" yarn build

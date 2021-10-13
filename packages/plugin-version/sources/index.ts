@@ -24,7 +24,7 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       isArray: true,
       isNullable: false,
-      default: [`master`, `origin/master`, `upstream/master`],
+      default: [`master`, `origin/master`, `upstream/master`, `main`, `origin/main`, `upstream/main`],
     },
     changesetIgnorePatterns: {
       description: `Array of glob patterns; files matching them will be ignored when fetching the changed files`,

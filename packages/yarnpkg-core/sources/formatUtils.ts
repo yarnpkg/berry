@@ -1,6 +1,6 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
-import {CIRCLE as isCircleCI}                                               from 'ci-info';
+import CI                                                                   from 'ci-info';
 import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
 
@@ -52,14 +52,14 @@ export enum Style {
   BOLD = 1 << 1,
 }
 
-const chalkOptions = process.env.GITHUB_ACTIONS
+const chalkOptions = CI.GITHUB_ACTIONS
   ? {level: 2}
   : chalk.supportsColor
     ? {level: chalk.supportsColor.level}
     : {level: 0};
 
 export const supportsColor = chalkOptions.level !== 0;
-export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS && !isCircleCI;
+export const supportsHyperlinks = supportsColor && !CI.GITHUB_ACTIONS && !CI.CIRCLE && !CI.GITLAB;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 

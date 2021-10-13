@@ -4,6 +4,7 @@ import * as ts                      from 'typescript';
 export enum CallType {
   REQUIRE,
   RESOLVE,
+  IMPORT,
 }
 
 export function prettyNodeLocation(configuration: Configuration, node: ts.Node) {
@@ -45,6 +46,11 @@ export function getCallType(call: ts.CallExpression) {
         return null;
 
       return CallType.RESOLVE;
+    } break;
+
+    // import(...)
+    case ts.SyntaxKind.ImportKeyword: {
+      return CallType.IMPORT;
     } break;
 
     default: {

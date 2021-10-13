@@ -163,6 +163,9 @@ export type PeerRequirement = {
   allRequesters: Array<LocatorHash>,
 };
 
+const makeLockfileChecksum = (normalizedContent: string) =>
+  hashUtils.makeHash(`${INSTALL_STATE_VERSION}`, normalizedContent);
+
 export class Project {
   public readonly configuration: Configuration;
   public readonly cwd: PortablePath;
@@ -279,7 +282,7 @@ export class Project {
       const content = await xfs.readFilePromise(lockfilePath, `utf8`);
 
       // We store the salted checksum of the lockfile in order to invalidate the install state when needed
-      this.lockFileChecksum = hashUtils.makeHash(`${INSTALL_STATE_VERSION}`, content);
+      this.lockFileChecksum = makeLockfileChecksum(content);
 
       const parsed: any = parseSyml(content);
 
@@ -1623,11 +1626,22 @@ export class Project {
 
   async persistLockfile() {
     const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
-    const lockfileContent = this.generateLockfile();
 
-    await xfs.changeFilePromise(lockfilePath, lockfileContent, {
-      automaticNewlines: true,
-    });
+    let currentContent = ``;
+    try {
+      currentContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+    } catch (error) {
+      // ignore errors, no big deal
+    }
+
+    const newContent = this.generateLockfile();
+    const normalizedContent = normalizeLineEndings(currentContent, newContent);
+    if (normalizedContent === currentContent)
+      return;
+
+    await xfs.writeFilePromise(lockfilePath, normalizedContent);
+
+    this.lockFileChecksum = makeLockfileChecksum(normalizedContent);
   }
 
   async persistInstallStateFile() {

@@ -1078,6 +1078,7 @@ describe(`Plug'n'Play`, () => {
             // If the .pnp.cjs file references absolute paths, they will stop working
             await xfs.renamePromise(`${path}/.yarn`, `${path2}/.yarn`);
             await xfs.renamePromise(`${path}/.pnp.cjs`, `${path2}/.pnp.cjs`);
+            await xfs.renamePromise(`${path}/yarn.lock`, `${path2}/yarn.lock`);
 
             await expect(source2(`require('no-deps')`)).resolves.toMatchObject({
               name: `no-deps`,
