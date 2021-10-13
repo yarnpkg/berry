@@ -1,34 +1,3 @@
 releases:
-  "@yarnpkg/builder": minor
   "@yarnpkg/cli": minor
-  "@yarnpkg/core": minor
-  "@yarnpkg/doctor": minor
-  "@yarnpkg/esbuild-plugin-pnp": minor
-  "@yarnpkg/nm": minor
-  "@yarnpkg/plugin-compat": minor
-  "@yarnpkg/plugin-constraints": minor
-  "@yarnpkg/plugin-dlx": minor
-  "@yarnpkg/plugin-essentials": minor
-  "@yarnpkg/plugin-exec": minor
-  "@yarnpkg/plugin-file": minor
-  "@yarnpkg/plugin-git": minor
-  "@yarnpkg/plugin-github": minor
-  "@yarnpkg/plugin-http": minor
-  "@yarnpkg/plugin-init": minor
-  "@yarnpkg/plugin-interactive-tools": minor
-  "@yarnpkg/plugin-link": minor
-  "@yarnpkg/plugin-nm": minor
   "@yarnpkg/plugin-npm": minor
-  "@yarnpkg/plugin-npm-cli": minor
-  "@yarnpkg/plugin-pack": minor
-  "@yarnpkg/plugin-patch": minor
-  "@yarnpkg/plugin-pnp": minor
-  "@yarnpkg/plugin-pnpm": minor
-  "@yarnpkg/plugin-stage": minor
-  "@yarnpkg/plugin-typescript": minor
-  "@yarnpkg/plugin-version": minor
-  "@yarnpkg/plugin-workspace-tools": minor
-  "@yarnpkg/pnp": minor
-  "@yarnpkg/pnpify": minor
-  "@yarnpkg/sdks": minor
-  vscode-zipfs: minor
