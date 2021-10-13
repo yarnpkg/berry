@@ -5719,6 +5719,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/json-proxy": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
     ci-info: ^3.2.0
     clipanion: ^3.0.1
     enquirer: ^2.3.6
@@ -5730,6 +5731,7 @@ __metadata:
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -5767,6 +5769,7 @@ __metadata:
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    clipanion: ^3.0.1
     git-url-parse: 11.1.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6052,6 +6055,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libui": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
     clipanion: ^3.0.1
     ink: ^3.0.8
     lodash: ^4.17.15
@@ -6062,6 +6066,7 @@ __metadata:
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -6074,6 +6079,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
     clipanion: ^3.0.1
     micromatch: ^4.0.2
     p-limit: ^2.2.0
@@ -6083,6 +6089,7 @@ __metadata:
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^"
   languageName: unknown
   linkType: soft
 

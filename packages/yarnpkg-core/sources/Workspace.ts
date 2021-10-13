@@ -173,7 +173,7 @@ export class Workspace {
         for (const dependencyType of dependencies) {
           for (const descriptor of projectWorkspace.manifest[dependencyType].values()) {
             const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
-            if (foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.locator, workspace.locator)) {
+            if (foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator)) {
               return true;
             }
           }
