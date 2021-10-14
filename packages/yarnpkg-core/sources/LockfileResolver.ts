@@ -23,7 +23,7 @@ export class LockfileResolver implements Resolver {
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (opts.project.originalPackages.has(locator.locatorHash))
+    if (opts.project.originalPackages.has(locator.locatorHash) && !opts.project.lockfileNeedsRefresh)
       return true;
 
     return false;
@@ -63,7 +63,6 @@ export class LockfileResolver implements Resolver {
 
   async resolve(locator: Locator, opts: ResolveOptions) {
     const pkg = opts.project.originalPackages.get(locator.locatorHash);
-
     if (!pkg)
       throw new Error(`The lockfile resolver isn't meant to resolve packages - they should already have been stored into a cache`);
 

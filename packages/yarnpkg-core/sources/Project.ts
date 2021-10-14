@@ -198,6 +198,12 @@ export class Project {
   public optionalBuilds: Set<LocatorHash> = new Set();
 
   /**
+   * If true, the data contained within `originalPackages` are from a different
+   * lockfile version and need to be refreshed.
+   */
+  public lockfileNeedsRefresh: boolean = false;
+
+  /**
    * Populated by the `resolveEverything` method.
    * *Not* stored inside the install state.
    *
@@ -291,6 +297,8 @@ export class Project {
         const lockfileVersion = parsed.__metadata.version;
         const cacheKey = parsed.__metadata.cacheKey;
 
+        this.lockfileNeedsRefresh = lockfileVersion < LOCKFILE_VERSION;
+
         for (const key of Object.keys(parsed)) {
           if (key === `__metadata`)
             continue;
@@ -325,33 +333,14 @@ export class Project {
             this.storedChecksums.set(locator.locatorHash, checksum);
           }
 
-          if (lockfileVersion >= LOCKFILE_VERSION) {
-            const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
-            this.originalPackages.set(pkg.locatorHash, pkg);
-          }
+          const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
+          this.originalPackages.set(pkg.locatorHash, pkg);
 
           for (const entry of key.split(MULTIPLE_KEYS_REGEXP)) {
             const descriptor = structUtils.parseDescriptor(entry);
 
             this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
-
-            if (lockfileVersion >= LOCKFILE_VERSION) {
-              // If the lockfile is up-to-date, we can simply register the
-              // resolution as a done deal.
-
-              this.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
-            } else {
-              // But if it isn't, then we instead setup an alias so that the
-              // descriptor will be re-resolved (so that we get to retrieve the
-              // new fields) while still resolving to the same locators.
-
-              const resolutionDescriptor = structUtils.convertLocatorToDescriptor(locator);
-
-              if (resolutionDescriptor.descriptorHash !== descriptor.descriptorHash) {
-                this.storedDescriptors.set(resolutionDescriptor.descriptorHash, resolutionDescriptor);
-                this.resolutionAliases.set(descriptor.descriptorHash, resolutionDescriptor.descriptorHash);
-              }
-            }
+            this.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
           }
         }
       }
