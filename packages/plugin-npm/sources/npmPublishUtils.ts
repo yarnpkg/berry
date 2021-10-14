@@ -8,7 +8,7 @@ import {URL}                    from 'url';
 
 import {normalizeRegistry}      from './npmConfigUtils';
 
-export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: {access: string | undefined, tag: string, registry: string, gitHead: string | undefined}) {
+export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: {access: string | undefined, tag: string, registry: string, gitHead?: string}) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;
