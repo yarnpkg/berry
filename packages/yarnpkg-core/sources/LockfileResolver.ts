@@ -3,6 +3,12 @@ import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 
 export class LockfileResolver implements Resolver {
+  private readonly resolver: Resolver;
+
+  constructor(resolver: Resolver) {
+    this.resolver = resolver;
+  }
+
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
     if (resolution)
@@ -32,7 +38,7 @@ export class LockfileResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return this.resolver.getResolutionDependencies(descriptor, opts);
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {

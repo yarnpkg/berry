@@ -674,9 +674,14 @@ export class Project {
     const legacyMigrationResolver = new LegacyMigrationResolver();
     await legacyMigrationResolver.setup(this, {report: opts.report});
 
-    const resolver: Resolver = opts.lockfileOnly
-      ? new MultiResolver([new LockfileResolver(), new RunInstallPleaseResolver(realResolver)])
-      : new MultiResolver([new LockfileResolver(), legacyMigrationResolver, realResolver]);
+    const resolverChain = opts.lockfileOnly
+      ? [new RunInstallPleaseResolver(realResolver)]
+      : [legacyMigrationResolver, realResolver];
+
+    const resolver: Resolver = new MultiResolver([
+      new LockfileResolver(realResolver),
+      ...resolverChain,
+    ]);
 
     const fetcher = this.configuration.makeFetcher();
 
