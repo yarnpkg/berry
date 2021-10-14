@@ -27,6 +27,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The PnP patch now picks up changes to the `fs` module, allowing users to patch it.
 - When using PnP, `require.resolve('pnpapi')` will be handled correctly even when using `exports`.
 - The install state will no longer be invalidated after running commands that modify the lockfile; this should bring a significant performance improvement when running commands such as `yarn run` immediately after adding or removing dependencies inside large monorepos.
+- Optional peer dependencies now imply an optional peer dependency on the corresponding `@types` version. This matches the behaviour for peer dependencies.
 
 ### Installs
 

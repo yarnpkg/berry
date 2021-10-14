@@ -1571,6 +1571,19 @@ export class Configuration {
         : `${descriptor.name}`;
     };
 
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in older
+    // npm releases.
+
+    for (const identString of pkg.peerDependenciesMeta.keys()) {
+      const ident = structUtils.parseIdent(identString);
+
+      if (!pkg.peerDependencies.has(ident.identHash)) {
+        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
+      }
+    }
+
+    // Automatically add corresponding `@types` optional peer dependencies
     for (const descriptor of pkg.peerDependencies.values()) {
       if (descriptor.scope === `types`)
         continue;
@@ -1582,21 +1595,10 @@ export class Configuration {
       if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(stringifiedTypesIdent))
         continue;
 
+      pkg.peerDependencies.set(typesIdent.identHash, structUtils.makeDescriptor(typesIdent, `*`));
       pkg.peerDependenciesMeta.set(stringifiedTypesIdent, {
         optional: true,
       });
-    }
-
-    // I don't like implicit dependencies, but package authors are reluctant to
-    // use optional peer dependencies because they would print warnings in older
-    // npm releases.
-
-    for (const identString of pkg.peerDependenciesMeta.keys()) {
-      const ident = structUtils.parseIdent(identString);
-
-      if (!pkg.peerDependencies.has(ident.identHash)) {
-        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
-      }
     }
 
     // We sort the dependencies so that further iterations always occur in the
