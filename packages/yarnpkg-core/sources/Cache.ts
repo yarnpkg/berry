@@ -299,8 +299,6 @@ export class Cache {
           ? shouldMock || await baseFs.existsPromise(tentativeCachePath)
           : false;
 
-        console.log(locator, {shouldMock});
-
         const action = cacheExists
           ? onHit
           : onMiss;
