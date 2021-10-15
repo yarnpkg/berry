@@ -719,7 +719,7 @@ export class Project {
       }
 
       resolutionQueue.push(Promise.all([...pkg.dependencies.values()].map(descriptor => {
-        return scheduleDescriptorResolution(descriptor);
+        return scheduleDescriptorResolution(descriptor, locator);
       })));
 
       allPackages.set(pkg.locatorHash, pkg);
@@ -737,8 +737,8 @@ export class Project {
       return newPromise;
     };
 
-    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor): Promise<Package> => {
-      const resolution = await scheduleDescriptorResolution(alias);
+    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor, parentLocator: Locator | null): Promise<Package> => {
+      const resolution = await scheduleDescriptorResolution(alias, parentLocator);
 
       allDescriptors.set(descriptor.descriptorHash, descriptor);
       allResolutions.set(descriptor.descriptorHash, resolution.locatorHash);
@@ -746,14 +746,19 @@ export class Project {
       return resolution;
     };
 
-    const startDescriptorResolution = async (descriptor: Descriptor): Promise<Package> => {
+    const startDescriptorResolution = async (descriptor: Descriptor, parentLocator: Locator | null): Promise<Package> => {
       const alias = this.resolutionAliases.get(descriptor.descriptorHash);
       if (typeof alias !== `undefined`)
-        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
+        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!, parentLocator);
 
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
-        return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency)] as const;
+        if (parentLocator === null)
+          throw new Error(`Assertion failed: Workspaces should not have resolution dependencies`);
+
+        const bound = resolver.bindDescriptor(dependency, parentLocator, resolveOptions);
+
+        return [dependency.descriptorHash, await scheduleDescriptorResolution(bound, parentLocator)] as const;
       })));
 
       const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
@@ -772,21 +777,21 @@ export class Project {
       return schedulePackageResolution(finalResolution);
     };
 
-    const scheduleDescriptorResolution = (descriptor: Descriptor) => {
+    const scheduleDescriptorResolution = (descriptor: Descriptor, parentLocator: Locator | null) => {
       const promise = descriptorResolutionPromises.get(descriptor.descriptorHash);
       if (typeof promise !== `undefined`)
         return promise;
 
       allDescriptors.set(descriptor.descriptorHash, descriptor);
 
-      const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor));
+      const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor, parentLocator));
       descriptorResolutionPromises.set(descriptor.descriptorHash, newPromise);
       return newPromise;
     };
 
     for (const workspace of this.workspaces) {
       const workspaceDescriptor = workspace.anchoredDescriptor;
-      resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor));
+      resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor, null));
     }
 
     while (resolutionQueue.length > 0) {
