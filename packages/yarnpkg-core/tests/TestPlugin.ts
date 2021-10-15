@@ -46,6 +46,8 @@ export class UnboundDescriptorResolver implements Resolver {
       languageName: `node`,
       linkType: LinkType.HARD,
 
+      conditions: null,
+
       dependencies: new Map(),
       peerDependencies: new Map(),
 
@@ -103,6 +105,8 @@ export class ResolutionDependencyResolver implements Resolver {
       version: `1.0.0`,
       languageName: `node`,
       linkType: LinkType.HARD,
+
+      conditions: null,
 
       dependencies: new Map(),
       peerDependencies: new Map(),

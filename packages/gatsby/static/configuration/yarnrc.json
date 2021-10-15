@@ -641,7 +641,8 @@
           "default": [],
           "_exampleItems": ["current", "x86", "ia32"]
         }
-      }
+      },
+      "_exampleKeys": ["os", "cpu"]
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
