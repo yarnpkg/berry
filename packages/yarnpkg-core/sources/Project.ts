@@ -1636,6 +1636,7 @@ export class Project {
     await xfs.writeFilePromise(lockfilePath, normalizedContent);
 
     this.lockFileChecksum = makeLockfileChecksum(normalizedContent);
+    this.lockfileNeedsRefresh = false;
   }
 
   async persistInstallStateFile() {
