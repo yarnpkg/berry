@@ -1652,7 +1652,7 @@ describe(`Plug'n'Play`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, build skipped.`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, build skipped.`));
 
         await expect(source(`require('dep')`)).resolves.toMatchObject({
           name: `dep`,
