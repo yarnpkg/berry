@@ -4,10 +4,13 @@ import LinkPlugin                                                               
 import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
 import v8                                                                              from 'v8';
 
+import {TestPlugin}                                                                    from './TestPlugin';
+
 const getConfiguration = (p: PortablePath) => {
   return Configuration.create(p, p, new Map([
     [`@yarnpkg/plugin-link`, LinkPlugin],
     [`@yarnpkg/plugin-pnp`, PnpPlugin],
+    [`plugin-test`, TestPlugin],
   ]));
 };
 
@@ -228,6 +231,56 @@ describe(`Project`, () => {
       project.topLevelWorkspace.manifest.main = `./index.js` as PortablePath;
       await project.topLevelWorkspace.persistManifest();
       expect(project.topLevelWorkspace.manifest.raw.main).toEqual(`./index.js`);
+    });
+  });
+
+  // https://github.com/yarnpkg/berry/issues/3559
+  it(`should preserve resolution dependencies when installing in lockfileOnly mode`, async () => {
+    const checkProject = (project: Project) => {
+      expect([...project.storedDescriptors.values()]).toStrictEqual(expect.arrayContaining([
+        expect.objectContaining({name: `foo`, range: `unbound:bar`}),
+        expect.objectContaining({name: `foo`, range: `resdep:foo@unbound:bar`}),
+      ]));
+
+      for (const packages of [project.originalPackages, project.storedPackages]) {
+        expect([...packages.values()]).toStrictEqual(expect.arrayContaining([
+          expect.objectContaining({name: `foo`, reference: `unbound:bar`}),
+          expect.objectContaining({name: `foo`, reference: `resdep:foo@unbound:bar`}),
+        ]));
+      }
+    };
+
+    await xfs.mktempPromise(async dir => {
+      await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {
+        dependencies: {
+          [`foo`]: `resdep:foo@unbound:bar`,
+        },
+      });
+
+      // First we install the project; this will generate the lockfile yada yada
+      {
+        const configuration = await getConfiguration(dir);
+        const {project} = await Project.find(configuration, dir);
+        const cache = await Cache.find(configuration);
+
+        await project.install({cache, report: new ThrowReport()});
+
+        // Sanity check
+        checkProject(project);
+      }
+
+      // Then we do it again, with a lockfileOnly install
+      {
+        const configuration = await getConfiguration(dir);
+        const {project} = await Project.find(configuration, dir);
+
+        await project.resolveEverything({
+          lockfileOnly: true,
+          report: new ThrowReport(),
+        });
+
+        checkProject(project);
+      }
     });
   });
 });
