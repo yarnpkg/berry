@@ -845,6 +845,9 @@ export class Project {
       if (pkg.conditions === null)
         continue;
 
+      if (!optionalBuilds.has(pkg.locatorHash))
+        continue;
+
       if (!structUtils.isPackageCompatible(pkg, supportedArchitectures))
         disabledLocators.add(pkg.locatorHash);
 
@@ -914,13 +917,6 @@ export class Project {
           throw new Error(`Assertion failed: The locator should have been registered`);
 
         if (structUtils.isVirtualLocator(pkg))
-          return;
-
-        // We don't fetch the package if it's for another system than ours
-        // unless --check-cache is set and the package already has an
-        // associated checksum (since in this case we need to validate it,
-        // which requires us to fetch the packages anew)
-        if (this.disabledLocators.has(pkg.locatorHash) && (!cache.check || !this.storedChecksums.has(pkg.locatorHash)))
           return;
 
         let fetchResult;
@@ -1582,7 +1578,6 @@ export class Project {
     optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
       cacheKey: undefined,
-      supportedArchitectures: this.configuration.getSupportedArchitectures(),
     };
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {

@@ -5390,7 +5390,7 @@ __metadata:
     stream-to-promise: ^2.2.0
     strip-ansi: ^6.0.0
     tar: ^6.0.5
-    tinylogic: ^1.0.2
+    tinylogic: ^1.0.3
     treeify: ^1.1.0
     tslib: ^1.13.0
     tunnel: ^0.0.6
@@ -25072,12 +25072,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"tinylogic@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "tinylogic@npm:1.0.2"
+"tinylogic@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "tinylogic@npm:1.0.3"
   dependencies:
     chevrotain: ^9.1.0
-  checksum: 4df546b841f4ebaf90040033a8217ef80f55c601111977a91edec066720250166a368276e34625fa464e8690726eef5c57647e4abe4a6ce689e72bcd7341592c
+  checksum: fdf7fcc170050889b210fd035b1eb2ac81a68d1324010a427eeee53ac49613ecaa3fbd33b41adb1264dfb02b4d500b3f442da1db3ffc53834c654345c1658afa
   languageName: node
   linkType: hard
 

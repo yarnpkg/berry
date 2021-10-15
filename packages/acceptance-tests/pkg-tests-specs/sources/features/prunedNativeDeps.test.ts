@@ -5,9 +5,9 @@ export {};
 
 describe(`Features`, () => {
   describe(`Pruned native deps`, () => {
-    it(`should only resolve all dependencies, regardless of the system`, makeTemporaryEnv({
+    it(`should resolve all dependencies, regardless of the system`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -19,12 +19,12 @@ describe(`Features`, () => {
 
       await run(`install`);
 
-      await expect(xfs.readFilePromise(ppath.join(path, Filename.lockfile))).resolves.toMatchSnapshot();
+      await expect(xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`)).resolves.toMatchSnapshot();
     }));
 
     it(`shouldn't fetch packages that it won't need`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -48,18 +48,18 @@ describe(`Features`, () => {
 
       expect(tarballRequests).toEqual([{
         type: RequestType.PackageTarball,
-        localName: `native`,
+        localName: `native-foo-x64`,
         version: `1.0.0`,
       }, {
         type: RequestType.PackageTarball,
-        localName: `native-foo-x64`,
+        localName: `optional-native`,
         version: `1.0.0`,
       }]);
     }));
 
     it(`should overfetch if requested to do so`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -83,22 +83,22 @@ describe(`Features`, () => {
 
       expect(tarballRequests).toEqual([{
         type: RequestType.PackageTarball,
-        localName: `native`,
-        version: `1.0.0`,
-      }, {
-        type: RequestType.PackageTarball,
         localName: `native-foo-x64`,
         version: `1.0.0`,
       }, {
         type: RequestType.PackageTarball,
         localName: `native-foo-x86`,
         version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `optional-native`,
+        version: `1.0.0`,
       }]);
     }));
 
     it(`should produce a stable lockfile, regardless of the architecture`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -126,7 +126,7 @@ describe(`Features`, () => {
 
     it(`should produce a stable PnP hook, regardless of the architecture`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -154,7 +154,7 @@ describe(`Features`, () => {
 
     it(`shouldn't break when using --check-cache with native packages`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -178,7 +178,7 @@ describe(`Features`, () => {
 
     it(`should detect packages being tampered when using --check-cache`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -206,7 +206,7 @@ describe(`Features`, () => {
 
     it(`should also validate other architectures than the current one if necessary when using --check-cache`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -241,7 +241,7 @@ describe(`Features`, () => {
 
     it(`should only fetch other architectures when using --check-cache if they are already in the cache`, makeTemporaryEnv({
       dependencies: {
-        [`native`]: `1.0.0`,
+        [`optional-native`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
@@ -274,15 +274,15 @@ describe(`Features`, () => {
 
       expect(tarballRequests).toEqual([{
         type: RequestType.PackageTarball,
-        localName: `native`,
-        version: `1.0.0`,
-      }, {
-        type: RequestType.PackageTarball,
         localName: `native-foo-x64`,
         version: `1.0.0`,
       }, {
         type: RequestType.PackageTarball,
         localName: `native-foo-x86`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `optional-native`,
         version: `1.0.0`,
       }]);
     }));

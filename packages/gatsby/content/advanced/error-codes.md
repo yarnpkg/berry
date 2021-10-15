@@ -358,3 +358,7 @@ workspace(WorkspaceCwd), workspace_field(WorkspaceCwd, 'name', _).
 ```
 
 For more information about the parameters that must be instantiated when calling the predicate reported by the error message, consult the [dedicated page](/features/constraints#query-predicate) from our documentation.
+
+## YN0076 - `INCOMPATIBLE_ARCHITECTURE`
+
+A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) fields) as being incompatible with the system architecture. Its postinstall scripts will not run on this system.

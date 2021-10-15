@@ -170,10 +170,15 @@ export class Cache {
     };
 
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
-      const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}` : expectedChecksum;
+      const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
+        ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}`
+        : expectedChecksum;
 
       if (refetchPath !== null) {
-        const previousChecksum = (!opts.skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}` : expectedChecksum;
+        const previousChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
+          ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}`
+          : expectedChecksum;
+
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
@@ -294,6 +299,8 @@ export class Cache {
           ? shouldMock || await baseFs.existsPromise(tentativeCachePath)
           : false;
 
+        console.log(locator, {shouldMock});
+
         const action = cacheExists
           ? onHit
           : onMiss;
@@ -355,7 +362,12 @@ export class Cache {
       zipFs?.discardAndClose();
     };
 
-    return [aliasFs, releaseFs, checksum];
+    // We hide the checksum if the package presence is conditional, because it becomes unreliable
+    const exposedChecksum = !opts.unstablePackages?.has(locator.locatorHash)
+      ? checksum
+      : null;
+
+    return [aliasFs, releaseFs, exposedChecksum];
   }
 }
 

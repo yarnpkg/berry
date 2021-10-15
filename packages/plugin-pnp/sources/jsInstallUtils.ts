@@ -1,6 +1,15 @@
 import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, Report, structUtils} from '@yarnpkg/core';
 import {Filename, ppath}                                                                                                                      from '@yarnpkg/fslib';
 
+export function checkAndReportManifestCompatibility(pkg: Package, label: string, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
+  if (!structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+    report?.reportWarningOnce(MessageName.INCOMPATIBLE_ARCHITECTURE, `${structUtils.prettyLocator(configuration, pkg)} The ${process.platform}-${process.arch} architecture is incompatible with this module, ${label} skipped.`);
+    return false;
+  }
+
+  return true;
+}
+
 export type ExtractBuildScriptDataRequirements = {
   manifest: Pick<Manifest, 'scripts'>,
   misc: {
@@ -36,6 +45,10 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
     report?.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
     return [];
   }
+
+  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, `build`, {configuration, report});
+  if (!isManifestCompatible)
+    return [];
 
   return buildScripts;
 }

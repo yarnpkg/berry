@@ -10348,7 +10348,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["stream-to-promise", "npm:2.2.0"],
             ["strip-ansi", "npm:6.0.0"],
             ["tar", "npm:6.0.5"],
-            ["tinylogic", "npm:1.0.2"],
+            ["tinylogic", "npm:1.0.3"],
             ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
             ["tunnel", "npm:0.0.6"]
@@ -38198,10 +38198,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["tinylogic", [
-        ["npm:1.0.2", {
-          "packageLocation": "./.yarn/cache/tinylogic-npm-1.0.2-16b9146b6a-4df546b841.zip/node_modules/tinylogic/",
+        ["npm:1.0.3", {
+          "packageLocation": "./.yarn/cache/tinylogic-npm-1.0.3-bd596a96c4-fdf7fcc170.zip/node_modules/tinylogic/",
           "packageDependencies": [
-            ["tinylogic", "npm:1.0.2"],
+            ["tinylogic", "npm:1.0.3"],
             ["chevrotain", "npm:9.1.0"]
           ],
           "linkType": "HARD",

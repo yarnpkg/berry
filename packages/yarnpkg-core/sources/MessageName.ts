@@ -78,7 +78,7 @@ export enum MessageName {
   UPDATE_LOCKFILE_ONLY_SKIP_LINK = 73,
   NM_HARDLINKS_MODE_DOWNGRADED = 74,
   PROLOG_INSTANTIATION_ERROR = 75,
-  IMMUTABLE_LOCKFILE_INCOMPATIBLE_PACKAGE = 76,
+  INCOMPATIBLE_ARCHITECTURE = 76,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

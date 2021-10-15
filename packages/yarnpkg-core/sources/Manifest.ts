@@ -662,9 +662,9 @@ export class Manifest {
     const fields: Array<string> = [];
 
     if (this.os && this.os.length > 0)
-      fields.push(this.os.length === 1 ? `os=${this.os[0]}` : `(${this.os.map(os => `os=${os}`).join(` | `)})`);
+      fields.push(toConditionLine(`os`, this.os));
     if (this.cpu && this.cpu.length > 0)
-      fields.push(this.cpu.length === 1 ? `cpu=${this.cpu[0]}` : `(${this.cpu.map(cpu => `cpu=${cpu}`).join(` | `)})`);
+      fields.push(toConditionLine(`cpu`, this.cpu));
 
     return fields.length > 0 ? fields.join(` & `) : null;
   }
@@ -986,4 +986,23 @@ function tryParseOptionalBoolean(value: unknown, {yamlCompatibilityMode}: {yamlC
     return value;
 
   return null;
+}
+
+function toConditionToken(name: string, raw: string) {
+  const index = raw.search(/[^!]/);
+  if (index === -1)
+    return `invalid`;
+
+  const prefix = index % 2 === 0 ? `` : `!`;
+  const value = raw.slice(index);
+
+  return `${prefix}${name}=${value}`;
+}
+
+function toConditionLine(name: string, rawTokens: Array<string>) {
+  if (rawTokens.length === 1) {
+    return toConditionToken(name, rawTokens[0]);
+  } else {
+    return `(${rawTokens.map(raw => toConditionToken(name, raw)).join(` | `)})`;
+  }
 }
