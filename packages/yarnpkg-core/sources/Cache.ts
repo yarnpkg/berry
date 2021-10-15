@@ -43,7 +43,11 @@ export class Cache {
 
   public readonly cacheKey: string;
 
-  private mutexes: Map<LocatorHash, Promise<readonly [boolean, PortablePath, string | null]>> = new Map();
+  private mutexes: Map<LocatorHash, Promise<readonly [
+    shouldMock: boolean,
+    cachePath: PortablePath,
+    checksum: string | null,
+  ]>> = new Map();
 
   /**
    * To ensure different instances of `Cache` doesn't end up copying to the same
@@ -159,12 +163,23 @@ export class Cache {
 
     const baseFs = new NodeFS();
 
+    // Conditional packages may not be fetched if they're intended for a
+    // different architecture than the current one. To avoid having to be
+    // careful about those packages everywhere, we instead change their
+    // content to that of an empty in-memory package.
+    //
+    // This memory representation will be wrapped into an AliasFS to make
+    // it seem like it actually exist on the disk, at the location of the
+    // cache the package would fill if it was normally fetched.
     const makeMockPackage = () => {
       const zipFs = new ZipFS(null, {libzip});
 
-      const rootPackageDir = ppath.join(PortablePath.root, Filename.nodeModules, structUtils.stringifyIdent(locator) as PortablePath);
+      const rootPackageDir = ppath.join(PortablePath.root, structUtils.getIdentVendorPath(locator));
       zipFs.mkdirSync(rootPackageDir, {recursive: true});
-      zipFs.writeJsonSync(ppath.join(rootPackageDir, Filename.manifest), {preferUnplugged: true});
+      zipFs.writeJsonSync(ppath.join(rootPackageDir, Filename.manifest), {
+        name: structUtils.stringifyIdent(locator),
+        pruned: true,
+      });
 
       return zipFs;
     };
@@ -294,19 +309,21 @@ export class Cache {
         // the checksum is known or not.
         const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum, opts);
 
-        const shouldMock = !!opts.mockedPackages?.has(locator.locatorHash) && (!this.check || !await baseFs.existsPromise(tentativeCachePath!));
-        const cacheExists = tentativeCachePath !== null
-          ? shouldMock || await baseFs.existsPromise(tentativeCachePath)
+        const cacheFileExists = tentativeCachePath !== null
+          ? await baseFs.existsPromise(tentativeCachePath)
           : false;
 
-        const action = cacheExists
+        const shouldMock = !!opts.mockedPackages?.has(locator.locatorHash) && (!this.check || !cacheFileExists);
+        const isCacheHit = shouldMock || cacheFileExists;
+
+        const action = isCacheHit
           ? onHit
           : onMiss;
 
         if (action)
           action();
 
-        if (!cacheExists) {
+        if (!isCacheHit) {
           return loadPackage();
         } else {
           let checksum: string | null = null;

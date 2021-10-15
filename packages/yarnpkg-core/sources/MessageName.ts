@@ -79,6 +79,7 @@ export enum MessageName {
   NM_HARDLINKS_MODE_DOWNGRADED = 74,
   PROLOG_INSTANTIATION_ERROR = 75,
   INCOMPATIBLE_ARCHITECTURE = 76,
+  GHOST_ARCHITECTURE = 77,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

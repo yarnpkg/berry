@@ -381,6 +381,9 @@ export class PnpInstaller implements Installer {
     if (FORCED_UNPLUG_PACKAGES.has(pkg.identHash))
       return true;
 
+    if (pkg.conditions !== null)
+      return true;
+
     if (customPackageData.manifest.preferUnplugged !== null)
       return customPackageData.manifest.preferUnplugged;
 

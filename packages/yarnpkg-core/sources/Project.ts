@@ -12,7 +12,7 @@ import v8                                                               from 'v8
 import zlib                                                             from 'zlib';
 
 import {Cache}                                                          from './Cache';
-import {Configuration}                                                  from './Configuration';
+import {Configuration, FormatType}                                      from './Configuration';
 import {Fetcher}                                                        from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
@@ -848,8 +848,21 @@ export class Project {
       if (!optionalBuilds.has(pkg.locatorHash))
         continue;
 
-      if (!structUtils.isPackageCompatible(pkg, supportedArchitectures))
+      if (!structUtils.isPackageCompatible(pkg, supportedArchitectures)) {
+        if (structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+          opts.report.reportWarningOnce(MessageName.GHOST_ARCHITECTURE, `${
+            structUtils.prettyLocator(this.configuration, pkg)
+          } Your current architecture (${
+            process.platform
+          }-${
+            process.arch
+          }) is supported by this package, but is missing from the ${
+            formatUtils.pretty(this.configuration, `supportedArchitecture`, FormatType.CODE)
+          } setting`);
+        }
+
         disabledLocators.add(pkg.locatorHash);
+      }
 
       conditionalLocators.add(pkg.locatorHash);
     }
