@@ -52,7 +52,7 @@
       "items": {
         "type": "string"
       },
-      "_exampleItems": ["linux", "darwin", "windows"]
+      "_exampleItems": ["linux", "darwin", "win32"]
     },
     "cpu": {
       "description": "A value compared during install with `process.arch`. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
