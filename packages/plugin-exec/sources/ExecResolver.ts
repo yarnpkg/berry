@@ -82,8 +82,7 @@ export class ExecResolver implements Resolver {
       languageName: manifest.languageName || opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
 
-      os: manifest.os,
-      cpu: manifest.cpu,
+      os: manifest.getConditions(),
 
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,
