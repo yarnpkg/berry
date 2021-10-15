@@ -852,7 +852,7 @@ export class Project {
         if (structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
           opts.report.reportWarningOnce(MessageName.GHOST_ARCHITECTURE, `${
             structUtils.prettyLocator(this.configuration, pkg)
-          } Your current architecture (${
+          }: Your current architecture (${
             process.platform
           }-${
             process.arch
