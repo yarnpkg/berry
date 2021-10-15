@@ -39,7 +39,7 @@ describe(`Lock tests`, () => {
 
         const lockfilePath = ppath.join(path, Filename.lockfile);
         const lockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
-        const replacedLockfile = lockfile.replace(/(__metadata:[\n ]*version: )([0-9]+)/, ($0, $1, $2) => `${$1}${$2 - 1}`);
+        const replacedLockfile = lockfile.replace(/(__metadata:[\t\r\n ]*version: )([0-9]+)/, ($0, $1, $2) => `${$1}${$2 - 1}`);
 
         // Sanity check to be sure that the test does something
         expect(replacedLockfile).not.toEqual(lockfile);
