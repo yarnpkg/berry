@@ -462,8 +462,6 @@ async function extractCustomPackageData(fetchResult: FetchResult) {
 
   return {
     manifest: {
-      os: manifest.os,
-      cpu: manifest.cpu,
       scripts: manifest.scripts,
       preferUnplugged: manifest.preferUnplugged,
     },

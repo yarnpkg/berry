@@ -658,6 +658,17 @@ export class Manifest {
     return false;
   }
 
+  getConditions() {
+    const fields: Array<string> = [];
+
+    if (this.os && this.os.length > 0)
+      fields.push(this.os.length === 1 ? `os=${this.os[0]}` : `(${this.os.map(os => `os=${os}`).join(` | `)})`);
+    if (this.cpu && this.cpu.length > 0)
+      fields.push(this.cpu.length === 1 ? `cpu=${this.cpu[0]}` : `(${this.cpu.map(cpu => `cpu=${cpu}`).join(` | `)})`);
+
+    return fields.length > 0 ? fields.join(` & `) : null;
+  }
+
   isCompatibleWithOS(os: string): boolean {
     return Manifest.isManifestFieldCompatible(this.os, os);
   }

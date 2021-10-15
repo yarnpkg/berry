@@ -31,8 +31,7 @@ export class GitFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`),
       loader: () => this.cloneFromRemote(normalizedLocator, nextOpts),
-      skipIntegrityCheck: opts.skipIntegrityCheck,
-    });
+    }, opts.cacheOptions);
 
     return {
       packageFs,
