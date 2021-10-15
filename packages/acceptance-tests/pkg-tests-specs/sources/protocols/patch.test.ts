@@ -1,4 +1,8 @@
-import {xfs, ppath} from '@yarnpkg/fslib';
+import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
+
+const {
+  tests: {getPackageDirectoryPath},
+} = require(`pkg-tests-core`);
 
 const NO_DEPS_PATCH = `diff --git a/index.js b/index.js
 index a6bf8f58..629b6aa8 100644
@@ -15,16 +19,18 @@ index a6bf8f58..629b6aa8 100644
      // $FlowFixMe The whole point of this file is to be dynamic
 `;
 
+const PATCH_NAME = `my-patch.patch` as Filename;
+
 describe(`Protocols`, () => {
   describe(`patch:`, () => {
     test(
       `it should apply a patch on the original package`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH);
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
 
@@ -41,15 +47,15 @@ describe(`Protocols`, () => {
       `it should generate the same file twice in a row`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH);
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
 
-          await xfs.removePromise(ppath.join(path, `.yarn/cache`));
-          await xfs.removePromise(ppath.join(path, `.yarn/global`));
+          await xfs.removePromise(ppath.join(path, `.yarn/cache` as PortablePath));
+          await xfs.removePromise(ppath.join(path, `.yarn/global` as PortablePath));
 
           await run(`install`);
 
@@ -66,15 +72,15 @@ describe(`Protocols`, () => {
       `it should generate the same file twice in a row (delayed)`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH);
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
 
-          await xfs.removePromise(ppath.join(path, `.yarn/cache`));
-          await xfs.removePromise(ppath.join(path, `.yarn/global`));
+          await xfs.removePromise(ppath.join(path, `.yarn/cache` as PortablePath));
+          await xfs.removePromise(ppath.join(path, `.yarn/global` as PortablePath));
 
           // At least three seconds because Zip archives are precise to two
           // seconds, not one. One extra second will ensure that the file
@@ -102,15 +108,15 @@ describe(`Protocols`, () => {
           },
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH);
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
 
           await run(`set`, `resolution`, `no-deps@npm:1.0.0`, `npm:2.0.0`);
 
-          await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+          await xfs.writeJsonPromise(ppath.join(path, `package.json` as PortablePath), {
             dependencies: {
-              [`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`,
+              [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`,
             },
           });
 
@@ -122,7 +128,7 @@ describe(`Protocols`, () => {
             hello: `world`,
           });
 
-          await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+          await xfs.writeJsonPromise(ppath.join(path, `package.json` as PortablePath), {
             dependencies: {
               [`no-deps`]: `1.0.0`,
             },
@@ -149,13 +155,13 @@ describe(`Protocols`, () => {
         {},
         async ({path, run, source}) => {
           await xfs.mktempPromise(async fileTarget => {
-            await xfs.writeFilePromise(ppath.join(fileTarget, `my-patch.patch`), NO_DEPS_PATCH);
-            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
-            await xfs.writeJsonPromise(ppath.join(fileTarget, `package.json`), {
-              dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+            await xfs.writeFilePromise(ppath.join(fileTarget, PATCH_NAME), NO_DEPS_PATCH);
+            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js` as Filename), `module.exports = require('no-deps');`);
+            await xfs.writeJsonPromise(ppath.join(fileTarget, Filename.manifest), {
+              dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
             });
 
-            await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+            await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
               dependencies: {[`file`]: `file:${fileTarget}`},
             });
 
@@ -175,15 +181,31 @@ describe(`Protocols`, () => {
       `it should throw on invalid patch files`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#my-patch.patch`},
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
         },
         async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `my-patch.patch`), NO_DEPS_PATCH, {encoding: `utf16le`});
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH, {encoding: `utf16le`});
 
           await expect(run(`install`)).rejects.toMatchObject({
             code: 1,
             stdout: expect.stringContaining(`Unable to parse patch file: No changes found`),
           });
+        },
+      ),
+    );
+
+    test(
+      `it should support applying a patch on a patch`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: getPackageDirectoryPath(`no-deps`, `1.0.0`).then((pkgPath: any) => `patch:no-deps@${encodeURIComponent(`file:${pkgPath}`)}#${PATCH_NAME}`),
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
+
+          await run(`install`);
         },
       ),
     );

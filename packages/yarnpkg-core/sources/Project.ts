@@ -687,6 +687,8 @@ export class Project {
     const packageResolutionPromises = new Map<LocatorHash, Promise<Package>>();
     const descriptorResolutionPromises = new Map<DescriptorHash, Promise<Package>>();
 
+    const dependencyResolutionLocator = this.topLevelWorkspace.anchoredLocator;
+
     const resolutionQueue: Array<Promise<unknown>> = [];
 
     const startPackageResolution = async (locator: Locator) => {
@@ -753,7 +755,8 @@ export class Project {
 
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
-        return [dependency.descriptorHash, await scheduleDescriptorResolution(dependency)] as const;
+        const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
+        return [dependency.descriptorHash, await scheduleDescriptorResolution(bound)] as const;
       })));
 
       const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
