@@ -178,7 +178,7 @@ export class Cache {
       zipFs.mkdirSync(rootPackageDir, {recursive: true});
       zipFs.writeJsonSync(ppath.join(rootPackageDir, Filename.manifest), {
         name: structUtils.stringifyIdent(locator),
-        pruned: true,
+        mocked: true,
       });
 
       return zipFs;

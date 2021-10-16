@@ -367,7 +367,7 @@ export class PnpInstaller implements Installer {
   private readonly unpluggedPaths: Set<string> = new Set();
 
   private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
-    if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
+    if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta) && !this.opts.project.disabledLocators.has(pkg.locatorHash)) {
       return this.unplugPackage(pkg, fetchResult);
     } else {
       return fetchResult.packageFs;
