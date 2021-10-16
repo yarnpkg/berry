@@ -12530,6 +12530,7 @@ fsevents@^1.2.7:
   dependencies:
     nan: ^2.9.2
     node-pre-gyp: ^0.10.0
+  checksum: f291742931e9fe14f1b1346c98a36be561e9aa769a66424ceed8713c3fd35f5fee7cdd1c07608afa18811e06cbdfd92b897bb82dc994a4060e013bbeecb3fd7c
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -12539,6 +12540,7 @@ fsevents@^1.2.7:
   resolution: "fsevents@npm:2.3.2"
   dependencies:
     node-gyp: latest
+  checksum: 97ade64e75091afee5265e6956cb72ba34db7819b4c3e94c431d4be2b19b8bb7a2d4116da417950c3425f17c8fe693d25e20212cac583ac1521ad066b77ae31f
   conditions: os=darwin
   languageName: node
   linkType: hard
