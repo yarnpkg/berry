@@ -833,11 +833,8 @@ export class Project {
       allPackages,
     });
 
-    for (const locatorHash of optionalBuilds) {
-      if (allResolutionDependencyPackages.has(locatorHash)) {
-        optionalBuilds.delete(locatorHash);
-      }
-    }
+    for (const locatorHash of allResolutionDependencyPackages)
+      optionalBuilds.delete(locatorHash);
 
     // All descriptors still referenced within the volatileDescriptors set are
     // descriptors that aren't depended upon by anything in the dependency tree.
