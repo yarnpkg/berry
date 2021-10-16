@@ -865,7 +865,7 @@ export class Project {
           }-${
             process.arch
           }) is supported by this package, but is missing from the ${
-            formatUtils.pretty(this.configuration, `supportedArchitecture`, FormatType.CODE)
+            formatUtils.pretty(this.configuration, `supportedArchitectures`, FormatType.SETTING)
           } setting`);
         }
 

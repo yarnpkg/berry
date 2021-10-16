@@ -630,7 +630,7 @@
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "darwin", "linux", "windows"]
+          "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
           "description": "The list of CPUs to cover.",
