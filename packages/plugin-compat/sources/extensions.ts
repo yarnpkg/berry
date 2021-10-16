@@ -697,4 +697,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'webpack-cli': optionalPeerDep,
     },
   }],
+  // https://github.com/webpack/webpack-dev-server/pull/2396
+  [`webpack-dev-server@<3.10.2`, {
+    peerDependenciesMeta: {
+      'webpack-cli': optionalPeerDep,
+    },
+  }],
 ];
