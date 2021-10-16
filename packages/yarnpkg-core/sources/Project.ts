@@ -694,6 +694,7 @@ export class Project {
     const descriptorResolutionPromises = new Map<DescriptorHash, Promise<Package>>();
 
     const dependencyResolutionLocator = this.topLevelWorkspace.anchoredLocator;
+    const allResolutionDependencyPackages = new Set<LocatorHash>();
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
@@ -762,7 +763,11 @@ export class Project {
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
         const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
-        return [dependency.descriptorHash, await scheduleDescriptorResolution(bound)] as const;
+
+        const resolvedPackage = await scheduleDescriptorResolution(bound);
+        allResolutionDependencyPackages.add(resolvedPackage.locatorHash);
+
+        return [dependency.descriptorHash, resolvedPackage] as const;
       })));
 
       const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
@@ -827,6 +832,12 @@ export class Project {
       allResolutions,
       allPackages,
     });
+
+    for (const locatorHash of optionalBuilds) {
+      if (allResolutionDependencyPackages.has(locatorHash)) {
+        optionalBuilds.delete(locatorHash);
+      }
+    }
 
     // All descriptors still referenced within the volatileDescriptors set are
     // descriptors that aren't depended upon by anything in the dependency tree.
