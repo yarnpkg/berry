@@ -684,4 +684,17 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `*`,
     },
   }],
+  // https://github.com/webpack/webpack/pull/11190
+  [`webpack@<4.44.1`, {
+    peerDependenciesMeta: {
+      'webpack-cli': optionalPeerDep,
+      'webpack-command': optionalPeerDep,
+    },
+  }],
+  // https://github.com/webpack/webpack/pull/11189
+  [`webpack@<5.0.0-beta.23`, {
+    peerDependenciesMeta: {
+      'webpack-cli': optionalPeerDep,
+    },
+  }],
 ];
