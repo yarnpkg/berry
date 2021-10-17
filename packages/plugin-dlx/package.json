@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-dlx",
-  "version": "3.0.1-rc.9",
+  "version": "3.1.0-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
