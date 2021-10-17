@@ -395,7 +395,7 @@ export class PnpInstaller implements Installer {
 
   private async unplugPackage(locator: Locator, fetchResult: FetchResult) {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
-    if (this.opts.project.disabledLocators.has(pkg.locatorHash))
+    if (this.opts.project.disabledLocators.has(locator.locatorHash))
       return new AliasFS(unplugPath, {baseFs: fetchResult.packageFs, pathUtils: ppath});
 
     this.unpluggedPaths.add(unplugPath);
