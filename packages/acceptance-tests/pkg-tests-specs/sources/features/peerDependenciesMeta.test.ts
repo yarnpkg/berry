@@ -46,6 +46,28 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should be able to access an implicit peer dependency`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            'optional-peer-deps-implicit': `1.0.0`,
+            'no-deps': `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(
+            source(`
+                  require
+                    .resolve('no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })
+                    .replace(/\\\\/g, '/')`),
+          ).resolves.toContain(`/node_modules/no-deps/`);
+        },
+      ),
+    );
+
+    test(
       `it should automatically add corresponding '@types' optional peer dependencies`,
       makeTemporaryEnv(
         {
