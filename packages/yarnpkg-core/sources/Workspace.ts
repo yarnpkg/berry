@@ -169,22 +169,19 @@ export class Workspace {
     const workspaceList = new Set<Workspace>();
 
     const visitWorkspace = (workspace: Workspace) => {
-      this.project.workspaces.filter(projectWorkspace => {
-        for (const dependencyType of dependencies) {
-          for (const descriptor of projectWorkspace.manifest[dependencyType].values()) {
+      for (const projectWorkspace of this.project.workspaces) {
+        const isDependent = dependencies.some(dependencyType => {
+          return [...projectWorkspace.manifest[dependencyType].values()].some(descriptor => {
             const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
-            if (foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator)) {
-              return true;
-            }
-          }
+            return foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator);
+          });
+        });
+
+        if (isDependent && !workspaceList.has(projectWorkspace)) {
+          workspaceList.add(projectWorkspace);
+          visitWorkspace(projectWorkspace);
         }
-        return false;
-      }).forEach(dependentWorkspace => {
-        if (!workspaceList.has(dependentWorkspace)) {
-          workspaceList.add(dependentWorkspace);
-          visitWorkspace(dependentWorkspace);
-        }
-      });
+      }
     };
 
     visitWorkspace(this);
