@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-init",
-  "version": "3.0.1-rc.1",
+  "version": "3.0.1-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {

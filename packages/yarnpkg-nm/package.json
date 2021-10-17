@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/nm",
-  "version": "3.0.0-rc.10",
+  "version": "3.0.0-rc.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "types": "./sources/index.ts",
