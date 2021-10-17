@@ -1,5 +1,3 @@
-import {Filename, ppath, xfs} from '@yarnpkg/fslib';
-
 describe(`Features`, () => {
   describe(`peerDependenciesMeta`, () => {
     test(
@@ -52,36 +50,17 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            foo: `portal:./foo`,
-            "no-deps": `1.0.0`,
-            "@types/no-deps": `1.0.0`,
+            'optional-peer-deps-implicit': `1.0.0`,
+            '@types/no-deps': `1.0.0`,
           },
         },
         async ({path, run, source}) => {
-          await xfs.mkdirPromise(ppath.join(path, `foo` as Filename), {
-            recursive: true,
-          });
-          await xfs.writeJsonPromise(
-            ppath.join(path, `foo` as Filename, Filename.manifest),
-            {
-              name: `foo`,
-              peerDependenciesMeta: {
-                "no-deps": {
-                  optional: true,
-                },
-              },
-            },
-          );
-
-          await expect(run(`install`)).resolves.toMatchObject({
-            code: 0,
-            stdout: expect.not.stringContaining(`YN0002`),
-          });
+          await run(`install`);
 
           await expect(
             source(`
                   require
-                    .resolve('@types/no-deps', { paths: [require.resolve('foo/package.json')] })
+                    .resolve('@types/no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })
                     .replace(/\\\\/g, '/')`),
           ).resolves.toContain(`/node_modules/@types/no-deps/`);
         },
