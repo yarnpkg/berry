@@ -1,9 +1,10 @@
-import {Configuration, Locator, execUtils, structUtils, httpUtils, semverUtils} from '@yarnpkg/core';
-import {npath, xfs}                                                             from '@yarnpkg/fslib';
-import GitUrlParse                                                              from 'git-url-parse';
-import querystring                                                              from 'querystring';
-import semver                                                                   from 'semver';
-import urlLib                                                                   from 'url';
+import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils} from '@yarnpkg/core';
+import {Filename, npath, PortablePath, ppath, xfs}                                                         from '@yarnpkg/fslib';
+import {UsageError}                                                                                        from 'clipanion';
+import GitUrlParse                                                                                         from 'git-url-parse';
+import querystring                                                                                         from 'querystring';
+import semver                                                                                              from 'semver';
+import urlLib                                                                                              from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -316,4 +317,105 @@ export async function clone(url: string, configuration: Configuration) {
 
     return directory;
   });
+}
+
+export async function fetchRoot(initialCwd: PortablePath) {
+  // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
+  // it may return long paths even when the cwd uses short paths, and we have no
+  // way to detect it from Node (not even realpath).
+
+  let match: PortablePath | null = null;
+
+  let cwd: PortablePath;
+  let nextCwd = initialCwd;
+  do {
+    cwd = nextCwd;
+    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
+      match = cwd;
+    nextCwd = ppath.dirname(cwd);
+  } while (match === null && nextCwd !== cwd);
+
+  return match;
+}
+
+export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
+  if (baseRefs.length === 0)
+    throw new UsageError(`Can't run this command with zero base refs specified.`);
+
+  const ancestorBases = [];
+
+  for (const candidate of baseRefs) {
+    const {code} = await execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {cwd: root});
+    if (code === 0) {
+      ancestorBases.push(candidate);
+    }
+  }
+
+  if (ancestorBases.length === 0)
+    throw new UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
+
+  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
+  const hash = mergeBaseStdout.trim();
+
+  const {stdout: showStdout} = await execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {cwd: root, strict: true});
+  const title = showStdout.trim();
+
+  return {hash, title};
+}
+
+// Note: This returns all changed files from the git diff,
+// which can include files not belonging to a workspace
+export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
+  const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
+
+  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
+  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
+
+  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
+  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
+
+  const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
+
+  return ignorePattern
+    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
+    : changedFiles;
+}
+
+// Note: yarn artifacts are excluded from workspace change detection
+// as they can be modified by changes to any workspace manifest file.
+export async function fetchChangedWorkspaces({ref, project}: {ref: string | true, project: Project}) {
+  if (project.configuration.projectCwd === null)
+    throw new UsageError(`This command can only be run from within a Yarn project`);
+
+  const ignoredPaths = [
+    ppath.resolve(project.cwd, project.configuration.get(`cacheFolder`)),
+    ppath.resolve(project.cwd, project.configuration.get(`installStatePath`)),
+    ppath.resolve(project.cwd, project.configuration.get(`lockfileFilename`)),
+    ppath.resolve(project.cwd, project.configuration.get(`virtualFolder`)),
+  ];
+  await project.configuration.triggerHook((hooks: Hooks) => {
+    return hooks.populateYarnPaths;
+  }, project, (path: PortablePath | null) => {
+    if (path != null) {
+      ignoredPaths.push(path);
+    }
+  });
+
+  const root = await fetchRoot(project.configuration.projectCwd);
+
+  if (root == null)
+    throw new UsageError(`This command can only be run on Git repositories`);
+
+  const base = await fetchBase(root, {baseRefs: typeof ref === `string` ? [ref] : project.configuration.get(`changesetBaseRefs`)});
+  const changedFiles = await fetchChangedFiles(root, {base: base.hash, project});
+
+  return new Set(miscUtils.mapAndFilter(changedFiles, file => {
+    const workspace = project.tryWorkspaceByFilePath(file);
+    if (workspace === null)
+      return miscUtils.mapAndFilter.skip;
+    if (ignoredPaths.some(ignoredPath => file.startsWith(ignoredPath)))
+      return miscUtils.mapAndFilter.skip;
+
+    return workspace;
+  }));
 }

@@ -18,7 +18,8 @@
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
@@ -26,7 +27,8 @@
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "repository": {
     "type": "git",
