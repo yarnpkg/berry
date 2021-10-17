@@ -236,6 +236,12 @@ class NodeModulesInstaller implements Installer {
       return [workspace.relativeCwd, hoistingLimits];
     }));
 
+    const selfReferencesByCwd = new Map(this.opts.project.workspaces.map(workspace => {
+      let selfReferences = this.opts.project.configuration.get(`nmSelfReferences`);
+      selfReferences = workspace.manifest.installConfig?.selfReferences ?? selfReferences;
+      return [workspace.relativeCwd, selfReferences];
+    }));
+
     const pnpApi: PnpApi = {
       VERSIONS: {
         std: 1,
@@ -291,7 +297,7 @@ class NodeModulesInstaller implements Installer {
       },
     };
 
-    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, validateExternalSoftLinks: true, hoistingLimitsByCwd, project: this.opts.project});
+    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, validateExternalSoftLinks: true, hoistingLimitsByCwd, project: this.opts.project, selfReferencesByCwd});
     if (!tree) {
       for (const {messageName, text} of errors)
         this.opts.report.reportError(messageName, text);

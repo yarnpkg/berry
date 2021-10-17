@@ -363,6 +363,12 @@
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
+    "nmSelfReferences": {
+      "_package": "@yarnpkg/plugin-nm",
+      "description": "Defines whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. This setting can be overriden per-workspace through the [`installConfig.selfReferences` field](/configuration/manifest#installConfig.selfReferences).",
+      "type": "boolean",
+      "default": true
+    },
     "nmMode": {
       "_package": "@yarnpkg/plugin-nm",
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",

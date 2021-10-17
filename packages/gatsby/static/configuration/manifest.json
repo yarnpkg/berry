@@ -330,9 +330,14 @@
           "type": "string",
           "enum": ["workspaces", "dependencies", "none"],
           "default": "none"
+        },
+        "selfReferences": {
+          "description": "Defines whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks, overriding for the current workspace the value initially set for [`nmSelfReferences`](/configuration/yarnrc#nmSelfReferences)",
+          "type": "boolean",
+          "default": true
         }
       },
-      "_exampleKeys": ["hoistingLimits"],
+      "_exampleKeys": ["hoistingLimits", "selfReferences"],
       "_margin": true
     }
   }
