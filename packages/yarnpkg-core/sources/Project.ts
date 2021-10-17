@@ -12,7 +12,7 @@ import v8                                                               from 'v8
 import zlib                                                             from 'zlib';
 
 import {Cache}                                                          from './Cache';
-import {Configuration}                                                  from './Configuration';
+import {Configuration, FormatType}                                      from './Configuration';
 import {Fetcher}                                                        from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
@@ -41,7 +41,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 4;
+const LOCKFILE_VERSION = 5;
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -137,6 +137,8 @@ const INSTALL_STATE_FIELDS = {
 
   restoreResolutions: [
     `accessibleLocators`,
+    `conditionalLocators`,
+    `disabledLocators`,
     `optionalBuilds`,
     `storedDescriptors`,
     `storedResolutions`,
@@ -194,6 +196,8 @@ export class Project {
   public storedBuildState: Map<LocatorHash, string> = new Map();
 
   public accessibleLocators: Set<LocatorHash> = new Set();
+  public conditionalLocators: Set<LocatorHash> = new Set();
+  public disabledLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
 
@@ -317,6 +321,8 @@ export class Project {
           const languageName = manifest.languageName || defaultLanguageName;
           const linkType = data.linkType.toUpperCase() as LinkType;
 
+          const conditions = data.conditions ?? null;
+
           const dependencies = manifest.dependencies;
           const peerDependencies = manifest.peerDependencies;
 
@@ -333,7 +339,7 @@ export class Project {
             this.storedChecksums.set(locator.locatorHash, checksum);
           }
 
-          const pkg: Package = {...locator, version, languageName, linkType, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
+          const pkg: Package = {...locator, version, languageName, linkType, conditions, dependencies, peerDependencies, dependenciesMeta, peerDependenciesMeta, bin};
           this.originalPackages.set(pkg.locatorHash, pkg);
 
           for (const entry of key.split(MULTIPLE_KEYS_REGEXP)) {
@@ -676,7 +682,7 @@ export class Project {
 
     const resolveOptions: ResolveOptions = opts.lockfileOnly
       ? {project: this, report: opts.report, resolver}
-      : {project: this, report: opts.report, resolver, fetchOptions: {project: this, cache: opts.cache, checksums: this.storedChecksums, report: opts.report, fetcher}};
+      : {project: this, report: opts.report, resolver, fetchOptions: {project: this, cache: opts.cache, checksums: this.storedChecksums, report: opts.report, fetcher, cacheOptions: {mirrorWriteOnly: true}}};
 
     const allDescriptors = new Map<DescriptorHash, Descriptor>();
     const allPackages = new Map<LocatorHash, Package>();
@@ -688,6 +694,7 @@ export class Project {
     const descriptorResolutionPromises = new Map<DescriptorHash, Promise<Package>>();
 
     const dependencyResolutionLocator = this.topLevelWorkspace.anchoredLocator;
+    const allResolutionDependencyPackages = new Set<LocatorHash>();
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
@@ -756,7 +763,11 @@ export class Project {
       const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
       const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
         const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
-        return [dependency.descriptorHash, await scheduleDescriptorResolution(bound)] as const;
+
+        const resolvedPackage = await scheduleDescriptorResolution(bound);
+        allResolutionDependencyPackages.add(resolvedPackage.locatorHash);
+
+        return [dependency.descriptorHash, resolvedPackage] as const;
       })));
 
       const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
@@ -822,12 +833,46 @@ export class Project {
       allPackages,
     });
 
+    for (const locatorHash of allResolutionDependencyPackages)
+      optionalBuilds.delete(locatorHash);
+
     // All descriptors still referenced within the volatileDescriptors set are
     // descriptors that aren't depended upon by anything in the dependency tree.
 
     for (const descriptorHash of volatileDescriptors) {
       allDescriptors.delete(descriptorHash);
       allResolutions.delete(descriptorHash);
+    }
+
+    const supportedArchitectures = this.configuration.getSupportedArchitectures();
+
+    const conditionalLocators = new Set<LocatorHash>();
+    const disabledLocators = new Set<LocatorHash>();
+
+    for (const pkg of allPackages.values()) {
+      if (pkg.conditions === null)
+        continue;
+
+      if (!optionalBuilds.has(pkg.locatorHash))
+        continue;
+
+      if (!structUtils.isPackageCompatible(pkg, supportedArchitectures)) {
+        if (structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+          opts.report.reportWarningOnce(MessageName.GHOST_ARCHITECTURE, `${
+            structUtils.prettyLocator(this.configuration, pkg)
+          }: Your current architecture (${
+            process.platform
+          }-${
+            process.arch
+          }) is supported by this package, but is missing from the ${
+            formatUtils.pretty(this.configuration, `supportedArchitectures`, FormatType.SETTING)
+          } setting`);
+        }
+
+        disabledLocators.add(pkg.locatorHash);
+      }
+
+      conditionalLocators.add(pkg.locatorHash);
     }
 
     // Everything is done, we can now update our internal resolutions to
@@ -838,6 +883,8 @@ export class Project {
     this.storedPackages = allPackages;
 
     this.accessibleLocators = accessibleLocators;
+    this.conditionalLocators = conditionalLocators;
+    this.disabledLocators = disabledLocators;
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
     this.peerRequirements = peerRequirements;
@@ -849,8 +896,13 @@ export class Project {
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
+    const cacheOptions = {
+      mockedPackages: this.disabledLocators,
+      unstablePackages: this.conditionalLocators,
+    };
+
     const fetcher = userFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
 
     let locatorHashes = Array.from(
       new Set(
@@ -898,7 +950,7 @@ export class Project {
           return;
         }
 
-        if (fetchResult.checksum)
+        if (fetchResult.checksum != null)
           this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
         else
           this.storedChecksums.delete(pkg.locatorHash);
@@ -917,8 +969,14 @@ export class Project {
   }
 
   async linkEverything({cache, report, fetcher: optFetcher, mode}: InstallOptions) {
+    const cacheOptions = {
+      mockedPackages: this.disabledLocators,
+      unstablePackages: this.conditionalLocators,
+      skipIntegrityCheck: true,
+    };
+
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true};
+    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions = {project: this, report};
@@ -1540,6 +1598,7 @@ export class Project {
 
     optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
+      cacheKey: undefined,
     };
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
@@ -1586,7 +1645,7 @@ export class Project {
       if (typeof checksum !== `undefined`) {
         const cacheKeyIndex = checksum.indexOf(`/`);
         if (cacheKeyIndex === -1)
-          throw new Error(`Assertion failed: Expecte the checksum to reference its cache key`);
+          throw new Error(`Assertion failed: Expected the checksum to reference its cache key`);
 
         const cacheKey = checksum.slice(0, cacheKeyIndex);
         const hash = checksum.slice(cacheKeyIndex + 1);
@@ -1610,6 +1669,8 @@ export class Project {
 
         resolution: structUtils.stringifyLocator(pkg),
         checksum: entryChecksum,
+
+        conditions: pkg.conditions || undefined,
       };
     }
 

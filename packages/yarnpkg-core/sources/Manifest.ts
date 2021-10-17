@@ -665,6 +665,17 @@ export class Manifest {
     return false;
   }
 
+  getConditions() {
+    const fields: Array<string> = [];
+
+    if (this.os && this.os.length > 0)
+      fields.push(toConditionLine(`os`, this.os));
+    if (this.cpu && this.cpu.length > 0)
+      fields.push(toConditionLine(`cpu`, this.cpu));
+
+    return fields.length > 0 ? fields.join(` & `) : null;
+  }
+
   isCompatibleWithOS(os: string): boolean {
     return Manifest.isManifestFieldCompatible(this.os, os);
   }
@@ -982,4 +993,23 @@ function tryParseOptionalBoolean(value: unknown, {yamlCompatibilityMode}: {yamlC
     return value;
 
   return null;
+}
+
+function toConditionToken(name: string, raw: string) {
+  const index = raw.search(/[^!]/);
+  if (index === -1)
+    return `invalid`;
+
+  const prefix = index % 2 === 0 ? `` : `!`;
+  const value = raw.slice(index);
+
+  return `${prefix}${name}=${value}`;
+}
+
+function toConditionLine(name: string, rawTokens: Array<string>) {
+  if (rawTokens.length === 1) {
+    return toConditionToken(name, rawTokens[0]);
+  } else {
+    return `(${rawTokens.map(raw => toConditionToken(name, raw)).join(` | `)})`;
+  }
 }

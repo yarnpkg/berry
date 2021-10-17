@@ -4451,6 +4451,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@chevrotain/types", [
+        ["npm:9.1.0", {
+          "packageLocation": "./.yarn/cache/@chevrotain-types-npm-9.1.0-80ac254cc2-5f26ff26aa.zip/node_modules/@chevrotain/types/",
+          "packageDependencies": [
+            ["@chevrotain/types", "npm:9.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@chevrotain/utils", [
+        ["npm:9.1.0", {
+          "packageLocation": "./.yarn/cache/@chevrotain-utils-npm-9.1.0-5e5d6d7acc-ca78c97c7c.zip/node_modules/@chevrotain/utils/",
+          "packageDependencies": [
+            ["@chevrotain/utils", "npm:9.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@cnakazawa/watch", [
         ["npm:1.0.3", {
           "packageLocation": "./.yarn/cache/@cnakazawa-watch-npm-1.0.3-e2afda3405-c11ca927d9.zip/node_modules/@cnakazawa/watch/",
@@ -10330,6 +10348,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["stream-to-promise", "npm:2.2.0"],
             ["strip-ansi", "npm:6.0.0"],
             ["tar", "npm:6.0.5"],
+            ["tinylogic", "npm:1.0.3"],
             ["treeify", "npm:1.1.0"],
             ["tslib", "npm:1.13.0"],
             ["tunnel", "npm:0.0.6"]
@@ -18292,6 +18311,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["domelementtype", "npm:2.2.0"],
             ["domhandler", "npm:4.2.0"],
             ["domutils", "npm:2.7.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["chevrotain", [
+        ["npm:9.1.0", {
+          "packageLocation": "./.yarn/cache/chevrotain-npm-9.1.0-9280f9d77f-632d0d7c69.zip/node_modules/chevrotain/",
+          "packageDependencies": [
+            ["chevrotain", "npm:9.1.0"],
+            ["@chevrotain/types", "npm:9.1.0"],
+            ["@chevrotain/utils", "npm:9.1.0"],
+            ["regexp-to-ast", "npm:0.5.0"]
           ],
           "linkType": "HARD",
         }]
@@ -35100,6 +35131,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["regexp-to-ast", [
+        ["npm:0.5.0", {
+          "packageLocation": "./.yarn/cache/regexp-to-ast-npm-0.5.0-1e96b9f3a0-72e32f2a12.zip/node_modules/regexp-to-ast/",
+          "packageDependencies": [
+            ["regexp-to-ast", "npm:0.5.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["regexp.prototype.flags", [
         ["npm:1.3.1", {
           "packageLocation": "./.yarn/cache/regexp.prototype.flags-npm-1.3.1-f0c34f894f-343595db5a.zip/node_modules/regexp.prototype.flags/",
@@ -38249,6 +38289,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/tinycolor2-npm-1.4.1-c3c0a28523-ffc22d9866.zip/node_modules/tinycolor2/",
           "packageDependencies": [
             ["tinycolor2", "npm:1.4.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["tinylogic", [
+        ["npm:1.0.3", {
+          "packageLocation": "./.yarn/cache/tinylogic-npm-1.0.3-bd596a96c4-fdf7fcc170.zip/node_modules/tinylogic/",
+          "packageDependencies": [
+            ["tinylogic", "npm:1.0.3"],
+            ["chevrotain", "npm:9.1.0"]
           ],
           "linkType": "HARD",
         }]

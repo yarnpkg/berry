@@ -34,6 +34,7 @@
     "stream-to-promise": "^2.2.0",
     "strip-ansi": "^6.0.0",
     "tar": "^6.0.5",
+    "tinylogic": "^1.0.3",
     "treeify": "^1.1.0",
     "tslib": "^1.13.0",
     "tunnel": "^0.0.6"

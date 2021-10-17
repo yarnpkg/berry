@@ -34,7 +34,62 @@ export type PackageRunDriver = (
   opts: RunDriverOptions,
 ) => Promise<ExecResult>;
 
+export enum RequestType {
+  Login = `login`,
+  PackageInfo = `packageInfo`,
+  PackageTarball = `packageTarball`,
+  Whoami = `whoami`,
+  Repository = `repository`,
+  Publish = `publish`,
+}
+
+export type Request = {
+  type: RequestType.Login;
+  username: string,
+} | {
+  type: RequestType.PackageInfo;
+  scope?: string;
+  localName: string;
+} | {
+  type: RequestType.PackageTarball;
+  scope?: string;
+  localName: string;
+  version?: string;
+} | {
+  type: RequestType.Whoami;
+  login: Login
+} | {
+  type: RequestType.Repository;
+} | {
+  type: RequestType.Publish;
+  scope?: string;
+  localName: string;
+};
+
+export interface Login {
+  username: string;
+  password: string;
+  requiresOtp: boolean;
+  otp?: string;
+  npmAuthToken: string;
+}
+
 let whitelist = new Map();
+let recording: Array<Request> | null = null;
+
+export const startRegistryRecording = async (
+  fn: () => Promise<void>,
+) => {
+  const currentRecording: Array<Request> = [];
+  recording = currentRecording;
+
+  try {
+    await fn();
+    return currentRecording;
+  } finally {
+    recording = null;
+  }
+};
 
 export const setPackageWhitelist = async (
   packages: Map<string, Set<string>>,
@@ -183,38 +238,6 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
   if (serverUrl !== null)
     return Promise.resolve(serverUrl);
-
-  enum RequestType {
-    Login = `login`,
-    PackageInfo = `packageInfo`,
-    PackageTarball = `packageTarball`,
-    Whoami = `whoami`,
-    Repository = `repository`,
-    Publish = `publish`,
-  }
-
-  type Request = {
-    type: RequestType.Login;
-    username: string,
-  } | {
-    type: RequestType.PackageInfo;
-    scope?: string;
-    localName: string;
-  } | {
-    type: RequestType.PackageTarball;
-    scope?: string;
-    localName: string;
-    version?: string;
-  } | {
-    type: RequestType.Whoami;
-    login: Login
-  } | {
-    type: RequestType.Repository;
-  } | {
-    type: RequestType.Publish;
-    scope?: string;
-    localName: string;
-  };
 
   const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
@@ -472,14 +495,6 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     }
   };
 
-  interface Login {
-    username: string;
-    password: string;
-    requiresOtp: boolean;
-    otp?: string;
-    npmAuthToken: string;
-  }
-
   const validLogins: Record<string, Login> = {
     testUser: {
       username: `testUser`,
@@ -517,6 +532,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
             processError(res, 404, `Invalid route: ${req.url}`);
             return;
           }
+
+          if (recording !== null)
+            recording.push(parsedRequest);
 
           const {authorization} = req.headers;
           if (authorization != null) {

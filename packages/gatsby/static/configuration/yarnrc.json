@@ -624,6 +624,32 @@
       "pattern": "^[^<>:;,?\"*|/]+$",
       "default": ".yarnrc.yml"
     },
+    "supportedArchitectures": {
+      "_package": "@yarnpkg/core",
+      "description": "Defines which for systems should Yarn install packages.",
+      "type": "object",
+      "properties": {
+        "os": {
+          "description": "The list of operating systems to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "darwin", "linux", "win32"]
+        },
+        "cpu": {
+          "description": "The list of CPUs to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "x86", "ia32"]
+        }
+      },
+      "_exampleKeys": ["os", "cpu"]
+    },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
       "description": "This setting defines the minimal amount of time between two telemetry uploads, in days. By default we only send one request per week, making it impossible for us to track your usage with a lower granularity.",

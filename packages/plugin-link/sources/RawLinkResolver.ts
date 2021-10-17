@@ -54,6 +54,8 @@ export class RawLinkResolver implements Resolver {
       languageName: opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.SOFT,
 
+      conditions: null,
+
       dependencies: new Map(),
       peerDependencies: new Map(),
 

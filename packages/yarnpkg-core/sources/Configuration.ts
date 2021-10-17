@@ -76,6 +76,11 @@ export enum SettingsType {
   MAP = `MAP`,
 }
 
+export type SupportedArchitectures = {
+  os: Array<string> | null;
+  cpu: Array<string> | null;
+};
+
 export type FormatType = formatUtils.Type;
 export const FormatType = formatUtils.Type;
 
@@ -283,6 +288,26 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  supportedArchitectures: {
+    description: `Architectures that Yarn will fetch and inject into the resolver`,
+    type: SettingsType.SHAPE,
+    properties: {
+      os: {
+        description: `Array of supported process.platform strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+      cpu: {
+        description: `Array of supported process.arch strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+    },
   },
 
   // Settings related to network access
@@ -518,6 +543,7 @@ export interface ConfigurationValueMap {
   defaultLanguageName: string;
   defaultProtocol: string;
   enableTransparentWorkspaces: boolean;
+  supportedArchitectures: miscUtils.ToMapValue<SupportedArchitectures>;
 
   enableMirror: boolean;
   enableNetwork: boolean;
@@ -1417,6 +1443,20 @@ export class Configuration {
         linkers.push(new linker());
 
     return linkers;
+  }
+
+  getSupportedArchitectures() {
+    const supportedArchitectures = this.get(`supportedArchitectures`);
+
+    let os = supportedArchitectures.get(`os`);
+    if (os !== null)
+      os = os.map(value => value === `current` ? process.platform : value);
+
+    let cpu = supportedArchitectures.get(`cpu`);
+    if (cpu !== null)
+      cpu = cpu.map(value => value === `current` ? process.arch : value);
+
+    return {os, cpu};
   }
 
   async refreshPackageExtensions() {

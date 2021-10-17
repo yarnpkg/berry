@@ -46,6 +46,22 @@
       "type": "string",
       "examples": ["MIT"]
     },
+    "os": {
+      "description": "A value compared during install with `process.platform`. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "_exampleItems": ["linux", "darwin", "win32"]
+    },
+    "cpu": {
+      "description": "A value compared during install with `process.arch`. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "_exampleItems": ["x64", "ia32", "arm64"]
+    },
     "main": {
       "description": "The path that will be used to resolve the qualified path to use when accessing the package by its name. This field can be modified at publish-time through the use of the `publishConfig.main` field.",
       "type": "string",
@@ -114,7 +130,7 @@
       "_exampleKeys": ["webpack"]
     },
     "optionalDependencies": {
-      "description": "Similar to the `dependencies` field, except that these entries will not be required to build properly should they have any build script. Note that such dependencies must still be resolvable and fetchable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs) - only the build step is optional.\n\n**This field is usually not what you're looking for**, unless you depend on the `fsevents` package. If you need a package to be required only when a specific feature is used then use an optional peer dependency. Your users will have to satisfy it should they use the feature, but it won't cause the build errors to be silently swallowed when the feature is needed.",
+      "description": "Similar to the `dependencies` field, except that these entries will not be required to build properly should they have any build script. Note that such dependencies must always be resolvable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs), but those which list `cpu`/`os` fields will not be fetched unless they match the current system architecture.\n\n**This field is usually not what you're looking for**, unless you depend on the `fsevents` package. If you need a package to be required only when a specific feature is used then use an optional peer dependency. Your users will have to satisfy it should they use the feature, but it won't cause the build errors to be silently swallowed when the feature is needed.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
@@ -173,7 +189,7 @@
               "examples": [false]
             },
             "optional": {
-              "description": "If true, the build isn't required to succeed for the install to be considered a success. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevail.",
+              "description": "If true, the build isn't required to succeed for the install to be considered a success, and the dependency may be skipped if its `os` and `cpu` fields don't match the current system architecture. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevail.",
               "type": "boolean",
               "examples": [false]
             },

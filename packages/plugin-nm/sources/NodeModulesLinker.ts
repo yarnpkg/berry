@@ -138,7 +138,7 @@ class NodeModulesInstaller implements Installer {
     }
 
     // We don't link the package at all if it's for an unsupported platform
-    if (!jsInstallUtils.checkAndReportManifestCompatibility(pkg, customPackageData, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
+    if (!jsInstallUtils.checkAndReportManifestCompatibility(pkg, `link`, {configuration: this.opts.project.configuration, report: this.opts.report}))
       return {packageLocation: null, buildDirective: null};
 
     const packageDependencies = new Map<string, string | [string, string] | null>();
@@ -373,8 +373,6 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
   return {
     manifest: {
       bin: manifest.bin,
-      os: manifest.os,
-      cpu: manifest.cpu,
       scripts: manifest.scripts,
     },
     misc: {

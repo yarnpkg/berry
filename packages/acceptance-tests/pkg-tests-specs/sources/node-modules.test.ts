@@ -285,7 +285,7 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, link skipped.`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, link skipped.`));
 
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
