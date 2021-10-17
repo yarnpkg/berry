@@ -1,7 +1,7 @@
 import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                        from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                       from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer} from '@yarnpkg/core';
-import {CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                         from '@yarnpkg/fslib';
+import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings}                    from '@yarnpkg/pnp';
 import {UsageError}                                                                                          from 'clipanion';
 
@@ -367,7 +367,7 @@ export class PnpInstaller implements Installer {
   private readonly unpluggedPaths: Set<string> = new Set();
 
   private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
-    if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta) && !this.opts.project.disabledLocators.has(pkg.locatorHash)) {
+    if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
       return this.unplugPackage(pkg, fetchResult);
     } else {
       return fetchResult.packageFs;
@@ -395,6 +395,9 @@ export class PnpInstaller implements Installer {
 
   private async unplugPackage(locator: Locator, fetchResult: FetchResult) {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
+    if (this.opts.project.disabledLocators.has(pkg.locatorHash))
+      return new AliasFS(unplugPath, {baseFs: fetchResult.packageFs, pathUtils: ppath});
+
     this.unpluggedPaths.add(unplugPath);
 
     const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
