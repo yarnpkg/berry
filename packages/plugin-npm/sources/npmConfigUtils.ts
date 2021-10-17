@@ -1,6 +1,7 @@
 import {Configuration, Manifest, Ident} from '@yarnpkg/core';
 
 export enum RegistryType {
+  AUDIT_REGISTRY = `npmAuditRegistry`,
   FETCH_REGISTRY = `npmRegistryServer`,
   PUBLISH_REGISTRY = `npmPublishRegistry`,
 }
@@ -14,8 +15,12 @@ export function normalizeRegistry(registry: string) {
   return registry.replace(/\/$/, ``);
 }
 
+export function getAuditRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
+  return getDefaultRegistry({configuration, type: RegistryType.AUDIT_REGISTRY});
+}
+
 export function getPublishRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
-  if (manifest.publishConfig && manifest.publishConfig.registry)
+  if (manifest.publishConfig?.registry)
     return normalizeRegistry(manifest.publishConfig.registry);
 
   if (manifest.name)
