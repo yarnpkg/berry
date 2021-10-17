@@ -59,10 +59,8 @@ describe(`Features`, () => {
 
           await expect(
             source(`
-                  require
-                    .resolve('no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })
-                    .replace(/\\\\/g, '/')`),
-          ).resolves.toContain(`/node_modules/no-deps/`);
+            require(require.resolve('no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })) === require('no-deps')`),
+          ).resolves.toEqual(true);
         },
       ),
     );
@@ -80,11 +78,8 @@ describe(`Features`, () => {
           await run(`install`);
 
           await expect(
-            source(`
-                  require
-                    .resolve('@types/no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })
-                    .replace(/\\\\/g, '/')`),
-          ).resolves.toContain(`/node_modules/@types/no-deps/`);
+            source(`require(require.resolve('@types/no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })) === require('@types/no-deps')`),
+          ).resolves.toEqual(true);
         },
       ),
     );
