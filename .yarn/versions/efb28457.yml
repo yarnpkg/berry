@@ -1,17 +1,12 @@
 releases:
-  "@yarnpkg/core": patch
+  "@yarnpkg/cli": minor
+  "@yarnpkg/core": minor
   "@yarnpkg/plugin-essentials": minor
-  "@yarnpkg/plugin-git": patch
+  "@yarnpkg/plugin-git": minor
   "@yarnpkg/plugin-version": patch
   "@yarnpkg/plugin-workspace-tools": minor
 
 declined:
-  - "@yarnpkg/builder"
-  - "@yarnpkg/doctor"
-  - "@yarnpkg/nm"
-  - "@yarnpkg/pnpify"
-  - "@yarnpkg/sdks"
-  - "@yarnpkg/cli"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
@@ -31,3 +26,8 @@ declined:
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/builder"
+  - "@yarnpkg/doctor"
+  - "@yarnpkg/nm"
+  - "@yarnpkg/pnpify"
+  - "@yarnpkg/sdks"
