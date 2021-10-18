@@ -20,6 +20,9 @@ import * as miscUtils                                         from './miscUtils'
 import * as structUtils                                       from './structUtils';
 import {LocatorHash, Locator}                                 from './types';
 
+/**
+ * @internal
+ */
 export enum PackageManager {
   Yarn1 = `Yarn Classic`,
   Yarn2 = `Yarn`,
@@ -44,6 +47,9 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   });
 }
 
+/**
+ * @internal
+ */
 export async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
   const manifest = await Manifest.tryFind(location);
 
