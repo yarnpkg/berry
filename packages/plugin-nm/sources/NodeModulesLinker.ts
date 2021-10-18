@@ -15,6 +15,7 @@ import cmdShim                                                             from 
 import {UsageError}                                                        from 'clipanion';
 import crypto                                                              from 'crypto';
 import fs                                                                  from 'fs';
+import fixBin                                                              from 'bin-links/lib/fix-bin';
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -1240,7 +1241,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath);
         if (ppath.contains(projectCwd, await xfs.realpathPromise(target)) !== null) {
-          await xfs.chmodPromise(target, 0o755);
+          await fixBin(target, 0o755);
         }
       }
     }
