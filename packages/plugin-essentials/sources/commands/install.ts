@@ -1,9 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils} from '@yarnpkg/core';
-import {xfs, ppath}                                                                         from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                           from '@yarnpkg/parsers';
-import {TRAVIS}                                                                             from 'ci-info';
-import {Command, Option, Usage}                                                             from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                             from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode} from '@yarnpkg/core';
+import {xfs, ppath, Filename}                                                                            from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                        from '@yarnpkg/parsers';
+import CI                                                                                                from 'ci-info';
+import {Command, Option, Usage}                                                                          from 'clipanion';
+import * as t                                                                                            from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -15,19 +16,19 @@ export default class YarnCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `install the project dependencies`,
     details: `
-      This command setup your project if needed. The installation is splitted in four different steps that each have their own characteristics:
+      This command sets up your project if needed. The installation is split into four different steps that each have their own characteristics:
 
       - **Resolution:** First the package manager will resolve your dependencies. The exact way a dependency version is privileged over another isn't standardized outside of the regular semver guarantees. If a package doesn't resolve to what you would expect, check that all dependencies are correctly declared (also check our website for more information: ).
 
-      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where are stored the cache files).
+      - **Fetch:** Then we download all the dependencies if needed, and make sure that they're all stored within our cache (check the value of \`cacheFolder\` in \`yarn config\` to see where the cache files are stored).
 
-      - **Link:** Then we send the dependency tree information to internal plugins tasked from writing them on the disk in some form (for example by generating the .pnp.cjs file you might know).
+      - **Link:** Then we send the dependency tree information to internal plugins tasked with writing them on the disk in some form (for example by generating the .pnp.cjs file you might know).
 
-      - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another.
+      - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another. See https://yarnpkg.com/advanced/lifecycle-scripts for detail.
 
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.cjs file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
-      If the \`--immutable\` option is set, Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePatterns\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
+      If the \`--immutable\` option is set (defaults to true on CI), Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePatterns\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
 
       If the \`--immutable-cache\` option is set, Yarn will abort with an error exit code if the cache folder was to be modified (either because files would be added, or because they'd be removed).
 
@@ -35,7 +36,11 @@ export default class YarnCommand extends BaseCommand {
 
       If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
 
-      If the \`--skip-builds\` option is set, Yarn will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+      If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
+
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+
+      - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
     `,
     examples: [[
       `Install the project`,
@@ -69,8 +74,9 @@ export default class YarnCommand extends BaseCommand {
     description: `Verbosely print the output of the build steps of dependencies`,
   });
 
-  skipBuilds = Option.Boolean(`--skip-builds`, false, {
-    description: `Skip the build step altogether`,
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   // Legacy flags; will emit errors or warnings when used
@@ -82,15 +88,13 @@ export default class YarnCommand extends BaseCommand {
   production = Option.Boolean(`--production`, {hidden: true});
   registry = Option.String(`--registry`, {hidden: true});
   silent = Option.Boolean(`--silent`, {hidden: true});
+  networkTimeout = Option.String(`--network-timeout`, {hidden: true});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     if (typeof this.inlineBuilds !== `undefined`)
       configuration.useWithSource(`<cli>`, {enableInlineBuilds: this.inlineBuilds}, configuration.startingCwd, {overwrite: true});
-
-    const isZeitNow = !!process.env.NOW_BUILDER;
-    const isNetlify = !!process.env.NETLIFY;
 
     // These variables are used in Google Cloud Platform environment
     // in process of deploying Google Cloud Functions and
@@ -125,7 +129,7 @@ export default class YarnCommand extends BaseCommand {
     // it would definitely be a configuration setting.
     if (typeof this.ignoreEngines !== `undefined`) {
       const exitCode = await reportDeprecation(`The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`, {
-        error: !isZeitNow,
+        error: !CI.VERCEL,
       });
 
       if (exitCode !== null) {
@@ -155,7 +159,7 @@ export default class YarnCommand extends BaseCommand {
     // let someone implement this "resolver-that-reads-the-cache" logic.
     if (typeof this.preferOffline !== `undefined`) {
       const exitCode = await reportDeprecation(`The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`, {
-        error: !isZeitNow,
+        error: !CI.VERCEL,
       });
 
       if (exitCode !== null) {
@@ -193,13 +197,11 @@ export default class YarnCommand extends BaseCommand {
     // Note: it's been deprecated because we're now locking more than just the
     // lockfile - for example the PnP artifacts will also be locked.
     if (typeof this.frozenLockfile !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: !isGCP && !TRAVIS,
+      await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
+        error: false,
       });
 
-      if (exitCode !== null) {
-        return exitCode;
-      }
+      this.immutable = this.frozenLockfile;
     }
 
     // We also want to prevent them from using --cache-folder
@@ -208,7 +210,7 @@ export default class YarnCommand extends BaseCommand {
     // Yarn commands would use different caches, causing unexpected behaviors.
     if (typeof this.cacheFolder !== `undefined`) {
       const exitCode = await reportDeprecation(`The cache-folder option has been deprecated; use rc settings instead`, {
-        error: !isNetlify,
+        error: !CI.NETLIFY,
       });
 
       if (exitCode !== null) {
@@ -216,9 +218,7 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    const immutable = typeof this.immutable === `undefined` && typeof this.frozenLockfile === `undefined`
-      ? configuration.get(`enableImmutableInstalls`) ?? false
-      : this.immutable ?? this.frozenLockfile ?? false;
+    const immutable = this.immutable ?? configuration.get(`enableImmutableInstalls`);
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -235,6 +235,39 @@ export default class YarnCommand extends BaseCommand {
 
       if (fixReport.hasErrors()) {
         return fixReport.exitCode();
+      }
+    }
+
+    if (configuration.projectCwd !== null && typeof configuration.sources.get(`nodeLinker`) === `undefined`) {
+      const projectCwd = configuration.projectCwd;
+
+      let content;
+      try {
+        content = await xfs.readFilePromise(ppath.join(projectCwd, Filename.lockfile), `utf8`);
+      } catch {}
+
+      // If migrating from a v1 install, we automatically enable the node-modules linker,
+      // since that's likely what the author intended to do.
+      if (content?.includes(`yarn lockfile v1`)) {
+        const nmReport = await StreamReport.start({
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+          includeFooter: false,
+        }, async report => {
+          report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
+          report.reportSeparator();
+
+          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
+
+          await Configuration.updateConfiguration(projectCwd, {
+            nodeLinker: `node-modules`,
+          });
+        });
+
+        if (nmReport.hasErrors()) {
+          return nmReport.exitCode();
+        }
       }
     }
 
@@ -281,7 +314,7 @@ export default class YarnCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable, skipBuild: this.skipBuilds});
+      await project.install({cache, report, immutable, mode: this.mode});
     });
 
     return report.exitCode();

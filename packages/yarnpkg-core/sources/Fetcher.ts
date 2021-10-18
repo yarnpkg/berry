@@ -1,6 +1,6 @@
 import {FakeFS, PortablePath} from '@yarnpkg/fslib';
 
-import {Cache}                from './Cache';
+import {Cache, CacheOptions}  from './Cache';
 import {Project}              from './Project';
 import {Report}               from './Report';
 import {LocatorHash, Locator} from './types';
@@ -12,6 +12,7 @@ export type MinimalFetchOptions = {
 
 export type FetchOptions = MinimalFetchOptions & {
   cache: Cache,
+  cacheOptions?: CacheOptions,
   checksums: Map<LocatorHash, string | null>,
   report: Report,
   skipIntegrityCheck?: boolean
@@ -28,7 +29,7 @@ export type FetchResult = {
 
   /**
    * The path where the package can be found within the `packageFs`. This is
-   * typically the "node_modules/<scope>/<name>` path.
+   * typically the `node_modules/<scope>/<name>` path.
    */
   prefixPath: PortablePath,
 
@@ -41,7 +42,7 @@ export type FetchResult = {
   /**
    * The checksum for the fetch result.
    */
-  checksum?: string,
+  checksum?: string | null,
 
   /**
    * If true, the package location won't be considered for package lookups (so

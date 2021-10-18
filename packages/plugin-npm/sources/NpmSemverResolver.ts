@@ -94,18 +94,20 @@ export class NpmSemverResolver implements Resolver {
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    return references
-      .map(reference => {
-        try {
-          return new semverUtils.SemVer(reference.slice(PROTOCOL.length));
-        } catch {
-          return null;
+    return miscUtils.mapAndFilter(references, reference => {
+      try {
+        const {selector} = structUtils.parseRange(reference, {requireProtocol: PROTOCOL});
+        const version = new semverUtils.SemVer(selector);
+
+        if (range.test(version)) {
+          return {reference, version};
         }
-      })
-      .filter((version): version is semver.SemVer => version !== null)
-      .filter(version => range.test(version))
-      .sort((a, b) => -a.compare(b))
-      .map(version => structUtils.makeLocator(descriptor, `${PROTOCOL}${version.raw}`));
+      } catch { }
+
+      return miscUtils.mapAndFilter.skip;
+    })
+      .sort((a, b) => -a.version.compare(b.version))
+      .map(({reference}) => structUtils.makeLocator(descriptor, reference));
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -138,7 +140,7 @@ export class NpmSemverResolver implements Resolver {
       for (const value of manifest.scripts.values()) {
         if (value.match(NODE_GYP_MATCH)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
-          opts.report.reportWarning(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
+          opts.report.reportWarningOnce(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
           break;
         }
       }
@@ -155,6 +157,8 @@ export class NpmSemverResolver implements Resolver {
 
       languageName: `node`,
       linkType: LinkType.HARD,
+
+      conditions: manifest.getConditions(),
 
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,

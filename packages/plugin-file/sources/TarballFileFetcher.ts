@@ -1,9 +1,9 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator}                                    from '@yarnpkg/core';
-import {miscUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {PortablePath, ppath, CwdFS}                 from '@yarnpkg/fslib';
+import {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions} from '@yarnpkg/core';
+import {Locator}                                                 from '@yarnpkg/core';
+import {miscUtils, structUtils, tgzUtils}                        from '@yarnpkg/core';
+import {PortablePath, ppath, CwdFS}                              from '@yarnpkg/fslib';
 
-import {TARBALL_REGEXP, PROTOCOL}                   from './constants';
+import {TARBALL_REGEXP, PROTOCOL}                                from './constants';
 
 export class TarballFileFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
@@ -27,8 +27,7 @@ export class TarballFileFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
       loader: () => this.fetchFromDisk(locator, opts),
-      skipIntegrityCheck: opts.skipIntegrityCheck,
-    });
+    }, opts.cacheOptions);
 
     return {
       packageFs,
@@ -43,13 +42,13 @@ export class TarballFileFetcher implements Fetcher {
 
     // If the file target is an absolute path we can directly access it via its
     // location on the disk. Otherwise we must go through the package fs.
-    const parentFetch = ppath.isAbsolute(path)
+    const parentFetch: FetchResult = ppath.isAbsolute(path)
       ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
       : await opts.fetcher.fetch(parentLocator, opts);
 
     // If the package fs publicized its "original location" (for example like
     // in the case of "file:" packages), we use it to derive the real location.
-    const effectiveParentFetch = parentFetch.localPath
+    const effectiveParentFetch: FetchResult = parentFetch.localPath
       ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
       : parentFetch;
 

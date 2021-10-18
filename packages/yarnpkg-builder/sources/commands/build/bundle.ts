@@ -5,8 +5,9 @@ import {npath}                                                              from
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
 import {Command, Option, Usage}                                             from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild-wasm';
+import {build, Plugin}                                                      from 'esbuild';
 import fs                                                                   from 'fs';
+import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
 import {promisify}                                                          from 'util';
@@ -21,7 +22,7 @@ const pkgJsonVersion = (basedir: string): string => {
 
 const suggestHash = async (basedir: string) => {
   try {
-    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%t`, `--date=short`], {cwd: basedir});
+    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%h`, `--date=short`], {cwd: basedir});
     return `git.${unique.stdout.trim().replace(/-/g, ``).replace(`.`, `.hash-`)}`;
   } catch {
     return null;
@@ -112,12 +113,16 @@ export default class BuildBundleCommand extends Command {
         };
 
         const res = await build({
-          banner: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          banner: {
+            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
           define: {YARN_VERSION: JSON.stringify(version)},
           outfile: output,
           logLevel: `silent`,
+          format: `iife`,
+          platform: `node`,
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
@@ -155,8 +160,11 @@ export default class BuildBundleCommand extends Command {
 
       report.reportSeparator();
 
+      const basedirReq = createRequire(`${basedir}/package.json`);
+
       for (const plugin of plugins) {
-        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(plugin))}`);
+        const {name} = basedirReq(`${plugin}/package.json`);
+        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(name))}`);
       }
     }
 

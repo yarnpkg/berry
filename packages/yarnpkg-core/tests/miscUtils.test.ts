@@ -9,7 +9,7 @@ describe(`miscUtils`, () => {
             return miscUtils.mapAndFind.skip;
 
           return n;
-        })
+        }),
       ).toEqual(2);
     });
 
@@ -20,7 +20,7 @@ describe(`miscUtils`, () => {
             return miscUtils.mapAndFind.skip;
 
           return n;
-        })
+        }),
       ).toEqual(1);
     });
 
@@ -31,8 +31,29 @@ describe(`miscUtils`, () => {
             return miscUtils.mapAndFind.skip;
 
           return n;
-        })
+        }),
       ).toBeUndefined();
+    });
+  });
+
+  describe(`isPathLike`, () => {
+    it.each([
+      `/some/abs/path`,
+      `~/home/directory`,
+      `../parent/directory`,
+      `./current/directory`,
+    ])(`should return true for %s`, pathLike => {
+      expect(miscUtils.isPathLike(pathLike)).toBe(true);
+    });
+
+    it.each([
+      `{some-glob,}`,
+      `pkg-a`,
+      `@scope/ident`,
+      `scope/ident`,
+      `~`,
+    ])(`should return false for %s`, pathLike => {
+      expect(miscUtils.isPathLike(pathLike)).toBe(false);
     });
   });
 });

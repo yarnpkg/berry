@@ -1,0 +1,64 @@
+name: "\U0001F41E Bug report"
+description: "For unintended behaviors. Missing features aren't bugs."
+title: "[Bug?]: "
+labels: bug
+body:
+  - type: checkboxes
+    id: selfservice
+    attributes:
+      label: Self-service
+      description: "Fixing bugs is always a great way to give back to open-source projects, and we're more than happy to answer questions and provide context. Our contributor guide can be found here: https://yarnpkg.com/advanced/contributing"
+      options:
+        - label: "I'd be willing to implement a fix"
+
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: |
+        A clear and concise description of what the bug is. A bug is **unintended**. A feature not being implemented is **not a bug**, and your issue may be closed for misleading labeling.
+      placeholder: |
+        ex: Scoped packages cause "yarn why" to crash.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: To reproduce
+      description: |
+        The _minimal_ information needed to reproduce your issue (ideally a package.json with a single dep). Note that bugs without minimal reproductions **will** be closed as non-actionable.
+
+        **IMPORTANT**: We **strongly** prefer reproductions that use Sherlock. Please check our documentation for more information: https://yarnpkg.com/advanced/sherlock
+      placeholder: |
+        ```js repro
+        // Sherlock reproduction. For instance:
+        await packageJsonAndInstall({
+          dependencies: {
+            [`packageName`]: `x.y.z`,
+          },
+        });
+        ```
+    validations:
+        required: true
+
+  - type: textarea
+    attributes:
+      label: Environment
+      render: shell
+      description: |
+        Run `yarn dlx -q envinfo --preset jest` and paste the result into the form
+      placeholder: |
+        System:
+          OS: macOS 11.4
+          CPU: (8) x64 Intel(R) Core(TM) i7-8559U CPU @ 2.70GHz
+        Binaries:
+          Node: 12.16.0 - /path/to/node
+          Yarn: 3.0.0-rc.5 - /path/to/yarn
+          npm: 6.14.11 - /path/to/npm
+    validations:
+        required: true
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: |
+        Add any other context about the problem here. Or a screenshot if applicable.

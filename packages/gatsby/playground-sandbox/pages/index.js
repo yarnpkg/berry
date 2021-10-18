@@ -1,8 +1,7 @@
 import Head                from 'next/head';
 import {useRef, useEffect} from 'react';
 
-// TODO: replace with `https://yarnpkg.com`
-const WEBSITE_URL = `https://deploy-preview-1193--yarn2.netlify.com`;
+const WEBSITE_URL = `https://yarnpkg.com`;
 
 const Home = () => {
   const iframeEl = useRef(null);

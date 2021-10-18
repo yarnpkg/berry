@@ -1,10 +1,11 @@
 import styled                   from '@emotion/styled';
 import React                    from 'react';
 
+import {Toc}                    from '../components/toc';
+
 import {Layout}                 from './layout';
 import {Navigation}             from './navigation';
 import {ifMobile, mediaQueries} from './responsive';
-import {Toc} from '../components/toc';
 
 const Container = styled.div`
   padding: 2em;
@@ -25,7 +26,6 @@ const ArticleContainer = styled.div`
   max-width: 1200px;
   grid-column: 1;
 `;
-
 
 
 export const LayoutContentNav = ({items, children}) => {

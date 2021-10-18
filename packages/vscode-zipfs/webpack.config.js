@@ -1,10 +1,10 @@
 const path = require(`path`);
 
 module.exports = {
-  mode: `production`,
+  mode: process.env.NODE_ENV || `production`,
   devtool: false,
 
-  target: `node10.19`,
+  target: `node12`,
 
   context: __dirname,
   entry: `./sources/index.ts`,

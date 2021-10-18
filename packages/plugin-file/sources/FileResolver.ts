@@ -7,7 +7,7 @@ import {FILE_REGEXP, PROTOCOL}                           from './constants';
 import * as fileUtils                                    from './fileUtils';
 
 // We use this for the folders to be regenerated without bumping the whole cache
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 
 export class FileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -62,9 +62,9 @@ export class FileResolver implements Resolver {
           params: {
             locator: structUtils.stringifyLocator(parentLocator),
           },
-        })
+        }),
       ),
-      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions}
+      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions},
     );
 
     const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
@@ -91,8 +91,10 @@ export class FileResolver implements Resolver {
 
       version: manifest.version || `0.0.0`,
 
-      languageName: opts.project.configuration.get(`defaultLanguageName`),
+      languageName: manifest.languageName || opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
+
+      conditions: manifest.getConditions(),
 
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,

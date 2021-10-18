@@ -134,6 +134,12 @@ export interface Package extends Locator {
   linkType: LinkType,
 
   /**
+   * A set of constraints indicating whether the package supports the host
+   * environment.
+   */
+  conditions: string | null,
+
+  /**
    * A map of the package's dependencies. There's no distinction between prod
    * dependencies and dev dependencies, because those have already been merged
    * together during the resolution process.

@@ -1,5 +1,6 @@
 import {Descriptor, Plugin, SettingsType, Package, formatUtils} from '@yarnpkg/core';
 import {Workspace}                                              from '@yarnpkg/core';
+import {isCI}                                                   from 'ci-info';
 
 import add                                                      from './commands/add';
 import bin                                                      from './commands/bin';
@@ -31,11 +32,12 @@ import run                                                      from './commands
 import setResolutionPolicy                                      from './commands/set/resolution';
 import setVersionFromSources                                    from './commands/set/version/sources';
 import setVersionPolicy                                         from './commands/set/version';
+import unlink                                                   from './commands/unlink';
 import up                                                       from './commands/up';
 import why                                                      from './commands/why';
 import listWorkspaces                                           from './commands/workspaces/list';
 import workspace                                                from './commands/workspace';
-import * as dedupeUtils                                         from './suggestUtils';
+import * as dedupeUtils                                         from './dedupeUtils';
 import * as suggestUtils                                        from './suggestUtils';
 
 export {
@@ -84,9 +86,9 @@ declare module '@yarnpkg/core' {
 const plugin: Plugin = {
   configuration: {
     enableImmutableInstalls: {
-      description: `If true, prevents the install command from modifying the lockfile`,
+      description: `If true (the default on CI), prevents the install command from modifying the lockfile`,
       type: SettingsType.BOOLEAN,
-      default: false,
+      default: isCI,
     },
 
     defaultSemverRangePrefix: {
@@ -118,6 +120,7 @@ const plugin: Plugin = {
     info,
     install,
     link,
+    unlink,
     node,
     pluginImportSources,
     pluginImport,

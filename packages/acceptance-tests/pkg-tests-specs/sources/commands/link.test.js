@@ -1,4 +1,4 @@
-import {npath} from '@yarnpkg/fslib';
+import {Filename, npath, xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {createTemporaryFolder, readJson, writeJson},
@@ -148,6 +148,62 @@ describe(`Commands`, () => {
           },
         });
       }),
+    );
+
+    test(
+      `it should not load the link target config in strict mode`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.mktempPromise(async target => {
+          await Promise.all([
+            xfs.writeJsonPromise(`${target}/package.json`, {name: `portal-target`}),
+            xfs.writeFilePromise(`${target}/${Filename.rc}`, `unknownConfig: 42`),
+          ]);
+
+          await expect(run(`link`, target)).resolves.toMatchObject({code: 0});
+
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+            resolutions: {
+              [`portal-target`]: `portal:${npath.toPortablePath(target)}`,
+            },
+          });
+        });
+      }),
+    );
+
+    test(
+      `it should not load plugins from the link target`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.mktempPromise(async target => {
+          await Promise.all([
+            xfs.writeJsonPromise(`${target}/package.json`, {name: `portal-target`}),
+            xfs.writeFilePromise(`${target}/${Filename.rc}`, `plugins:\n  - path: ./foo.js`),
+            xfs.writeFilePromise(`${target}/foo.js`, `throw new Error(42)`),
+          ]);
+
+          await expect(run(`link`, target)).resolves.toMatchObject({code: 0});
+
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
+            resolutions: {
+              [`portal-target`]: `portal:${npath.toPortablePath(target)}`,
+            },
+          });
+        });
+      }),
+    );
+
+    test(
+      `it should not allow linking a project to itself`,
+      makeTemporaryEnv(
+        {
+          name: `foo`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`link`, path)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`Can't link the project to itself`),
+          });
+        },
+      ),
     );
   });
 });

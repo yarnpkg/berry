@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>Yarn</ShortName>
+  <Description>Yarn package search</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image height="48" width="48" type="image/png">https://yarnpkg.com/icons/icon-48x48.png</Image>
+  <Url type="text/html" template="https://yarnpkg.com/?q={searchTerms}"/>
+</OpenSearchDescription>

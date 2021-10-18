@@ -1,3 +1,6 @@
+// Workaround for https://github.com/eslint/eslint/issues/3458
+require(`@rushstack/eslint-patch/modern-module-resolution`);
+
 module.exports = {
   extends: [
     `./rules/best-practices`,
@@ -10,11 +13,11 @@ module.exports = {
 
   env: {
     node: true,
-    es6: true,
+    es2017: true,
   },
 
   parserOptions: {
-    ecmaVersion: 6,
+    ecmaVersion: 2019,
     sourceType: `module`,
     ecmaFeatures: {
       modules: true,

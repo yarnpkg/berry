@@ -14,20 +14,25 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     ? new RegExp(data.ignorePatternData)
     : null;
 
-  const packageLocatorsByLocations = new Map<PortablePath, PhysicalPackageLocator | null>();
-  const packageLocationLengths = new Set<number>();
+  const packageLocatorsByLocations = new Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>();
 
   const packageRegistry = new Map<string | null, PackageStore>(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map<string | null, PackageInformation<PortablePath>>(packageStoreData.map(([packageReference, packageInformationData]) => {
       if ((packageName === null) !== (packageReference === null))
         throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
 
-      if (!packageInformationData.discardFromLookup) {
-        // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
-        const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
-        packageLocatorsByLocations.set(packageInformationData.packageLocation, packageLocator);
+      const discardFromLookup = packageInformationData.discardFromLookup ?? false;
 
-        packageLocationLengths.add(packageInformationData.packageLocation.length);
+      // @ts-expect-error: TypeScript isn't smart enough to understand the type assertion
+      const packageLocator: PhysicalPackageLocator = {name: packageName, reference: packageReference};
+      const entry = packageLocatorsByLocations.get(packageInformationData.packageLocation);
+      if (!entry) {
+        packageLocatorsByLocations.set(packageInformationData.packageLocation, {locator: packageLocator, discardFromLookup});
+      } else {
+        entry.discardFromLookup = entry.discardFromLookup && discardFromLookup;
+        if (!discardFromLookup) {
+          entry.locator = packageLocator;
+        }
       }
 
       let resolvedPackageLocation: PortablePath | null = null;
@@ -36,7 +41,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
         packageDependencies: new Map(packageInformationData.packageDependencies),
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
-        discardFromLookup: packageInformationData.discardFromLookup || false,
+        discardFromLookup,
         // we only need this for packages that are used by the currently running script
         // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {
@@ -48,9 +53,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
       }];
     }))];
   }));
-
-  for (const location of data.locationBlacklistData)
-    packageLocatorsByLocations.set(location, null);
 
   const fallbackExclusionList = new Map(data.fallbackExclusionList.map(([packageName, packageReferences]) => {
     return [packageName, new Set(packageReferences)] as [string, Set<string>];
@@ -68,7 +70,6 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     fallbackExclusionList,
     fallbackPool,
     ignorePattern,
-    packageLocationLengths: [...packageLocationLengths].sort((a, b) => b - a),
     packageLocatorsByLocations,
     packageRegistry,
   };

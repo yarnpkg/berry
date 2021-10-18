@@ -3,7 +3,6 @@ import {Cache, Configuration, Project, StreamReport, Package, MessageName, forma
 import {structUtils, semverUtils}                                                                                          from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                                                                                from 'clipanion';
 import micromatch                                                                                                          from 'micromatch';
-import semver                                                                                                              from 'semver';
 
 import * as pnpUtils                                                                                                       from '../pnpUtils';
 
@@ -85,7 +84,7 @@ export default class UnplugCommand extends BaseCommand {
         ? patternDescriptor
         : structUtils.makeDescriptor(patternDescriptor, `*`);
 
-      if (!semver.validRange(pseudoDescriptor.range))
+      if (!semverUtils.validRange(pseudoDescriptor.range))
         throw new UsageError(`The range of the descriptor patterns must be a valid semver range (${structUtils.prettyDescriptor(configuration, pseudoDescriptor)})`);
 
       return (pkg: Package) => {

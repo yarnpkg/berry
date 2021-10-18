@@ -72,9 +72,9 @@ There's already good documentation online explaining how to get rid of cyclic de
 
 A package has build scripts, but they've been disabled across the project.
 
-Build scripts can be disabled on a global basis through the use of the `enable-scripts` settings. When it happens, a warning is still emitted to let you know that the installation might not be complete.
+Build scripts can be disabled on a global basis through the use of the `enableScripts` settings. When it happens, a warning is still emitted to let you know that the installation might not be complete.
 
-The safest way to downgrade the warning into a notification is to explicitly disable build scripts for the affected packages through the use of the `dependenciesMeta[].build` key.
+The safest way to downgrade the warning into a notification is to explicitly disable build scripts for the affected packages through the use of the `dependenciesMeta[].built` key.
 
 ## YN0005 - `BUILD_DISABLED`
 
@@ -182,9 +182,9 @@ This situation usually happens after you've modified the zip archives from your 
 
 ## YN0019 - `UNUSED_CACHE_ENTRY`
 
-A file from the cache has been detected unused by `yarn cache clean`.
+A file from the cache has been detected unused while installing dependencies.
 
-After removing or upgrading a dependency you'll find that Yarn won't automatically remove the now obsolete files from your cache (this is because your cache might be shared by multiple projects, and in order to keep the history less messy). Running `yarn cache clean` will cause Yarn to try to figure out which packages from the cache aren't referenced by the current lockfile.
+Running `yarn cache clean` will cause Yarn to remove everything inside `.yarn/cache`.
 
 ## YN0020 - `MISSING_LOCKFILE_ENTRY`
 
@@ -236,7 +236,7 @@ When running `yarn add` without adding explicit ranges to the packages to add, Y
 
 Your lockfile would be modified if Yarn was to finish the install.
 
-When passing the `--frozen-lockfile` option to `yarn install`, Yarn will ensure that the lockfile isn't modified in the process and will instead throw an exception if this situation was to happen (for example if a newly added package was missing from the lockfile, or if the current Yarn release required some kind of migration before being able to work with the lockfile).
+When passing the `--immutable` option to `yarn install`, Yarn will ensure that the lockfile isn't modified in the process and will instead throw an exception if this situation was to happen (for example if a newly added package was missing from the lockfile, or if the current Yarn release required some kind of migration before being able to work with the lockfile).
 
 This option is typically meant to be used on your CI and production servers, and fixing this error should simply be a matter of running `yarn install` on your local development environment and submitting a PR containing the updated lockfile.
 
@@ -312,6 +312,14 @@ A package requests a peer dependency, but its parent in the dependency tree prov
 
 A package is marked as deprecated by the publisher. Avoid using it, use the alternative provided in the deprecation message instead.
 
+## YN0062 - `INCOMPATIBLE_OS`
+
+A package is incompatible with the operating system, as reported by [`process.platform`](https://nodejs.org/api/process.html#process_process_platform).  Its installation will be skipped.
+
+## YN0063 - `INCOMPATIBLE_CPU`
+
+A package is incompatible with the CPU architecture, as reported by [`process.arch`](https://nodejs.org/api/process.html#process_process_arch).  Its installation will be skipped.
+
 ## YN0068 - `UNUSED_PACKAGE_EXTENSION`
 
 A packageExtension is detected by Yarn as being unused, which means that the selector doesn't match any of the installed packages.
@@ -319,3 +327,44 @@ A packageExtension is detected by Yarn as being unused, which means that the sel
 ## YN0069 - `REDUNDANT_PACKAGE_EXTENSION`
 
 A packageExtension is detected by Yarn as being unneeded, which means that the selected packages have the same behavior with and without the extension.
+
+## YN0071 - `NM_CANT_INSTALL_EXTERNAL_SOFT_LINK`
+
+An external soft link (portal) cannot be installed, because incompatible version of a dependency exists in the parent package. This prevents portal representation for node_modules installs without a need to write files into portal's target directory, which is forbidden for security reasons.
+
+**Workarounds** If the ranges for conflicting dependencies overlap between portal target and portal parent, the workaround is to use `yarn dedupe foo` (where `foo` is the conflicting dependency name) to upgrade the conflicting dependencies to the highest available versions, if `yarn dedupe` is used without arguments, all the dependencies across the project will be upgraded to the highest versions within their ranges in `package.json`. Another alternative is to use `link:` protocol instead of `portal:` and install dependencies inside the target directory explicitly.
+
+## YN0072 - `NM_PRESERVE_SYMLINKS_REQUIRED`
+
+A portal dependency with subdependencies is used in the project. `--preserve-symlinks` Node option must be used
+to start the application in order for portal dependency to find its subdependencies and peer dependencies.
+
+## YN0074 - `NM_HARDLINKS_MODE_DOWNGRADED`
+
+`nmMode` has been downgraded to `hardlinks-local` due to global cache and install folder being on different devices. Consider changing `globalFolder` setting and place the global cache on the same device as your project, if you want `hardlinks-global` to take effect.
+
+## YN0075 - `PROLOG_INSTANTIATION_ERROR`
+
+This error appears when a Prolog predicate is called with an invalid signature. Specifically, it means that some of the predicate parameters are non-instantiated (ie have no defined value), when the predicate would expect some. This doesn't mean that you need to hardcode a value, just that you need to assign one before calling the predicate. In the case of the `WorkspaceCwd` parameter from most of the Yarn predicates, it means that instead of calling:
+
+```
+workspace_field(WorkspaceCwd, 'name', _).
+```
+
+You would also use the `workspace/1` predicate to let Prolog "fill" the `WorkspaceCwd` parameter prior to using it in `workspace_field/3`:
+
+```
+workspace(WorkspaceCwd), workspace_field(WorkspaceCwd, 'name', _).
+```
+
+For more information about the parameters that must be instantiated when calling the predicate reported by the error message, consult the [dedicated page](/features/constraints#query-predicate) from our documentation.
+
+## YN0076 - `INCOMPATIBLE_ARCHITECTURE`
+
+A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) fields) as being incompatible with the system architecture. Its postinstall scripts will not run on this system.
+
+## YN0077 - `GHOST_ARCHITECTURE`
+
+Some native packages may be excluded from the install if they signal they don't support the systems the project is intended for. This detection is typically based on your current system parameters, but it can be configured using the [`supportedArchitectures` config option](/configuration/yarnrc#supportedArchitectures). If your os or cpu are missing from this list, Yarn will skip the packages and raise a warning.
+
+Note that all fields from `supportedArchitectures` default to `current`, which is a dynamic value depending on your local parameters. For instance, if you wish to support "my current os, whatever it is, plus linux", you can set `supportedArchitectures.os` to `["current", "linux"]`.

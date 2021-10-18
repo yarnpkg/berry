@@ -9,16 +9,44 @@ import {NodeFS}                                                                 
 import {ZipFS}                                                                                                                                       from './ZipFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
-import {Filename, FSPath, PortablePath}                                                                                                              from './path';
+import {Filename, FSPath, PortablePath, ppath}                                                                                                       from './path';
 
 const ZIP_FD = 0x80000000;
 
-const FILE_PARTS_REGEX = /.*?(?<!\/)\.zip(?=\/|$)/;
+/**
+ * Extracts the archive part (ending in the first instance of `extension`) from a path.
+ *
+ * The indexOf-based implementation is ~3.7x faster than a RegExp-based implementation.
+ */
+export const getArchivePart = (path: string, extension: string) => {
+  let idx = path.indexOf(extension);
+  if (idx <= 0)
+    return null;
+
+  let nextCharIdx = idx;
+  while (idx >= 0) {
+    nextCharIdx = idx + extension.length;
+    if (path[nextCharIdx] === ppath.sep)
+      break;
+
+    // Disallow files named ".zip"
+    if (path[idx - 1] === ppath.sep)
+      return null;
+
+    idx = path.indexOf(extension, nextCharIdx);
+  }
+
+  // The path either has to end in ".zip" or contain an archive subpath (".zip/...")
+  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
+    return null;
+
+  return path.slice(0, nextCharIdx) as PortablePath;
+};
 
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>,
   filter?: RegExp | null,
-  libzip: Libzip,
+  libzip: Libzip | (() => Libzip),
   maxOpenFiles?: number,
   readOnlyArchives?: boolean,
   useCache?: boolean,
@@ -27,6 +55,13 @@ export type ZipOpenFSOptions = {
    * ZipFS instances are pruned from the cache if they aren't accessed within this amount of time.
    */
   maxAge?: number,
+  /**
+   * Which file extensions will be interpreted as zip files. Useful for supporting other formats
+   * packaged as zips, such as .docx.
+   *
+   * If not provided, defaults to only accepting `.zip`.
+   */
+  fileExtensions?: Array<string> | null;
 };
 
 export class ZipOpenFS extends BasePortableFakeFS {
@@ -40,7 +75,15 @@ export class ZipOpenFS extends BasePortableFakeFS {
     }
   }
 
-  private readonly libzip: Libzip;
+  private libzipFactory!: () => Libzip;
+  private libzipInstance?: Libzip;
+
+  private get libzip(): Libzip {
+    if (typeof this.libzipInstance === `undefined`)
+      this.libzipInstance = this.libzipFactory();
+
+    return this.libzipInstance;
+  }
 
   private readonly baseFs: FakeFS<PortablePath>;
 
@@ -53,15 +96,18 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private readonly maxOpenFiles: number;
   private readonly maxAge: number;
   private readonly readOnlyArchives: boolean;
+  private readonly fileExtensions: Array<string> | null;
 
   private isZip: Set<PortablePath> = new Set();
   private notZip: Set<PortablePath> = new Set();
   private realPaths: Map<PortablePath, PortablePath> = new Map();
 
-  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000}: ZipOpenFSOptions) {
+  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000, fileExtensions = null}: ZipOpenFSOptions) {
     super();
 
-    this.libzip = libzip;
+    this.libzipFactory = typeof libzip !== `function`
+      ? () => libzip
+      : libzip;
 
     this.baseFs = baseFs;
 
@@ -71,6 +117,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     this.maxOpenFiles = maxOpenFiles;
     this.readOnlyArchives = readOnlyArchives;
     this.maxAge = maxAge;
+    this.fileExtensions = fileExtensions;
   }
 
   getExtractHint(hints: ExtractHintOptions) {
@@ -461,7 +508,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(oldP, () => {
       return this.makeCallSync(newP, () => {
         return this.baseFs.renameSync(oldP, newP);
-      }, async () => {
+      }, () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
       });
     }, (zipFsO, {subPath: subPathO}) => {
@@ -710,28 +757,28 @@ export class ZipOpenFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
   async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
-  async readdirPromise(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Promise<Array<string> | Array<Dirent>> {
+  async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<Dirent>> {
     return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.readdirPromise(p, {withFileTypes: withFileTypes as any});
+      return await this.baseFs.readdirPromise(p, opts as any);
     }, async (zipFs, {subPath}) => {
-      return await zipFs.readdirPromise(subPath, {withFileTypes: withFileTypes as any});
+      return await zipFs.readdirPromise(subPath, opts as any);
     }, {
       requireSubpath: false,
     });
   }
 
   readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false} | null): Array<Filename>;
   readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<Dirent>;
   readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
-  readdirSync(p: PortablePath, {withFileTypes}: {withFileTypes?: boolean} = {}): Array<string> | Array<Dirent> {
+  readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<Dirent> {
     return this.makeCallSync(p, () => {
-      return this.baseFs.readdirSync(p, {withFileTypes: withFileTypes as any});
+      return this.baseFs.readdirSync(p, opts as any);
     }, (zipFs, {subPath}) => {
-      return zipFs.readdirSync(subPath, {withFileTypes: withFileTypes as any});
+      return zipFs.readdirSync(subPath, opts as any);
     }, {
       requireSubpath: false,
     });
@@ -851,11 +898,24 @@ export class ZipOpenFS extends BasePortableFakeFS {
     let filePath = `` as PortablePath;
 
     while (true) {
-      const parts = FILE_PARTS_REGEX.exec(p.substr(filePath.length));
-      if (!parts)
+      const pathPartWithArchive = p.substr(filePath.length);
+
+      let archivePart;
+      if (!this.fileExtensions) {
+        archivePart = getArchivePart(pathPartWithArchive, `.zip`);
+      } else {
+        for (const ext of this.fileExtensions) {
+          archivePart = getArchivePart(pathPartWithArchive, ext);
+          if (archivePart) {
+            break;
+          }
+        }
+      }
+
+      if (!archivePart)
         return null;
 
-      filePath = this.pathUtils.join(filePath, parts[0] as PortablePath);
+      filePath = this.pathUtils.join(filePath, archivePart);
 
       if (this.isZip.has(filePath) === false) {
         if (this.notZip.has(filePath))

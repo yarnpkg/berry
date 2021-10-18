@@ -1,0 +1,9 @@
+{
+  "name": "optional-native",
+  "version": "1.0.0",
+  "optionalDependencies": {
+    "native-bar-x64": "1.0.0",
+    "native-foo-x64": "1.0.0",
+    "native-foo-x86": "1.0.0"
+  }
+}

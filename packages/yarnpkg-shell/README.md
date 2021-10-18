@@ -7,7 +7,7 @@ A JavaScript implementation of a bash-like shell (we use it in Yarn 2 to provide
 ```ts
 import {execute} from '@yarnpkg/shell';
 
-process.exitCode = await execute(`ls "$1" | wc -l`, [process.cwd()]);
+process.exitCode = await execute(`ls "$0" | wc -l`, [process.cwd()]);
 ```
 
 ## Features
@@ -22,6 +22,7 @@ process.exitCode = await execute(`ls "$1" | wc -l`, [process.cwd()]);
 - Supports variables
 - Supports string manipulators
 - Supports argc/argv
+- Supports background jobs with color-coded output
 - Supports the most classic builtins
 - Doesn't necessarily need to access the fs
 

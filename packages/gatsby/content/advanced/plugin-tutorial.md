@@ -15,7 +15,7 @@ Starting from the Yarn 2, Yarn now supports plugins. For more information about 
 
 Plugins are scripts that get loaded at runtime by Yarn, and that can inject new behaviors into it. They also can require some packages provided by Yarn itself, such as `@yarnpkg/core`. This allows you to use the exact same core API as the Yarn binary currently in use, kinda like if it was a peer dependency!
 
-> **Important:** Since plugins are loaded before Yarn starts (and thus before you make your first install), it's strongly advised to write your plugins in such a way that they work without dependencies. If that becomes difficult, know that we provide a powerful tool ([`@yarnpkg/builder`](#builder)) that can bundle your plugins into a single Javascript file, ready to be published.
+> **Important:** Since plugins are loaded before Yarn starts (and thus before you make your first install), it's strongly advised to write your plugins in such a way that they work without dependencies. If that becomes difficult, know that we provide a powerful tool ([`@yarnpkg/builder`](#all-in-one-plugin-builder) that can bundle your plugins into a single Javascript file, ready to be published.
 
 ## Writing our first plugin
 
@@ -51,7 +51,7 @@ That's it! You have your first plugin, congratulations! Of course it doesn't do 
 
 ## All-in-one plugin builder
 
-As we saw, plugins are meant to be standalone JavaScript source files. It's very possible to author them by hand, especially if you only need a small one, but once you start adding multiple commands it can become a bit more complicated. To make this process easyer, we maintain a package called `@yarnpkg/builder`. This builder is to Yarn what Next.js is to web development - it's a tool designed to help creating, building, and managing complex plugins written in TypeScript.
+As we saw, plugins are meant to be standalone JavaScript source files. It's very possible to author them by hand, especially if you only need a small one, but once you start adding multiple commands it can become a bit more complicated. To make this process easier, we maintain a package called `@yarnpkg/builder`. This builder is to Yarn what Next.js is to web development - it's a tool designed to help creating, building, and managing complex plugins written in TypeScript.
 
 Its documentation can be found on the [dedicated page](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-builder/README.md), but remember that you're not required to use it. Sometimes good old scripts are just fine!
 
@@ -66,12 +66,12 @@ module.exports = {
     const {Command} = require(`clipanion`);
 
     class HelloWorldCommand extends Command {
+      static paths = [[`hello`]];
+
       async execute() {
         this.context.stdout.write(`This is my very own plugin 😎\n`);
       }
     }
-
-    HelloWorldCommand.addPath(`hello`);
 
     return {
       commands: [
@@ -82,51 +82,41 @@ module.exports = {
 };
 ```
 
-Now, try to run `yarn hello`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`yup`](https://github.com/jquense/yup) library, which we provide. Here's an example where we only accept email addresses as parameter:
+Now, try to run `yarn hello`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`typanion`](https://github.com/arcanis/typanion) library, which we provide. Here's an example where we only accept numbers as parameter:
 
 ```js
 module.exports = {
-  name: `plugin-hello-world`,
+  name: `plugin-addition`,
   factory: require => {
-    const {Command} = require(`clipanion`);
-    const yup = require(`yup`);
+    const {Command, Option} = require(`clipanion`);
+    const t = require(`typanion`);
 
-    class HelloWorldCommand extends Command {
+    class AdditionCommand extends Command {
+      static paths = [[`addition`]];
+
+      // Show descriptive usage for a --help argument passed to this command
+      static usage = Command.Usage({
+        description: `hello world!`,
+        details: `
+          This command will print a nice message.
+        `,
+        examples: [[
+          `Add two numbers together`,
+          `yarn addition 42 10`,
+        ]],
+      });
+
+      a = Option.String({validator: t.isNumber()});
+      b = Option.String({validator: t.isNumber()});
+
       async execute() {
-        this.context.stdout.write(`Hello ${this.email} 💌\n`);
+        this.context.stdout.write(`${this.a}+${this.b}=${this.a + this.b}\n`);
       }
     }
 
-    // Note: This curious syntax is because @Command.String is actually
-    // a decorator! But since they aren't supported in native JS at the
-    // moment, we need to call them manually.
-    HelloWorldCommand.addOption(`email`, Command.String(`--email`));
-
-    // Similarly we would be able to use a decorator here too, but since
-    // we're writing our code in JS-only we need to go through "addPath".
-    HelloWorldCommand.addPath(`hello`);
-
-    // Similarly, native JS doesn't support member variable as of today,
-    // hence the awkward writing.
-    HelloWorldCommand.schema = yup.object().shape({
-      email: yup.string().required().email(),
-    });
-
-    // Show descriptive usage for a --help argument passed to this command
-    HelloWorldCommand.usage = Command.Usage({
-      description: `hello world!`,
-      details: `
-        This command will print a nice message.
-      `,
-      examples: [[
-        `Say hello to an email user`,
-        `yarn hello --email acidburn@example.com`,
-      ]],
-    });
-
     return {
       commands: [
-        HelloWorldCommand,
+        AdditionCommand,
       ],
     };
   },
@@ -142,7 +132,7 @@ module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
     hooks: {
-      setupScriptEnvironment(scriptEnv) {
+      setupScriptEnvironment(project, scriptEnv) {
         scriptEnv.HELLO_WORLD = `my first plugin!`;
       },
     },

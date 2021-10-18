@@ -64,7 +64,7 @@ export function formatKeywords(
   keywords = [],
   highlightedKeywords = [],
   maxKeywords = 4,
-  onClick
+  onClick,
 ) {
   if (isEmpty(keywords)) return keywords;
   highlightedKeywords.forEach((el, i) => {
@@ -117,7 +117,7 @@ export function formatKeywords(
             {content}
           </span>
         );
-      }
+      },
     )
     .reduce((prev, curr) => [prev, `, `, curr]);
 }
@@ -170,9 +170,10 @@ export const prefixURL = (url, {base, user, project, head, path}) => {
     return url;
   } else {
     return new URL(
-      (path ? `${path.replace(/^\//, ``)}/` : ``) +
-        url.replace(/^(\.?\/?)/, ``),
-      `${base}/${user}/${project}/${path ? `` : `${head}/`}`
+      url.replace(/^\//, ``),
+      `${base}/${user}/${project}/${
+        path ? `` : `${head}/${path ? `${path.replace(/^\//, ``)}/` : ``}`
+      }`,
     );
   }
 };
@@ -223,10 +224,10 @@ export const HighlightedMarkdown = connectHighlight(
               key={`split-${i}-${v.value}`}
               dangerouslySetInnerHTML={safeMarkdown(v.value)}
             />
-          )
+          ),
       )}
     </span>
-  )
+  ),
 );
 
 const inlineRenderer = new marked.Renderer();

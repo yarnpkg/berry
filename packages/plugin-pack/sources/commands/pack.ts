@@ -79,13 +79,13 @@ export default class PackCommand extends BaseCommand {
       json: this.json,
     }, async report => {
       await packUtils.prepareForPack(workspace, {report}, async () => {
-        report.reportJson({base: workspace.cwd});
+        report.reportJson({base: npath.fromPortablePath(workspace.cwd)});
 
         const files = await packUtils.genPackList(workspace);
 
         for (const file of files) {
-          report.reportInfo(null, file);
-          report.reportJson({location: file});
+          report.reportInfo(null, npath.fromPortablePath(file));
+          report.reportJson({location: npath.fromPortablePath(file)});
         }
 
         if (!this.dryRun) {
@@ -102,7 +102,7 @@ export default class PackCommand extends BaseCommand {
 
       if (!this.dryRun) {
         report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${formatUtils.pretty(configuration, target, formatUtils.Type.PATH)}`);
-        report.reportJson({output: target});
+        report.reportJson({output: npath.fromPortablePath(target)});
       }
     });
 

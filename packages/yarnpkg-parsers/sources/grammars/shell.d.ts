@@ -20,6 +20,7 @@ export type Argument =
 export type RedirectArgument = {
   type: `redirection`,
   subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`,
+  fd: number | null,
   args: Array<ValueArgument>
 };
 
@@ -67,7 +68,10 @@ export type CommandLineThen = {
   line: CommandLine,
 };
 
-export type ShellLine = Array<CommandLine>;
+export type ShellLine = Array<{
+  type: ';' | '&',
+  command: CommandLine,
+}>;
 
 export type ArithmeticPrimary = {
   type: `number`,

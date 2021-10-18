@@ -1,6 +1,10 @@
+import * as constants from './constants';
 import * as statUtils from './statUtils';
 
-export {opendir} from './algorithms/opendir';
+export {constants};
+
+export {LinkStrategy} from './algorithms/copyPromise';
+export {opendir}      from './algorithms/opendir';
 
 export {statUtils};
 
@@ -19,6 +23,7 @@ export type {WatchFileOptions}         from './FakeFS';
 export type {WatchFileCallback}        from './FakeFS';
 export type {StatWatcher}              from './FakeFS';
 export type {OpendirOptions}           from './FakeFS';
+export type {Stats, BigIntStats}       from './FakeFS';
 
 export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
 export type {ZipCompression}           from './ZipFS';

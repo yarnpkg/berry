@@ -1,20 +1,21 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "2.2.0",
+  "version": "3.1.0-rc.10",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
-    "@yarnpkg/core": "^2.4.0",
-    "@yarnpkg/plugin-patch": "^2.1.2"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-patch": "workspace:^"
   },
   "devDependencies": {
+    "@types/lodash-es": "4.17.4",
     "@types/resolve": "^1.17.1",
-    "@yarnpkg/cli": "workspace:^2.4.0",
-    "@yarnpkg/core": "workspace:^2.4.0",
-    "@yarnpkg/fslib": "workspace:^2.4.0",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "@yarnpkg/plugin-npm": "workspace:^2.4.0",
-    "@yarnpkg/plugin-patch": "workspace:^2.1.2",
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/monorepo": "workspace:^",
+    "@yarnpkg/plugin-npm": "workspace:^",
+    "@yarnpkg/plugin-patch": "workspace:^",
     "resolve": "^1.17.0",
     "semver": "^7.1.2"
   },
@@ -27,7 +28,7 @@
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\"",
     "test:plugin-compat": "run test:unit --config \"$(pwd)/jest.config.js\"",
-    "debug-patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
+    "debug:patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
   },
   "publishConfig": {
     "main": "./lib/index.js",
@@ -37,6 +38,7 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "3.0.0"
 }

@@ -1,11 +1,11 @@
-import {Report, Workspace, scriptUtils}                            from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath} from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                       from '@yarnpkg/plugin-stage';
-import mm                                                          from 'micromatch';
-import tar                                                         from 'tar-stream';
-import {createGzip}                                                from 'zlib';
+import {Manifest, Report, Workspace, scriptUtils}                             from '@yarnpkg/core';
+import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath, constants} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                                  from '@yarnpkg/plugin-stage';
+import mm                                                                     from 'micromatch';
+import tar                                                                    from 'tar-stream';
+import {createGzip}                                                           from 'zlib';
 
-import {Hooks}                                                     from './';
+import {Hooks}                                                                from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -57,6 +57,10 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
 
   try {
+    const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
+    if (await xfs.existsPromise(manifestPath))
+      await workspace.manifest.loadFile(manifestPath, {baseFs: xfs});
+
     await cb();
   } finally {
     await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
@@ -83,7 +87,11 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       const dest = ppath.join(`package` as PortablePath, file);
 
       const stat = await xfs.lstatPromise(source);
-      const opts = {name: dest, mtime: new Date(315532800000)};
+
+      const opts = {
+        name: dest,
+        mtime: new Date(constants.SAFE_TIME * 1000),
+      };
 
       const mode = executableFiles.has(file)
         ? 0o755
@@ -174,7 +182,6 @@ export async function genPackList(workspace: Workspace) {
 
   maybeRejectPath(ppath.resolve(project.cwd, configuration.get(`lockfileFilename`)));
 
-  maybeRejectPath(configuration.get(`bstatePath`));
   maybeRejectPath(configuration.get(`cacheFolder`));
   maybeRejectPath(configuration.get(`globalFolder`));
   maybeRejectPath(configuration.get(`installStatePath`));

@@ -5,7 +5,6 @@ import camelcase                                                                
 import {isCI}                                                                                           from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
 import pLimit, {Limit}                                                                                  from 'p-limit';
-import semver                                                                                           from 'semver';
 import {PassThrough, Writable}                                                                          from 'stream';
 
 import {CorePlugin}                                                                                     from './CorePlugin';
@@ -52,6 +51,11 @@ const IGNORED_ENV_VARIABLES = new Set([
   // "wrapOutput" was a variable used to indicate nested "yarn run" processes
   // back in Yarn 1.
   `wrapOutput`,
+
+  // "YARN_HOME" and "YARN_CONF_DIR" may be present as part of the unrelated "Apache Hadoop YARN" software project.
+  // https://hadoop.apache.org/docs/r0.23.11/hadoop-project-dist/hadoop-common/SingleCluster.html
+  `home`,
+  `confDir`,
 ]);
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
@@ -71,6 +75,11 @@ export enum SettingsType {
   SHAPE = `SHAPE`,
   MAP = `MAP`,
 }
+
+export type SupportedArchitectures = {
+  os: Array<string> | null;
+  cpu: Array<string> | null;
+};
 
 export type FormatType = formatUtils.Type;
 export const FormatType = formatUtils.Type;
@@ -176,14 +185,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: DEFAULT_COMPRESSION_LEVEL,
   },
   virtualFolder: {
-    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named $$virtual)`,
+    description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named __virtual__)`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/$$virtual`,
-  },
-  bstatePath: {
-    description: `Path of the file where the current state of the built packages must be stored`,
-    type: SettingsType.ABSOLUTE_PATH,
-    default: `./.yarn/build-state.yml`,
+    default: `./.yarn/__virtual__`,
   },
   lockfileFilename: {
     description: `Name of the files where the Yarn dependency tree entries must be stored`,
@@ -211,11 +215,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
-  enableAbsoluteVirtuals: {
-    description: `If true, the virtual symlinks will use absolute paths if required [non portable!!]`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
 
   // Settings related to the output style
   enableColors: {
@@ -235,6 +234,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: isCI,
     defaultText: `<dynamic>`,
+  },
+  enableMessageNames: {
+    description: `If true, the CLI will prefix most messages with codes suitable for search engines`,
+    type: SettingsType.BOOLEAN,
+    default: true,
   },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
@@ -285,6 +289,26 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  supportedArchitectures: {
+    description: `Architectures that Yarn will fetch and inject into the resolver`,
+    type: SettingsType.SHAPE,
+    properties: {
+      os: {
+        description: `Array of supported process.platform strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+      cpu: {
+        description: `Array of supported process.arch strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+    },
+  },
 
   // Settings related to network access
   enableMirror: {
@@ -326,7 +350,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   networkConcurrency: {
     description: `Maximal number of concurrent requests`,
     type: SettingsType.NUMBER,
-    default: Infinity,
+    default: 50,
   },
   networkSettings: {
     description: `Network settings per hostname (glob patterns are supported)`,
@@ -385,6 +409,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
         type: SettingsType.STRING,
         default: undefined,
       },
+      pattern: {
+        description: `Code of the patterns covered by this override`,
+        type: SettingsType.STRING,
+        default: undefined,
+      },
       level: {
         description: `Log level override, set to null to remove override`,
         type: SettingsType.STRING,
@@ -415,6 +444,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   // Settings related to security
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
+  enableStrictSettings: {
+    description: `If true, unknown settings will cause Yarn to abort`,
     type: SettingsType.BOOLEAN,
     default: true,
   },
@@ -490,13 +524,11 @@ export interface ConfigurationValueMap {
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   virtualFolder: PortablePath;
-  bstatePath: PortablePath;
   lockfileFilename: Filename;
   installStatePath: PortablePath;
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
-  enableAbsoluteVirtuals: boolean;
 
   enableColors: boolean;
   enableHyperlinks: boolean;
@@ -511,6 +543,7 @@ export interface ConfigurationValueMap {
   defaultLanguageName: string;
   defaultProtocol: string;
   enableTransparentWorkspaces: boolean;
+  supportedArchitectures: miscUtils.ToMapValue<SupportedArchitectures>;
 
   enableMirror: boolean;
   enableNetwork: boolean;
@@ -529,7 +562,7 @@ export interface ConfigurationValueMap {
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
-  logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, level?: formatUtils.LogLevel | null}>>;
+  logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
@@ -538,6 +571,7 @@ export interface ConfigurationValueMap {
 
   // Settings related to security
   enableScripts: boolean;
+  enableStrictSettings: boolean;
   enableImmutableCache: boolean;
   checksumBehavior: string;
 
@@ -616,7 +650,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     return value;
 
   const interpretValue = () => {
-    if (definition.type === SettingsType.BOOLEAN)
+    if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
@@ -635,6 +669,8 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
         return parseInt(valueWithReplacedVariables);
       case SettingsType.LOCATOR:
         return structUtils.parseLocator(valueWithReplacedVariables);
+      case SettingsType.BOOLEAN:
+        return miscUtils.parseBoolean(valueWithReplacedVariables);
       default:
         return valueWithReplacedVariables;
     }
@@ -906,7 +942,18 @@ export class Configuration {
     delete environmentSettings.rcFilename;
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
+
     const homeRcFile = await Configuration.findHomeRcFile();
+    if (homeRcFile) {
+      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+      // The home configuration is never strict because it improves support for
+      // multiple projects using different Yarn versions on the same machine
+      if (rcFile) {
+        rcFile.strict = false;
+      } else {
+        rcFiles.push({...homeRcFile, strict: false});
+      }
+    }
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
     // to not have to load the plugins if there's a `yarn-path` configured.
@@ -923,8 +970,6 @@ export class Configuration {
     configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
-    if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, pickCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -974,14 +1019,13 @@ export class Configuration {
       [`@@core`, CorePlugin],
     ]);
 
-    const interop =
-      (obj: any) => obj.__esModule
-        ? obj.default
-        : obj;
+    const getDefault = (object: any) => {
+      return `default` in object ? object.default : object;
+    };
 
     if (pluginConfiguration !== null) {
       for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, interop(pluginConfiguration.modules.get(request)));
+        plugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
 
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
@@ -991,12 +1035,8 @@ export class Configuration {
 
       const dynamicPlugins = new Set();
 
-      const getDefault = (object: any) => {
-        return object.default || object;
-      };
-
-      const importPlugin = (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = miscUtils.dynamicRequire(npath.fromPortablePath(pluginPath));
+      const importPlugin = async (pluginPath: PortablePath, source: string) => {
+        const {factory, name} = miscUtils.dynamicRequire(pluginPath);
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
@@ -1012,8 +1052,8 @@ export class Configuration {
           }
         };
 
-        const plugin = miscUtils.prettifySyncErrors(() => {
-          return getDefault(factory(pluginRequire));
+        const plugin = await miscUtils.prettifyAsyncErrors(async () => {
+          return getDefault(await factory(pluginRequire));
         }, message => {
           return `${message} (when initializing ${name}, defined in ${source})`;
         });
@@ -1027,7 +1067,7 @@ export class Configuration {
       if (environmentSettings.plugins) {
         for (const userProvidedPath of environmentSettings.plugins.split(`;`)) {
           const pluginPath = ppath.resolve(startingCwd, npath.toPortablePath(userProvidedPath));
-          importPlugin(pluginPath, `<environment>`);
+          await importPlugin(pluginPath, `<environment>`);
         }
       }
 
@@ -1043,7 +1083,7 @@ export class Configuration {
             : userPluginEntry;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          importPlugin(pluginPath, path);
+          await importPlugin(pluginPath, path);
         }
       }
     }
@@ -1052,13 +1092,8 @@ export class Configuration {
       configuration.activatePlugin(name, plugin);
 
     configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict});
-
-    // The home configuration is never strict because it improves support for
-    // multiple projects using different Yarn versions on the same machine
-    if (homeRcFile)
-      configuration.useWithSource(homeRcFile.path, excludeCoreFields(homeRcFile.data), homeRcFile.cwd, {strict: false});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1072,7 +1107,12 @@ export class Configuration {
 
   static async findRcFiles(startingCwd: PortablePath) {
     const rcFilename = getRcFilename();
-    const rcFiles = [];
+    const rcFiles: Array<{
+      path: PortablePath;
+      cwd: PortablePath;
+      data: any;
+      strict?: boolean
+    }> = [];
 
     let nextCwd = startingCwd;
     let currentCwd = null;
@@ -1247,7 +1287,9 @@ export class Configuration {
   }
 
   use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
-    for (const key of Object.keys(data)) {
+    strict = strict && this.get(`enableStrictSettings`);
+
+    for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
       const value = data[key];
       if (typeof value === `undefined`)
         continue;
@@ -1285,18 +1327,23 @@ export class Configuration {
         throw error;
       }
 
+      if (key === `enableStrictSettings` && source !== `<environment>`) {
+        strict = parsed as boolean;
+        continue;
+      }
+
       if (definition.type === SettingsType.MAP) {
         const previousValue = this.values.get(key) as Map<string, any>;
         this.values.set(key, new Map(overwrite
           ? [...previousValue, ...parsed as Map<string, any>]
-          : [...parsed as Map<string, any>, ...previousValue]
+          : [...parsed as Map<string, any>, ...previousValue],
         ));
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else if (definition.isArray && definition.concatenateValues) {
         const previousValue = this.values.get(key) as Array<unknown>;
         this.values.set(key, overwrite
           ? [...previousValue, ...parsed as Array<unknown>]
-          : [...parsed as Array<unknown>, ...previousValue]
+          : [...parsed as Array<unknown>, ...previousValue],
         );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {
@@ -1398,13 +1445,27 @@ export class Configuration {
     return linkers;
   }
 
+  getSupportedArchitectures() {
+    const supportedArchitectures = this.get(`supportedArchitectures`);
+
+    let os = supportedArchitectures.get(`os`);
+    if (os !== null)
+      os = os.map(value => value === `current` ? process.platform : value);
+
+    let cpu = supportedArchitectures.get(`cpu`);
+    if (cpu !== null)
+      cpu = cpu.map(value => value === `current` ? process.arch : value);
+
+    return {os, cpu};
+  }
+
   async refreshPackageExtensions() {
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
 
     const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
-      if (!semver.validRange(descriptor.range))
-        throw new Error(`Only semver ranges are allowed as keys for the lockfileExtensions setting`);
+      if (!semverUtils.validRange(descriptor.range))
+        throw new Error(`Only semver ranges are allowed as keys for the packageExtensions setting`);
 
       const extension = new Manifest();
       extension.load(extensionData, {yamlCompatibilityMode: true});

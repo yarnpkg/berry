@@ -1,14 +1,14 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "2.4.0",
+  "version": "3.1.0-rc.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^2.4.0",
-    "@yarnpkg/json-proxy": "workspace:^2.1.0",
-    "@yarnpkg/parsers": "workspace:^2.3.0",
-    "ci-info": "^2.0.0",
-    "clipanion": "^3.0.0-rc.10",
+    "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/json-proxy": "workspace:^",
+    "@yarnpkg/parsers": "workspace:^",
+    "ci-info": "^3.2.0",
+    "clipanion": "^3.0.1",
     "enquirer": "^2.3.6",
     "lodash": "^4.17.15",
     "micromatch": "^4.0.2",
@@ -17,17 +17,18 @@
     "typanion": "^3.3.0"
   },
   "peerDependencies": {
-    "@yarnpkg/cli": "^2.4.0",
-    "@yarnpkg/core": "^2.4.0"
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
-    "@types/ci-info": "^2",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
-    "@yarnpkg/cli": "workspace:^2.4.0",
-    "@yarnpkg/core": "workspace:^2.4.0"
+    "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "3.0.0"
 }

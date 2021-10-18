@@ -1,8 +1,10 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
+import CI                                                                   from 'ci-info';
+import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
 
-import {Configuration}                                                      from './Configuration';
+import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
 import {Report}                                                             from './Report';
 import * as miscUtils                                                       from './miscUtils';
@@ -41,6 +43,7 @@ export const Type = {
   RESOLUTION: `RESOLUTION`,
   DEPENDENT: `DEPENDENT`,
   PACKAGE_EXTENSION: `PACKAGE_EXTENSION`,
+  SETTING: `SETTING`,
 } as const;
 
 export type Type = keyof typeof Type;
@@ -49,14 +52,14 @@ export enum Style {
   BOLD = 1 << 1,
 }
 
-const chalkOptions = process.env.GITHUB_ACTIONS
+const chalkOptions = CI.GITHUB_ACTIONS
   ? {level: 2}
   : chalk.supportsColor
     ? {level: chalk.supportsColor.level}
     : {level: 0};
 
 export const supportsColor = chalkOptions.level !== 0;
-export const supportsHyperlinks = supportsColor && !process.env.GITHUB_ACTIONS;
+export const supportsHyperlinks = supportsColor && !CI.GITHUB_ACTIONS && !CI.CIRCLE && !CI.GITLAB;
 
 const chalkInstance = new chalk.Instance(chalkOptions);
 
@@ -185,6 +188,18 @@ const transforms = {
     },
   }),
 
+  [Type.SETTING]: validateTransform({
+    pretty: (configuration: Configuration, settingName: keyof ConfigurationValueMap) => {
+      // Asserts that the setting is valid
+      configuration.get(settingName);
+
+      return applyHyperlink(configuration, applyColor(configuration, settingName, Type.CODE), `https://yarnpkg.com/configuration/yarnrc#${settingName}`);
+    },
+    json: (settingName: string) => {
+      return settingName;
+    },
+  }),
+
   [Type.DURATION]: validateTransform({
     pretty: (configuration: Configuration, duration: number) => {
       if (duration > 1000 * 60) {
@@ -239,6 +254,11 @@ export type Source<T> = T extends keyof AllTransforms
 export type Tuple<T extends Type = Type> =
   readonly [Source<T>, T];
 
+export type Field = {
+  label: string;
+  value: Tuple<any>;
+};
+
 export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T> {
   return [value, formatType];
 }
@@ -277,6 +297,24 @@ export function applyColor(configuration: Configuration, value: string, formatTy
     throw new Error(`Invalid format type ${color}`);
 
   return fn(value);
+}
+
+const isKonsole = !!process.env.KONSOLE_VERSION;
+
+export function applyHyperlink(configuration: Configuration, text: string, href: string) {
+  // Only print hyperlinks if allowed per configuration
+  if (!configuration.get(`enableHyperlinks`))
+    return text;
+
+  // We use ESC as ST for Konsole because it doesn't support
+  // the non-standard BEL character for hyperlinks
+  if (isKonsole)
+    return `\u001b]8;;${href}\u001b\\${text}\u001b]8;;\u001b\\`;
+
+  // We use BELL as ST because it seems that iTerm doesn't properly support
+  // the \x1b\\ sequence described in the reference document
+  // https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda#the-escape-sequence
+  return `\u001b]8;;${href}\u0007${text}\u001b]8;;\u0007`;
 }
 
 export function pretty<T extends Type>(configuration: Configuration, value: Source<T>, formatType: T | string): string {
@@ -322,6 +360,10 @@ export function mark(configuration: Configuration) {
   };
 }
 
+export function prettyField(configuration: Configuration, {label, value: [value, formatType]}: Field) {
+  return `${pretty(configuration, label, Type.CODE)}: ${pretty(configuration, value, formatType)}`;
+}
+
 export enum LogLevel {
   Error = `error`,
   Warning = `warning`,
@@ -338,6 +380,7 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
   const logFiltersByCode = new Map<string, LogLevel | null>();
   const logFiltersByText = new Map<string, LogLevel | null>();
+  const logFiltersByPatternMatcher: Array<[(str: string) => boolean, LogLevel | null]> = [];
 
   for (const filter of logFilters) {
     const level = filter.get(`level`);
@@ -349,19 +392,40 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
       logFiltersByCode.set(code, level);
 
     const text = filter.get(`text`);
-    if (typeof text !== `undefined`) {
+    if (typeof text !== `undefined`)
       logFiltersByText.set(text, level);
+
+    const pattern = filter.get(`pattern`);
+    if (typeof pattern !== `undefined`) {
+      logFiltersByPatternMatcher.push([micromatch.matcher(pattern, {contains: true}), level]);
     }
   }
+
+  // Higher priority to the last patterns, just like other filters
+  logFiltersByPatternMatcher.reverse();
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
     if (name === null || name === MessageName.UNNAMED)
       return defaultLevel;
 
+    // Avoid processing the string unless we know we'll actually need it
+    const strippedText = logFiltersByText.size > 0 || logFiltersByPatternMatcher.length > 0
+      ? stripAnsi(text)
+      : text;
+
     if (logFiltersByText.size > 0) {
-      const level = logFiltersByText.get(stripAnsi(text));
+      const level = logFiltersByText.get(strippedText);
+
       if (typeof level !== `undefined`) {
         return level ?? defaultLevel;
+      }
+    }
+
+    if (logFiltersByPatternMatcher.length > 0) {
+      for (const [filterMatcher, filterLevel] of logFiltersByPatternMatcher) {
+        if (filterMatcher(strippedText)) {
+          return filterLevel ?? defaultLevel;
+        }
       }
     }
 

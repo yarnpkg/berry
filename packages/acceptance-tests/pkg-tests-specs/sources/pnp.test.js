@@ -260,7 +260,7 @@ describe(`Plug'n'Play`, () => {
 
         expect(filter(rootMessage)).not.toEqual(filter(dependencyMessage));
       },
-    )
+    ),
   );
 
   test(
@@ -287,7 +287,7 @@ describe(`Plug'n'Play`, () => {
 
         expect(filter(workspaceMessage)).toEqual(filter(rootMessage));
       },
-    )
+    ),
   );
 
   test(
@@ -323,8 +323,8 @@ describe(`Plug'n'Play`, () => {
           name: `@types/no-deps`,
           version: `1.0.0`,
         });
-      }
-    )
+      },
+    ),
   );
 
   test(
@@ -404,7 +404,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         const {stdout} = await run(`install`);
         expect(stdout).not.toEqual(expect.stringContaining(`YN0060`));
-      }
+      },
     ),
   );
 
@@ -649,7 +649,7 @@ describe(`Plug'n'Play`, () => {
               `${npath.fromPortablePath(path)}/workspace-b`,
               ``,
             ])}}))`,
-            {cwd: `${path}/workspace-a`}
+            {cwd: `${path}/workspace-a`},
           ),
         ).resolves.toMatchObject({
           name: `no-deps`,
@@ -1078,6 +1078,7 @@ describe(`Plug'n'Play`, () => {
             // If the .pnp.cjs file references absolute paths, they will stop working
             await xfs.renamePromise(`${path}/.yarn`, `${path2}/.yarn`);
             await xfs.renamePromise(`${path}/.pnp.cjs`, `${path2}/.pnp.cjs`);
+            await xfs.renamePromise(`${path}/yarn.lock`, `${path2}/yarn.lock`);
 
             await expect(source2(`require('no-deps')`)).resolves.toMatchObject({
               name: `no-deps`,
@@ -1651,7 +1652,7 @@ describe(`Plug'n'Play`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, build skipped.`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, build skipped.`));
 
         await expect(source(`require('dep')`)).resolves.toMatchObject({
           name: `dep`,
@@ -1704,6 +1705,8 @@ describe(`Plug'n'Play`, () => {
       await mkdirp(`${path}/foo`);
       await writeFile(`${path}/foo/index.js`, ``);
 
+      await run(`install`);
+
       await expect(source(`require.resolve('./foo')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo.js`));
       await expect(source(`require.resolve('./foo/')`)).resolves.toEqual(npath.fromPortablePath(`${path}/foo/index.js`));
     }),
@@ -1749,7 +1752,7 @@ describe(`Plug'n'Play`, () => {
 
         await xfs.writeFilePromise(
           `${portalTarget}/index.js`,
-          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`
+          `module.exports = require.resolve('peer-deps-fixed', {paths: [__dirname]})`,
         );
 
         await xfs.writeJsonPromise(`${path}/package.json`, {
@@ -1762,7 +1765,7 @@ describe(`Plug'n'Play`, () => {
 
         await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
       });
-    })
+    }),
   );
 
   test(
@@ -1781,7 +1784,7 @@ describe(`Plug'n'Play`, () => {
 
         await xfs.writeFilePromise(
           `${portalTarget}/index.js`,
-          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`
+          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`,
         );
 
         await xfs.writeJsonPromise(`${path}/package.json`, {
@@ -1795,7 +1798,7 @@ describe(`Plug'n'Play`, () => {
 
         await expect(source(`require('portal')`)).resolves.toMatch(`no-deps-npm-2.0.0-`);
       });
-    })
+    }),
   );
 
   test(
@@ -1826,7 +1829,7 @@ describe(`Plug'n'Play`, () => {
           stderr: expect.stringContaining(`is controlled by multiple pnpapi instances`),
         });
       });
-    })
+    }),
   );
 
   test(
@@ -1840,6 +1843,274 @@ describe(`Plug'n'Play`, () => {
       await run(`install`);
 
       await expect(source(`require('./ignored/index.js')`)).resolves.toBe(42);
-    })
+    }),
+  );
+
+  test(
+    `it should be able to resolve a dependency using a module instance without an id`,
+    makeTemporaryEnv({
+      workspaces: [`workspace-a`],
+    }, async ({path, run, source}) => {
+      await xfs.mkdirpPromise(`${path}/workspace-a`);
+      await xfs.writeJsonPromise(`${path}/workspace-a/package.json`, {dependencies: {[`no-deps`]: `*`}});
+      await xfs.writeFilePromise(`${path}/index.js`, `
+        const Module = require('module');
+        const path = require('path');
+
+        module.exports = Module._resolveFilename(
+          'no-deps',
+          Object.assign(new Module(), {
+            paths: Module._nodeModulePaths(path.join(__dirname, 'workspace-a')),
+          })
+        );
+        `);
+
+      await run(`install`);
+
+      await expect(source(`require('./index.js')`)).resolves.toMatch(/no-deps(\\|\/)index.js/);
+    }),
+  );
+
+  test(
+    `it should respect pnpIgnorePatterns when using findPnpApi`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpIgnorePatterns: `ignored/**`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/ignored`);
+        await run(`install`);
+
+        await expect(source(`require('module').findPnpApi(require('path').resolve('ignored'))`)).resolves.toBe(null);
+      },
+    ),
+  );
+
+  test(
+    `it shouldn't match on dot files with pnpIgnorePatterns`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpIgnorePatterns: `ignored/**`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/ignored/node_modules/.cache`, {recursive: true});
+        await run(`install`);
+
+        await expect(source(`require('module').findPnpApi(require('path').resolve('ignored/node_modules/.cache'))`)).resolves.toBe(null);
+      },
+    ),
+  );
+
+  test(
+    `it should run the install scripts anew if the unplugged folder is removed`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-scripted': `*`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringContaining(`YN0007`),
+        });
+
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.not.stringContaining(`YN0007`),
+        });
+
+        await xfs.removePromise(ppath.join(path, `.yarn/unplugged`));
+
+        await expect(run(`install`)).resolves.toMatchObject({
+          code: 0,
+          stdout: expect.stringContaining(`YN0007`),
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should output the "reloading the API instance" warning using process.emitWarning`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs');
+          const api = require.resolve('pnpapi');
+
+          require('fs').writeFileSync(api, fs.readFileSync(api));
+
+          setTimeout(() => {
+            require.resolve('pnpapi');
+          }, 1000);
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: expect.stringContaining(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance`),
+        });
+
+        await expect(run(`node`, `./index.js`, {env: {NODE_OPTIONS: `--no-warnings`}})).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: ``,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should be able to resolve relative preloads`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `-r`, `./.pnp.cjs`, `-p`, `42`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should set bytesRead on Windows when input is a pipe and EOF is thrown`,
+    makeTemporaryEnv(
+      {
+        scripts: {
+          test: `echo '' | node index.js`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs');
+
+          fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
+            console.log(bytesRead);
+            fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
+              console.log(bytesRead);
+            });
+          });
+        `);
+
+        await expect(run(`test`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `1\n0\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should pick the most specific locator`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/sub-project`);
+        await xfs.writeJsonPromise(`${path}/sub-project/package.json`, {
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+        });
+        await xfs.writeFilePromise(`${path}/sub-project/yarn.lock`, ``);
+
+        await expect(run(`install`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/sub-project/index.js`, `
+          const path = require('path');
+          require.resolve('no-deps', {paths: [path.resolve(__dirname, '..'), __filename]});
+          require.resolve('no-deps', {paths: [path.resolve(__dirname, '..'), __filename]});
+        `);
+
+        await expect(run(`node`, `./index.js`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
+      },
+    ),
+  );
+
+  test(
+    `it should load modules that haven't been loaded`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/foo.js`, `
+          module.exports.foo = 42;
+        `);
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          import('./foo.js').then((mod) => console.log(mod.foo));
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should support circular requires`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/foo.js`, `
+          module.exports.foo = 42;
+          require('./index.js');
+        `);
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          console.log(require('./foo.js').foo);
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should support user patched fs`,
+    makeTemporaryEnv(
+      { },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(`${path}/index.js`, `
+          const fs = require('fs')
+
+          fs.realpathSync = (file) => file;
+
+          fs.readFileSync = () => {
+            return 'module.exports = 42';
+          }
+
+          const originalStatSync = fs.statSync;
+          fs.statSync = () => {
+            return originalStatSync(__filename);
+          }
+
+          console.log(require('${path}/does/not/exist.js'))
+        `);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
   );
 });

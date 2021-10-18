@@ -192,8 +192,8 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
 
   const sourceFile = await ts.createSourceFile(
     npath.fromPortablePath(p),
-    `(${content})`,
-    ts.ScriptTarget.ES2015,
+    content,
+    ts.ScriptTarget.JSON,
     /*setParentNodes */ true,
   );
 
@@ -296,6 +296,9 @@ async function processWorkspace(workspace: Workspace, {configuration, fileList, 
     if (scriptName.match(/^(pre|post)(?!(install|pack)$)/) && !scriptName.match(/^prettier/))
       report.reportWarning(MessageName.UNNAMED, `User scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called in sequence anymore; prefer calling prologues and epilogues explicitly`);
 
+  if (Array.isArray(workspace.manifest.raw.bundleDependencies) || Array.isArray(workspace.manifest.raw.bundledDependencies))
+    report.reportWarning(MessageName.UNNAMED, `The bundleDependencies (or bundledDependencies) field is not supported anymore; prefer using a bundler`);
+
   for (const p of fileList) {
     const parsed = await parseFile(p);
 
@@ -358,7 +361,7 @@ class EntryCommand extends Command {
       return null;
     };
 
-    await StreamReport.start({
+    const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
@@ -410,6 +413,8 @@ class EntryCommand extends Command {
       report.reportSeparator();
       await reportedProgress;
     });
+
+    return report.exitCode();
   }
 }
 

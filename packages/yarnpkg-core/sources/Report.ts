@@ -6,6 +6,7 @@ import {Locator}       from './types';
 
 export class ReportError extends Error {
   public reportCode: MessageName;
+  public originalError?: Error;
 
   constructor(code: MessageName, message: string, public reportExtra?: (report: Report) => void) {
     super(message);
@@ -93,21 +94,25 @@ export abstract class Report {
     };
   }
 
-  reportInfoOnce(name: MessageName, text: string, opts?: {key?: any}) {
+  reportInfoOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedInfos.has(key)) {
       this.reportedInfos.add(key);
       this.reportInfo(name, text);
+
+      opts?.reportExtra?.(this);
     }
   }
 
-  reportWarningOnce(name: MessageName, text: string, opts?: {key?: any}) {
+  reportWarningOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedWarnings.has(key)) {
       this.reportedWarnings.add(key);
       this.reportWarning(name, text);
+
+      opts?.reportExtra?.(this);
     }
   }
 

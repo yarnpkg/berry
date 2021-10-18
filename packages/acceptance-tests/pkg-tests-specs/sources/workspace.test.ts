@@ -33,7 +33,7 @@ describe(`Workspaces tests`, () => {
         `packages/baz`,
         `packages/foo`,
       ]);
-    })
+    }),
   );
 
   test(
@@ -53,7 +53,7 @@ describe(`Workspaces tests`, () => {
         `packages/bar`,
         `packages/baz`,
       ]);
-    })
+    }),
   );
 
   test(
@@ -242,7 +242,7 @@ describe(`Workspaces tests`, () => {
 
         await expect(
           run(`run`, `has-bin-entries`, `foo`, {
-            cwd: `${path}/packages/workspace`,
+            cwd: `${path}/packages/workspace` as PortablePath,
           }),
         ).resolves.toMatchObject({stdout: `foo\n`});
       },

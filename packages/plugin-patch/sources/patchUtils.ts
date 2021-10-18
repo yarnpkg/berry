@@ -80,6 +80,10 @@ type VisitPatchPathOptions<T> = {
 };
 
 function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOptions<T>, patchPath: PortablePath) {
+  const optional = patchPath.startsWith(`~`);
+  if (optional)
+    patchPath = patchPath.slice(1) as PortablePath;
+
   const builtinMatch = patchPath.match(BUILTIN_REGEXP);
   if (builtinMatch !== null)
     return onBuiltin(builtinMatch[1]);
@@ -89,6 +93,14 @@ function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOp
   } else {
     return onRelative(patchPath);
   }
+}
+
+export function extractPatchFlags(patchPath: PortablePath) {
+  const optional = patchPath.startsWith(`~`);
+  if (optional)
+    patchPath = patchPath.slice(1) as PortablePath;
+
+  return {optional};
 }
 
 export function isParentRequired(patchPath: PortablePath) {
@@ -119,39 +131,47 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
   // First we obtain the specification for all the patches that we'll have to
   // apply to the original package.
   const patchFiles = await miscUtils.releaseAfterUseAsync(async () => {
-    return await Promise.all(patchPaths.map(async patchPath => visitPatchPath({
-      onAbsolute: async () => {
-        return await xfs.readFilePromise(patchPath, `utf8`);
-      },
+    return await Promise.all(patchPaths.map(async patchPath => {
+      const flags = extractPatchFlags(patchPath);
 
-      onRelative: async () => {
-        if (effectiveParentFetch === null)
-          throw new Error(`Assertion failed: The parent locator should have been fetched`);
+      const source = await visitPatchPath({
+        onAbsolute: async () => {
+          return await xfs.readFilePromise(patchPath, `utf8`);
+        },
 
-        return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
-      },
+        onRelative: async () => {
+          if (effectiveParentFetch === null)
+            throw new Error(`Assertion failed: The parent locator should have been fetched`);
 
-      onBuiltin: async name => {
-        return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
-          return hooks.getBuiltinPatch;
-        }, opts.project, name);
-      },
-    }, patchPath)));
+          return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
+        },
+
+        onBuiltin: async name => {
+          return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
+            return hooks.getBuiltinPatch;
+          }, opts.project, name);
+        },
+      }, patchPath);
+
+      return {...flags, source};
+    }));
   });
 
   // Normalizes the line endings to prevent mismatches when cloning a
   // repository on Windows systems (the default settings for Git are to
   // convert newlines back and forth, which would mess with the checksum)
-  return patchFiles.map(definition => {
-    if (typeof definition === `string`) {
-      return definition.replace(/\r\n?/g, `\n`);
-    } else {
-      return definition;
-    }
-  });
+  for (const spec of patchFiles)
+    if (typeof spec.source === `string`)
+      spec.source = spec.source.replace(/\r\n?/g, `\n`);
+
+  return patchFiles;
 }
 
 export async function extractPackageToDisk(locator: Locator, {cache, project}: {cache: Cache, project: Project}) {
+  const pkg = project.storedPackages.get(locator.locatorHash);
+  if (typeof pkg === `undefined`)
+    throw new Error(`Assertion failed: Expected the package to be registered`);
+
   const checksums = project.storedChecksums;
   const report = new ThrowReport();
 
@@ -160,24 +180,44 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 
   const temp = await xfs.mktempPromise();
 
-  await xfs.copyPromise(temp, fetchResult.prefixPath, {
-    baseFs: fetchResult.packageFs,
-  });
+  const sourcePath = ppath.join(temp, `source` as Filename);
+  const userPath = ppath.join(temp, `user` as Filename);
+  const metaPath = ppath.join(temp, `.yarn-patch.json` as Filename);
 
-  await xfs.writeJsonPromise(ppath.join(temp, `.yarn-patch.json` as Filename), {
-    locator: structUtils.stringifyLocator(locator),
-  });
+  await Promise.all([
+    xfs.copyPromise(sourcePath, fetchResult.prefixPath, {
+      baseFs: fetchResult.packageFs,
+    }),
+    xfs.copyPromise(userPath, fetchResult.prefixPath, {
+      baseFs: fetchResult.packageFs,
+    }),
+    xfs.writeJsonPromise(metaPath, {
+      locator: structUtils.stringifyLocator(locator),
+      version: pkg.version,
+    }),
+  ]);
 
   xfs.detachTemp(temp);
-  return temp;
+  return userPath;
 }
 
 export async function diffFolders(folderA: PortablePath, folderB: PortablePath) {
   const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
 
-  const {stdout, stderr} = await execUtils.execvp(`git`, [`diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, folderAN, folderBN], {
+  const {stdout, stderr} = await execUtils.execvp(`git`, [`-c`, `core.safecrlf=false`, `diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, `--text`, folderAN, folderBN], {
     cwd: npath.toPortablePath(process.cwd()),
+    env: {
+      ...process.env,
+      //#region Predictable output
+      // These variables aim to ignore the global git config so we get predictable output
+      // https://git-scm.com/docs/git#Documentation/git.txt-codeGITCONFIGNOSYSTEMcode
+      GIT_CONFIG_NOSYSTEM: `1`,
+      HOME: ``,
+      XDG_CONFIG_HOME: ``,
+      USERPROFILE: ``,
+      //#endregion
+    },
   });
 
   // we cannot rely on exit code, because --no-index implies --exit-code

@@ -4,6 +4,9 @@ import {PortablePath}         from '@yarnpkg/fslib';
 import versionApply           from './commands/version/apply';
 import versionCheck           from './commands/version/check';
 import version                from './commands/version';
+import * as versionUtils      from './versionUtils';
+
+export {versionUtils};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -21,7 +24,7 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       isArray: true,
       isNullable: false,
-      default: [`master`, `origin/master`, `upstream/master`],
+      default: [`master`, `origin/master`, `upstream/master`, `main`, `origin/main`, `upstream/main`],
     },
     changesetIgnorePatterns: {
       description: `Array of glob patterns; files matching them will be ignored when fetching the changed files`,

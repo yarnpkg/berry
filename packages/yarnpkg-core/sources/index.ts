@@ -17,7 +17,7 @@ export type {PluginConfiguration, SettingsDefinition, MapConfigurationValue, Pac
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                           from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                     from './Fetcher';
 export {BuildType}                                                                                        from './Installer';
-export type {Installer, BuildDirective, InstallStatus, FinalizeInstallStatus}                             from './Installer';
+export type {Installer, BuildDirective, InstallStatus, InstallPackageExtraApi, FinalizeInstallStatus}     from './Installer';
 export {LightReport}                                                                                      from './LightReport';
 export type {Linker, LinkOptions, MinimalLinkOptions}                                                     from './Linker';
 export {Manifest}                                                                                         from './Manifest';
@@ -25,7 +25,7 @@ export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMe
 export {MessageName}                                                                                      from './MessageName';
 export type {CommandContext, Hooks, Plugin}                                                               from './Plugin';
 export type {PeerRequirement}                                                                             from './Project';
-export {Project}                                                                                          from './Project';
+export {Project, InstallMode}                                                                             from './Project';
 export {TAG_REGEXP}                                                                                       from './ProtocolResolver';
 export {ReportError, Report}                                                                              from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                             from './Resolver';

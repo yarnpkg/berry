@@ -13,12 +13,18 @@ export type ApplyPatchOptions = {
   manager: Manager,
 };
 
+type PatchedModule = Module & {
+  load(path: NativePath): void;
+  isLoading?: boolean;
+};
+
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // @ts-expect-error
   const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   /**
-   * The cache that will be used for all accesses occuring outside of a PnP context.
+   * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
   const defaultCache: NodeJS.NodeRequireCache = {};
@@ -45,7 +51,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       return null;
 
     const apiEntry = opts.manager.getApiEntry(apiPath, true);
-    return apiEntry.instance;
+    // Check if the path is ignored
+    return apiEntry.instance.findPackageLocator(lookupPath) ? apiEntry.instance : null;
   };
 
   function getRequireStack(parent: Module | null | undefined) {
@@ -71,7 +78,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Builtins are managed by the regular Node loader
 
-    if (builtinModules.has(request)) {
+    if (isBuiltinModule(request)) {
       try {
         enableNativeHooks = false;
         return originalModuleLoad.call(Module, request, parent, isMain);
@@ -122,15 +129,31 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = entry.cache[modulePath];
-    if (cacheEntry)
+    const cacheEntry = entry.cache[modulePath] as PatchedModule;
+    if (cacheEntry) {
+      // When a dynamic import is used in CJS files Node adds the module
+      // to the cache but doesn't load it so we do it here.
+      //
+      // Keep track of and check if the module is already loading to
+      // handle circular requires.
+      //
+      // The explicit checks are required since `@babel/register` et al.
+      // create modules without the `loaded` and `load` properties
+      if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
+        try {
+          cacheEntry.isLoading = true;
+          cacheEntry.load(modulePath);
+        } finally {
+          cacheEntry.isLoading = false;
+        }
+      }
+
       return cacheEntry.exports;
+    }
 
     // Create a new module and store it into the cache
 
-    // @ts-expect-error
-    const module = new Module(modulePath, parent);
-    // @ts-expect-error
+    const module = new Module(modulePath, parent ?? undefined) as PatchedModule;
     module.pnpApiPath = moduleApiPath;
 
     entry.cache[modulePath] = module;
@@ -147,10 +170,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     let hasThrown = true;
 
     try {
-    // @ts-expect-error
+      module.isLoading = true;
       module.load(modulePath);
       hasThrown = false;
     } finally {
+      module.isLoading = false;
       if (hasThrown) {
         delete Module._cache[modulePath];
       }
@@ -174,6 +198,14 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   }
 
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
+    if (module && module.id !== `<repl>` && module.id !== `internal/preload` && !module.parent && !module.filename && module.paths.length > 0) {
+      return [{
+        apiPath: opts.manager.findApiPathFor(module.paths[0]),
+        path: module.paths[0],
+        module,
+      }];
+    }
+
     const issuer = getIssuerModule(module);
 
     if (issuer !== null) {
@@ -207,7 +239,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: (NodeModule & {pnpApiPath?: PortablePath}) | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
-    if (builtinModules.has(request))
+    if (isBuiltinModule(request))
       return request;
 
     if (!enableNativeHooks)
@@ -241,7 +273,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (optionNames.size > 0) {
         throw makeError(
           ErrorCode.UNSUPPORTED,
-          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`
+          `Some options passed to require() aren't supported by PnP yet (${Array.from(optionNames).join(`, `)})`,
         );
       }
     }

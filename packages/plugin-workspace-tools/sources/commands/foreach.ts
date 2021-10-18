@@ -2,57 +2,13 @@ import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
 import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
+import {gitUtils}                                          from '@yarnpkg/plugin-git';
 import {Command, Option, Usage, UsageError}                from 'clipanion';
 import micromatch                                          from 'micromatch';
 import {cpus}                                              from 'os';
 import pLimit                                              from 'p-limit';
 import {Writable}                                          from 'stream';
 import * as t                                              from 'typanion';
-
-/**
- * Retrieves all the child workspaces of a given root workspace recursively
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the child workspaces
- */
-const getWorkspaceChildrenRecursive = (rootWorkspace: Workspace, project: Project): Array<Workspace> => {
-  const workspaceList = [];
-  for (const childWorkspaceCwd of rootWorkspace.workspacesCwds) {
-    const childWorkspace = project.workspacesByCwd.get(childWorkspaceCwd);
-    if (childWorkspace) {
-      workspaceList.push(childWorkspace, ...getWorkspaceChildrenRecursive(childWorkspace, project));
-    }
-  }
-  return workspaceList;
-};
-
-/**
- * Find workspaces marked as dependencies/devDependencies of the current workspace recursively.
- *
- * @param rootWorkspace root workspace
- * @param project project
- *
- * @returns all the workspaces marked as dependencies
- */
-const getWorkspaceDependenciesRecursive = (rootWorkspace: Workspace, project: Project): Set<Workspace> => {
-  const workspaceList = new Set<Workspace>();
-
-  const visitWorkspace = (workspace: Workspace) => {
-    const dependencies = new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]);
-    for (const descriptor of dependencies.values()) {
-      const foundWorkspace = project.tryWorkspaceByDescriptor(descriptor);
-      if (foundWorkspace !== null && !workspaceList.has(foundWorkspace)) {
-        workspaceList.add(foundWorkspace);
-        visitWorkspace(foundWorkspace);
-      }
-    }
-  };
-
-  visitWorkspace(rootWorkspace);
-  return workspaceList;
-};
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
@@ -66,7 +22,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     details: `
       This command will run a given sub-command on current and all its descendant workspaces. Various flags can alter the exact behavior of the command:
 
-      - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`.
+      - If \`-p,--parallel\` is set, the commands will be ran in parallel; they'll by default be limited to a number of parallel tasks roughly equal to half your core number, but that can be overridden via \`-j,--jobs\`, or disabled by setting \`-j unlimited\`.
 
       - If \`-p,--parallel\` and \`-i,--interlaced\` are both set, Yarn will print the lines from the output as it receives them. If \`-i,--interlaced\` wasn't set, it would instead buffer the output from each process and print the resulting buffers only after their source processes have exited.
 
@@ -75,6 +31,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
 
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
+
+      - If \`--from\` is set, Yarn will use the packages matching the 'from' glob as the starting point for any recursive search.
+
+      - If \`--since\` is set, Yarn will only run the command on workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -89,13 +49,21 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       `Run build script on current and all descendant packages`,
       `yarn workspaces foreach run build`,
     ], [
-      `Run build script on current and all descendant packages in parallel, building dependent packages first`,
+      `Run build script on current and all descendant packages in parallel, building package dependencies first`,
       `yarn workspaces foreach -pt run build`,
+    ],
+    [
+      `Run build script on several packages and all their dependencies, building dependencies first`,
+      `yarn workspaces foreach -ptR --from '{workspace-a,workspace-b}' run build`,
     ]],
   });
 
   recursive = Option.Boolean(`-R,--recursive`, false, {
     description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
+  });
+
+  from = Option.Array(`--from`, [], {
+    description: `An array of glob pattern idents from which to base any recursion`,
   });
 
   all = Option.Boolean(`-A,--all`, false, {
@@ -115,8 +83,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   });
 
   jobs = Option.String(`-j,--jobs`, {
-    description: `The maximum number of parallel tasks that the execution will be limited to`,
-    validator: t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(2)]),
+    description: `The maximum number of parallel tasks that the execution will be limited to; or \`unlimited\``,
+    validator: t.isOneOf([t.isEnum([`unlimited`]), t.applyCascade(t.isNumber(), [t.isInteger(), t.isAtLeast(1)])]),
   });
 
   topological = Option.Boolean(`-t,--topological`, false, {
@@ -137,6 +105,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
   publicOnly = Option.Boolean(`--no-private`, {
     description: `Avoid running the command on private workspaces`,
+  });
+
+  since = Option.String(`--since`, {
+    description: `Only include workspaces that have been changed since the specified ref.`,
+    tolerateBoolean: true,
   });
 
   commandName = Option.String();
@@ -161,14 +134,40 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
-    const candidates = this.recursive
-      ? [rootWorkspace, ...getWorkspaceDependenciesRecursive(rootWorkspace, project)]
-      : [rootWorkspace, ...getWorkspaceChildrenRecursive(rootWorkspace, project)];
+    const rootCandidates = this.since
+      ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
+      : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
+
+    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);
+    const fromCandidates: Array<Workspace> = this.from.length > 0
+      ? rootCandidates.filter(fromPredicate)
+      : rootCandidates;
+
+    const candidates = new Set([...fromCandidates, ...(fromCandidates.map(candidate => [...(
+      this.recursive
+        ? this.since
+          ? candidate.getRecursiveWorkspaceDependents()
+          : candidate.getRecursiveWorkspaceDependencies()
+        : candidate.getRecursiveWorkspaceChildren()
+    )])).flat()]);
 
     const workspaces: Array<Workspace> = [];
 
+    // A script containing `:` becomes global if it exists in only one workspace.
+    let isGlobalScript = false;
+    if (scriptName?.includes(`:`)) {
+      for (const workspace of project.workspaces) {
+        if (workspace.manifest.scripts.has(scriptName)) {
+          isGlobalScript = !isGlobalScript;
+          if (isGlobalScript === false) {
+            break;
+          }
+        }
+      }
+    }
+
     for (const workspace of candidates) {
-      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !scriptName.includes(`:`))
+      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript)
         continue;
 
       // Prevents infinite loop in the case of configuring a script as such:
@@ -188,17 +187,21 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       workspaces.push(workspace);
     }
 
-    let interlaced = this.interlaced;
+    const concurrency = this.parallel ?
+      (this.jobs === `unlimited`
+        ? Infinity
+        : this.jobs || Math.max(1, cpus().length / 2))
+      : 1;
 
+    // No need to parallelize if we were explicitly asked for one job
+    const parallel = concurrency === 1 ? false : this.parallel;
     // No need to buffer the output if we're executing the commands sequentially
-    if (!this.parallel)
-      interlaced = true;
+    const interlaced = parallel ? this.interlaced : true;
+
+    const limit = pLimit(concurrency);
 
     const needsProcessing = new Map<LocatorHash, Workspace>();
     const processing = new Set<DescriptorHash>();
-
-    const concurrency = this.parallel ? Math.max(1, cpus().length / 2) : 1;
-    const limit = pLimit(this.jobs || concurrency);
 
     let commandCount = 0;
     let finalExitCode: number | null = null;
@@ -213,7 +216,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         if (abortNextCommands)
           return -1;
 
-        if (!this.parallel && this.verbose && commandIndex > 1)
+        if (!parallel && this.verbose && commandIndex > 1)
           report.reportSeparator();
 
         const prefix = getPrefix(workspace, {configuration, verbose: this.verbose, commandIndex});
@@ -222,6 +225,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
         try {
+          if (this.verbose)
+            report.reportInfo(null, `${prefix} Process started`);
+
+          const start = Date.now();
+
           const exitCode = (await this.cli.run([this.commandName, ...this.args], {
             cwd: workspace.cwd,
             stdout,
@@ -231,11 +239,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           stdout.end();
           stderr.end();
 
-          const emptyStdout = await stdoutEnd;
-          const emptyStderr = await stderrEnd;
+          await stdoutEnd;
+          await stderrEnd;
 
-          if (this.verbose && emptyStdout && emptyStderr)
-            report.reportInfo(null, `${prefix} Process exited without output (exit code ${exitCode})`);
+          const end = Date.now();
+          if (this.verbose) {
+            const timerMessage = configuration.get(`enableTimers`) ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}` : ``;
+            report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})${timerMessage}`);
+          }
 
           if (exitCode === 130) {
             // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
@@ -305,7 +316,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           // If we're not executing processes in parallel we can just wait for it
           // to finish outside of this loop (it'll then reenter it anyway)
-          if (!this.parallel) {
+          if (!parallel) {
             break;
           }
         }

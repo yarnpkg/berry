@@ -36,6 +36,10 @@ export default class SetResolutionCommand extends BaseCommand {
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
+
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 

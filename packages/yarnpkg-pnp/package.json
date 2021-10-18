@@ -1,23 +1,25 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "2.3.2",
+  "version": "3.1.0-rc.8",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^2.4.0",
+    "@yarnpkg/fslib": "workspace:^",
+    "resolve.exports": "^1.0.2",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@yarnpkg/builder": "workspace:^2.1.3",
-    "@yarnpkg/libzip": "workspace:^2.2.1",
-    "@yarnpkg/monorepo": "workspace:0.0.0",
-    "typescript": "4.1.0-beta",
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/libzip": "workspace:^",
+    "@yarnpkg/monorepo": "workspace:^",
+    "typescript": "^4.4.2",
     "webpack": "^5.1.1",
     "webpack-cli": "^4.0.0-beta.8"
   },
   "scripts": {
     "build:pnp:hook": "webpack-cli --config webpack.config.hook.js",
+    "update:pnp:hook": "run build:pnp:hook && yarn install",
     "build:pnp": "webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",
@@ -37,6 +39,7 @@
     "directory": "packages/yarnpkg-pnp"
   },
   "engines": {
-    "node": ">=10.19.0"
-  }
+    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "stableVersion": "3.0.0"
 }

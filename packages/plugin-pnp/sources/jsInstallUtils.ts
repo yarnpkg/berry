@@ -1,25 +1,16 @@
 import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, Report, structUtils} from '@yarnpkg/core';
 import {Filename, ppath}                                                                                                                      from '@yarnpkg/fslib';
 
-export type ManifestCompatibilityDataRequirements = {
-  manifest: Pick<Manifest, 'cpu' | 'os'>,
-};
-
-export function checkAndReportManifestCompatibility(pkg: Package, requirements: ManifestCompatibilityDataRequirements, label: string, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
-  if (!Manifest.isManifestFieldCompatible(requirements.manifest.os, process.platform)) {
-    report?.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(configuration, pkg)} The platform ${process.platform} is incompatible with this module, ${label} skipped.`);
-    return false;
-  }
-
-  if (!Manifest.isManifestFieldCompatible(requirements.manifest.cpu, process.arch)) {
-    report?.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module, ${label} skipped.`);
+export function checkAndReportManifestCompatibility(pkg: Package, label: string, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
+  if (!structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+    report?.reportWarningOnce(MessageName.INCOMPATIBLE_ARCHITECTURE, `${structUtils.prettyLocator(configuration, pkg)} The ${process.platform}-${process.arch} architecture is incompatible with this module, ${label} skipped.`);
     return false;
   }
 
   return true;
 }
 
-export type ExtractBuildScriptDataRequirements = ManifestCompatibilityDataRequirements & {
+export type ExtractBuildScriptDataRequirements = {
   manifest: Pick<Manifest, 'scripts'>,
   misc: {
     hasBindingGyp: boolean,
@@ -40,11 +31,6 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
   if (buildScripts.length === 0)
     return [];
 
-  if (!configuration.get(`enableScripts`) && !dependencyMeta.built) {
-    report?.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
-    return [];
-  }
-
   if (pkg.linkType !== LinkType.HARD) {
     report?.reportWarningOnce(MessageName.SOFT_LINK_BUILD, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but is referenced through a soft link. Soft links don't support build scripts, so they'll be ignored.`);
     return [];
@@ -55,7 +41,12 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
     return [];
   }
 
-  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, requirements, `build`, {configuration, report});
+  if (!configuration.get(`enableScripts`) && !dependencyMeta.built) {
+    report?.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`);
+    return [];
+  }
+
+  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, `build`, {configuration, report});
   if (!isManifestCompatible)
     return [];
 

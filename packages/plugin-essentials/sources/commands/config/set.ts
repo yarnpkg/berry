@@ -55,8 +55,13 @@ export default class ConfigSetCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    if (!configuration.projectCwd)
-      throw new UsageError(`This command must be run from within a project folder`);
+
+    const assertProjectCwd = () => {
+      if (!configuration.projectCwd)
+        throw new UsageError(`This command must be run from within a project folder`);
+
+      return configuration.projectCwd;
+    };
 
     const name = this.name.replace(/[.[].*$/, ``);
     const path = this.name.replace(/^[^.[]*\.?/, ``);
@@ -65,6 +70,9 @@ export default class ConfigSetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
 
+    if (name === `enableStrictSettings`)
+      throw new UsageError(`This setting only affects the file it's in, and thus cannot be set from the CLI`);
+
     const value: unknown = this.json
       ? JSON.parse(this.value)
       : this.value;
@@ -72,7 +80,7 @@ export default class ConfigSetCommand extends BaseCommand {
     const updateConfiguration: (patch: ((current: any) => any)) => Promise<void> =
       this.home
         ? patch => Configuration.updateHomeConfiguration(patch)
-        : patch => Configuration.updateConfiguration(configuration.projectCwd!, patch);
+        : patch => Configuration.updateConfiguration(assertProjectCwd(), patch);
 
     await updateConfiguration(current => {
       if (path) {
