@@ -58,6 +58,8 @@ export class WorkspaceResolver implements Resolver {
       languageName: `unknown`,
       linkType: LinkType.SOFT,
 
+      conditions: null,
+
       dependencies: new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]),
       peerDependencies: new Map([...workspace.manifest.peerDependencies]),
 

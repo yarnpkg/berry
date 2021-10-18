@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/esbuild-plugin-pnp",
-  "version": "1.0.1-rc.6",
+  "version": "2.0.0-rc.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
-    "esbuild": ">=0.8.36"
+    "esbuild": ">=0.10.0"
   },
   "devDependencies": {
     "@yarnpkg/pnp": "workspace:^",
@@ -20,7 +20,6 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "bin": "./lib/cli.js",
     "typings": "./lib/index.d.ts"
   },
   "files": [

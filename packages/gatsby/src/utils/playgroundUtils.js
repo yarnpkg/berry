@@ -20,6 +20,17 @@ const fetchJson = async (url, options) => {
 
 const fetchJsonFromSandbox = (url, options) => fetchJson(SANDBOX_URL + url, options);
 
+export const fetchNodeVersion = async ({setLabel}) => {
+  const fetchNodeVersionData = await fetchJsonFromSandbox(`/api/fetch-node-version`);
+
+  if (fetchNodeVersionData.status === `success`) {
+    return fetchNodeVersionData.nodeVersion;
+  } else {
+    setLabel(LABELS.ERROR);
+    throw new Error(`An error has occurred while fetching the node version`);
+  }
+};
+
 export const checkRepo = async ({setLabel}) => {
   setLabel(LABELS.CHECKING);
   const checkRepoData = await fetchJsonFromSandbox(`/api/check-repo`);

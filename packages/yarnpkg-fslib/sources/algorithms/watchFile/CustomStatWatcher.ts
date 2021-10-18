@@ -97,15 +97,13 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
     try {
       return this.fakeFs.statSync(this.path, {bigint: this.bigint});
     } catch (error) {
-      if (error.code === `ENOENT`) {
-        const statInstance = this.bigint
-          ? ((new statUtils.BigIntStatsEntry() as unknown) as BigIntStats)
-          : ((new statUtils.StatEntry() as unknown) as Stats);
+      // From observation, all errors seem to be mostly ignored by Node.
+      // Checked with ENOENT, ENOTDIR, EPERM
+      const statInstance = this.bigint
+        ? ((new statUtils.BigIntStatsEntry() as unknown) as BigIntStats)
+        : ((new statUtils.StatEntry() as unknown) as Stats);
 
-        return statUtils.clearStats(statInstance);
-      } else {
-        throw error;
-      }
+      return statUtils.clearStats(statInstance);
     }
   }
 

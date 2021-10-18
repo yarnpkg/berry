@@ -8,6 +8,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+### Commands
+
+- `yarn workspaces` now supports a `--since` option to filter by changed workspaces.
+
 ### Bugfixes
 
 - Direct portal dependencies for `node_modules` install are given priority during hoisting now, to prevent cases when indirect regular dependencies take place in the install tree first and block the way for direct portal dependencies.
@@ -15,12 +19,21 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Hoisting algorithm speedup, impacts recurrent `node_modules` installs time.
 - CLI bundles built from sources output `commit` hash instead of `tree` hash as part of their version
 - `workspaces foreach run` now handles the fact that a script containing `:` only becomes global if it exists in one workspace.
+- Nested workspaces are properly hoisted by `node-modules` linker.
+- Self-referencing symlinks are not created for anonymous workspaces by `node-modules` linker, since they cannot be used anyway from the code.
+- The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
+- `logFilters` using `pattern` matchers now match any part of the log entry
+- The cache is now fully atomic when moving files across devices and in general more efficient.
+- The PnP patch now picks up changes to the `fs` module, allowing users to patch it.
+- When using PnP, `require.resolve('pnpapi')` will be handled correctly even when using `exports`.
+- The install state will no longer be invalidated after running commands that modify the lockfile; this should bring a significant performance improvement when running commands such as `yarn run` immediately after adding or removing dependencies inside large monorepos.
 
 ### Installs
 
 - `hardlinks-global` node modules mode is automatically downgraded to `hardlinks-local` when global cache and install folder are on a different devices and the install continues normally. Warning is produced to the user with mitigation steps provided in documentation.
 - The nm linker maximizes chances to end-up with only one top-level node_modules in the case of using workspaces
 - The nm linker reinstalls modules that have their directories removed from node_modules by the user
+- The `nmSelfReferences` setting has been added to the nm linker to control whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. `yarn workspaces focus` will not create self-referencing symlinks for excluded workspaces anymore.
 
 ## 3.0.2
 

@@ -255,8 +255,13 @@ export default class InfoCommand extends BaseCommand {
         if (!extra.has(`cache`))
           return;
 
+        const cacheOptions = {
+          mockedPackages: project.disabledLocators,
+          unstablePackages: project.conditionalLocators,
+        };
+
         const checksum = project.storedChecksums.get(pkg.locatorHash) ?? null;
-        const cachePath = cache.getLocatorPath(pkg, checksum);
+        const cachePath = cache.getLocatorPath(pkg, checksum, cacheOptions);
 
         let stat;
         if (cachePath !== null) {
