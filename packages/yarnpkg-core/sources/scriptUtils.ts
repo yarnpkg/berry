@@ -1,3 +1,4 @@
+import {semverUtils}                                          from '@yarnpkg/core';
 import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
@@ -20,7 +21,7 @@ import * as miscUtils                                         from './miscUtils'
 import * as structUtils                                       from './structUtils';
 import {LocatorHash, Locator}                                 from './types';
 
-enum PackageManager {
+export enum PackageManager {
   Yarn1 = `Yarn Classic`,
   Yarn2 = `Yarn`,
   Npm = `npm`,
@@ -44,13 +45,34 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   });
 }
 
-async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
-  let yarnLock = null;
+export async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
+  const manifest = await Manifest.tryFind(location);
+
+  if (manifest?.packageManager) {
+    const locator = structUtils.tryParseLocator(manifest?.packageManager.trim());
+    if (locator?.name) {
+      const reason = `matched ${locator.name}`;
+      const [major] = locator.reference.split(`.`);
+      switch (locator.name) {
+        case `yarn`:
+          return {
+            packageManager: Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2,
+            reason,
+          };
+        case `npm`:
+          return {packageManager: PackageManager.Npm, reason};
+        case `pnpm`:
+          return {packageManager: PackageManager.Pnpm, reason};
+      }
+    }
+  }
+
+  let yarnLock: string | undefined;
   try {
     yarnLock = await xfs.readFilePromise(ppath.join(location, Filename.lockfile), `utf8`);
   } catch {}
 
-  if (yarnLock !== null) {
+  if (yarnLock !== undefined) {
     if (yarnLock.match(/^__metadata:$/m)) {
       return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
     } else {
