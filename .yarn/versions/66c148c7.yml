@@ -1,6 +1,6 @@
 releases:
   "@yarnpkg/cli": patch
-  "@yarnpkg/plugin-node-modules": patch
+  "@yarnpkg/plugin-nm": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -13,6 +13,7 @@ declined:
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
