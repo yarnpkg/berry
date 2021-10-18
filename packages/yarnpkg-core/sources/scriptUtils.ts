@@ -54,7 +54,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   const manifest = await Manifest.tryFind(location);
 
   if (manifest?.packageManager) {
-    const locator = structUtils.tryParseLocator(manifest?.packageManager.trim());
+    const locator = structUtils.tryParseLocator(manifest.packageManager);
     if (locator?.name) {
       const reason = `matched "packageManager": "${manifest.packageManager}" in manifest`;
       const [major] = locator.reference.split(`.`);

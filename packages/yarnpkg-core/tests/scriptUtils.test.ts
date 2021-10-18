@@ -15,8 +15,8 @@ describe(`scriptUtils`, () => {
       "yarn@bar": scriptUtils.PackageManager.Yarn2,
       // invalid
       "foo@1": undefined,
-      // trim
-      " yarn@1.2.3 ": scriptUtils.PackageManager.Yarn1,
+      // invalid because of spaces
+      " yarn@1.2.3 ": undefined,
       // normally invalid, but we parse them anyway
       yarn: scriptUtils.PackageManager.Yarn2,
       npm: scriptUtils.PackageManager.Npm,
