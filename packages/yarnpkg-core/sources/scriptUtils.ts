@@ -1,4 +1,3 @@
-import {semverUtils}                                          from '@yarnpkg/core';
 import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
 import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
 import {getLibzipPromise}                                     from '@yarnpkg/libzip';
