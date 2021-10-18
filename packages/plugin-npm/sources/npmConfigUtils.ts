@@ -15,8 +15,13 @@ export function normalizeRegistry(registry: string) {
   return registry.replace(/\/$/, ``);
 }
 
+// TODO: Remove the fallback on publishConfig
 export function getAuditRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
-  return getDefaultRegistry({configuration, type: RegistryType.AUDIT_REGISTRY});
+  const defaultRegistry = configuration.get(RegistryType.AUDIT_REGISTRY);
+  if (defaultRegistry !== null)
+    return normalizeRegistry(defaultRegistry);
+
+  return getPublishRegistry(manifest, {configuration});
 }
 
 export function getPublishRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
