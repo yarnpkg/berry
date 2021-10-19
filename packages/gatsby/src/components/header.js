@@ -345,7 +345,7 @@ export const Header = ({children}) => {
             <InlineIcon icon={githubIcon} height={25}/>
           </a>
           <a href={`https://discord.com/invite/yarnpkg`}>
-            <discordIcon height={25}/>
+            <DiscordLogo height={25}/>
           </a>
         </MenuSearchBox>
       </MenuContainer>
