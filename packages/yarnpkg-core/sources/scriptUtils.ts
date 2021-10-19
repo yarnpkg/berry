@@ -55,19 +55,24 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (manifest?.packageManager) {
     const locator = structUtils.tryParseLocator(manifest.packageManager);
+
     if (locator?.name) {
-      const reason = `matched "packageManager": "${manifest.packageManager}" in manifest`;
+      const reason = `found ${JSON.stringify({packageManager: manifest.packageManager})} in manifest`;
       const [major] = locator.reference.split(`.`);
+
       switch (locator.name) {
-        case `yarn`:
-          return {
-            packageManager: Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2,
-            reason,
-          };
-        case `npm`:
+        case `yarn`: {
+          const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
+          return {packageManager, reason};
+        } break;
+
+        case `npm`: {
           return {packageManager: PackageManager.Npm, reason};
-        case `pnpm`:
+        } break;
+
+        case `pnpm`: {
           return {packageManager: PackageManager.Pnpm, reason};
+        } break;
       }
     }
   }
@@ -90,7 +95,6 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
     return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
-
 
   if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
     return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
