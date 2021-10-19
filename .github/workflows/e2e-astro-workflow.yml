@@ -31,8 +31,5 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yes | yarn create astro my-app && cd my-app
-        yarn config set pnpMode loose
-        yarn config set pnpFallbackMode all
-        yarn
+        YARN_PNP_FALLBACK_MODE=all YARN_PNP_MODE=loose yarn
         yarn build
-
