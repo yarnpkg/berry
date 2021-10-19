@@ -210,8 +210,6 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   for (const locator of pnpRoots)
     visit(locator, null);
 
-  console.log(workspaceLikeLocators);
-
   const cwdSegments = topPkgPortableLocation.split(ppath.sep);
   for (const locator of workspaceLikeLocators.values()) {
     const pkg = pnp.getPackageInformation(locator)!;
