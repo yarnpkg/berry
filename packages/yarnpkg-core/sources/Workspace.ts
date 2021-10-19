@@ -140,7 +140,7 @@ export class Workspace {
         // Quick note: it means that if we have, say, a workspace in
         // dev dependencies but not in dependencies, this workspace will be
         // traversed (even if dependencies traditionally override dev
-        // dependencies). It's not clearly which behaviour is better, but
+        // dependencies). It's not clear which behaviour is better, but
         // at least it's consistent.
         for (const descriptor of workspace.manifest[dependencyType].values()) {
           const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
@@ -149,6 +149,37 @@ export class Workspace {
 
           workspaceList.add(foundWorkspace);
           visitWorkspace(foundWorkspace);
+        }
+      }
+    };
+
+    visitWorkspace(this);
+    return workspaceList;
+  }
+
+  /**
+   * Find workspaces which include the current workspace as a dependency/devDependency recursively.
+   *
+   * @param rootWorkspace root workspace
+   * @param project project
+   *
+   * @returns all the workspaces marked as dependents
+   */
+  getRecursiveWorkspaceDependents({dependencies = Manifest.hardDependencies}: {dependencies?: Array<HardDependencies>} = {}) {
+    const workspaceList = new Set<Workspace>();
+
+    const visitWorkspace = (workspace: Workspace) => {
+      for (const projectWorkspace of this.project.workspaces) {
+        const isDependent = dependencies.some(dependencyType => {
+          return [...projectWorkspace.manifest[dependencyType].values()].some(descriptor => {
+            const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
+            return foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator);
+          });
+        });
+
+        if (isDependent && !workspaceList.has(projectWorkspace)) {
+          workspaceList.add(projectWorkspace);
+          visitWorkspace(projectWorkspace);
         }
       }
     };

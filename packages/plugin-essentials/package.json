@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "3.1.0-rc.8",
+  "version": "3.1.0-rc.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -18,7 +18,8 @@
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
@@ -26,7 +27,8 @@
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "repository": {
     "type": "git",

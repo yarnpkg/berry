@@ -158,6 +158,8 @@ export class NpmSemverResolver implements Resolver {
       languageName: `node`,
       linkType: LinkType.HARD,
 
+      conditions: manifest.getConditions(),
+
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,
 

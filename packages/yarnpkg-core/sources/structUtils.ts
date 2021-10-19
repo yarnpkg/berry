@@ -1,6 +1,7 @@
 import {PortablePath, toFilename}               from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
+import {makeParser}                             from 'tinylogic';
 
 import {Configuration}                          from './Configuration';
 import {Workspace}                              from './Workspace';
@@ -13,6 +14,9 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
+
+const conditionRegex = /(os|cpu)=([a-z0-9_-]+)/;
+const conditionParser = makeParser(conditionRegex);
 
 /**
  * Creates a package ident.
@@ -119,6 +123,8 @@ export function renamePackage(pkg: Package, locator: Locator): Package {
 
     languageName: pkg.languageName,
     linkType: pkg.linkType,
+
+    conditions: pkg.conditions,
 
     dependencies: new Map(pkg.dependencies),
     peerDependencies: new Map(pkg.peerDependencies),
@@ -800,4 +806,19 @@ export function prettyDependent(configuration: Configuration, locator: Locator, 
  */
 export function getIdentVendorPath(ident: Ident) {
   return `node_modules/${stringifyIdent(ident)}` as PortablePath;
+}
+
+/**
+ * Returns whether the given package is compatible with the specified environment.
+ */
+export function isPackageCompatible(pkg: Package, architectures: {os: Array<string> | null, cpu: Array<string> | null}) {
+  if (!pkg.conditions)
+    return true;
+
+  return conditionParser(pkg.conditions, specifier => {
+    const [, name, value] = specifier.match(conditionRegex)!;
+    const supported = architectures[name as keyof typeof architectures];
+
+    return supported ? supported.includes(value) : true;
+  });
 }

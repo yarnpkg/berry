@@ -97,10 +97,12 @@ export default class NpmPublishCommand extends BaseCommand {
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
 
+        const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
           tag: this.tag,
           registry,
+          gitHead,
         });
 
         await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {

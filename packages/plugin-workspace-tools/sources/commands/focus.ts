@@ -86,6 +86,8 @@ export default class WorkspacesFocus extends BaseCommand {
           workspace.manifest.devDependencies.clear();
         }
       } else {
+        workspace.manifest.installConfig = workspace.manifest.installConfig || {};
+        workspace.manifest.installConfig.selfReferences = false;
         workspace.manifest.dependencies.clear();
         workspace.manifest.devDependencies.clear();
         workspace.manifest.peerDependencies.clear();

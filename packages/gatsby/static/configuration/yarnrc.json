@@ -363,6 +363,12 @@
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
+    "nmSelfReferences": {
+      "_package": "@yarnpkg/plugin-nm",
+      "description": "Defines whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. This setting can be overriden per-workspace through the [`installConfig.selfReferences` field](/configuration/manifest#installConfig.selfReferences).",
+      "type": "boolean",
+      "default": true
+    },
     "nmMode": {
       "_package": "@yarnpkg/plugin-nm",
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
@@ -623,6 +629,32 @@
       "type": "string",
       "pattern": "^[^<>:;,?\"*|/]+$",
       "default": ".yarnrc.yml"
+    },
+    "supportedArchitectures": {
+      "_package": "@yarnpkg/core",
+      "description": "Defines which for systems should Yarn install packages.",
+      "type": "object",
+      "properties": {
+        "os": {
+          "description": "The list of operating systems to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "darwin", "linux", "win32"]
+        },
+        "cpu": {
+          "description": "The list of CPUs to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "x86", "ia32"]
+        }
+      },
+      "_exampleKeys": ["os", "cpu"]
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",

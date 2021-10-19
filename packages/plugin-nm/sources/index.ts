@@ -10,6 +10,7 @@ declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;
     nmMode: NodeModulesMode;
+    nmSelfReferences: boolean;
   }
 }
 
@@ -40,6 +41,11 @@ const plugin: Plugin<Hooks> = {
         NodeModulesMode.HARDLINKS_GLOBAL,
       ],
       default: NodeModulesMode.CLASSIC,
+    },
+    nmSelfReferences: {
+      description: `If set to 'false' the workspace will not be allowed to require itself and corresponding self-referencing symlink will not be created`,
+      type: SettingsType.BOOLEAN,
+      default: true,
     },
   },
   linkers: [

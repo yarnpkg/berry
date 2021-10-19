@@ -1,5 +1,78 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Commands workspace foreach --since --recursive runs on workspaces changed and their dependents 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Test Workspace B
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
+➤ YN0000: Test Workspace C
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach --since runs on no workspaces if there are no staged or unstaged changes on the default branch 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach --since runs on no workspaces if there have been no changes 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach --since runs on workspaces changed since branching from the default branch 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace B
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
+➤ YN0000: Test Workspace G
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach --since runs on workspaces changed since commit 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace B
+➤ YN0000: Test Workspace C
+➤ YN0000: Test Workspace D
+➤ YN0000: Test Workspace E
+➤ YN0000: Test Workspace F
+➤ YN0000: Test Workspace G
+➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands workspace foreach --since runs only on changed workspaces 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Test Workspace A
+➤ YN0000: Done
+",
+}
+`;
+
 exports[`Commands workspace foreach can run on public workspaces only 1`] = `
 Object {
   "code": 0,

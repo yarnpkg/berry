@@ -14,8 +14,12 @@ import {LocatorHash, Locator}                                           from './
 
 const CACHE_VERSION = 8;
 
-export type FetchFromCacheOptions = {
-  checksums: Map<LocatorHash, Locator>,
+export type CacheOptions = {
+  mockedPackages?: Set<LocatorHash>;
+  unstablePackages?: Set<LocatorHash>;
+
+  mirrorWriteOnly?: boolean;
+  skipIntegrityCheck?: boolean;
 };
 
 export class Cache {
@@ -39,7 +43,11 @@ export class Cache {
 
   public readonly cacheKey: string;
 
-  private mutexes: Map<LocatorHash, Promise<readonly [PortablePath, string]>> = new Map();
+  private mutexes: Map<LocatorHash, Promise<readonly [
+    shouldMock: boolean,
+    cachePath: PortablePath,
+    checksum: string | null,
+  ]>> = new Map();
 
   /**
    * To ensure different instances of `Cache` doesn't end up copying to the same
@@ -101,10 +109,12 @@ export class Cache {
     return `${structUtils.slugifyLocator(locator)}-${significantChecksum}.zip` as Filename;
   }
 
-  getLocatorPath(locator: Locator, expectedChecksum: string | null) {
+  getLocatorPath(locator: Locator, expectedChecksum: string | null, opts: CacheOptions = {}) {
     // If there is no mirror, then the local cache *is* the mirror, in which
-    // case we use the versioned filename pattern.
-    if (this.mirrorCwd === null)
+    // case we use the versioned filename pattern. Same if the package is
+    // unstable, meaning it may be there or not depending on the environment,
+    // so we can't rely on its checksum to get a stable location.
+    if (this.mirrorCwd === null || opts.unstablePackages?.has(locator.locatorHash))
       return ppath.resolve(this.cwd, this.getVersionFilename(locator));
 
     // If we don't yet know the checksum, discard the path resolution for now
@@ -148,16 +158,42 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, skipIntegrityCheck}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>, skipIntegrityCheck?: boolean}): Promise<[FakeFS<PortablePath>, () => void, string]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>}, opts: CacheOptions = {}): Promise<[FakeFS<PortablePath>, () => void, string | null]> {
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
     const baseFs = new NodeFS();
 
+    // Conditional packages may not be fetched if they're intended for a
+    // different architecture than the current one. To avoid having to be
+    // careful about those packages everywhere, we instead change their
+    // content to that of an empty in-memory package.
+    //
+    // This memory representation will be wrapped into an AliasFS to make
+    // it seem like it actually exist on the disk, at the location of the
+    // cache the package would fill if it was normally fetched.
+    const makeMockPackage = () => {
+      const zipFs = new ZipFS(null, {libzip});
+
+      const rootPackageDir = ppath.join(PortablePath.root, structUtils.getIdentVendorPath(locator));
+      zipFs.mkdirSync(rootPackageDir, {recursive: true});
+      zipFs.writeJsonSync(ppath.join(rootPackageDir, Filename.manifest), {
+        name: structUtils.stringifyIdent(locator),
+        mocked: true,
+      });
+
+      return zipFs;
+    };
+
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
-      const actualChecksum = (!skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}` : expectedChecksum;
+      const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
+        ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}`
+        : expectedChecksum;
 
       if (refetchPath !== null) {
-        const previousChecksum = (!skipIntegrityCheck || !expectedChecksum) ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}` : expectedChecksum;
+        const previousChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
+          ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}`
+          : expectedChecksum;
+
         if (actualChecksum !== previousChecksum) {
           throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the local checksum - has the local cache been corrupted?`);
         }
@@ -220,6 +256,7 @@ export class Cache {
     const loadPackage = async () => {
       if (!loader)
         throw new Error(`Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
+
       if (this.immutable)
         throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
@@ -228,32 +265,41 @@ export class Cache {
       // Do this before moving the file so that we don't pollute the cache with corrupted archives
       const checksum = await validateFile(packagePath);
 
-      const cachePath = this.getLocatorPath(locator, checksum);
+      const cachePath = this.getLocatorPath(locator, checksum, opts);
       if (!cachePath)
         throw new Error(`Assertion failed: Expected the cache path to be available`);
 
-      await Promise.all([
-        // Copy the package into the mirror
-        (async () => {
-          if (packageSource !== `mirror` && mirrorPath !== null) {
-            const mirrorPathTemp = `${mirrorPath}${this.cacheId}` as PortablePath;
-            await xfs.copyFilePromise(packagePath, mirrorPathTemp, fs.constants.COPYFILE_FICLONE);
-            await xfs.chmodPromise(mirrorPathTemp, 0o644);
-            // Doing a rename is important to ensure the cache is atomic
-            await xfs.renamePromise(mirrorPathTemp, mirrorPath);
-          }
-        })(),
-        // Copy the package into the cache
-        (async () => {
+      const copyProcess: Array<() => Promise<void>> = [];
+
+      // Copy the package into the mirror
+      if (packageSource !== `mirror` && mirrorPath !== null) {
+        copyProcess.push(async () => {
+          const mirrorPathTemp = `${mirrorPath}${this.cacheId}` as PortablePath;
+          await xfs.copyFilePromise(packagePath, mirrorPathTemp, fs.constants.COPYFILE_FICLONE);
+          await xfs.chmodPromise(mirrorPathTemp, 0o644);
+          // Doing a rename is important to ensure the cache is atomic
+          await xfs.renamePromise(mirrorPathTemp, mirrorPath);
+        });
+      }
+
+      // Copy the package into the cache
+      if (!opts.mirrorWriteOnly || mirrorPath === null) {
+        copyProcess.push(async () => {
           const cachePathTemp = `${cachePath}${this.cacheId}` as PortablePath;
           await xfs.copyFilePromise(packagePath, cachePathTemp, fs.constants.COPYFILE_FICLONE);
           await xfs.chmodPromise(cachePathTemp, 0o644);
           // Doing a rename is important to ensure the cache is atomic
           await xfs.renamePromise(cachePathTemp, cachePath);
-        })(),
-      ]);
+        });
+      }
 
-      return [cachePath, checksum] as const;
+      const finalPath = opts.mirrorWriteOnly
+        ? mirrorPath ?? cachePath
+        : cachePath;
+
+      await Promise.all(copyProcess.map(copy => copy()));
+
+      return [false, finalPath, checksum] as const;
     };
 
     const loadPackageThroughMutex = async () => {
@@ -261,30 +307,34 @@ export class Cache {
         // We don't yet know whether the cache path can be computed yet, since that
         // depends on whether the cache is actually the mirror or not, and whether
         // the checksum is known or not.
-        const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum);
+        const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum, opts);
 
-        const cacheExists = tentativeCachePath !== null
+        const cacheFileExists = tentativeCachePath !== null
           ? await baseFs.existsPromise(tentativeCachePath)
           : false;
 
-        const action = cacheExists
+        const shouldMock = !!opts.mockedPackages?.has(locator.locatorHash) && (!this.check || !cacheFileExists);
+        const isCacheHit = shouldMock || cacheFileExists;
+
+        const action = isCacheHit
           ? onHit
           : onMiss;
 
         if (action)
           action();
 
-        if (!cacheExists) {
+        if (!isCacheHit) {
           return loadPackage();
         } else {
           let checksum: string | null = null;
           const cachePath = tentativeCachePath!;
-          if (this.check)
-            checksum = await validateFileAgainstRemote(cachePath);
-          else
-            checksum = await validateFile(cachePath);
 
-          return [cachePath, checksum] as const;
+          if (!shouldMock)
+            checksum = this.check
+              ? await validateFileAgainstRemote(cachePath)
+              : await validateFile(cachePath);
+
+          return [shouldMock, cachePath, checksum] as const;
         }
       };
 
@@ -301,15 +351,20 @@ export class Cache {
     for (let mutex; (mutex = this.mutexes.get(locator.locatorHash));)
       await mutex;
 
-    const [cachePath, checksum] = await loadPackageThroughMutex();
+    const [shouldMock, cachePath, checksum] = await loadPackageThroughMutex();
 
     this.markedFiles.add(cachePath);
 
-    let zipFs: ZipFS | null = null;
+    let zipFs: ZipFS | undefined;
 
     const libzip = await getLibzipPromise();
-    const lazyFs: LazyFS<PortablePath> = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
-      return zipFs = new ZipFS(cachePath, {baseFs, libzip, readOnly: true});
+
+    const zipFsBuilder = shouldMock
+      ? () => makeMockPackage()
+      : () => new ZipFS(cachePath, {baseFs, libzip, readOnly: true});
+
+    const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
+      return zipFs = zipFsBuilder();
     }, message => {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
@@ -319,12 +374,15 @@ export class Cache {
     const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
 
     const releaseFs = () => {
-      if (zipFs !== null) {
-        zipFs.discardAndClose();
-      }
+      zipFs?.discardAndClose();
     };
 
-    return [aliasFs, releaseFs, checksum];
+    // We hide the checksum if the package presence is conditional, because it becomes unreliable
+    const exposedChecksum = !opts.unstablePackages?.has(locator.locatorHash)
+      ? checksum
+      : null;
+
+    return [aliasFs, releaseFs, exposedChecksum];
   }
 }
 

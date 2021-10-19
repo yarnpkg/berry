@@ -51,5 +51,6 @@ jobs:
         source scripts/e2e-setup-ci.sh nm
         git clone https://github.com/babel/babel.git
         cd babel
+        yarn config unset yarnPath
         NM_DEBUG_LEVEL=1 yarn
       shell: bash
