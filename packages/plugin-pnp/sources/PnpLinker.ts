@@ -348,7 +348,7 @@ export class PnpInstaller implements Installer {
     }
 
     if (this.isEsmEnabled()) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `ESM support with PnP is experimental and can break at any moment Node decides to change the experimental loader API`);
+      this.opts.report.reportWarning(MessageName.UNNAMED, `ESM support for PnP uses the experimental loader API and is therefor experimental`);
       await xfs.writeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate());
     }
 
