@@ -25,6 +25,7 @@ jobs:
           - classic
           - yarn
           - yarn-nm
+          - yarn-pnpm
           - npm
           - pnpm
 
@@ -47,7 +48,7 @@ jobs:
     - name: 'Install the package manager'
       run: |
         case ${{matrix.packageManager}} in
-          yarn|yarn-nm)
+          yarn|yarn-nm|yarn-pnpm)
             node scripts/run-yarn.js build:cli --no-minify;;
           npm)
             npm install -g npm@^7;;
