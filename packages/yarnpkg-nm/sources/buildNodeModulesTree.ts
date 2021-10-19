@@ -177,7 +177,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   const workspaceLikeLocators = new Map<PortablePath, PhysicalPackageLocator>();
 
   const seen = new Set();
-  const visit = (locator: PhysicalPackageLocator) => {
+  const visit = (locator: PhysicalPackageLocator, parentLocator: PhysicalPackageLocator | null) => {
     const locatorKey = stringifyLocator(locator);
     if (seen.has(locatorKey))
       return;
@@ -186,13 +186,21 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
 
     const pkg = pnp.getPackageInformation(locator);
     if (pkg) {
-      if (pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation))
-        workspaceLikeLocators.set(getRealPackageLocation(pkg, locator, pnp), locator);
+      const parentLocatorKey = parentLocator ? stringifyLocator(parentLocator) : ``;
+      if (stringifyLocator(locator) !== parentLocatorKey && pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation)) {
+        const location = getRealPackageLocation(pkg, locator, pnp);
+        const prevLocator = workspaceLikeLocators.get(location);
+        // Give workspaces a priority over portals and other protocols pointing to the same location
+        // The devDependencies are not installed for portals, but installed for workspaces
+        if (!prevLocator || locator.reference.startsWith(`workspace:`)) {
+          workspaceLikeLocators.set(location, locator);
+        }
+      }
 
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null) {
           if (!pkg.packagePeers.has(name)) {
-            visit(pnp.getLocator(name, referencish));
+            visit(pnp.getLocator(name, referencish), locator);
           }
         }
       }
@@ -200,7 +208,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   };
 
   for (const locator of pnpRoots)
-    visit(locator);
+    visit(locator, null);
 
   const cwdSegments = topPkgPortableLocation.split(ppath.sep);
   for (const locator of workspaceLikeLocators.values()) {
