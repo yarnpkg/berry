@@ -6,7 +6,7 @@
   "dependencies": {
     "@types/node": "^13.7.0",
     "@yarnpkg/fslib": "workspace:^",
-    "resolve.exports": "^1.0.2",
+    "resolve.exports": "^1.1.0",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
