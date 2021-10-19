@@ -180,7 +180,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             typeof parsedMessage.arguments.hostInfo === \`string\`
           ) {
             hostInfo = parsedMessage.arguments.hostInfo;
-            if (hostInfo === \`vscode\` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\\/1\\.[1-5][0-9]\\./)) {
+            if (hostInfo === \`vscode\` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\\/1\\.([1-5][0-9]|60)\\./)) {
               hostInfo += \` <1.61\`;
             }
           }
