@@ -5,7 +5,7 @@ import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
 import PropTypes                                           from 'prop-types';
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
 
-import {DiscordLogo}                                         from '../images/logos/Discord';
+import {DiscordLogo}                                       from '../images/logos/Discord';
 
 import {Logo}                                              from './logo';
 import {ifDesktop, ifMobile}                               from './responsive';
