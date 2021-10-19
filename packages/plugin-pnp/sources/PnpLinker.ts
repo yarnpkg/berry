@@ -349,7 +349,10 @@ export class PnpInstaller implements Installer {
 
     if (this.isEsmEnabled()) {
       this.opts.report.reportWarning(MessageName.UNNAMED, `ESM support for PnP uses the experimental loader API and is therefor experimental`);
-      await xfs.writeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate());
+      await xfs.changeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate(), {
+        automaticNewlines: true,
+        mode: 0o644,
+      });
     }
 
     const pnpUnpluggedFolder = this.opts.project.configuration.get(`pnpUnpluggedFolder`);
