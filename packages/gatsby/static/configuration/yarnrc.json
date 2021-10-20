@@ -34,7 +34,7 @@
       "examples": ["./exampleCA.pem"]
     },
     "changesetBaseRefs": {
-      "_package": "@yarnpkg/plugin-version",
+      "_package": "@yarnpkg/plugin-git",
       "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, upstream/master, main, origin/main, and upstream/main. Supports git branches, tags, and commits.",
       "type": "array",
       "items": {
@@ -43,7 +43,7 @@
       "default": ["master", "origin/master", "upstream/master", "main", "origin/main", "upstream/main"]
     },
     "changesetIgnorePatterns": {
-      "_package": "@yarnpkg/plugin-version",
+      "_package": "@yarnpkg/plugin-git",
       "description": "An Array of glob patterns. Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
       "type": "array",
       "items": {

@@ -389,11 +389,7 @@ function makeWorkspacesListSinceEnv(cb) {
   return makeTemporaryEnv({
     private: true,
     workspaces: [`packages/*`],
-  }, {
-    plugins: [
-      require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-    ],
-  }, async ({path, run, ...rest}) => {
+  }, {}, async ({path, run, ...rest}) => {
     await setupWorkspaces(path);
 
     const git = (...args) => execFile(`git`, args, {cwd: path});
