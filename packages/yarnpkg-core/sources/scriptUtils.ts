@@ -20,7 +20,10 @@ import * as miscUtils                                         from './miscUtils'
 import * as structUtils                                       from './structUtils';
 import {LocatorHash, Locator}                                 from './types';
 
-enum PackageManager {
+/**
+ * @internal
+ */
+export enum PackageManager {
   Yarn1 = `Yarn Classic`,
   Yarn2 = `Yarn`,
   Npm = `npm`,
@@ -44,13 +47,42 @@ async function makePathWrapper(location: PortablePath, name: Filename, argv0: Na
   });
 }
 
-async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
-  let yarnLock = null;
+/**
+ * @internal
+ */
+export async function detectPackageManager(location: PortablePath): Promise<PackageManagerSelection | null> {
+  const manifest = await Manifest.tryFind(location);
+
+  if (manifest?.packageManager) {
+    const locator = structUtils.tryParseLocator(manifest.packageManager);
+
+    if (locator?.name) {
+      const reason = `found ${JSON.stringify({packageManager: manifest.packageManager})} in manifest`;
+      const [major] = locator.reference.split(`.`);
+
+      switch (locator.name) {
+        case `yarn`: {
+          const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
+          return {packageManager, reason};
+        } break;
+
+        case `npm`: {
+          return {packageManager: PackageManager.Npm, reason};
+        } break;
+
+        case `pnpm`: {
+          return {packageManager: PackageManager.Pnpm, reason};
+        } break;
+      }
+    }
+  }
+
+  let yarnLock: string | undefined;
   try {
     yarnLock = await xfs.readFilePromise(ppath.join(location, Filename.lockfile), `utf8`);
   } catch {}
 
-  if (yarnLock !== null) {
+  if (yarnLock !== undefined) {
     if (yarnLock.match(/^__metadata:$/m)) {
       return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
     } else {
@@ -63,7 +95,6 @@ async function detectPackageManager(location: PortablePath): Promise<PackageMana
 
   if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
     return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
-
 
   if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
     return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
