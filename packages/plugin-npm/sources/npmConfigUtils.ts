@@ -1,6 +1,7 @@
 import {Configuration, Manifest, Ident} from '@yarnpkg/core';
 
 export enum RegistryType {
+  AUDIT_REGISTRY = `npmAuditRegistry`,
   FETCH_REGISTRY = `npmRegistryServer`,
   PUBLISH_REGISTRY = `npmPublishRegistry`,
 }
@@ -14,8 +15,17 @@ export function normalizeRegistry(registry: string) {
   return registry.replace(/\/$/, ``);
 }
 
+// TODO: Remove the fallback on publishConfig
+export function getAuditRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
+  const defaultRegistry = configuration.get(RegistryType.AUDIT_REGISTRY);
+  if (defaultRegistry !== null)
+    return normalizeRegistry(defaultRegistry);
+
+  return getPublishRegistry(manifest, {configuration});
+}
+
 export function getPublishRegistry(manifest: Manifest, {configuration}: {configuration: Configuration}) {
-  if (manifest.publishConfig && manifest.publishConfig.registry)
+  if (manifest.publishConfig?.registry)
     return normalizeRegistry(manifest.publishConfig.registry);
 
   if (manifest.name)

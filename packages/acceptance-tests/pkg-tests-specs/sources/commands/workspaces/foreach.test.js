@@ -584,7 +584,6 @@ function makeWorkspacesForeachSinceEnv(cb) {
     workspaces: [`packages/*`],
   }, {
     plugins: [
-      require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
       require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
     ],
   }, async ({path, run, ...rest}) => {
