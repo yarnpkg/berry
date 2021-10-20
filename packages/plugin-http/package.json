@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-http",
-  "version": "2.2.0-rc.1",
+  "version": "2.2.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
