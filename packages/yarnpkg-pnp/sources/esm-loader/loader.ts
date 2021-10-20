@@ -6,15 +6,10 @@ import './fspatch';
 
 const [major, minor] = process.versions.node.split(`.`).map(value => parseInt(value, 10));
 
-const hasConsolidatedLoaders = major > 16 || (major === 16 && minor >= 12);
+// The hooks were consolidated in https://github.com/nodejs/node/pull/37468
+const hasConsolidatedHooks = major > 16 || (major === 16 && minor >= 12);
 
 export const resolve = resolveHook;
-
-// Removed in Node v16.12.0
-export const getFormat = hasConsolidatedLoaders ? undefined : getFormatHook;
-
-// Removed in Node v16.12.0
-export const getSource = hasConsolidatedLoaders ? undefined : getSourceHook;
-
-// Added in Node v16.12.0
-export const load = hasConsolidatedLoaders ? loadHook : undefined;
+export const getFormat = hasConsolidatedHooks ? undefined : getFormatHook;
+export const getSource = hasConsolidatedHooks ? undefined : getSourceHook;
+export const load = hasConsolidatedHooks ? loadHook : undefined;
