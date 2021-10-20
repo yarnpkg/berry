@@ -1669,12 +1669,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
-  version: 7.14.0
-  resolution: "@babel/runtime@npm:7.14.0"
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.14.8, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
+  version: 7.15.4
+  resolution: "@babel/runtime@npm:7.15.4"
   dependencies:
     regenerator-runtime: ^0.13.4
-  checksum: 257dc2594355dd8798455f25b6f2f9a00f162b427391265752933e0e3337b3b14661d09283187d5039ae3764f723890ffe767e995c73d662f1d515bdf48e5ade
+  checksum: c40825430400e47c19b97e4142d5315d2910305b9714d44a711472587ee2fd4521fdba5f02ddd9df3902f5e988d9854fa83f4da1e0c091f70f6983fa52480606
   languageName: node
   linkType: hard
 
@@ -3718,10 +3718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sindresorhus/is@npm:^3.1.1":
-  version: 3.1.2
-  resolution: "@sindresorhus/is@npm:3.1.2"
-  checksum: 6b68b2c0bc36beda9442c64e40e2e971999b0814af610a52d5c0bda2213061ff63d158912bd494dc8b8fa5c027ed13ec5947e4902dd9a315b2f2337221dbcb7f
+"@sindresorhus/is@npm:^4.0.0":
+  version: 4.2.0
+  resolution: "@sindresorhus/is@npm:4.2.0"
+  checksum: 59040dfb75c2eb6ab76e8c7ac10b7f7f6ba740f0b5ac618a89a8bcdbaf923836a8e998078d59d81f6f13f4b6bbe15bfe1bca962c877edcbe9160d1c100c56fd7
   languageName: node
   linkType: hard
 
@@ -3805,10 +3805,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tokenizer/token@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@tokenizer/token@npm:0.1.1"
-  checksum: f8a912a44382af9d8724227ad6fdf6b2a0cf790602009507e85c66f9493f1ea6b699f4f442c66477a9fc01812f7ce60149fcad1b5d87cfa875f8bae3c68f6e76
+"@tokenizer/token@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@tokenizer/token@npm:0.3.0"
+  checksum: 1d575d02d2a9f0c5a4ca5180635ebd2ad59e0f18b42a65f3d04844148b49b3db35cf00b6012a1af2d59c2ab3caca59451c5689f747ba8667ee586ad717ee58e1
   languageName: node
   linkType: hard
 
@@ -3986,13 +3986,6 @@ __metadata:
   version: 0.0.30
   resolution: "@types/debug@npm:0.0.30"
   checksum: 61365bfd3129b8e93696bc1a9be574fb11ff6bd2f32a8dafdefc547035b83c9341f17ffd303417481335fc3392d5e7842962d09551877493fa0f1e6814fec10d
-  languageName: node
-  linkType: hard
-
-"@types/debug@npm:^4.1.5":
-  version: 4.1.5
-  resolution: "@types/debug@npm:4.1.5"
-  checksum: 36bdb74909be193aeeb8c9bb64ef45d691f35181dcf75285728ec1e07103cb91042be2e8294f0624fc5922d9b4f68482faf5ea3068288577ebdccee76cd7870c
   languageName: node
   linkType: hard
 
@@ -11996,14 +11989,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-type@npm:^16.0.0, file-type@npm:^16.2.0":
-  version: 16.5.0
-  resolution: "file-type@npm:16.5.0"
+"file-type@npm:^16.0.0, file-type@npm:^16.5.3":
+  version: 16.5.3
+  resolution: "file-type@npm:16.5.3"
   dependencies:
     readable-web-to-node-stream: ^3.0.0
-    strtok3: ^6.0.3
-    token-types: ^2.0.0
-  checksum: feb2c7aa3c2ab3093679876e6a9b7b3bc6a3ac9d7b63709e1a90f6d85970a2dd1428daf570664577ef9c071be1073b78d6b3210c88b9e98525bad31e59c31e63
+    strtok3: ^6.2.4
+    token-types: ^4.1.1
+  checksum: 38a4443d0f7b9b3de8a44a1d75d441f9ddb544a1adbf22ec7bc07d135452c3464000c64daa51220ffec6a38ceec7565a1290337bd81aab2e6273c79db5ed9ef3
   languageName: node
   linkType: hard
 
@@ -12439,6 +12432,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fs-extra@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "fs-extra@npm:10.0.0"
+  dependencies:
+    graceful-fs: ^4.2.0
+    jsonfile: ^6.0.1
+    universalify: ^2.0.0
+  checksum: 5285a3d8f34b917cf2b66af8c231a40c1623626e9d701a20051d3337be16c6d7cac94441c8b3732d47a92a2a027886ca93c69b6a4ae6aee3c89650d2a8880c0a
+  languageName: node
+  linkType: hard
+
 "fs-extra@npm:^4.0.2":
   version: 4.0.3
   resolution: "fs-extra@npm:4.0.3"
@@ -12633,19 +12637,21 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gatsby-core-utils@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "gatsby-core-utils@npm:2.7.0"
+"gatsby-core-utils@npm:^2.7.0, gatsby-core-utils@npm:^2.8.0-next.1":
+  version: 2.14.0
+  resolution: "gatsby-core-utils@npm:2.14.0"
   dependencies:
+    "@babel/runtime": ^7.15.4
     ci-info: 2.0.0
     configstore: ^5.0.1
-    file-type: ^16.2.0
-    fs-extra: ^8.1.0
-    node-object-hash: ^2.0.0
-    proper-lockfile: ^4.1.1
+    file-type: ^16.5.3
+    fs-extra: ^10.0.0
+    got: ^11.8.2
+    node-object-hash: ^2.3.9
+    proper-lockfile: ^4.1.2
     tmp: ^0.2.1
     xdg-basedir: ^4.0.0
-  checksum: c28ff05a2597162e4d94db02dfe29f13d62075c9cd20464304bd11e8e728b8b6d7e5d082aafc6c45ecdc99a8f6543df88b489fe331abc747b4f097b21dc8f282
+  checksum: b33a1a1e9a9adc53bbc4053e1e1fbfb066817a2e922058990f20612afb19c351dfb77919231553e2051b734a339957f716012d741823d0b7c387a2b7ccc3ea7b
   languageName: node
   linkType: hard
 
@@ -13684,11 +13690,11 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"got@npm:^11.7.0":
-  version: 11.7.0
-  resolution: "got@npm:11.7.0"
+"got@npm:^11.7.0, got@npm:^11.8.2":
+  version: 11.8.2
+  resolution: "got@npm:11.8.2"
   dependencies:
-    "@sindresorhus/is": ^3.1.1
+    "@sindresorhus/is": ^4.0.0
     "@szmarczak/http-timer": ^4.0.5
     "@types/cacheable-request": ^6.0.1
     "@types/responselike": ^1.0.0
@@ -13699,7 +13705,7 @@ fsevents@^1.2.7:
     lowercase-keys: ^2.0.0
     p-cancelable: ^2.0.0
     responselike: ^2.0.0
-  checksum: 7ddec3a7672028909af784accf9635c07872bf541ce5841ef19742d3c6d90218b447dce32d51126daeed7d00cb58bdfeacc014477509996d64c6d2002263adbe
+  checksum: 41ad7bf74f7ec18bca81997ea0a6c8b6b75405cc3ba76d49c5d9d4658cad200d5a9fa7b0a13058458d0df6bed217baabd122d5d351c6bc6996514a5e428744bb
   languageName: node
   linkType: hard
 
@@ -18921,10 +18927,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-object-hash@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "node-object-hash@npm:2.0.0"
-  checksum: 7eee810aacfbc01fb235e5a77448c2c32f1b5ba0c967daacb27b57a843c377a239dd7731af111c051afe58a61657fac01e7db13efb74fae0ec6e54841420a9e6
+"node-object-hash@npm:^2.3.9":
+  version: 2.3.10
+  resolution: "node-object-hash@npm:2.3.10"
+  checksum: 5d2a80f67810294d352205bfc4823aa6097b06cd5dee6e0fec7e2bc40b55bfe5251e90313046230abe2fd230b8b7c5dcda967243e4136b94971e2630e6c7d0cd
   languageName: node
   linkType: hard
 
@@ -20198,10 +20204,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"peek-readable@npm:^3.1.3":
-  version: 3.1.3
-  resolution: "peek-readable@npm:3.1.3"
-  checksum: c37ca828014419dadccc38fd1715d1e670144b48a4aee0ed17fd162f3faa5e5321589b56a7b503413d0669dd53f2d621e0a929ab9ed9719a61dd5af1416e6f67
+"peek-readable@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "peek-readable@npm:4.0.1"
+  checksum: aed788748585fe2dc55ac8a1ea4dd75b9f30c71a790bbd53f785aab757e6b765a6b6a4b19343242f24fdfc416a81d5ec40635ead75379b94af5b0e9d647d087d
   languageName: node
   linkType: hard
 
@@ -21202,14 +21208,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"proper-lockfile@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "proper-lockfile@npm:4.1.1"
+"proper-lockfile@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "proper-lockfile@npm:4.1.2"
   dependencies:
-    graceful-fs: ^4.1.11
+    graceful-fs: ^4.2.4
     retry: ^0.12.0
     signal-exit: ^3.0.2
-  checksum: 3978ee0b14d1ff4b0fd0a37551eb17c6018dbd0c10e9253e4f85fa66dd06cd531e4952ca5f59f22d4872dc827457ff08f9a4a024624c39667a8d785e30d90ff5
+  checksum: 00078ee6a61c216a56a6140c7d2a98c6c733b3678503002dc073ab8beca5d50ca271de4c85fca13b9b8ee2ff546c36674d1850509b84a04a5d0363bcb8638939
   languageName: node
   linkType: hard
 
@@ -24475,14 +24481,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^6.0.3":
-  version: 6.0.8
-  resolution: "strtok3@npm:6.0.8"
+"strtok3@npm:^6.2.4":
+  version: 6.2.4
+  resolution: "strtok3@npm:6.2.4"
   dependencies:
-    "@tokenizer/token": ^0.1.1
-    "@types/debug": ^4.1.5
-    peek-readable: ^3.1.3
-  checksum: c732686a2d220e3f9a8dfc09a3311861781934e63256cd52f9b3f15e8fb02812c121b14428528b276eb0be5026824192cbbfb551607a222e6dd800debbf53657
+    "@tokenizer/token": ^0.3.0
+    peek-readable: ^4.0.1
+  checksum: 327b48a79d464542e9ae922c1af3aacc6e6673be31442ab82648ee4afa8cf67f23b426d3e6e77a496ff6e0c9ddc009d9242a224ee05186a100325b633759d0ec
   languageName: node
   linkType: hard
 
@@ -25226,13 +25231,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"token-types@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "token-types@npm:2.1.1"
+"token-types@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "token-types@npm:4.1.1"
   dependencies:
-    "@tokenizer/token": ^0.1.1
+    "@tokenizer/token": ^0.3.0
     ieee754: ^1.2.1
-  checksum: e5874d0a5055e10f292585aabaf76a4c4c2833d9f252d0317c33256121b3bbcf9ae2d951e08f85484fb6485070a37edd14c750ba7d4255664c9962c7f6205265
+  checksum: 8fe4e84611f6c575439b24003650064a2abe8f7c848cdf84dfa233792e4081226e538d567825954d536eadee3a17d902db62ce652b2b1191b772caf1c7d0e312
   languageName: node
   linkType: hard
 
