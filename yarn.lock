@@ -6105,12 +6105,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
+    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-node-resolve": ^11.0.1
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
-    resolve.exports: ^1.0.2
+    esbuild: "npm:esbuild-wasm@^0.11.20"
+    resolve.exports: ^1.1.0
+    rollup: ^2.43.0
+    rollup-plugin-esbuild: ^3.0.2
     tslib: ^1.13.0
     typescript: ^4.4.2
     webpack: ^5.1.1
@@ -22744,10 +22749,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"resolve.exports@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "resolve.exports@npm:1.0.2"
-  checksum: 1de1e50dc61dfe0abfdcbe658aaffce108662b007a1879406cbcf32a8199358ed4a2b86ca4606a53d9978f2bc7e5e1321edf6cca36081ae0b845334f28c29cf3
+"resolve.exports@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "resolve.exports@npm:1.1.0"
+  checksum: 52865af8edb088f6c7759a328584a5de6b226754f004b742523adcfe398cfbc4559515104bc2ae87b8e78b1e4de46c9baec400b3fb1f7d517b86d2d48a098a2d
   languageName: node
   linkType: hard
 

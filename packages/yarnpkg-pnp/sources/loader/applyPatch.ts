@@ -7,6 +7,7 @@ import {PnpApi}                                                    from '../type
 
 import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
 import {Manager}                                                   from './makeManager';
+import * as nodeUtils                                              from './nodeUtils';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>,
@@ -360,19 +361,21 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (request === `pnpapi`)
       return false;
 
-    // Node sometimes call this function with an absolute path and a `null` set
-    // of paths. This would cause the resolution to fail. To avoid that, we
-    // fallback on the regular resolution. We only do this when `isMain` is
-    // true because the Node default resolution doesn't handle well in-zip
-    // paths, even absolute, so we try to use it as little as possible.
-    if (!enableNativeHooks || (isMain && npath.isAbsolute(request)))
+    if (!enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
 
-    for (const path of paths || []) {
+    // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L490-L494
+    const isAbsolute = npath.isAbsolute(request);
+    if (isAbsolute)
+      paths = [``];
+    else if (!paths || paths.length === 0)
+      return false;
+
+    for (const path of paths) {
       let resolution: string | false;
 
       try {
-        const pnpApiPath = opts.manager.findApiPathFor(path);
+        const pnpApiPath = opts.manager.findApiPathFor(isAbsolute ? request : path);
         if (pnpApiPath !== null) {
           const api = opts.manager.getApiEntry(pnpApiPath, true).instance;
           resolution = api.resolveRequest(request, path) || false;
@@ -389,6 +392,22 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     }
 
     return false;
+  };
+
+  // Specifying the `--experimental-loader` flag makes Node enter ESM mode so we change it to not do that
+  // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L72-L81
+  // Tested by https://github.com/yarnpkg/berry/blob/d80ee2dc5298d31eb864288d77671a2264713371/packages/acceptance-tests/pkg-tests-specs/sources/pnp-esm.test.ts#L226-L244
+  // Upstream issue https://github.com/nodejs/node/issues/33226
+  const originalRunMain = moduleExports.runMain;
+  moduleExports.runMain = function (main = process.argv[1]) {
+    const resolvedMain = nodeUtils.resolveMainPath(main);
+
+    const useESMLoader = resolvedMain ? nodeUtils.shouldUseESMLoader(resolvedMain) : false;
+    if (useESMLoader) {
+      originalRunMain(main);
+    } else {
+      Module._load(main, null, true);
+    }
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));
