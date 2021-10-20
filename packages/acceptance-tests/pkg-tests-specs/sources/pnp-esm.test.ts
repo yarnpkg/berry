@@ -223,6 +223,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
+  // Tests the workaround for https://github.com/nodejs/node/issues/33226
   test(
     `it should not enter ESM mode just because the loader is present`,
     makeTemporaryEnv(
