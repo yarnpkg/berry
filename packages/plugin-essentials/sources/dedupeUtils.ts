@@ -113,6 +113,9 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
     project,
     report: throwReport,
     skipIntegrityCheck: true,
+    cacheOptions: {
+      skipIntegrityCheck: true,
+    },
   };
   const resolveOptions: ResolveOptions = {
     project,

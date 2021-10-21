@@ -15,6 +15,9 @@ export type FetchOptions = MinimalFetchOptions & {
   cacheOptions?: CacheOptions,
   checksums: Map<LocatorHash, string | null>,
   report: Report,
+  /**
+   * @deprecated Use cacheOptions.skipIntegrityCheck instead
+   */
   skipIntegrityCheck?: boolean
 };
 

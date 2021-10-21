@@ -360,7 +360,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const fetcher = project.configuration.makeFetcher();
   const resolver = project.configuration.makeResolver();
 
-  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, skipIntegrityCheck: true};
+  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, cacheOptions: {skipIntegrityCheck: true}, skipIntegrityCheck: true};
   const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
   // The descriptor has to be bound for the resolvers that need a parent locator. (e.g. FileResolver)
