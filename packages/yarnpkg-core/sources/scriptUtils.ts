@@ -17,6 +17,7 @@ import {YarnVersion}                                          from './YarnVersio
 import * as execUtils                                         from './execUtils';
 import * as formatUtils                                       from './formatUtils';
 import * as miscUtils                                         from './miscUtils';
+import * as semverUtils                                       from './semverUtils';
 import * as structUtils                                       from './structUtils';
 import {LocatorHash, Locator}                                 from './types';
 
@@ -283,8 +284,39 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           }],
 
           [PackageManager.Npm, async () => {
-            if (workspace !== null)
-              throw new Error(`Workspaces aren't supported by npm, which has been detected as the primary package manager for ${cwd}`);
+            // Running `npm pack --workspace w` on npm@<7.x causes npm to ignore the
+            // `--workspace` flag and instead pack the `w` package from the registry
+            if (workspace !== null) {
+              const versionStream = new PassThrough();
+              const versionPromise = miscUtils.bufferStream(versionStream);
+
+              versionStream.pipe(stdout, {end: false});
+
+              const version = await execUtils.pipevp(`npm`, [`--version`], {cwd, env, stdin, stdout: versionStream, stderr, end: execUtils.EndStrategy.Never});
+              versionStream.end();
+
+              if (version.code !== 0) {
+                stdout.end();
+                stderr.end();
+
+                return version.code;
+              }
+
+              const npmVersion = (await versionPromise).toString().trim();
+
+              if (!semverUtils.satisfiesWithPrereleases(npmVersion, `>=7.x`)) {
+                const npmIdent = structUtils.makeIdent(null, `npm`);
+
+                const currentNpmDescriptor = structUtils.makeDescriptor(npmIdent, npmVersion);
+                const requiredNpmDescriptor = structUtils.makeDescriptor(npmIdent, `>=7.x`);
+
+                throw new Error(`Workspaces aren't supported by ${structUtils.prettyDescriptor(configuration, currentNpmDescriptor)}; please upgrade to ${structUtils.prettyDescriptor(configuration, requiredNpmDescriptor)} (npm has been detected as the primary package manager for ${formatUtils.pretty(configuration, cwd, formatUtils.Type.PATH)})`);
+              }
+            }
+
+            const workspaceCli = workspace !== null
+              ? [`--workspace`, workspace]
+              : [];
 
             // Otherwise npm won't properly set the user agent, using the Yarn
             // one instead
@@ -304,7 +336,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 
             // It seems that npm doesn't support specifying the pack output path,
             // so we have to extract the stdout on top of forking it to the logs.
-            const pack = await execUtils.pipevp(`npm`, [`pack`, `--silent`], {cwd, env, stdin, stdout: packStream, stderr});
+            const pack = await execUtils.pipevp(`npm`, [`pack`, `--silent`, ...workspaceCli], {cwd, env, stdin, stdout: packStream, stderr});
             if (pack.code !== 0)
               return pack.code;
 
