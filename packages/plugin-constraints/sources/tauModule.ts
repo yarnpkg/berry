@@ -86,7 +86,10 @@ const tauModule = new pl.type.Module(`constraints`, {
 
     prependGoals(thread, point, [new pl.type.Term(`=`, [
       fieldValue,
-      new pl.type.Term(JSON.stringify(value)),
+      // TODO: Investigate whether we should JSON.stringify primitive values too.
+      // For now we don't because it would be a breaking change.
+      // https://github.com/yarnpkg/berry/issues/3584
+      new pl.type.Term(typeof value === `object` ? JSON.stringify(value) : value),
     ])]);
   },
 
