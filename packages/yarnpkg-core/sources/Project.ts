@@ -850,7 +850,7 @@ export class Project {
     const disabledLocators = new Set<LocatorHash>();
 
     for (const pkg of allPackages.values()) {
-      if (pkg.conditions === null)
+      if (pkg.conditions == null)
         continue;
 
       if (!optionalBuilds.has(pkg.locatorHash))
