@@ -398,11 +398,45 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 
             return 0;
           }],
+
+          [PackageManager.Pnpm, async () => {
+            const workspaceCli = workspace !== null
+              ? [`--filter`, workspace]
+              : [];
+
+            const install = await execUtils.pipevp(`pnpm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            if (install.code !== 0)
+              return install.code;
+
+            const packStream = new PassThrough();
+            const packPromise = miscUtils.bufferStream(packStream);
+
+            packStream.pipe(stdout);
+
+            // It seems that pnpm doesn't support specifying the pack output path,
+            // so we have to extract the stdout on top of forking it to the logs.
+
+            // - `pnpm pack` doesn't support the `--filter` flag so we have to use `pnpm exec`
+            // - We have to use the `--pack-destination` flag because otherwise pnpm generates the tarball inside the workspace cwd
+            const packArgs = [...workspaceCli, `exec`, `pnpm`, `pack`, `--pack-destination`, npath.fromPortablePath(cwd)];
+
+            const pack = await execUtils.pipevp(`pnpm`, packArgs, {cwd, env, stdin, stdout: packStream, stderr});
+            if (pack.code !== 0)
+              return pack.code;
+
+            const packOutput = (await packPromise).toString().trim().replace(/^.*\n/s, ``);
+            const packTarget = ppath.resolve(cwd, npath.toPortablePath(packOutput));
+
+            // Only then can we move the pack to its rightful location
+            await xfs.renamePromise(packTarget, outputPath);
+
+            return 0;
+          }],
         ]);
 
         const workflow = workflows.get(effectivePackageManager);
         if (typeof workflow === `undefined`)
-          throw new Error(`Assertion failed: Unsupported workflow`);
+          throw new Error(`Assertion failed: Unsupported workflow: "${effectivePackageManager}"`);
 
         const code = await workflow();
         if (code === 0 || typeof code === `undefined`)
