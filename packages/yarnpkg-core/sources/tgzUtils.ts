@@ -67,7 +67,9 @@ async function * parseTar(tgz: Buffer) {
   });
 
   parser.on(`close`, () => {
-    passthrough.destroy();
+    if (!passthrough.destroyed) {
+      passthrough.end();
+    }
   });
 
   parser.end(tgz);

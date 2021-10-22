@@ -186,6 +186,7 @@ jobs:
         - 12
         - 14
         - 16
+        - 17
         platform:
         - ubuntu-latest
         - windows-latest

@@ -22,7 +22,7 @@ describe(`Https tests`, () => {
           `    npmAuthToken: ${AUTH_TOKEN}`,
         ].join(`\n`));
 
-        await expect(run(`install`)).rejects.toThrow(`RequestError: self signed certificate`);
+        await expect(run(`install`)).rejects.toThrow(/RequestError: self(-| )signed certificate/);
       },
     ),
   );
@@ -139,7 +139,7 @@ describe(`Https tests`, () => {
           `    npmAuthToken: ${AUTH_TOKEN}`,
         ].join(`\n`));
 
-        await expect(run(`install`)).rejects.toThrow(`RequestError: self signed certificate`);
+        await expect(run(`install`)).rejects.toThrow(/RequestError: self(-| )signed certificate/);
       },
     ),
   );
