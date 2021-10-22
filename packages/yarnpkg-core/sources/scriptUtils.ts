@@ -400,10 +400,6 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           }],
 
           [PackageManager.Pnpm, async () => {
-            const workspaceCli = workspace !== null
-              ? [`--filter`, workspace]
-              : [];
-
             const install = await execUtils.pipevp(`pnpm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (install.code !== 0)
               return install.code;
@@ -418,7 +414,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 
             // - `pnpm pack` doesn't support the `--filter` flag so we have to use `pnpm exec`
             // - We have to use the `--pack-destination` flag because otherwise pnpm generates the tarball inside the workspace cwd
-            const packArgs = [...workspaceCli, `exec`, `pnpm`, `pack`, `--pack-destination`, npath.fromPortablePath(cwd)];
+            // - Only pnpm@>=6.x supports the `--pack-destination` flag (and previous versions throw an error)
+            const packArgs = workspace !== null
+              ? [`--filter`, workspace, `exec`, `pnpm`, `pack`, `--pack-destination`, npath.fromPortablePath(cwd)]
+              : [`pack`];
 
             const pack = await execUtils.pipevp(`pnpm`, packArgs, {cwd, env, stdin, stdout: packStream, stderr});
             if (pack.code !== 0)
