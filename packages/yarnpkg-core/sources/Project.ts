@@ -11,12 +11,12 @@ import {promisify}                                                      from 'ut
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
 
-import {Cache}                                                          from './Cache';
+import {Cache, CacheOptions}                                            from './Cache';
 import {Configuration, FormatType}                                      from './Configuration';
-import {Fetcher}                                                        from './Fetcher';
+import {Fetcher, FetchOptions}                                          from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
-import {Linker}                                                         from './Linker';
+import {Linker, LinkOptions}                                            from './Linker';
 import {LockfileResolver}                                               from './LockfileResolver';
 import {DependencyMeta, Manifest}                                       from './Manifest';
 import {MessageName}                                                    from './MessageName';
@@ -850,7 +850,7 @@ export class Project {
     const disabledLocators = new Set<LocatorHash>();
 
     for (const pkg of allPackages.values()) {
-      if (pkg.conditions === null)
+      if (pkg.conditions == null)
         continue;
 
       if (!optionalBuilds.has(pkg.locatorHash))
@@ -969,17 +969,17 @@ export class Project {
   }
 
   async linkEverything({cache, report, fetcher: optFetcher, mode}: InstallOptions) {
-    const cacheOptions = {
+    const cacheOptions: CacheOptions = {
       mockedPackages: this.disabledLocators,
       unstablePackages: this.conditionalLocators,
       skipIntegrityCheck: true,
     };
 
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
+    const fetcherOptions: FetchOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true, cacheOptions};
 
     const linkers = this.configuration.getLinkers();
-    const linkerOptions = {project: this, report};
+    const linkerOptions: LinkOptions = {project: this, report};
 
     const installers = new Map(linkers.map(linker => {
       const installer = linker.makeInstaller(linkerOptions);

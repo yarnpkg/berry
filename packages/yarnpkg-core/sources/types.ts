@@ -137,7 +137,7 @@ export interface Package extends Locator {
    * A set of constraints indicating whether the package supports the host
    * environment.
    */
-  conditions: string | null,
+  conditions?: string | null,
 
   /**
    * A map of the package's dependencies. There's no distinction between prod
