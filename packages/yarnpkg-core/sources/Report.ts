@@ -24,6 +24,12 @@ export type ProgressDefinition = {
   title?: string,
 };
 
+export type SectionOptions = {
+  reportHeader?: () => void,
+  reportFooter?: () => void,
+  skipIfEmpty?: boolean;
+};
+
 export type TimerOptions = {
   skipIfEmpty?: boolean;
 };
@@ -35,6 +41,9 @@ export abstract class Report {
 
   abstract reportCacheHit(locator: Locator): void;
   abstract reportCacheMiss(locator: Locator, message?: string): void;
+
+  abstract startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>): Promise<T>;
+  abstract startSectionSync<T>(opts: SectionOptions, cb: () => T): T;
 
   abstract startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<T>;
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;

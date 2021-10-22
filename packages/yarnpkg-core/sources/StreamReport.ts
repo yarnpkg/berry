@@ -1,13 +1,13 @@
-import sliceAnsi                                  from '@arcanis/slice-ansi';
-import CI                                         from 'ci-info';
-import {Writable}                                 from 'stream';
+import sliceAnsi                                                  from '@arcanis/slice-ansi';
+import CI                                                         from 'ci-info';
+import {Writable}                                                 from 'stream';
 
-import {Configuration}                            from './Configuration';
-import {MessageName, stringifyMessageName}        from './MessageName';
-import {ProgressDefinition, Report, TimerOptions} from './Report';
-import * as formatUtils                           from './formatUtils';
-import * as structUtils                           from './structUtils';
-import {Locator}                                  from './types';
+import {Configuration}                                            from './Configuration';
+import {MessageName, stringifyMessageName}                        from './MessageName';
+import {ProgressDefinition, Report, SectionOptions, TimerOptions} from './Report';
+import * as formatUtils                                           from './formatUtils';
+import * as structUtils                                           from './structUtils';
+import {Locator}                                                  from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration,
@@ -231,6 +231,56 @@ export class StreamReport extends Report {
 
     if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
       this.reportInfo(MessageName.FETCH_NOT_CACHED, message);
+    }
+  }
+
+  startSectionSync<T>(opts: SectionOptions, cb: () => T) {
+    const mark = {committed: false, action: () => {
+      opts.reportHeader?.();
+    }};
+
+    if (opts.skipIfEmpty) {
+      this.uncommitted.add(mark);
+    } else {
+      mark.action();
+      mark.committed = true;
+    }
+
+    try {
+      return cb();
+    } catch (error) {
+      this.reportExceptionOnce(error);
+      throw error;
+    } finally {
+      this.uncommitted.delete(mark);
+      if (mark.committed) {
+        opts.reportFooter?.();
+      }
+    }
+  }
+
+  async startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>) {
+    const mark = {committed: false, action: () => {
+      opts.reportHeader?.();
+    }};
+
+    if (opts.skipIfEmpty) {
+      this.uncommitted.add(mark);
+    } else {
+      mark.action();
+      mark.committed = true;
+    }
+
+    try {
+      return await cb();
+    } catch (error) {
+      this.reportExceptionOnce(error);
+      throw error;
+    } finally {
+      this.uncommitted.delete(mark);
+      if (mark.committed) {
+        opts.reportFooter?.();
+      }
     }
   }
 
