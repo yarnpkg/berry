@@ -52,7 +52,7 @@ git@github.com:yarnpkg/berry.git#head=master
 
 - Yarn will use either of Yarn, npm, or pnpm to pack the repository, based on the repository style (ie we'll use Yarn if there's a `yarn.lock`, npm if there's a `package-lock.json`, or pnpm if there's a `pnpm-lock.yaml`)
 
-- Workspaces can be cloned as long as the remote repository uses Yarn or npm (npm@>=7.x has to be installed on the system); we can't support pnpm because it doesn't have equivalent for the [`workspace` command](/cli/workspace). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
+- Workspaces can be cloned as long as the remote repository uses Yarn, npm (npm@>=7.x has to be installed on the system), or pnpm. Just reference the workspace by name in your range (you can optionally enforce the tag as well):
 
 ```
 git@github.com:yarnpkg/berry.git#workspace=@yarnpkg/shell&tag=@yarnpkg/shell/2.1.0

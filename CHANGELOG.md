@@ -11,6 +11,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Installs
 
 - The pnpm linker will now remove the `node_modules/.store` and `node_modules` folders if they are empty.
+- Yarn can now install git repositories that use pnpm (workspaces are supported too if pnpm@>=6.x is installed on the system).
 
 ### Miscellaneous Features
 
