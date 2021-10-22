@@ -52,12 +52,12 @@ git@github.com:yarnpkg/berry.git#head=master
 
 - Yarn will use either of Yarn, npm, or pnpm to pack the repository, based on the repository style (ie we'll use Yarn if there's a `yarn.lock`, npm if there's a `package-lock.json`, or pnpm if there's a `pnpm-lock.yaml`)
 
-- Workspaces can be cloned as long as the remote repository uses Yarn (we can't support pnpm because it doesn't have equivalent for the [`workspace` command](/cli/workspace)). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
+- Workspaces can be cloned as long as the remote repository uses Yarn or npm (npm@>=7.x has to be installed on the system); we can't support pnpm because it doesn't have equivalent for the [`workspace` command](/cli/workspace). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
 
 ```
 git@github.com:yarnpkg/berry.git#workspace=@yarnpkg/shell&tag=@yarnpkg/shell/2.1.0
 ```
-  
+
 ### Patch
 
 The `patch:` protocol is meant to be used with [`yarn patch`](/cli/patch) and [`yarn patch-commit`](/cli/patch-commit). It allows you to change the sources for a package without having to completely fork the dependency. The intended workflow is:
@@ -76,7 +76,7 @@ Note that if you wish to update a transitive dependency (ie not directly yours),
 
 ### Workspace
 
-The `workspace:` protocol is meant to be used with [workspaces](/features/workspaces#workspace-ranges-workspace). While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartmentalize your code). 
+The `workspace:` protocol is meant to be used with [workspaces](/features/workspaces#workspace-ranges-workspace). While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartmentalize your code).
 
 Our current recommendation is to use `workspace:*`, which will almost always do what you expect. See [the documentation of workspaces](/features/workspaces#workspace-ranges-workspace) for full details about this protocol.
 

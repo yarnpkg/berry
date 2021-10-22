@@ -3,6 +3,7 @@ const {
   tests: {startPackageServer},
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
+const {execUtils, semverUtils} = require(`@yarnpkg/core`);
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -143,6 +144,43 @@ describe(`Protocols`, () => {
           await run(`install`);
 
           await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
+        },
+      ),
+      45000,
+    );
+
+    test(
+      `it should support installing specific workspaces from npm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pkg-a`]: startPackageServer().then(url => `${url}/repositories/npm-workspaces.git#workspace=pkg-a`),
+            [`pkg-b`]: startPackageServer().then(url => `${url}/repositories/npm-workspaces.git#workspace=pkg-b`),
+          },
+        },
+        async ({path, run, source}) => {
+          const {code, stdout, stderr} = await execUtils.execvp(`npm`, [`--version`], {cwd: path});
+          if (code !== 0)
+            throw new Error(`Couldn't get npm version: ${stderr}`);
+
+          const npmVersion = stdout.trim();
+          const doesNpmSupportWorkspaces = semverUtils.satisfiesWithPrereleases(npmVersion, `>=7.x`);
+
+          if (doesNpmSupportWorkspaces) {
+            await run(`install`);
+
+            await expect(source(`require('pkg-a/package.json')`)).resolves.toMatchObject({
+              name: `pkg-a`,
+              version: `1.0.0`,
+            });
+
+            await expect(source(`require('pkg-b/package.json')`)).resolves.toMatchObject({
+              name: `pkg-b`,
+              version: `1.0.0`,
+            });
+          } else {
+            await expect(run(`install`)).rejects.toThrow(`Workspaces aren't supported by npm@${npmVersion}`);
+          }
         },
       ),
       45000,
