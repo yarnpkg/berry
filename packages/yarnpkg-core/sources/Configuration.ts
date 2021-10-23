@@ -1459,6 +1459,9 @@ export class Configuration {
     return {os, cpu};
   }
 
+  /**
+   * @internal This function is subject to change without a major bump depending on how we'll cover the remaining cases.
+   */
   shouldRemoveMockedPackagesFromCache() {
     const supportedArchitectures = this.get(`supportedArchitectures`);
 
