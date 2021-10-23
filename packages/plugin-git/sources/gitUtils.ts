@@ -1,10 +1,10 @@
-import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                         from '@yarnpkg/fslib';
-import {UsageError}                                                                                        from 'clipanion';
-import GitUrlParse                                                                                         from 'git-url-parse';
-import querystring                                                                                         from 'querystring';
-import semver                                                                                              from 'semver';
-import urlLib                                                                                              from 'url';
+import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
+import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {UsageError}                                                                                                                               from 'clipanion';
+import GitUrlParse                                                                                                                                from 'git-url-parse';
+import querystring                                                                                                                                from 'querystring';
+import semver                                                                                                                                     from 'semver';
+import urlLib                                                                                                                                     from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -184,8 +184,9 @@ export async function lsRemote(repo: string, configuration: Configuration) {
       strict: true,
     });
   } catch (error) {
-    error.message = `Listing the refs for ${repo} failed`;
-    throw error;
+    throw new ReportError(MessageName.EXCEPTION, `Listing the refs for ${formatUtils.pretty(configuration, repo, formatUtils.Type.URL)} failed`, report => {
+      report.reportExceptionOnce(error);
+    });
   }
 
   const refs = new Map();

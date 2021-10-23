@@ -3,6 +3,11 @@ import {ChildProcess}        from 'child_process';
 import crossSpawn            from 'cross-spawn';
 import {Readable, Writable}  from 'stream';
 
+import {Configuration}       from './Configuration';
+import {MessageName}         from './MessageName';
+import {ReportError}         from './Report';
+import * as formatUtils      from './formatUtils';
+
 export enum EndStrategy {
   Never,
   ErrorCode,
@@ -110,10 +115,15 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 
       if (code === 0 || !strict) {
         resolve({code: getExitCode(code, sig)});
-      } else if (code !== null) {
-        reject(new Error(`Child "${fileName}" exited with exit code ${code}`));
       } else {
-        reject(new Error(`Child "${fileName}" exited with signal ${sig}`));
+        const configuration = Configuration.create(cwd);
+        const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
+
+        if (code !== null) {
+          reject(new ReportError(MessageName.EXCEPTION, `Child ${prettyFileName} exited with exit code ${formatUtils.pretty(configuration, code, formatUtils.Type.NUMBER)}`));
+        } else {
+          reject(new ReportError(MessageName.EXCEPTION, `Child ${prettyFileName} exited with signal ${formatUtils.pretty(configuration, sig, formatUtils.Type.CODE)}`));
+        }
       }
     });
   });
@@ -174,7 +184,19 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
           code: getExitCode(code, signal), stdout, stderr,
         });
       } else {
-        reject(Object.assign(new Error(`Child "${fileName}" exited with exit code ${code}\n\n${stderr}`), {
+        const configuration = Configuration.create(cwd);
+
+        const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
+        const prettyCode = formatUtils.pretty(configuration, code, formatUtils.Type.NUMBER);
+        const stderrPrefix = formatUtils.pretty(configuration, `STDERR`, `red`);
+
+        const reportError = new ReportError(MessageName.EXCEPTION, `Child ${prettyFileName} exited with exit code ${prettyCode}`, report => {
+          for (const line of stderr.toString().trim().split(`\n`)) {
+            report.reportError(MessageName.EXCEPTION, `${stderrPrefix} ${line}`);
+          }
+        });
+
+        reject(Object.assign(reportError, {
           code: getExitCode(code, signal), stdout, stderr,
         }));
       }

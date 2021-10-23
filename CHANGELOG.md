@@ -36,6 +36,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The `nmSelfReferences` setting has been added to the nm linker to control whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. `yarn workspaces focus` will not create self-referencing symlinks for excluded workspaces anymore.
 - Yarn can now install workspaces from remote git repositories that use npm if npm@>=7.x is installed on the system.
 
+### Miscellaneous
+
+- Reporting for Git ref-listing errors has been improved.
+
 ## 3.0.2
 
 - Updated TypeScript patch to cover TypeScript 4.4.
