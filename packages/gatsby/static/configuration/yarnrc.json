@@ -389,6 +389,13 @@
       "type": "boolean",
       "default": false
     },
+    "npmAuditRegistry": {
+      "_package": "@yarnpkg/plugin-npm",
+      "description": "Defines the registry that must be used when auditing dependencies. Doesn't need to be defined, in which case the value of `npmRegistryServer` will be used.",
+      "type": "string",
+      "format": "uri",
+      "examples": ["https://npm.pkg.github.com"]
+    },
     "npmAuthIdent": {
       "_package": "@yarnpkg/plugin-npm",
       "description": "Defines the authentication credentials to use by default when accessing your registries (equivalent to `_auth` in the v1). This settings is strongly discouraged in favor of `npmAuthToken`.",
