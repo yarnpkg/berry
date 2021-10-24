@@ -2054,8 +2054,19 @@ function applyVirtualResolutionMutations({
         for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
           let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
-          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest))
-            peerDescriptor = parentDescriptor;
+          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
+            // If the parent isn't installed under an alias we can skip unnecessary steps
+            if (parentDescriptor.identHash === parentLocator.identHash) {
+              peerDescriptor = parentDescriptor;
+            } else {
+              peerDescriptor = structUtils.makeDescriptor(parentLocator, parentDescriptor.range);
+
+              allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
+              allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
+
+              volatileDescriptors.delete(peerDescriptor.descriptorHash);
+            }
+          }
 
           // If the peerRequest isn't provided by the parent then fall back to dependencies
           if ((!peerDescriptor || peerDescriptor.range === `missing:`) && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
