@@ -581,7 +581,7 @@ describe(`Dragon tests`, () => {
           // even fulfill the require promise (installing dragon-test-11-a both under the aliased and original name).
           // TODO: make the node-modules linker fulfill the require promise
           await expect(source(`
-            {
+            (() => {
               const {createRequire} = require(\`module\`);
 
               const rootInstance = require.resolve(\`aliased\`);
@@ -591,7 +591,7 @@ describe(`Dragon tests`, () => {
               ).resolve(\`dragon-test-11-a\`);
 
               return rootInstance === dragonTest11BInstance;
-            }
+            })()
         `)).resolves.toEqual(true);
         },
       ));
