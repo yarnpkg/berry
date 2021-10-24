@@ -146,9 +146,24 @@ export class NpmSemverResolver implements Resolver {
       }
     }
 
-    // Show deprecation warnings
-    if (typeof manifest.raw.deprecated === `string`)
-      opts.report.reportWarningOnce(MessageName.DEPRECATED_PACKAGE, `${structUtils.prettyLocator(opts.project.configuration, locator)} is deprecated: ${manifest.raw.deprecated}`);
+    // Show deprecation warnings.
+    //
+    // Apparently some packages have a `deprecated` field set to an empty string
+    // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
+    // the package, completely removing the `deprecated field`).
+    //
+    // Both the npm website and all other package managers skip showing deprecation warnings in this case.
+
+    if (typeof manifest.raw.deprecated === `string` && manifest.raw.deprecated !== ``) {
+      opts.report.reportWarningOnce(MessageName.DEPRECATED_PACKAGE, `${
+        structUtils.prettyLocator(opts.project.configuration, locator)
+      } is deprecated${
+        // If the `deprecated` field contains anything, even only whitespace, the package is considered deprecated by both the npm website and CLI.
+        manifest.raw.deprecated.match(/\S/)
+          ? `: ${manifest.raw.deprecated}`
+          : ``
+      }`);
+    }
 
     return {
       ...locator,
