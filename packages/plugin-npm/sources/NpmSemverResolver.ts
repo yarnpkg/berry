@@ -150,7 +150,7 @@ export class NpmSemverResolver implements Resolver {
     //
     // Apparently some packages have a `deprecated` field set to an empty string
     // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
-    // the package, completely removing the `deprecated field`).
+    // the package, completely removing the `deprecated` field).
     //
     // Both the npm website and all other package managers skip showing deprecation warnings in this case.
 
