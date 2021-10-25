@@ -1,6 +1,9 @@
 releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
+  "@yarnpkg/nm": patch
+  "@yarnpkg/plugin-nm": patch
+  "@yarnpkg/pnpify": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -15,7 +18,6 @@ declined:
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
-  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
@@ -26,8 +28,7 @@ declined:
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
+  - vscode-zipfs
   - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/nm"
-  - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
