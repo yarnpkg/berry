@@ -423,6 +423,8 @@ async function git(message: string, args: Array<string>, opts: Omit<execUtils.Ex
     if (!(error instanceof execUtils.ExecError))
       throw error;
 
+    const execErrorReportExtra = error.reportExtra;
+
     const stderr = error.stderr.toString();
 
     throw new ReportError(MessageName.EXCEPTION, `Failed ${message}`, report => {
@@ -445,6 +447,8 @@ async function git(message: string, args: Array<string>, opts: Omit<execUtils.Ex
           value: formatUtils.tuple(formatUtils.Type.NO_HINT, errorMessage),
         })}`);
       }
+
+      execErrorReportExtra?.(report);
     });
   }
 }
