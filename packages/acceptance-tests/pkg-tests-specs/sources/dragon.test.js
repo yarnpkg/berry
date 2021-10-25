@@ -547,7 +547,7 @@ describe(`Dragon tests`, () => {
     ),
   );
 
-  for (const nodeLinker of [`pnp`, `pnpm`]) {
+  for (const nodeLinker of [`pnp`, `pnpm`, `node-modules`]) {
     test(`it should pass the dragon test 11 with "nodeLinker: ${nodeLinker}"`,
       makeTemporaryEnv(
         {
