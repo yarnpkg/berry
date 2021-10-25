@@ -2217,7 +2217,6 @@ function applyVirtualResolutionMutations({
   enum WarningType {
     NotProvided,
     NotCompatible,
-    NotWorkspace,
   }
 
   type Warning = {
