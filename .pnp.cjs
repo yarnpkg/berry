@@ -50954,7 +50954,10 @@ function getPathForDisplay(p) {
 ;// CONCATENATED MODULE: ./sources/loader/nodeUtils.ts
 
 
- // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
+ // @ts-expect-error
+
+const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
+const isBuiltinModule = request => request.startsWith(`node:`) || builtinModules.has(request); // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
 
 function resolveMainPath(main) {
   let mainPath = external_module_.Module._findPath(npath.resolve(main), null, true);
@@ -51015,15 +51018,9 @@ function readPackage(requestPath) {
 
 
 function applyPatch(pnpapi, opts) {
-  // @ts-expect-error
-  const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
-
-  const isBuiltinModule = request => builtinModules.has(request) || request.startsWith(`node:`);
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
    */
-
-
   const defaultCache = {};
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need

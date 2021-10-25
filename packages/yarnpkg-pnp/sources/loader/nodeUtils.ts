@@ -2,6 +2,11 @@ import {NativePath, npath} from '@yarnpkg/fslib';
 import fs                  from 'fs';
 import {Module}            from 'module';
 
+// @ts-expect-error
+const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+
+export const isBuiltinModule = (request: string) => request.startsWith(`node:`) || builtinModules.has(request);
+
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
 export function resolveMainPath(main: NativePath) {
   let mainPath = Module._findPath(npath.resolve(main), null, true);
