@@ -64,7 +64,7 @@ declare module '@yarnpkg/core' {
     pnpMode: string;
     pnpShebang: string;
     pnpIgnorePatterns: Array<string>;
-    pnpEnableExperimentalEsm: boolean
+    pnpEnableEsmLoader: boolean
     pnpEnableInlining: boolean;
     pnpFallbackMode: string;
     pnpUnpluggedFolder: PortablePath;
@@ -99,7 +99,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       default: [],
       isArray: true,
     },
-    pnpEnableExperimentalEsm: {
+    pnpEnableEsmLoader: {
       description: `If true, Yarn will generate an ESM loader (\`.pnp.loader.mjs\`). If this is not explicitly set Yarn tries to automatically detect whether ESM support is required.`,
       type: SettingsType.BOOLEAN,
       default: false,
