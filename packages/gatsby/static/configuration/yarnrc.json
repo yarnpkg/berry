@@ -380,8 +380,8 @@
       "_package": "@yarnpkg/plugin-pnp",
       "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `pnpm` and `node-modules`.",
       "type": "string",
-      "enum": ["pnp", "pnpm", "node-modules"],
-      "default": "pnp"
+      "default": "pnp",
+      "examples": ["pnp", "pnpm", "node-modules"]
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
