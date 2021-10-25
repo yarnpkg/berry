@@ -179,7 +179,6 @@ export async function lsRemote(repo: string, configuration: Configuration) {
   const res = await git(`listing refs`, [`ls-remote`, normalizedRepoUrl], {
     cwd: configuration.startingCwd,
     env: makeGitEnvironment(),
-    strict: true,
   }, {
     configuration,
     normalizedRepoUrl,
@@ -302,7 +301,7 @@ export async function clone(url: string, configuration: Configuration) {
       throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
     const directory = await xfs.mktempPromise();
-    const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
+    const execOpts = {cwd: directory, env: makeGitEnvironment()};
 
     await git(`cloning the repository`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
     await git(`switching branch`, [`checkout`, `${request}`], execOpts, {configuration, normalizedRepoUrl});
@@ -412,9 +411,13 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
   }));
 }
 
-async function git(message: string, args: Array<string>, opts: execUtils.ExecvpOptions, {configuration, normalizedRepoUrl}: {configuration: Configuration, normalizedRepoUrl: string}) {
+async function git(message: string, args: Array<string>, opts: Omit<execUtils.ExecvpOptions, 'strict'>, {configuration, normalizedRepoUrl}: {configuration: Configuration, normalizedRepoUrl: string}) {
   try {
-    return await execUtils.execvp(`git`, args, opts);
+    return await execUtils.execvp(`git`, args, {
+      ...opts,
+      // The promise won't reject on non-zero exit codes unless we pass the strict option.
+      strict: true,
+    });
   } catch (error) {
     if (!(error instanceof execUtils.ExecError))
       throw error;
