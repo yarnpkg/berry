@@ -24,13 +24,14 @@
   },
   "scripts": {
     "build:pnp:hook": "webpack-cli --config webpack.config.hook.js",
-    "update:pnp:hook": "run build:pnp:hook && yarn install",
     "build:esm:hook": "rollup -c",
+    "build:pnp:artifacts": "run build:pnp:hook & run build:esm:hook &",
+    "update:pnp:artifacts": "run build:pnp:artifacts && yarn install",
     "build:pnp": "webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",
     "release": "yarn npm publish",
-    "update-local": "run build:pnp:hook"
+    "update-local": "run build:pnp:artifacts"
   },
   "publishConfig": {
     "main": "./lib/index.js",
