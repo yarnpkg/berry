@@ -547,7 +547,11 @@ describe(`Dragon tests`, () => {
     ),
   );
 
-  for (const nodeLinker of [`pnp`, `pnpm`]) {
+  for (const [nodeLinker, shouldHaveAccessToTheSameInstance] of [
+    [`pnp`, true],
+    [`pnpm`, true],
+    [`node-modules`, false],
+  ]) {
     test(`it should pass the dragon test 11 with "nodeLinker: ${nodeLinker}"`,
       makeTemporaryEnv(
         {
@@ -577,9 +581,8 @@ describe(`Dragon tests`, () => {
 
           // Make sure that both the root and dragon-test-11-b have access to the same instance.
           // This is only possible with the PnP and pnpm linkers, because the node-modules linker
-          // can't fulfill the peer dependency promise. Unfortunately, because of a bug, it doesn't
-          // even fulfill the require promise (installing dragon-test-11-a both under the aliased and original name).
-          // TODO: make the node-modules linker fulfill the require promise
+          // can't fulfill the peer dependency promise. For the NM linker we test that it at least
+          // fulfills the require promise (installing dragon-test-11-a both under the aliased and original name).
           await expect(source(`
             (() => {
               const {createRequire} = require(\`module\`);
@@ -592,7 +595,7 @@ describe(`Dragon tests`, () => {
 
               return rootInstance === dragonTest11BInstance;
             })()
-        `)).resolves.toEqual(true);
+        `)).resolves.toEqual(shouldHaveAccessToTheSameInstance);
         },
       ));
   }
