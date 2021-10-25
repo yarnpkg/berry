@@ -1,0 +1,8 @@
+releases:
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/plugin-dlx": patch
+  "@yarnpkg/plugin-typescript": major
+  "@yarnpkg/plugin-stage": patch
+  "@yarnpkg/plugin-init": patch
+  "@yarnpkg/plugin-interactive-tools": patch
+  "@yarnpkg/plugin-compat": patch
