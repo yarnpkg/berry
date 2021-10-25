@@ -8,6 +8,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+## 3.1.0
+
 ### Commands
 
 - The `yarn workspaces list` and `yarn workspaces foreach` commands now both support a new `--since` option that lets you filter the workspace list by changes (only workspaces that changed since the specified commit will be iterated on). This feature is still a little experimental, especially when used with `-R,--recursive`.
