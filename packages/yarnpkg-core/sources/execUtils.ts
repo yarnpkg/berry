@@ -1,12 +1,12 @@
-import {PortablePath, npath} from '@yarnpkg/fslib';
-import {ChildProcess}        from 'child_process';
-import crossSpawn            from 'cross-spawn';
-import {Readable, Writable}  from 'stream';
+import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
+import {ChildProcess}             from 'child_process';
+import crossSpawn                 from 'cross-spawn';
+import {Readable, Writable}       from 'stream';
 
-import {Configuration}       from './Configuration';
-import {MessageName}         from './MessageName';
-import {Report, ReportError} from './Report';
-import * as formatUtils      from './formatUtils';
+import {Configuration}            from './Configuration';
+import {MessageName}              from './MessageName';
+import {Report, ReportError}      from './Report';
+import * as formatUtils           from './formatUtils';
 
 export enum EndStrategy {
   Never,
@@ -24,13 +24,45 @@ export type PipevpOptions = {
   stderr: Writable,
 };
 
+export type PipeErrorOptions = {
+  fileName: string,
+  code: number,
+  signal: NodeJS.Signals | null,
+};
+
 export class PipeError extends ReportError {
-  code!: number;
+  code: number;
+
+  constructor({fileName, code, signal}: PipeErrorOptions) {
+    // It doesn't matter whether we create a new Configuration from the cwd or from a
+    // temp directory since in none of these cases the user's rc values will be respected.
+    // TODO: find a way to respect them
+    const configuration = Configuration.create(xfs.mktempSync());
+    const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
+
+    super(MessageName.EXCEPTION, `Child ${prettyFileName} reported an error`, report => {
+      reportExitStatus(code, signal, {configuration, report});
+    });
+
+    this.code = getExitCode(code, signal);
+  }
 }
 
+export type ExecErrorOptions = PipeErrorOptions & {
+  stdout: Buffer | string,
+  stderr: Buffer | string,
+};
+
 export class ExecError extends PipeError {
-  stdout!: Buffer | string;
-  stderr!: Buffer | string;
+  stdout: Buffer | string;
+  stderr: Buffer | string;
+
+  constructor({fileName, code, signal, stdout, stderr}: ExecErrorOptions) {
+    super({fileName, code, signal});
+
+    this.stdout = stdout;
+    this.stderr = stderr;
+  }
 }
 
 function hasFd(stream: null | Readable | Writable) {
@@ -125,14 +157,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
       if (code === 0 || !strict) {
         resolve({code: getExitCode(code, signal)});
       } else {
-        const configuration = Configuration.create(cwd);
-        const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
-
-        reject(Object.assign(new PipeError(MessageName.EXCEPTION, `Child ${prettyFileName} reported an error`, report => {
-          reportExitStatus(code, signal, {configuration, report});
-        }), {
-          code: getExitCode(code, signal),
-        }));
+        reject(new PipeError({fileName, code, signal}));
       }
     });
   });
@@ -201,15 +226,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
           code: getExitCode(code, signal), stdout, stderr,
         });
       } else {
-        const configuration = Configuration.create(cwd);
-        const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
-
-        reject(Object.assign(new ExecError(MessageName.EXCEPTION, `Child ${prettyFileName} reported an error`, report => {
-          reportExitStatus(code, signal, {configuration, report});
-        }), {
-          code: getExitCode(code, signal),
-          stdout, stderr,
-        }));
+        reject(new ExecError({fileName, code, signal, stdout, stderr}));
       }
     });
   });
