@@ -176,18 +176,14 @@ export async function lsRemote(repo: string, configuration: Configuration) {
   if (!networkSettings.enableNetwork)
     throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
-  let res: {stdout: string};
-  try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, normalizedRepoUrl], {
-      cwd: configuration.startingCwd,
-      env: makeGitEnvironment(),
-      strict: true,
-    });
-  } catch (error) {
-    throw new ReportError(MessageName.EXCEPTION, `Listing the refs for ${formatUtils.pretty(configuration, repo, formatUtils.Type.URL)} failed`, report => {
-      report.reportExceptionOnce(error);
-    });
-  }
+  const res = await git(`listing refs`, [`ls-remote`, normalizedRepoUrl], {
+    cwd: configuration.startingCwd,
+    env: makeGitEnvironment(),
+    strict: true,
+  }, {
+    configuration,
+    normalizedRepoUrl,
+  });
 
   const refs = new Map();
 
@@ -308,13 +304,8 @@ export async function clone(url: string, configuration: Configuration) {
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
 
-    try {
-      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts);
-      await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
-    } catch (error) {
-      error.message = `Repository clone failed: ${error.message}`;
-      throw error;
-    }
+    await git(`cloning the repository`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
+    await git(`switching branch`, [`checkout`, `${request}`], execOpts, {configuration, normalizedRepoUrl});
 
     return directory;
   });
@@ -419,4 +410,38 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
 
     return workspace;
   }));
+}
+
+async function git(message: string, args: Array<string>, opts: execUtils.ExecvpOptions, {configuration, normalizedRepoUrl}: {configuration: Configuration, normalizedRepoUrl: string}) {
+  try {
+    return await execUtils.execvp(`git`, args, opts);
+  } catch (error) {
+    if (!(error instanceof execUtils.ExecError))
+      throw error;
+
+    const stderr = error.stderr.toString();
+    const errorMatch = stderr.match(/^ERROR: (.*)/m);
+    const fatalMatch = stderr.match(/^fatal: (.*)/m);
+
+    throw new ReportError(MessageName.EXCEPTION, `Failed ${message}`, report => {
+      report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
+        label: `Repository URL`,
+        value: formatUtils.tuple(formatUtils.Type.URL, normalizedRepoUrl),
+      })}`);
+
+      if (errorMatch) {
+        report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
+          label: `Remote Error`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, errorMatch[1]),
+        })}`);
+      }
+
+      if (fatalMatch) {
+        report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
+          label: `Fatal Error`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, fatalMatch[1]),
+        })}`);
+      }
+    });
+  }
 }

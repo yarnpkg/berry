@@ -5,7 +5,7 @@ import {Readable, Writable}  from 'stream';
 
 import {Configuration}       from './Configuration';
 import {MessageName}         from './MessageName';
-import {ReportError}         from './Report';
+import {Report, ReportError} from './Report';
 import * as formatUtils      from './formatUtils';
 
 export enum EndStrategy {
@@ -23,6 +23,15 @@ export type PipevpOptions = {
   stdout: Writable,
   stderr: Writable,
 };
+
+export class PipeError extends ReportError {
+  code!: number;
+}
+
+export class ExecError extends PipeError {
+  stdout!: Buffer | string;
+  stderr!: Buffer | string;
+}
 
 function hasFd(stream: null | Readable | Writable) {
   // @ts-expect-error: Not sure how to typecheck this field
@@ -102,7 +111,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
       reject(error);
     });
 
-    child.on(`close`, (code, sig) => {
+    child.on(`close`, (code, signal) => {
       activeChildren.delete(child);
 
       if (activeChildren.size === 0) {
@@ -114,16 +123,16 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
         closeStreams();
 
       if (code === 0 || !strict) {
-        resolve({code: getExitCode(code, sig)});
+        resolve({code: getExitCode(code, signal)});
       } else {
         const configuration = Configuration.create(cwd);
         const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
 
-        if (code !== null) {
-          reject(new ReportError(MessageName.EXCEPTION, `Child ${prettyFileName} exited with exit code ${formatUtils.pretty(configuration, code, formatUtils.Type.NUMBER)}`));
-        } else {
-          reject(new ReportError(MessageName.EXCEPTION, `Child ${prettyFileName} exited with signal ${formatUtils.pretty(configuration, sig, formatUtils.Type.CODE)}`));
-        }
+        reject(Object.assign(new PipeError(MessageName.EXCEPTION, `Child ${prettyFileName} reported an error`, report => {
+          reportExitStatus(code, signal, {configuration, report});
+        }), {
+          code: getExitCode(code, signal),
+        }));
       }
     });
   });
@@ -166,8 +175,16 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   });
 
   return await new Promise((resolve, reject) => {
-    subprocess.on(`error`, () => {
-      reject();
+    subprocess.on(`error`, err => {
+      const configuration = Configuration.create(cwd);
+      const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
+
+      reject(new ReportError(MessageName.EXCEPTION, `Process ${prettyFileName} failed to spawn`, report => {
+        report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
+          label: `Thrown Error`,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, err.message),
+        })}`);
+      }));
     });
 
     subprocess.on(`close`, (code, signal) => {
@@ -185,19 +202,13 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
         });
       } else {
         const configuration = Configuration.create(cwd);
-
         const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
-        const prettyCode = formatUtils.pretty(configuration, code, formatUtils.Type.NUMBER);
-        const stderrPrefix = formatUtils.pretty(configuration, `STDERR`, `red`);
 
-        const reportError = new ReportError(MessageName.EXCEPTION, `Child ${prettyFileName} exited with exit code ${prettyCode}`, report => {
-          for (const line of stderr.toString().trim().split(`\n`)) {
-            report.reportError(MessageName.EXCEPTION, `${stderrPrefix} ${line}`);
-          }
-        });
-
-        reject(Object.assign(reportError, {
-          code: getExitCode(code, signal), stdout, stderr,
+        reject(Object.assign(new ExecError(MessageName.EXCEPTION, `Child ${prettyFileName} reported an error`, report => {
+          reportExitStatus(code, signal, {configuration, report});
+        }), {
+          code: getExitCode(code, signal),
+          stdout, stderr,
         }));
       }
     });
@@ -218,4 +229,14 @@ function getExitCode(code: number | null, signal: NodeJS.Signals | null): number
   } else {
     return code ?? 1;
   }
+}
+
+function reportExitStatus(code: number | null, signal: string | null, {configuration, report}: {configuration: Configuration, report: Report}) {
+  report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, code !== null ? {
+    label: `Exit Code`,
+    value: formatUtils.tuple(formatUtils.Type.NUMBER, code),
+  } : {
+    label: `Exit Signal`,
+    value: formatUtils.tuple(formatUtils.Type.CODE, signal),
+  })}`);
 }
