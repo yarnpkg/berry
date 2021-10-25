@@ -20,7 +20,6 @@ module.exports = makeConfig({
     filename: `[name].js`,
     path: `${__dirname}/sources`,
     libraryExport: `default`,
-    libraryTarget: `commonjs2`,
   },
 
   plugins: [
