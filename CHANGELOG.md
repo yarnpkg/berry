@@ -10,31 +10,48 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### Commands
 
-- `yarn workspaces` now supports a `--since` option to filter by changed workspaces.
+- The `yarn workspaces list` and `yarn workspaces foreach` commands now both support a new `--since` option that lets you filter the workspace list by changes (only workspaces that changed since the specified commit will be iterated on). This feature is still a little experimental, especially when used with `-R,--recursive`.
+- The `yarn workspaces foreach` command now handles the fact that a script containing `:` only becomes global if it exists in exactly one workspace.
+- The `yarn workspaces foreach` command now supports `--jobs 1` and `--jobs unlimited`.
+- The `yarn init -2` command will now add the [`packageManager`](https://nodejs.org/api/packages.html#packagemanager) field to your project manifest.
+
+### Settings
+
+- The `pattern` matcher from `logFilters` will now match any part of the log entry.
+
+### Installs
+
+- A new `nodeLinker: pnpm` mode will let you install packages using the pnpm install strategy, where packages are stored flat and referenced by each others through symlinks. This mode is still a little experimental, so please send our way bugs you might find.
+- Yarn won't install anymore packages that don't match the current OS. Should you need to (for example if you check-in your cache), use the [`supportedArchitectures`](https://yarnpkg.com/configuration/yarnrc#supportedArchitectures) field to manually enforce the presence of specific architectures.
+- The `nmMode: hardlinks-global` setting will now be automatically downgraded to `nmMode: hardlinks-local` when global caches and install folders are kept on different devices, thus letting the install continue normally. A warning will still be produced explaining this behaviour.
+- The `node_modules` linker maximizes chances to end-up with only one top-level node_modules in the case of using workspaces
+- The `nmSelfReferences` setting has been added to the nm linker to control whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. `yarn workspaces focus` will not create self-referencing symlinks for excluded workspaces anymore.
+- Yarn can now install workspaces from remote git repositories that use npm if npm@>=7.x is installed on the system.
+- The hoisting algorithm should be faster, improving the install time for recurrent `node_modules` installs.
+
+### Miscellaneous Features
+
+- Workspaces can now be referred to using `workspace:^` and `workspace:~`. When published, those markers will turn into the actual version (just like what used to happen with `workspace:*`), except that they'll be prefixed with the relevant semver prefix (respectively `^` and `~`).
+- A new `npmAuditRegistry` setting will let you define which registry to use when running audits. If unset, we'll fallback to the currently configured publish registry (we'll likely change this behavior in Yarn 4 to rather use the fetch registry).
 
 ### Bugfixes
 
-- Direct portal dependencies for `node_modules` install are given priority during hoisting now, to prevent cases when indirect regular dependencies take place in the install tree first and block the way for direct portal dependencies.
-- Usage of `pnpify` inside directories containing spaces is now possible.
-- Hoisting algorithm speedup, impacts recurrent `node_modules` installs time.
-- CLI bundles built from sources output `commit` hash instead of `tree` hash as part of their version
-- `workspaces foreach run` now handles the fact that a script containing `:` only becomes global if it exists in one workspace.
+- Direct portal dependencies for `node_modules` installs will now be given priority during hoisting, preventing cases when indirect regular dependencies would block the way for direct portal dependencies.
+- The `pnpify` binary can now be used from inside directories containing spaces.
+- The CLI bundles built from sources will now output the commit hash instead of the tree hash, as part of their `--version` string.
 - Nested workspaces are properly hoisted by `node-modules` linker.
-- Self-referencing symlinks are not created for anonymous workspaces by `node-modules` linker, since they cannot be used anyway from the code.
-- The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name located next to the issuer
-- `logFilters` using `pattern` matchers now match any part of the log entry
-- The cache is now fully atomic when moving files across devices and in general more efficient.
-- The PnP patch now picks up changes to the `fs` module, allowing users to patch it.
+- Self-referencing symlinks won't be created for anonymous workspaces when using the `node-modules` linker, since they cannot be used from the code anyway.
+- The cache is now fully atomic when moving files across devices, and is more efficient in general.
+- The PnP patch will now properly pick up changes to the `fs` module, allowing users to patch it.
 - When using PnP, `require.resolve('pnpapi')` will be handled correctly even when using `exports`.
 - The install state will no longer be invalidated after running commands that modify the lockfile; this should bring a significant performance improvement when running commands such as `yarn run` immediately after adding or removing dependencies inside large monorepos.
 - Optional peer dependencies now imply an optional peer dependency on the corresponding `@types` version. This matches the behaviour for peer dependencies.
 
-### Installs
+### Compatibility
 
-- `hardlinks-global` node modules mode is automatically downgraded to `hardlinks-local` when global cache and install folder are on a different devices and the install continues normally. Warning is produced to the user with mitigation steps provided in documentation.
-- The nm linker maximizes chances to end-up with only one top-level node_modules in the case of using workspaces
-- The `nmSelfReferences` setting has been added to the nm linker to control whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. `yarn workspaces focus` will not create self-referencing symlinks for excluded workspaces anymore.
-- Yarn can now install workspaces from remote git repositories that use npm if npm@>=7.x is installed on the system.
+- Yarn will now generate an experimental ESM loader when it detects you may need it. This can be disabled (or enabled) using [`pnpEnableEsmLoader`](https://yarnpkg.com/configuration/yarnrc#pnpEnableEsmLoader).
+- The PnP compatibility patch for `resolve` will no longer resolve missing modules to a file with the same name that would happen to be located next to the issuer.
+- Fixes the SDK to account for a breaking change in VSCode >=1.61.
 
 ## 3.0.2
 
