@@ -41629,17 +41629,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
   }, {basePath: basePath || __dirname});
   }
 
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["pnpHook"] = factory();
-	else
-		root["pnpHook"] = factory();
-})(global, function() {
-return /******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 368:
@@ -52744,8 +52734,6 @@ if (process.mainModule === __non_webpack_module__) {
 }
 })();
 
-__webpack_exports__ = __webpack_exports__.default;
-/******/ 	return __webpack_exports__;
+module.exports = __webpack_exports__.default;
 /******/ })()
 ;
-});

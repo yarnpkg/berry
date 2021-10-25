@@ -20,8 +20,7 @@ module.exports = makeConfig({
     filename: `[name].js`,
     path: `${__dirname}/sources`,
     libraryExport: `default`,
-    libraryTarget: `umd`,
-    library: `pnpHook`,
+    libraryTarget: `commonjs2`,
   },
 
   plugins: [
