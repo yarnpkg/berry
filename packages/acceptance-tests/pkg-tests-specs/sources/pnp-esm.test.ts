@@ -2,6 +2,50 @@ import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
+    `it should be able to import a node builtin`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `import fs from 'fs';\nconsole.log(typeof fs.constants)`,
+        );
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `object\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should be able to import a node builtin through the node: protocol`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `import fs from 'node:fs';\nconsole.log(typeof fs.constants)`,
+        );
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `object\n`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should be able to import a dependency`,
     makeTemporaryEnv(
       {
