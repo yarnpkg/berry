@@ -2,6 +2,7 @@ import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils,
 import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
+import capitalize                                                                                                                                 from 'lodash/capitalize';
 import querystring                                                                                                                                from 'querystring';
 import semver                                                                                                                                     from 'semver';
 import urlLib                                                                                                                                     from 'url';
@@ -423,8 +424,6 @@ async function git(message: string, args: Array<string>, opts: Omit<execUtils.Ex
       throw error;
 
     const stderr = error.stderr.toString();
-    const errorMatch = stderr.match(/^ERROR: (.*)/m);
-    const fatalMatch = stderr.match(/^fatal: (.*)/m);
 
     throw new ReportError(MessageName.EXCEPTION, `Failed ${message}`, report => {
       report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
@@ -432,17 +431,18 @@ async function git(message: string, args: Array<string>, opts: Omit<execUtils.Ex
         value: formatUtils.tuple(formatUtils.Type.URL, normalizedRepoUrl),
       })}`);
 
-      if (errorMatch) {
-        report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
-          label: `Remote Error`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, errorMatch[1]),
-        })}`);
-      }
+      for (const match of stderr.matchAll(/^(.+?): (.*)$/gm)) {
+        let [, errorName, errorMessage] = match;
 
-      if (fatalMatch) {
+        errorName = errorName.toLowerCase();
+
+        const label = errorName === `error`
+          ? `Error`
+          : `${capitalize(errorName)} Error`;
+
         report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
-          label: `Fatal Error`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, fatalMatch[1]),
+          label,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, errorMessage),
         })}`);
       }
     });
