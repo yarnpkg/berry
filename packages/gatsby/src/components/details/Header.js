@@ -45,9 +45,9 @@ const Vulnerabilities = ({vulns, url}) =>
       href={url}
     >
       <VulnIcon
-        width="22"
-        height="22"
-        alt="vulns"
+        width={`22`}
+        height={`22`}
+        alt={`vulns`}
         src={IcoSnyk}
       />
       {vulns} vulnerabilities

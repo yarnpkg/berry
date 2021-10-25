@@ -18,10 +18,10 @@ export const Layout = ({header, children}) => <>
   <Helmet>
     <meta name={`viewport`} content={`width=device-width, initial-scale=1`} />
     <link
-      rel="search"
-      href="/opensearch.xml"
-      type="application/opensearchdescription+xml"
-      title="Yarn package search"
+      rel={`search`}
+      href={`/opensearch.xml`}
+      type={`application/opensearchdescription+xml`}
+      title={`Yarn package search`}
     />
   </Helmet>
   {header ? header : <Header/>}
