@@ -1,8 +1,12 @@
 import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, Report, structUtils} from '@yarnpkg/core';
 import {Filename, ppath}                                                                                                                      from '@yarnpkg/fslib';
 
+export function checkManifestCompatibility(pkg: Package) {
+  return structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]});
+}
+
 export function checkAndReportManifestCompatibility(pkg: Package, label: string, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
-  if (!structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+  if (!checkManifestCompatibility(pkg)) {
     report?.reportWarningOnce(MessageName.INCOMPATIBLE_ARCHITECTURE, `${structUtils.prettyLocator(configuration, pkg)} The ${process.platform}-${process.arch} architecture is incompatible with this module, ${label} skipped.`);
     return false;
   }
