@@ -76,7 +76,7 @@ const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => (
     <SearchFooter>
       Search by Algolia
       {` - `}
-      <a href="https://discourse.algolia.com/t/2016-algolia-community-gift-yarn-package-search/319">
+      <a href={`https://discourse.algolia.com/t/2016-algolia-community-gift-yarn-package-search/319`}>
         read how it works
       </a>
       .

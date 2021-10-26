@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "3.1.0-rc.9",
+  "version": "3.1.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -23,9 +23,10 @@
     "webpack-cli": "^4.0.0-beta.8"
   },
   "scripts": {
-    "build:pnp:hook": "webpack-cli --config webpack.config.hook.js",
+    "build:pnp:cjs": "webpack-cli --config webpack.config.hook.js",
+    "build:pnp:esm": "rollup -c",
+    "build:pnp:hook": "run build:pnp:cjs & run build:pnp:esm &",
     "update:pnp:hook": "run build:pnp:hook && yarn install",
-    "build:esm:hook": "rollup -c",
     "build:pnp": "webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",
@@ -46,6 +47,5 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  },
-  "stableVersion": "3.0.0"
+  }
 }
