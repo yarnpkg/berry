@@ -206,11 +206,10 @@ class PnpmInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    await Promise.all([
-      this.storeCleanup(),
-      // Wait for the package installs to catch up
-      this.asyncActions.wait(),
-    ]);
+    await this.storeCleanup();
+
+    // Wait for the package installs to catch up
+    await this.asyncActions.wait(),
 
     await removeIfEmpty(getNodeModulesLocation(this.opts.project));
   }
