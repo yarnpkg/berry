@@ -40,3 +40,5 @@ jobs:
         yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
         yarn add -D eslint-config-react-app
         yarn build
+      if: |
+        always()

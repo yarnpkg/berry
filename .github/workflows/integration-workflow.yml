@@ -35,7 +35,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -52,7 +52,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -64,7 +64,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -76,7 +76,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -88,7 +88,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -100,7 +100,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -109,27 +109,35 @@ jobs:
         node ./scripts/run-yarn.js version check
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
 
     - name: 'Check for linting errors (fix w/ "yarn test:lint --fix")'
       run: |
         node ./scripts/run-yarn.js test:lint
       shell: bash
+      if: |
+        always()
 
     - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
       run: |
         node ./scripts/run-yarn.js constraints
       shell: bash
+      if: |
+        always()
 
     - name: 'Check for type errors'
       run: |
         node ./scripts/run-yarn.js typecheck:all
       shell: bash
+      if: |
+        always()
 
     - name: 'Check for duplicate dependencies (fix w/ "yarn dedupe")'
       run: |
         node ./scripts/run-yarn.js dedupe --check
       shell: bash
+      if: |
+        always()
 
   build:
     name: 'Build artifacts'
@@ -172,6 +180,8 @@ jobs:
     - name: 'Build vscode-zipfs'
       run: |
         node ./scripts/run-yarn.js package:vscode-zipfs
+      if: |
+        always()
 
     - uses: actions/upload-artifact@v2
       with:
@@ -218,3 +228,5 @@ jobs:
       run: |
         node ./scripts/run-yarn.js test:unit
       shell: bash
+      if: |
+        always()
