@@ -1,12 +1,12 @@
-import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
-import {ChildProcess}             from 'child_process';
-import crossSpawn                 from 'cross-spawn';
-import {Readable, Writable}       from 'stream';
+import {PortablePath, npath, ppath} from '@yarnpkg/fslib';
+import {ChildProcess}               from 'child_process';
+import crossSpawn                   from 'cross-spawn';
+import {Readable, Writable}         from 'stream';
 
-import {Configuration}            from './Configuration';
-import {MessageName}              from './MessageName';
-import {Report, ReportError}      from './Report';
-import * as formatUtils           from './formatUtils';
+import {Configuration}              from './Configuration';
+import {MessageName}                from './MessageName';
+import {Report, ReportError}        from './Report';
+import * as formatUtils             from './formatUtils';
 
 export enum EndStrategy {
   Never,
@@ -37,7 +37,7 @@ export class PipeError extends ReportError {
     // It doesn't matter whether we create a new Configuration from the cwd or from a
     // temp directory since in none of these cases the user's rc values will be respected.
     // TODO: find a way to respect them
-    const configuration = Configuration.create(xfs.mktempSync());
+    const configuration = Configuration.create(ppath.cwd());
     const prettyFileName = formatUtils.pretty(configuration, fileName, formatUtils.Type.PATH);
 
     super(MessageName.EXCEPTION, `Child ${prettyFileName} reported an error`, report => {
