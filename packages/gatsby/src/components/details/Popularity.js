@@ -16,7 +16,7 @@ const Stargazers = ({stargazers, repository}) => {
   const providerName = {github: `GitHub`, gitlab: `GitLab`}[provider];
   return (
     <Di
-      icon="stargazers"
+      icon={`stargazers`}
       title={`${providerName} stargazers`}
       description={stargazers.toLocaleString(`en`)}
     />
@@ -27,8 +27,8 @@ const Downloads = ({downloads, humanDownloads}) =>
   downloads >= 0 &&
   humanDownloads && (
     <Di
-      icon="downloads"
-      title="Downloads last 30 days"
+      icon={`downloads`}
+      title={`Downloads last 30 days`}
       description={
         <span title={downloads.toLocaleString(`en`)}>
           {humanDownloads}
@@ -40,13 +40,13 @@ const Downloads = ({downloads, humanDownloads}) =>
 const Dependents = ({dependents, humanDependents, name}) =>
   dependents >= 0 && (
     <Di
-      icon="dependents"
-      title="Dependents"
+      icon={`dependents`}
+      title={`Dependents`}
       description={
         <a
           href={`https://www.npmjs.com/browse/depended/${name}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={`_blank`}
+          rel={`noopener noreferrer`}
           title={dependents.toLocaleString(`en`)}
         >
           {humanDependents}
@@ -68,8 +68,8 @@ const formatHits = hits => {
 };
 
 const JsDelivrHits = ({jsDelivrHits}) => (<Di
-  icon="downloads"
-  title="jsDelivr last 30 days"
+  icon={`downloads`}
+  title={`jsDelivr last 30 days`}
   description={
     <span title={jsDelivrHits.toLocaleString(`en`)}>
       {formatHits(jsDelivrHits)}

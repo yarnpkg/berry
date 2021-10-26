@@ -10429,7 +10429,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:4.30.0"],
             ["@typescript-eslint/parser", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:4.30.0"],
             ["eslint", "npm:7.32.0"],
-            ["eslint-plugin-arca", "npm:0.11.1"],
+            ["eslint-plugin-arca", "npm:0.12.1"],
             ["eslint-plugin-react", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:7.25.1"],
             ["typescript", "patch:typescript@npm%3A4.4.2#~builtin<compat/typescript>::version=4.4.2&hash=ddd1e8"]
           ],
@@ -10448,7 +10448,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rushstack/eslint-patch", "npm:1.0.6"],
             ["@typescript-eslint/eslint-plugin", "virtual:7e29ef780829a7f5844bc9463a6da911a4e9f70db032355b31dd04cbadc7ff9d3a8eb4b4f77ebc94ebcbe7331a40ea818ae04778cd971a4d3699a0d352bbfe63#npm:4.30.0"],
             ["@typescript-eslint/parser", "virtual:7e29ef780829a7f5844bc9463a6da911a4e9f70db032355b31dd04cbadc7ff9d3a8eb4b4f77ebc94ebcbe7331a40ea818ae04778cd971a4d3699a0d352bbfe63#npm:4.30.0"],
-            ["eslint-plugin-arca", "npm:0.11.1"],
+            ["eslint-plugin-arca", "npm:0.12.1"],
             ["eslint-plugin-react", "virtual:7e29ef780829a7f5844bc9463a6da911a4e9f70db032355b31dd04cbadc7ff9d3a8eb4b4f77ebc94ebcbe7331a40ea818ae04778cd971a4d3699a0d352bbfe63#npm:7.25.1"]
           ],
           "linkType": "SOFT",
@@ -21600,10 +21600,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["eslint-plugin-arca", [
-        ["npm:0.11.1", {
-          "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.11.1-597b1d74b0-f3e537b3c3.zip/node_modules/eslint-plugin-arca/",
+        ["npm:0.12.1", {
+          "packageLocation": "./.yarn/cache/eslint-plugin-arca-npm-0.12.1-50b9155e3c-75f558b70d.zip/node_modules/eslint-plugin-arca/",
           "packageDependencies": [
-            ["eslint-plugin-arca", "npm:0.11.1"]
+            ["eslint-plugin-arca", "npm:0.12.1"]
           ],
           "linkType": "HARD",
         }]

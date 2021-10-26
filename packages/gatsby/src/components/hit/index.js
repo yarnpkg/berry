@@ -87,9 +87,9 @@ export const Owner = ({link, avatar, name, onClick}) => (
     }}
   >
     <HitOwnerAvatar
-      width="20"
-      height="20"
-      alt="owner"
+      width={`20`}
+      height={`20`}
+      alt={`owner`}
       src={`https://res.cloudinary.com/hilnmyskv/image/fetch/w_40,h_40,f_auto,q_80,fl_lossy/${avatar}`}
     />
     {name}
@@ -304,7 +304,7 @@ const HitHiddenKeywords = styled.span`
 export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
   <HitItem>
     <HitNameLink to={packageLink(hit.name, false)}>
-      <Highlight attribute="name" hit={hit} />
+      <Highlight attribute={`name`} hit={hit} />
     </HitNameLink>
     <Downloads
       downloads={hit.downloadsLast30Days}
@@ -318,7 +318,7 @@ export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
       {hit.deprecated ? (
         hit.deprecated
       ) : (
-        <HighlightedMarkdown attribute="description" hit={hit} />
+        <HighlightedMarkdown attribute={`description`} hit={hit} />
       )}
     </HitDescription>
     <Owner {...hit.owner} onClick={onOwnerClick} />

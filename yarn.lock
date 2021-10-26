@@ -5424,7 +5424,7 @@ __metadata:
     "@rushstack/eslint-patch": ^1.0.6
     "@typescript-eslint/eslint-plugin": ^4.30.0
     "@typescript-eslint/parser": ^4.30.0
-    eslint-plugin-arca: ^0.11.1
+    eslint-plugin-arca: ^0.12.1
     eslint-plugin-react: ^7.25.1
   peerDependencies:
     eslint: "*"
@@ -11081,10 +11081,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-arca@npm:^0.11.1":
-  version: 0.11.1
-  resolution: "eslint-plugin-arca@npm:0.11.1"
-  checksum: f3e537b3c3d7e982fa6bfb5ec52e37bc61f5d2d88e58126d54dc362234807441b0e9acbbf78cf1593dbcf580b5c434e8430ff2b1ebd5a5f089d6f229f8687a90
+"eslint-plugin-arca@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "eslint-plugin-arca@npm:0.12.1"
+  checksum: 75f558b70d30c64bd539038890ae89d1bc64c32e296cf8bca96299348b593ddc589a2fda7f6bee3a7b955b165a9a13d4b9fd39c7573108cda063acc8c5c2f739
   languageName: node
   linkType: hard
 
