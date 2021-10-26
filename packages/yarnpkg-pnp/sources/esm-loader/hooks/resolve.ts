@@ -10,7 +10,7 @@ const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+
 
 export async function resolve(
   originalSpecifier: string,
-  context: { conditions: Array<string>; parentURL: string | undefined },
+  context: { conditions: Array<string>, parentURL: string | undefined },
   defaultResolver: typeof resolve,
 ): Promise<{ url: string }> {
   const {findPnpApi} = (moduleExports as unknown) as { findPnpApi?: (path: NativePath) => null | PnpApi };

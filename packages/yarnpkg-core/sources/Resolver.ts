@@ -4,13 +4,13 @@ import {Report}                                       from './Report';
 import {Descriptor, Locator, Package, DescriptorHash} from './types';
 
 export type MinimalResolveOptions = {
-  project: Project,
-  resolver: Resolver,
+  project: Project;
+  resolver: Resolver;
 };
 
 export type ResolveOptions = MinimalResolveOptions & {
-  fetchOptions?: FetchOptions | null,
-  report: Report,
+  fetchOptions?: FetchOptions | null;
+  report: Report;
 };
 
 /**

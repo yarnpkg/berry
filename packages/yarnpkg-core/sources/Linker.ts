@@ -6,11 +6,11 @@ import {Report}           from './Report';
 import {Locator, Package} from './types';
 
 export type MinimalLinkOptions = {
-  project: Project,
+  project: Project;
 };
 
 export type LinkOptions = MinimalLinkOptions & {
-  report: Report,
+  report: Report;
 };
 
 /**

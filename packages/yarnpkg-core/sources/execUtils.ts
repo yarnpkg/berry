@@ -15,13 +15,13 @@ export enum EndStrategy {
 }
 
 export type PipevpOptions = {
-  cwd: PortablePath,
-  env?: {[key: string]: string | undefined},
-  end?: EndStrategy,
-  strict?: boolean,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd: PortablePath;
+  env?: {[key: string]: string | undefined};
+  end?: EndStrategy;
+  strict?: boolean;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
 export type PipeErrorOptions = {
@@ -164,10 +164,10 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 }
 
 export type ExecvpOptions = {
-  cwd: PortablePath,
-  env?: {[key: string]: string | undefined},
-  encoding?: string,
-  strict?: boolean,
+  cwd: PortablePath;
+  env?: {[key: string]: string | undefined};
+  encoding?: string;
+  strict?: boolean;
 };
 
 export async function execvp(fileName: string, args: Array<string>, opts: ExecvpOptions & {encoding: 'buffer'}): Promise<{code: number, stdout: Buffer, stderr: Buffer}>;

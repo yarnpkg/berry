@@ -97,10 +97,10 @@ class NodeModulesInstaller implements Installer {
   // anywhere - we literally just use it for the lifetime of the installer then
   // discard it.
   private localStore: Map<LocatorHash, {
-    pkg: Package,
-    customPackageData: CustomPackageData,
-    dependencyMeta: DependencyMeta,
-    pnpNode: PackageInformation<NativePath>,
+    pkg: Package;
+    customPackageData: CustomPackageData;
+    dependencyMeta: DependencyMeta;
+    pnpNode: PackageInformation<NativePath>;
   }> = new Map();
 
   private realLocatorChecksums: Map<LocatorHash, string | null> = new Map();
@@ -117,7 +117,7 @@ class NodeModulesInstaller implements Installer {
   }
 
   private customData: {
-    store: Map<LocatorHash, CustomPackageData>,
+    store: Map<LocatorHash, CustomPackageData>;
   } = {
     store: new Map(),
   };
@@ -732,14 +732,14 @@ enum DirEntryKind {
 }
 
 type DirEntry = {
-  kind: DirEntryKind.FILE,
-  mode: number,
-  digest?: string,
+  kind: DirEntryKind.FILE;
+  mode: number;
+  digest?: string;
 } | {
-  kind: DirEntryKind. DIRECTORY
+  kind: DirEntryKind. DIRECTORY;
 } | {
-  kind: DirEntryKind.SYMLINK,
-  symlinkTo: PortablePath
+  kind: DirEntryKind.SYMLINK;
+  symlinkTo: PortablePath;
 };
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {

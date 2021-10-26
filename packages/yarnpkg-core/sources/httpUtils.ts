@@ -163,12 +163,12 @@ export enum Method {
 }
 
 export type Options = {
-  configuration: Configuration,
+  configuration: Configuration;
   customErrorMessage?: (err: RequestError) => string | null;
   headers?: {[headerName: string]: string};
-  jsonRequest?: boolean,
-  jsonResponse?: boolean,
-  method?: Method,
+  jsonRequest?: boolean;
+  jsonResponse?: boolean;
+  method?: Method;
 };
 
 export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {

@@ -21,8 +21,8 @@ export type Stdio = [
 export type ProcessImplementation = (
   stdio: Stdio,
 ) => {
-  stdin: Writable,
-  promise: Promise<number>,
+  stdin: Writable;
+  promise: Promise<number>;
 };
 
 const activeChildren = new Set<ChildProcess>();
@@ -182,9 +182,9 @@ class PipeStream implements StreamLock<Writable> {
 }
 
 type StartOptions = {
-  stdin: StreamLock<Readable>,
-  stdout: StreamLock<Writable>,
-  stderr: StreamLock<Writable>,
+  stdin: StreamLock<Readable>;
+  stdout: StreamLock<Writable>;
+  stderr: StreamLock<Writable>;
 };
 
 export class Handle {

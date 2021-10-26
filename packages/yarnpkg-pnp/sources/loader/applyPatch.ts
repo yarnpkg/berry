@@ -10,8 +10,8 @@ import {Manager}                                                   from './makeM
 import * as nodeUtils                                              from './nodeUtils';
 
 export type ApplyPatchOptions = {
-  fakeFs: FakeFS<PortablePath>,
-  manager: Manager,
+  fakeFs: FakeFS<PortablePath>;
+  manager: Manager;
 };
 
 type PatchedModule = Module & {

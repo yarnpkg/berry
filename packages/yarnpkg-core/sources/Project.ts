@@ -75,27 +75,27 @@ export type InstallOptions = {
    * fetched. Some fetches may occur even during the resolution, for example
    * when resolving git packages.
    */
-  cache: Cache,
+  cache: Cache;
 
   /**
    * An optional override for the default fetching pipeline. This is for
    * overrides only - if you need to _add_ resolvers, prefer adding them
    * through regular plugins instead.
    */
-  fetcher?: Fetcher,
+  fetcher?: Fetcher;
 
   /**
    * An optional override for the default resolution pipeline. This is for
    * overrides only - if you need to _add_ resolvers, prefer adding them
    * through regular plugins instead.
    */
-  resolver?: Resolver
+  resolver?: Resolver;
 
   /**
    * Provide a report instance that'll be use to store the information emitted
    * during the install process.
    */
-  report: Report,
+  report: Report;
 
   /**
    * If true, Yarn will check that the lockfile won't change after the
@@ -103,31 +103,31 @@ export type InstallOptions = {
    * the list of files in `immutablePatterns` and check that they didn't get
    * modified either.
    */
-  immutable?: boolean,
+  immutable?: boolean;
 
   /**
    * If true, Yarn will exclusively use the lockfile metadata. Setting this
    * flag will cause it to ignore any change in the manifests, and to abort
    * if any dependency isn't present in the lockfile.
    */
-  lockfileOnly?: boolean,
+  lockfileOnly?: boolean;
 
   /**
    * Changes which artifacts are generated during the install. Check the
    * enumeration documentation for details.
    */
-  mode?: InstallMode,
+  mode?: InstallMode;
 
   /**
    * If true (the default), Yarn will update the workspace manifests once the
    * install has completed.
    */
-  persistProject?: boolean,
+  persistProject?: boolean;
 
   /**
    * @deprecated Use `mode=skip-build`
    */
-  skipBuild?: never,
+  skipBuild?: never;
 };
 
 const INSTALL_STATE_FIELDS = {
@@ -159,10 +159,10 @@ type RestoreInstallStateOpts = {
 type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
 export type PeerRequirement = {
-  subject: LocatorHash,
-  requested: Ident,
-  rootRequester: LocatorHash,
-  allRequesters: Array<LocatorHash>,
+  subject: LocatorHash;
+  requested: Ident;
+  rootRequester: LocatorHash;
+  allRequesters: Array<LocatorHash>;
 };
 
 const makeLockfileChecksum = (normalizedContent: string) =>
@@ -1847,20 +1847,20 @@ function applyVirtualResolutionMutations({
 
   tolerateMissingPackages = false,
 }: {
-  project: Project,
+  project: Project;
 
-  allDescriptors: Map<DescriptorHash, Descriptor>,
-  allResolutions: Map<DescriptorHash, LocatorHash>,
-  allPackages: Map<LocatorHash, Package>,
+  allDescriptors: Map<DescriptorHash, Descriptor>;
+  allResolutions: Map<DescriptorHash, LocatorHash>;
+  allPackages: Map<LocatorHash, Package>;
 
-  accessibleLocators?: Set<LocatorHash>,
-  optionalBuilds?: Set<LocatorHash>,
-  volatileDescriptors?: Set<DescriptorHash>,
-  peerRequirements?: Project['peerRequirements'],
+  accessibleLocators?: Set<LocatorHash>;
+  optionalBuilds?: Set<LocatorHash>;
+  volatileDescriptors?: Set<DescriptorHash>;
+  peerRequirements?: Project['peerRequirements'];
 
-  report: Report | null,
+  report: Report | null;
 
-  tolerateMissingPackages?: boolean,
+  tolerateMissingPackages?: boolean;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -2231,19 +2231,19 @@ function applyVirtualResolutionMutations({
   }
 
   type Warning = {
-    type: WarningType.NotProvided,
-    subject: Locator,
-    requested: Ident,
-    requester: Ident,
-    hash: string,
+    type: WarningType.NotProvided;
+    subject: Locator;
+    requested: Ident;
+    requester: Ident;
+    hash: string;
   } | {
-    type: WarningType.NotCompatible,
-    subject: Locator,
-    requested: Ident,
-    requester: Ident,
-    version: string,
-    hash: string,
-    requirementCount: number,
+    type: WarningType.NotCompatible;
+    subject: Locator;
+    requested: Ident;
+    requester: Ident;
+    version: string;
+    hash: string;
+    requirementCount: number;
   };
 
   const warnings: Array<Warning> = [];

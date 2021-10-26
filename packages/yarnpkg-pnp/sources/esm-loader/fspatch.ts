@@ -17,7 +17,7 @@ import fs from 'fs';
 */
 
 const binding = (process as any).binding(`fs`) as {
-  fstat: (fd: number, useBigint: false, req: any, ctx: object) => Float64Array
+  fstat: (fd: number, useBigint: false, req: any, ctx: object) => Float64Array;
 };
 const originalfstat = binding.fstat;
 

@@ -79,8 +79,8 @@ export class PnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly virtualTemplates: Map<LocatorHash, {
-    locator: Locator,
-    location: PortablePath,
+    locator: Locator;
+    location: PortablePath;
   }> = new Map();
 
   private isESMLoaderRequired: boolean = false;
@@ -97,7 +97,7 @@ export class PnpInstaller implements Installer {
   }
 
   private customData: {
-    store: Map<LocatorHash, CustomPackageData>,
+    store: Map<LocatorHash, CustomPackageData>;
   } = {
     store: new Map(),
   };

@@ -366,7 +366,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 }
 
 type HasPackageScriptOption = {
-  project: Project,
+  project: Project;
 };
 
 export async function hasPackageScript(locator: Locator, scriptName: string, {project}: HasPackageScriptOption) {
@@ -400,11 +400,11 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 }
 
 type ExecutePackageScriptOptions = {
-  cwd?: PortablePath | undefined,
-  project: Project,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd?: PortablePath | undefined;
+  project: Project;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
 export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions): Promise<number> {
@@ -513,10 +513,10 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
 }
 
 type ExecuteWorkspaceScriptOptions = {
-  cwd?: PortablePath | undefined,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd?: PortablePath | undefined;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
 };
 
 export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
@@ -528,8 +528,8 @@ export function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
 }
 
 type ExecuteWorkspaceLifecycleScriptOptions = {
-  cwd?: PortablePath | undefined,
-  report: Report,
+  cwd?: PortablePath | undefined;
+  report: Report;
 };
 
 export async function executeWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, {cwd, report}: ExecuteWorkspaceLifecycleScriptOptions) {
@@ -569,7 +569,7 @@ export async function maybeExecuteWorkspaceLifecycleScript(workspace: Workspace,
 }
 
 type GetPackageAccessibleBinariesOptions = {
-  project: Project,
+  project: Project;
 };
 
 type Binary = [Locator, NativePath];
@@ -659,14 +659,14 @@ export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
 }
 
 type ExecutePackageAccessibleBinaryOptions = {
-  cwd: PortablePath,
-  nodeArgs?: Array<string>,
-  project: Project,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd: PortablePath;
+  nodeArgs?: Array<string>;
+  project: Project;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
   /** @internal */
-  packageAccessibleBinaries?: PackageAccessibleBinaries,
+  packageAccessibleBinaries?: PackageAccessibleBinaries;
 };
 
 /**
@@ -710,12 +710,12 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 }
 
 type ExecuteWorkspaceAccessibleBinaryOptions = {
-  cwd: PortablePath,
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
+  cwd: PortablePath;
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
   /** @internal */
-  packageAccessibleBinaries?: PackageAccessibleBinaries,
+  packageAccessibleBinaries?: PackageAccessibleBinaries;
 };
 
 /**

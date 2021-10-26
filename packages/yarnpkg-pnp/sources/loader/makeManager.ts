@@ -5,14 +5,14 @@ import {Module}                                                              fro
 import {PnpApi}                                                              from '../types';
 
 export type ApiMetadata = {
-  cache: typeof Module._cache,
-  instance: PnpApi,
-  stats: fs.Stats,
-  lastRefreshCheck: number
+  cache: typeof Module._cache;
+  instance: PnpApi;
+  stats: fs.Stats;
+  lastRefreshCheck: number;
 };
 
 export type MakeManagerOptions = {
-  fakeFs: FakeFS<PortablePath>,
+  fakeFs: FakeFS<PortablePath>;
 };
 
 export type Manager = ReturnType<typeof makeManager>;
@@ -97,8 +97,8 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
   function findApiPathFor(modulePath: NativePath) {
     let bestCandidate: {
-      packageLocation: NativePath,
-      apiPaths: Array<PortablePath>,
+      packageLocation: NativePath;
+      apiPaths: Array<PortablePath>;
     } | null = null;
 
     for (const [apiPath, apiEntry] of apiMetadata) {

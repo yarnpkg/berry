@@ -9,10 +9,10 @@ import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackag
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
 
 export type MakeApiOptions = {
-  allowDebug?: boolean,
-  compatibilityMode?: boolean,
-  fakeFs: FakeFS<PortablePath>,
-  pnpapiResolution: NativePath,
+  allowDebug?: boolean;
+  compatibilityMode?: boolean;
+  fakeFs: FakeFS<PortablePath>;
+  pnpapiResolution: NativePath;
 };
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {

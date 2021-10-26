@@ -11,23 +11,23 @@ const client = algoliasearch(algolia.appId, algolia.apiKey).initIndex(
 );
 
 export interface AlgoliaPackage {
-  objectID: string
-  name: string
-  version: string
-  repository?: AlgoliaPackageRepository
-  owner: AlgoliaPackageOwner
-  humanDownloadsLast30Days: string
+  objectID: string;
+  name: string;
+  version: string;
+  repository?: AlgoliaPackageRepository;
+  owner: AlgoliaPackageOwner;
+  humanDownloadsLast30Days: string;
 }
 
 export interface AlgoliaPackageRepository {
-  url: string
+  url: string;
 }
 
 export interface AlgoliaPackageOwner {
-  name: string
-  email?: string
-  avatar: string
-  link: string
+  name: string;
+  email?: string;
+  avatar: string;
+  link: string;
 }
 
 export const search = async (

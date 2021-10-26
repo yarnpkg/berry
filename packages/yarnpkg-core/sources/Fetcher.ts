@@ -6,46 +6,46 @@ import {Report}               from './Report';
 import {LocatorHash, Locator} from './types';
 
 export type MinimalFetchOptions = {
-  project: Project,
-  fetcher: Fetcher,
+  project: Project;
+  fetcher: Fetcher;
 };
 
 export type FetchOptions = MinimalFetchOptions & {
-  cache: Cache,
-  cacheOptions?: CacheOptions,
-  checksums: Map<LocatorHash, string | null>,
-  report: Report,
+  cache: Cache;
+  cacheOptions?: CacheOptions;
+  checksums: Map<LocatorHash, string | null>;
+  report: Report;
   /**
    * @deprecated Use cacheOptions.skipIntegrityCheck instead
    */
-  skipIntegrityCheck?: boolean
+  skipIntegrityCheck?: boolean;
 };
 
 export type FetchResult = {
-  packageFs: FakeFS<PortablePath>,
+  packageFs: FakeFS<PortablePath>;
 
   /**
    * If set, this function will be called once the fetch result isn't needed
    * anymore. Typically used to release the ZipFS memory.
    */
-  releaseFs?: () => void,
+  releaseFs?: () => void;
 
   /**
    * The path where the package can be found within the `packageFs`. This is
    * typically the `node_modules/<scope>/<name>` path.
    */
-  prefixPath: PortablePath,
+  prefixPath: PortablePath;
 
   /**
    * The "true" place where we can find the sources. We use that in order to
    * compute the `file:` and `link:` relative paths.
    */
-  localPath?: PortablePath | null,
+  localPath?: PortablePath | null;
 
   /**
    * The checksum for the fetch result.
    */
-  checksum?: string | null,
+  checksum?: string | null;
 
   /**
    * If true, the package location won't be considered for package lookups (so
@@ -53,7 +53,7 @@ export type FetchResult = {
    * should be resolvable, but should never be used to detect the package that
    * owns a path).
    */
-  discardFromLookup?: boolean,
+  discardFromLookup?: boolean;
 };
 
 /**

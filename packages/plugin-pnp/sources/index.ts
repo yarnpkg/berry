@@ -64,7 +64,7 @@ declare module '@yarnpkg/core' {
     pnpMode: string;
     pnpShebang: string;
     pnpIgnorePatterns: Array<string>;
-    pnpEnableEsmLoader: boolean
+    pnpEnableEsmLoader: boolean;
     pnpEnableInlining: boolean;
     pnpFallbackMode: string;
     pnpUnpluggedFolder: PortablePath;

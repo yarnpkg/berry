@@ -3,14 +3,14 @@ import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, 
 import micromatch                                                                                      from 'micromatch';
 
 export type Algorithm = (project: Project, patterns: Array<string>, opts: {
-  resolver: Resolver,
-  resolveOptions: ResolveOptions,
-  fetcher: Fetcher,
-  fetchOptions: FetchOptions,
+  resolver: Resolver;
+  resolveOptions: ResolveOptions;
+  fetcher: Fetcher;
+  fetchOptions: FetchOptions;
 }) => Promise<Array<Promise<{
-  descriptor: Descriptor,
-  currentPackage: Package,
-  updatedPackage: Package,
+  descriptor: Descriptor;
+  currentPackage: Package;
+  updatedPackage: Package;
 } | null>>>;
 
 export enum Strategy {
@@ -93,10 +93,10 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
 };
 
 export type DedupeOptions = {
-  strategy: Strategy,
-  patterns: Array<string>,
-  cache: Cache,
-  report: Report,
+  strategy: Strategy;
+  patterns: Array<string>;
+  cache: Cache;
+  report: Report;
 };
 
 export async function dedupe(project: Project, {strategy, patterns, cache, report}: DedupeOptions) {

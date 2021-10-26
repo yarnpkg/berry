@@ -59,7 +59,7 @@ export type Hooks = {
     project: Project,
     env: ProcessEnvironment,
     makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
    * When a script is getting executed. You must call the executor, or the
@@ -71,7 +71,7 @@ export type Hooks = {
     locator: Locator,
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
-  ) => Promise<() => Promise<number>>,
+  ) => Promise<() => Promise<number>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
@@ -81,7 +81,7 @@ export type Hooks = {
   globalHashGeneration?: (
     project: Project,
     contributeHash: (data: string | Buffer) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
    * Before the resolution runs; should be use to setup new aliases that won't
@@ -93,7 +93,7 @@ export type Hooks = {
     locator: Locator,
     initialDependency: Descriptor,
     extra: {resolver: Resolver, resolveOptions: ResolveOptions},
-  ) => Promise<Descriptor>,
+  ) => Promise<Descriptor>;
 
   /**
    * Called after the `install` method from the `Project` class successfully
@@ -102,7 +102,7 @@ export type Hooks = {
   afterAllInstalled?: (
     project: Project,
     options: InstallOptions
-  ) => void,
+  ) => void;
 
   /**
    * Called during the `Validation step` of the `install` method from the `Project`
@@ -111,8 +111,8 @@ export type Hooks = {
   validateProject?: (
     project: Project,
     report: {
-      reportWarning: (name: MessageName, text: string) => void,
-      reportError: (name: MessageName, text: string) => void,
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
     }
   ) => void;
 
@@ -123,8 +123,8 @@ export type Hooks = {
   validateWorkspace?: (
     workspace: Workspace,
     report: {
-      reportWarning: (name: MessageName, text: string) => void,
-      reportError: (name: MessageName, text: string) => void,
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
     }
   ) => void;
 
@@ -134,7 +134,7 @@ export type Hooks = {
   populateYarnPaths?: (
     project: Project,
     definePath: (path: PortablePath | null) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
    * Called when user requests to clean global cache
@@ -145,10 +145,10 @@ export type Hooks = {
 };
 
 export type Plugin<PluginHooks = any> = {
-  configuration?: Partial<ConfigurationDefinitionMap>,
-  commands?: Array<CommandClass<CommandContext>>,
-  fetchers?: Array<FetcherPlugin>,
-  linkers?: Array<LinkerPlugin>,
-  resolvers?: Array<ResolverPlugin>,
-  hooks?: PluginHooks,
+  configuration?: Partial<ConfigurationDefinitionMap>;
+  commands?: Array<CommandClass<CommandContext>>;
+  fetchers?: Array<FetcherPlugin>;
+  linkers?: Array<LinkerPlugin>;
+  resolvers?: Array<ResolverPlugin>;
+  hooks?: PluginHooks;
 };

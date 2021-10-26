@@ -46,12 +46,12 @@ export function isGitUrl(url: string): boolean {
 export type RepoUrlParts = {
   repo: string;
   treeish: {
-    protocol: TreeishProtocols | string | null,
-    request: string,
-  },
+    protocol: TreeishProtocols | string | null;
+    request: string;
+  };
   extra: {
-    [key: string]: string,
-  },
+    [key: string]: string;
+  };
 };
 
 export function splitRepoUrl(url: string): RepoUrlParts {
@@ -102,7 +102,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
       repo,
       treeish: {protocol, request},
       extra: extra as {
-        [key: string]: string,
+        [key: string]: string;
       },
     };
   } else {
