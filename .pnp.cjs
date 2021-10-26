@@ -12001,12 +12001,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-git", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-git"],
             ["@types/git-url-parse", "npm:9.0.0"],
+            ["@types/lodash", "npm:4.14.172"],
             ["@types/semver", "npm:7.1.0"],
             ["@types/yarnpkg__core", null],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.0.1"],
             ["git-url-parse", "npm:11.1.2"],
+            ["lodash", "npm:4.17.21"],
             ["semver", "npm:7.3.5"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -12021,11 +12023,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/plugin-git", "workspace:packages/plugin-git"],
             ["@types/git-url-parse", "npm:9.0.0"],
+            ["@types/lodash", "npm:4.14.172"],
             ["@types/semver", "npm:7.1.0"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.0.1"],
             ["git-url-parse", "npm:11.1.2"],
+            ["lodash", "npm:4.17.21"],
             ["semver", "npm:7.3.5"],
             ["tslib", "npm:1.13.0"]
           ],

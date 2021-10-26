@@ -1,10 +1,11 @@
-import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                         from '@yarnpkg/fslib';
-import {UsageError}                                                                                        from 'clipanion';
-import GitUrlParse                                                                                         from 'git-url-parse';
-import querystring                                                                                         from 'querystring';
-import semver                                                                                              from 'semver';
-import urlLib                                                                                              from 'url';
+import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
+import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {UsageError}                                                                                                                               from 'clipanion';
+import GitUrlParse                                                                                                                                from 'git-url-parse';
+import capitalize                                                                                                                                 from 'lodash/capitalize';
+import querystring                                                                                                                                from 'querystring';
+import semver                                                                                                                                     from 'semver';
+import urlLib                                                                                                                                     from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -176,17 +177,13 @@ export async function lsRemote(repo: string, configuration: Configuration) {
   if (!networkSettings.enableNetwork)
     throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
-  let res: {stdout: string};
-  try {
-    res = await execUtils.execvp(`git`, [`ls-remote`, normalizedRepoUrl], {
-      cwd: configuration.startingCwd,
-      env: makeGitEnvironment(),
-      strict: true,
-    });
-  } catch (error) {
-    error.message = `Listing the refs for ${repo} failed`;
-    throw error;
-  }
+  const res = await git(`listing refs`, [`ls-remote`, normalizedRepoUrl], {
+    cwd: configuration.startingCwd,
+    env: makeGitEnvironment(),
+  }, {
+    configuration,
+    normalizedRepoUrl,
+  });
 
   const refs = new Map();
 
@@ -305,15 +302,10 @@ export async function clone(url: string, configuration: Configuration) {
       throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
 
     const directory = await xfs.mktempPromise();
-    const execOpts = {cwd: directory, env: makeGitEnvironment(), strict: true};
+    const execOpts = {cwd: directory, env: makeGitEnvironment()};
 
-    try {
-      await execUtils.execvp(`git`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts);
-      await execUtils.execvp(`git`, [`checkout`, `${request}`], execOpts);
-    } catch (error) {
-      error.message = `Repository clone failed: ${error.message}`;
-      throw error;
-    }
+    await git(`cloning the repository`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
+    await git(`switching branch`, [`checkout`, `${request}`], execOpts, {configuration, normalizedRepoUrl});
 
     return directory;
   });
@@ -418,4 +410,45 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
 
     return workspace;
   }));
+}
+
+async function git(message: string, args: Array<string>, opts: Omit<execUtils.ExecvpOptions, 'strict'>, {configuration, normalizedRepoUrl}: {configuration: Configuration, normalizedRepoUrl: string}) {
+  try {
+    return await execUtils.execvp(`git`, args, {
+      ...opts,
+      // The promise won't reject on non-zero exit codes unless we pass the strict option.
+      strict: true,
+    });
+  } catch (error) {
+    if (!(error instanceof execUtils.ExecError))
+      throw error;
+
+    const execErrorReportExtra = error.reportExtra;
+
+    const stderr = error.stderr.toString();
+
+    throw new ReportError(MessageName.EXCEPTION, `Failed ${message}`, report => {
+      report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
+        label: `Repository URL`,
+        value: formatUtils.tuple(formatUtils.Type.URL, normalizedRepoUrl),
+      })}`);
+
+      for (const match of stderr.matchAll(/^(.+?): (.*)$/gm)) {
+        let [, errorName, errorMessage] = match;
+
+        errorName = errorName.toLowerCase();
+
+        const label = errorName === `error`
+          ? `Error`
+          : `${capitalize(errorName)} Error`;
+
+        report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
+          label,
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, errorMessage),
+        })}`);
+      }
+
+      execErrorReportExtra?.(report);
+    });
+  }
 }
