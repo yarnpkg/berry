@@ -4,8 +4,8 @@ import fs                                               from 'fs';
 import micromatch                                       from 'micromatch';
 
 export type Glob = {
-  isGlobPattern: (pattern: string) => boolean,
-  match: (pattern: string, options: {cwd: PortablePath, baseFs: FakeFS<PortablePath>}) => Promise<Array<string>>,
+  isGlobPattern: (pattern: string) => boolean;
+  match: (pattern: string, options: {cwd: PortablePath, baseFs: FakeFS<PortablePath>}) => Promise<Array<string>>;
 };
 
 export const micromatchOptions: micromatch.Options = {

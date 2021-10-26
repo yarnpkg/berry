@@ -232,11 +232,11 @@ export function getDependencies(project: Project, workspace: Workspace, {all}: {
 
   const data: {
     [key: string]: {
-      version: string,
-      integrity: string,
-      requires: {[key: string]: string},
-      dev: boolean,
-    },
+      version: string;
+      integrity: string;
+      requires: {[key: string]: string};
+      dev: boolean;
+    };
   } = {};
 
   for (const pkg of project.storedPackages.values()) {

@@ -279,8 +279,8 @@ function dynamicRequireNoCache(path: string) {
 }
 
 const dynamicRequireFsTimeCache = new Map<PortablePath, {
-  mtime: number,
-  instance: any,
+  mtime: number;
+  instance: any;
 }>();
 
 /**

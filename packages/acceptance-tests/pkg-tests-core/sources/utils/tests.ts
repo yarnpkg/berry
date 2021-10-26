@@ -44,26 +44,26 @@ export enum RequestType {
 }
 
 export type Request = {
-  type: RequestType.Login,
-  username: string,
+  type: RequestType.Login;
+  username: string;
 } | {
-  type: RequestType.PackageInfo,
-  scope?: string,
-  localName: string,
+  type: RequestType.PackageInfo;
+  scope?: string;
+  localName: string;
 } | {
-  type: RequestType.PackageTarball,
-  scope?: string,
-  localName: string,
-  version?: string,
+  type: RequestType.PackageTarball;
+  scope?: string;
+  localName: string;
+  version?: string;
 } | {
-  type: RequestType.Whoami,
-  login: Login,
+  type: RequestType.Whoami;
+  login: Login;
 } | {
-  type: RequestType.Repository,
+  type: RequestType.Repository;
 } | {
-  type: RequestType.Publish,
-  scope?: string,
-  localName: string,
+  type: RequestType.Publish;
+  scope?: string;
+  localName: string;
 };
 
 export interface Login {
@@ -229,8 +229,8 @@ export const getPackageDirectoryPath = async (
 };
 
 const packageServerUrls: {
-  http: string | null,
-  https: string | null,
+  http: string | null;
+  https: string | null;
 } = {http: null, https: null};
 
 export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
@@ -592,9 +592,9 @@ export interface PackageDriver {
 export type RunFunction = (
   {path, run, source}:
   {
-    path: PortablePath,
-    run: (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>,
-    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>,
+    path: PortablePath;
+    run: (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>;
+    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>;
   }
 ) => void;
 
@@ -602,8 +602,8 @@ export const generatePkgDriver = ({
   getName,
   runDriver,
 }: {
-  getName: () => string,
-  runDriver: PackageRunDriver,
+  getName: () => string;
+  runDriver: PackageRunDriver;
 }): PackageDriver => {
   const withConfig = (definition: Record<string, any>): PackageDriver => {
     const makeTemporaryEnv: PackageDriver = (packageJson, subDefinition, fn) => {
@@ -709,8 +709,8 @@ export const testIf = (condition: () => boolean, name: string,
 };
 
 let httpsCertificates: {
-  server: pem.CertificateCreationResult,
-  ca: pem.CertificateCreationResult,
+  server: pem.CertificateCreationResult;
+  ca: pem.CertificateCreationResult;
 };
 
 export const getHttpsCertificates = async () => {

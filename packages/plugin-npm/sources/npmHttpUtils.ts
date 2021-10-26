@@ -15,15 +15,15 @@ export enum AuthType {
 }
 
 type AuthOptions = {
-  authType?: AuthType,
+  authType?: AuthType;
 };
 
 type RegistryOptions = {
-  ident: Ident,
-  registry?: string,
+  ident: Ident;
+  registry?: string;
 } | {
-  ident?: Ident,
-  registry: string,
+  ident?: Ident;
+  registry: string;
 };
 
 export type Options = httpUtils.Options & AuthOptions & RegistryOptions;

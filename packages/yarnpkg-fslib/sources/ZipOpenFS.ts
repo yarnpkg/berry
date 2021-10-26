@@ -44,24 +44,24 @@ export const getArchivePart = (path: string, extension: string) => {
 };
 
 export type ZipOpenFSOptions = {
-  baseFs?: FakeFS<PortablePath>,
-  filter?: RegExp | null,
-  libzip: Libzip | (() => Libzip),
-  maxOpenFiles?: number,
-  readOnlyArchives?: boolean,
-  useCache?: boolean,
+  baseFs?: FakeFS<PortablePath>;
+  filter?: RegExp | null;
+  libzip: Libzip | (() => Libzip);
+  maxOpenFiles?: number;
+  readOnlyArchives?: boolean;
+  useCache?: boolean;
   /**
    * Maximum age in ms.
    * ZipFS instances are pruned from the cache if they aren't accessed within this amount of time.
    */
-  maxAge?: number,
+  maxAge?: number;
   /**
    * Which file extensions will be interpreted as zip files. Useful for supporting other formats
    * packaged as zips, such as .docx.
    *
    * If not provided, defaults to only accepting `.zip`.
    */
-  fileExtensions?: Array<string> | null,
+  fileExtensions?: Array<string> | null;
 };
 
 export class ZipOpenFS extends BasePortableFakeFS {

@@ -21,20 +21,20 @@ export enum NodeModulesHoistingLimits {
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
-  dirList: Set<Filename>,
+  dirList: Set<Filename>;
 };
 
 // The entry for a package within a node_modules
 export type NodeModulesPackageNode = {
-  locator: LocatorKey,
+  locator: LocatorKey;
   // The source path. Note that the virtual paths have been resolved/lost!
-  target: PortablePath,
+  target: PortablePath;
   // Hard links are copies of the target; soft links are symlinks to it
-  linkType: LinkType,
+  linkType: LinkType;
   // Contains ["node_modules"] if there's nested n_m entries
-  dirList?: undefined,
-  nodePath: string,
-  aliases: Array<string>,
+  dirList?: undefined;
+  nodePath: string;
+  aliases: Array<string>;
 };
 
 /**
@@ -107,10 +107,10 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
 const stringifyLocator = (locator: PhysicalPackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
 
 export type NodeModulesLocatorMap = Map<LocatorKey, {
-  target: PortablePath,
-  linkType: LinkType,
-  locations: Array<PortablePath>,
-  aliases: Array<string>,
+  target: PortablePath;
+  linkType: LinkType;
+  locations: Array<PortablePath>;
+  aliases: Array<string>;
 }>;
 
 export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {

@@ -2,13 +2,13 @@ import {parse} from './grammars/resolution';
 
 export type Resolution = {
   from?: {
-    fullName: string,
-    description?: string,
-  },
+    fullName: string;
+    description?: string;
+  };
   descriptor: {
-    fullName: string,
-    description?: string,
-  },
+    fullName: string;
+    description?: string;
+  };
 };
 
 export function parseResolution(source: string): Resolution {

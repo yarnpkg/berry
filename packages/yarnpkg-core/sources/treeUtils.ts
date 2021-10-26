@@ -5,17 +5,17 @@ import {Configuration}  from './Configuration';
 import * as formatUtils from './formatUtils';
 
 export type TreeNode = {
-  label?: string,
-  value?: formatUtils.Tuple,
-  children?: Array<TreeNode> | TreeMap,
+  label?: string;
+  value?: formatUtils.Tuple;
+  children?: Array<TreeNode> | TreeMap;
 };
 
 export type TreeMap = {
-  [key: string]: TreeNode,
+  [key: string]: TreeNode;
 };
 
 export type TreeifyNode = {
-  [key: string]: TreeifyNode,
+  [key: string]: TreeifyNode;
 };
 
 export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {

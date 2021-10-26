@@ -7,12 +7,12 @@ interface Options {
 }
 
 export type ExecResult = {
-  stdout: string,
-  stderr: string,
-  code: number,
+  stdout: string;
+  stderr: string;
+  code: number;
 } | cp.ExecException & {
-  stdout: string,
-  stderr: string,
+  stdout: string;
+  stderr: string;
 };
 
 export const execFile = (

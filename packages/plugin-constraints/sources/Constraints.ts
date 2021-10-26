@@ -12,16 +12,16 @@ import {linkProjectToSession}                                from './tauModule';
 plLists(pl);
 
 export type EnforcedDependency = {
-  workspace: Workspace,
-  dependencyIdent: Ident,
-  dependencyRange: string | null,
-  dependencyType: DependencyType,
+  workspace: Workspace;
+  dependencyIdent: Ident;
+  dependencyRange: string | null;
+  dependencyType: DependencyType;
 };
 
 export type EnforcedField = {
-  workspace: Workspace,
-  fieldPath: string,
-  fieldValue: string | null,
+  workspace: Workspace;
+  fieldPath: string;
+  fieldValue: string | null;
 };
 
 export enum DependencyType {

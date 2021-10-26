@@ -192,7 +192,7 @@ export type PackageExtension = (
   | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
   | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
 ) & {
-  status: PackageExtensionStatus,
-  userProvided: boolean,
-  parentDescriptor: Descriptor,
+  status: PackageExtensionStatus;
+  userProvided: boolean;
+  parentDescriptor: Descriptor;
 };

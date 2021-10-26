@@ -15,11 +15,11 @@ import {Query}                   from '../types/queries';
 export const defaultKeywords = [`package manager`, `yarn`, `yarnpkg`, `configuration`, `yarnrc`];
 
 export type SEOProps = {
-  description?: string,
-  lang?: string,
-  meta?: Array<{name: string, content: string}>,
-  keywords?: Array<string>,
-  title: string,
+  description?: string;
+  lang?: string;
+  meta?: Array<{name: string, content: string}>;
+  keywords?: Array<string>;
+  title: string;
 };
 
 export function SEO({description, lang = `en`, meta = [], keywords = [], title}: SEOProps) {

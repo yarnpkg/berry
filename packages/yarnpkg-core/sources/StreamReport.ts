@@ -10,15 +10,15 @@ import * as structUtils                           from './structUtils';
 import {Locator}                                  from './types';
 
 export type StreamReportOptions = {
-  configuration: Configuration,
-  forgettableBufferSize?: number,
-  forgettableNames?: Set<MessageName | null>,
-  includeFooter?: boolean,
-  includeInfos?: boolean,
-  includeLogs?: boolean,
-  includeWarnings?: boolean,
-  json?: boolean,
-  stdout: Writable,
+  configuration: Configuration;
+  forgettableBufferSize?: number;
+  forgettableNames?: Set<MessageName | null>;
+  includeFooter?: boolean;
+  includeInfos?: boolean;
+  includeLogs?: boolean;
+  includeWarnings?: boolean;
+  json?: boolean;
+  stdout: Writable;
 };
 
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
@@ -148,8 +148,8 @@ export class StreamReport extends Report {
   private stdout: Writable;
 
   private uncommitted = new Set<{
-    committed: boolean,
-    action: () => void,
+    committed: boolean;
+    action: () => void;
   }>();
 
   private cacheHitCount: number = 0;
@@ -164,8 +164,8 @@ export class StreamReport extends Report {
   private indent: number = 0;
 
   private progress: Map<AsyncIterable<ProgressDefinition>, {
-    definition: ProgressDefinition,
-    lastScaledSize: number,
+    definition: ProgressDefinition;
+    lastScaledSize: number;
   }> = new Map();
 
   private progressTime: number = 0;

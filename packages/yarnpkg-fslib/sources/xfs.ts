@@ -11,23 +11,23 @@ function getTempName(prefix: string) {
 }
 
 export type XFS = NodeFS & {
-  detachTemp(p: PortablePath): void,
+  detachTemp(p: PortablePath): void;
 
-  mktempSync(): PortablePath,
-  mktempSync<T>(cb: (p: PortablePath) => T): T,
+  mktempSync(): PortablePath;
+  mktempSync<T>(cb: (p: PortablePath) => T): T;
 
-  mktempPromise(): Promise<PortablePath>,
-  mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>,
-
-  /**
-   * Tries to remove all temp folders created by mktempSync and mktempPromise
-   */
-  rmtempPromise(): Promise<void>,
+  mktempPromise(): Promise<PortablePath>;
+  mktempPromise<T>(cb: (p: PortablePath) => Promise<T>): Promise<T>;
 
   /**
    * Tries to remove all temp folders created by mktempSync and mktempPromise
    */
-  rmtempSync(): void,
+  rmtempPromise(): Promise<void>;
+
+  /**
+   * Tries to remove all temp folders created by mktempSync and mktempPromise
+   */
+  rmtempSync(): void;
 };
 
 const tmpdirs = new Set<PortablePath>();

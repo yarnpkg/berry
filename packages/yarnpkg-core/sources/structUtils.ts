@@ -432,13 +432,13 @@ export function tryParseLocator(string: string, strict: boolean = false): Locato
 
 type ParseRangeOptions = {
   /** Throw an error if bindings are missing */
-  requireBindings?: boolean,
+  requireBindings?: boolean;
   /** Throw an error if the protocol is missing or is not the specified one */
-  requireProtocol?: boolean | string,
+  requireProtocol?: boolean | string;
   /** Throw an error if the source is missing */
-  requireSource?: boolean,
+  requireSource?: boolean;
   /** Whether to parse the selector as a query string */
-  parseSelector?: boolean,
+  parseSelector?: boolean;
 };
 
 type ParseRangeReturnType<Opts extends ParseRangeOptions> =

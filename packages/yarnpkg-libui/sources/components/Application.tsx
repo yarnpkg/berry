@@ -3,9 +3,9 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {emitKeypressEvents}                  from 'readline';
 
 export const MinistoreContext = React.createContext<{
-  getAll: () => Map<string, any>,
-  get: (key: string) => any,
-  set: (key: string, value: any) => void,
+  getAll: () => Map<string, any>;
+  get: (key: string) => any;
+  set: (key: string, value: any) => void;
 } | null>(null);
 
 export const Application = ({children}: {children: React.ReactElement}) => {

@@ -77,32 +77,32 @@ export enum SettingsType {
 }
 
 export type SupportedArchitectures = {
-  os: Array<string> | null,
-  cpu: Array<string> | null,
+  os: Array<string> | null;
+  cpu: Array<string> | null;
 };
 
 export type FormatType = formatUtils.Type;
 export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
-  description: string,
-  type: T,
+  description: string;
+  type: T;
 } & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
-  properties: {[propertyName: string]: SettingsDefinition},
+  properties: {[propertyName: string]: SettingsDefinition};
 };
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
-  valueDefinition: SettingsDefinitionNoDefault,
-  normalizeKeys?: (key: string) => string,
+  valueDefinition: SettingsDefinitionNoDefault;
+  normalizeKeys?: (key: string) => string;
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
-  default: any,
-  defaultText?: any,
-  isNullable?: boolean,
-  values?: Array<any>,
+  default: any;
+  defaultText?: any;
+  isNullable?: boolean;
+  values?: Array<any>;
 };
 
 export type SettingsDefinitionNoDefault =
@@ -116,8 +116,8 @@ export type SettingsDefinition =
   | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
-  modules: Map<string, any>,
-  plugins: Set<string>,
+  modules: Map<string, any>;
+  plugins: Set<string>;
 };
 
 // General rules:
@@ -554,10 +554,10 @@ export interface ConfigurationValueMap {
   httpRetry: number;
   networkConcurrency: number;
   networkSettings: Map<string, miscUtils.ToMapValue<{
-    caFilePath: PortablePath | null,
-    enableNetwork: boolean | null,
-    httpProxy: string | null,
-    httpsProxy: string | null,
+    caFilePath: PortablePath | null;
+    enableNetwork: boolean | null;
+    httpProxy: string | null;
+    httpsProxy: string | null;
   }>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
@@ -577,9 +577,9 @@ export interface ConfigurationValueMap {
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
-    dependencies?: Map<string, string>,
-    peerDependencies?: Map<string, string>,
-    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>,
+    dependencies?: Map<string, string>;
+    peerDependencies?: Map<string, string>;
+    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>;
   }>>;
 }
 
@@ -592,7 +592,7 @@ type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   | (T extends PortablePath ? SettingsType.ABSOLUTE_PATH : never)
   | (T extends string ? SettingsType.LOCATOR | SettingsType.LOCATOR_LOOSE | SettingsType.SECRET | SettingsType.STRING : never)
   | SettingsType.ANY
-  ,
+  ;
 };
 
 type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
@@ -782,8 +782,8 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
 }
 
 type SettingTransforms = {
-  hideSecrets: boolean,
-  getNativePaths: boolean,
+  hideSecrets: boolean;
+  getNativePaths: boolean;
 };
 
 function transformConfiguration(rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
@@ -858,10 +858,10 @@ export enum ProjectLookup {
 }
 
 export type FindProjectOptions = {
-  lookup?: ProjectLookup,
-  strict?: boolean,
-  usePath?: boolean,
-  useRc?: boolean,
+  lookup?: ProjectLookup;
+  strict?: boolean;
+  usePath?: boolean;
+  useRc?: boolean;
 };
 
 export class Configuration {
@@ -1108,10 +1108,10 @@ export class Configuration {
   static async findRcFiles(startingCwd: PortablePath) {
     const rcFilename = getRcFilename();
     const rcFiles: Array<{
-      path: PortablePath,
-      cwd: PortablePath,
-      data: any,
-      strict?: boolean,
+      path: PortablePath;
+      cwd: PortablePath;
+      data: any;
+      strict?: boolean;
     }> = [];
 
     let nextCwd = startingCwd;

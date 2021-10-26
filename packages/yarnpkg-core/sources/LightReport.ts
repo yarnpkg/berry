@@ -8,9 +8,9 @@ import * as formatUtils          from './formatUtils';
 import {Locator}                 from './types';
 
 export type LightReportOptions = {
-  configuration: Configuration,
-  stdout: Writable,
-  suggestInstall?: boolean,
+  configuration: Configuration;
+  stdout: Writable;
+  suggestInstall?: boolean;
 };
 
 export class LightReport extends Report {

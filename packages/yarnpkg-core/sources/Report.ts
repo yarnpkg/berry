@@ -20,12 +20,12 @@ export function isReportError(error: Error): error is ReportError {
 }
 
 export type ProgressDefinition = {
-  progress: number,
-  title?: string,
+  progress: number;
+  title?: string;
 };
 
 export type TimerOptions = {
-  skipIfEmpty?: boolean,
+  skipIfEmpty?: boolean;
 };
 
 export abstract class Report {

@@ -140,8 +140,8 @@ async function getCredentials({registry, report, stdin, stdout}: {registry: stri
   report.reportSeparator();
 
   const {username, password} = await prompt<{
-    username: string,
-    password: string,
+    username: string;
+    password: string;
   }>([{
     type: `input`,
     name: `username`,

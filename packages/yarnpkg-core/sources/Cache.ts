@@ -15,11 +15,11 @@ import {LocatorHash, Locator}                                           from './
 const CACHE_VERSION = 8;
 
 export type CacheOptions = {
-  mockedPackages?: Set<LocatorHash>,
-  unstablePackages?: Set<LocatorHash>,
+  mockedPackages?: Set<LocatorHash>;
+  unstablePackages?: Set<LocatorHash>;
 
-  mirrorWriteOnly?: boolean,
-  skipIntegrityCheck?: boolean,
+  mirrorWriteOnly?: boolean;
+  skipIntegrityCheck?: boolean;
 };
 
 export class Cache {

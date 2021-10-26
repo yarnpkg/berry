@@ -32,11 +32,11 @@ export interface AuditAction {
 
 export interface AuditAdvisory {
   findings: Array<{
-    version: string,
-    paths: Array<string>,
-    dev: boolean,
-    optional: boolean,
-    bundled: boolean,
+    version: string;
+    paths: Array<string>;
+    dev: boolean;
+    optional: boolean;
+    bundled: boolean;
   }>;
   id: number;
   created: string;
@@ -44,10 +44,10 @@ export interface AuditAdvisory {
   deleted?: boolean;
   title: string;
   found_by: {
-    name: string,
+    name: string;
   };
   reported_by: {
-    name: string,
+    name: string;
   };
   module_name: string;
   cves: Array<string>;
@@ -60,9 +60,9 @@ export interface AuditAdvisory {
   severity: string;
   cwe: string;
   metadata: {
-    module_type: string,
-    exploitability: number,
-    affected_components: string,
+    module_type: string;
+    exploitability: number;
+    affected_components: string;
   };
   url: string;
 }

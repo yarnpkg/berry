@@ -5,7 +5,7 @@ import * as errors           from '../errors';
 import {Filename, Path}      from '../path';
 
 export type CustomDirOptions = {
-  onClose?: () => void,
+  onClose?: () => void;
 };
 
 export class CustomDir<P extends Path> implements Dir<P> {

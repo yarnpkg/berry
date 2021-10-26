@@ -36,6 +36,7 @@ module.exports = {
 
     '@typescript-eslint/member-delimiter-style': [`error`, {
       multiline: {
+        delimiter: `semi`,
         requireLast: true,
       },
       singleline: {
@@ -43,17 +44,11 @@ module.exports = {
       },
       overrides: {
         interface: {
-          multiline: {
-            delimiter: `semi`,
-          },
           singleline: {
             delimiter: `semi`,
           },
         },
         typeLiteral: {
-          multiline: {
-            delimiter: `comma`,
-          },
           singleline: {
             delimiter: `comma`,
           },

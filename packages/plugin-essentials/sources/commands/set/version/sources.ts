@@ -151,10 +151,10 @@ export async function runWorkflow(workflow: Array<Array<string>>, {configuration
 }
 
 export type PrepareSpec = {
-  branch: string,
-  context: CommandContext,
-  force: boolean,
-  repository: string,
+  branch: string;
+  context: CommandContext;
+  force: boolean;
+  repository: string;
 };
 
 export async function prepareRepo(spec: PrepareSpec, {configuration, report, target}: {configuration: Configuration, report: Report, target: PortablePath}) {

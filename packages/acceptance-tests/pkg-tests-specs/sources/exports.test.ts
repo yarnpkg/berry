@@ -3,9 +3,9 @@ import {createTemporaryFolder}                       from 'pkg-tests-core/source
 import {yarn}                                        from 'pkg-tests-core';
 
 export type Manifest = {
-  name: string,
-  main?: string,
-  exports?: string | object,
+  name: string;
+  main?: string;
+  exports?: string | object;
 };
 
 export async function writeTestPackage(path: PortablePath, manifest: Manifest, files: Array<string>) {
@@ -20,8 +20,8 @@ export async function writeTestPackage(path: PortablePath, manifest: Manifest, f
 }
 
 export type Assertions = {
-  pass?: Array<[/*request: */string, /*resolved: */string]>,
-  fail?: Array<[/*request: */string, /*error: */string | {message: string, code?: string, pnpCode?: string}]>,
+  pass?: Array<[/*request: */string, /*resolved: */string]>;
+  fail?: Array<[/*request: */string, /*error: */string | {message: string, code?: string, pnpCode?: string}]>;
 };
 
 export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<Manifest, 'name'>, files: Array<string>, {pass, fail}: Assertions) {

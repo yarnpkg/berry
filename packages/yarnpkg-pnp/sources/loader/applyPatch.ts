@@ -10,13 +10,13 @@ import {Manager}                                                   from './makeM
 import * as nodeUtils                                              from './nodeUtils';
 
 export type ApplyPatchOptions = {
-  fakeFs: FakeFS<PortablePath>,
-  manager: Manager,
+  fakeFs: FakeFS<PortablePath>;
+  manager: Manager;
 };
 
 type PatchedModule = Module & {
-  load(path: NativePath): void,
-  isLoading?: boolean,
+  load(path: NativePath): void;
+  isLoading?: boolean;
 };
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
@@ -181,9 +181,9 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   };
 
   type IssuerSpec = {
-    apiPath: PortablePath | null,
-    path: NativePath | null,
-    module: NodeModule | null | undefined,
+    apiPath: PortablePath | null;
+    path: NativePath | null;
+    module: NodeModule | null | undefined;
   };
 
   function getIssuerSpecsFromPaths(paths: Array<NativePath>): Array<IssuerSpec> {

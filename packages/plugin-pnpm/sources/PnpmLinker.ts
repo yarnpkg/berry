@@ -5,7 +5,7 @@ import {UsageError}                                                             
 import pLimit                                                                                                                                                                                                   from 'p-limit';
 
 export type PnpmCustomData = {
-  locatorByPath: Map<string, string>,
+  locatorByPath: Map<string, string>;
 };
 
 export class PnpmLinker implements Linker {
@@ -300,9 +300,9 @@ async function getNodeModulesListing(nmPath: PortablePath) {
 }
 
 type Deferred = {
-  promise: Promise<void>,
-  resolve: () => void,
-  reject: (err: Error) => void,
+  promise: Promise<void>;
+  resolve: () => void;
+  reject: (err: Error) => void;
 };
 
 function makeDeferred(): Deferred {

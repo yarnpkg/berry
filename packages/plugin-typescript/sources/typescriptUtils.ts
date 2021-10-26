@@ -10,7 +10,7 @@ const ALGOLIA_APP_ID = `OFCNCOG2CU`;
 
 interface AlgoliaObj {
   types?: {
-    ts?: string,
+    ts?: string;
   };
 }
 

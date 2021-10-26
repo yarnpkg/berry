@@ -48,9 +48,9 @@ const SYNTAX_COMPONENTS = {
 } as const;
 
 export type SchemaState = {
-  mode: SchemaMode,
-  pathSegments: Array<string>,
-  renderAnchor: boolean,
+  mode: SchemaMode;
+  pathSegments: Array<string>;
+  renderAnchor: boolean;
 };
 
 export const getAnchor = (state: SchemaState) => (
