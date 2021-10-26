@@ -1,8 +1,8 @@
 releases:
-  "@yarnpkg/esbuild-plugin-pnp": minor
+  "@yarnpkg/eslint-config": minor
 
 declined:
-  - "@yarnpkg/eslint-config"
+  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-git"
   - "@yarnpkg/plugin-github"
@@ -16,7 +16,6 @@ declined:
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-workspace-tools"
-  - "@yarnpkg/builder"
   - "@yarnpkg/core"
   - "@yarnpkg/fslib"
   - "@yarnpkg/json-proxy"
