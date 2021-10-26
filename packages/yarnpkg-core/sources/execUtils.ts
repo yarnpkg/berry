@@ -25,9 +25,9 @@ export type PipevpOptions = {
 };
 
 export type PipeErrorOptions = {
-  fileName: string,
-  code: number,
-  signal: NodeJS.Signals | null,
+  fileName: string;
+  code: number;
+  signal: NodeJS.Signals | null;
 };
 
 export class PipeError extends ReportError {
@@ -49,8 +49,8 @@ export class PipeError extends ReportError {
 }
 
 export type ExecErrorOptions = PipeErrorOptions & {
-  stdout: Buffer | string,
-  stderr: Buffer | string,
+  stdout: Buffer | string;
+  stderr: Buffer | string;
 };
 
 export class ExecError extends PipeError {

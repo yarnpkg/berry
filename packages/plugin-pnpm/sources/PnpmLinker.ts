@@ -208,26 +208,34 @@ class PnpmInstaller implements Installer {
   async finalizeInstall() {
     const storeLocation = getStoreLocation(this.opts.project);
 
-    const expectedEntries = new Set<Filename>();
-    for (const packageLocation of this.packageLocations.values())
-      expectedEntries.add(ppath.basename(packageLocation));
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`) {
+      await xfs.removePromise(storeLocation);
+    } else {
+      const expectedEntries = new Set<Filename>();
+      for (const packageLocation of this.packageLocations.values())
+        expectedEntries.add(ppath.basename(packageLocation));
 
-    let storeRecords: Array<Filename>;
-    try {
-      storeRecords = await xfs.readdirPromise(storeLocation);
-    } catch {
-      storeRecords = [];
+      let storeRecords: Array<Filename>;
+      try {
+        storeRecords = await xfs.readdirPromise(storeLocation);
+      } catch {
+        storeRecords = [];
+      }
+
+      const removals: Array<Promise<void>> = [];
+      for (const record of storeRecords)
+        if (!expectedEntries.has(record))
+          removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
+
+      await Promise.all(removals);
+
+      await removeIfEmpty(storeLocation);
     }
 
-    const removals: Array<Promise<void>> = [];
-    for (const record of storeRecords)
-      if (!expectedEntries.has(record))
-        removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
-
-    await Promise.all(removals);
-
     // Wait for the package installs to catch up
-    await this.asyncActions.wait();
+    await this.asyncActions.wait(),
+
+    await removeIfEmpty(getNodeModulesLocation(this.opts.project));
   }
 }
 
@@ -238,8 +246,12 @@ function getCustomDataKey() {
   });
 }
 
+function getNodeModulesLocation(project: Project) {
+  return ppath.join(project.cwd, Filename.nodeModules);
+}
+
 function getStoreLocation(project: Project) {
-  return ppath.join(project.cwd, Filename.nodeModules, `.store` as Filename);
+  return ppath.join(getNodeModulesLocation(project), `.store` as Filename);
 }
 
 function getPackageLocation(locator: Locator, {project}: {project: Project}) {
@@ -297,6 +309,16 @@ async function getNodeModulesListing(nmPath: PortablePath) {
   }
 
   return listing;
+}
+
+async function removeIfEmpty(dir: PortablePath) {
+  try {
+    await xfs.rmdirPromise(dir);
+  } catch (error) {
+    if (error.code !== `ENOENT` && error.code !== `ENOTEMPTY`) {
+      throw error;
+    }
+  }
 }
 
 type Deferred = {
