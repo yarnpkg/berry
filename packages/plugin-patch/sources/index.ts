@@ -13,7 +13,7 @@ export interface Hooks {
   getBuiltinPatch?: (
     project: Project,
     name: string,
-  ) => Promise<string | null | void>,
+  ) => Promise<string | null | void>;
 }
 
 declare module '@yarnpkg/core' {

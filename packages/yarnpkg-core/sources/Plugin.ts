@@ -14,12 +14,12 @@ import {Locator, Descriptor}                                                    
 type ProcessEnvironment = {[key: string]: string};
 
 export type CommandContext = {
-  cwd: PortablePath;
-  plugins: PluginConfiguration;
-  quiet: boolean;
-  stdin: Readable;
-  stdout: Writable;
-  stderr: Writable;
+  cwd: PortablePath,
+  plugins: PluginConfiguration,
+  quiet: boolean,
+  stdin: Readable,
+  stdout: Writable,
+  stderr: Writable,
 };
 
 export interface FetcherPlugin {
@@ -43,7 +43,7 @@ export type Hooks = {
   registerPackageExtensions?: (
     configuration: Configuration,
     registerPackageExtension: (descriptor: Descriptor, extensionData: PackageExtensionData) => void,
-  ) => Promise<void>;
+  ) => Promise<void>,
 
   /**
    * Called before a script is executed. The hooks are allowed to modify the
@@ -114,7 +114,7 @@ export type Hooks = {
       reportWarning: (name: MessageName, text: string) => void,
       reportError: (name: MessageName, text: string) => void,
     }
-  ) => void;
+  ) => void,
 
   /**
    * Called during the `Validation step` of the `install` method from the `Project`
@@ -126,7 +126,7 @@ export type Hooks = {
       reportWarning: (name: MessageName, text: string) => void,
       reportError: (name: MessageName, text: string) => void,
     }
-  ) => void;
+  ) => void,
 
   /**
    * Used to notify the core of all the potential artifacts of the available linkers.
@@ -141,7 +141,7 @@ export type Hooks = {
    */
   cleanGlobalArtifacts?: (
     configuration: Configuration,
-  ) => Promise<void>;
+  ) => Promise<void>,
 };
 
 export type Plugin<PluginHooks = any> = {

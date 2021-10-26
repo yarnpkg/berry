@@ -72,7 +72,7 @@ export enum Strategy {
   CACHE = `cache`,
 }
 
-export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boolean}, project: Project): Modifier {
+export function getModifier(flags: {exact: boolean, caret: boolean, tilde: boolean}, project: Project): Modifier {
   if (flags.exact)
     return Modifier.EXACT;
   if (flags.caret)

@@ -25,7 +25,7 @@ export type ProgressDefinition = {
 };
 
 export type TimerOptions = {
-  skipIfEmpty?: boolean;
+  skipIfEmpty?: boolean,
 };
 
 export abstract class Report {

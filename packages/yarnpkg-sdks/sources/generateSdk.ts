@@ -262,8 +262,8 @@ export class Wrapper {
 }
 
 type AllIntegrations = {
-  requestedIntegrations: Set<SupportedIntegration>;
-  preexistingIntegrations: Set<SupportedIntegration>;
+  requestedIntegrations: Set<SupportedIntegration>,
+  preexistingIntegrations: Set<SupportedIntegration>,
 };
 
 export const generateSdk = async (pnpApi: PnpApi, {requestedIntegrations, preexistingIntegrations}: AllIntegrations, {report, onlyBase, verbose, configuration}: {report: Report, onlyBase: boolean, verbose: boolean, configuration: Configuration}): Promise<void> => {

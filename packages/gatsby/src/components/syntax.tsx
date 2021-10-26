@@ -4,42 +4,42 @@ import {FaLink}                               from 'react-icons/fa';
 import React, {PropsWithChildren, useContext} from 'react';
 
 export type Theme = {
-  name: string;
+  name: string,
 
   colors: {
-    background: string;
-    documentation: string;
-    highlight: string;
-    code: string;
-    key: string;
-    string: string;
-    boolean: string;
-    number: string;
-  };
+    background: string,
+    documentation: string,
+    highlight: string,
+    code: string,
+    key: string,
+    string: string,
+    boolean: string,
+    number: string,
+  },
 
-  formatKey: (value: unknown) => string;
-  formatValue: (value: unknown) => string;
+  formatKey: (value: unknown) => string,
+  formatValue: (value: unknown) => string,
 
   keys: {
-    suffix: string;
-  };
+    suffix: string,
+  },
 
   dictionaries: {
-    leading: string;
-    trailing: string;
-    suffix: string;
-  };
+    leading: string,
+    trailing: string,
+    suffix: string,
+  },
 
   arrays: {
-    leading: string;
-    trailing: string;
-    prefix: string;
-    suffix: string;
-  };
+    leading: string,
+    trailing: string,
+    prefix: string,
+    suffix: string,
+  },
 };
 
 export type ThemeProps = {
-  theme: Theme;
+  theme: Theme,
 };
 
 const getColorForScalar = (theme: Theme, scalar: unknown) => {
@@ -159,7 +159,7 @@ const Description = styled.div`
 const NestedSectionHeaderContext = React.createContext(1);
 
 export type NestedSectionHeaderProps = {
-  name?: string;
+  name?: string,
 };
 
 const NestedSectionHeader = ({name, children}: PropsWithChildren<NestedSectionHeaderProps>) => {
@@ -174,8 +174,8 @@ const NestedSectionHeader = ({name, children}: PropsWithChildren<NestedSectionHe
 };
 
 export type DescribeProps = ThemeProps & NestedSectionHeaderProps & {
-  description: React.ReactNode | null;
-  anchor?: string | null;
+  description: React.ReactNode | null,
+  anchor?: string | null,
 };
 
 const Describe = ({theme, name, description, anchor, children}: PropsWithChildren<DescribeProps>) => description ? <>
@@ -198,7 +198,7 @@ const Anchor = () => <>
 </>;
 
 export type KeyProps = ThemeProps & NestedSectionHeaderProps & {
-  anchorTarget?: string | null;
+  anchorTarget?: string | null,
 };
 
 const Key = ({theme, name, anchorTarget}: KeyProps) => <>
@@ -215,7 +215,7 @@ const Key = ({theme, name, anchorTarget}: KeyProps) => <>
 </>;
 
 export type ArrayProps = KeyProps & {
-  suffix?: string;
+  suffix?: string,
 };
 
 export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithChildren<ArrayProps>) => <div>
@@ -234,8 +234,8 @@ export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithCh
 </div>;
 
 export type DictionaryProps = KeyProps & {
-  suffix?: string;
-  margin: boolean;
+  suffix?: string,
+  margin: boolean,
 };
 
 export const Dictionary = ({theme, name, suffix, anchorTarget, children, margin}: PropsWithChildren<DictionaryProps>) => <div>
@@ -251,8 +251,8 @@ export const Dictionary = ({theme, name, suffix, anchorTarget, children, margin}
 </div>;
 
 export type ScalarProps = KeyProps & {
-  suffix?: string;
-  placeholder: unknown;
+  suffix?: string,
+  placeholder: unknown,
 };
 
 export const Scalar = ({theme, suffix, placeholder}: ScalarProps) => <div>

@@ -9,10 +9,10 @@ import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
 export type Stats = NodeStats & {
-  crc?: number
+  crc?: number,
 };
 export type BigIntStats = NodeBigIntStats & {
-  crc?: number
+  crc?: number,
 };
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
@@ -20,23 +20,23 @@ export type Dirent = Exclude<NodeDirent, 'name'> & {
 };
 
 export type Dir<P extends Path> = {
-  readonly path: P;
+  readonly path: P,
 
-  [Symbol.asyncIterator](): AsyncIterableIterator<Dirent>;
+  [Symbol.asyncIterator](): AsyncIterableIterator<Dirent>,
 
-  close(): Promise<void>;
-  close(cb: NoParamCallback): void;
+  close(): Promise<void>,
+  close(cb: NoParamCallback): void,
 
-  closeSync(): void;
+  closeSync(): void,
 
-  read(): Promise<Dirent | null>;
-  read(cb: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void): void;
+  read(): Promise<Dirent | null>,
+  read(cb: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void): void,
 
-  readSync(): Dirent | null;
+  readSync(): Dirent | null,
 };
 
 export type OpendirOptions = Partial<{
-  bufferSize: number;
+  bufferSize: number,
 }>;
 
 export type CreateReadStreamOptions = Partial<{
@@ -106,7 +106,7 @@ export type StatWatcher = EventEmitter & {
 };
 
 export type ExtractHintOptions = {
-  relevantExtensions: Set<string>;
+  relevantExtensions: Set<string>,
 };
 
 export type SymlinkType = 'file' | 'dir' | 'junction';

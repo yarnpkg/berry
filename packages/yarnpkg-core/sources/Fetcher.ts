@@ -18,7 +18,7 @@ export type FetchOptions = MinimalFetchOptions & {
   /**
    * @deprecated Use cacheOptions.skipIntegrityCheck instead
    */
-  skipIntegrityCheck?: boolean
+  skipIntegrityCheck?: boolean,
 };
 
 export type FetchResult = {

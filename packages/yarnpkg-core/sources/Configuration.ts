@@ -77,8 +77,8 @@ export enum SettingsType {
 }
 
 export type SupportedArchitectures = {
-  os: Array<string> | null;
-  cpu: Array<string> | null;
+  os: Array<string> | null,
+  cpu: Array<string> | null,
 };
 
 export type FormatType = formatUtils.Type;
@@ -554,10 +554,10 @@ export interface ConfigurationValueMap {
   httpRetry: number;
   networkConcurrency: number;
   networkSettings: Map<string, miscUtils.ToMapValue<{
-    caFilePath: PortablePath | null;
-    enableNetwork: boolean | null;
-    httpProxy: string | null;
-    httpsProxy: string | null;
+    caFilePath: PortablePath | null,
+    enableNetwork: boolean | null,
+    httpProxy: string | null,
+    httpsProxy: string | null,
   }>>;
   caFilePath: PortablePath | null;
   enableStrictSsl: boolean;
@@ -592,7 +592,7 @@ type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   | (T extends PortablePath ? SettingsType.ABSOLUTE_PATH : never)
   | (T extends string ? SettingsType.LOCATOR | SettingsType.LOCATOR_LOOSE | SettingsType.SECRET | SettingsType.STRING : never)
   | SettingsType.ANY
-  ;
+  ,
 };
 
 type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
@@ -782,8 +782,8 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
 }
 
 type SettingTransforms = {
-  hideSecrets: boolean;
-  getNativePaths: boolean;
+  hideSecrets: boolean,
+  getNativePaths: boolean,
 };
 
 function transformConfiguration(rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
@@ -1108,10 +1108,10 @@ export class Configuration {
   static async findRcFiles(startingCwd: PortablePath) {
     const rcFilename = getRcFilename();
     const rcFiles: Array<{
-      path: PortablePath;
-      cwd: PortablePath;
-      data: any;
-      strict?: boolean
+      path: PortablePath,
+      cwd: PortablePath,
+      data: any,
+      strict?: boolean,
     }> = [];
 
     let nextCwd = startingCwd;

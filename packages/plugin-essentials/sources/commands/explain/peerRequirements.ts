@@ -175,7 +175,7 @@ export async function explainPeerRequirements(peerRequirementsHash: string, proj
       stringifiedLocator: string,
       prettyLocator: string,
       prettyRange: string,
-      mark: string
+      mark: string,
     }> = [];
 
     for (const {pkg, peerDependency} of miscUtils.sortMap(allRequesters, requester => structUtils.stringifyLocator(requester.pkg))) {

@@ -37,7 +37,7 @@ export type LocationLengthData = Array<number>;
 // This is what is stored within the .pnp.meta.json file
 export type SerializedState = {
   // @eslint-ignore-next-line @typescript-eslint/naming-convention
-  __info: Array<string>;
+  __info: Array<string>,
   enableTopLevelFallback: boolean,
   fallbackExclusionList: Array<[string, Array<string>]>,
   fallbackPool: Array<[string, DependencyTarget]>,
@@ -53,7 +53,7 @@ export type RuntimeState = {
   fallbackExclusionList: Map<string, Set<string>>,
   fallbackPool: Map<string, DependencyTarget>,
   ignorePattern: RegExp | null,
-  packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>;
+  packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>,
   packageRegistry: PackageRegistry,
   dependencyTreeRoots: Array<PhysicalPackageLocator>,
 };
@@ -94,7 +94,7 @@ export type ResolveToUnqualifiedOptions = {
 
 export type ResolveUnqualifiedOptions = {
   extensions?: Array<string>,
-  conditions?: Set<string>
+  conditions?: Set<string>,
 };
 
 export type ResolveRequestOptions =

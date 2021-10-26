@@ -1,10 +1,10 @@
 import querystring from 'querystring';
 
 type ParsedGithubUrl = {
-  auth?: string;
-  username: string;
-  reponame: string;
-  treeish: string;
+  auth?: string,
+  username: string,
+  reponame: string,
+  treeish: string,
 };
 
 const githubPatterns = [

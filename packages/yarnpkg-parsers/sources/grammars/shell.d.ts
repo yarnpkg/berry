@@ -21,7 +21,7 @@ export type RedirectArgument = {
   type: `redirection`,
   subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`,
   fd: number | null,
-  args: Array<ValueArgument>
+  args: Array<ValueArgument>,
 };
 
 export type ValueArgument =
@@ -46,7 +46,7 @@ export type Command = {
   args: Array<RedirectArgument>,
 } | {
   type: `envs`,
-  envs: Array<EnvSegment>
+  envs: Array<EnvSegment>,
 };
 
 export type CommandChain = Command & {
@@ -82,7 +82,7 @@ export type ArithmeticPrimary = {
 };
 
 export type ArithmeticOperatorExpression = {
-  type: `multiplication` | `division` | `addition` | `subtraction`;
+  type: `multiplication` | `division` | `addition` | `subtraction`,
   left: ArithmeticExpression,
   right: ArithmeticExpression,
 };

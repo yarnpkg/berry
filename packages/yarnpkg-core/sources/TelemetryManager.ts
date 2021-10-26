@@ -17,16 +17,16 @@ export enum MetricName {
 }
 
 export type RegistryBlock = {
-  values?: {[key in MetricName]?: Array<string>};
-  hits?: {[key in MetricName]?: {[extra: string]: number}};
-  enumerators?: {[key in MetricName]?: Array<string>};
+  values?: {[key in MetricName]?: Array<string>},
+  hits?: {[key in MetricName]?: {[extra: string]: number}},
+  enumerators?: {[key in MetricName]?: Array<string>},
 };
 
 export type RegistryFile = {
-  lastUpdate?: number;
+  lastUpdate?: number,
   blocks?: {
-    [userId: string]: RegistryBlock;
-  };
+    [userId: string]: RegistryBlock,
+  },
 };
 
 export class TelemetryManager {

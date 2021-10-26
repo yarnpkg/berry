@@ -92,7 +92,7 @@ const colors = new Map<Type, [string, number] | null>([
 // internal to this file, it should be fine.
 const validateTransform = <T>(spec: {
   pretty: (configuration: any, val: T) => string,
-  json: (val: T) => any
+  json: (val: T) => any,
 }): {
   pretty: (configuration: any, val: T) => string,
   json: (val: T) => any,
@@ -255,8 +255,8 @@ export type Tuple<T extends Type = Type> =
   readonly [Source<T>, T];
 
 export type Field = {
-  label: string;
-  value: Tuple<any>;
+  label: string,
+  value: Tuple<any>,
 };
 
 export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T> {

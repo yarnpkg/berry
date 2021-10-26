@@ -39,8 +39,8 @@ const ALWAYS_IGNORE = [
 ];
 
 type IgnoreList = {
-  accept: Array<string>;
-  reject: Array<string>;
+  accept: Array<string>,
+  reject: Array<string>,
 };
 
 export async function hasPackScripts(workspace: Workspace) {

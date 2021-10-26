@@ -61,7 +61,7 @@ export type ZipOpenFSOptions = {
    *
    * If not provided, defaults to only accepting `.zip`.
    */
-  fileExtensions?: Array<string> | null;
+  fileExtensions?: Array<string> | null,
 };
 
 export class ZipOpenFS extends BasePortableFakeFS {

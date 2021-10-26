@@ -79,7 +79,7 @@ export type FilePatch = {
 };
 
 type FileDeletion = {
-  type: `file deletion`
+  type: `file deletion`,
   semverExclusivity: string | null,
   path: PortablePath,
   mode: FileMode,

@@ -55,7 +55,7 @@ export type ShellState = {
   stderr: Writable,
   variables: {[key: string]: string},
   nextBackgroundJobIndex: number,
-  backgroundJobs: Array<Promise<unknown>>;
+  backgroundJobs: Array<Promise<unknown>>,
 };
 
 enum StreamType {

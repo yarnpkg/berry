@@ -89,7 +89,7 @@ export type InstallOptions = {
    * overrides only - if you need to _add_ resolvers, prefer adding them
    * through regular plugins instead.
    */
-  resolver?: Resolver
+  resolver?: Resolver,
 
   /**
    * Provide a report instance that'll be use to store the information emitted

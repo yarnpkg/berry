@@ -44,26 +44,26 @@ export enum RequestType {
 }
 
 export type Request = {
-  type: RequestType.Login;
+  type: RequestType.Login,
   username: string,
 } | {
-  type: RequestType.PackageInfo;
-  scope?: string;
-  localName: string;
+  type: RequestType.PackageInfo,
+  scope?: string,
+  localName: string,
 } | {
-  type: RequestType.PackageTarball;
-  scope?: string;
-  localName: string;
-  version?: string;
+  type: RequestType.PackageTarball,
+  scope?: string,
+  localName: string,
+  version?: string,
 } | {
-  type: RequestType.Whoami;
-  login: Login
+  type: RequestType.Whoami,
+  login: Login,
 } | {
-  type: RequestType.Repository;
+  type: RequestType.Repository,
 } | {
-  type: RequestType.Publish;
-  scope?: string;
-  localName: string;
+  type: RequestType.Publish,
+  scope?: string,
+  localName: string,
 };
 
 export interface Login {
@@ -594,7 +594,7 @@ export type RunFunction = (
   {
     path: PortablePath,
     run: (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>,
-    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>
+    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>,
   }
 ) => void;
 
@@ -709,8 +709,8 @@ export const testIf = (condition: () => boolean, name: string,
 };
 
 let httpsCertificates: {
-  server: pem.CertificateCreationResult;
-  ca: pem.CertificateCreationResult;
+  server: pem.CertificateCreationResult,
+  ca: pem.CertificateCreationResult,
 };
 
 export const getHttpsCertificates = async () => {

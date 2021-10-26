@@ -49,7 +49,7 @@ export type FinalizeInstallData = {
    *
    * And of course, they have to manage their own migration.
    */
-  customData?: any;
+  customData?: any,
 };
 
 export type InstallPackageExtraApi = {
@@ -67,7 +67,7 @@ export type InstallPackageExtraApi = {
    * memory), so you'll need to implement an upper bound to the number of
    * concurrent package installs.
    */
-  holdFetchResult: (promise: Promise<void>) => void;
+  holdFetchResult: (promise: Promise<void>) => void,
 };
 
 export interface Installer {

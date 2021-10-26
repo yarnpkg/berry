@@ -736,10 +736,10 @@ type DirEntry = {
   mode: number,
   digest?: string,
 } | {
-  kind: DirEntryKind. DIRECTORY
+  kind: DirEntryKind. DIRECTORY,
 } | {
   kind: DirEntryKind.SYMLINK,
-  symlinkTo: PortablePath
+  symlinkTo: PortablePath,
 };
 
 const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {

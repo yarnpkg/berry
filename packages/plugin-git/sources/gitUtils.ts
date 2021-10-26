@@ -43,7 +43,7 @@ export function isGitUrl(url: string): boolean {
 }
 
 export type RepoUrlParts = {
-  repo: string;
+  repo: string,
   treeish: {
     protocol: TreeishProtocols | string | null,
     request: string,

@@ -8,7 +8,7 @@ export type ApiMetadata = {
   cache: typeof Module._cache,
   instance: PnpApi,
   stats: fs.Stats,
-  lastRefreshCheck: number
+  lastRefreshCheck: number,
 };
 
 export type MakeManagerOptions = {

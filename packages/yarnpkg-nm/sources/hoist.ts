@@ -63,14 +63,14 @@ enum Hoistable {
   YES, NO, DEPENDS,
 }
 type HoistInfo = {
-  isHoistable: Hoistable.YES
+  isHoistable: Hoistable.YES,
 } | {
-  isHoistable: Hoistable.NO
-  reason: string | null
+  isHoistable: Hoistable.NO,
+  reason: string | null,
 } | {
-  isHoistable: Hoistable.DEPENDS
-  dependsOn: Set<HoisterWorkTree>
-  reason: string | null
+  isHoistable: Hoistable.DEPENDS,
+  dependsOn: Set<HoisterWorkTree>,
+  reason: string | null,
 };
 
 type ShadowedNodes = Map<HoisterWorkTree, Set<PackageName>>;
@@ -89,18 +89,18 @@ enum DebugLevel {
 
 export type HoistOptions = {
   /** Runs self-checks after hoisting is finished */
-  check?: boolean;
+  check?: boolean,
   /** Debug level */
-  debugLevel?: DebugLevel;
+  debugLevel?: DebugLevel,
   /** Hoist borders are defined by parent node locator and its dependency name. The dependency is considered a border, nothing can be hoisted past this dependency, but dependency can be hoisted */
-  hoistingLimits?: Map<Locator, Set<PackageName>>;
+  hoistingLimits?: Map<Locator, Set<PackageName>>,
 };
 
 type InternalHoistOptions = {
-  check?: boolean;
-  debugLevel: DebugLevel;
-  fastLookupPossible: boolean;
-  hoistingLimits: Map<Locator, Set<PackageName>>;
+  check?: boolean,
+  debugLevel: DebugLevel,
+  fastLookupPossible: boolean,
+  hoistingLimits: Map<Locator, Set<PackageName>>,
 };
 
 /**

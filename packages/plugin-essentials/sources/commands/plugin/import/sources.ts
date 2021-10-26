@@ -90,8 +90,8 @@ export default class PluginDlSourcesCommand extends BaseCommand {
 }
 
 export type BuildAndSavePluginsSpec = {
-  context: CommandContext;
-  noMinify: boolean;
+  context: CommandContext,
+  noMinify: boolean,
 };
 
 export async function buildAndSavePlugin(pluginSpec: string, {context, noMinify}: BuildAndSavePluginsSpec, {project, report, target}: {project: Project, report: Report, target: PortablePath}) {

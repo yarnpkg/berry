@@ -51,26 +51,26 @@ export interface Hooks {
     target: suggestUtils.Target,
     descriptor: Descriptor,
     strategies: Array<suggestUtils.Strategy>
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   afterWorkspaceDependencyReplacement?: (
     workspace: Workspace,
     target: suggestUtils.Target,
     fromDescriptor: Descriptor,
     toDescriptor: Descriptor,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   afterWorkspaceDependencyRemoval?: (
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   fetchPackageInfo?: (
     pkg: Package,
     extra: Set<string>,
     registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 }
 
 declare module '@yarnpkg/core' {

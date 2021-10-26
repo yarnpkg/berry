@@ -48,9 +48,9 @@ async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
 }
 
 type OnResolveParams = {
-  resolvedPath: string | null;
-  watchFiles: Array<string>
-  error?: Error;
+  resolvedPath: string | null,
+  watchFiles: Array<string>,
+  error?: Error,
 };
 
 async function defaultOnResolve(args: OnResolveArgs, {resolvedPath, error, watchFiles}: OnResolveParams): Promise<OnResolveResult> {

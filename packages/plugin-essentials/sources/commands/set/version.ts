@@ -6,8 +6,8 @@ import {Command, Option, Usage, UsageError}                                     
 import semver                                                                                from 'semver';
 
 export type Tags = {
-  latest: Record<string, string>;
-  tags: Array<string>;
+  latest: Record<string, string>,
+  tags: Array<string>,
 };
 
 // eslint-disable-next-line arca/no-default-export

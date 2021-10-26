@@ -62,17 +62,17 @@ declare module '@yarnpkg/core' {
     npmRegistryServer: string;
 
     npmScopes:  Map<string, miscUtils.ToMapValue<{
-      npmAlwaysAuth: boolean;
-      npmAuthIdent: string | null;
-      npmAuthToken: string | null;
+      npmAlwaysAuth: boolean,
+      npmAuthIdent: string | null,
+      npmAuthToken: string | null,
 
-      npmPublishRegistry: string | null;
-      npmRegistryServer: string;
+      npmPublishRegistry: string | null,
+      npmRegistryServer: string,
     }>>;
     npmRegistries: Map<string, miscUtils.ToMapValue<{
-      npmAlwaysAuth: boolean;
-      npmAuthIdent: string | null;
-      npmAuthToken: string | null;
+      npmAlwaysAuth: boolean,
+      npmAuthIdent: string | null,
+      npmAuthToken: string | null,
     }>>;
   }
 }

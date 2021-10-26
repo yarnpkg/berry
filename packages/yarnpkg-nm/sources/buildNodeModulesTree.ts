@@ -21,7 +21,7 @@ export enum NodeModulesHoistingLimits {
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
-  dirList: Set<Filename>
+  dirList: Set<Filename>,
 };
 
 // The entry for a package within a node_modules
@@ -107,10 +107,10 @@ export const buildNodeModulesTree = (pnp: PnpApi, options: NodeModulesTreeOption
 const stringifyLocator = (locator: PhysicalPackageLocator): LocatorKey => `${locator.name}@${locator.reference}`;
 
 export type NodeModulesLocatorMap = Map<LocatorKey, {
-  target: PortablePath;
-  linkType: LinkType;
-  locations: Array<PortablePath>;
-  aliases: Array<string>;
+  target: PortablePath,
+  linkType: LinkType,
+  locations: Array<PortablePath>,
+  aliases: Array<string>,
 }>;
 
 export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLocatorMap => {

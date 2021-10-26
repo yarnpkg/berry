@@ -7,7 +7,7 @@ import * as formatUtils from './formatUtils';
 export type TreeNode = {
   label?: string,
   value?: formatUtils.Tuple,
-  children?: Array<TreeNode> | TreeMap;
+  children?: Array<TreeNode> | TreeMap,
 };
 
 export type TreeMap = {
@@ -15,7 +15,7 @@ export type TreeMap = {
 };
 
 export type TreeifyNode = {
-  [key: string]: TreeifyNode;
+  [key: string]: TreeifyNode,
 };
 
 export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {

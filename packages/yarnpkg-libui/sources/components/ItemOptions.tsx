@@ -19,7 +19,7 @@ export const ItemOptions = function <T>({
   options: Array<{value: T, label: string}>,
   value: T,
   onChange: (value: T) => void,
-  sizes?: Array<number>
+  sizes?: Array<number>,
 }) {
   // Our possible values are those that have been provided with a label so that
   // the user can see what they're selecting.

@@ -381,9 +381,9 @@ function createStream(report: Report, {prefix, interlaced}: {prefix: string | nu
 }
 
 type GetPrefixOptions = {
-  configuration: Configuration;
-  commandIndex: number;
-  verbose: boolean;
+  configuration: Configuration,
+  commandIndex: number,
+  verbose: boolean,
 };
 
 function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}: GetPrefixOptions) {
