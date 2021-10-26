@@ -206,15 +206,6 @@ class PnpmInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    await this.storeCleanup();
-
-    // Wait for the package installs to catch up
-    await this.asyncActions.wait(),
-
-    await removeIfEmpty(getNodeModulesLocation(this.opts.project));
-  }
-
-  private async storeCleanup() {
     const storeLocation = getStoreLocation(this.opts.project);
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`) {
@@ -240,6 +231,11 @@ class PnpmInstaller implements Installer {
 
       await removeIfEmpty(storeLocation);
     }
+
+    // Wait for the package installs to catch up
+    await this.asyncActions.wait(),
+
+    await removeIfEmpty(getNodeModulesLocation(this.opts.project));
   }
 }
 
