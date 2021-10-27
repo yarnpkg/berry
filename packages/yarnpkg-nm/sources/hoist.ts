@@ -986,7 +986,13 @@ const dumpDepTree = (tree: HoisterWorkTree) => {
       return ``;
 
     nodeCount++;
-    const dependencies = Array.from(pkg.dependencies.values()).sort((n1, n2) => n1.name.localeCompare(n2.name));
+    const dependencies = Array.from(pkg.dependencies.values()).sort((n1, n2) => {
+      if (n1.name === n2.name) {
+        return 0;
+      } else {
+        return n1.name > n2.name ? 1 : -1;
+      }
+    });
 
     let str = ``;
     parents.add(pkg);
