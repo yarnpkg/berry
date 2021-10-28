@@ -540,6 +540,30 @@ describe(`Commands`, () => {
         await expect(run(`workspaces`, `foreach`, `--since`, `--recursive`, `run`, `print`)).resolves.toMatchSnapshot();
       }),
     );
+
+    test(
+      `it should run on workspaces with matching binaries`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        },
+        {
+          plugins: [
+            require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
+          ],
+        },
+        async ({run}) => {
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `run`, `has-bin-entries`, `binary-executed`)).resolves.toMatchObject({
+            code: 0,
+            stdout: expect.stringContaining(`binary-executed`),
+          });
+        },
+      ),
+    );
   });
 });
 
