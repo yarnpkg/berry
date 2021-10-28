@@ -244,6 +244,13 @@ jobs:
         name: yarn-artifacts
         path: packages
 
+    # Apparently @babel/register is insanely slow inside the big-endian
+    # docker container, so we don't want to run yarn from sources at all.
+    - name: 'Set ignorePath to true'
+      run: |
+        node ./scripts/run-yarn.js config set ignorePath true
+      shell: bash
+
     # https://github.com/multiarch/qemu-user-static
     - name: 'Enable execution of multi-arch containers'
       run: |
@@ -252,5 +259,5 @@ jobs:
 
     - name: 'Run the basic integration test suite'
       run: |
-        docker run --rm --volume "$PWD:/berry" --workdir /berry s390x/node /bin/bash -c 'node -p "os.endianness()" && node ./scripts/run-yarn.js test:integration --maxWorkers=100% basic.test.js'
+        docker run --rm --volume "$PWD:/berry" --workdir /berry s390x/node /bin/bash -c 'node -p "os.endianness()" && node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100% basic.test.js'
       shell: bash
