@@ -51,7 +51,8 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_TIMERS`]: `false`,
         [`FORCE_COLOR`]: `0`,
         // Otherwise the output wouldn't be the same on CI vs non-CI
-        [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
+        [`YARN_ENABLE_INLINE_BUILDS`]: `true`,
+        [`YARN_PREFER_AGGREGATE_CACHE_INFO`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         // Otherwise tests fail on systems where this is globally set to true
