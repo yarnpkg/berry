@@ -251,13 +251,13 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log('foo')`);
+        await xfs.writeFilePromise(ppath.join(path, `index.ts` as Filename), ``);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await expect(run(`node`, `./index`)).rejects.toMatchObject({
+        await expect(run(`node`, `./index.ts`)).rejects.toMatchObject({
           code: 1,
-          stderr: expect.stringContaining(`Unknown file extension ""`),
+          stderr: expect.stringContaining(`Unknown file extension ".ts"`),
         });
       },
     ),
