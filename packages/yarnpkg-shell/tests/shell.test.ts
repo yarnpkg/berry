@@ -668,7 +668,7 @@ describe(`Shell`, () => {
         });
       });
 
-      it.only(`should support alternative arguments via \${ARG:+...}`, async () => {
+      it(`should support alternative arguments via \${ARG:+...}`, async () => {
         await expect(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
           [],
@@ -684,7 +684,7 @@ describe(`Shell`, () => {
         });
       });
 
-      it.only(`should support alternative arguments via \${N:+...}`, async () => {
+      it(`should support alternative arguments via \${N:+...}`, async () => {
         await expect(bufferResult(
           `echo "\${1:+hello world}"`,
         )).resolves.toMatchObject({
@@ -692,7 +692,7 @@ describe(`Shell`, () => {
         });
       });
 
-      it.only(`should support alternative default arguments`, async () => {
+      it(`should support alternative default arguments`, async () => {
         await expect(bufferResult(
           `echo "foo\${FOOBAR:+}bar"`,
           [],
