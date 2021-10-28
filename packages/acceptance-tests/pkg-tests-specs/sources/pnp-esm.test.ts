@@ -267,9 +267,9 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  // Tests the workaround for https://github.com/nodejs/node/issues/33226
+  // Tests https://github.com/nodejs/node/issues/33226
   test(
-    `it should not enter ESM mode just because the loader is present`,
+    `it should not load extensionless commonjs files as ESM`,
     makeTemporaryEnv(
       { },
       {
@@ -340,7 +340,7 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should work with dynamic imports in esm mode`,
+    `it should support dynamic imports in ESM mode`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -360,21 +360,20 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  // Requires the ESM loader to be loaded but currently that enters ESM
-  // mode and would test the incorrect code path
-  test.skip(
-    `it should work with dynamic imports in commonjs mode`,
+  test(
+    `it should support dynamic imports in commonjs mode`,
     makeTemporaryEnv(
       {
         dependencies: {
           "no-deps": `1.0.0`,
+          "is-number": `1.0.0`,
         },
       },
       {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import('no-deps').then(() => console.log(42))`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `require('no-deps');\nimport('is-number').then(() => console.log(42))`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 

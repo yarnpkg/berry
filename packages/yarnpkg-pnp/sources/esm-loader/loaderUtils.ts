@@ -48,6 +48,9 @@ export function getFileFormat(filepath: string): string | null {
         `Unknown file extension ".json" for ${filepath}`,
       );
     }
+    // Matching files without extensions deviates from Node's default
+    // behaviour but is a fix for https://github.com/nodejs/node/issues/33226
+    case ``:
     case `.js`: {
       const pkg = nodeUtils.readPackageScope(filepath);
       if (pkg) {
