@@ -230,3 +230,27 @@ jobs:
       shell: bash
       if: |
         always()
+
+  big-endian:
+    name: 'Big-endian debian w/ Node.js latest'
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: yarn-artifacts
+        path: packages
+
+    # https://github.com/multiarch/qemu-user-static
+    - name: 'Enable execution of multi-arch containers'
+      run: |
+        docker run --rm --privileged multiarch/qemu-user-static --reset --persistent yes
+      shell: bash
+
+    - name: 'Run the basic integration test suite'
+      run: |
+        docker run --rm --tty --volume "$PWD:/berry" --workdir /berry s390x/node /bin/bash -c 'node -p "os.endianness()" && node ./scripts/run-yarn.js test:integration --maxWorkers=100% basic.test.js'
+      shell: bash
