@@ -214,10 +214,9 @@ jobs:
       with:
         node-version: ${{matrix.node}}.x
 
-    - name: 'Enable corepack'
+    - name: 'Install pnpm'
       run: |
-        npm i -gf corepack
-        corepack enable
+        npm i -g pnpm
       shell: bash
 
     - uses: actions/download-artifact@v2
