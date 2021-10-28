@@ -109,9 +109,9 @@ export class IntegrationsFile {
 }
 
 type TemplateOptions = {
-  setupEnv?: boolean,
-  usePnpify?: boolean,
-  wrapModule?: string,
+  setupEnv?: boolean;
+  usePnpify?: boolean;
+  wrapModule?: string;
 };
 
 const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false, wrapModule}: TemplateOptions) => [

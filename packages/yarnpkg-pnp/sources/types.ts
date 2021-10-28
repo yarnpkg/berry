@@ -38,62 +38,63 @@ export type LocationLengthData = Array<number>;
 export type SerializedState = {
   // @eslint-ignore-next-line @typescript-eslint/naming-convention
   __info: Array<string>;
-  enableTopLevelFallback: boolean,
-  fallbackExclusionList: Array<[string, Array<string>]>,
-  fallbackPool: Array<[string, DependencyTarget]>,
-  ignorePatternData: string | null,
-  packageRegistryData: PackageRegistryData,
-  dependencyTreeRoots: Array<PhysicalPackageLocator>,
+  enableTopLevelFallback: boolean;
+  fallbackExclusionList: Array<[string, Array<string>]>;
+  fallbackPool: Array<[string, DependencyTarget]>;
+  ignorePatternData: string | null;
+  packageRegistryData: PackageRegistryData;
+  dependencyTreeRoots: Array<PhysicalPackageLocator>;
 };
 
 // This is what `makeApi` actually consumes
 export type RuntimeState = {
-  basePath: PortablePath,
-  enableTopLevelFallback: boolean,
-  fallbackExclusionList: Map<string, Set<string>>,
-  fallbackPool: Map<string, DependencyTarget>,
-  ignorePattern: RegExp | null,
+  basePath: PortablePath;
+  enableTopLevelFallback: boolean;
+  fallbackExclusionList: Map<string, Set<string>>;
+  fallbackPool: Map<string, DependencyTarget>;
+  ignorePattern: RegExp | null;
   packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>;
-  packageRegistry: PackageRegistry,
-  dependencyTreeRoots: Array<PhysicalPackageLocator>,
+  packageRegistry: PackageRegistry;
+  dependencyTreeRoots: Array<PhysicalPackageLocator>;
 };
 
 // This is what the generation functions take as parameter
 export type PnpSettings = {
   // Whether the top-level dependencies should be made available to all the
   // dependency tree as a fallback (default is true)
-  enableTopLevelFallback?: boolean,
+  enableTopLevelFallback?: boolean;
 
   // Which packages should never be allowed to use fallbacks, no matter what
-  fallbackExclusionList?: Array<PhysicalPackageLocator>,
+  fallbackExclusionList?: Array<PhysicalPackageLocator>;
 
   // Which packages should be made available through the fallback mechanism
-  fallbackPool?: Map<string, DependencyTarget>,
+  fallbackPool?: Map<string, DependencyTarget>;
 
   // Which paths shouldn't use PnP, even if they would otherwise be detected
   // as being owned by a package (legacy settings used to help people migrate
   // to PnP + workspaces when they weren't using either)
-  ignorePattern?: string | null,
+  ignorePattern?: string | null;
 
   // The set of packages to store within the PnP map
-  packageRegistry: PackageRegistry,
+  packageRegistry: PackageRegistry;
 
   // The shebang to add at the top of the file, can be any string you want (the
   // default value should be enough most of the time)
-  shebang?: string | null,
+  shebang?: string | null;
 
   // The following locators will be made available in the API through the
   // getDependencyTreeRoots function. They are typically the workspace
   // locators.
-  dependencyTreeRoots: Array<PhysicalPackageLocator>,
+  dependencyTreeRoots: Array<PhysicalPackageLocator>;
 };
 
 export type ResolveToUnqualifiedOptions = {
-  considerBuiltins?: boolean,
+  considerBuiltins?: boolean;
 };
 
 export type ResolveUnqualifiedOptions = {
-  extensions?: Array<string>,
+  extensions?: Array<string>;
+  conditions?: Set<string>;
 };
 
 export type ResolveRequestOptions =
@@ -101,20 +102,20 @@ export type ResolveRequestOptions =
   ResolveUnqualifiedOptions;
 
 export type PnpApi = {
-  VERSIONS: {std: number, [key: string]: number},
+  VERSIONS: {std: number, [key: string]: number};
 
-  topLevel: {name: null, reference: null},
-  getLocator: (name: string, referencish: string | [string, string]) => PhysicalPackageLocator,
+  topLevel: {name: null, reference: null};
+  getLocator: (name: string, referencish: string | [string, string]) => PhysicalPackageLocator;
 
-  getDependencyTreeRoots: () => Array<PhysicalPackageLocator>,
-  getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null,
-  findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null,
+  getDependencyTreeRoots: () => Array<PhysicalPackageLocator>;
+  getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null;
+  findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null;
 
-  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => NativePath | null,
-  resolveUnqualified: (unqualified: NativePath, opts?: ResolveUnqualifiedOptions) => NativePath,
-  resolveRequest: (request: string, issuer: NativePath | null, opts?: ResolveRequestOptions) => NativePath | null,
+  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => NativePath | null;
+  resolveUnqualified: (unqualified: NativePath, opts?: ResolveUnqualifiedOptions) => NativePath;
+  resolveRequest: (request: string, issuer: NativePath | null, opts?: ResolveRequestOptions) => NativePath | null;
 
   // Extension methods
-  resolveVirtual?: (p: NativePath) => NativePath | null,
-  getAllLocators?: () => Array<PhysicalPackageLocator>,
+  resolveVirtual?: (p: NativePath) => NativePath | null;
+  getAllLocators?: () => Array<PhysicalPackageLocator>;
 };

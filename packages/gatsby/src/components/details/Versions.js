@@ -41,7 +41,7 @@ export const Versions = ({versions}) => {
           {buttonText}
           <ReadMoreIcon
             src={IcoReadMore}
-            alt=""
+            alt={``}
             style={{transform: showMore ? `rotate(180deg) translateY(3px)` : `translateY(-1px)`}}
           />
         </ReadMoreButton>

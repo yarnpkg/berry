@@ -71,11 +71,8 @@ module.exports = function (_, opts) {
   const packageIterator = (request, basedir, getCandidates, opts) => {
     const pathsToTest = [basedir].concat(originalPaths);
     const resolution = runPnpResolutionOnArray(request, pathsToTest);
-    if (typeof resolution === `undefined`)
+    if (resolution == null)
       return getCandidates();
-
-    if (resolution === null)
-      return pathsToTest.map(file => path.join(file, request));
 
     return [resolution.unqualifiedPath];
   };
@@ -83,11 +80,8 @@ module.exports = function (_, opts) {
   const paths = (request, basedir, getNodeModulePaths, opts) => {
     const pathsToTest = [basedir].concat(originalPaths);
     const resolution = runPnpResolutionOnArray(request, pathsToTest);
-    if (typeof resolution === `undefined`)
-      return getNodeModulePaths();
-
-    if (resolution === null)
-      return pathsToTest;
+    if (resolution == null)
+      return getNodeModulePaths().concat(originalPaths);
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
@@ -116,7 +110,7 @@ module.exports = function (_, opts) {
 
   opts.paths = function (request, basedir, getNodeModulePaths, opts) {
     if (isInsideIterator)
-      return getNodeModulePaths();
+      return getNodeModulePaths().concat(originalPaths);
 
     return paths(request, basedir, getNodeModulePaths, opts);
   };

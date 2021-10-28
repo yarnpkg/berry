@@ -9,17 +9,32 @@ export interface Hooks {
     current: FetchResult | null,
     locator: Locator,
     opts: FetchOptions,
-  ) => Promise<FetchResult | null>,
+  ) => Promise<FetchResult | null>;
 }
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
+    changesetBaseRefs: Array<string>;
+    changesetIgnorePatterns: Array<string>;
     cloneConcurrency: number;
   }
 }
 
 const plugin: Plugin = {
   configuration: {
+    changesetBaseRefs: {
+      description: `The base git refs that the current HEAD is compared against when detecting changes. Supports git branches, tags, and commits.`,
+      type: SettingsType.STRING,
+      isArray: true,
+      isNullable: false,
+      default: [`master`, `origin/master`, `upstream/master`, `main`, `origin/main`, `upstream/main`],
+    },
+    changesetIgnorePatterns: {
+      description: `Array of glob patterns; files matching them will be ignored when fetching the changed files`,
+      type: SettingsType.STRING,
+      default: [],
+      isArray: true,
+    },
     cloneConcurrency: {
       description: `Maximal number of concurrent clones`,
       type: SettingsType.NUMBER,

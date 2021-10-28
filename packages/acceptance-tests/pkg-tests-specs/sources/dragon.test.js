@@ -546,4 +546,57 @@ describe(`Dragon tests`, () => {
       },
     ),
   );
+
+  for (const [nodeLinker, shouldHaveAccessToTheSameInstance] of [
+    [`pnp`, true],
+    [`pnpm`, true],
+    [`node-modules`, false],
+  ]) {
+    test(`it should pass the dragon test 11 with "nodeLinker: ${nodeLinker}"`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`aliased`]: `npm:dragon-test-11-a@1.0.0`,
+          },
+        },
+        {
+          nodeLinker,
+        },
+        async ({path, run, source}) => {
+          //
+          // . -> aliased (dragon-test-11-a) -> dragon-test-11-b --> dragon-test-11-a
+          //                                 --> does-not-matter
+          //
+          // First issue: https://github.com/yarnpkg/berry/issues/3630
+          //
+          // Yarn was throwing an "Assertion failed: Virtual packages shouldn't be encountered when virtualizing a branch"
+          // error only when aliased had a peer dependency on does-not-matter.
+          //
+          // Second issue:
+          //
+          // When aliased packages depended on packages that had peer dependencies on the package the alias resolved to,
+          // Yarn was providing the peer dependency under the aliased name instead of providing it under its true name.
+
+          await expect(run(`install`)).resolves.toBeTruthy();
+
+          // Make sure that both the root and dragon-test-11-b have access to the same instance.
+          // This is only possible with the PnP and pnpm linkers, because the node-modules linker
+          // can't fulfill the peer dependency promise. For the NM linker we test that it at least
+          // fulfills the require promise (installing dragon-test-11-a both under the aliased and original name).
+          await expect(source(`
+            (() => {
+              const {createRequire} = require(\`module\`);
+
+              const rootInstance = require.resolve(\`aliased\`);
+
+              const dragonTest11BInstance = createRequire(
+                createRequire(rootInstance).resolve(\`dragon-test-11-b\`)
+              ).resolve(\`dragon-test-11-a\`);
+
+              return rootInstance === dragonTest11BInstance;
+            })()
+        `)).resolves.toEqual(shouldHaveAccessToTheSameInstance);
+        },
+      ));
+  }
 });

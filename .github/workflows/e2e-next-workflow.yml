@@ -60,3 +60,5 @@ jobs:
         echo 'hello world!' | tee pages/text.txt
 
         yarn next build
+      if: |
+        always()

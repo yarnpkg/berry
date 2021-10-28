@@ -1,10 +1,14 @@
+import {execUtils}              from '@yarnpkg/core';
 import {Workspace, structUtils} from '@yarnpkg/core';
+import {PortablePath}           from '@yarnpkg/fslib';
 import {packUtils}              from '@yarnpkg/plugin-pack';
 import {createHash}             from 'crypto';
 import ssri                     from 'ssri';
 import {URL}                    from 'url';
 
-export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry}: {access: string | undefined, tag: string, registry: string}) {
+import {normalizeRegistry}      from './npmConfigUtils';
+
+export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: {access: string | undefined, tag: string, registry: string, gitHead?: string}) {
   const configuration = workspace.project.configuration;
 
   const ident = workspace.manifest.name!;
@@ -34,7 +38,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   // While the npm registry ignores the provided tarball URL, it's used by
   // other registries such as verdaccio.
   const tarballName = `${name}-${version}.tgz`;
-  const tarballURL = new URL(`${name}/-/${tarballName}`, registry);
+  const tarballURL = new URL(`${normalizeRegistry(registry)}/${name}/-/${tarballName}`);
 
   return {
     _id: name,
@@ -45,7 +49,6 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
         length: buffer.length,
       },
     },
-
     name,
     access,
 
@@ -61,6 +64,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
 
         name,
         version,
+        gitHead,
 
         dist: {
           shasum,
@@ -72,4 +76,15 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
       },
     },
   };
+}
+
+export async function getGitHead(workingDir: PortablePath) {
+  try {
+    const {stdout} = await execUtils.execvp(`git`, [`rev-parse`, `--revs-only`, `HEAD`], {cwd: workingDir});
+    if (stdout.trim() === ``)
+      return undefined;
+    return stdout.trim();
+  } catch {
+    return undefined;
+  }
 }

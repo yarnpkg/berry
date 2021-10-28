@@ -164,7 +164,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/pull/507
-  [`fork-ts-checker-webpack-plugin@*`, {
+  [`fork-ts-checker-webpack-plugin@<=6.3.4`, {
     peerDependencies: {
       eslint: `>= 6`,
       typescript: `>= 2.7`,
@@ -562,6 +562,145 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`winston-transport@<=4.4.0`, {
     dependencies: {
       logform: `^2.2.0`,
+    },
+  }],
+  // https://github.com/vire/jest-vue-preprocessor/pull/177
+  [`jest-vue-preprocessor@*`, {
+    dependencies: {
+      '@babel/core': `7.8.7`,
+      '@babel/template': `7.8.6`,
+    },
+    peerDependencies: {
+      pug: `^2.0.4`,
+    },
+    peerDependenciesMeta: {
+      pug: optionalPeerDep,
+    },
+  }],
+  // https://github.com/rt2zz/redux-persist/pull/1336
+  [`redux-persist@*`, {
+    peerDependencies: {
+      react: `>=16`,
+    },
+    peerDependenciesMeta: {
+      react: optionalPeerDep,
+    },
+  }],
+  // https://github.com/paixaop/node-sodium/pull/159
+  [`sodium@>=3`, {
+    dependencies: {
+      'node-gyp': `^3.8.0`,
+    },
+  }],
+  // https://github.com/gajus/babel-plugin-graphql-tag/pull/63
+  [`babel-plugin-graphql-tag@<=3.1.0`, {
+    peerDependencies: {
+      graphql: `^14.0.0 || ^15.0.0`,
+    },
+  }],
+  // https://github.com/microsoft/playwright/pull/8501
+  [`@playwright/test@<=1.14.1`, {
+    dependencies: {
+      'jest-matcher-utils': `^26.4.2`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/32954
+  ...[
+    `babel-plugin-remove-graphql-queries@<3.14.0-next.1`,
+    `babel-preset-gatsby-package@<1.14.0-next.1`,
+    `create-gatsby@<1.14.0-next.1`,
+    `gatsby-admin@<0.24.0-next.1`,
+    `gatsby-cli@<3.14.0-next.1`,
+    `gatsby-core-utils@<2.14.0-next.1`,
+    `gatsby-design-tokens@<3.14.0-next.1`,
+    `gatsby-legacy-polyfills@<1.14.0-next.1`,
+    `gatsby-plugin-benchmark-reporting@<1.14.0-next.1`,
+    `gatsby-plugin-graphql-config@<0.23.0-next.1`,
+    `gatsby-plugin-image@<1.14.0-next.1`,
+    `gatsby-plugin-mdx@<2.14.0-next.1`,
+    `gatsby-plugin-netlify-cms@<5.14.0-next.1`,
+    `gatsby-plugin-no-sourcemaps@<3.14.0-next.1`,
+    `gatsby-plugin-page-creator@<3.14.0-next.1`,
+    `gatsby-plugin-preact@<5.14.0-next.1`,
+    `gatsby-plugin-preload-fonts@<2.14.0-next.1`,
+    `gatsby-plugin-schema-snapshot@<2.14.0-next.1`,
+    `gatsby-plugin-styletron@<6.14.0-next.1`,
+    `gatsby-plugin-subfont@<3.14.0-next.1`,
+    `gatsby-plugin-utils@<1.14.0-next.1`,
+    `gatsby-recipes@<0.25.0-next.1`,
+    `gatsby-source-shopify@<5.6.0-next.1`,
+    `gatsby-source-wikipedia@<3.14.0-next.1`,
+    `gatsby-transformer-screenshot@<3.14.0-next.1`,
+    `gatsby-worker@<0.5.0-next.1`,
+  ].map<[string, PackageExtensionData]>(descriptorString => [
+    descriptorString,
+    {
+      dependencies: {
+        '@babel/runtime': `^7.14.8`,
+      },
+    },
+  ]),
+  // Originally fixed in https://github.com/gatsbyjs/gatsby/pull/31837 (https://github.com/gatsbyjs/gatsby/commit/6378692d7ec1eb902520720e27aca97e8eb42c21)
+  // Version updated and added in https://github.com/gatsbyjs/gatsby/pull/32928
+  [`gatsby-core-utils@<2.14.0-next.1`, {
+    dependencies: {
+      got: `8.3.2`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/32861
+  [`gatsby-plugin-gatsby-cloud@<=3.1.0-next.0`, {
+    dependencies: {
+      'gatsby-core-utils': `^2.13.0-next.0`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/31837
+  [`gatsby-plugin-gatsby-cloud@<=3.2.0-next.1`, {
+    peerDependencies: {
+      webpack: `*`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/31837
+  [`babel-plugin-remove-graphql-queries@<=3.14.0-next.1`, {
+    dependencies: {
+      'gatsby-core-utils': `^2.8.0-next.1`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/32861
+  [`gatsby-plugin-netlify@3.13.0-next.1`, {
+    dependencies: {
+      'gatsby-core-utils': `^2.13.0-next.0`,
+    },
+  }],
+  // https://github.com/paul-soporan/clipanion-v3-codemod/pull/1
+  [`clipanion-v3-codemod@<=0.2.0`, {
+    peerDependencies: {
+      jscodeshift: `^0.11.0`,
+    },
+  }],
+  // https://github.com/FormidableLabs/react-live/pull/180
+  [`react-live@*`, {
+    peerDependencies: {
+      'react-dom': `*`,
+      react: `*`,
+    },
+  }],
+  // https://github.com/webpack/webpack/pull/11190
+  [`webpack@<4.44.1`, {
+    peerDependenciesMeta: {
+      'webpack-cli': optionalPeerDep,
+      'webpack-command': optionalPeerDep,
+    },
+  }],
+  // https://github.com/webpack/webpack/pull/11189
+  [`webpack@<5.0.0-beta.23`, {
+    peerDependenciesMeta: {
+      'webpack-cli': optionalPeerDep,
+    },
+  }],
+  // https://github.com/webpack/webpack-dev-server/pull/2396
+  [`webpack-dev-server@<3.10.2`, {
+    peerDependenciesMeta: {
+      'webpack-cli': optionalPeerDep,
     },
   }],
 ];

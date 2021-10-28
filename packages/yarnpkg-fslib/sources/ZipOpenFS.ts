@@ -44,17 +44,17 @@ export const getArchivePart = (path: string, extension: string) => {
 };
 
 export type ZipOpenFSOptions = {
-  baseFs?: FakeFS<PortablePath>,
-  filter?: RegExp | null,
-  libzip: Libzip | (() => Libzip),
-  maxOpenFiles?: number,
-  readOnlyArchives?: boolean,
-  useCache?: boolean,
+  baseFs?: FakeFS<PortablePath>;
+  filter?: RegExp | null;
+  libzip: Libzip | (() => Libzip);
+  maxOpenFiles?: number;
+  readOnlyArchives?: boolean;
+  useCache?: boolean;
   /**
    * Maximum age in ms.
    * ZipFS instances are pruned from the cache if they aren't accessed within this amount of time.
    */
-  maxAge?: number,
+  maxAge?: number;
   /**
    * Which file extensions will be interpreted as zip files. Useful for supporting other formats
    * packaged as zips, such as .docx.
@@ -508,7 +508,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(oldP, () => {
       return this.makeCallSync(newP, () => {
         return this.baseFs.renameSync(oldP, newP);
-      }, async () => {
+      }, () => {
         throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
       });
     }, (zipFsO, {subPath: subPathO}) => {

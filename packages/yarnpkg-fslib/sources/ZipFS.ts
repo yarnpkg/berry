@@ -19,15 +19,15 @@ export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
 
 export type ZipBufferOptions = {
-  libzip: Libzip,
-  readOnly?: boolean,
-  stats?: Stats,
-  level?: ZipCompression,
+  libzip: Libzip;
+  readOnly?: boolean;
+  stats?: Stats;
+  level?: ZipCompression;
 };
 
 export type ZipPathOptions = ZipBufferOptions & {
-  baseFs?: FakeFS<PortablePath>,
-  create?: boolean,
+  baseFs?: FakeFS<PortablePath>;
+  create?: boolean;
 };
 
 function toUnixTimestamp(time: Date | string | number) {
@@ -382,7 +382,7 @@ export class ZipFS extends BasePortableFakeFS {
     return this.readSync(fd, buffer, offset, length, position);
   }
 
-  readSync(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {
+  readSync(fd: number, buffer: Buffer, offset: number = 0, length: number = buffer.byteLength, position: number | null = -1) {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`)
       throw errors.EBADF(`read`);
@@ -1509,13 +1509,13 @@ export class ZipFS extends BasePortableFakeFS {
   watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;
   watchFile(p: PortablePath, opts: WatchFileOptions, cb: WatchFileCallback): StatWatcher;
   watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const resolvedP = ppath.resolve(PortablePath.root, p);
 
     return watchFile(this, resolvedP, a, b);
   }
 
   unwatchFile(p: PortablePath, cb?: WatchFileCallback): void {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const resolvedP = ppath.resolve(PortablePath.root, p);
 
     return unwatchFile(this, resolvedP, cb);
   }

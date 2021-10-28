@@ -1,0 +1,6 @@
+{
+  "name": "native-bar-x64",
+  "version": "1.0.0",
+  "os": ["bar"],
+  "cpu": ["x64"]
+}

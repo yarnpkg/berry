@@ -54,13 +54,13 @@ If you're using Zero-Installs:
 If you're not using Zero-Installs:
 
 ```gitignore
+.pnp.*
 .yarn/*
 !.yarn/patches
-!.yarn/releases
 !.yarn/plugins
+!.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.pnp.*
 ```
 
 If you're interested to know more about each of these files:

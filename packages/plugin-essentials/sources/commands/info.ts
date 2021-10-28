@@ -227,7 +227,7 @@ export default class InfoCommand extends BaseCommand {
     const infoTree: treeUtils.TreeNode = {children: infoTreeChildren};
 
     const fetcher = configuration.makeFetcher();
-    const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), skipIntegrityCheck: true};
+    const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), cacheOptions: {skipIntegrityCheck: true}, skipIntegrityCheck: true};
 
     const builtinInfoBuilders: Array<Exclude<Hooks['fetchPackageInfo'], undefined>> = [
       // Manifest fields
@@ -255,8 +255,13 @@ export default class InfoCommand extends BaseCommand {
         if (!extra.has(`cache`))
           return;
 
+        const cacheOptions = {
+          mockedPackages: project.disabledLocators,
+          unstablePackages: project.conditionalLocators,
+        };
+
         const checksum = project.storedChecksums.get(pkg.locatorHash) ?? null;
-        const cachePath = cache.getLocatorPath(pkg, checksum);
+        const cachePath = cache.getLocatorPath(pkg, checksum, cacheOptions);
 
         let stat;
         if (cachePath !== null) {

@@ -20,8 +20,8 @@ export async function writeTestPackage(path: PortablePath, manifest: Manifest, f
 }
 
 export type Assertions = {
-  pass?: Array<[/*request: */string, /*resolved: */string]>,
-  fail?: Array<[/*request: */string, /*error: */string | {message: string, code?: string, pnpCode?: string}]>,
+  pass?: Array<[/*request: */string, /*resolved: */string]>;
+  fail?: Array<[/*request: */string, /*error: */string | {message: string, code?: string, pnpCode?: string}]>;
 };
 
 export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<Manifest, 'name'>, files: Array<string>, {pass, fail}: Assertions) {
@@ -876,5 +876,33 @@ describe(`"exports" field`, () => {
     async () => {
       expect(require.resolve(`@yarnpkg/monorepo/.yarn/sdks/typescript/lib/tsserver.js`)).toStrictEqual(npath.join(__dirname, `../../../../.yarn/sdks/typescript/lib/tsserver.js`));
     },
+  );
+
+  test(
+    `pnpapi with exports`,
+    makeTemporaryEnv({
+      name: `pkg`,
+      exports: {
+        [`.`]: `./main.js`,
+
+        // require.resolve(`pnpapi`) shouldn't be remappable
+        [`pnpapi`]: `./pnpapi.js`,
+        [`.pnp.cjs`]: `./pnpapi.js`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await xfs.writeFilePromise(`${path}/main.js` as PortablePath, ``);
+      await xfs.writeFilePromise(`${path}/pnpapi.js` as PortablePath, `module.exports = 'pnpapi.js';`);
+
+      // require goes through Module._load which doesn't call resolveRequest if the request is `pnpapi`
+      await expect(source(`require('pnpapi')`)).resolves.toHaveProperty(`VERSIONS`);
+
+      // require.resolve goes through Module._resolveFilename which calls resolveRequest
+      await expect(source(`require.resolve('pnpapi')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/.pnp.cjs`));
+
+      await expect(source(`require('pnpapi').resolveToUnqualified('pnpapi', null)`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/.pnp.cjs`));
+      await expect(source(`require('pnpapi').resolveRequest('pnpapi', null)`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/.pnp.cjs`));
+    }),
   );
 });

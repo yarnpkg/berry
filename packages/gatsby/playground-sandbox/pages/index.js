@@ -1,8 +1,7 @@
 import Head                from 'next/head';
 import {useRef, useEffect} from 'react';
 
-// TODO: replace with `https://yarnpkg.com`
-const WEBSITE_URL = `https://deploy-preview-1193--yarn2.netlify.com`;
+const WEBSITE_URL = `https://yarnpkg.com`;
 
 const Home = () => {
   const iframeEl = useRef(null);
@@ -12,7 +11,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div className={`container`}>
       <Head>
         <title>Sherlock Playground</title>
       </Head>
@@ -20,12 +19,12 @@ const Home = () => {
       <main>
         <iframe
           ref={iframeEl}
-          title="playground"
+          title={`playground`}
           src={`${WEBSITE_URL}/playground/frame`}
-          allow="fullscreen"
-          width="100%"
-          height="100%"
-          frameBorder="0"
+          allow={`fullscreen`}
+          width={`100%`}
+          height={`100%`}
+          frameBorder={`0`}
         />
       </main>
     </div>

@@ -285,7 +285,7 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The platform ${process.platform} is incompatible with this module, link skipped.`));
+        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, link skipped.`));
 
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
@@ -341,8 +341,6 @@ describe(`Node_Modules`, () => {
           name: `no-deps-bins`,
           version: `1.0.0`,
         });
-        // We must not create self-reference directory 'node_modules/no-deps2/node_modules/no-deps'
-        await expect(xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).resolves.toEqual(false);
       },
     ),
   );
@@ -507,6 +505,59 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep` as PortablePath)).toEqual(true);
         // workspace symlink should NOT be hoisted to the top
         expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
+      },
+    ),
+  );
+
+  test(`should respect self references settings`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmSelfReferences: false,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+          installConfig: {
+            selfReferences: true,
+          },
+        });
+        await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
+          name: `ws2`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(false);
+      },
+    ),
+  );
+
+  test(`should not create self-reference symlinks for workspaces excluded from focus`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`)],
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+        });
+        await writeJson(npath.toPortablePath(`${path}/ws2/package.json`), {
+          name: `ws2`,
+        });
+
+        await run(`workspaces`, `focus`, `ws2`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(true);
       },
     ),
   );
@@ -690,19 +741,17 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
           name: `foo`,
-          version: `1.0.0`,
           workspaces: [`bar`],
           dependencies: {
+            bar: `workspace:*`,
             'no-deps': `1.0.0`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/foo/bar/package.json`), {
           name: `bar`,
-          version: `1.0.0`,
-          workspaces: [`bar`],
           peerDependencies: {
             'no-deps': `*`,
           },
@@ -1339,13 +1388,13 @@ describe(`Node_Modules`, () => {
 
 
   test(
-    `it should fallback to dependencies if the parent doesn't provide the peer dependency`,
+    `should fallback to dependencies if the parent doesn't provide the peer dependency`,
     makeTemporaryEnv(
       {},
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({path, run}) => {
         const appPath = ppath.join(path, `lib-1` as Filename);
         const libPath = ppath.join(path, `lib-2` as Filename);
 
@@ -1378,6 +1427,111 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         await expect(xfs.existsPromise(ppath.join(path, `node_modules/no-deps` as PortablePath))).resolves.toEqual(true);
+      },
+    ),
+  );
+
+  it(`should not create self-referencing symlinks for anonymous workspaces`,
+    makeTemporaryEnv(
+      {
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        const entries = await xfs.readdirPromise(ppath.join(path, `node_modules` as Filename), {withFileTypes: true});
+        let symlinkCount = 0;
+        for (const entry of entries) {
+          if (entry.isSymbolicLink()) {
+            symlinkCount++;
+          }
+        }
+
+        expect(symlinkCount).toBe(0);
+      },
+    ),
+  );
+
+  it(`should properly hoist nested workspaces`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`, `ws/nested1`, `ws/nested1/nested2`],
+        dependencies: {
+          ws: `workspace:*`,
+          nested1: `workspace:*`,
+          nested2: `workspace:*`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirpPromise(ppath.join(path, `ws/nested1/nested2` as PortablePath));
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}` as PortablePath), {
+          name: `ws`,
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/${Filename.manifest}` as PortablePath), {
+          name: `nested1`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/nested2/${Filename.manifest}` as PortablePath), {
+          name: `nested2`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
+        await expect(source(`require('module').createRequire(require.resolve('nested1/package.json') + '/..')('no-deps')`)).resolves.toMatchObject({
+          version: `2.0.0`,
+        });
+      },
+    ),
+  );
+
+  it(`should install project when portal is pointing to a workspace`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirpPromise(ppath.join(path, `ws1` as PortablePath));
+        await xfs.writeJsonPromise(ppath.join(path, `ws1/${Filename.manifest}` as PortablePath), {
+          name: `ws1`,
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+        await xfs.mkdirpPromise(ppath.join(path, `ws2` as PortablePath));
+        await xfs.writeJsonPromise(ppath.join(path, `ws2/${Filename.manifest}` as PortablePath), {
+          name: `ws2`,
+          devDependencies: {
+            [`ws1`]: `portal:../ws1`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
       },
     ),
   );

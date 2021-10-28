@@ -33,8 +33,8 @@ export const CorePlugin: Plugin = {
     },
 
     validateProject: async (project: Project, report: {
-      reportWarning: (name: MessageName, text: string) => void,
-      reportError: (name: MessageName, text: string) => void,
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
     }) => {
       for (const workspace of project.workspaces) {
         const workspaceName = structUtils.prettyWorkspace(project.configuration, workspace);
@@ -49,8 +49,8 @@ export const CorePlugin: Plugin = {
     },
 
     validateWorkspace: async (workspace: Workspace, report: {
-      reportWarning: (name: MessageName, text: string) => void,
-      reportError: (name: MessageName, text: string) => void,
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
     }) => {
       // Validate manifest
       const {manifest} = workspace;

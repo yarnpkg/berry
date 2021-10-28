@@ -1,0 +1,6 @@
+{
+  "name": "native-foo-x86",
+  "version": "1.0.0",
+  "os": ["foo"],
+  "cpu": ["x86"]
+}

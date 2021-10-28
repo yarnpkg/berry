@@ -45,14 +45,14 @@ export const Usage = ({
     <h1>Usage</h1>
     <dl>
       <Di
-        icon="dependencies"
+        icon={`dependencies`}
         {...deps({
           title: `Dependencies`,
           dependencies,
         })}
       />
       <Di
-        icon="devdependencies"
+        icon={`devdependencies`}
         {...deps({
           title: `DevDependencies`,
           dependencies: devDependencies,
@@ -60,10 +60,10 @@ export const Usage = ({
       />
       {packageJSONLink && (
         <Di
-          icon="package-json"
-          title="Packages"
+          icon={`package-json`}
+          title={`Packages`}
           description={
-            <a target="_blank" rel="noopener noreferrer" href={packageJSONLink}>
+            <a target={`_blank`} rel={`noopener noreferrer`} href={packageJSONLink}>
               see package.json
             </a>
           }
@@ -71,12 +71,12 @@ export const Usage = ({
       )}
       {bundlesize && (
         <Di
-          icon="download-size"
-          title="Size in browser"
+          icon={`download-size`}
+          title={`Size in browser`}
           description={
             <a
-              target="_blank"
-              rel="noopener noreferrer"
+              target={`_blank`}
+              rel={`noopener noreferrer`}
               href={bundlesize.href}
               title={`size: ${bundlesize.size}, gzip: ${bundlesize.gzip}`}
             >

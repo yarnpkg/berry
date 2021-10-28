@@ -6,20 +6,20 @@ import semver                                                                   
 const WORKSPACE_PROTOCOL = `workspace:`;
 
 export type Suggestion = {
-  descriptor: Descriptor,
-  name: string,
-  reason: string,
+  descriptor: Descriptor;
+  name: string;
+  reason: string;
 };
 
 export type NullableSuggestion = {
-  descriptor: Descriptor | null,
-  name: string,
-  reason: string,
+  descriptor: Descriptor | null;
+  name: string;
+  reason: string;
 };
 
 export type Results = {
-  suggestions: Array<NullableSuggestion>,
-  rejections: Array<Error>,
+  suggestions: Array<NullableSuggestion>;
+  rejections: Array<Error>;
 };
 
 export enum Target {
@@ -72,7 +72,7 @@ export enum Strategy {
   CACHE = `cache`,
 }
 
-export function getModifier(flags: {exact: boolean; caret: boolean; tilde: boolean}, project: Project): Modifier {
+export function getModifier(flags: {exact: boolean, caret: boolean, tilde: boolean}, project: Project): Modifier {
   if (flags.exact)
     return Modifier.EXACT;
   if (flags.caret)
@@ -118,8 +118,8 @@ export function makeWorkspaceDescriptor(workspace: Workspace, modifier: Modifier
 
 export async function findProjectDescriptors(ident: Ident, {project, target}: {project: Project, target: Target}) {
   const matches: Map<DescriptorHash, {
-    descriptor: Descriptor,
-    locators: Array<Locator>,
+    descriptor: Descriptor;
+    locators: Array<Locator>;
   }> = new Map();
 
   const getDescriptorEntry = (descriptor: Descriptor) => {
@@ -360,7 +360,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const fetcher = project.configuration.makeFetcher();
   const resolver = project.configuration.makeResolver();
 
-  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, skipIntegrityCheck: true};
+  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, cacheOptions: {skipIntegrityCheck: true}, skipIntegrityCheck: true};
   const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
   // The descriptor has to be bound for the resolvers that need a parent locator. (e.g. FileResolver)
