@@ -252,5 +252,5 @@ jobs:
 
     - name: 'Run the basic integration test suite'
       run: |
-        docker run --rm --tty --volume "$PWD:/berry" --workdir /berry s390x/node /bin/bash -c 'node -p "os.endianness()" && node ./scripts/run-yarn.js test:integration --maxWorkers=100% basic.test.js'
+        docker run --rm --volume "$PWD:/berry" --workdir /berry s390x/node /bin/bash -c 'node -p "os.endianness()" && node ./scripts/run-yarn.js test:integration --maxWorkers=100% basic.test.js'
       shell: bash
