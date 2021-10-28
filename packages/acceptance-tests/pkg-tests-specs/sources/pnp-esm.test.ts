@@ -142,57 +142,6 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should support named exports in commonjs files`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          'no-deps-exports': `1.0.0`,
-        },
-        type: `module`,
-      },
-      async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
-
-        await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
-          `import {foo} from 'no-deps-exports';\nconsole.log(foo)`,
-        );
-
-        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `42\n`,
-        });
-      },
-    ),
-  );
-
-  test(
-    `it should always set default as module.exports when importing a commonjs file`,
-    makeTemporaryEnv(
-      {
-        type: `module`,
-      },
-      async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
-
-        await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
-          `import foo from './foo.cjs';\nconsole.log(foo)`,
-        );
-        await xfs.writeFilePromise(
-          ppath.join(path, `foo.cjs` as Filename),
-          `module.exports.default = 42`,
-        );
-
-        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `{ default: 42 }\n`,
-        });
-      },
-    ),
-  );
-
-  test(
     `it should respect exports`,
     makeTemporaryEnv(
       {
