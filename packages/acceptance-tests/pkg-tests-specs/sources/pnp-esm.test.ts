@@ -1,4 +1,4 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -285,37 +285,19 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should enter ESM mode when entrypoint is ESM`,
+    `it should support ESM binaries`,
     makeTemporaryEnv(
       {
-        workspaces: [`workspace`],
         dependencies: {
-          pkg: `workspace:*`,
+          'no-deps-bins-esm': `1.0.0`,
         },
       },
       async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `workspace` as PortablePath));
-        await xfs.writeJsonPromise(ppath.join(path, `workspace/package.json` as PortablePath), {
-          name: `pkg`,
-          type: `module`,
-          bin: `index.mjs`,
-          peerDependencies: {
-            'no-deps': `*`,
-          },
-        });
-        await xfs.writeFilePromise(ppath.join(path, `workspace/index.mjs` as Filename), `import 'fs'; console.log('foo')`);
-
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        // Ensure path is virtual (ie node can't find it by default)
-        await expect(run(`bin`, `pkg`)).resolves.toMatchObject({
+        await expect(run(`no-deps-bins-esm`)).resolves.toMatchObject({
           code: 0,
-          stdout: expect.stringContaining(`__virtual__`),
-        });
-
-        await expect(run(`pkg`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `foo\n`,
+          stdout: `42\n`,
         });
       },
     ),
