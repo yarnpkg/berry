@@ -128,8 +128,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     const cacheEntry = entry.cache[modulePath] as PatchedModule;
     if (cacheEntry) {
-      // When a dynamic import is used in CJS files Node adds the module
-      // to the cache but doesn't load it so we do it here.
+      // When the Node ESM loader encounters CJS modules it adds them
+      // to the cache but doesn't load them so we do that here.
       //
       // Keep track of and check if the module is already loading to
       // handle circular requires.
@@ -139,6 +139,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
         try {
           cacheEntry.isLoading = true;
+
+          // The main module is exposed as a global variable
+          if (isMain) {
+            process.mainModule = cacheEntry;
+            cacheEntry.id = `.`;
+          }
+
           cacheEntry.load(modulePath);
         } finally {
           cacheEntry.isLoading = false;
@@ -155,8 +162,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     entry.cache[modulePath] = module;
 
-    // The main module is exposed as global variable
-
+    // The main module is exposed as a global variable
     if (isMain) {
       process.mainModule = module;
       module.id = `.`;

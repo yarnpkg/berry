@@ -384,4 +384,33 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+
+  test(
+    `it should set the main module`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `
+            console.log({
+              require: typeof require,
+              main: require.main === module,
+              mainModule: process.mainModule === module,
+            });
+          `,
+        );
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `{ require: 'function', main: true, mainModule: true }\n`,
+        });
+      },
+    ),
+  );
 });
