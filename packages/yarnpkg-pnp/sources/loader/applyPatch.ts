@@ -126,7 +126,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = entry.cache[modulePath] as PatchedModule;
+    const cacheEntry = entry.cache[modulePath] as PatchedModule | undefined;
     if (cacheEntry) {
       // When the Node ESM loader encounters CJS modules it adds them
       // to the cache but doesn't load them so we do that here.
