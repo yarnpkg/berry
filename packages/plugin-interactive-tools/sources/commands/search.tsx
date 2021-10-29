@@ -37,33 +37,33 @@ export default class SearchCommand extends BaseCommand {
 
     const Prompt = () => {
       return (
-        <Box flexDirection="row">
-          <Box flexDirection="column" width={48}>
+        <Box flexDirection={`row`}>
+          <Box flexDirection={`column`} width={48}>
             <Box>
               <Text>
-                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to move between packages.
+                Press <Text bold color={`cyanBright`}>{`<up>`}</Text>/<Text bold color={`cyanBright`}>{`<down>`}</Text> to move between packages.
               </Text>
             </Box>
             <Box>
               <Text>
-                Press <Text bold color="cyanBright">{`<space>`}</Text> to select a package.
+                Press <Text bold color={`cyanBright`}>{`<space>`}</Text> to select a package.
               </Text>
             </Box>
             <Box>
               <Text>
-                Press <Text bold color="cyanBright">{`<space>`}</Text> again to change the target.
+                Press <Text bold color={`cyanBright`}>{`<space>`}</Text> again to change the target.
               </Text>
             </Box>
           </Box>
-          <Box flexDirection="column">
+          <Box flexDirection={`column`}>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install the selected packages.
+                Press <Text bold color={`cyanBright`}>{`<enter>`}</Text> to install the selected packages.
               </Text>
             </Box>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+                Press <Text bold color={`cyanBright`}>{`<ctrl+c>`}</Text> to abort.
               </Text>
             </Box>
           </Box>
@@ -73,14 +73,14 @@ export default class SearchCommand extends BaseCommand {
 
     const SearchColumnNames = () => {
       return <>
-        <Box width={15}><Text bold underline color="gray">Owner</Text></Box>
-        <Box width={11}><Text bold underline color="gray">Version</Text></Box>
-        <Box width={10}><Text bold underline color="gray">Downloads</Text></Box>
+        <Box width={15}><Text bold underline color={`gray`}>Owner</Text></Box>
+        <Box width={11}><Text bold underline color={`gray`}>Version</Text></Box>
+        <Box width={10}><Text bold underline color={`gray`}>Downloads</Text></Box>
       </>;
     };
 
     const SelectedColumnNames = () => {
-      return <Box width={17}><Text bold underline color="gray">Target</Text></Box>;
+      return <Box width={17}><Text bold underline color={`gray`}>Target</Text></Box>;
     };
 
     const HitEntry = ({hit, active}: {hit: AlgoliaPackage, active: boolean}) => {
@@ -112,17 +112,17 @@ export default class SearchCommand extends BaseCommand {
       return (
         <Box>
           <Box width={45}>
-            <Text bold wrap="wrap">
+            <Text bold wrap={`wrap`}>
               {prettyIdent}
             </Text>
           </Box>
           <Box width={14} marginLeft={1}>
-            <Text bold wrap="truncate">
+            <Text bold wrap={`truncate`}>
               {hit.owner.name}
             </Text>
           </Box>
           <Box width={10} marginLeft={1}>
-            <Text italic wrap="truncate">
+            <Text italic wrap={`truncate`}>
               {hit.version}
             </Text>
           </Box>
@@ -230,7 +230,7 @@ export default class SearchCommand extends BaseCommand {
               loop={false}
               children={hits.map(hit => <HitEntry key={hit.name} hit={hit} active={false} />)}
               willReachEnd={fetchNextPageHits}
-            /> : <Text color="gray">Start typing...</Text>
+            /> : <Text color={`gray`}>Start typing...</Text>
           }
           <Box flexDirection={`row`} marginTop={1}>
             <Box width={49}>
@@ -241,7 +241,7 @@ export default class SearchCommand extends BaseCommand {
           {selectedPackages.length ?
             selectedPackages.map(
               name => <SelectedEntry key={name} name={name} active={false}/>,
-            ) : <Text color="gray">No selected packages...</Text>
+            ) : <Text color={`gray`}>No selected packages...</Text>
           }
           <PoweredByAlgolia />
         </Box>

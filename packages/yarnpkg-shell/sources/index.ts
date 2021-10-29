@@ -18,15 +18,15 @@ export {globUtils, ShellError};
 export type Glob = globUtils.Glob;
 
 export type UserOptions = {
-  baseFs: FakeFS<PortablePath>,
-  builtins: {[key: string]: ShellBuiltin},
-  cwd: PortablePath,
-  env: {[key: string]: string | undefined},
-  stdin: Readable | null,
-  stdout: Writable,
-  stderr: Writable,
-  variables: {[key: string]: string},
-  glob: globUtils.Glob,
+  baseFs: FakeFS<PortablePath>;
+  builtins: {[key: string]: ShellBuiltin};
+  cwd: PortablePath;
+  env: {[key: string]: string | undefined};
+  stdin: Readable | null;
+  stdout: Writable;
+  stderr: Writable;
+  variables: {[key: string]: string};
+  glob: globUtils.Glob;
 };
 
 export type ShellBuiltin = (
@@ -36,25 +36,25 @@ export type ShellBuiltin = (
 ) => Promise<number>;
 
 export type ShellOptions = {
-  args: Array<string>,
-  baseFs: FakeFS<PortablePath>,
-  builtins: Map<string, ShellBuiltin>,
-  initialStdin: Readable,
-  initialStdout: Writable,
-  initialStderr: Writable,
-  glob: globUtils.Glob,
+  args: Array<string>;
+  baseFs: FakeFS<PortablePath>;
+  builtins: Map<string, ShellBuiltin>;
+  initialStdin: Readable;
+  initialStdout: Writable;
+  initialStderr: Writable;
+  glob: globUtils.Glob;
 };
 
 export type ShellState = {
-  cwd: PortablePath,
-  environment: {[key: string]: string},
-  exitCode: number | null,
-  procedures: {[key: string]: ProcessImplementation},
-  stdin: Readable,
-  stdout: Writable,
-  stderr: Writable,
-  variables: {[key: string]: string},
-  nextBackgroundJobIndex: number,
+  cwd: PortablePath;
+  environment: {[key: string]: string};
+  exitCode: number | null;
+  procedures: {[key: string]: ProcessImplementation};
+  stdin: Readable;
+  stdout: Writable;
+  stderr: Writable;
+  variables: {[key: string]: string};
+  nextBackgroundJobIndex: number;
   backgroundJobs: Array<Promise<unknown>>;
 };
 

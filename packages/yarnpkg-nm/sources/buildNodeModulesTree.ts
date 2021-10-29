@@ -21,20 +21,20 @@ export enum NodeModulesHoistingLimits {
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
-  dirList: Set<Filename>
+  dirList: Set<Filename>;
 };
 
 // The entry for a package within a node_modules
 export type NodeModulesPackageNode = {
-  locator: LocatorKey,
+  locator: LocatorKey;
   // The source path. Note that the virtual paths have been resolved/lost!
-  target: PortablePath,
+  target: PortablePath;
   // Hard links are copies of the target; soft links are symlinks to it
-  linkType: LinkType,
+  linkType: LinkType;
   // Contains ["node_modules"] if there's nested n_m entries
-  dirList?: undefined,
-  nodePath: string,
-  aliases: Array<string>,
+  dirList?: undefined;
+  nodePath: string;
+  aliases: Array<string>;
 };
 
 /**
@@ -177,7 +177,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   const workspaceLikeLocators = new Map<PortablePath, PhysicalPackageLocator>();
 
   const seen = new Set();
-  const visit = (locator: PhysicalPackageLocator) => {
+  const visit = (locator: PhysicalPackageLocator, parentLocator: PhysicalPackageLocator | null) => {
     const locatorKey = stringifyLocator(locator);
     if (seen.has(locatorKey))
       return;
@@ -186,13 +186,21 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
 
     const pkg = pnp.getPackageInformation(locator);
     if (pkg) {
-      if (pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation))
-        workspaceLikeLocators.set(getRealPackageLocation(pkg, locator, pnp), locator);
+      const parentLocatorKey = parentLocator ? stringifyLocator(parentLocator) : ``;
+      if (stringifyLocator(locator) !== parentLocatorKey && pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation)) {
+        const location = getRealPackageLocation(pkg, locator, pnp);
+        const prevLocator = workspaceLikeLocators.get(location);
+        // Give workspaces a priority over portals and other protocols pointing to the same location
+        // The devDependencies are not installed for portals, but installed for workspaces
+        if (!prevLocator || locator.reference.startsWith(`workspace:`)) {
+          workspaceLikeLocators.set(location, locator);
+        }
+      }
 
       for (const [name, referencish] of pkg.packageDependencies) {
         if (referencish !== null) {
           if (!pkg.packagePeers.has(name)) {
-            visit(pnp.getLocator(name, referencish));
+            visit(pnp.getLocator(name, referencish), locator);
           }
         }
       }
@@ -200,7 +208,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
   };
 
   for (const locator of pnpRoots)
-    visit(locator);
+    visit(locator, null);
 
   const cwdSegments = topPkgPortableLocation.split(ppath.sep);
   for (const locator of workspaceLikeLocators.values()) {
@@ -416,7 +424,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
 
-          addPackageToTree(stringifyLocator(depLocator) === stringifyLocator(locator) ? name : depName, depPkg, depLocator, node, pkg, allDependencies, relativeDepCwd, isHoistBorder);
+          addPackageToTree(depName, depPkg, depLocator, node, pkg, allDependencies, relativeDepCwd, isHoistBorder);
         }
       }
     }

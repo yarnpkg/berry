@@ -4,7 +4,7 @@ import {ProxiedFS}           from './ProxiedFS';
 import {ppath, PortablePath} from './path';
 
 export type JailFSOptions = {
-  baseFs?: FakeFS<PortablePath>,
+  baseFs?: FakeFS<PortablePath>;
 };
 
 const JAIL_ROOT = PortablePath.root;

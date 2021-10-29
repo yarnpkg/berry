@@ -11,12 +11,12 @@ import {promisify}                                                      from 'ut
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
 
-import {Cache}                                                          from './Cache';
+import {Cache, CacheOptions}                                            from './Cache';
 import {Configuration, FormatType}                                      from './Configuration';
-import {Fetcher}                                                        from './Fetcher';
+import {Fetcher, FetchOptions}                                          from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
-import {Linker}                                                         from './Linker';
+import {Linker, LinkOptions}                                            from './Linker';
 import {LockfileResolver}                                               from './LockfileResolver';
 import {DependencyMeta, Manifest}                                       from './Manifest';
 import {MessageName}                                                    from './MessageName';
@@ -75,27 +75,27 @@ export type InstallOptions = {
    * fetched. Some fetches may occur even during the resolution, for example
    * when resolving git packages.
    */
-  cache: Cache,
+  cache: Cache;
 
   /**
    * An optional override for the default fetching pipeline. This is for
    * overrides only - if you need to _add_ resolvers, prefer adding them
    * through regular plugins instead.
    */
-  fetcher?: Fetcher,
+  fetcher?: Fetcher;
 
   /**
    * An optional override for the default resolution pipeline. This is for
    * overrides only - if you need to _add_ resolvers, prefer adding them
    * through regular plugins instead.
    */
-  resolver?: Resolver
+  resolver?: Resolver;
 
   /**
    * Provide a report instance that'll be use to store the information emitted
    * during the install process.
    */
-  report: Report,
+  report: Report;
 
   /**
    * If true, Yarn will check that the lockfile won't change after the
@@ -103,31 +103,31 @@ export type InstallOptions = {
    * the list of files in `immutablePatterns` and check that they didn't get
    * modified either.
    */
-  immutable?: boolean,
+  immutable?: boolean;
 
   /**
    * If true, Yarn will exclusively use the lockfile metadata. Setting this
    * flag will cause it to ignore any change in the manifests, and to abort
    * if any dependency isn't present in the lockfile.
    */
-  lockfileOnly?: boolean,
+  lockfileOnly?: boolean;
 
   /**
    * Changes which artifacts are generated during the install. Check the
    * enumeration documentation for details.
    */
-  mode?: InstallMode,
+  mode?: InstallMode;
 
   /**
    * If true (the default), Yarn will update the workspace manifests once the
    * install has completed.
    */
-  persistProject?: boolean,
+  persistProject?: boolean;
 
   /**
    * @deprecated Use `mode=skip-build`
    */
-  skipBuild?: never,
+  skipBuild?: never;
 };
 
 const INSTALL_STATE_FIELDS = {
@@ -159,10 +159,10 @@ type RestoreInstallStateOpts = {
 type InstallState = Pick<Project, typeof INSTALL_STATE_FIELDS[keyof typeof INSTALL_STATE_FIELDS][number]>;
 
 export type PeerRequirement = {
-  subject: LocatorHash,
-  requested: Ident,
-  rootRequester: LocatorHash,
-  allRequesters: Array<LocatorHash>,
+  subject: LocatorHash;
+  requested: Ident;
+  rootRequester: LocatorHash;
+  allRequesters: Array<LocatorHash>;
 };
 
 const makeLockfileChecksum = (normalizedContent: string) =>
@@ -850,7 +850,7 @@ export class Project {
     const disabledLocators = new Set<LocatorHash>();
 
     for (const pkg of allPackages.values()) {
-      if (pkg.conditions === null)
+      if (pkg.conditions == null)
         continue;
 
       if (!optionalBuilds.has(pkg.locatorHash))
@@ -969,17 +969,17 @@ export class Project {
   }
 
   async linkEverything({cache, report, fetcher: optFetcher, mode}: InstallOptions) {
-    const cacheOptions = {
+    const cacheOptions: CacheOptions = {
       mockedPackages: this.disabledLocators,
       unstablePackages: this.conditionalLocators,
       skipIntegrityCheck: true,
     };
 
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
+    const fetcherOptions: FetchOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true, cacheOptions};
 
     const linkers = this.configuration.getLinkers();
-    const linkerOptions = {project: this, report};
+    const linkerOptions: LinkOptions = {project: this, report};
 
     const installers = new Map(linkers.map(linker => {
       const installer = linker.makeInstaller(linkerOptions);
@@ -1847,20 +1847,20 @@ function applyVirtualResolutionMutations({
 
   tolerateMissingPackages = false,
 }: {
-  project: Project,
+  project: Project;
 
-  allDescriptors: Map<DescriptorHash, Descriptor>,
-  allResolutions: Map<DescriptorHash, LocatorHash>,
-  allPackages: Map<LocatorHash, Package>,
+  allDescriptors: Map<DescriptorHash, Descriptor>;
+  allResolutions: Map<DescriptorHash, LocatorHash>;
+  allPackages: Map<LocatorHash, Package>;
 
-  accessibleLocators?: Set<LocatorHash>,
-  optionalBuilds?: Set<LocatorHash>,
-  volatileDescriptors?: Set<DescriptorHash>,
-  peerRequirements?: Project['peerRequirements'],
+  accessibleLocators?: Set<LocatorHash>;
+  optionalBuilds?: Set<LocatorHash>;
+  volatileDescriptors?: Set<DescriptorHash>;
+  peerRequirements?: Project['peerRequirements'];
 
-  report: Report | null,
+  report: Report | null;
 
-  tolerateMissingPackages?: boolean,
+  tolerateMissingPackages?: boolean;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -2054,8 +2054,19 @@ function applyVirtualResolutionMutations({
         for (const peerRequest of virtualizedPackage.peerDependencies.values()) {
           let peerDescriptor = parentPackage.dependencies.get(peerRequest.identHash);
 
-          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest))
-            peerDescriptor = parentDescriptor;
+          if (!peerDescriptor && structUtils.areIdentsEqual(parentLocator, peerRequest)) {
+            // If the parent isn't installed under an alias we can skip unnecessary steps
+            if (parentDescriptor.identHash === parentLocator.identHash) {
+              peerDescriptor = parentDescriptor;
+            } else {
+              peerDescriptor = structUtils.makeDescriptor(parentLocator, parentDescriptor.range);
+
+              allDescriptors.set(peerDescriptor.descriptorHash, peerDescriptor);
+              allResolutions.set(peerDescriptor.descriptorHash, parentLocator.locatorHash);
+
+              volatileDescriptors.delete(peerDescriptor.descriptorHash);
+            }
+          }
 
           // If the peerRequest isn't provided by the parent then fall back to dependencies
           if ((!peerDescriptor || peerDescriptor.range === `missing:`) && virtualizedPackage.dependencies.has(peerRequest.identHash)) {
@@ -2217,23 +2228,22 @@ function applyVirtualResolutionMutations({
   enum WarningType {
     NotProvided,
     NotCompatible,
-    NotWorkspace,
   }
 
   type Warning = {
-    type: WarningType.NotProvided,
-    subject: Locator,
-    requested: Ident,
-    requester: Ident,
-    hash: string,
+    type: WarningType.NotProvided;
+    subject: Locator;
+    requested: Ident;
+    requester: Ident;
+    hash: string;
   } | {
-    type: WarningType.NotCompatible,
-    subject: Locator,
-    requested: Ident,
-    requester: Ident,
-    version: string,
-    hash: string,
-    requirementCount: number,
+    type: WarningType.NotCompatible;
+    subject: Locator;
+    requested: Ident;
+    requester: Ident;
+    version: string;
+    hash: string;
+    requirementCount: number;
   };
 
   const warnings: Array<Warning> = [];

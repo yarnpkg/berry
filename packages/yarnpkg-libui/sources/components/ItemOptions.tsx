@@ -14,12 +14,12 @@ export const ItemOptions = function <T>({
   onChange,
   sizes = [],
 }: {
-  active: boolean,
-  skewer?: boolean,
-  options: Array<{value: T, label: string}>,
-  value: T,
-  onChange: (value: T) => void,
-  sizes?: Array<number>
+  active: boolean;
+  skewer?: boolean;
+  options: Array<{value: T, label: string}>;
+  value: T;
+  onChange: (value: T) => void;
+  sizes?: Array<number>;
 }) {
   // Our possible values are those that have been provided with a label so that
   // the user can see what they're selecting.

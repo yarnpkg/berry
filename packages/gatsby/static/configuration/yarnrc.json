@@ -34,7 +34,7 @@
       "examples": ["./exampleCA.pem"]
     },
     "changesetBaseRefs": {
-      "_package": "@yarnpkg/plugin-version",
+      "_package": "@yarnpkg/plugin-git",
       "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, upstream/master, main, origin/main, and upstream/main. Supports git branches, tags, and commits.",
       "type": "array",
       "items": {
@@ -43,7 +43,7 @@
       "default": ["master", "origin/master", "upstream/master", "main", "origin/main", "upstream/main"]
     },
     "changesetIgnorePatterns": {
-      "_package": "@yarnpkg/plugin-version",
+      "_package": "@yarnpkg/plugin-git",
       "description": "An Array of glob patterns. Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
       "type": "array",
       "items": {
@@ -378,16 +378,23 @@
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
+      "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `pnpm` and `node-modules`.",
       "type": "string",
-      "enum": ["pnp", "node-modules"],
-      "default": "pnp"
+      "default": "pnp",
+      "examples": ["pnp", "pnpm", "node-modules"]
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
       "description": "If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.",
       "type": "boolean",
       "default": false
+    },
+    "npmAuditRegistry": {
+      "_package": "@yarnpkg/plugin-npm",
+      "description": "Defines the registry that must be used when auditing dependencies. Doesn't need to be defined, in which case the value of `npmRegistryServer` will be used.",
+      "type": "string",
+      "format": "uri",
+      "examples": ["https://npm.pkg.github.com"]
     },
     "npmAuthIdent": {
       "_package": "@yarnpkg/plugin-npm",
@@ -548,6 +555,12 @@
       "type": "string",
       "format": "uri-reference",
       "default": "./.pnp.data.json"
+    },
+    "pnpEnableEsmLoader": {
+      "_package": "@yarnpkg/plugin-pnp",
+      "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`). Yarn tries to automatically detect whether ESM support is required.",
+      "type": "boolean",
+      "default": false
     },
     "pnpEnableInlining": {
       "_package": "@yarnpkg/plugin-pnp",

@@ -471,7 +471,7 @@ describe(`Shell`, () => {
       });
 
       it(`should support the $RANDOM variable`, async () => {
-        async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
+        async function getNumbers(result: Promise<{ exitCode: number, stdout: string, stderr: string }>): Promise<Array<number>> {
           const {exitCode, stdout, stderr} = await result;
 
           if (exitCode !== 0)

@@ -187,3 +187,5 @@ jobs:
         EOT
 
         yarn node ./test.js
+      if: |
+        always()

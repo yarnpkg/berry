@@ -63,14 +63,14 @@ enum Hoistable {
   YES, NO, DEPENDS,
 }
 type HoistInfo = {
-  isHoistable: Hoistable.YES
+  isHoistable: Hoistable.YES;
 } | {
-  isHoistable: Hoistable.NO
-  reason: string | null
+  isHoistable: Hoistable.NO;
+  reason: string | null;
 } | {
-  isHoistable: Hoistable.DEPENDS
-  dependsOn: Set<HoisterWorkTree>
-  reason: string | null
+  isHoistable: Hoistable.DEPENDS;
+  dependsOn: Set<HoisterWorkTree>;
+  reason: string | null;
 };
 
 type ShadowedNodes = Map<HoisterWorkTree, Set<PackageName>>;

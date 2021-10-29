@@ -96,7 +96,7 @@ export default class AuditCommand extends BaseCommand {
       dependencies,
     };
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {
+    const registry = npmConfigUtils.getAuditRegistry(workspace.manifest, {
       configuration,
     });
 
@@ -106,7 +106,7 @@ export default class AuditCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, async () => {
       result = ((await npmHttpUtils.post(`/-/npm/v1/security/audits/quick`, body, {
-        authType: npmHttpUtils.AuthType.NO_AUTH,
+        authType: npmHttpUtils.AuthType.BEST_EFFORT,
         configuration,
         jsonResponse: true,
         registry,

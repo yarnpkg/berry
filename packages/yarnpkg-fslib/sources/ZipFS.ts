@@ -19,15 +19,15 @@ export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
 
 export type ZipBufferOptions = {
-  libzip: Libzip,
-  readOnly?: boolean,
-  stats?: Stats,
-  level?: ZipCompression,
+  libzip: Libzip;
+  readOnly?: boolean;
+  stats?: Stats;
+  level?: ZipCompression;
 };
 
 export type ZipPathOptions = ZipBufferOptions & {
-  baseFs?: FakeFS<PortablePath>,
-  create?: boolean,
+  baseFs?: FakeFS<PortablePath>;
+  create?: boolean;
 };
 
 function toUnixTimestamp(time: Date | string | number) {

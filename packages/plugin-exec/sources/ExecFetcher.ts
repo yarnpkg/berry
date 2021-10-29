@@ -51,7 +51,9 @@ export class ExecFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator),
       loader: () => this.fetchFromDisk(locator, opts),
-    }, opts.cacheOptions);
+      skipIntegrityCheck: opts.skipIntegrityCheck,
+      ...opts.cacheOptions,
+    });
 
     return {
       packageFs,

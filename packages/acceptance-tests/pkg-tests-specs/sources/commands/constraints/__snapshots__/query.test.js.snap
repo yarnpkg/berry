@@ -661,7 +661,7 @@ exports[`Commands constraints query test (various field types / workspace_field 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: FieldValue = '\\"foo\\"'
+  "stdout": "➤ YN0000: FieldValue = foo
 ➤ YN0000: Done
 ",
 }

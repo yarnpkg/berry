@@ -11,10 +11,10 @@ export function checkAndReportManifestCompatibility(pkg: Package, label: string,
 }
 
 export type ExtractBuildScriptDataRequirements = {
-  manifest: Pick<Manifest, 'scripts'>,
+  manifest: Pick<Manifest, 'scripts'>;
   misc: {
-    hasBindingGyp: boolean,
-  },
+    hasBindingGyp: boolean;
+  };
 };
 
 export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScriptDataRequirements, dependencyMeta: DependencyMeta, {configuration, report}: {configuration: Configuration, report?: Report | null}) {

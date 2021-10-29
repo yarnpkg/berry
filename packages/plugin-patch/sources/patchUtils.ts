@@ -74,9 +74,9 @@ export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPa
 }
 
 type VisitPatchPathOptions<T> = {
-  onAbsolute: (p: PortablePath) => T,
-  onRelative: (p: PortablePath) => T,
-  onBuiltin: (name: string) => T,
+  onAbsolute: (p: PortablePath) => T;
+  onRelative: (p: PortablePath) => T;
+  onBuiltin: (name: string) => T;
 };
 
 function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOptions<T>, patchPath: PortablePath) {

@@ -87,26 +87,26 @@ const RawSearchBox = ({currentRefinement, refine, autoFocus}) => {
   };
 
   return (
-    <SearchForm noValidate action="" role="search" onSubmit={onSubmit}>
+    <SearchForm noValidate action={``} role={`search`} onSubmit={onSubmit}>
       <SearchInput
-        placeholder="Search packages (i.e. babel, webpack, react…)"
+        placeholder={`Search packages (i.e. babel, webpack, react…)`}
         autoFocus={autoFocus}
         active={active}
-        type="search"
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck="false"
-        required="required"
-        maxLength="512"
+        type={`search`}
+        autoComplete={`off`}
+        autoCorrect={`off`}
+        autoCapitalize={`off`}
+        spellCheck={`false`}
+        required={`required`}
+        maxLength={`512`}
         onFocus={() => setActive(true)}
         onBlur={() => setActive(false)}
         value={currentRefinement}
         onChange={event => refine(event.currentTarget.value)}
-        size="1"
+        size={`1`}
       />
-      <SubmitButton type="submit" title="Submit your search query."><IoIosSearch/></SubmitButton>
-      <ResetButton type="reset" title="Clear the search query." onClick={() => refine(``)}><IoIosClose/></ResetButton>
+      <SubmitButton type={`submit`} title={`Submit your search query.`}><IoIosSearch/></SubmitButton>
+      <ResetButton type={`reset`} title={`Clear the search query.`} onClick={() => refine(``)}><IoIosClose/></ResetButton>
     </SearchForm>
   );
 };

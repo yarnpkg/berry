@@ -183,7 +183,7 @@ export function getReportTree(result: npmAuditTypes.AuditResponse, severity?: np
         },
         Recommendation: {
           label: `Recommendation`,
-          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.recommendation.replace(/\n/g, ` `)),
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.recommendation?.replace(/\n/g, ` `)),
         },
       },
     };
@@ -236,7 +236,7 @@ export function getDependencies(project: Project, workspace: Workspace, {all}: {
       integrity: string;
       requires: {[key: string]: string};
       dev: boolean;
-    },
+    };
   } = {};
 
   for (const pkg of project.storedPackages.values()) {

@@ -26,7 +26,7 @@ export function assertStatus<T extends Status>(current: Status, expected: T): as
 export type ListenerOptions = Omit<Required<WatchFileOptions>, 'bigint'>;
 
 export type CustomStatWatcherOptions = {
-  bigint?: boolean,
+  bigint?: boolean;
 };
 
 export class CustomStatWatcher<P extends Path> extends EventEmitter implements StatWatcher {

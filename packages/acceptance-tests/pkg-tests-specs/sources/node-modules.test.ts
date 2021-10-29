@@ -341,8 +341,6 @@ describe(`Node_Modules`, () => {
           name: `no-deps-bins`,
           version: `1.0.0`,
         });
-        // We must not create self-reference directory 'node_modules/no-deps2/node_modules/no-deps'
-        await expect(xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).resolves.toEqual(false);
       },
     ),
   );
@@ -1552,4 +1550,37 @@ describe(`Node_Modules`, () => {
       },
     );
   });
+
+  it(`should install project when portal is pointing to a workspace`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirpPromise(ppath.join(path, `ws1` as PortablePath));
+        await xfs.writeJsonPromise(ppath.join(path, `ws1/${Filename.manifest}` as PortablePath), {
+          name: `ws1`,
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+        await xfs.mkdirpPromise(ppath.join(path, `ws2` as PortablePath));
+        await xfs.writeJsonPromise(ppath.join(path, `ws2/${Filename.manifest}` as PortablePath), {
+          name: `ws2`,
+          devDependencies: {
+            [`ws1`]: `portal:../ws1`,
+          },
+        });
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
 });

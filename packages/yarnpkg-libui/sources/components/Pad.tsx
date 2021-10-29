@@ -2,8 +2,8 @@ import {Text} from 'ink';
 import React  from 'react';
 
 export interface PadProps {
-  length: number
-  active: boolean
+  length: number;
+  active: boolean;
 }
 
 export const Pad = ({length, active}: PadProps) => {
