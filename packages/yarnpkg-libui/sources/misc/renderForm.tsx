@@ -1,14 +1,16 @@
-import {useApp, render} from 'ink';
-import React            from 'react';
+import React         from 'react';
 
-import {Application}    from '../components/Application';
-import {useKeypress}    from '../hooks/useKeypress';
+import {Application} from '../components/Application';
+import {useKeypress} from '../hooks/useKeypress';
+import {getInk}      from '../ink';
 
 type InferProps<T> = T extends React.ComponentType<infer P> ? P : never;
 
 export type SubmitInjectedComponent<T, C = React.ComponentType> = React.ComponentType<InferProps<C> & { useSubmit: (value: T) => void }>;
 
 export async function renderForm<T, C = React.ComponentType>(UserComponent: SubmitInjectedComponent<T, C>, props: InferProps<C>) {
+  const {useApp, render} = getInk();
+
   let returnedValue: T | undefined;
 
   const useSubmit = (value: T) => {

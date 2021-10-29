@@ -4,11 +4,11 @@ import {ItemOptions}                                                            
 import {Pad}                                                                                                                            from '@yarnpkg/libui/sources/components/Pad';
 import {ScrollableItems}                                                                                                                from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
+import {initInk}                                                                                                                        from '@yarnpkg/libui/sources/ink';
 import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
 import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
-import {Box, Text}                                                                                                                      from 'ink';
 import React, {useEffect, useRef, useState}                                                                                             from 'react';
 import semver                                                                                                                           from 'semver';
 
@@ -37,6 +37,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
   });
 
   async execute() {
+    const {Box, Text} = await initInk();
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);

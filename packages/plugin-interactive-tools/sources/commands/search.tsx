@@ -4,10 +4,9 @@ import {Gem}                                 from '@yarnpkg/libui/sources/compon
 import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {useKeypress}                         from '@yarnpkg/libui/sources/hooks/useKeypress';
 import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
+import {initInk}                             from '@yarnpkg/libui/sources/ink';
 import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}                      from 'clipanion';
-import InkTextInput                          from 'ink-text-input';
-import {Box, Text}                           from 'ink';
 import React, {useEffect, useState}          from 'react';
 
 import {AlgoliaPackage, search}              from '../algolia';
@@ -33,6 +32,9 @@ export default class SearchCommand extends BaseCommand {
   });
 
   async execute() {
+    const {Box, Text} = await initInk();
+    const {default: InkTextInput} = await import(`ink-text-input`);
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     const Prompt = () => {

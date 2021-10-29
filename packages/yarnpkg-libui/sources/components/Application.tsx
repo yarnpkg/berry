@@ -1,6 +1,7 @@
-import {useStdin}                            from 'ink';
 import React, {useEffect, useMemo, useState} from 'react';
 import {emitKeypressEvents}                  from 'readline';
+
+import {getInk}                              from '../ink';
 
 export const MinistoreContext = React.createContext<{
   getAll: () => Map<string, any>;
@@ -9,7 +10,7 @@ export const MinistoreContext = React.createContext<{
 } | null>(null);
 
 export const Application = ({children}: {children: React.ReactElement}) => {
-  const {stdin, setRawMode} = useStdin();
+  const {stdin, setRawMode} = getInk().useStdin();
 
   useEffect(() => {
     setRawMode && setRawMode(true);

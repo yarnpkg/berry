@@ -5,9 +5,9 @@ import {Gem}                                                                    
 import {ScrollableItems}                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
 import {FocusRequest}                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {useListInput}                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
+import {initInk}                                                                                from '@yarnpkg/libui/sources/ink';
 import {renderForm}                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
-import {Box, Text}                                                                              from 'ink';
 import React, {useCallback, useState}                                                           from 'react';
 import semver                                                                                   from 'semver';
 
@@ -50,6 +50,8 @@ export default class VersionCheckCommand extends BaseCommand {
   }
 
   async executeInteractive() {
+    const {Box, Text} = await initInk();
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
