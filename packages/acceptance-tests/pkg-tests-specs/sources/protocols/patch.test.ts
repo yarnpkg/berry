@@ -96,7 +96,6 @@ describe(`Protocols`, () => {
           });
         },
       ),
-      10000,
     );
 
     test(
@@ -146,7 +145,6 @@ describe(`Protocols`, () => {
           });
         },
       ),
-      10000,
     );
 
     test(
