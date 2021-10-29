@@ -7,7 +7,7 @@ jest.setTimeout(
   // Testing things inside a big-endian container takes forever
   os.endianness() === `BE`
     ? 150000
-    : 30000,
+    : 45000,
 );
 
 beforeEach(async () => {
