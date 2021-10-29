@@ -179,7 +179,6 @@ describe(`Features`, () => {
           child.stdin.end();
         }
       },
-      45000,
     );
   });
 });
