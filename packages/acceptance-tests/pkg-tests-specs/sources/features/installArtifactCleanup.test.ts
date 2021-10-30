@@ -216,7 +216,7 @@ describe(`Install Artifact Cleanup`, () => {
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps/foo/bar` as PortablePath)).resolves.toStrictEqual(true);
     }));
 
-    it(`should not remove extraneous files in valid nested entries (no self-references)`, makeTemporaryEnv({}, {
+    it(`should not remove extraneous files in valid nested entries (no self-references for the root entry)`, makeTemporaryEnv({}, {
       nodeLinker: `pnpm`,
     }, async ({path, run, source}) => {
       await run(`add`, `self-require-trap@1.0.0`);

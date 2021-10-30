@@ -150,13 +150,6 @@ class PnpmInstaller implements Installer {
 
     const storeLocation = getStoreLocation(this.opts.project);
 
-    const assertNodeModules = (path: string) => {
-      if (!path.endsWith(Filename.nodeModules))
-        throw new Error(`Assertion failed: Expected path to end in "${Filename.nodeModules}"`);
-
-      return path as PortablePath;
-    };
-
     this.asyncActions.reduce(locator.locatorHash, async action => {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
@@ -170,8 +163,8 @@ class PnpmInstaller implements Installer {
       let nmPath: PortablePath;
       let storeEntryPathToClean: PortablePath | null = null;
 
-      if (ppath.contains(storeLocation, pkgPath) && pkgPath.endsWith(locatorName)) {
-        nmPath = assertNodeModules(pkgPath.slice(0, -(ppath.sep.length + locatorName.length)));
+      if (ppath.contains(storeLocation, pkgPath) && pkgPath.endsWith(structUtils.getIdentVendorPath(locator))) {
+        nmPath = pkgPath.slice(0, -(ppath.sep.length + locatorName.length)) as PortablePath;
         storeEntryPathToClean = ppath.dirname(nmPath);
       } else {
         nmPath = ppath.join(pkgPath, Filename.nodeModules);
@@ -182,7 +175,7 @@ class PnpmInstaller implements Installer {
       // There are 3 cases:
       // - The package is a hard link and we generate self references; in this case the
       //   package path which is symlinked is .store/<hash>/node_modules/<scope>/<name>
-      //   so we can safely clean .store/<hash>/node_modules/<extraneous-entry>
+      //   so we can safely clean .store/<hash>/<extraneous-entry>
       // - The package is a hard link and we don't generate self references; in this case
       //   the package path which is symlinked is .store/<hash>, so we can't clean extraneous
       //   entries because we should allow the user to modify the package sources
@@ -279,7 +272,7 @@ class PnpmInstaller implements Installer {
       for (const packageLocation of this.customData.packageLocations.values()) {
         const subpath = ppath.contains(storeLocation, packageLocation);
         if (subpath !== null) {
-          const [storeEntry] = subpath.split(`/`);
+          const [storeEntry] = subpath.split(ppath.sep);
           expectedEntries.add(storeEntry as Filename);
         }
       }
