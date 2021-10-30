@@ -225,8 +225,21 @@ class PnpmInstaller implements Installer {
       // check will be broken.
       extraneous.delete(locatorName);
 
-      for (const name of extraneous.keys())
-        concurrentPromises.push(xfs.removePromise(ppath.join(nmPath, name)));
+      const removeNamePromises = [];
+      const scopesToRemove = new Set<Filename>();
+
+      for (const name of extraneous.keys()) {
+        removeNamePromises.push(xfs.removePromise(ppath.join(nmPath, name)));
+
+        const scope = structUtils.tryParseIdent(name)?.scope;
+        if (scope) {
+          scopesToRemove.add(`@${scope}` as Filename);
+        }
+      }
+
+      concurrentPromises.push(Promise.all(removeNamePromises).then(() => Promise.all([...scopesToRemove].map(
+        scope => removeIfEmpty(ppath.join(nmPath, scope)),
+      ))) as Promise<void>);
 
       await Promise.all(concurrentPromises);
     });
@@ -338,8 +351,13 @@ async function getNodeModulesListing(nmPath: PortablePath) {
         continue;
 
       if (entry.name.startsWith(`@`)) {
-        for (const subEntry of await xfs.readdirPromise(ppath.join(nmPath, entry.name), {withFileTypes: true})) {
-          listing.set(`${entry.name}/${subEntry.name}` as PortablePath, subEntry);
+        const scopeListing = await xfs.readdirPromise(ppath.join(nmPath, entry.name), {withFileTypes: true});
+        if (scopeListing.length === 0) {
+          listing.set(entry.name, entry);
+        } else {
+          for (const subEntry of scopeListing) {
+            listing.set(`${entry.name}/${subEntry.name}` as PortablePath, subEntry);
+          }
         }
       } else {
         listing.set(entry.name, entry);
