@@ -3,5 +3,6 @@
     "version": "1.0.0",
     "dependencies": {
         "self-require-trap": "2.0.0"
-    }
+    },
+    "bin": "./bin"
 }

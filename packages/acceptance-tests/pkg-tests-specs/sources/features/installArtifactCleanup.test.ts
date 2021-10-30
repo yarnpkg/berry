@@ -104,6 +104,24 @@ describe(`Install Artifact Cleanup`, () => {
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps` as PortablePath)).resolves.toStrictEqual(true);
     }));
 
+    it(`should remove extraneous nested entries (no self-references)`, makeTemporaryEnv({}, {
+      nodeLinker: `pnpm`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `self-require-trap@1.0.0`);
+
+      // Sanity check
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/self-require-trap` as PortablePath)).resolves.toStrictEqual(true);
+
+      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/foo` as PortablePath);
+      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/foo/bar` as PortablePath, ``);
+
+      await run(`install`);
+
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/foo` as PortablePath)).resolves.toStrictEqual(false);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/self-require-trap` as PortablePath)).resolves.toStrictEqual(true);
+    }));
+
     it(`should not remove extraneous files in valid nested entries`, makeTemporaryEnv({}, {
       nodeLinker: `pnpm`,
     }, async ({path, run, source}) => {
@@ -126,6 +144,23 @@ describe(`Install Artifact Cleanup`, () => {
       await run(`install`);
 
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps/foo/bar` as PortablePath)).resolves.toStrictEqual(true);
+    }));
+
+    it(`should not remove extraneous files in valid nested entries (no self-references)`, makeTemporaryEnv({}, {
+      nodeLinker: `pnpm`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `self-require-trap@1.0.0`);
+
+      // Sanity check
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/self-require-trap` as PortablePath)).resolves.toStrictEqual(true);
+
+      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/self-require-trap/foo` as PortablePath);
+      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/self-require-trap/foo/bar` as PortablePath, ``);
+
+      await run(`install`);
+
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/self-require-trap/${Filename.nodeModules}/self-require-trap/foo/bar` as PortablePath)).resolves.toStrictEqual(true);
     }));
 
     it(`should not overwrite files`, makeTemporaryEnv({}, {

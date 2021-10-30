@@ -5,7 +5,8 @@ import {UsageError}                                                             
 import pLimit                                                                                                                                                                                                   from 'p-limit';
 
 export type PnpmCustomData = {
-  locatorByPath: Map<string, string>;
+  packageLocations: Map<LocatorHash, PortablePath>;
+  locatorByPath: Map<PortablePath, string>;
 };
 
 export class PnpmLinker implements Linker {
@@ -14,8 +15,16 @@ export class PnpmLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    // TODO: Support soft linked packages
-    return getPackageLocation(locator, {project: opts.project});
+    const customDataKey = getCustomDataKey();
+    const customData = opts.project.installersCustomData.get(customDataKey) as PnpmCustomData | undefined;
+    if (!customData)
+      throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+
+    const packageLocation = customData.packageLocations.get(locator.locatorHash);
+    if (typeof packageLocation === `undefined`)
+      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnpm map - running an install might help`);
+
+    return packageLocation;
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null> {
@@ -54,7 +63,6 @@ export class PnpmLinker implements Linker {
 
 class PnpmInstaller implements Installer {
   private asyncActions = new AsyncActions();
-  private packageLocations = new Map<LocatorHash, PortablePath>();
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
@@ -65,11 +73,14 @@ class PnpmInstaller implements Installer {
   }
 
   private customData: PnpmCustomData = {
+    packageLocations: new Map(),
     locatorByPath: new Map(),
   };
 
   attachCustomData(customData: any) {
-    this.customData = customData;
+    // We don't want to attach the data because it's only used in the Linker and we'll recompute it anyways in the Installer,
+    // it needs to be invalidated because otherwise we'll never prune the store or we might run into issues when the dependency
+    // tree of a package changes and we need to create a self reference for it for example.
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
@@ -83,7 +94,7 @@ class PnpmInstaller implements Installer {
 
   async installPackageSoft(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const pkgPath = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
-    this.packageLocations.set(pkg.locatorHash, pkgPath);
+    this.customData.packageLocations.set(pkg.locatorHash, pkgPath);
 
     return {
       packageLocation: pkgPath,
@@ -92,10 +103,12 @@ class PnpmInstaller implements Installer {
   }
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
-    const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
+    // We only enable self-references if the package doesn't depend on a different
+    // version of itself (in which case it should resolve to that version)
+    const pkgPath = getPackageLocation(pkg, {project: this.opts.project, createSelfReference: !pkg.dependencies.has(pkg.identHash)});
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
-    this.packageLocations.set(pkg.locatorHash, pkgPath);
+    this.customData.packageLocations.set(pkg.locatorHash, pkgPath);
 
     api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () => {
       await xfs.mkdirPromise(pkgPath, {recursive: true});
@@ -138,8 +151,8 @@ class PnpmInstaller implements Installer {
     const storeLocation = getStoreLocation(this.opts.project);
 
     const assertNodeModules = (path: string) => {
-      if (!path.endsWith(`${Filename.nodeModules}/`))
-        throw new Error(`Assertion failed: Expected path to end in "${Filename.nodeModules}/"`);
+      if (!path.endsWith(Filename.nodeModules))
+        throw new Error(`Assertion failed: Expected path to end in "${Filename.nodeModules}"`);
 
       return path as PortablePath;
     };
@@ -148,21 +161,22 @@ class PnpmInstaller implements Installer {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
 
-      const pkgPath = this.packageLocations.get(locator.locatorHash);
+      const pkgPath = this.customData.packageLocations.get(locator.locatorHash);
       if (typeof pkgPath === `undefined`)
         throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
 
       const locatorName = structUtils.stringifyIdent(locator) as PortablePath;
 
-      const nmPath = ppath.contains(storeLocation, pkgPath)
-        ? assertNodeModules(pkgPath.slice(0, -locatorName.length))
-        : ppath.join(pkgPath, Filename.nodeModules);
+      const nmPath = assertNodeModules(
+        ppath.contains(storeLocation, pkgPath) && pkgPath.endsWith(locatorName)
+          ? pkgPath.slice(0, -(ppath.sep.length + locatorName.length))
+          : ppath.join(pkgPath, Filename.nodeModules),
+      );
 
       // Retrieve what's currently inside the package's true nm folder. We
       // will use that to figure out what are the extraneous entries we'll
       // need to remove.
       const extraneous = await getNodeModulesListing(nmPath);
-      extraneous.delete(locatorName);
 
       const concurrentPromises: Array<Promise<void>> = [];
 
@@ -174,7 +188,7 @@ class PnpmInstaller implements Installer {
           targetDependency = structUtils.devirtualizeLocator(dependency);
         }
 
-        const depSrcPath = this.packageLocations.get(targetDependency.locatorHash);
+        const depSrcPath = this.customData.packageLocations.get(targetDependency.locatorHash);
         if (typeof depSrcPath === `undefined`)
           throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
@@ -206,6 +220,11 @@ class PnpmInstaller implements Installer {
         }));
       }
 
+      // We delete the locator name from the listing in the case of self-references.
+      // We only do it now because if self-references are disabled, the `existing`
+      // check will be broken.
+      extraneous.delete(locatorName);
+
       for (const name of extraneous.keys())
         concurrentPromises.push(xfs.removePromise(ppath.join(nmPath, name)));
 
@@ -224,7 +243,7 @@ class PnpmInstaller implements Installer {
       await xfs.removePromise(storeLocation);
     } else {
       const expectedEntries = new Set<Filename>();
-      for (const packageLocation of this.packageLocations.values()) {
+      for (const packageLocation of this.customData.packageLocations.values()) {
         const subpath = ppath.contains(storeLocation, packageLocation);
         if (subpath !== null) {
           const [storeEntry] = subpath.split(`/`);
@@ -253,13 +272,17 @@ class PnpmInstaller implements Installer {
     await this.asyncActions.wait(),
 
     await removeIfEmpty(getNodeModulesLocation(this.opts.project));
+
+    return {
+      customData: this.customData,
+    };
   }
 }
 
 function getCustomDataKey() {
   return JSON.stringify({
     name: `PnpmInstaller`,
-    version: 1,
+    version: 2,
   });
 }
 
@@ -271,9 +294,11 @@ function getStoreLocation(project: Project) {
   return ppath.join(getNodeModulesLocation(project), `.store` as Filename);
 }
 
-function getPackageLocation(locator: Locator, {project}: {project: Project}) {
+function getPackageLocation(locator: Locator, {project, createSelfReference}: {project: Project, createSelfReference: boolean}) {
   const pkgKey = structUtils.slugifyLocator(locator);
-  const prefixPath = structUtils.getIdentVendorPath(locator);
+  const prefixPath = createSelfReference
+    ? structUtils.getIdentVendorPath(locator)
+    : PortablePath.dot;
   const pkgPath = ppath.join(getStoreLocation(project), pkgKey, prefixPath);
 
   return pkgPath;
