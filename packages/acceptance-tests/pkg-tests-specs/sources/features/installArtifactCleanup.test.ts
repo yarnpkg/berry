@@ -1,5 +1,9 @@
 import {Filename, PortablePath, xfs} from '@yarnpkg/fslib';
 
+const lsStore = async (path: PortablePath) => {
+  return await xfs.readdirPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath);
+};
+
 describe(`Install Artifact Cleanup`, () => {
   describe(`pnpm linker`, () => {
     it(`should not generate a node_modules folder if it has nothing to put inside it`, makeTemporaryEnv({}, {
@@ -82,15 +86,22 @@ describe(`Install Artifact Cleanup`, () => {
 
       // Sanity check
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps` as PortablePath)).resolves.toStrictEqual(true);
 
-      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/foo` as PortablePath);
-      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/foo/bar` as PortablePath, ``);
+      // We only symlink the package itself, not its dependencies
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps` as PortablePath)).resolves.toStrictEqual(false);
+
+      const entries = await lsStore(path);
+      const oneFixedDepEntry = entries.find(entry => entry.startsWith(`one-fixed-dep`));
+      expect(oneFixedDepEntry).toBeDefined();
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps` as PortablePath)).resolves.toStrictEqual(true);
+
+      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/foo` as PortablePath);
+      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/foo/bar` as PortablePath, ``);
 
       await run(`install`);
 
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/foo` as PortablePath)).resolves.toStrictEqual(false);
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps` as PortablePath)).resolves.toStrictEqual(true);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/foo` as PortablePath)).resolves.toStrictEqual(false);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps` as PortablePath)).resolves.toStrictEqual(true);
     }));
 
     it(`should not remove extraneous files in valid nested entries`, makeTemporaryEnv({}, {
@@ -100,14 +111,21 @@ describe(`Install Artifact Cleanup`, () => {
 
       // Sanity check
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps` as PortablePath)).resolves.toStrictEqual(true);
 
-      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps/foo` as PortablePath);
-      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps/foo/bar` as PortablePath, ``);
+      // We only symlink the package itself, not its dependencies
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps` as PortablePath)).resolves.toStrictEqual(false);
+
+      const entries = await lsStore(path);
+      const oneFixedDepEntry = entries.find(entry => entry.startsWith(`one-fixed-dep`));
+      expect(oneFixedDepEntry).toBeDefined();
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps` as PortablePath)).resolves.toStrictEqual(true);
+
+      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps/foo` as PortablePath);
+      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps/foo/bar` as PortablePath, ``);
 
       await run(`install`);
 
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/one-fixed-dep/${Filename.nodeModules}/no-deps/foo/bar` as PortablePath)).resolves.toStrictEqual(true);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${oneFixedDepEntry}/node_modules/no-deps/foo/bar` as PortablePath)).resolves.toStrictEqual(true);
     }));
 
     it(`should not overwrite files`, makeTemporaryEnv({}, {

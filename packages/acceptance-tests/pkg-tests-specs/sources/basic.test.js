@@ -49,6 +49,24 @@ describe(`Basic tests`, () => {
       );
 
       test(
+        `it should correctly install a single scoped dependency that contains no sub-dependencies`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`@types/no-deps`]: `1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(source(`require('@types/no-deps')`)).resolves.toMatchObject({
+              name: `@types/no-deps`,
+              version: `1.0.0`,
+            });
+          },
+        ),
+      );
+
+      test(
         `it should correctly install a dependency that itself contains a fixed dependency`,
         makeTemporaryEnv(
           {
@@ -479,7 +497,7 @@ describe(`Basic tests`, () => {
       );
 
       test(
-        `it should allow accessing a package via too many slashes`,
+        `it should support self-requires in direct dependencies`,
         makeTemporaryEnv(
           {
             dependencies: {[`various-requires`]: `1.0.0`},
@@ -488,7 +506,25 @@ describe(`Basic tests`, () => {
           async ({path, run, source}) => {
             await run(`install`);
 
-            await expect(source(`require('various-requires//self')`)).resolves.toMatchObject({
+            await expect(source(`require('various-requires/self')`)).resolves.toMatchObject({
+              name: `various-requires`,
+              version: `1.0.0`,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should support self-requires in transitive dependencies`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`self-require-dep`]: `1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(source(`require('self-require-dep/self')`)).resolves.toMatchObject({
               name: `various-requires`,
               version: `1.0.0`,
             });

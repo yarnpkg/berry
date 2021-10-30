@@ -135,6 +135,8 @@ class PnpmInstaller implements Installer {
     if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
+    const storeLocation = getStoreLocation(this.opts.project);
+
     this.asyncActions.reduce(locator.locatorHash, async action => {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
@@ -143,14 +145,17 @@ class PnpmInstaller implements Installer {
       if (typeof pkgPath === `undefined`)
         throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
 
-      const nmPath = ppath.join(pkgPath, Filename.nodeModules);
-      if (dependencies.length > 0)
-        await xfs.mkdirpPromise(nmPath);
+      const locatorName = structUtils.stringifyIdent(locator) as PortablePath;
+
+      const nmPath = ppath.contains(storeLocation, pkgPath)
+        ? pkgPath.slice(0, -locatorName.length) as PortablePath
+        : ppath.join(pkgPath, Filename.nodeModules);
 
       // Retrieve what's currently inside the package's true nm folder. We
       // will use that to figure out what are the extraneous entries we'll
       // need to remove.
       const extraneous = await getNodeModulesListing(nmPath);
+      extraneous.delete(locatorName);
 
       const concurrentPromises: Array<Promise<void>> = [];
 
@@ -212,8 +217,13 @@ class PnpmInstaller implements Installer {
       await xfs.removePromise(storeLocation);
     } else {
       const expectedEntries = new Set<Filename>();
-      for (const packageLocation of this.packageLocations.values())
-        expectedEntries.add(ppath.basename(packageLocation));
+      for (const packageLocation of this.packageLocations.values()) {
+        const subpath = ppath.contains(storeLocation, packageLocation);
+        if (subpath !== null) {
+          const [storeEntry] = subpath.split(`/`);
+          expectedEntries.add(storeEntry as Filename);
+        }
+      }
 
       let storeRecords: Array<Filename>;
       try {
@@ -256,7 +266,8 @@ function getStoreLocation(project: Project) {
 
 function getPackageLocation(locator: Locator, {project}: {project: Project}) {
   const pkgKey = structUtils.slugifyLocator(locator);
-  const pkgPath = ppath.join(getStoreLocation(project), pkgKey);
+  const prefixPath = structUtils.getIdentVendorPath(locator);
+  const pkgPath = ppath.join(getStoreLocation(project), pkgKey, prefixPath);
 
   return pkgPath;
 }
