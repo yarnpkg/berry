@@ -137,6 +137,13 @@ class PnpmInstaller implements Installer {
 
     const storeLocation = getStoreLocation(this.opts.project);
 
+    const assertNodeModules = (path: string) => {
+      if (!path.endsWith(`${Filename.nodeModules}/`))
+        throw new Error(`Assertion failed: Expected path to end in "${Filename.nodeModules}/"`);
+
+      return path as PortablePath;
+    };
+
     this.asyncActions.reduce(locator.locatorHash, async action => {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
@@ -148,7 +155,7 @@ class PnpmInstaller implements Installer {
       const locatorName = structUtils.stringifyIdent(locator) as PortablePath;
 
       const nmPath = ppath.contains(storeLocation, pkgPath)
-        ? pkgPath.slice(0, -locatorName.length) as PortablePath
+        ? assertNodeModules(pkgPath.slice(0, -locatorName.length))
         : ppath.join(pkgPath, Filename.nodeModules);
 
       // Retrieve what's currently inside the package's true nm folder. We
