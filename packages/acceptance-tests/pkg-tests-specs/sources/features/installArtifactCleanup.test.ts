@@ -267,6 +267,50 @@ describe(`Install Artifact Cleanup`, () => {
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}` as PortablePath)).resolves.toStrictEqual(false);
     }));
 
+    it(`should remove extraneous files in .store entries when self-references are created`, makeTemporaryEnv({}, {
+      nodeLinker: `pnpm`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps@1.0.0`);
+
+      // Sanity check
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/no-deps` as PortablePath)).resolves.toStrictEqual(true);
+
+      const entries = await lsStore(path);
+      const noDepsEntry = entries.find(entry => entry.startsWith(`no-deps`));
+      expect(noDepsEntry).toBeDefined();
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${noDepsEntry}/node_modules/no-deps` as PortablePath)).resolves.toStrictEqual(true);
+
+      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/.store/${noDepsEntry}/foo` as PortablePath);
+      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/.store/${noDepsEntry}/foo/bar` as PortablePath, ``);
+
+      await run(`install`);
+
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${noDepsEntry}/foo` as PortablePath)).resolves.toStrictEqual(false);
+    }));
+
+    it(`should not remove extraneous files in .store entries when self-references are not created`, makeTemporaryEnv({}, {
+      nodeLinker: `pnpm`,
+    }, async ({path, run, source}) => {
+      await run(`add`, `self-require-trap@1.0.0`);
+
+      // Sanity check
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/self-require-trap` as PortablePath)).resolves.toStrictEqual(true);
+
+      const entries = await lsStore(path);
+      const selfRequireTrapEntry = entries.find(entry => entry.startsWith(`self-require-trap-npm-1.0.0`));
+      expect(selfRequireTrapEntry).toBeDefined();
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${selfRequireTrapEntry}/node_modules/self-require-trap` as PortablePath)).resolves.toStrictEqual(true);
+
+      await xfs.mkdirPromise(`${path}/${Filename.nodeModules}/.store/${selfRequireTrapEntry}/foo` as PortablePath);
+      await xfs.writeFilePromise(`${path}/${Filename.nodeModules}/.store/${selfRequireTrapEntry}/foo/bar` as PortablePath, ``);
+
+      await run(`install`);
+
+      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${selfRequireTrapEntry}/foo/bar` as PortablePath)).resolves.toStrictEqual(true);
+    }));
+
     it(`should remove the node_modules folder after switching to the pnp linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
       await run(`config`, `set`, `nodeLinker`, `pnpm`);
 

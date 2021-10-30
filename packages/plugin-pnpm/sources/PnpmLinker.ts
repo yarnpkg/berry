@@ -167,18 +167,38 @@ class PnpmInstaller implements Installer {
 
       const locatorName = structUtils.stringifyIdent(locator) as PortablePath;
 
-      const nmPath = assertNodeModules(
-        ppath.contains(storeLocation, pkgPath) && pkgPath.endsWith(locatorName)
-          ? pkgPath.slice(0, -(ppath.sep.length + locatorName.length))
-          : ppath.join(pkgPath, Filename.nodeModules),
-      );
+      let nmPath: PortablePath;
+      let storeEntryPathToClean: PortablePath | null = null;
+
+      if (ppath.contains(storeLocation, pkgPath) && pkgPath.endsWith(locatorName)) {
+        nmPath = assertNodeModules(pkgPath.slice(0, -(ppath.sep.length + locatorName.length)));
+        storeEntryPathToClean = ppath.dirname(nmPath);
+      } else {
+        nmPath = ppath.join(pkgPath, Filename.nodeModules);
+      }
+
+      const concurrentPromises: Array<Promise<void>> = [];
+
+      // There are 3 cases:
+      // - The package is a hard link and we generate self references; in this case the
+      //   package path which is symlinked is .store/<hash>/node_modules/<scope>/<name>
+      //   so we can safely clean .store/<hash>/node_modules/<extraneous-entry>
+      // - The package is a hard link and we don't generate self references; in this case
+      //   the package path which is symlinked is .store/<hash>, so we can't clean extraneous
+      //   entries because we should allow the user to modify the package sources
+      // - The package is a soft link; nothing to clean
+      if (storeEntryPathToClean !== null) {
+        for (const entry of await xfs.readdirPromise(storeEntryPathToClean)) {
+          if (entry !== Filename.nodeModules) {
+            concurrentPromises.push(xfs.removePromise(ppath.join(storeEntryPathToClean, entry)));
+          }
+        }
+      }
 
       // Retrieve what's currently inside the package's true nm folder. We
       // will use that to figure out what are the extraneous entries we'll
       // need to remove.
       const extraneous = await getNodeModulesListing(nmPath);
-
-      const concurrentPromises: Array<Promise<void>> = [];
 
       for (const [descriptor, dependency] of dependencies) {
         // Downgrade virtual workspaces (cf isPnpmVirtualCompatible's documentation)
