@@ -23756,17 +23756,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.19, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.19":
-  version: 0.5.19
-  resolution: "source-map-support@npm:0.5.19"
-  dependencies:
-    buffer-from: ^1.0.0
-    source-map: ^0.6.0
-  checksum: c72802fdba9cb62b92baef18cc14cc4047608b77f0353e6c36dd993444149a466a2845332c5540d4a6630957254f0f68f4ef5a0120c33d2e83974c51a05afbac
-  languageName: node
-  linkType: hard
-
-"source-map-support@npm:~0.5.20":
+"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.19, source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.20":
   version: 0.5.20
   resolution: "source-map-support@npm:0.5.20"
   dependencies:
@@ -24976,7 +24966,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.0.0":
+"terser@npm:^5.0.0, terser@npm:^5.7.0":
   version: 5.9.0
   resolution: "terser@npm:5.9.0"
   dependencies:
@@ -24986,19 +24976,6 @@ resolve@^2.0.0-next.3:
   bin:
     terser: bin/terser
   checksum: 11c1246b1991015a8881742878af779e3863fad42f626ffda957dbf28c94bf51e7994cffb9ffbec86ff3c23ab45ffa6d79d453c15e664306e35fc7b2c4eee5f4
-  languageName: node
-  linkType: hard
-
-"terser@npm:^5.7.0":
-  version: 5.7.0
-  resolution: "terser@npm:5.7.0"
-  dependencies:
-    commander: ^2.20.0
-    source-map: ~0.7.2
-    source-map-support: ~0.5.19
-  bin:
-    terser: bin/terser
-  checksum: 3abeb551865079b27e2890dbec866054967d1963fc80a81e5e14e414c43db88ff53a5e88844c145df11bed01b28040aa96afd82113c6d1a6ad28409b6cae4fde
   languageName: node
   linkType: hard
 

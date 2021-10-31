@@ -4363,7 +4363,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["find-cache-dir", "npm:2.1.0"],
             ["make-dir", "npm:2.1.0"],
             ["pirates", "npm:4.0.1"],
-            ["source-map-support", "npm:0.5.19"]
+            ["source-map-support", "npm:0.5.20"]
           ],
           "packagePeers": [
             "@babel/core",
@@ -23524,7 +23524,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["socket.io", "npm:3.1.1"],
             ["socket.io-client", "npm:3.1.1"],
             ["source-map", "npm:0.7.3"],
-            ["source-map-support", "npm:0.5.19"],
+            ["source-map-support", "npm:0.5.20"],
             ["st", "npm:2.0.0"],
             ["stack-trace", "npm:0.0.10"],
             ["string-similarity", "npm:1.2.2"],
@@ -27859,7 +27859,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-runtime", "npm:26.0.1"],
             ["jest-util", "npm:26.0.1"],
             ["jest-worker", "npm:26.6.2"],
-            ["source-map-support", "npm:0.5.19"],
+            ["source-map-support", "npm:0.5.20"],
             ["throat", "npm:5.0.0"]
           ],
           "linkType": "HARD",
@@ -36846,15 +36846,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["source-map-support", [
-        ["npm:0.5.19", {
-          "packageLocation": "./.yarn/cache/source-map-support-npm-0.5.19-65b33ae61e-c72802fdba.zip/node_modules/source-map-support/",
-          "packageDependencies": [
-            ["source-map-support", "npm:0.5.19"],
-            ["buffer-from", "npm:1.1.1"],
-            ["source-map", "npm:0.6.1"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:0.5.20", {
           "packageLocation": "./.yarn/cache/source-map-support-npm-0.5.20-edfc5ce275-43946aff45.zip/node_modules/source-map-support/",
           "packageDependencies": [
@@ -38096,17 +38087,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["terser", "npm:4.7.0"],
             ["commander", "npm:2.20.0"],
             ["source-map", "npm:0.6.1"],
-            ["source-map-support", "npm:0.5.19"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:5.7.0", {
-          "packageLocation": "./.yarn/cache/terser-npm-5.7.0-debcd2ddd2-3abeb55186.zip/node_modules/terser/",
-          "packageDependencies": [
-            ["terser", "npm:5.7.0"],
-            ["commander", "npm:2.20.0"],
-            ["source-map", "npm:0.7.3"],
-            ["source-map-support", "npm:0.5.19"]
+            ["source-map-support", "npm:0.5.20"]
           ],
           "linkType": "HARD",
         }],
@@ -38153,7 +38134,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["schema-utils", "npm:3.0.0"],
             ["serialize-javascript", "npm:5.0.1"],
             ["source-map", "npm:0.6.1"],
-            ["terser", "npm:5.7.0"],
+            ["terser", "npm:5.9.0"],
             ["webpack", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#npm:5.38.1"]
           ],
           "packagePeers": [
@@ -38194,7 +38175,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["schema-utils", "npm:3.0.0"],
             ["serialize-javascript", "npm:5.0.1"],
             ["source-map", "npm:0.6.1"],
-            ["terser", "npm:5.7.0"],
+            ["terser", "npm:5.9.0"],
             ["webpack", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:5.38.1"]
           ],
           "packagePeers": [
@@ -38715,7 +38696,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["create-require", "npm:1.1.1"],
             ["diff", "npm:4.0.1"],
             ["make-error", "npm:1.3.6"],
-            ["source-map-support", "npm:0.5.19"],
+            ["source-map-support", "npm:0.5.20"],
             ["typescript", null],
             ["yn", "npm:3.1.1"]
           ],
