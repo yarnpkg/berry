@@ -432,7 +432,7 @@ export class StreamReport extends Report {
         lastScaledSize: -1,
       });
 
-      this.refreshProgress(-1);
+      this.refreshProgress({delta: -1});
 
       for await (const {progress, title} of progressIt) {
         if (stopped)
@@ -455,7 +455,7 @@ export class StreamReport extends Report {
       stopped = true;
 
       this.progress.delete(progressIt);
-      this.refreshProgress(+1);
+      this.refreshProgress({delta: +1});
     };
 
     return {...promise, stop};
@@ -601,14 +601,14 @@ export class StreamReport extends Report {
     }
 
     this.progressTimeout = setTimeout(() => {
-      this.refreshProgress();
+      this.refreshProgress({force: true});
     }, PROGRESS_INTERVAL);
   }
 
-  private refreshProgress(delta: number = 0) {
+  private refreshProgress({delta = 0, force = false}: {delta?: number, force?: boolean} = {}) {
     let needsUpdate = false;
 
-    if (this.progress.size === 0) {
+    if (force || this.progress.size === 0) {
       needsUpdate = true;
     } else {
       for (const progress of this.progress.values()) {
