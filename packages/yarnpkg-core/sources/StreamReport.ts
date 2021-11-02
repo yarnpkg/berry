@@ -598,7 +598,7 @@ export class StreamReport extends Report {
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
     for (const progress of this.progress.values()) {
-      const progressBar = typeof progress.definition.progress !== `undefined` && typeof progress.lastScaledSize !== `undefined`
+      const progressBar = typeof progress.lastScaledSize !== `undefined`
         ? ` ${
           this.progressStyle.chars[0].repeat(progress.lastScaledSize)
         }${
