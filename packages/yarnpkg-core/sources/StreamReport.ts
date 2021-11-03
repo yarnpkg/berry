@@ -598,13 +598,14 @@ export class StreamReport extends Report {
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
     for (const progress of this.progress.values()) {
-      const progressBar = typeof progress.lastScaledSize !== `undefined`
-        ? ` ${
-          this.progressStyle.chars[0].repeat(progress.lastScaledSize)
-        }${
-          this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize)
-        }`
-        : ``;
+      let progressBar = ``;
+
+      if (typeof progress.lastScaledSize !== `undefined`) {
+        const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
+        const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
+        progressBar = ` ${ok}${ko}`;
+      }
+
       const formattedName = this.formatName(null);
       const prefix = formattedName ? `${formattedName}: ` : ``;
       const title = progress.definition.title ? ` ${progress.definition.title}` : ``;
