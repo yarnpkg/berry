@@ -471,7 +471,7 @@ describe(`Shell`, () => {
       });
 
       it(`should support the $RANDOM variable`, async () => {
-        async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
+        async function getNumbers(result: Promise<{ exitCode: number, stdout: string, stderr: string }>): Promise<Array<number>> {
           const {exitCode, stdout, stderr} = await result;
 
           if (exitCode !== 0)
@@ -663,6 +663,40 @@ describe(`Shell`, () => {
       it(`should support empty default arguments`, async () => {
         await expect(bufferResult(
           `echo "foo\${DOESNT_EXIST:-}bar"`,
+        )).resolves.toMatchObject({
+          stdout: `foobar\n`,
+        });
+      });
+
+      it(`should support alternative arguments via \${ARG:+...}`, async () => {
+        await expect(bufferResult(
+          `echo "\${FOOBAR:+hello world}"`,
+          [],
+          {env: {FOOBAR: `goodbye world`}},
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+
+        await expect(bufferResult(
+          `echo "\${FOOBAR:+hello world}"`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+      });
+
+      it(`should support alternative arguments via \${N:+...}`, async () => {
+        await expect(bufferResult(
+          `echo "\${1:+hello world}"`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+
+      it(`should support alternative default arguments`, async () => {
+        await expect(bufferResult(
+          `echo "foo\${FOOBAR:+}bar"`,
+          [],
+          {env: {FOOBAR: `goodbye world`}},
         )).resolves.toMatchObject({
           stdout: `foobar\n`,
         });

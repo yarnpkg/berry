@@ -34,6 +34,28 @@ module.exports = {
       ignoredNodes: [`TSTypeParameterInstantiation`],
     }],
 
+    '@typescript-eslint/member-delimiter-style': [`error`, {
+      multiline: {
+        delimiter: `semi`,
+        requireLast: true,
+      },
+      singleline: {
+        requireLast: false,
+      },
+      overrides: {
+        interface: {
+          singleline: {
+            delimiter: `semi`,
+          },
+        },
+        typeLiteral: {
+          singleline: {
+            delimiter: `comma`,
+          },
+        },
+      },
+    }],
+
     '@typescript-eslint/quotes': [`error`, `backtick`],
 
     '@typescript-eslint/semi': 2,

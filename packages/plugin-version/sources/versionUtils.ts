@@ -46,25 +46,25 @@ export function validateReleaseDecision(decision: unknown): string {
 }
 
 export type VersionFile = {
-  project: Project,
+  project: Project;
 
-  changedFiles: Set<PortablePath>,
-  changedWorkspaces: Set<Workspace>,
+  changedFiles: Set<PortablePath>;
+  changedWorkspaces: Set<Workspace>;
 
-  releaseRoots: Set<Workspace>,
-  releases: Releases,
+  releaseRoots: Set<Workspace>;
+  releases: Releases;
 
-  saveAll: () => Promise<void>,
+  saveAll: () => Promise<void>;
 } & ({
-  root: PortablePath,
+  root: PortablePath;
 
-  baseHash: string,
-  baseTitle: string,
+  baseHash: string;
+  baseTitle: string;
 } | {
-  root: null,
+  root: null;
 
-  baseHash: null,
-  baseTitle: null,
+  baseHash: null;
+  baseTitle: null;
 });
 
 export async function resolveVersionFiles(project: Project, {prerelease = null}: {prerelease?: string | null} = {}) {
@@ -485,8 +485,8 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
 }
 
 const placeholders: Map<string, {
-  extract: (parts: Array<string | number>) => [string | number, Array<string | number>] | null,
-  generate: (previous?: number) => string,
+  extract: (parts: Array<string | number>) => [string | number, Array<string | number>] | null;
+  generate: (previous?: number) => string;
 }> = new Map([
   [`%n`, {
     extract: parts => {

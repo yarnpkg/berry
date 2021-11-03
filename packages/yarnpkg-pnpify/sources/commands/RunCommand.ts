@@ -33,7 +33,7 @@ export default class RunCommand extends Command {
 
   async execute() {
     let {NODE_OPTIONS} = process.env;
-    NODE_OPTIONS = `${NODE_OPTIONS || ``} --require "${dynamicRequire.resolve(`@yarnpkg/pnpify`)}"`.trim();
+    NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${JSON.stringify(dynamicRequire.resolve(`@yarnpkg/pnpify`))}`.trim();
 
     const {code} = await execUtils.pipevp(this.commandName, this.args, {
       cwd: npath.toPortablePath(this.cwd),

@@ -8,7 +8,7 @@ export async function load(
   urlString: string,
   context: { format: string | null | undefined },
   defaultLoad: typeof load,
-): Promise<{ format: string; source: string }> {
+): Promise<{ format: string, source: string }> {
   const url = loaderUtils.tryParseURL(urlString);
   if (url?.protocol !== `file:`)
     return defaultLoad(urlString, context, defaultLoad);

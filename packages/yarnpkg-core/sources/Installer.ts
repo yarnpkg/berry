@@ -11,15 +11,15 @@ export enum BuildType {
 export type BuildDirective = [BuildType, string];
 
 export type InstallStatus = {
-  packageLocation: PortablePath | null,
-  buildDirective: Array<BuildDirective> | null,
-  installPromise?: Promise<void>,
+  packageLocation: PortablePath | null;
+  buildDirective: Array<BuildDirective> | null;
+  installPromise?: Promise<void>;
 };
 
 export type FinalizeInstallStatus = {
-  locatorHash: LocatorHash,
-  buildLocations: Array<PortablePath>,
-  buildDirective: Array<BuildDirective>,
+  locatorHash: LocatorHash;
+  buildLocations: Array<PortablePath>;
+  buildDirective: Array<BuildDirective>;
 };
 
 export type FinalizeInstallData = {
@@ -31,7 +31,7 @@ export type FinalizeInstallData = {
    * replicate the hoisting that would happen with the node-modules linking
    * strategy.
    */
-  records?: Array<FinalizeInstallStatus>,
+  records?: Array<FinalizeInstallStatus>;
 
   /**
    * A set of data that are preserved from one install to the next. Linkers are

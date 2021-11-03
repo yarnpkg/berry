@@ -378,16 +378,23 @@
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
+      "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `pnpm` and `node-modules`.",
       "type": "string",
-      "enum": ["pnp", "node-modules"],
-      "default": "pnp"
+      "default": "pnp",
+      "examples": ["pnp", "pnpm", "node-modules"]
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
       "description": "If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.",
       "type": "boolean",
       "default": false
+    },
+    "npmAuditRegistry": {
+      "_package": "@yarnpkg/plugin-npm",
+      "description": "Defines the registry that must be used when auditing dependencies. Doesn't need to be defined, in which case the value of `npmRegistryServer` will be used.",
+      "type": "string",
+      "format": "uri",
+      "examples": ["https://npm.pkg.github.com"]
     },
     "npmAuthIdent": {
       "_package": "@yarnpkg/plugin-npm",
@@ -549,7 +556,7 @@
       "format": "uri-reference",
       "default": "./.pnp.data.json"
     },
-    "pnpEnableExperimentalEsm": {
+    "pnpEnableEsmLoader": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`). Yarn tries to automatically detect whether ESM support is required.",
       "type": "boolean",

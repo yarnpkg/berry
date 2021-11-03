@@ -1,0 +1,28 @@
+releases:
+  "@yarnpkg/eslint-config": minor
+
+declined:
+  - "@yarnpkg/esbuild-plugin-pnp"
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-git"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/plugin-pnpm"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/core"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/json-proxy"
+  - "@yarnpkg/libui"
+  - "@yarnpkg/nm"
+  - "@yarnpkg/parsers"
+  - "@yarnpkg/pnp"
+  - "@yarnpkg/pnpify"
+  - "@yarnpkg/sdks"
+  - "@yarnpkg/shell"

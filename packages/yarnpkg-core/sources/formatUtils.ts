@@ -91,11 +91,11 @@ const colors = new Map<Type, [string, number] | null>([
 // properly type the `format` method from Configuration. Since transforms are
 // internal to this file, it should be fine.
 const validateTransform = <T>(spec: {
-  pretty: (configuration: any, val: T) => string,
-  json: (val: T) => any
+  pretty: (configuration: any, val: T) => string;
+  json: (val: T) => any;
 }): {
-  pretty: (configuration: any, val: T) => string,
-  json: (val: T) => any,
+  pretty: (configuration: any, val: T) => string;
+  json: (val: T) => any;
 } => spec;
 
 const transforms = {

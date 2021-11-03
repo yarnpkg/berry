@@ -67,28 +67,28 @@ export default class VersionCheckCommand extends BaseCommand {
 
     const Prompt = () => {
       return (
-        <Box flexDirection="row" paddingBottom={1}>
-          <Box flexDirection="column" width={60}>
+        <Box flexDirection={`row`} paddingBottom={1}>
+          <Box flexDirection={`column`} width={60}>
             <Box>
               <Text>
-                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to select workspaces.
+                Press <Text bold color={`cyanBright`}>{`<up>`}</Text>/<Text bold color={`cyanBright`}>{`<down>`}</Text> to select workspaces.
               </Text>
             </Box>
             <Box>
               <Text>
-                 Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select release strategies.
+                 Press <Text bold color={`cyanBright`}>{`<left>`}</Text>/<Text bold color={`cyanBright`}>{`<right>`}</Text> to select release strategies.
               </Text>
             </Box>
           </Box>
-          <Box flexDirection="column">
+          <Box flexDirection={`column`}>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<enter>`}</Text> to save.
+                Press <Text bold color={`cyanBright`}>{`<enter>`}</Text> to save.
               </Text>
             </Box>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+                Press <Text bold color={`cyanBright`}>{`<ctrl+c>`}</Text> to abort.
               </Text>
             </Box>
           </Box>
@@ -120,10 +120,10 @@ export default class VersionCheckCommand extends BaseCommand {
       });
 
       const nextVersion = decision === versionUtils.Decision.UNDECIDED
-        ? <Text color="yellow">{currentVersion}</Text>
+        ? <Text color={`yellow`}>{currentVersion}</Text>
         : decision === versionUtils.Decision.DECLINE
-          ? <Text color="green">{currentVersion}</Text>
-          : <Text><Text color="magenta">{currentVersion}</Text> → <Text color="green">{
+          ? <Text color={`green`}>{currentVersion}</Text>
+          : <Text><Text color={`magenta`}>{currentVersion}</Text> → <Text color={`green`}>{
             semver.valid(decision)
               ? decision
               : semver.inc(currentVersion, decision as versionUtils.IncrementDecision)
@@ -236,7 +236,7 @@ export default class VersionCheckCommand extends BaseCommand {
       parts.push(`${releaseCount} release${releaseCount === 1 ? `` : `s`}`);
       parts.push(`${remainingCount} remaining`);
 
-      return <Text color="yellow">{parts.join(`, `)}</Text>;
+      return <Text color={`yellow`}>{parts.join(`, `)}</Text>;
     };
 
     const App = ({useSubmit}: {useSubmit: (value: versionUtils.Releases) => void}) => {
@@ -265,7 +265,7 @@ export default class VersionCheckCommand extends BaseCommand {
         <Box flexDirection={`column`}>
           <Prompt />
           <Box>
-            <Text wrap="wrap">
+            <Text wrap={`wrap`}>
               The following files have been modified in your local checkout.
             </Text>
           </Box>
@@ -273,14 +273,14 @@ export default class VersionCheckCommand extends BaseCommand {
             {[...versionFile.changedFiles].map(file => (
               <Box key={file}>
                 <Text>
-                  <Text color="grey">{npath.fromPortablePath(versionFile.root)}</Text>{npath.sep}{npath.relative(npath.fromPortablePath(versionFile.root), npath.fromPortablePath(file))}
+                  <Text color={`grey`}>{npath.fromPortablePath(versionFile.root)}</Text>{npath.sep}{npath.relative(npath.fromPortablePath(versionFile.root), npath.fromPortablePath(file))}
                 </Text>
               </Box>
             ))}
           </Box>
           {versionFile.releaseRoots.size > 0 && <>
             <Box marginTop={1}>
-              <Text wrap="wrap">
+              <Text wrap={`wrap`}>
                 Because of those files having been modified, the following workspaces may need to be released again (note that private workspaces are also shown here, because even though they won't be published, releasing them will allow us to flag their dependents for potential re-release):
               </Text>
             </Box>
@@ -298,13 +298,13 @@ export default class VersionCheckCommand extends BaseCommand {
           {dependentWorkspaces.size > 0 ? (
             <>
               <Box marginTop={1}>
-                <Text wrap="wrap">
+                <Text wrap={`wrap`}>
                   The following workspaces depend on other workspaces that have been marked for release, and thus may need to be released as well:
                 </Text>
               </Box>
               <Box>
                 <Text>
-                  (Press <Text bold color="cyanBright">{`<tab>`}</Text> to move the focus between the workspace groups.)
+                  (Press <Text bold color={`cyanBright`}>{`<tab>`}</Text> to move the focus between the workspace groups.)
                 </Text>
               </Box>
               {dependentWorkspaces.size > 5 ? (

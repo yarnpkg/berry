@@ -79,8 +79,8 @@ export class PnpInstaller implements Installer {
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly virtualTemplates: Map<LocatorHash, {
-    locator: Locator,
-    location: PortablePath,
+    locator: Locator;
+    location: PortablePath;
   }> = new Map();
 
   private isESMLoaderRequired: boolean = false;
@@ -97,7 +97,7 @@ export class PnpInstaller implements Installer {
   }
 
   private customData: {
-    store: Map<LocatorHash, CustomPackageData>,
+    store: Map<LocatorHash, CustomPackageData>;
   } = {
     store: new Map(),
   };
@@ -294,8 +294,8 @@ export class PnpInstaller implements Installer {
   }
 
   private isEsmEnabled() {
-    if (this.opts.project.configuration.sources.has(`pnpEnableExperimentalEsm`))
-      return this.opts.project.configuration.get(`pnpEnableExperimentalEsm`);
+    if (this.opts.project.configuration.sources.has(`pnpEnableEsmLoader`))
+      return this.opts.project.configuration.get(`pnpEnableEsmLoader`);
 
     if (this.isESMLoaderRequired)
       return true;
@@ -414,7 +414,7 @@ export class PnpInstaller implements Installer {
     if (FORCED_UNPLUG_PACKAGES.has(pkg.identHash))
       return true;
 
-    if (pkg.conditions !== null)
+    if (pkg.conditions != null)
       return true;
 
     if (customPackageData.manifest.preferUnplugged !== null)

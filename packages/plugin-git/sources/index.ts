@@ -9,7 +9,7 @@ export interface Hooks {
     current: FetchResult | null,
     locator: Locator,
     opts: FetchOptions,
-  ) => Promise<FetchResult | null>,
+  ) => Promise<FetchResult | null>;
 }
 
 declare module '@yarnpkg/core' {

@@ -19,7 +19,7 @@ const PlaygroundFrame = () => {
 
   return (<>
     <Layout>
-      <SEO title="Playground" keywords={defaultKeywords} />
+      <SEO title={`Playground`} keywords={defaultKeywords} />
       <Playground />
     </Layout>
   </>);

@@ -179,7 +179,7 @@ export const PrerenderedMarkdown = ({title, children, editUrl}) => <>
       <Title>
         {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
       </Title>
-      {editUrl && <EditLink target="_blank" href={editUrl}>Edit this page on GitHub</EditLink>}
+      {editUrl && <EditLink target={`_blank`} href={editUrl}>Edit this page on GitHub</EditLink>}
     </TitleContainer>
     <Content dangerouslySetInnerHTML={{__html: children}} />
   </Container>

@@ -56,3 +56,5 @@ jobs:
 
         echo 'const f = () => 42;' | tee ko.ts
         ! yarn eslint ko.ts
+      if: |
+        always()

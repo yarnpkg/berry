@@ -21,20 +21,20 @@ export enum NodeModulesHoistingLimits {
 
 // The list of directories stored within a node_modules (or node_modules/@foo)
 export type NodeModulesBaseNode = {
-  dirList: Set<Filename>
+  dirList: Set<Filename>;
 };
 
 // The entry for a package within a node_modules
 export type NodeModulesPackageNode = {
-  locator: LocatorKey,
+  locator: LocatorKey;
   // The source path. Note that the virtual paths have been resolved/lost!
-  target: PortablePath,
+  target: PortablePath;
   // Hard links are copies of the target; soft links are symlinks to it
-  linkType: LinkType,
+  linkType: LinkType;
   // Contains ["node_modules"] if there's nested n_m entries
-  dirList?: undefined,
-  nodePath: string,
-  aliases: Array<string>,
+  dirList?: undefined;
+  nodePath: string;
+  aliases: Array<string>;
 };
 
 /**
@@ -133,7 +133,13 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
     val.locations = val.locations.sort((loc1: PortablePath, loc2: PortablePath) => {
       const len1 = loc1.split(ppath.delimiter).length;
       const len2 = loc2.split(ppath.delimiter).length;
-      return len1 !== len2 ? len2 - len1 : loc2.localeCompare(loc1);
+      if (loc2 === loc1) {
+        return 0;
+      } else if (len1 !== len2) {
+        return len2 - len1;
+      } else {
+        return loc2 > loc1 ? 1 : -1;
+      }
     });
   }
 
@@ -424,7 +430,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
             || depHoistingLimits === NodeModulesHoistingLimits.DEPENDENCIES
             || depHoistingLimits === NodeModulesHoistingLimits.WORKSPACES;
 
-          addPackageToTree(stringifyLocator(depLocator) === stringifyLocator(locator) ? name : depName, depPkg, depLocator, node, pkg, allDependencies, relativeDepCwd, isHoistBorder);
+          addPackageToTree(depName, depPkg, depLocator, node, pkg, allDependencies, relativeDepCwd, isHoistBorder);
         }
       }
     }

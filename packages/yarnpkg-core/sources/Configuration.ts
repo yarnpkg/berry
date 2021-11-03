@@ -85,24 +85,24 @@ export type FormatType = formatUtils.Type;
 export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
-  description: string,
-  type: T,
+  description: string;
+  type: T;
 } & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
-  properties: {[propertyName: string]: SettingsDefinition},
+  properties: {[propertyName: string]: SettingsDefinition};
 };
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
-  valueDefinition: SettingsDefinitionNoDefault,
-  normalizeKeys?: (key: string) => string,
+  valueDefinition: SettingsDefinitionNoDefault;
+  normalizeKeys?: (key: string) => string;
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
-  default: any,
-  defaultText?: any,
-  isNullable?: boolean,
-  values?: Array<any>,
+  default: any;
+  defaultText?: any;
+  isNullable?: boolean;
+  values?: Array<any>;
 };
 
 export type SettingsDefinitionNoDefault =
@@ -116,8 +116,8 @@ export type SettingsDefinition =
   | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
-  modules: Map<string, any>,
-  plugins: Set<string>,
+  modules: Map<string, any>;
+  plugins: Set<string>;
 };
 
 // General rules:
@@ -577,9 +577,9 @@ export interface ConfigurationValueMap {
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
-    dependencies?: Map<string, string>,
-    peerDependencies?: Map<string, string>,
-    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>,
+    dependencies?: Map<string, string>;
+    peerDependencies?: Map<string, string>;
+    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>;
   }>>;
 }
 
@@ -858,10 +858,10 @@ export enum ProjectLookup {
 }
 
 export type FindProjectOptions = {
-  lookup?: ProjectLookup,
-  strict?: boolean,
-  usePath?: boolean,
-  useRc?: boolean,
+  lookup?: ProjectLookup;
+  strict?: boolean;
+  usePath?: boolean;
+  useRc?: boolean;
 };
 
 export class Configuration {
@@ -1111,7 +1111,7 @@ export class Configuration {
       path: PortablePath;
       cwd: PortablePath;
       data: any;
-      strict?: boolean
+      strict?: boolean;
     }> = [];
 
     let nextCwd = startingCwd;

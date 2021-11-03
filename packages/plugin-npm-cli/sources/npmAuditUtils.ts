@@ -236,7 +236,7 @@ export function getDependencies(project: Project, workspace: Workspace, {all}: {
       integrity: string;
       requires: {[key: string]: string};
       dev: boolean;
-    },
+    };
   } = {};
 
   for (const pkg of project.storedPackages.values()) {

@@ -61,15 +61,15 @@ export const Install = ({name, onOpenFileBrowser}) => (
   <InstallBox>
     <h1>Use it</h1>
     <InstallCommand>
-      <Copyable pre="$ " tag="code">
+      <Copyable pre={`$ `} tag={`code`}>
         yarn add {name}
       </Copyable>
     </InstallCommand>
     <div>
       <a
         href={`https://runkit.com/npm/${name}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={`_blank`}
+        rel={`noopener noreferrer`}
       >
         Try in RunKit
       </a>

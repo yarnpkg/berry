@@ -9,14 +9,14 @@ import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
 export type Stats = NodeStats & {
-  crc?: number
+  crc?: number;
 };
 export type BigIntStats = NodeBigIntStats & {
-  crc?: number
+  crc?: number;
 };
 
 export type Dirent = Exclude<NodeDirent, 'name'> & {
-  name: Filename,
+  name: Filename;
 };
 
 export type Dir<P extends Path> = {
@@ -40,48 +40,48 @@ export type OpendirOptions = Partial<{
 }>;
 
 export type CreateReadStreamOptions = Partial<{
-  encoding: string,
-  fd: number,
+  encoding: string;
+  fd: number;
 }>;
 
 export type CreateWriteStreamOptions = Partial<{
-  encoding: string,
-  fd: number,
-  flags: 'a',
+  encoding: string;
+  fd: number;
+  flags: 'a';
 }>;
 
 export type MkdirOptions = Partial<{
-  recursive: boolean,
-  mode: number,
+  recursive: boolean;
+  mode: number;
 }>;
 
 export type RmdirOptions = Partial<{
-  maxRetries: number,
-  recursive: boolean,
-  retryDelay: number,
+  maxRetries: number;
+  recursive: boolean;
+  retryDelay: number;
 }>;
 
 export type WriteFileOptions = Partial<{
-  encoding: string,
-  mode: number,
-  flag: string,
+  encoding: string;
+  mode: number;
+  flag: string;
 }> | string;
 
 export type WatchOptions = Partial<{
-  persistent: boolean,
-  recursive: boolean,
-  encoding: string,
+  persistent: boolean;
+  recursive: boolean;
+  encoding: string;
 }> | string;
 
 export type WatchFileOptions = Partial<{
-  bigint: boolean,
-  persistent: boolean,
-  interval: number,
+  bigint: boolean;
+  persistent: boolean;
+  interval: number;
 }>;
 
 export type ChangeFileOptions = Partial<{
-  automaticNewlines: boolean,
-  mode: number,
+  automaticNewlines: boolean;
+  mode: number;
 }>;
 
 export type WatchCallback = (
@@ -90,8 +90,8 @@ export type WatchCallback = (
 ) => void;
 
 export type Watcher = {
-  on: any,
-  close: () => void,
+  on: any;
+  close: () => void;
 };
 
 export type WatchFileCallback = (
@@ -101,8 +101,8 @@ export type WatchFileCallback = (
 
 export type StatWatcher = EventEmitter & {
   // Node 14+
-  ref?: () => StatWatcher,
-  unref?: () => StatWatcher,
+  ref?: () => StatWatcher;
+  unref?: () => StatWatcher;
 };
 
 export type ExtractHintOptions = {

@@ -58,7 +58,7 @@ export const Link = ({site, url, display, tag = `a`}) => {
   return (
     <LinkBox>
       <LinkElement href={url}>
-        {site && <LinkIcon src={images[site]} alt="" />}
+        {site && <LinkIcon src={images[site]} alt={``} />}
         {display}
       </LinkElement>
     </LinkBox>
@@ -70,7 +70,7 @@ const RepositoryLink = ({repository}) => {
 
   if (!isKnownRepositoryHost(repository.host)) {
     return repository.url ? (
-      <Link site="generic_repo" url={repository.url} display={repository.url} />
+      <Link site={`generic_repo`} url={repository.url} display={repository.url} />
     ) : null;
   }
 
@@ -88,25 +88,25 @@ const RepositoryLink = ({repository}) => {
 export const Links = ({name, homepage, repository}) => (
   <div>
     <Link
-      site="yarn"
+      site={`yarn`}
       url={`https://yarn.pm/${name}`}
       display={
         <Copyable>
-          <span className="text-hide">https://</span>
+          <span className={`text-hide`}>https://</span>
             yarn.pm/{name}
         </Copyable>
       }
     />
     {homepage ? (
       <Link
-        site="homepage"
+        site={`homepage`}
         url={homepage}
         display={homepage.replace(/(http)?s?(:\/\/)?(www\.)?/, ``)}
       />
     ) : null}
     {repository ? <RepositoryLink repository={repository} /> : null}
     <Link
-      site="npm"
+      site={`npm`}
       url={`https://www.npmjs.com/package/${name}`}
       display={name}
     />

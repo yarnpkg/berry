@@ -4,9 +4,9 @@ import {Cli, Definition as ClipanionDefinition} from 'clipanion';
 
 type ExtendedDefinition = ClipanionDefinition & {
   plugin: {
-    name: string,
-    isDefault: boolean,
-  },
+    name: string;
+    isDefault: boolean;
+  };
 };
 
 // eslint-disable-next-line arca/no-default-export

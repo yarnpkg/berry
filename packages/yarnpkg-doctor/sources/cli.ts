@@ -245,7 +245,7 @@ async function makeResolveFn(project: Project) {
   const checksums = project.storedChecksums;
   const yarnReport = new ThrowReport();
 
-  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums, report: yarnReport, skipIntegrityCheck: true};
+  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums, report: yarnReport, cacheOptions: {skipIntegrityCheck: true}, skipIntegrityCheck: true};
   const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
   return async (descriptor: Descriptor) => {

@@ -2,7 +2,7 @@ import {Text}                 from 'ink';
 import React, {memo, useMemo} from 'react';
 
 export interface GemProps {
-  active: boolean
+  active: boolean;
 }
 export const Gem: React.FC<GemProps> = memo(({active}) => {
   const text = useMemo(() => active ? `◉` : `◯`, [active]);

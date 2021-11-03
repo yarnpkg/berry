@@ -140,8 +140,8 @@ export const FileBrowser = ({objectID, version, onBackToDetails}) => {
 
       return (
         <Directory
-          name="/"
-          path="/"
+          name={`/`}
+          path={`/`}
           baseURL={baseURL}
           files={state.files}
           expandedDirs={state.expandedDirs}
@@ -150,7 +150,7 @@ export const FileBrowser = ({objectID, version, onBackToDetails}) => {
       );
     } else if (state.error) {
       return (
-        <Alert role="alert">
+        <Alert role={`alert`}>
           {`Could not load file listing: ${state.error.message}`}
         </Alert>
       );
@@ -235,14 +235,14 @@ const Directory = ({name, path, baseURL, expandedDirs, files, onToggleDir}) => {
       <DirItem key={path}>
         <a
           href={url}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={`_blank`}
+          rel={`noopener noreferrer`}
           onClick={toggleDir}
         >
           {name}
         </a>
         <CSSTransitionGroup
-          transitionName="details-files"
+          transitionName={`details-files`}
           transitionEnterTimeout={600}
           transitionLeaveTimeout={600}
         >
@@ -255,7 +255,7 @@ const Directory = ({name, path, baseURL, expandedDirs, files, onToggleDir}) => {
 
 const File = ({file, url, key, size}) => (
   <FileItem key={key}>
-    <a href={url} target="_blank" rel="noopener noreferrer">
+    <a href={url} target={`_blank`} rel={`noopener noreferrer`}>
       {file.name}
     </a>
     <small>{bytes(size)}</small>
