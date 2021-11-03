@@ -133,7 +133,13 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
     val.locations = val.locations.sort((loc1: PortablePath, loc2: PortablePath) => {
       const len1 = loc1.split(ppath.delimiter).length;
       const len2 = loc2.split(ppath.delimiter).length;
-      return len1 !== len2 ? len2 - len1 : loc2.localeCompare(loc1);
+      if (loc2 === loc1) {
+        return 0;
+      } else if (len1 !== len2) {
+        return len2 - len1;
+      } else {
+        return loc2 > loc1 ? 1 : -1;
+      }
     });
   }
 
