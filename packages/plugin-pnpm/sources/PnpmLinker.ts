@@ -79,8 +79,7 @@ class PnpmInstaller implements Installer {
 
   attachCustomData(customData: any) {
     // We don't want to attach the data because it's only used in the Linker and we'll recompute it anyways in the Installer,
-    // it needs to be invalidated because otherwise we'll never prune the store or we might run into issues when the dependency
-    // tree of a package changes and we need to create a self reference for it for example.
+    // it needs to be invalidated because otherwise we'll never prune the store or we might run into various issues.
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
@@ -103,9 +102,7 @@ class PnpmInstaller implements Installer {
   }
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
-    // We only enable self-references if the package doesn't depend on a different
-    // version of itself (in which case it should resolve to that version)
-    const pkgPath = getPackageLocation(pkg, {project: this.opts.project, createSelfReference: !pkg.dependencies.has(pkg.identHash)});
+    const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
     this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
@@ -148,8 +145,6 @@ class PnpmInstaller implements Installer {
     if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
-    const storeLocation = getStoreLocation(this.opts.project);
-
     this.asyncActions.reduce(locator.locatorHash, async action => {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
@@ -158,35 +153,9 @@ class PnpmInstaller implements Installer {
       if (typeof pkgPath === `undefined`)
         throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
 
-      const locatorName = structUtils.stringifyIdent(locator) as PortablePath;
-
-      let nmPath: PortablePath;
-      let storeEntryPathToClean: PortablePath | null = null;
-
-      if (ppath.contains(storeLocation, pkgPath) && pkgPath.endsWith(structUtils.getIdentVendorPath(locator))) {
-        nmPath = pkgPath.slice(0, -(ppath.sep.length + locatorName.length)) as PortablePath;
-        storeEntryPathToClean = ppath.dirname(nmPath);
-      } else {
-        nmPath = ppath.join(pkgPath, Filename.nodeModules);
-      }
+      const nmPath = ppath.join(pkgPath, Filename.nodeModules);
 
       const concurrentPromises: Array<Promise<void>> = [];
-
-      // There are 3 cases:
-      // - The package is a hard link and we generate self references; in this case the
-      //   package path which is symlinked is .store/<hash>/node_modules/<scope>/<name>
-      //   so we can safely clean .store/<hash>/<extraneous-entry>
-      // - The package is a hard link and we don't generate self references; in this case
-      //   the package path which is symlinked is .store/<hash>, so we can't clean extraneous
-      //   entries because we should allow the user to modify the package sources
-      // - The package is a soft link; nothing to clean
-      if (storeEntryPathToClean !== null) {
-        for (const entry of await xfs.readdirPromise(storeEntryPathToClean)) {
-          if (entry !== Filename.nodeModules) {
-            concurrentPromises.push(xfs.removePromise(ppath.join(storeEntryPathToClean, entry)));
-          }
-        }
-      }
 
       // Retrieve what's currently inside the package's true nm folder. We
       // will use that to figure out what are the extraneous entries we'll
@@ -233,26 +202,7 @@ class PnpmInstaller implements Installer {
         }));
       }
 
-      // We delete the locator name from the listing in the case of self-references.
-      // We only do it now because if self-references are disabled, the `existing`
-      // check will be broken.
-      extraneous.delete(locatorName);
-
-      const removeNamePromises = [];
-      const scopesToRemove = new Set<Filename>();
-
-      for (const name of extraneous.keys()) {
-        removeNamePromises.push(xfs.removePromise(ppath.join(nmPath, name)));
-
-        const scope = structUtils.tryParseIdent(name)?.scope;
-        if (scope) {
-          scopesToRemove.add(`@${scope}` as Filename);
-        }
-      }
-
-      concurrentPromises.push(Promise.all(removeNamePromises).then(() => Promise.all([...scopesToRemove].map(
-        scope => removeIfEmpty(ppath.join(nmPath, scope)),
-      ))) as Promise<void>);
+      concurrentPromises.push(cleanNodeModules(nmPath, extraneous));
 
       await Promise.all(concurrentPromises);
     });
@@ -268,12 +218,35 @@ class PnpmInstaller implements Installer {
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`) {
       await xfs.removePromise(storeLocation);
     } else {
+      const removals: Array<Promise<void>> = [];
+
       const expectedEntries = new Set<Filename>();
       for (const packageLocation of this.customData.pathByLocator.values()) {
         const subpath = ppath.contains(storeLocation, packageLocation);
         if (subpath !== null) {
-          const [storeEntry] = subpath.split(ppath.sep);
+          const [storeEntry, /* Filename.nodeModules */, ...identComponents] = subpath.split(ppath.sep);
           expectedEntries.add(storeEntry as Filename);
+
+          const storeEntryPath = ppath.join(storeLocation, storeEntry as Filename);
+
+          removals.push(xfs.readdirPromise(storeEntryPath)
+            .then(entries => {
+              return Promise.all(entries.map(async entry => {
+                const p = ppath.join(storeEntryPath, entry);
+                if (entry === Filename.nodeModules) {
+                  const extraneous = await getNodeModulesListing(p);
+                  extraneous.delete(identComponents.join(ppath.sep) as PortablePath);
+                  return cleanNodeModules(p, extraneous);
+                } else {
+                  return xfs.removePromise(p);
+                }
+              }));
+            })
+            .catch(error => {
+              if (error.code !== `ENOENT`) {
+                throw error;
+              }
+            }) as Promise<void>);
         }
       }
 
@@ -284,7 +257,6 @@ class PnpmInstaller implements Installer {
         storeRecords = [];
       }
 
-      const removals: Array<Promise<void>> = [];
       for (const record of storeRecords)
         if (!expectedEntries.has(record))
           removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
@@ -320,11 +292,9 @@ function getStoreLocation(project: Project) {
   return ppath.join(getNodeModulesLocation(project), `.store` as Filename);
 }
 
-function getPackageLocation(locator: Locator, {project, createSelfReference}: {project: Project, createSelfReference: boolean}) {
+function getPackageLocation(locator: Locator, {project}: {project: Project}) {
   const pkgKey = structUtils.slugifyLocator(locator);
-  const prefixPath = createSelfReference
-    ? structUtils.getIdentVendorPath(locator)
-    : PortablePath.dot;
+  const prefixPath = structUtils.getIdentVendorPath(locator);
   const pkgPath = ppath.join(getStoreLocation(project), pkgKey, prefixPath);
 
   return pkgPath;
@@ -383,6 +353,24 @@ async function getNodeModulesListing(nmPath: PortablePath) {
   }
 
   return listing;
+}
+
+async function cleanNodeModules(nmPath: PortablePath, extraneous: Map<PortablePath, Dirent>) {
+  const removeNamePromises = [];
+  const scopesToRemove = new Set<Filename>();
+
+  for (const name of extraneous.keys()) {
+    removeNamePromises.push(xfs.removePromise(ppath.join(nmPath, name)));
+
+    const scope = structUtils.tryParseIdent(name)?.scope;
+    if (scope) {
+      scopesToRemove.add(`@${scope}` as Filename);
+    }
+  }
+
+  return Promise.all(removeNamePromises).then(() => Promise.all([...scopesToRemove].map(
+    scope => removeIfEmpty(ppath.join(nmPath, scope)),
+  ))) as Promise<void>;
 }
 
 async function removeIfEmpty(dir: PortablePath) {
