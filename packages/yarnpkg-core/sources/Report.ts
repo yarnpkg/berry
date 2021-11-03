@@ -33,8 +33,8 @@ export type ProgressIterable = AsyncIterable<ProgressDefinition> & {
 };
 
 export type SectionOptions = {
-  reportHeader?: () => void,
-  reportFooter?: () => void,
+  reportHeader?: () => void;
+  reportFooter?: () => void;
   skipIfEmpty?: boolean;
 };
 
