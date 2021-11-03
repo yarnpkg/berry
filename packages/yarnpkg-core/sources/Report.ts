@@ -1,8 +1,11 @@
+import throttle        from 'lodash/throttle';
 import {PassThrough}   from 'stream';
 import {StringDecoder} from 'string_decoder';
 
 import {MessageName}   from './MessageName';
 import {Locator}       from './types';
+
+const TITLE_PROGRESS_FPS = 15;
 
 export class ReportError extends Error {
   public reportCode: MessageName;
@@ -20,8 +23,13 @@ export function isReportError(error: Error): error is ReportError {
 }
 
 export type ProgressDefinition = {
-  progress: number;
+  progress?: number;
   title?: string;
+};
+
+export type ProgressIterable = AsyncIterable<ProgressDefinition> & {
+  hasProgress: boolean;
+  hasTitle: boolean;
 };
 
 export type TimerOptions = {
@@ -89,9 +97,69 @@ export abstract class Report {
       [Symbol.asyncIterator]() {
         return gen;
       },
+      hasProgress: true,
+      hasTitle: false,
       set,
       tick,
     };
+  }
+
+  static progressViaTitle() {
+    let currentTitle: string | undefined;
+
+    let unlock: () => void;
+    let lock = new Promise<void>(resolve => {
+      unlock = resolve;
+    });
+
+    const setTitle = throttle((title: string) => {
+      const thisUnlock = unlock;
+
+      lock = new Promise<void>(resolve => {
+        unlock = resolve;
+      });
+
+      currentTitle = title;
+      thisUnlock();
+    }, 1000 / TITLE_PROGRESS_FPS);
+
+    const gen = (async function * () {
+      while (true) {
+        await lock;
+        yield {
+          title: currentTitle,
+        };
+      }
+    })();
+
+    return {
+      [Symbol.asyncIterator]() {
+        return gen;
+      },
+      hasProgress: false,
+      hasTitle: true,
+      setTitle,
+    };
+  }
+
+  async startProgressPromise<T, P extends ProgressIterable>(progressIt: P, cb: (progressIt: P) => Promise<T>): Promise<T> {
+    const reportedProgress = this.reportProgress(progressIt);
+
+    try {
+      return await cb(progressIt);
+    } finally {
+      reportedProgress.stop();
+    }
+  }
+
+  startProgressSync<T, P extends ProgressIterable>(progressIt: P, cb: (progressIt: P) => T): T {
+    const reportedProgress = this.reportProgress(progressIt);
+
+    try {
+      return cb(progressIt);
+    } finally {
+      reportedProgress.stop();
+    }
   }
 
   reportInfoOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {

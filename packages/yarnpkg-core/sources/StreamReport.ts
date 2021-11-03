@@ -1,13 +1,13 @@
-import sliceAnsi                                  from '@arcanis/slice-ansi';
-import CI                                         from 'ci-info';
-import {Writable}                                 from 'stream';
+import sliceAnsi                                                    from '@arcanis/slice-ansi';
+import CI                                                           from 'ci-info';
+import {Writable}                                                   from 'stream';
 
-import {Configuration}                            from './Configuration';
-import {MessageName, stringifyMessageName}        from './MessageName';
-import {ProgressDefinition, Report, TimerOptions} from './Report';
-import * as formatUtils                           from './formatUtils';
-import * as structUtils                           from './structUtils';
-import {Locator}                                  from './types';
+import {Configuration}                                              from './Configuration';
+import {MessageName, stringifyMessageName}                          from './MessageName';
+import {ProgressDefinition, ProgressIterable, Report, TimerOptions} from './Report';
+import * as formatUtils                                             from './formatUtils';
+import * as structUtils                                             from './structUtils';
+import {Locator}                                                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration;
@@ -163,9 +163,10 @@ export class StreamReport extends Report {
 
   private indent: number = 0;
 
-  private progress: Map<AsyncIterable<ProgressDefinition>, {
+  private progress: Map<ProgressIterable, {
     definition: ProgressDefinition;
-    lastScaledSize: number;
+    lastScaledSize?: number;
+    lastTitle?: string;
   }> = new Map();
 
   private progressTime: number = 0;
@@ -418,30 +419,36 @@ export class StreamReport extends Report {
     }
   }
 
-  reportProgress(progressIt: AsyncIterable<{progress: number, title?: string}>) {
+  reportProgress(progressIt: ProgressIterable) {
+    if (progressIt.hasProgress && progressIt.hasTitle)
+      throw new Error(`Unimplemented: Progress bars can't have both progress and titles.`);
+
     let stopped = false;
 
     const promise = Promise.resolve().then(async () => {
       const progressDefinition: ProgressDefinition = {
-        progress: 0,
-        title: undefined,
+        progress: progressIt.hasProgress ? 0 : undefined,
+        title: progressIt.hasTitle ? `` : undefined,
       };
 
       this.progress.set(progressIt, {
         definition: progressDefinition,
-        lastScaledSize: -1,
+        lastScaledSize: progressIt.hasProgress ? -1 : undefined,
+        lastTitle: undefined,
       });
 
-      this.refreshProgress(-1);
+      this.refreshProgress({delta: -1});
 
       for await (const {progress, title} of progressIt) {
         if (stopped)
           continue;
+
         if (progressDefinition.progress === progress && progressDefinition.title === title)
           continue;
 
         progressDefinition.progress = progress;
         progressDefinition.title = title;
+
         this.refreshProgress();
       }
 
@@ -455,7 +462,7 @@ export class StreamReport extends Report {
       stopped = true;
 
       this.progress.delete(progressIt);
-      this.refreshProgress(+1);
+      this.refreshProgress({delta: +1});
     };
 
     return {...promise, stop};
@@ -591,33 +598,45 @@ export class StreamReport extends Report {
     const spinner = PROGRESS_FRAMES[this.progressFrame];
 
     for (const progress of this.progress.values()) {
-      const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
-      const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
+      let progressBar = ``;
+
+      if (typeof progress.lastScaledSize !== `undefined`) {
+        const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
+        const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
+        progressBar = ` ${ok}${ko}`;
+      }
 
       const formattedName = this.formatName(null);
       const prefix = formattedName ? `${formattedName}: ` : ``;
+      const title = progress.definition.title ? ` ${progress.definition.title}` : ``;
 
-      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${spinner} ${ok}${ko}\n`);
+      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${spinner}${progressBar}${title}\n`);
     }
 
     this.progressTimeout = setTimeout(() => {
-      this.refreshProgress();
+      this.refreshProgress({force: true});
     }, PROGRESS_INTERVAL);
   }
 
-  private refreshProgress(delta: number = 0) {
+  private refreshProgress({delta = 0, force = false}: {delta?: number, force?: boolean} = {}) {
     let needsUpdate = false;
+    let needsClear = false;
 
-    if (this.progress.size === 0) {
+    if (force || this.progress.size === 0) {
       needsUpdate = true;
     } else {
       for (const progress of this.progress.values()) {
-        const refreshedScaledSize = Math.trunc(this.progressMaxScaledSize * progress.definition.progress);
+        const refreshedScaledSize = typeof progress.definition.progress !== `undefined`
+          ? Math.trunc(this.progressMaxScaledSize * progress.definition.progress)
+          : undefined;
 
         const previousScaledSize = progress.lastScaledSize;
         progress.lastScaledSize = refreshedScaledSize;
 
-        if (refreshedScaledSize !== previousScaledSize) {
+        const previousTitle = progress.lastTitle;
+        progress.lastTitle = progress.definition.title;
+
+        if ((refreshedScaledSize !== previousScaledSize) || (needsClear = previousTitle !== progress.definition.title)) {
           needsUpdate = true;
           break;
         }
@@ -625,7 +644,7 @@ export class StreamReport extends Report {
     }
 
     if (needsUpdate) {
-      this.clearProgress({delta});
+      this.clearProgress({delta, clear: needsClear});
       this.writeProgress();
     }
   }

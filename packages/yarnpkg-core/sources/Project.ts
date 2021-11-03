@@ -698,116 +698,120 @@ export class Project {
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
-    const startPackageResolution = async (locator: Locator) => {
-      const originalPkg = await miscUtils.prettifyAsyncErrors(async () => {
-        return await resolver.resolve(locator, resolveOptions);
-      }, message => {
-        return `${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
-      });
-
-      if (!structUtils.areLocatorsEqual(locator, originalPkg))
-        throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, originalPkg)})`);
-
-      originalPackages.set(originalPkg.locatorHash, originalPkg);
-
-      const pkg = this.configuration.normalizePackage(originalPkg);
-
-      for (const [identHash, descriptor] of pkg.dependencies) {
-        const dependency = await this.configuration.reduceHook(hooks => {
-          return hooks.reduceDependency;
-        }, descriptor, this, pkg, descriptor, {
-          resolver,
-          resolveOptions,
+    await opts.report.startProgressPromise(Report.progressViaTitle(), async progress => {
+      const startPackageResolution = async (locator: Locator) => {
+        const originalPkg = await miscUtils.prettifyAsyncErrors(async () => {
+          return await resolver.resolve(locator, resolveOptions);
+        }, message => {
+          return `${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
         });
 
-        if (!structUtils.areIdentsEqual(descriptor, dependency))
-          throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+        if (!structUtils.areLocatorsEqual(locator, originalPkg))
+          throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, originalPkg)})`);
 
-        const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
-        pkg.dependencies.set(identHash, bound);
+        originalPackages.set(originalPkg.locatorHash, originalPkg);
+
+        const pkg = this.configuration.normalizePackage(originalPkg);
+
+        for (const [identHash, descriptor] of pkg.dependencies) {
+          const dependency = await this.configuration.reduceHook(hooks => {
+            return hooks.reduceDependency;
+          }, descriptor, this, pkg, descriptor, {
+            resolver,
+            resolveOptions,
+          });
+
+          if (!structUtils.areIdentsEqual(descriptor, dependency))
+            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
+          pkg.dependencies.set(identHash, bound);
+        }
+
+        resolutionQueue.push(Promise.all([...pkg.dependencies.values()].map(descriptor => {
+          return scheduleDescriptorResolution(descriptor);
+        })));
+
+        allPackages.set(pkg.locatorHash, pkg);
+
+        return pkg;
+      };
+
+      const schedulePackageResolution = async (locator: Locator) => {
+        const promise = packageResolutionPromises.get(locator.locatorHash);
+        if (typeof promise !== `undefined`)
+          return promise;
+
+        const newPromise = Promise.resolve().then(() => startPackageResolution(locator));
+        packageResolutionPromises.set(locator.locatorHash, newPromise);
+        return newPromise;
+      };
+
+      const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor): Promise<Package> => {
+        const resolution = await scheduleDescriptorResolution(alias);
+
+        allDescriptors.set(descriptor.descriptorHash, descriptor);
+        allResolutions.set(descriptor.descriptorHash, resolution.locatorHash);
+
+        return resolution;
+      };
+
+      const startDescriptorResolution = async (descriptor: Descriptor): Promise<Package> => {
+        progress.setTitle(structUtils.prettyDescriptor(this.configuration, descriptor));
+
+        const alias = this.resolutionAliases.get(descriptor.descriptorHash);
+        if (typeof alias !== `undefined`)
+          return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
+
+        const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
+        const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
+          const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
+
+          const resolvedPackage = await scheduleDescriptorResolution(bound);
+          allResolutionDependencyPackages.add(resolvedPackage.locatorHash);
+
+          return [dependency.descriptorHash, resolvedPackage] as const;
+        })));
+
+        const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
+          return await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
+        }, message => {
+          return `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${message}`;
+        });
+
+        const finalResolution = candidateResolutions[0];
+        if (typeof finalResolution === `undefined`)
+          throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+
+        allDescriptors.set(descriptor.descriptorHash, descriptor);
+        allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);
+
+        return schedulePackageResolution(finalResolution);
+      };
+
+      const scheduleDescriptorResolution = (descriptor: Descriptor) => {
+        const promise = descriptorResolutionPromises.get(descriptor.descriptorHash);
+        if (typeof promise !== `undefined`)
+          return promise;
+
+        allDescriptors.set(descriptor.descriptorHash, descriptor);
+
+        const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor));
+        descriptorResolutionPromises.set(descriptor.descriptorHash, newPromise);
+        return newPromise;
+      };
+
+      for (const workspace of this.workspaces) {
+        const workspaceDescriptor = workspace.anchoredDescriptor;
+        resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor));
       }
 
-      resolutionQueue.push(Promise.all([...pkg.dependencies.values()].map(descriptor => {
-        return scheduleDescriptorResolution(descriptor);
-      })));
-
-      allPackages.set(pkg.locatorHash, pkg);
-
-      return pkg;
-    };
-
-    const schedulePackageResolution = async (locator: Locator) => {
-      const promise = packageResolutionPromises.get(locator.locatorHash);
-      if (typeof promise !== `undefined`)
-        return promise;
-
-      const newPromise = Promise.resolve().then(() => startPackageResolution(locator));
-      packageResolutionPromises.set(locator.locatorHash, newPromise);
-      return newPromise;
-    };
-
-    const startDescriptorAliasing = async (descriptor: Descriptor, alias: Descriptor): Promise<Package> => {
-      const resolution = await scheduleDescriptorResolution(alias);
-
-      allDescriptors.set(descriptor.descriptorHash, descriptor);
-      allResolutions.set(descriptor.descriptorHash, resolution.locatorHash);
-
-      return resolution;
-    };
-
-    const startDescriptorResolution = async (descriptor: Descriptor): Promise<Package> => {
-      const alias = this.resolutionAliases.get(descriptor.descriptorHash);
-      if (typeof alias !== `undefined`)
-        return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
-
-      const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
-      const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
-        const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
-
-        const resolvedPackage = await scheduleDescriptorResolution(bound);
-        allResolutionDependencyPackages.add(resolvedPackage.locatorHash);
-
-        return [dependency.descriptorHash, resolvedPackage] as const;
-      })));
-
-      const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
-        return await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
-      }, message => {
-        return `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${message}`;
-      });
-
-      const finalResolution = candidateResolutions[0];
-      if (typeof finalResolution === `undefined`)
-        throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
-
-      allDescriptors.set(descriptor.descriptorHash, descriptor);
-      allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);
-
-      return schedulePackageResolution(finalResolution);
-    };
-
-    const scheduleDescriptorResolution = (descriptor: Descriptor) => {
-      const promise = descriptorResolutionPromises.get(descriptor.descriptorHash);
-      if (typeof promise !== `undefined`)
-        return promise;
-
-      allDescriptors.set(descriptor.descriptorHash, descriptor);
-
-      const newPromise = Promise.resolve().then(() => startDescriptorResolution(descriptor));
-      descriptorResolutionPromises.set(descriptor.descriptorHash, newPromise);
-      return newPromise;
-    };
-
-    for (const workspace of this.workspaces) {
-      const workspaceDescriptor = workspace.anchoredDescriptor;
-      resolutionQueue.push(scheduleDescriptorResolution(workspaceDescriptor));
-    }
-
-    while (resolutionQueue.length > 0) {
-      const copy = [...resolutionQueue];
-      resolutionQueue.length = 0;
-      await Promise.all(copy);
-    }
+      while (resolutionQueue.length > 0) {
+        const copy = [...resolutionQueue];
+        resolutionQueue.length = 0;
+        await Promise.all(copy);
+      }
+    });
 
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
