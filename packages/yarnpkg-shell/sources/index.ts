@@ -434,6 +434,8 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
           raw = opts.args[argIndex];
         } else if (segment.defaultValue) {
           raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
+        } else if (segment.alternativeValue) {
+          raw = (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `);
         } else {
           throw new ShellError(`Unbound argument #${argIndex}`);
         }
@@ -448,6 +450,9 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
           throw new ShellError(`Unbound variable "${segment.name}"`);
         }
       }
+
+      if (typeof raw !== `undefined` && segment.alternativeValue)
+        raw = (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `);
 
       if (segment.quoted) {
         push(raw);
@@ -875,7 +880,7 @@ async function executeCommandLine(node: CommandLine, opts: ShellOptions, state: 
 
       default: {
         throw new Error(`Assertion failed: Unsupported command type: "${node.then.type}"`);
-      } break;
+      }
     }
 
     node = node.then.line;
@@ -911,20 +916,17 @@ async function executeShellLine(node: ShellLine, opts: ShellOptions, state: Shel
 function locateArgsVariableInSegment(segment: ArgumentSegment | ArithmeticPrimary): boolean {
   switch (segment.type) {
     case `variable`: {
-      return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10)) || (`defaultValue` in segment && !!segment.defaultValue && segment.defaultValue.some(arg => locateArgsVariableInArgument(arg)));
-    } break;
-
+      return segment.name === `@` || segment.name === `#` || segment.name === `*` || Number.isFinite(parseInt(segment.name, 10)) || (`defaultValue` in segment && !!segment.defaultValue && segment.defaultValue.some(arg => locateArgsVariableInArgument(arg))) || (`alternativeValue` in segment && !!segment.alternativeValue && segment.alternativeValue.some(arg => locateArgsVariableInArgument(arg)));
+    }
     case `arithmetic`: {
       return locateArgsVariableInArithmetic(segment.arithmetic);
-    } break;
-
+    }
     case `shell`: {
       return locateArgsVariable(segment.shell);
-    } break;
-
+    }
     default: {
       return false;
-    } break;
+    }
   }
 }
 
@@ -932,12 +934,10 @@ function locateArgsVariableInArgument(arg: Argument): boolean {
   switch (arg.type) {
     case `redirection`: {
       return arg.args.some(arg => locateArgsVariableInArgument(arg));
-    } break;
-
+    }
     case `argument`: {
       return arg.segments.some(segment => locateArgsVariableInSegment(segment));
-    } break;
-
+    }
     default:
       throw new Error(`Assertion failed: Unsupported argument type: "${(arg as Argument).type}"`);
   }
@@ -947,12 +947,10 @@ function locateArgsVariableInArithmetic(arg: ArithmeticExpression): boolean {
   switch (arg.type) {
     case `variable`: {
       return locateArgsVariableInSegment(arg);
-    } break;
-
+    }
     case `number`: {
       return false;
-    } break;
-
+    }
     default:
       return locateArgsVariableInArithmetic(arg.left) || locateArgsVariableInArithmetic(arg.right);
   }

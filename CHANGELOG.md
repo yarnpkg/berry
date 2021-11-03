@@ -12,6 +12,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - The pnpm linker will now remove the `node_modules/.store` and `node_modules` folders if they are empty.
 
+### Bugfixes
+
+- `@yarnpkg/pnpify` now escapes paths correctly
+
 ### Miscellaneous Features
 
 - Reporting for Git errors has been improved.
