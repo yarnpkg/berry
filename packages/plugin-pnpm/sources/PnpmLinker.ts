@@ -5,7 +5,7 @@ import {UsageError}                                                             
 import pLimit                                                                                                                                                                                                   from 'p-limit';
 
 export type PnpmCustomData = {
-  packageLocations: Map<LocatorHash, PortablePath>;
+  pathByLocator: Map<LocatorHash, PortablePath>;
   locatorByPath: Map<PortablePath, string>;
 };
 
@@ -20,7 +20,7 @@ export class PnpmLinker implements Linker {
     if (!customData)
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
-    const packageLocation = customData.packageLocations.get(locator.locatorHash);
+    const packageLocation = customData.pathByLocator.get(locator.locatorHash);
     if (typeof packageLocation === `undefined`)
       throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnpm map - running an install might help`);
 
@@ -73,7 +73,7 @@ class PnpmInstaller implements Installer {
   }
 
   private customData: PnpmCustomData = {
-    packageLocations: new Map(),
+    pathByLocator: new Map(),
     locatorByPath: new Map(),
   };
 
@@ -94,7 +94,7 @@ class PnpmInstaller implements Installer {
 
   async installPackageSoft(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const pkgPath = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
-    this.customData.packageLocations.set(pkg.locatorHash, pkgPath);
+    this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
 
     return {
       packageLocation: pkgPath,
@@ -108,7 +108,7 @@ class PnpmInstaller implements Installer {
     const pkgPath = getPackageLocation(pkg, {project: this.opts.project, createSelfReference: !pkg.dependencies.has(pkg.identHash)});
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
-    this.customData.packageLocations.set(pkg.locatorHash, pkgPath);
+    this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
 
     api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () => {
       await xfs.mkdirPromise(pkgPath, {recursive: true});
@@ -154,7 +154,7 @@ class PnpmInstaller implements Installer {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
 
-      const pkgPath = this.customData.packageLocations.get(locator.locatorHash);
+      const pkgPath = this.customData.pathByLocator.get(locator.locatorHash);
       if (typeof pkgPath === `undefined`)
         throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
 
@@ -201,7 +201,7 @@ class PnpmInstaller implements Installer {
           targetDependency = structUtils.devirtualizeLocator(dependency);
         }
 
-        const depSrcPath = this.customData.packageLocations.get(targetDependency.locatorHash);
+        const depSrcPath = this.customData.pathByLocator.get(targetDependency.locatorHash);
         if (typeof depSrcPath === `undefined`)
           throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
@@ -269,7 +269,7 @@ class PnpmInstaller implements Installer {
       await xfs.removePromise(storeLocation);
     } else {
       const expectedEntries = new Set<Filename>();
-      for (const packageLocation of this.customData.packageLocations.values()) {
+      for (const packageLocation of this.customData.pathByLocator.values()) {
         const subpath = ppath.contains(storeLocation, packageLocation);
         if (subpath !== null) {
           const [storeEntry] = subpath.split(ppath.sep);
