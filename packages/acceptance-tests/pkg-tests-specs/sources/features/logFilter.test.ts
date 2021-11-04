@@ -1,16 +1,16 @@
-import {xfs} from '@yarnpkg/fslib';
+import {PortablePath, xfs} from '@yarnpkg/fslib';
 
-const makeCodeFilter = level => JSON.stringify([{
+const makeCodeFilter = (level: string) => JSON.stringify([{
   code: `YN0005`,
   level,
 }]);
 
-const makeTextFilter = level => JSON.stringify([{
+const makeTextFilter = (level: string) => JSON.stringify([{
   text: `no-deps-scripted@npm:1.0.0 lists build scripts, but its build has been explicitly disabled through configuration.`,
   level,
 }]);
 
-const makePatternFilter = level => JSON.stringify([{
+const makePatternFilter = (level: string) => JSON.stringify([{
   pattern: `no-deps-scripted*`,
   level,
 }]);
@@ -117,20 +117,20 @@ describe(`Features`, () => {
         [`no-deps-scripted`]: {built: false},
       },
     }, async ({path, run, source}) => {
-      let {stdout} = await run(`install`, {env: {FORCE_COLOR: 1}});
+      let {stdout} = await run(`install`, {env: {FORCE_COLOR: `1`}});
       expect(stdout).toMatch(/lists build scripts/); // sanity check
       expect(stdout).not.toMatch(/no-deps-scripted@npm:1.0.0 lists build scripts/); // sanity check
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`info`));
 
-      ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
+      ({stdout} = await run(`install`, {env: {FORCE_COLOR: `1`}}));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`discard`));
 
-      ({stdout} = await run(`install`, {env: {FORCE_COLOR: 1}}));
+      ({stdout} = await run(`install`, {env: {FORCE_COLOR: `1`}}));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
@@ -188,7 +188,7 @@ describe(`Features`, () => {
         [`no-deps`]: `1.0.0`,
       },
     }, async ({path, run, source}) => {
-      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, `
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `
         packageExtensions:
           'no-deps@*':
             peerDependencies:
@@ -210,6 +210,49 @@ describe(`Features`, () => {
         code: 0,
         stdout: expect.not.stringContaining(`doesn't provide`),
       });
+    }));
+
+    test(`it should not print the project validation timer header and footer if its contents are discarded via logFilters`, makeTemporaryMonorepoEnv({
+      workspaces: [`foo`],
+    }, {
+      [`foo`]: {
+        name: `foo`,
+        resolutions: {
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+    }, async ({path, run, source}) => {
+      let {stdout} = await run(`install`);
+      // sanity check
+      expect(stdout).toMatch(/Project validation/);
+      expect(stdout).toMatch(/Resolutions field will be ignored/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, JSON.stringify([{
+        text: `foo: Resolutions field will be ignored`,
+        level: `discard`,
+      }]));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).not.toMatch(/Project validation/);
+      expect(stdout).not.toMatch(/Resolutions field will be ignored/);
+    }));
+
+    test(`it should not print the peer dependencies footer if the section contents are discarded via logFilters`, makeTemporaryEnv({
+      dependencies: {[`peer-deps`]: `1.0.0`},
+    }, async ({path, run, source}) => {
+      let {stdout} = await run(`install`);
+      // sanity check
+      expect(stdout).toContain(`YN0002`);
+      expect(stdout).toMatch(/Some peer dependencies are incorrectly met/);
+
+      await run(`config`, `set`, `logFilters`, `--json`, JSON.stringify([{
+        pattern: `doesn't provide`,
+        level: `discard`,
+      }]));
+
+      ({stdout} = await run(`install`));
+      expect(stdout).not.toContain(`YN0002`);
+      expect(stdout).not.toMatch(/Some peer dependencies are incorrectly met/);
     }));
   });
 });

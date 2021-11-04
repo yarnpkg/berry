@@ -32,9 +32,13 @@ export type ProgressIterable = AsyncIterable<ProgressDefinition> & {
   hasTitle: boolean;
 };
 
-export type TimerOptions = {
+export type SectionOptions = {
+  reportHeader?: () => void;
+  reportFooter?: (elapsedTime: number) => void;
   skipIfEmpty?: boolean;
 };
+
+export type TimerOptions = Pick<SectionOptions, 'skipIfEmpty'>;
 
 export abstract class Report {
   private reportedInfos: Set<any> = new Set();
@@ -43,6 +47,9 @@ export abstract class Report {
 
   abstract reportCacheHit(locator: Locator): void;
   abstract reportCacheMiss(locator: Locator, message?: string): void;
+
+  abstract startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>): Promise<T>;
+  abstract startSectionSync<T>(opts: SectionOptions, cb: () => T): T;
 
   abstract startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<T>;
   abstract startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;

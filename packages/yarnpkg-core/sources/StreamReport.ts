@@ -1,13 +1,13 @@
-import sliceAnsi                                                    from '@arcanis/slice-ansi';
-import CI                                                           from 'ci-info';
-import {Writable}                                                   from 'stream';
+import sliceAnsi                                                                    from '@arcanis/slice-ansi';
+import CI                                                                           from 'ci-info';
+import {Writable}                                                                   from 'stream';
 
-import {Configuration}                                              from './Configuration';
-import {MessageName, stringifyMessageName}                          from './MessageName';
-import {ProgressDefinition, ProgressIterable, Report, TimerOptions} from './Report';
-import * as formatUtils                                             from './formatUtils';
-import * as structUtils                                             from './structUtils';
-import {Locator}                                                    from './types';
+import {Configuration}                                                              from './Configuration';
+import {MessageName, stringifyMessageName}                                          from './MessageName';
+import {ProgressDefinition, Report, SectionOptions, TimerOptions, ProgressIterable} from './Report';
+import * as formatUtils                                                             from './formatUtils';
+import * as structUtils                                                             from './structUtils';
+import {Locator}                                                                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration;
@@ -235,22 +235,12 @@ export class StreamReport extends Report {
     }
   }
 
-  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
-  startTimerSync<T>(what: string, cb: () => T): T;
-  startTimerSync<T>(what: string, opts: TimerOptions | (() => T), cb?: () => T) {
-    const realOpts = typeof opts === `function` ? {} : opts;
-    const realCb = typeof opts === `function` ? opts : cb!;
-
+  startSectionSync<T>({reportHeader, reportFooter, skipIfEmpty}: SectionOptions, cb: () => T) {
     const mark = {committed: false, action: () => {
-      this.reportInfo(null, `┌ ${what}`);
-      this.indent += 1;
-
-      if (GROUP !== null && !this.json && this.includeInfos) {
-        this.stdout.write(GROUP.start(what));
-      }
+      reportHeader?.();
     }};
 
-    if (realOpts.skipIfEmpty) {
+    if (skipIfEmpty) {
       this.uncommitted.add(mark);
     } else {
       mark.action();
@@ -260,7 +250,7 @@ export class StreamReport extends Report {
     const before = Date.now();
 
     try {
-      return realCb();
+      return cb();
     } catch (error) {
       this.reportExceptionOnce(error);
       throw error;
@@ -269,66 +259,82 @@ export class StreamReport extends Report {
 
       this.uncommitted.delete(mark);
       if (mark.committed) {
+        reportFooter?.(after - before);
+      }
+    }
+  }
+
+  async startSectionPromise<T>({reportHeader, reportFooter, skipIfEmpty}: SectionOptions, cb: () => Promise<T>) {
+    const mark = {committed: false, action: () => {
+      reportHeader?.();
+    }};
+
+    if (skipIfEmpty) {
+      this.uncommitted.add(mark);
+    } else {
+      mark.action();
+      mark.committed = true;
+    }
+
+    const before = Date.now();
+
+    try {
+      return await cb();
+    } catch (error) {
+      this.reportExceptionOnce(error);
+      throw error;
+    } finally {
+      const after = Date.now();
+
+      this.uncommitted.delete(mark);
+      if (mark.committed) {
+        reportFooter?.(after - before);
+      }
+    }
+  }
+
+  private startTimerImpl<Callback extends Function>(what: string, opts: TimerOptions | Callback, cb?: Callback) {
+    const realOpts = typeof opts === `function` ? {} : opts;
+    const realCb = typeof opts === `function` ? opts : cb!;
+
+    return {
+      cb: realCb,
+      reportHeader: () => {
+        this.reportInfo(null, `┌ ${what}`);
+        this.indent += 1;
+
+        if (GROUP !== null && !this.json && this.includeInfos) {
+          this.stdout.write(GROUP.start(what));
+        }
+      },
+      reportFooter: elapsedTime => {
         this.indent -= 1;
 
         if (GROUP !== null && !this.json && this.includeInfos)
           this.stdout.write(GROUP.end(what));
 
-        if (this.configuration.get(`enableTimers`) && after - before > 200) {
-          this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
+        if (this.configuration.get(`enableTimers`) && elapsedTime > 200) {
+          this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, elapsedTime, formatUtils.Type.DURATION)}`);
         } else {
           this.reportInfo(null, `└ Completed`);
         }
-      }
-    }
+      },
+      skipIfEmpty: realOpts.skipIfEmpty,
+    } as SectionOptions & {cb: Callback};
+  }
+
+  startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
+  startTimerSync<T>(what: string, cb: () => T): T;
+  startTimerSync<T>(what: string, opts: TimerOptions | (() => T), cb?: () => T) {
+    const {cb: realCb, ...sectionOps} = this.startTimerImpl(what, opts, cb);
+    return this.startSectionSync(sectionOps, realCb);
   }
 
   async startTimerPromise<T>(what: string, opts: TimerOptions, cb: () => Promise<T>): Promise<T>;
   async startTimerPromise<T>(what: string, cb: () => Promise<T>): Promise<T>;
   async startTimerPromise<T>(what: string, opts: TimerOptions | (() => Promise<T>), cb?: () => Promise<T>) {
-    const realOpts = typeof opts === `function` ? {} : opts;
-    const realCb = typeof opts === `function` ? opts : cb!;
-
-    const mark = {committed: false, action: () => {
-      this.reportInfo(null, `┌ ${what}`);
-      this.indent += 1;
-
-      if (GROUP !== null && !this.json && this.includeInfos) {
-        this.stdout.write(GROUP.start(what));
-      }
-    }};
-
-    if (realOpts.skipIfEmpty) {
-      this.uncommitted.add(mark);
-    } else {
-      mark.action();
-      mark.committed = true;
-    }
-
-    const before = Date.now();
-
-    try {
-      return await realCb();
-    } catch (error) {
-      this.reportExceptionOnce(error);
-      throw error;
-    } finally {
-      const after = Date.now();
-
-      this.uncommitted.delete(mark);
-      if (mark.committed) {
-        this.indent -= 1;
-
-        if (GROUP !== null && !this.json && this.includeInfos)
-          this.stdout.write(GROUP.end(what));
-
-        if (this.configuration.get(`enableTimers`) && after - before > 200) {
-          this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, after - before, formatUtils.Type.DURATION)}`);
-        } else {
-          this.reportInfo(null, `└ Completed`);
-        }
-      }
-    }
+    const {cb: realCb, ...sectionOps} = this.startTimerImpl(what, opts, cb);
+    return this.startSectionPromise(sectionOps, realCb);
   }
 
   async startCacheReport<T>(cb: () => Promise<T>) {
