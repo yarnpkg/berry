@@ -34,13 +34,11 @@ export type ProgressIterable = AsyncIterable<ProgressDefinition> & {
 
 export type SectionOptions = {
   reportHeader?: () => void;
-  reportFooter?: () => void;
+  reportFooter?: (elapsedTime: number) => void;
   skipIfEmpty?: boolean;
 };
 
-export type TimerOptions = {
-  skipIfEmpty?: boolean;
-};
+export type TimerOptions = Pick<SectionOptions, 'skipIfEmpty'>;
 
 export abstract class Report {
   private reportedInfos: Set<any> = new Set();
