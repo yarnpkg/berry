@@ -728,7 +728,7 @@ export class Project {
           pkg.dependencies.set(identHash, bound);
         }
 
-        resolutionQueue.push(Promise.all([...pkg.dependencies.values()].map(descriptor => {
+        resolutionQueue.push(miscUtils.allSettledSafe([...pkg.dependencies.values()].map(descriptor => {
           return scheduleDescriptorResolution(descriptor);
         })));
 
@@ -764,7 +764,7 @@ export class Project {
           return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
 
         const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
-        const resolvedDependencies = new Map(await Promise.all(resolutionDependencies.map(async dependency => {
+        const resolvedDependencies = new Map(await miscUtils.allSettledSafe(resolutionDependencies.map(async dependency => {
           const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
 
           const resolvedPackage = await scheduleDescriptorResolution(bound);
@@ -809,7 +809,7 @@ export class Project {
       while (resolutionQueue.length > 0) {
         const copy = [...resolutionQueue];
         resolutionQueue.length = 0;
-        await Promise.all(copy);
+        await miscUtils.allSettledSafe(copy);
       }
     });
 
@@ -936,7 +936,7 @@ export class Project {
     const limit = pLimit(FETCHER_CONCURRENCY);
 
     await report.startCacheReport(async () => {
-      await Promise.all(locatorHashes.map(locatorHash => limit(async () => {
+      await miscUtils.allSettledSafe(locatorHashes.map(locatorHash => limit(async () => {
         const pkg = this.storedPackages.get(locatorHash);
         if (!pkg)
           throw new Error(`Assertion failed: The locator should have been registered`);
@@ -1000,7 +1000,7 @@ export class Project {
     const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
     const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
 
-    const fetchResultsPerPackage = new Map(await Promise.all([...this.accessibleLocators].map(async locatorHash => {
+    const fetchResultsPerPackage = new Map(await miscUtils.allSettledSafe([...this.accessibleLocators].map(async locatorHash => {
       const pkg = this.storedPackages.get(locatorHash);
       if (!pkg)
         throw new Error(`Assertion failed: The locator should have been registered`);
@@ -1048,7 +1048,7 @@ export class Project {
           if (holdPromises.length === 0) {
             fetchResult.releaseFs?.();
           } else {
-            pendingPromises.push(Promise.all(holdPromises).catch(() => {}).then(() => {
+            pendingPromises.push(miscUtils.allSettledSafe(holdPromises).catch(() => {}).then(() => {
               fetchResult.releaseFs?.();
             }));
           }
@@ -1080,7 +1080,7 @@ export class Project {
           if (holdPromises.length === 0) {
             fetchResult.releaseFs?.();
           } else {
-            pendingPromises.push(Promise.all(holdPromises).then(() => {}).then(() => {
+            pendingPromises.push(miscUtils.allSettledSafe(holdPromises).then(() => {}).then(() => {
               fetchResult.releaseFs?.();
             }));
           }
@@ -1205,7 +1205,7 @@ export class Project {
 
     this.installersCustomData = installersCustomData;
 
-    await Promise.all(pendingPromises);
+    await miscUtils.allSettledSafe(pendingPromises);
 
     // Step 4: Build the packages in multiple steps
 
@@ -1414,7 +1414,7 @@ export class Project {
         }
       }
 
-      await Promise.all(buildPromises);
+      await miscUtils.allSettledSafe(buildPromises);
 
       // If we reach this code, it means that we have circular dependencies
       // somewhere. Worst, it means that the circular dependencies both have
