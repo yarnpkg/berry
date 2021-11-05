@@ -728,9 +728,20 @@ export class Project {
           pkg.dependencies.set(identHash, bound);
         }
 
-        resolutionQueue.push(miscUtils.allSettledSafe([...pkg.dependencies.values()].map(descriptor => {
+        const dependencyResolutions = miscUtils.allSettledSafe([...pkg.dependencies.values()].map(descriptor => {
           return scheduleDescriptorResolution(descriptor);
-        })));
+        }));
+
+        resolutionQueue.push(dependencyResolutions);
+
+        // While the promise is now part of `resolutionQueue`, nothing is
+        // technically `awaiting` it just yet (and nothing will until the
+        // current resolution pass fully ends, and the next one starts).
+        //
+        // To avoid V8 printing an UnhandledPromiseRejectionWarning, we
+        // bind a empty `catch`.
+        //
+        dependencyResolutions.catch(() => {});
 
         allPackages.set(pkg.locatorHash, pkg);
 
