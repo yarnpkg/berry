@@ -45748,9 +45748,6 @@ function createCommonjsModule(fn) {
 var libzipSync = createCommonjsModule(function (module, exports) {
 var frozenFs = Object.assign({}, fs__default['default']);
 var createModule = function() {
-  var _scriptDir = typeof document !== "undefined" && document.currentScript ? document.currentScript.src : void 0;
-  if (typeof __filename !== "undefined")
-    _scriptDir = _scriptDir || __filename;
   return function(createModule2) {
     createModule2 = createModule2 || {};
     var Module = typeof createModule2 !== "undefined" ? createModule2 : {};
@@ -45816,12 +45813,6 @@ var createModule = function() {
       }
     }
     moduleOverrides = null;
-    if (Module["arguments"])
-      Module["arguments"];
-    if (Module["thisProgram"])
-      Module["thisProgram"];
-    if (Module["quit"])
-      Module["quit"];
     var STACK_ALIGN = 16;
     function alignMemory(size, factor) {
       if (!factor)
@@ -45831,7 +45822,6 @@ var createModule = function() {
     var wasmBinary;
     if (Module["wasmBinary"])
       wasmBinary = Module["wasmBinary"];
-    Module["noExitRuntime"] || true;
     if (typeof WebAssembly !== "object") {
       abort("no native wasm support detected");
     }
@@ -46055,7 +46045,6 @@ var createModule = function() {
       Module["HEAPF32"] = HEAPF32 = new Float32Array(buf);
       Module["HEAPF64"] = HEAPF64 = new Float64Array(buf);
     }
-    Module["INITIAL_MEMORY"] || 16777216;
     var wasmTable;
     var __ATPRERUN__ = [];
     var __ATINIT__ = [];
@@ -46312,13 +46301,7 @@ var createModule = function() {
       }
     };
     function getRandomDevice() {
-      if (typeof crypto === "object" && typeof crypto["getRandomValues"] === "function") {
-        var randomBuffer = new Uint8Array(1);
-        return function() {
-          crypto.getRandomValues(randomBuffer);
-          return randomBuffer[0];
-        };
-      } else {
+      {
         try {
           var crypto_module = require$$2__default['default'];
           return function() {
@@ -47646,7 +47629,7 @@ var createModule = function() {
       },
       mayCreate: function(dir, name) {
         try {
-          var node = FS.lookupNode(dir, name);
+          FS.lookupNode(dir, name);
           return 20;
         } catch (e) {
         }
@@ -48763,9 +48746,7 @@ var createModule = function() {
       forceLoadFile: function(obj) {
         if (obj.isDevice || obj.isFolder || obj.link || obj.contents)
           return true;
-        if (typeof XMLHttpRequest !== "undefined") {
-          throw new Error("Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.");
-        } else if (read_) {
+        if (read_) {
           try {
             obj.contents = intArrayFromString(read_(obj.url), true);
             obj.usedBytes = obj.contents.length;
@@ -48777,84 +48758,7 @@ var createModule = function() {
         }
       },
       createLazyFile: function(parent, name, url, canRead, canWrite) {
-        function LazyUint8Array() {
-          this.lengthKnown = false;
-          this.chunks = [];
-        }
-        LazyUint8Array.prototype.get = function LazyUint8Array_get(idx) {
-          if (idx > this.length - 1 || idx < 0) {
-            return void 0;
-          }
-          var chunkOffset = idx % this.chunkSize;
-          var chunkNum = idx / this.chunkSize | 0;
-          return this.getter(chunkNum)[chunkOffset];
-        };
-        LazyUint8Array.prototype.setDataGetter = function LazyUint8Array_setDataGetter(getter) {
-          this.getter = getter;
-        };
-        LazyUint8Array.prototype.cacheLength = function LazyUint8Array_cacheLength() {
-          var xhr = new XMLHttpRequest();
-          xhr.open("HEAD", url, false);
-          xhr.send(null);
-          if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304))
-            throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
-          var datalength = Number(xhr.getResponseHeader("Content-length"));
-          var header;
-          var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
-          var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
-          var chunkSize = 1024 * 1024;
-          if (!hasByteServing)
-            chunkSize = datalength;
-          var doXHR = function(from, to) {
-            if (from > to)
-              throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!");
-            if (to > datalength - 1)
-              throw new Error("only " + datalength + " bytes available! programmer error!");
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open("GET", url, false);
-            if (datalength !== chunkSize)
-              xhr2.setRequestHeader("Range", "bytes=" + from + "-" + to);
-            if (typeof Uint8Array != "undefined")
-              xhr2.responseType = "arraybuffer";
-            if (xhr2.overrideMimeType) {
-              xhr2.overrideMimeType("text/plain; charset=x-user-defined");
-            }
-            xhr2.send(null);
-            if (!(xhr2.status >= 200 && xhr2.status < 300 || xhr2.status === 304))
-              throw new Error("Couldn't load " + url + ". Status: " + xhr2.status);
-            if (xhr2.response !== void 0) {
-              return new Uint8Array(xhr2.response || []);
-            } else {
-              return intArrayFromString(xhr2.responseText || "", true);
-            }
-          };
-          var lazyArray2 = this;
-          lazyArray2.setDataGetter(function(chunkNum) {
-            var start = chunkNum * chunkSize;
-            var end = (chunkNum + 1) * chunkSize - 1;
-            end = Math.min(end, datalength - 1);
-            if (typeof lazyArray2.chunks[chunkNum] === "undefined") {
-              lazyArray2.chunks[chunkNum] = doXHR(start, end);
-            }
-            if (typeof lazyArray2.chunks[chunkNum] === "undefined")
-              throw new Error("doXHR failed!");
-            return lazyArray2.chunks[chunkNum];
-          });
-          if (usesGzip || !datalength) {
-            chunkSize = datalength = 1;
-            datalength = this.getter(0).length;
-            chunkSize = datalength;
-            out("LazyFiles on gzip forces download of the whole file when length is accessed");
-          }
-          this._length = datalength;
-          this._chunkSize = chunkSize;
-          this.lengthKnown = true;
-        };
-        if (typeof XMLHttpRequest !== "undefined") {
-          throw "Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc";
-          var lazyArray = new LazyUint8Array();
-          var properties = {isDevice: false, contents: lazyArray};
-        } else {
+        var properties; {
           var properties = {isDevice: false, url};
         }
         var node = FS.createFile(parent, name, properties, canRead, canWrite);

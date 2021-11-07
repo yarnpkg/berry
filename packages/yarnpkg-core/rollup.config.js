@@ -25,6 +25,11 @@ function wrapOutput() {
 // eslint-disable-next-line arca/no-default-export
 export default [
   {
+    treeshake: {
+      propertyReadSideEffects: false,
+      unknownGlobalSideEffects: false,
+      tryCatchDeoptimization: false,
+    },
     input: `./sources/worker-zip/Worker.ts`,
     output: {
       file: `./sources/worker-zip/index.js`,
@@ -39,7 +44,15 @@ export default [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `node12`}),
+      esbuild({
+        tsconfig: false,
+        target: `node12`,
+        define: {
+          document: `undefined`,
+          XMLHttpRequest: `undefined`,
+          crypto: `undefined`,
+        },
+      }),
       cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
       terser({ecma: 2019}),
       wrapOutput(),

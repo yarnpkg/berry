@@ -24,6 +24,11 @@ function wrapOutput() {
 /** @type {Array<import('rollup').RollupOptions>} */
 const options = [
   {
+    treeshake: {
+      propertyReadSideEffects: false,
+      unknownGlobalSideEffects: false,
+      tryCatchDeoptimization: false,
+    },
     input: `./sources/loader/_entryPoint.ts`,
     output: {
       file: `./sources/hook.js`,
@@ -39,12 +44,25 @@ const options = [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `node12`}),
+      esbuild({
+        tsconfig: false,
+        target: `node12`,
+        define: {
+          document: `undefined`,
+          XMLHttpRequest: `undefined`,
+          crypto: `undefined`,
+        },
+      }),
       cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
       wrapOutput(),
     ],
   },
   {
+    treeshake: {
+      propertyReadSideEffects: false,
+      unknownGlobalSideEffects: false,
+      tryCatchDeoptimization: false,
+    },
     input: `./sources/esm-loader/loader.ts`,
     output: {
       file: `./sources/esm-loader/built-loader.js`,
@@ -57,7 +75,15 @@ const options = [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `node12`}),
+      esbuild({
+        tsconfig: false,
+        target: `node12`,
+        define: {
+          document: `undefined`,
+          XMLHttpRequest: `undefined`,
+          crypto: `undefined`,
+        },
+      }),
       cjs({requireReturnsDefault: `preferred`}),
       wrapOutput(),
     ],
