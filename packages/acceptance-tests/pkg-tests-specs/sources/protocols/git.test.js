@@ -185,5 +185,48 @@ describe(`Protocols`, () => {
       ),
       45000,
     );
+
+    test(
+      `it should use pnpm to setup pnpm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pnpm-project`]: startPackageServer().then(url => `${url}/repositories/pnpm-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('pnpm-project')`)).resolves.toMatch(/\bpnpm\/[0-9]+/);
+        },
+      ),
+      45000,
+    );
+
+    test(
+      `it should support installing specific workspaces from pnpm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pkg-a`]: startPackageServer().then(url => `${url}/repositories/pnpm-workspaces.git#workspace=pkg-a`),
+            [`pkg-b`]: startPackageServer().then(url => `${url}/repositories/pnpm-workspaces.git#workspace=pkg-b`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('pkg-a/package.json')`)).resolves.toMatchObject({
+            name: `pkg-a`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('pkg-b/package.json')`)).resolves.toMatchObject({
+            name: `pkg-b`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+      45000,
+    );
   });
 });
