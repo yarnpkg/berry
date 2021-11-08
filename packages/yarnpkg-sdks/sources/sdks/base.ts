@@ -9,7 +9,7 @@ export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   await wrapper.writeManifest();
 
   await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
-  await wrapper.writeFile(`lib/api.js` as PortablePath);
+  await wrapper.writeFile(`lib/api.js` as PortablePath, {requirePath: `` as PortablePath});
 
   return wrapper;
 };

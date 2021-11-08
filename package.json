@@ -29,7 +29,7 @@
     "@yarnpkg/sdks": "workspace:^",
     "babel-jest": "^26.0.1",
     "clipanion": "^3.0.1",
-    "eslint": "^7.32.0",
+    "eslint": "^8.2.0",
     "github-api": "^3.2.2",
     "jest": "^26.0.1",
     "jest-environment-node": "^26.0.1",
