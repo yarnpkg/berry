@@ -35,7 +35,7 @@ const options = [
       format: `cjs`,
       exports: `default`,
       strict: false,
-      preferConst: true,
+      generatedCode: `es2015`,
     },
     plugins: [
       resolve({
@@ -67,6 +67,7 @@ const options = [
     output: {
       file: `./sources/esm-loader/built-loader.js`,
       format: `esm`,
+      generatedCode: `es2015`,
     },
     plugins: [
       resolve({

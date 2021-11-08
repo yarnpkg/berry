@@ -7410,7 +7410,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-reference", "npm:1.2.1"],
             ["magic-string", "npm:0.25.7"],
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -7438,7 +7438,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["deepmerge", "npm:4.2.2"],
             ["is-module", "npm:1.0.0"],
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -7470,7 +7470,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/rollup", null],
             ["estree-walker", "npm:1.0.1"],
             ["picomatch", "npm:2.2.3"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -7485,7 +7485,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/rollup", null],
             ["estree-walker", "npm:2.0.2"],
             ["picomatch", "npm:2.2.3"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -10456,7 +10456,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-queue", "npm:6.6.2"],
             ["pluralize", "npm:7.0.0"],
             ["pretty-bytes", "npm:5.6.0"],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["rollup-plugin-terser", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:7.0.2"],
             ["semver", "npm:7.3.5"],
@@ -15723,7 +15723,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
               "npm:0.11.20"
             ]],
             ["resolve.exports", "npm:1.1.0"],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=493e53"],
@@ -36171,10 +36171,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["rollup", [
-        ["npm:2.45.2", {
-          "packageLocation": "./.yarn/cache/rollup-npm-2.45.2-3c532e57ff-c049bedc19.zip/node_modules/rollup/",
+        ["npm:2.59.0", {
+          "packageLocation": "./.yarn/cache/rollup-npm-2.59.0-72e7408354-9fbaa72b8f.zip/node_modules/rollup/",
           "packageDependencies": [
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"]
           ],
           "linkType": "HARD",
@@ -36201,7 +36201,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ]],
             ["joycon", "npm:3.0.1"],
             ["jsonc-parser", "npm:3.0.0"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/esbuild",
@@ -36227,7 +36227,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.12.13"],
             ["@types/rollup", null],
             ["jest-worker", "npm:26.6.2"],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["serialize-javascript", "npm:4.0.0"],
             ["terser", "npm:5.9.0"]
           ],
@@ -40470,7 +40470,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
               "esbuild-wasm",
               "npm:0.11.20"
             ]],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["rollup-plugin-terser", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:7.0.2"],
             ["tslib", "npm:1.13.0"],
@@ -41861,25 +41861,23 @@ const stream = require('stream');
 const zlib = require('zlib');
 const events = require('events');
 
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+const _interopDefaultLegacy = e => e && typeof e === 'object' && 'default' in e ? e : { default: e };
 
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
-  var n = Object.create(null);
+  const n = Object.create(null);
   if (e) {
-    Object.keys(e).forEach(function (k) {
+    for (const k in e) {
       if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
+        const d = Object.getOwnPropertyDescriptor(e, k);
         Object.defineProperty(n, k, d.get ? d : {
           enumerable: true,
-          get: function () {
-            return e[k];
-          }
+          get: () => e[k]
         });
       }
-    });
+    }
   }
-  n['default'] = e;
+  n.default = e;
   return Object.freeze(n);
 }
 
@@ -42099,15 +42097,15 @@ const Filename = {
   pnpCjs: `.pnp.cjs`,
   rc: `.yarnrc.yml`
 };
-const npath = Object.create(path__default['default']);
-const ppath = Object.create(path__default['default'].posix);
+const npath = Object.create(path__default.default);
+const ppath = Object.create(path__default.default.posix);
 npath.cwd = () => process.cwd();
 ppath.cwd = () => toPortablePath(process.cwd());
 ppath.resolve = (...segments) => {
   if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
-    return path__default['default'].posix.resolve(...segments);
+    return path__default.default.posix.resolve(...segments);
   } else {
-    return path__default['default'].posix.resolve(ppath.cwd(), ...segments);
+    return path__default.default.posix.resolve(ppath.cwd(), ...segments);
   }
 };
 const contains = function(pathUtils, from, to) {
@@ -42276,7 +42274,7 @@ function makeCloneLinkOperation(opFs, destination, source, sourceStat, linkStrat
   if (typeof isCloneSupported === `undefined`) {
     return async () => {
       try {
-        await opFs.copyFilePromise(source, destination, fs__default['default'].constants.COPYFILE_FICLONE_FORCE);
+        await opFs.copyFilePromise(source, destination, fs__default.default.constants.COPYFILE_FICLONE_FORCE);
         isCloneSupportedCache.set(opFs, true);
       } catch (err) {
         if (err.code === `ENOSYS` || err.code === `ENOTSUP`) {
@@ -42289,7 +42287,7 @@ function makeCloneLinkOperation(opFs, destination, source, sourceStat, linkStrat
     };
   } else {
     if (isCloneSupported) {
-      return async () => opFs.copyFilePromise(source, destination, fs__default['default'].constants.COPYFILE_FICLONE_FORCE);
+      return async () => opFs.copyFilePromise(source, destination, fs__default.default.constants.COPYFILE_FICLONE_FORCE);
     } else {
       return makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy);
     }
@@ -42306,7 +42304,7 @@ async function copyFile(prelayout, postlayout, updateTime, destinationFs, destin
     }
   }
   const linkStrategy = (_a = opts.linkStrategy) != null ? _a : null;
-  const op = destinationFs === sourceFs ? linkStrategy !== null ? makeCloneLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.copyFilePromise(source, destination, fs__default['default'].constants.COPYFILE_FICLONE) : linkStrategy !== null ? makeLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
+  const op = destinationFs === sourceFs ? linkStrategy !== null ? makeCloneLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.copyFilePromise(source, destination, fs__default.default.constants.COPYFILE_FICLONE) : linkStrategy !== null ? makeLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
   prelayout.push(async () => op());
   return true;
 }
@@ -42802,7 +42800,7 @@ function normalizeLineEndings(originalContent, newContent) {
 }
 
 class NodeFS extends BasePortableFakeFS {
-  constructor(realFs = fs__default['default']) {
+  constructor(realFs = fs__default.default) {
     super();
     this.realFs = realFs;
     if (typeof this.realFs.lutimes !== `undefined`) {
@@ -44007,7 +44005,7 @@ class ZipFS extends BasePortableFakeFS {
           return data;
         } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
-            zlib__default['default'].inflateRaw(data, (error, result) => {
+            zlib__default.default.inflateRaw(data, (error, result) => {
               if (error) {
                 reject(error);
               } else {
@@ -44017,7 +44015,7 @@ class ZipFS extends BasePortableFakeFS {
             });
           });
         } else {
-          const decompressedData = zlib__default['default'].inflateRawSync(data);
+          const decompressedData = zlib__default.default.inflateRawSync(data);
           this.fileSources.set(index, decompressedData);
           return decompressedData;
         }
@@ -45746,7 +45744,7 @@ function createCommonjsModule(fn) {
 }
 
 var libzipSync = createCommonjsModule(function (module, exports) {
-var frozenFs = Object.assign({}, fs__default['default']);
+var frozenFs = Object.assign({}, fs__default.default);
 var createModule = function() {
   return function(createModule2) {
     createModule2 = createModule2 || {};
@@ -45785,7 +45783,7 @@ var createModule = function() {
         if (!nodeFS)
           nodeFS = frozenFs;
         if (!nodePath)
-          nodePath = path__default['default'];
+          nodePath = path__default.default;
         filename = nodePath["normalize"](filename);
         return nodeFS["readFileSync"](filename, binary ? null : "utf8");
       };
@@ -46303,7 +46301,7 @@ var createModule = function() {
     function getRandomDevice() {
       {
         try {
-          var crypto_module = require$$2__default['default'];
+          var crypto_module = require$$2__default.default;
           return function() {
             return crypto_module["randomBytes"](1)[0];
           };
@@ -49496,7 +49494,7 @@ var createModule = function() {
     FS.staticInit();
     {
       var fs = frozenFs;
-      var NODEJS_PATH = path__default['default'];
+      var NODEJS_PATH = path__default.default;
       NODEFS.staticInit();
     }
     {
@@ -49924,7 +49922,7 @@ function applyPatch(pnpapi, opts) {
   const defaultCache = {};
   let enableNativeHooks = true;
   process.versions.pnp = String(pnpapi.VERSIONS.std);
-  const moduleExports = require$$0__default['default'];
+  const moduleExports = require$$0__default.default;
   moduleExports.findPnpApi = (lookupSource) => {
     const lookupPath = lookupSource instanceof url.URL ? url.fileURLToPath(lookupSource) : lookupSource;
     const apiPath = opts.manager.findApiPathFor(lookupPath);
@@ -50136,7 +50134,7 @@ Require stack:
     }
     return false;
   };
-  patchFs(fs__default['default'], new PosixFS(opts.fakeFs));
+  patchFs(fs__default.default, new PosixFS(opts.fakeFs));
 }
 
 function hydrateRuntimeState(data, {basePath}) {
@@ -51050,7 +51048,7 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
-const localFs = __spreadValues({}, fs__default['default']);
+const localFs = __spreadValues({}, fs__default.default);
 const nodeFs = new NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
@@ -51101,7 +51099,7 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       fakeFs: defaultFsLayer,
       manager
     });
-    dynamicFsLayer.baseFs = new NodeFS(fs__default['default']);
+    dynamicFsLayer.baseFs = new NodeFS(fs__default.default);
   }
 });
 manager = makeManager(defaultApi, {
@@ -51110,7 +51108,7 @@ manager = makeManager(defaultApi, {
 if (module.parent && module.parent.id === `internal/preload`) {
   defaultApi.setup();
   if (module.filename) {
-    delete require$$0__default['default']._cache[module.filename];
+    delete require$$0__default.default._cache[module.filename];
   }
 }
 if (process.mainModule === module) {
@@ -51147,7 +51145,7 @@ if (process.mainModule === module) {
     }
   } else {
     let buffer = ``;
-    const decoder = new StringDecoder__default['default'].StringDecoder();
+    const decoder = new StringDecoder__default.default.StringDecoder();
     process.stdin.on(`data`, (chunk) => {
       buffer += decoder.write(chunk);
       do {

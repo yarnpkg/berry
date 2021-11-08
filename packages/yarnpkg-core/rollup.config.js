@@ -35,7 +35,7 @@ export default [
       file: `./sources/worker-zip/index.js`,
       format: `cjs`,
       strict: false,
-      preferConst: true,
+      generatedCode: `es2015`,
     },
     plugins: [
       resolve({

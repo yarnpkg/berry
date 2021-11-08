@@ -16,6 +16,7 @@ export default async () => ({
   output: {
     file: `./build/index.js`,
     format: `cjs`,
+    generatedCode: `es2015`,
   },
   plugins: [
     resolve({
