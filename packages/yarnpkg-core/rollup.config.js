@@ -1,4 +1,4 @@
-import cjs                  from '@rollup/plugin-commonjs';
+https://github.com/yarnpkg/berry/blob/31738d08d289054e613d6d455e1db760ec4c978f/packages/yarnpkg-core/sources/Installer.tsimport cjs                  from '@rollup/plugin-commonjs';
 import resolve              from '@rollup/plugin-node-resolve';
 import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
