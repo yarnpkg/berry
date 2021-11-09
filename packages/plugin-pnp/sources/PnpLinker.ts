@@ -99,8 +99,8 @@ export class PnpInstaller implements Installer {
   private customData: {
     store: Map<LocatorHash, CustomPackageData>;
   } = {
-    store: new Map(),
-  };
+      store: new Map(),
+    };
 
   attachCustomData(customData: any) {
     this.customData = customData;
