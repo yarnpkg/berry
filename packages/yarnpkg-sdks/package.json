@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/sdks",
-  "version": "2.5.0",
+  "version": "2.5.1-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -42,5 +42,6 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "2.5.0"
 }
