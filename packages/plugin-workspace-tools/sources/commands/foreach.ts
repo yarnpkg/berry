@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
-import {gitUtils}                                          from '@yarnpkg/plugin-git';
-import {Command, Option, Usage, UsageError}                from 'clipanion';
-import micromatch                                          from 'micromatch';
-import {cpus}                                              from 'os';
-import pLimit                                              from 'p-limit';
-import {Writable}                                          from 'stream';
-import * as t                                              from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
+import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils}                         from '@yarnpkg/core';
+import {gitUtils}                                                    from '@yarnpkg/plugin-git';
+import {Command, Option, Usage, UsageError}                          from 'clipanion';
+import micromatch                                                    from 'micromatch';
+import {cpus}                                                        from 'os';
+import pLimit                                                        from 'p-limit';
+import {Writable}                                                    from 'stream';
+import * as t                                                        from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
@@ -122,6 +122,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
+    await project.restoreInstallState();
+
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
     const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
       ? command.scriptName
@@ -167,8 +169,12 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     }
 
     for (const workspace of candidates) {
-      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript)
-        continue;
+      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript) {
+        const accessibleBinaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
+        if (!accessibleBinaries.has(scriptName)) {
+          continue;
+        }
+      }
 
       // Prevents infinite loop in the case of configuring a script as such:
       // "lint": "yarn workspaces foreach --all lint"

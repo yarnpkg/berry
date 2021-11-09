@@ -20,6 +20,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - `@yarnpkg/pnpify` now escapes paths correctly
 
+### Bugfixes
+
+- `yarn workspaces foreach run` is now able to run binaries
+
 ### Miscellaneous Features
 
 - Reporting for Git errors has been improved.
