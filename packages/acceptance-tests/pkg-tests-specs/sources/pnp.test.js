@@ -360,22 +360,6 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
-    `it should not add the implicit self dependency if an explicit one already exists`,
-    makeTemporaryEnv(
-      {
-        dependencies: {[`self-require-trap`]: `1.0.0`},
-      },
-      async ({path, run, source}) => {
-        await run(`install`);
-
-        await expect(source(`require('self-require-trap/self') !== require('self-require-trap')`)).resolves.toEqual(
-          true,
-        );
-      },
-    ),
-  );
-
-  test(
     `it should run scripts using a Node version that auto-injects the hook`,
     makeTemporaryEnv(
       {
