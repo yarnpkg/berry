@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
+  "@yarnpkg/eslint-config": patch
   "@yarnpkg/libzip": patch
   "@yarnpkg/plugin-pnp": patch
   "@yarnpkg/pnp": patch

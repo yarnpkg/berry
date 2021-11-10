@@ -7,8 +7,6 @@ try {
   throw new Error(`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.`);
 }
 
-var __non_webpack_module__ = module;
-
 function $$SETUP_STATE(hydrateRuntimeState, basePath) {
   return hydrateRuntimeState({
     "__info": [
@@ -51202,13 +51200,13 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
 manager = makeManager(defaultApi, {
   fakeFs: dynamicFsLayer
 });
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === `internal/preload`) {
+if (module.parent && module.parent.id === `internal/preload`) {
   defaultApi.setup();
-  if (__non_webpack_module__.filename) {
-    delete require$$0__default['default']._cache[__non_webpack_module__.filename];
+  if (module.filename) {
+    delete require$$0__default['default']._cache[module.filename];
   }
 }
-if (process.mainModule === __non_webpack_module__) {
+if (process.mainModule === module) {
   const reportError = (code, message, data) => {
     process.stdout.write(`${JSON.stringify([{code, message, data}, null])}
 `);

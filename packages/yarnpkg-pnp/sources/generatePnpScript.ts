@@ -15,8 +15,6 @@ function generateLoader(shebang: string | null | undefined, loader: string) {
     `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
     `}\n`,
     `\n`,
-    `var __non_webpack_module__ = module;\n`,
-    `\n`,
     `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
     loader.replace(/^/gm, `  `),
     `}\n`,
