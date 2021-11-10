@@ -19,6 +19,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Bugfixes
 
 - `@yarnpkg/pnpify` now escapes paths correctly
+- The ESM loader is now enabled regardless of the entrypoint module type, this fixes support for dynamic imports in commonjs modules when the entrypoint is also commonjs
 
 ### Bugfixes
 

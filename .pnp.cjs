@@ -46258,10 +46258,10 @@ const Filename = {
   pnpCjs: `.pnp.cjs`,
   rc: `.yarnrc.yml`
 };
-const npath = Object.create((external_path_default()));
+const path_npath = Object.create((external_path_default()));
 const ppath = Object.create((external_path_default()).posix);
 
-npath.cwd = () => process.cwd();
+path_npath.cwd = () => process.cwd();
 
 ppath.cwd = () => toPortablePath(process.cwd());
 
@@ -46286,10 +46286,10 @@ const contains = function (pathUtils, from, to) {
   }
 };
 
-npath.fromPortablePath = fromPortablePath;
-npath.toPortablePath = toPortablePath;
+path_npath.fromPortablePath = fromPortablePath;
+path_npath.toPortablePath = toPortablePath;
 
-npath.contains = (from, to) => contains(npath, from, to);
+path_npath.contains = (from, to) => contains(path_npath, from, to);
 
 ppath.contains = (from, to) => contains(ppath, from, to);
 
@@ -46316,10 +46316,10 @@ function toPortablePath(p) {
 }
 
 function convertPath(targetPathUtils, sourcePath) {
-  return targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
+  return targetPathUtils === path_npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
 }
 function toFilename(filename) {
-  if (npath.parse(filename).dir !== `` || ppath.parse(filename).dir !== ``) throw new Error(`Invalid filename: "${filename}"`);
+  if (path_npath.parse(filename).dir !== `` || ppath.parse(filename).dir !== ``) throw new Error(`Invalid filename: "${filename}"`);
   return filename;
 }
 ;// CONCATENATED MODULE: ../yarnpkg-fslib/sources/algorithms/copyPromise.ts
@@ -47098,20 +47098,20 @@ class NodeFS extends BasePortableFakeFS {
 
   async openPromise(p, flags, mode) {
     return await new Promise((resolve, reject) => {
-      this.realFs.open(npath.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
+      this.realFs.open(path_npath.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
     });
   }
 
   openSync(p, flags, mode) {
-    return this.realFs.openSync(npath.fromPortablePath(p), flags, mode);
+    return this.realFs.openSync(path_npath.fromPortablePath(p), flags, mode);
   }
 
   async opendirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
       if (typeof opts !== `undefined`) {
-        this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+        this.realFs.opendir(path_npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+        this.realFs.opendir(path_npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     }).then(dir => {
       return Object.defineProperty(dir, `path`, {
@@ -47123,7 +47123,7 @@ class NodeFS extends BasePortableFakeFS {
   }
 
   opendirSync(p, opts) {
-    const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
+    const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(path_npath.fromPortablePath(p), opts) : this.realFs.opendirSync(path_npath.fromPortablePath(p));
     return Object.defineProperty(dir, `path`, {
       value: p,
       configurable: true,
@@ -47176,62 +47176,62 @@ class NodeFS extends BasePortableFakeFS {
   }
 
   createReadStream(p, opts) {
-    const realPath = p !== null ? npath.fromPortablePath(p) : p;
+    const realPath = p !== null ? path_npath.fromPortablePath(p) : p;
     return this.realFs.createReadStream(realPath, opts);
   }
 
   createWriteStream(p, opts) {
-    const realPath = p !== null ? npath.fromPortablePath(p) : p;
+    const realPath = p !== null ? path_npath.fromPortablePath(p) : p;
     return this.realFs.createWriteStream(realPath, opts);
   }
 
   async realpathPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.realpath(npath.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
+      this.realFs.realpath(path_npath.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
     }).then(path => {
-      return npath.toPortablePath(path);
+      return path_npath.toPortablePath(path);
     });
   }
 
   realpathSync(p) {
-    return npath.toPortablePath(this.realFs.realpathSync(npath.fromPortablePath(p), {}));
+    return path_npath.toPortablePath(this.realFs.realpathSync(path_npath.fromPortablePath(p), {}));
   }
 
   async existsPromise(p) {
     return await new Promise(resolve => {
-      this.realFs.exists(npath.fromPortablePath(p), resolve);
+      this.realFs.exists(path_npath.fromPortablePath(p), resolve);
     });
   }
 
   accessSync(p, mode) {
-    return this.realFs.accessSync(npath.fromPortablePath(p), mode);
+    return this.realFs.accessSync(path_npath.fromPortablePath(p), mode);
   }
 
   async accessPromise(p, mode) {
     return await new Promise((resolve, reject) => {
-      this.realFs.access(npath.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
+      this.realFs.access(path_npath.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
     });
   }
 
   existsSync(p) {
-    return this.realFs.existsSync(npath.fromPortablePath(p));
+    return this.realFs.existsSync(path_npath.fromPortablePath(p));
   }
 
   async statPromise(p, opts) {
     return await new Promise((resolve, reject) => {
       if (opts) {
-        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+        this.realFs.stat(path_npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+        this.realFs.stat(path_npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     });
   }
 
   statSync(p, opts) {
     if (opts) {
-      return this.realFs.statSync(npath.fromPortablePath(p), opts);
+      return this.realFs.statSync(path_npath.fromPortablePath(p), opts);
     } else {
-      return this.realFs.statSync(npath.fromPortablePath(p));
+      return this.realFs.statSync(path_npath.fromPortablePath(p));
     }
   }
 
@@ -47259,9 +47259,9 @@ class NodeFS extends BasePortableFakeFS {
     return await new Promise((resolve, reject) => {
       if (opts) {
         // @ts-expect-error - TS does not know this takes options
-        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+        this.realFs.lstat(path_npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+        this.realFs.lstat(path_npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     });
   }
@@ -47269,55 +47269,55 @@ class NodeFS extends BasePortableFakeFS {
   lstatSync(p, opts) {
     if (opts) {
       // @ts-expect-error - TS does not know this takes options
-      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
+      return this.realFs.lstatSync(path_npath.fromPortablePath(p), opts);
     } else {
-      return this.realFs.lstatSync(npath.fromPortablePath(p));
+      return this.realFs.lstatSync(path_npath.fromPortablePath(p));
     }
   }
 
   async chmodPromise(p, mask) {
     return await new Promise((resolve, reject) => {
-      this.realFs.chmod(npath.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
+      this.realFs.chmod(path_npath.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
     });
   }
 
   chmodSync(p, mask) {
-    return this.realFs.chmodSync(npath.fromPortablePath(p), mask);
+    return this.realFs.chmodSync(path_npath.fromPortablePath(p), mask);
   }
 
   async chownPromise(p, uid, gid) {
     return await new Promise((resolve, reject) => {
-      this.realFs.chown(npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
+      this.realFs.chown(path_npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
     });
   }
 
   chownSync(p, uid, gid) {
-    return this.realFs.chownSync(npath.fromPortablePath(p), uid, gid);
+    return this.realFs.chownSync(path_npath.fromPortablePath(p), uid, gid);
   }
 
   async renamePromise(oldP, newP) {
     return await new Promise((resolve, reject) => {
-      this.realFs.rename(npath.fromPortablePath(oldP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+      this.realFs.rename(path_npath.fromPortablePath(oldP), path_npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
     });
   }
 
   renameSync(oldP, newP) {
-    return this.realFs.renameSync(npath.fromPortablePath(oldP), npath.fromPortablePath(newP));
+    return this.realFs.renameSync(path_npath.fromPortablePath(oldP), path_npath.fromPortablePath(newP));
   }
 
   async copyFilePromise(sourceP, destP, flags = 0) {
     return await new Promise((resolve, reject) => {
-      this.realFs.copyFile(npath.fromPortablePath(sourceP), npath.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+      this.realFs.copyFile(path_npath.fromPortablePath(sourceP), path_npath.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
     });
   }
 
   copyFileSync(sourceP, destP, flags = 0) {
-    return this.realFs.copyFileSync(npath.fromPortablePath(sourceP), npath.fromPortablePath(destP), flags);
+    return this.realFs.copyFileSync(path_npath.fromPortablePath(sourceP), path_npath.fromPortablePath(destP), flags);
   }
 
   async appendFilePromise(p, content, opts) {
     return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+      const fsNativePath = typeof p === `string` ? path_npath.fromPortablePath(p) : p;
 
       if (opts) {
         this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
@@ -47328,7 +47328,7 @@ class NodeFS extends BasePortableFakeFS {
   }
 
   appendFileSync(p, content, opts) {
-    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+    const fsNativePath = typeof p === `string` ? path_npath.fromPortablePath(p) : p;
 
     if (opts) {
       this.realFs.appendFileSync(fsNativePath, content, opts);
@@ -47339,7 +47339,7 @@ class NodeFS extends BasePortableFakeFS {
 
   async writeFilePromise(p, content, opts) {
     return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+      const fsNativePath = typeof p === `string` ? path_npath.fromPortablePath(p) : p;
 
       if (opts) {
         this.realFs.writeFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
@@ -47350,7 +47350,7 @@ class NodeFS extends BasePortableFakeFS {
   }
 
   writeFileSync(p, content, opts) {
-    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+    const fsNativePath = typeof p === `string` ? path_npath.fromPortablePath(p) : p;
 
     if (opts) {
       this.realFs.writeFileSync(fsNativePath, content, opts);
@@ -47361,22 +47361,22 @@ class NodeFS extends BasePortableFakeFS {
 
   async unlinkPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.unlink(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.unlink(path_npath.fromPortablePath(p), this.makeCallback(resolve, reject));
     });
   }
 
   unlinkSync(p) {
-    return this.realFs.unlinkSync(npath.fromPortablePath(p));
+    return this.realFs.unlinkSync(path_npath.fromPortablePath(p));
   }
 
   async utimesPromise(p, atime, mtime) {
     return await new Promise((resolve, reject) => {
-      this.realFs.utimes(npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+      this.realFs.utimes(path_npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
     });
   }
 
   utimesSync(p, atime, mtime) {
-    this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
+    this.realFs.utimesSync(path_npath.fromPortablePath(p), atime, mtime);
   }
 
   async lutimesPromiseImpl(p, atime, mtime) {
@@ -47384,7 +47384,7 @@ class NodeFS extends BasePortableFakeFS {
     const lutimes = this.realFs.lutimes;
     if (typeof lutimes === `undefined`) throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
     return await new Promise((resolve, reject) => {
-      lutimes.call(this.realFs, npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+      lutimes.call(this.realFs, path_npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
     });
   }
 
@@ -47392,122 +47392,122 @@ class NodeFS extends BasePortableFakeFS {
     // @ts-expect-error: Not yet in DefinitelyTyped
     const lutimesSync = this.realFs.lutimesSync;
     if (typeof lutimesSync === `undefined`) throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
-    lutimesSync.call(this.realFs, npath.fromPortablePath(p), atime, mtime);
+    lutimesSync.call(this.realFs, path_npath.fromPortablePath(p), atime, mtime);
   }
 
   async mkdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      this.realFs.mkdir(path_npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
     });
   }
 
   mkdirSync(p, opts) {
-    return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
+    return this.realFs.mkdirSync(path_npath.fromPortablePath(p), opts);
   }
 
   async rmdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
       // TODO: always pass opts when min node version is 12.10+
       if (opts) {
-        this.realFs.rmdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+        this.realFs.rmdir(path_npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+        this.realFs.rmdir(path_npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     });
   }
 
   rmdirSync(p, opts) {
-    return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
+    return this.realFs.rmdirSync(path_npath.fromPortablePath(p), opts);
   }
 
   async linkPromise(existingP, newP) {
     return await new Promise((resolve, reject) => {
-      this.realFs.link(npath.fromPortablePath(existingP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+      this.realFs.link(path_npath.fromPortablePath(existingP), path_npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
     });
   }
 
   linkSync(existingP, newP) {
-    return this.realFs.linkSync(npath.fromPortablePath(existingP), npath.fromPortablePath(newP));
+    return this.realFs.linkSync(path_npath.fromPortablePath(existingP), path_npath.fromPortablePath(newP));
   }
 
   async symlinkPromise(target, p, type) {
     return await new Promise((resolve, reject) => {
-      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+      this.realFs.symlink(path_npath.fromPortablePath(target.replace(/\/+$/, ``)), path_npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
     });
   }
 
   symlinkSync(target, p, type) {
-    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type);
+    return this.realFs.symlinkSync(path_npath.fromPortablePath(target.replace(/\/+$/, ``)), path_npath.fromPortablePath(p), type);
   }
 
   async readFilePromise(p, encoding) {
     return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+      const fsNativePath = typeof p === `string` ? path_npath.fromPortablePath(p) : p;
       this.realFs.readFile(fsNativePath, encoding, this.makeCallback(resolve, reject));
     });
   }
 
   readFileSync(p, encoding) {
-    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+    const fsNativePath = typeof p === `string` ? path_npath.fromPortablePath(p) : p;
     return this.realFs.readFileSync(fsNativePath, encoding);
   }
 
   async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
       if (opts === null || opts === void 0 ? void 0 : opts.withFileTypes) {
-        this.realFs.readdir(npath.fromPortablePath(p), {
+        this.realFs.readdir(path_npath.fromPortablePath(p), {
           withFileTypes: true
         }, this.makeCallback(resolve, reject));
       } else {
-        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value), reject));
+        this.realFs.readdir(path_npath.fromPortablePath(p), this.makeCallback(value => resolve(value), reject));
       }
     });
   }
 
   readdirSync(p, opts) {
     if (opts === null || opts === void 0 ? void 0 : opts.withFileTypes) {
-      return this.realFs.readdirSync(npath.fromPortablePath(p), {
+      return this.realFs.readdirSync(path_npath.fromPortablePath(p), {
         withFileTypes: true
       });
     } else {
-      return this.realFs.readdirSync(npath.fromPortablePath(p));
+      return this.realFs.readdirSync(path_npath.fromPortablePath(p));
     }
   }
 
   async readlinkPromise(p) {
     return await new Promise((resolve, reject) => {
-      this.realFs.readlink(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      this.realFs.readlink(path_npath.fromPortablePath(p), this.makeCallback(resolve, reject));
     }).then(path => {
-      return npath.toPortablePath(path);
+      return path_npath.toPortablePath(path);
     });
   }
 
   readlinkSync(p) {
-    return npath.toPortablePath(this.realFs.readlinkSync(npath.fromPortablePath(p)));
+    return path_npath.toPortablePath(this.realFs.readlinkSync(path_npath.fromPortablePath(p)));
   }
 
   async truncatePromise(p, len) {
     return await new Promise((resolve, reject) => {
-      this.realFs.truncate(npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
+      this.realFs.truncate(path_npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
     });
   }
 
   truncateSync(p, len) {
-    return this.realFs.truncateSync(npath.fromPortablePath(p), len);
+    return this.realFs.truncateSync(path_npath.fromPortablePath(p), len);
   }
 
   watch(p, a, b) {
-    return this.realFs.watch(npath.fromPortablePath(p), // @ts-expect-error
+    return this.realFs.watch(path_npath.fromPortablePath(p), // @ts-expect-error
     a, b);
   }
 
   watchFile(p, a, b) {
-    return this.realFs.watchFile(npath.fromPortablePath(p), // @ts-expect-error
+    return this.realFs.watchFile(path_npath.fromPortablePath(p), // @ts-expect-error
     a, b);
   }
 
   unwatchFile(p, cb) {
-    return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
+    return this.realFs.unwatchFile(path_npath.fromPortablePath(p), cb);
   }
 
   makeCallback(resolve, reject) {
@@ -48524,7 +48524,7 @@ class ZipFS extends BasePortableFakeFS {
       }
 
       if (typeof source === `string`) {
-        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
+        this.zip = this.libzip.open(path_npath.fromPortablePath(source), flags, errPtr);
       } else {
         const lzSource = this.allocateUnattachedSource(source);
 
@@ -50907,7 +50907,7 @@ const external_url_namespaceObject = require("url");;
 
 class URLFS extends ProxiedFS {
   constructor(baseFs) {
-    super(npath);
+    super(path_npath);
     this.baseFs = baseFs;
   }
 
@@ -51092,16 +51092,16 @@ function extendFs(realFs, fakeFs) {
 
 class PosixFS extends ProxiedFS {
   constructor(baseFs) {
-    super(npath);
+    super(path_npath);
     this.baseFs = baseFs;
   }
 
   mapFromBase(path) {
-    return npath.fromPortablePath(path);
+    return path_npath.fromPortablePath(path);
   }
 
   mapToBase(path) {
-    return npath.toPortablePath(path);
+    return path_npath.toPortablePath(path);
   }
 
 }
@@ -51160,7 +51160,7 @@ function getIssuerModule(parent) {
   return issuer || null;
 }
 function getPathForDisplay(p) {
-  return npath.normalize(npath.fromPortablePath(p));
+  return path_npath.normalize(path_npath.fromPortablePath(p));
 }
 ;// CONCATENATED MODULE: ./sources/loader/nodeUtils.ts
 
@@ -51168,32 +51168,7 @@ function getPathForDisplay(p) {
  // @ts-expect-error
 
 const builtinModules = new Set(external_module_.Module.builtinModules || Object.keys(process.binding(`natives`)));
-const isBuiltinModule = request => request.startsWith(`node:`) || builtinModules.has(request); // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
-
-function resolveMainPath(main) {
-  let mainPath = external_module_.Module._findPath(npath.resolve(main), null, true);
-
-  if (!mainPath) return false; // const preserveSymlinksMain = getOptionValue(`--preserve-symlinks-main`);
-  // if (!preserveSymlinksMain)
-
-  mainPath = external_fs_default().realpathSync(mainPath);
-  return mainPath;
-} // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L26-L41
-
-function shouldUseESMLoader(mainPath) {
-  // const userLoader = getOptionValue(`--experimental-loader`);
-  // if (userLoader)
-  //   return true;
-  // const esModuleSpecifierResolution =
-  //   getOptionValue(`--experimental-specifier-resolution`);
-  // if (esModuleSpecifierResolution === `node`)
-  //   return true;
-  // Determine the module format of the main
-  if (mainPath && mainPath.endsWith(`.mjs`)) return true;
-  if (!mainPath || mainPath.endsWith(`.cjs`)) return false;
-  const pkg = readPackageScope(mainPath);
-  return pkg && pkg.data.type === `module`;
-} // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
+const isBuiltinModule = request => request.startsWith(`node:`) || builtinModules.has(request); // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
 
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
@@ -51218,8 +51193,8 @@ function readPackageScope(checkPath) {
 
 function readPackage(requestPath) {
   const jsonPath = npath.resolve(requestPath, `package.json`);
-  if (!external_fs_default().existsSync(jsonPath)) return null;
-  return JSON.parse(external_fs_default().readFileSync(jsonPath, `utf8`));
+  if (!fs.existsSync(jsonPath)) return null;
+  return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
 }
 ;// CONCATENATED MODULE: ./sources/loader/applyPatch.ts
 
@@ -51297,7 +51272,7 @@ function applyPatch(pnpapi, opts) {
 
 
     const isOwnedByRuntime = parentApi !== null ? parentApi.findPackageLocator(modulePath) !== null : false;
-    const moduleApiPath = isOwnedByRuntime ? parentApiPath : opts.manager.findApiPathFor(npath.dirname(modulePath));
+    const moduleApiPath = isOwnedByRuntime ? parentApiPath : opts.manager.findApiPathFor(path_npath.dirname(modulePath));
     const entry = moduleApiPath !== null ? opts.manager.getApiEntry(moduleApiPath) : {
       instance: null,
       cache: defaultCache
@@ -51306,8 +51281,8 @@ function applyPatch(pnpapi, opts) {
     const cacheEntry = entry.cache[modulePath];
 
     if (cacheEntry) {
-      // When a dynamic import is used in CJS files Node adds the module
-      // to the cache but doesn't load it so we do it here.
+      // When the Node ESM loader encounters CJS modules it adds them
+      // to the cache but doesn't load them so we do that here.
       //
       // Keep track of and check if the module is already loading to
       // handle circular requires.
@@ -51316,7 +51291,13 @@ function applyPatch(pnpapi, opts) {
       // create modules without the `loaded` and `load` properties
       if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
         try {
-          cacheEntry.isLoading = true;
+          cacheEntry.isLoading = true; // The main module is exposed as a global variable
+
+          if (isMain) {
+            process.mainModule = cacheEntry;
+            cacheEntry.id = `.`;
+          }
+
           cacheEntry.load(modulePath);
         } finally {
           cacheEntry.isLoading = false;
@@ -51329,7 +51310,7 @@ function applyPatch(pnpapi, opts) {
 
     const module = new external_module_.Module(modulePath, parent !== null && parent !== void 0 ? parent : undefined);
     module.pnpApiPath = moduleApiPath;
-    entry.cache[modulePath] = module; // The main module is exposed as global variable
+    entry.cache[modulePath] = module; // The main module is exposed as a global variable
 
     if (isMain) {
       process.mainModule = module;
@@ -51376,7 +51357,7 @@ function applyPatch(pnpapi, opts) {
     const issuer = getIssuerModule(module);
 
     if (issuer !== null) {
-      const path = npath.dirname(issuer.filename);
+      const path = path_npath.dirname(issuer.filename);
       const apiPath = opts.manager.getApiPathFromParent(issuer);
       return [{
         apiPath,
@@ -51385,7 +51366,7 @@ function applyPatch(pnpapi, opts) {
       }];
     } else {
       const path = process.cwd();
-      const apiPath = (_a = opts.manager.findApiPathFor(npath.join(path, `[file]`))) !== null && _a !== void 0 ? _a : opts.manager.getApiPathFromParent(null);
+      const apiPath = (_a = opts.manager.findApiPathFor(path_npath.join(path, `[file]`))) !== null && _a !== void 0 ? _a : opts.manager.getApiPathFromParent(null);
       return [{
         apiPath,
         path,
@@ -51396,7 +51377,7 @@ function applyPatch(pnpapi, opts) {
 
   function makeFakeParent(path) {
     const fakeParent = new external_module_.Module(``);
-    const fakeFilePath = npath.join(path, `[file]`);
+    const fakeFilePath = path_npath.join(path, `[file]`);
     fakeParent.paths = external_module_.Module._nodeModulePaths(fakeFilePath);
     return fakeParent;
   } // Splits a require request into its components, or return null if the request is a file path
@@ -51441,11 +51422,11 @@ function applyPatch(pnpapi, opts) {
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
 
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = (parent === null || parent === void 0 ? void 0 : parent.filename) != null ? npath.dirname(parent.filename) : null;
-      const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
+      const parentDirectory = (parent === null || parent === void 0 ? void 0 : parent.filename) != null ? path_npath.dirname(parent.filename) : null;
+      const absoluteRequest = path_npath.isAbsolute(request) ? request : parentDirectory !== null ? path_npath.resolve(parentDirectory, request) : null;
 
       if (absoluteRequest !== null) {
-        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && (parent === null || parent === void 0 ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
+        const apiPath = parentDirectory === path_npath.dirname(absoluteRequest) && (parent === null || parent === void 0 ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
 
         if (apiPath !== null) {
           issuerSpecs.unshift({
@@ -51502,7 +51483,7 @@ function applyPatch(pnpapi, opts) {
     if (request === `pnpapi`) return false;
     if (!enableNativeHooks) return originalFindPath.call(external_module_.Module, request, paths, isMain); // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L490-L494
 
-    const isAbsolute = npath.isAbsolute(request);
+    const isAbsolute = path_npath.isAbsolute(request);
     if (isAbsolute) paths = [``];else if (!paths || paths.length === 0) return false;
 
     for (const path of paths) {
@@ -51527,23 +51508,6 @@ function applyPatch(pnpapi, opts) {
     }
 
     return false;
-  }; // Specifying the `--experimental-loader` flag makes Node enter ESM mode so we change it to not do that
-  // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L72-L81
-  // Tested by https://github.com/yarnpkg/berry/blob/d80ee2dc5298d31eb864288d77671a2264713371/packages/acceptance-tests/pkg-tests-specs/sources/pnp-esm.test.ts#L226-L244
-  // Upstream issue https://github.com/nodejs/node/issues/33226
-
-
-  const originalRunMain = moduleExports.runMain;
-
-  moduleExports.runMain = function (main = process.argv[1]) {
-    const resolvedMain = resolveMainPath(main);
-    const useESMLoader = resolvedMain ? shouldUseESMLoader(resolvedMain) : false;
-
-    if (useESMLoader) {
-      originalRunMain(main);
-    } else {
-      external_module_.Module._load(main, null, true);
-    }
   };
 
   patchFs((external_fs_default()), new PosixFS(opts.fakeFs));
@@ -51553,7 +51517,7 @@ function applyPatch(pnpapi, opts) {
 function hydrateRuntimeState(data, {
   basePath
 }) {
-  const portablePath = npath.toPortablePath(basePath);
+  const portablePath = path_npath.toPortablePath(basePath);
   const absolutePortablePath = ppath.resolve(portablePath);
   const ignorePattern = data.ignorePatternData !== null ? new RegExp(data.ignorePatternData) : null;
   const packageLocatorsByLocations = new Map();
@@ -52086,7 +52050,7 @@ function makeApi(runtimeState, opts) {
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
 
-    return external_module_.Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, {
+    return external_module_.Module._resolveFilename(path_npath.fromPortablePath(request), makeFakeModule(path_npath.fromPortablePath(issuer)), false, {
       plugnplay: false
     });
   }
@@ -52259,7 +52223,7 @@ function makeApi(runtimeState, opts) {
     considerBuiltins = true
   } = {}) {
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
-    if (request === `pnpapi`) return npath.toPortablePath(opts.pnpapiResolution); // Bailout if the request is a native module
+    if (request === `pnpapi`) return path_npath.toPortablePath(opts.pnpapiResolution); // Bailout if the request is a native module
 
     if (considerBuiltins && isBuiltinModule(request)) return null;
     const requestForDisplay = getPathForDisplay(request);
@@ -52285,7 +52249,7 @@ function makeApi(runtimeState, opts) {
           });
         }
 
-        return npath.toPortablePath(result);
+        return path_npath.toPortablePath(result);
       }
     }
 
@@ -52339,7 +52303,7 @@ function makeApi(runtimeState, opts) {
           });
         }
 
-        return npath.toPortablePath(result);
+        return path_npath.toPortablePath(result);
       }
 
       const issuerInformation = getPackageInformationSafe(issuerLocator); // We obtain the dependency reference in regard to the package that request it
@@ -52619,35 +52583,35 @@ function makeApi(runtimeState, opts) {
     getPackageInformation: locator => {
       const info = getPackageInformation(locator);
       if (info === null) return null;
-      const packageLocation = npath.fromPortablePath(info.packageLocation);
+      const packageLocation = path_npath.fromPortablePath(info.packageLocation);
       const nativeInfo = { ...info,
         packageLocation
       };
       return nativeInfo;
     },
     findPackageLocator: path => {
-      return findPackageLocator(npath.toPortablePath(path));
+      return findPackageLocator(path_npath.toPortablePath(path));
     },
     resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request, issuer, opts) => {
-      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
-      const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
+      const portableIssuer = issuer !== null ? path_npath.toPortablePath(issuer) : null;
+      const resolution = resolveToUnqualified(path_npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null) return null;
-      return npath.fromPortablePath(resolution);
+      return path_npath.fromPortablePath(resolution);
     }),
     resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath, opts) => {
-      return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
+      return path_npath.fromPortablePath(resolveUnqualified(path_npath.toPortablePath(unqualifiedPath), opts));
     }),
     resolveRequest: maybeLog(`resolveRequest`, (request, issuer, opts) => {
-      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
-      const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
+      const portableIssuer = issuer !== null ? path_npath.toPortablePath(issuer) : null;
+      const resolution = resolveRequest(path_npath.toPortablePath(request), portableIssuer, opts);
       if (resolution === null) return null;
-      return npath.fromPortablePath(resolution);
+      return path_npath.fromPortablePath(resolution);
     }),
     resolveVirtual: maybeLog(`resolveVirtual`, path => {
-      const result = resolveVirtual(npath.toPortablePath(path));
+      const result = resolveVirtual(path_npath.toPortablePath(path));
 
       if (result !== null) {
-        return npath.fromPortablePath(result);
+        return path_npath.fromPortablePath(result);
       } else {
         return null;
       }
@@ -52658,8 +52622,8 @@ function makeApi(runtimeState, opts) {
 
 
 function makeManager(pnpapi, opts) {
-  const initialApiPath = npath.toPortablePath(pnpapi.resolveToUnqualified(`pnpapi`, null));
-  const initialApiStats = opts.fakeFs.statSync(npath.toPortablePath(initialApiPath));
+  const initialApiPath = path_npath.toPortablePath(pnpapi.resolveToUnqualified(`pnpapi`, null));
+  const initialApiStats = opts.fakeFs.statSync(path_npath.toPortablePath(initialApiPath));
   const apiMetadata = new Map([[initialApiPath, {
     cache: external_module_.Module._cache,
     instance: pnpapi,
@@ -52668,7 +52632,7 @@ function makeManager(pnpapi, opts) {
   }]]);
 
   function loadApiInstance(pnpApiPath) {
-    const nativePath = npath.fromPortablePath(pnpApiPath); // @ts-expect-error
+    const nativePath = path_npath.fromPortablePath(pnpApiPath); // @ts-expect-error
 
     const module = new external_module_.Module(nativePath, null); // @ts-expect-error
 
@@ -52683,7 +52647,7 @@ function makeManager(pnpapi, opts) {
     const stats = opts.fakeFs.statSync(pnpApiPath);
 
     if (stats.mtime > apiEntry.stats.mtime) {
-      process.emitWarning(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
+      process.emitWarning(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${path_npath.fromPortablePath(pnpApiPath)})`);
       apiEntry.stats = stats;
       apiEntry.instance = loadApiInstance(pnpApiPath);
     }
@@ -52751,11 +52715,11 @@ function makeManager(pnpapi, opts) {
 
     if (bestCandidate) {
       if (bestCandidate.apiPaths.length === 1) return bestCandidate.apiPaths[0];
-      const controlSegment = bestCandidate.apiPaths.map(apiPath => `  ${npath.fromPortablePath(apiPath)}`).join(`\n`);
+      const controlSegment = bestCandidate.apiPaths.map(apiPath => `  ${path_npath.fromPortablePath(apiPath)}`).join(`\n`);
       throw new Error(`Unable to locate pnpapi, the module '${modulePath}' is controlled by multiple pnpapi instances.\nThis is usually caused by using the global cache (enableGlobalCache: true)\n\nControlled by:\n${controlSegment}\n`);
     }
 
-    const start = ppath.resolve(npath.toPortablePath(modulePath));
+    const start = ppath.resolve(path_npath.toPortablePath(modulePath));
     let curr;
     let next = start;
 
