@@ -5502,6 +5502,7 @@ __metadata:
     pretty-bytes: ^5.1.0
     rollup: ^2.43.0
     rollup-plugin-esbuild: ^3.0.2
+    rollup-plugin-terser: ^7.0.2
     semver: ^7.1.2
     stream-to-promise: ^2.2.0
     strip-ansi: ^6.0.0

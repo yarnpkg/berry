@@ -2,6 +2,7 @@ import cjs                  from '@rollup/plugin-commonjs';
 import resolve              from '@rollup/plugin-node-resolve';
 import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
+import {terser}             from 'rollup-plugin-terser';
 import {brotliCompressSync} from 'zlib';
 
 function wrapOutput() {
@@ -40,6 +41,7 @@ export default [
       }),
       esbuild({tsconfig: false, target: `node12`}),
       cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
+      terser({ecma: 2019}),
       wrapOutput(),
     ],
   },
