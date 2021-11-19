@@ -22,7 +22,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/plugin-git": "workspace:^",
-    "typescript": "^4.4.2"
+    "typescript": "^4.5.2"
   },
   "scripts": {
     "build:plugin-workspace-tools": "builder build plugin",
