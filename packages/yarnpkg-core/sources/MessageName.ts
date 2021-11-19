@@ -85,3 +85,7 @@ export enum MessageName {
 export function stringifyMessageName(name: MessageName | number): string {
   return `YN${name.toString(10).padStart(4, `0`)}`;
 }
+
+export function parseMessageName(messageName: string) {
+  return Number(messageName.slice(2));
+}

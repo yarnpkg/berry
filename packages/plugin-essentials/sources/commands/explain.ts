@@ -1,20 +1,12 @@
-import {BaseCommand}                                                                           from '@yarnpkg/cli';
-import {Configuration, MessageName, miscUtils, formatUtils, YarnVersion, httpUtils, treeUtils} from '@yarnpkg/core';
-import {Option, UsageError, Command}                                                           from 'clipanion';
-import * as t                                                                                  from 'typanion';
+import {BaseCommand}                                                                                                                   from '@yarnpkg/cli';
+import {Configuration, MessageName, miscUtils, formatUtils, YarnVersion, httpUtils, treeUtils, parseMessageName, stringifyMessageName} from '@yarnpkg/core';
+import {Option, UsageError, Command}                                                                                                   from 'clipanion';
+import * as t                                                                                                                          from 'typanion';
 
-import {resolveTag}                                                                            from './set/version';
-
-function getCodeValue(code: string) {
-  return Number(code.slice(2));
-}
+import {resolveTag}                                                                                                                    from './set/version';
 
 function getCodeName(code: string): string | undefined {
-  return MessageName[getCodeValue(code)];
-}
-
-function makeCode(value: string) {
-  return `YN${value.padStart(4, `0`)}`;
+  return MessageName[parseMessageName(code)];
 }
 
 const ERROR_CODE_DOC_REGEXP = /## (?<code>YN[0-9]{4}) - `(?<name>[A-Z_]+)`\n\n(?<details>(?:.(?!##))+)/gs;
@@ -114,7 +106,7 @@ export default class ExplainCommand extends BaseCommand {
             return miscUtils.mapAndFilter.skip;
 
           return {
-            label: makeCode(key),
+            label: stringifyMessageName(Number(key)),
             value: formatUtils.tuple(formatUtils.Type.CODE, value as string),
           };
         }),
