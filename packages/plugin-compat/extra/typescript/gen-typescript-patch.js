@@ -76,7 +76,13 @@ const SLICES = [
     from: `793bfe32745bf6797924354b0fd5be62cf01950c`,
     to: `88a10595c32309fc26eb4a7f5a858d98e883dae0`,
     onto: `a10409ccaa3604790dc45f52ef0402eb49015dcf`,
-    range: `>=4.4`,
+    range: `>=4.4 <4.5`,
+  },
+  {
+    from: `79fe5d206f89e5f1585807bdcd7feeb567a69646`,
+    to: `79fe5d206f89e5f1585807bdcd7feeb567a69646`,
+    onto: `7893f689fedcfe28a499d119d34844840bce9160`,
+    range: `>=4.5.2`,
   },
 ];
 
