@@ -19,7 +19,7 @@ export default async () => ({
       jail: path.join(__dirname, `../../`),
       preferBuiltins: true,
     }),
-    esbuild({tsconfig: false, target: `node12`, format: `cjs`}),
+    esbuild({tsconfig: false, target: `node12`}),
     cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
     mode === `production` && (await import(`rollup-plugin-terser`)).terser({ecma: 2019}),
   ],
