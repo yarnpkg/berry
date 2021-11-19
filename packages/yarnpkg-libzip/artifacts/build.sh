@@ -48,6 +48,12 @@ LIBZIP_REPO=arcanis/libzip
   if [[ -n "$LIBZIP_REPO" ]]; then
     if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
       git clone https://github.com/"$LIBZIP_REPO" libzip-"$LIBZIP_VERSION"
+
+      # Reverts https://github.com/arcanis/libzip/pull/1
+      # TODO: Remove this once the function is removed from upstream
+      cd libzip-"$LIBZIP_VERSION"
+      git checkout 664462
+      cd ..
     fi
   else
     if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
@@ -82,7 +88,7 @@ LIBZIP_REPO=arcanis/libzip
 
   mkdir -p local/lib local/include
   cp lib/libzip.a local/lib/
-  cp zipconf.h ../lib/zip.h local/include/
+  cp config.h zipconf.h ../lib/zip.h ../lib/compat.h ../lib/zipint.h local/include/
 
   echo Built libzip
 )
@@ -106,8 +112,9 @@ build() {
     -s NODEJS_CATCH_REJECTION=0 \
     "$@" \
     -I./libzip-"$LIBZIP_VERSION"/build/local/include \
+    -I./zlib-"$ZLIB_VERSION"/build/local/include \
     -O3 \
-    ./zipstruct.c \
+    ./lib/*.c \
     ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
     ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
 
