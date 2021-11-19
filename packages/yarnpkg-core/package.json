@@ -55,7 +55,8 @@
     "@yarnpkg/plugin-pnp": "workspace:^",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
     "rollup": "^2.43.0",
-    "rollup-plugin-esbuild": "^3.0.2"
+    "rollup-plugin-esbuild": "^3.0.2",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
     "build:zip:worker": "rollup -c",
