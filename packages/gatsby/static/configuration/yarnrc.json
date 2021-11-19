@@ -639,7 +639,7 @@
     },
     "supportedArchitectures": {
       "_package": "@yarnpkg/core",
-      "description": "Defines which for systems should Yarn install packages.",
+      "description": "Defines the systems for which Yarn should install packages.",
       "type": "object",
       "properties": {
         "os": {
