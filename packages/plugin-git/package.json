@@ -6,7 +6,7 @@
   "dependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.0.1",
+    "clipanion": "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0",
     "git-url-parse": "11.1.2",
     "lodash": "^4.17.15",
     "semver": "^7.1.2",

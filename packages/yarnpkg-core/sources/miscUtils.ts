@@ -7,8 +7,8 @@ import {Readable, Transform}      from 'stream';
 /**
  * @internal
  */
-export function isTaggedYarnVersion(version: string) {
-  return semver.valid(version) && version.match(/^[^-]+(-rc\.[0-9]+)?$/);
+export function isTaggedYarnVersion(version: string | null) {
+  return !!(semver.valid(version) && version!.match(/^[^-]+(-rc\.[0-9]+)?$/));
 }
 
 export function escapeRegExp(str: string) {

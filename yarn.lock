@@ -5394,7 +5394,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^"
     babel-loader: ^8.1.0
     chalk: ^3.0.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     filesize: ^4.1.2
     fork-ts-checker-webpack-plugin: ^5.0.0
@@ -5445,7 +5445,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^"
     chalk: ^3.0.0
     ci-info: ^3.2.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -5486,7 +5486,7 @@ __metadata:
     camelcase: ^5.3.1
     chalk: ^3.0.0
     ci-info: ^3.2.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     cross-spawn: 7.0.3
     diff: ^4.0.1
     esbuild: "npm:esbuild-wasm@^0.11.20"
@@ -5522,7 +5522,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     globby: ^11.0.1
     micromatch: ^4.0.2
     p-limit: ^2.2.0
@@ -5733,7 +5733,7 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     babel-jest: ^26.0.1
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     eslint: ^8.2.0
     github-api: ^3.2.2
     jest: ^26.0.1
@@ -5814,7 +5814,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     lodash: ^4.17.15
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
@@ -5834,7 +5834,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/json-proxy": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -5857,7 +5857,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
     ci-info: ^3.2.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     enquirer: ^2.3.6
     lodash: ^4.17.15
     micromatch: ^4.0.2
@@ -5906,7 +5906,7 @@ __metadata:
     "@types/semver": ^7.1.0
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     git-url-parse: 11.1.2
     lodash: ^4.17.15
     semver: ^7.1.2
@@ -5950,7 +5950,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     lodash: ^4.17.15
     tslib: ^1.13.0
   peerDependencies:
@@ -5972,7 +5972,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^"
     "@yarnpkg/plugin-essentials": "workspace:^"
     algoliasearch: ^4.2.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     diff: ^4.0.1
     ink: ^3.0.8
     ink-text-input: ^4.0.1
@@ -6014,7 +6014,7 @@ __metadata:
     "@yarnpkg/plugin-stage": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
     "@zkochan/cmd-shim": ^5.1.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     micromatch: ^4.0.2
     tslib: ^1.13.0
   peerDependencies:
@@ -6034,7 +6034,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     enquirer: ^2.3.6
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6076,7 +6076,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-stage": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     micromatch: ^4.0.2
     tar-stream: ^2.0.1
     tslib: ^1.13.0
@@ -6094,7 +6094,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -6113,7 +6113,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-stage": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -6132,7 +6132,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
     "@yarnpkg/plugin-stage": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     p-limit: ^2.2.0
     tslib: ^1.13.0
   peerDependencies:
@@ -6149,7 +6149,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     tslib: ^1.13.0
     typescript: ^4.4.2
   peerDependencies:
@@ -6194,7 +6194,7 @@ __metadata:
     "@yarnpkg/libui": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     ink: ^3.0.8
     lodash: ^4.17.15
     react: ^16.13.1
@@ -6218,7 +6218,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
@@ -6263,7 +6263,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/nm": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     cross-spawn: 7.0.3
     tslib: ^1.13.0
   bin:
@@ -6283,7 +6283,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
     chalk: ^3.0.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     comment-json: ^2.2.0
     lodash: ^4.17.15
     tslib: ^1.13.0
@@ -6302,7 +6302,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     chalk: ^3.0.0
-    clipanion: ^3.0.1
+    clipanion: "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0"
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
@@ -8625,23 +8625,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clipanion@https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0":
+  version: 3.2.0-rc.3
+  resolution: "clipanion@https://github.com/arcanis/clipanion.git#commit=c8d51b41b759af4480a8eda05f6abae74a14caf0"
+  dependencies:
+    typanion: ^3.3.1
+  peerDependencies:
+    typanion: "*"
+  checksum: 72e3d594f53b749b2a8c352768e4dc2c966ae8ba86b9f4cc5cb3fc41c6f8d23a3921345343de6e717d2ced541b3c1222a495e4ad265f837ad4dd96d7c6011d6c
+  languageName: node
+  linkType: hard
+
 "clipanion@npm:2.0.0-rc.16":
   version: 2.0.0-rc.16
   resolution: "clipanion@npm:2.0.0-rc.16"
   dependencies:
     chalk: ^2.4.2
   checksum: 91cf93ba72d6ac5da7aa40886e507c5502ab71fe4b0dbac54c2444493112553376905b654db78ed932e5e9e876935fe9fc32965ebc4a0ea8864268afab247df8
-  languageName: node
-  linkType: hard
-
-"clipanion@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "clipanion@npm:3.0.1"
-  dependencies:
-    typanion: ^3.3.1
-  peerDependencies:
-    typanion: "*"
-  checksum: 3a4b0c1e7d29a0f3c41860323494114a3533298134761e564b9057fe26ceef929a06da73cc3dfc0000e02c89ad7222984109a60213a212c10ea71ac6cacabc89
   languageName: node
   linkType: hard
 
