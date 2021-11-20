@@ -25,6 +25,8 @@ Note that these challenges are not unique to Yarn — you may remember a time wh
 
 In order to make a project zero-install, you must be able to use it as soon as you clone it. This is very easy starting from Yarn 2!
 
+- First, ensure that your project is using [Plug'n'Play](/features/plugnplay) to resolve dependencies via the cache folder and **not** from `node_modules`.
+
 - The cache folder is by default stored within your project folder (in `.yarn/cache`). Just make sure you add it to your repository (see also, [Offline Cache](/features/offline-cache)).
 
   - Again, this whole workflow is optional. If at some point you decide that in the end you prefer to keep using a global cache, just toggle on `enableGlobalCache` in the [yarnrc settings](/configuration/yarnrc#enableGlobalCache) and it'll be back to normal.
