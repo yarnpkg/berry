@@ -188,11 +188,12 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
     const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
 
-    if (bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion))
-      manifest.packageManager = `yarn@${bundleVersion}`;
-    else
-      // If the version isn't tagged, we use the latest stable version as the wrapper
-      manifest.packageManager = await resolveTag(configuration, `stable`);
+    manifest.packageManager = `yarn@${
+      bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion)
+        ? bundleVersion
+        // If the version isn't tagged, we use the latest stable version as the wrapper
+        : await resolveTag(configuration, `stable`)
+    }`;
 
     const data = {};
     manifest.exportTo(data);
