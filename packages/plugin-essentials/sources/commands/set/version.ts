@@ -190,6 +190,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
     if (bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion))
       manifest.packageManager = `yarn@${bundleVersion}`;
+    else
+      manifest.packageManager = null;
 
     const data = {};
     manifest.exportTo(data);
