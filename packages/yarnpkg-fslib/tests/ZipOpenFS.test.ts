@@ -1,10 +1,10 @@
-import {getLibzipSync}          from '@yarnpkg/libzip';
+import {getLibzipSync}                        from '@yarnpkg/libzip';
 
-import {getArchivePart}         from '../sources/ZipOpenFS';
-import {ppath, npath, Filename} from '../sources/path';
-import {ZipOpenFS}              from '../sources';
+import {getArchivePart}                       from '../sources/ZipOpenFS';
+import {ppath, npath, Filename, PortablePath} from '../sources/path';
+import {ZipOpenFS}                            from '../sources';
 
-import {useFakeTime}            from './utils';
+import {useFakeTime}                          from './utils';
 
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
@@ -95,6 +95,20 @@ describe(`ZipOpenFS`, () => {
 
     expect(buff.toString(`utf8`)).toEqual(`foo\n`);
 
+    fs.discardAndClose();
+  });
+
+  it(`the path property of the stream object returned by createReadStream is the normalized path argument`, async () => {
+    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+
+    const unnormalizedPath = ZIP_FILE1.replace(/\//g, `/./`) as PortablePath;
+    const normalizedPath = ZIP_FILE1;
+
+    const stream = fs.createReadStream(unnormalizedPath);
+
+    expect(stream.path).toMatch(normalizedPath);
+
+    stream.destroy();
     fs.discardAndClose();
   });
 
