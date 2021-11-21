@@ -9,7 +9,7 @@ import {NodeFS}                                                                 
 import {ZipFS}                                                                                                                                       from './ZipFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
-import {Filename, FSPath, PortablePath, ppath}                                                                                                       from './path';
+import {Filename, FSPath, npath, PortablePath, ppath}                                                                                                from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -304,7 +304,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
       return this.baseFs.createReadStream(p, opts);
     }, (zipFs, {archivePath, subPath}) => {
       const stream = zipFs.createReadStream(subPath, opts);
-      stream.path = this.pathUtils.join(archivePath, subPath);
+      // This is a very hacky workaround. `ZipOpenFS` shouldn't have to work with `NativePath`s.
+      // Ref: https://github.com/yarnpkg/berry/pull/3774
+      // TODO: think of a better solution
+      stream.path = npath.fromPortablePath(this.pathUtils.join(archivePath, subPath));
       return stream;
     });
   }
