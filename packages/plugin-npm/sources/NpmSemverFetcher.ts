@@ -52,7 +52,6 @@ export class NpmSemverFetcher implements Fetcher {
       sourceBuffer = await npmHttpUtils.get(NpmSemverFetcher.getLocatorUrl(locator), {
         configuration: opts.project.configuration,
         ident: locator,
-        reportInfo: opts.report.reportInfo,
       });
     } catch (error) {
       // The npm registry doesn't always support %2f when fetching the package tarballs 🤡
@@ -61,7 +60,6 @@ export class NpmSemverFetcher implements Fetcher {
       sourceBuffer = await npmHttpUtils.get(NpmSemverFetcher.getLocatorUrl(locator).replace(/%2f/g, `/`), {
         configuration: opts.project.configuration,
         ident: locator,
-        reportInfo: opts.report.reportInfo,
       });
     }
 

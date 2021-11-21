@@ -1,6 +1,8 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
+import {Response}                                                                             from 'got/dist/source';
 import {Writable, Readable}                                                                   from 'stream';
+import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
 import {Fetcher}                                                                              from './Fetcher';
@@ -9,6 +11,7 @@ import {MessageName}                                                            
 import {Project, InstallOptions}                                                              from './Project';
 import {Resolver, ResolveOptions}                                                             from './Resolver';
 import {Workspace}                                                                            from './Workspace';
+import {Body, Method}                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -62,7 +65,7 @@ export type Hooks = {
   ) => Promise<void>;
 
   /**
-   * When a script is getting executed. You must call the executor, or the
+   * Called when a script is getting executed. You must call the executor, or the
    * script won't be called at all.
    */
   wrapScriptExecution?: (
@@ -72,6 +75,14 @@ export type Hooks = {
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>;
+
+  /**
+   * Called when a network request is being made.
+   */
+  wrapNetworkRequest?: (
+    networkRequest: () => Promise<Response<any>>,
+    extra: {target: string | URL, body: Body, configuration: Configuration, headers: { [headerName: string]: string } | undefined, jsonRequest: boolean | undefined, jsonResponse: boolean | undefined, method: Method | undefined}
+  ) => Promise<() => Promise<Response<any>>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use

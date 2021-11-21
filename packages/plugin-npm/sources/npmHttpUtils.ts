@@ -26,11 +26,7 @@ type RegistryOptions = {
   registry: string;
 };
 
-type ReportOptions = {
-  reportInfo?: (name: MessageName | null, text: string) => void;
-};
-
-export type Options = httpUtils.Options & AuthOptions & RegistryOptions & ReportOptions;
+export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
 
 /**
  * Consumes all 401 Unauthorized errors and reports them as `AUTHENTICATION_INVALID`.
@@ -70,12 +66,7 @@ export async function get(path: string, {configuration, headers, ident, authType
     headers = {...headers, authorization: auth};
 
   try {
-    const url = path.charAt(0) === `/` ? `${registry}${path}` : path;
-
-    if (typeof rest.reportInfo !== `undefined`)
-      rest.reportInfo(MessageName.UNNAMED, `Fetching ${url}`);
-
-    return await httpUtils.get(url, {configuration, headers, ...rest});
+    return await httpUtils.get(path.charAt(0) === `/` ? `${registry}${path}` : path, {configuration, headers, ...rest});
   } catch (error) {
     await handleInvalidAuthenticationError(error, {registry, configuration, headers});
 
