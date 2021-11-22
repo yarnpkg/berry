@@ -42,25 +42,25 @@ Most projects will only face those four problems, which can all be fixed in a go
 If you're using Zero-Installs:
 
 ```gitignore
-.yarn/*
 !.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+.yarn/*
 ```
 
 If you're not using Zero-Installs:
 
 ```gitignore
-.pnp.*
-.yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+.yarn/*
+.pnp.*
 ```
 
 If you're interested to know more about each of these files:

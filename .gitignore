@@ -39,3 +39,6 @@ package.tgz
 /vscode-case-study
 
 .idea
+
+# deepcode
+.dccache
