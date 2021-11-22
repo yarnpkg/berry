@@ -7,7 +7,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0",
+    "clipanion": "^3.2.0-rc.4",
     "globby": "^11.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",

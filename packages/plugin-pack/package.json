@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "https://github.com/arcanis/clipanion#c8d51b41b759af4480a8eda05f6abae74a14caf0",
+    "clipanion": "^3.2.0-rc.4",
     "micromatch": "^4.0.2",
     "tar-stream": "^2.0.1",
     "tslib": "^1.13.0"
