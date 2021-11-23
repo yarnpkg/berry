@@ -89,7 +89,7 @@ export function stringifyMessageName(name: MessageName | number): string {
 export function parseMessageName(messageName: string): MessageName {
   const parsed = Number(messageName.slice(2));
   if (typeof MessageName[parsed] === `undefined`)
-    throw new Error(`Unknown message name: ${messageName}`);
+    throw new Error(`Unknown message name: "${messageName}"`);
 
   return parsed;
 }
