@@ -93,6 +93,7 @@ build() {
 
   source "$EMSDK_ENV"
 
+  # Options are documented at https://github.com/emscripten-core/emscripten/blob/86131037aa4f1c7bf6021081dd28fae12bdedba1/src/settings.js
   emcc \
     -o ./build.js \
     -s WASM=1 \
@@ -102,6 +103,8 @@ build() {
     -s ENVIRONMENT=node \
     -s NODERAWFS=1 \
     -s SINGLE_FILE=1 \
+    -s MODULARIZE=1 \
+    -s EXPORT_NAME="createModule" \
     -s NODEJS_CATCH_EXIT=0 \
     -s NODEJS_CATCH_REJECTION=0 \
     "$@" \
