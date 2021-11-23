@@ -1,0 +1,4 @@
+undecided:
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/core"
+  - "@yarnpkg/cli"

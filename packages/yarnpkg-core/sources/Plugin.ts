@@ -1,6 +1,5 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
-import {Response}                                                                             from 'got/dist/source';
 import {Writable, Readable}                                                                   from 'stream';
 import {URL}                                                                                  from 'url';
 
@@ -80,9 +79,9 @@ export type Hooks = {
    * Called when a network request is being made.
    */
   wrapNetworkRequest?: (
-    networkRequest: () => Promise<Response<any>>,
+    networkRequest: () => Promise<any>,
     extra: {target: string | URL, body: Body, configuration: Configuration, headers: { [headerName: string]: string } | undefined, jsonRequest: boolean | undefined, jsonResponse: boolean | undefined, method: Method | undefined}
-  ) => Promise<() => Promise<Response<any>>>;
+  ) => Promise<() => Promise<any>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
