@@ -12,9 +12,10 @@ THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
 
 ZLIB_VERSION=1.2.11
-LIBZIP_VERSION=1.5.2
+LIBZIP_VERSION=1.5.2 # Ignored at the moment; we use a fork, cf next params
 
 LIBZIP_REPO=arcanis/libzip
+LIBZIP_COMMIT=664462465d2730d51f04437c90ed7ebcbe19a36f
 
 [[ -f ./zlib-"$ZLIB_VERSION"/libz.a ]] || (
   if ! [[ -e zlib-"$ZLIB_VERSION".tar.gz ]]; then
@@ -49,10 +50,8 @@ LIBZIP_REPO=arcanis/libzip
     if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
       git clone https://github.com/"$LIBZIP_REPO" libzip-"$LIBZIP_VERSION"
 
-      # Reverts https://github.com/arcanis/libzip/pull/1
-      # TODO: Remove this once the function is removed from upstream
       cd libzip-"$LIBZIP_VERSION"
-      git checkout 664462
+      git checkout "$LIBZIP_COMMIT"
       cd ..
     fi
   else
