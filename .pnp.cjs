@@ -49901,9 +49901,15 @@ class ZipOpenFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.createReadStream(p, opts);
     }, (zipFs, {
+      archivePath,
       subPath
     }) => {
-      return zipFs.createReadStream(subPath, opts);
+      const stream = zipFs.createReadStream(subPath, opts); // This is a very hacky workaround. `ZipOpenFS` shouldn't have to work with `NativePath`s.
+      // Ref: https://github.com/yarnpkg/berry/pull/3774
+      // TODO: think of a better solution
+
+      stream.path = path_npath.fromPortablePath(this.pathUtils.join(archivePath, subPath));
+      return stream;
     });
   }
 

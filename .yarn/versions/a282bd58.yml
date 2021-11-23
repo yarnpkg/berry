@@ -1,5 +1,8 @@
 releases:
+  "@yarnpkg/cli": patch
   "@yarnpkg/fslib": patch
+  "@yarnpkg/pnp": patch
+  vscode-zipfs: patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -23,14 +26,15 @@ declined:
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
-  - vscode-zipfs
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
-  - "@yarnpkg/pnp"
+  - "@yarnpkg/parsers"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
   - "@yarnpkg/shell"
+
+undecided:
+  - "@yarnpkg/eslint-config"
