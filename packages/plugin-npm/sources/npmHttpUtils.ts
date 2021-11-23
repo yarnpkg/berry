@@ -14,10 +14,6 @@ export enum AuthType {
   ALWAYS_AUTH,
 }
 
-type AuthOptions = {
-  authType?: AuthType;
-};
-
 type RegistryOptions = {
   ident: Ident;
   registry?: string;
@@ -26,7 +22,10 @@ type RegistryOptions = {
   registry: string;
 };
 
-export type Options = httpUtils.Options & AuthOptions & RegistryOptions & {otp?: string};
+export type Options = httpUtils.Options & RegistryOptions & {
+  authType?: AuthType;
+  otp?: string;
+};
 
 /**
  * Consumes all 401 Unauthorized errors and reports them as `AUTHENTICATION_INVALID`.
@@ -85,7 +84,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
-    headers = {...headers, ...getOtpHeaders(otp)}
+    headers = {...headers, ...getOtpHeaders(otp)};
 
   try {
     return await httpUtils.post(registry + path, body, {configuration, headers, ...rest});
@@ -121,12 +120,12 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
-    headers = {...headers, ...getOtpHeaders(otp)}
+    headers = {...headers, ...getOtpHeaders(otp)};
 
   try {
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error) ) {
+    if (!isOtpError(error)) {
       await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
@@ -157,7 +156,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
-    headers = {...headers, ...getOtpHeaders(otp)}
+    headers = {...headers, ...getOtpHeaders(otp)};
 
   try {
     return await httpUtils.del(registry + path, {configuration, headers, ...rest});
