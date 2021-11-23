@@ -1,11 +1,11 @@
 import {BaseCommand}                                                                                                                   from '@yarnpkg/cli';
 import {Configuration, MessageName, miscUtils, formatUtils, YarnVersion, httpUtils, treeUtils, parseMessageName, stringifyMessageName} from '@yarnpkg/core';
-import {Option, UsageError, Command}                                                                                                   from 'clipanion';
+import {Option, Command}                                                                                                               from 'clipanion';
 import * as t                                                                                                                          from 'typanion';
 
 import {resolveTag}                                                                                                                    from './set/version';
 
-function getCodeName(code: string): string | undefined {
+function getCodeName(code: string): string {
   return MessageName[parseMessageName(code)];
 }
 
@@ -69,8 +69,6 @@ export default class ExplainCommand extends BaseCommand {
 
     if (typeof this.code !== `undefined`) {
       const name = getCodeName(this.code);
-      if (typeof name === `undefined`)
-        throw new UsageError(`Unknown error code: ${this.code}`);
 
       const prettyName = formatUtils.pretty(configuration, name, formatUtils.Type.CODE);
       const header = this.cli.format().header(`${this.code} - ${prettyName}`);

@@ -86,6 +86,10 @@ export function stringifyMessageName(name: MessageName | number): string {
   return `YN${name.toString(10).padStart(4, `0`)}`;
 }
 
-export function parseMessageName(messageName: string) {
-  return Number(messageName.slice(2));
+export function parseMessageName(messageName: string): MessageName {
+  const parsed = Number(messageName.slice(2));
+  if (typeof MessageName[parsed] === `undefined`)
+    throw new Error(`Unknown message name: ${messageName}`);
+
+  return parsed;
 }
