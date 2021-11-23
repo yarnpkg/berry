@@ -5,6 +5,8 @@ releases:
   vscode-zipfs: patch
 
 declined:
+  - "@yarnpkg/esbuild-plugin-pnp"
+  - "@yarnpkg/eslint-config"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
@@ -15,6 +17,7 @@ declined:
   - "@yarnpkg/plugin-github"
   - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
@@ -24,6 +27,7 @@ declined:
   - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
@@ -35,6 +39,3 @@ declined:
   - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
   - "@yarnpkg/shell"
-
-undecided:
-  - "@yarnpkg/eslint-config"
