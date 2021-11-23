@@ -20,6 +20,7 @@ export type CommandContext = {
   stdin: Readable;
   stdout: Writable;
   stderr: Writable;
+  colorDepth: number;
 };
 
 export interface FetcherPlugin {
