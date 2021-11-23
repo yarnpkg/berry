@@ -98,15 +98,15 @@ describe(`ZipOpenFS`, () => {
     fs.discardAndClose();
   });
 
-  it(`the path property of the stream object returned by createReadStream is the normalized path argument`, async () => {
+  it(`sets the path property of the stream object returned by createReadStream to the normalized native version of the input path`, async () => {
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
 
-    const unnormalizedPath = ZIP_FILE1.replace(/\//g, `/./`) as PortablePath;
-    const normalizedPath = ZIP_FILE1;
+    const unnormalizedPortablePath = ZIP_FILE1.replace(/\//g, `/./`) as PortablePath;
+    const normalizedNativePath = npath.fromPortablePath(ZIP_FILE1);
 
-    const stream = fs.createReadStream(unnormalizedPath);
+    const stream = fs.createReadStream(unnormalizedPortablePath);
 
-    expect(stream.path).toMatch(normalizedPath);
+    expect(stream.path).toMatch(normalizedNativePath);
 
     stream.destroy();
     fs.discardAndClose();
