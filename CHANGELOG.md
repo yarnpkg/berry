@@ -8,6 +8,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+### Commands
+
+- A new `yarn explain` command has been added. It can be used to explain an error code or list all available error codes.
+
 ### Installs
 
 - The pnpm linker has received various improvements:
@@ -20,9 +24,6 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - `@yarnpkg/pnpify` now escapes paths correctly
 - The ESM loader is now enabled regardless of the entrypoint module type, this fixes support for dynamic imports in commonjs modules when the entrypoint is also commonjs
-
-### Bugfixes
-
 - `yarn workspaces foreach run` is now able to run binaries
 
 ### Miscellaneous Features
