@@ -5,7 +5,7 @@
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@arcanis/slice-ansi": "^1.0.2",
+    "@arcanis/slice-ansi": "^1.1.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/fslib": "workspace:^",
