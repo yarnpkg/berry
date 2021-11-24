@@ -25,7 +25,7 @@ Note that these challenges are not unique to Yarn — you may remember a time wh
 
 In order to make a project zero-install, you must be able to use it as soon as you clone it. This is very easy starting from Yarn 2!
 
-- First, ensure that your project is using [Plug'n'Play](/features/plugnplay) to resolve dependencies via the cache folder and **not** from `node_modules`.
+- First, ensure that your project is using [Plug'n'Play](/features/pnp) to resolve dependencies via the cache folder and **not** from `node_modules`.
 
   - While in theory you could check-in your `node_modules` folder rather than the cache, in practice the `node_modules` contains a gigantic amount of files that frequently change location and mess with Git's optimizations. By contrast, the Yarn cache contains exactly one file per package, that only change when the packages themselves change.
 
