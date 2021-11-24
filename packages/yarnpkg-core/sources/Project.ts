@@ -624,18 +624,20 @@ export class Project {
     const linkerOptions = {project: this, report};
 
     for (const linker of linkers) {
-      const locator = await linker.findPackageLocator(cwd, linkerOptions);
-      if (locator) {
-        // If strict mode, the specified cwd must be a package,
-        // not merely contained in a package.
-        if (strict) {
-          const location = await linker.findPackageLocation(locator, linkerOptions);
-          if (location.replace(TRAILING_SLASH_REGEXP, ``) !== cwd.replace(TRAILING_SLASH_REGEXP, ``)) {
-            continue;
+      try {
+        const locator = await linker.findPackageLocator(cwd, linkerOptions);
+        if (locator) {
+          // If strict mode, the specified cwd must be a package,
+          // not merely contained in a package.
+          if (strict) {
+            const location = await linker.findPackageLocation(locator, linkerOptions);
+            if (location.replace(TRAILING_SLASH_REGEXP, ``) !== cwd.replace(TRAILING_SLASH_REGEXP, ``)) {
+              continue;
+            }
           }
+          return locator;
         }
-        return locator;
-      }
+      } catch (_) {}
     }
 
     return null;
