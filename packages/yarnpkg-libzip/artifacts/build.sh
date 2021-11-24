@@ -12,9 +12,10 @@ THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
 
 ZLIB_VERSION=1.2.11
-LIBZIP_VERSION=1.5.2
+LIBZIP_VERSION=1.5.2 # Ignored at the moment; we use a fork, cf next params
 
 LIBZIP_REPO=arcanis/libzip
+LIBZIP_COMMIT=664462465d2730d51f04437c90ed7ebcbe19a36f
 
 [[ -f ./zlib-"$ZLIB_VERSION"/libz.a ]] || (
   if ! [[ -e zlib-"$ZLIB_VERSION".tar.gz ]]; then
@@ -48,6 +49,10 @@ LIBZIP_REPO=arcanis/libzip
   if [[ -n "$LIBZIP_REPO" ]]; then
     if ! [[ -e libzip-"$LIBZIP_VERSION" ]]; then
       git clone https://github.com/"$LIBZIP_REPO" libzip-"$LIBZIP_VERSION"
+
+      cd libzip-"$LIBZIP_VERSION"
+      git checkout "$LIBZIP_COMMIT"
+      cd ..
     fi
   else
     if ! [[ -e libzip-"$LIBZIP_VERSION".tar.gz ]]; then
@@ -82,7 +87,7 @@ LIBZIP_REPO=arcanis/libzip
 
   mkdir -p local/lib local/include
   cp lib/libzip.a local/lib/
-  cp zipconf.h ../lib/zip.h local/include/
+  cp config.h zipconf.h ../lib/zip.h ../lib/compat.h ../lib/zipint.h local/include/
 
   echo Built libzip
 )
@@ -93,6 +98,7 @@ build() {
 
   source "$EMSDK_ENV"
 
+  # Options are documented at https://github.com/emscripten-core/emscripten/blob/86131037aa4f1c7bf6021081dd28fae12bdedba1/src/settings.js
   emcc \
     -o ./build.js \
     -s WASM=1 \
@@ -102,12 +108,15 @@ build() {
     -s ENVIRONMENT=node \
     -s NODERAWFS=1 \
     -s SINGLE_FILE=1 \
+    -s MODULARIZE=1 \
+    -s EXPORT_NAME="createModule" \
     -s NODEJS_CATCH_EXIT=0 \
     -s NODEJS_CATCH_REJECTION=0 \
     "$@" \
     -I./libzip-"$LIBZIP_VERSION"/build/local/include \
+    -I./zlib-"$ZLIB_VERSION"/build/local/include \
     -O3 \
-    ./zipstruct.c \
+    ./lib/*.c \
     ./libzip-"$LIBZIP_VERSION"/build/local/lib/libzip.a \
     ./zlib-"$ZLIB_VERSION"/build/local/lib/libz.a
 

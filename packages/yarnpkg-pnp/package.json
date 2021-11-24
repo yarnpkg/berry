@@ -23,9 +23,7 @@
     "webpack-cli": "^4.0.0-beta.8"
   },
   "scripts": {
-    "build:pnp:cjs": "webpack-cli --config webpack.config.hook.js",
-    "build:pnp:esm": "rollup -c",
-    "build:pnp:hook": "run build:pnp:cjs & run build:pnp:esm &",
+    "build:pnp:hook": "rollup -c",
     "update:pnp:hook": "run build:pnp:hook && yarn install",
     "build:pnp": "webpack-cli --config webpack.config.pkg.js",
     "postpack": "rm -rf lib",

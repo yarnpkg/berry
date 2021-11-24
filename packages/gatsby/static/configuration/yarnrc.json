@@ -623,6 +623,12 @@
       "type": "boolean",
       "default": false
     },
+    "preferTruncatedLines": {
+      "_package": "@yarnpkg/core",
+      "description": "If true, Yarn will truncate lines that would go beyond the size of the terminal. If progress bars are disabled, lines will never be truncated. Forgettable lines (e.g. the fetch step logs) are always truncated.",
+      "type": "boolean",
+      "default": false
+    },
     "progressBarStyle": {
       "_package": "@yarnpkg/core",
       "description": "Which style of progress bar should be used (only when progress bars are enabled). Valid values can be found [here](https://github.com/yarnpkg/berry/blob/ac2668904bdcd804e531291c749b9d17b8d3acd7/packages/yarnpkg-core/sources/StreamReport.ts#L40).",
