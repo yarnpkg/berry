@@ -10,7 +10,7 @@ import {MessageName}                                                            
 import {Project, InstallOptions}                                                              from './Project';
 import {Resolver, ResolveOptions}                                                             from './Resolver';
 import {Workspace}                                                                            from './Workspace';
-import {Body, Method}                                                                         from './httpUtils';
+import * as httpUtils                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -35,6 +35,11 @@ export interface LinkerPlugin {
 export interface ResolverPlugin {
   new(): Resolver;
 }
+
+export type WrapNetworkRequestInfo = httpUtils.Options & {
+  target: string | URL;
+  body: httpUtils.Body;
+};
 
 export type Hooks = {
   /**
@@ -80,7 +85,7 @@ export type Hooks = {
    */
   wrapNetworkRequest?: (
     networkRequest: () => Promise<any>,
-    extra: {target: string | URL, body: Body, configuration: Configuration, headers: { [headerName: string]: string } | undefined, jsonRequest: boolean | undefined, jsonResponse: boolean | undefined, method: Method | undefined}
+    extra: WrapNetworkRequestInfo
   ) => Promise<() => Promise<any>>;
 
   /**
