@@ -10,7 +10,6 @@
     "@types/treeify": "^1.0.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/json-proxy": "workspace:^",
-    "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
     "@yarnpkg/shell": "workspace:^",

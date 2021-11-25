@@ -4,7 +4,6 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/nm": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",

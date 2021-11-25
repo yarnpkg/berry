@@ -1,12 +1,10 @@
 import {ZipOpenFS, VirtualFS, PosixFS, npath} from '@yarnpkg/fslib';
-import {getLibzipSync}                        from '@yarnpkg/libzip';
 import * as vscode                            from 'vscode';
 
 export class ZipFSProvider implements vscode.FileSystemProvider {
   private readonly fs = new PosixFS(
     new VirtualFS({
       baseFs: new ZipOpenFS({
-        libzip: getLibzipSync(),
         useCache: true,
         maxOpenFiles: 80,
       }),

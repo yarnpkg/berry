@@ -1,6 +1,5 @@
 import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
-import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
-import {getLibzipPromise}                                     from '@yarnpkg/libzip';
+import {xfs, npath, ppath, toFilename, getLibzipPromise}      from '@yarnpkg/fslib';
 import {execute}                                              from '@yarnpkg/shell';
 import capitalize                                             from 'lodash/capitalize';
 import pLimit                                                 from 'p-limit';

@@ -1,5 +1,4 @@
-import {PortablePath, ZipFS}                    from '@yarnpkg/fslib';
-import {getLibzipPromise}                       from '@yarnpkg/libzip';
+import {PortablePath, ZipFS, getLibzipPromise}  from '@yarnpkg/fslib';
 import {parentPort}                             from 'worker_threads';
 
 import {extractArchiveTo, ExtractBufferOptions} from '../tgzUtils';

@@ -10591,7 +10591,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
             ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-link", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-link"],
             ["@yarnpkg/plugin-npm", "virtual:f9d90af7d716b3ed916c405f2a01eaf983ac84baf75bd67dc1fa320a529fda05c09bbfb4fa47252f3b3e23450138f3130fa2e3d0cec9917c6c8492798c353e12#workspace:packages/plugin-npm"],
@@ -12757,7 +12756,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-pnp"],
@@ -12786,7 +12784,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:14a22fb3831dfc762a1bb8a042d17886271c56698e1a83233f09eaacff5a5b83fe6f87adb9255774eab3586392c18ff98cf87aa6b374d572d9b72f88829f6d9e#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-pnp"],
@@ -12815,7 +12812,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-pnp"],
@@ -12844,7 +12840,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/plugin-pnp"],
@@ -12873,7 +12868,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pnp"],
@@ -12902,7 +12896,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:83b7a14498f70e120fb6f455fa263877f0d2954cbb68f3216e842cf37532afa9fe7895f2327708b45ae12ab75df0f3b07ed6e746fa7001bc6460dba7aaf38d31#workspace:packages/plugin-pnp"],
@@ -12931,7 +12924,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:a027ddc7edcbf74025e90effce333897039d2c6f8e1ebe319fb72c52c5be1b885da91acc56476d19bb6ce2e31cbc2d5b11241940b82f833a2cac262496c0088f#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-pnp"],
@@ -12960,7 +12952,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-pnp"],
@@ -12989,7 +12980,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-pnp"],
@@ -13018,7 +13008,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/plugin-pnp"],
@@ -13047,7 +13036,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:c44c4b6360dc34d25da6d32e39622e7e40f36f37b99dc66b6ebbd615fdd49465f496bf10f81b6fa5f71b95443fda61174ad51d2799fc7ca433af9a9666cd0f37#workspace:packages/plugin-pnp"],
@@ -13076,7 +13064,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:cd2af72718007566941ac9f5a6def4d055c38029c95c3ac065493603e6055c1d77b2f2df752588114932973488b5a566f49b00118e7e12f48aa0798ea38cc15b#workspace:packages/plugin-pnp"],
@@ -13105,7 +13092,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:743b60015fc887fe314a7ee01ea4843b516ac512d77939f47dc39d50bc7db742dc8994fe9bb2245ada0b3ce6f8aa58329d603fbc24093050cd499cb16a1a995f#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-pnp"],
@@ -13134,7 +13120,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-pnp"],
@@ -13161,7 +13146,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/nm", "workspace:packages/yarnpkg-nm"],
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@yarnpkg/plugin-pnp", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/plugin-pnp"],
@@ -14461,7 +14445,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:14a22fb3831dfc762a1bb8a042d17886271c56698e1a83233f09eaacff5a5b83fe6f87adb9255774eab3586392c18ff98cf87aa6b374d572d9b72f88829f6d9e#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14482,7 +14465,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14503,7 +14485,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14524,7 +14505,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14545,7 +14525,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14566,7 +14545,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:a027ddc7edcbf74025e90effce333897039d2c6f8e1ebe319fb72c52c5be1b885da91acc56476d19bb6ce2e31cbc2d5b11241940b82f833a2cac262496c0088f#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14587,7 +14565,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14608,7 +14585,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14629,7 +14605,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14650,7 +14625,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14671,7 +14645,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:e04a2594c769771b96db34e7a92a8a3af1c98ae86dce662589a5c5d5209e16875506f8cb5f4c2230a2b2ae06335b14466352c4ed470d39edf9edb6c515984525#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14692,7 +14665,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:743b60015fc887fe314a7ee01ea4843b516ac512d77939f47dc39d50bc7db742dc8994fe9bb2245ada0b3ce6f8aa58329d603fbc24093050cd499cb16a1a995f#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14713,7 +14685,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14734,7 +14705,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -14753,7 +14723,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/cli", "virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["clipanion", "virtual:02f08ef8b8f3af06d08a146e8941d7fef41abbe0f441d85250a110dd2773e679dff502bd7763f42309743e1ddb33847a4bc3aab82132068c9954ae25f4c4bce5#npm:3.2.0-rc.4"],
             ["tslib", "npm:1.13.0"]
           ],
@@ -15884,7 +15853,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/node", "npm:13.7.0"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["@yarnpkg/monorepo", "workspace:."],
             ["esbuild", [
               "esbuild-wasm",
@@ -40708,7 +40676,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/vscode", "npm:1.54.0"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
-            ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],
             ["esbuild", [
               "esbuild-wasm",
               "npm:0.11.20"
@@ -41917,10 +41884,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
   }
 
 const fs = require('fs');
-const path = require('path');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
+const path = require('path');
 const nodeUtils = require('util');
 const os = require('os');
 const stream = require('stream');
@@ -41948,9 +41915,9 @@ function _interopNamespace(e) {
 }
 
 const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
-const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
+const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
 const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
 
@@ -42862,2945 +42829,6 @@ function getEndOfLine(content) {
 }
 function normalizeLineEndings(originalContent, newContent) {
   return newContent.replace(/\r?\n/g, getEndOfLine(originalContent));
-}
-
-class NodeFS extends BasePortableFakeFS {
-  constructor(realFs = fs__default.default) {
-    super();
-    this.realFs = realFs;
-    if (typeof this.realFs.lutimes !== `undefined`) {
-      this.lutimesPromise = this.lutimesPromiseImpl;
-      this.lutimesSync = this.lutimesSyncImpl;
-    }
-  }
-  getExtractHint() {
-    return false;
-  }
-  getRealPath() {
-    return PortablePath.root;
-  }
-  resolve(p) {
-    return ppath.resolve(p);
-  }
-  async openPromise(p, flags, mode) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.open(npath.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
-    });
-  }
-  openSync(p, flags, mode) {
-    return this.realFs.openSync(npath.fromPortablePath(p), flags, mode);
-  }
-  async opendirPromise(p, opts) {
-    return await new Promise((resolve, reject) => {
-      if (typeof opts !== `undefined`) {
-        this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-      }
-    }).then((dir) => {
-      return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
-    });
-  }
-  opendirSync(p, opts) {
-    const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
-    return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
-  }
-  async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.read(fd, buffer, offset, length, position, (error, bytesRead) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(bytesRead);
-        }
-      });
-    });
-  }
-  readSync(fd, buffer, offset, length, position) {
-    return this.realFs.readSync(fd, buffer, offset, length, position);
-  }
-  async writePromise(fd, buffer, offset, length, position) {
-    return await new Promise((resolve, reject) => {
-      if (typeof buffer === `string`) {
-        return this.realFs.write(fd, buffer, offset, this.makeCallback(resolve, reject));
-      } else {
-        return this.realFs.write(fd, buffer, offset, length, position, this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  writeSync(fd, buffer, offset, length, position) {
-    if (typeof buffer === `string`) {
-      return this.realFs.writeSync(fd, buffer, offset);
-    } else {
-      return this.realFs.writeSync(fd, buffer, offset, length, position);
-    }
-  }
-  async closePromise(fd) {
-    await new Promise((resolve, reject) => {
-      this.realFs.close(fd, this.makeCallback(resolve, reject));
-    });
-  }
-  closeSync(fd) {
-    this.realFs.closeSync(fd);
-  }
-  createReadStream(p, opts) {
-    const realPath = p !== null ? npath.fromPortablePath(p) : p;
-    return this.realFs.createReadStream(realPath, opts);
-  }
-  createWriteStream(p, opts) {
-    const realPath = p !== null ? npath.fromPortablePath(p) : p;
-    return this.realFs.createWriteStream(realPath, opts);
-  }
-  async realpathPromise(p) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.realpath(npath.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
-    }).then((path) => {
-      return npath.toPortablePath(path);
-    });
-  }
-  realpathSync(p) {
-    return npath.toPortablePath(this.realFs.realpathSync(npath.fromPortablePath(p), {}));
-  }
-  async existsPromise(p) {
-    return await new Promise((resolve) => {
-      this.realFs.exists(npath.fromPortablePath(p), resolve);
-    });
-  }
-  accessSync(p, mode) {
-    return this.realFs.accessSync(npath.fromPortablePath(p), mode);
-  }
-  async accessPromise(p, mode) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.access(npath.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
-    });
-  }
-  existsSync(p) {
-    return this.realFs.existsSync(npath.fromPortablePath(p));
-  }
-  async statPromise(p, opts) {
-    return await new Promise((resolve, reject) => {
-      if (opts) {
-        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  statSync(p, opts) {
-    if (opts) {
-      return this.realFs.statSync(npath.fromPortablePath(p), opts);
-    } else {
-      return this.realFs.statSync(npath.fromPortablePath(p));
-    }
-  }
-  async fstatPromise(fd, opts) {
-    return await new Promise((resolve, reject) => {
-      if (opts) {
-        this.realFs.fstat(fd, opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.fstat(fd, this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  fstatSync(fd, opts) {
-    if (opts) {
-      return this.realFs.fstatSync(fd, opts);
-    } else {
-      return this.realFs.fstatSync(fd);
-    }
-  }
-  async lstatPromise(p, opts) {
-    return await new Promise((resolve, reject) => {
-      if (opts) {
-        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  lstatSync(p, opts) {
-    if (opts) {
-      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
-    } else {
-      return this.realFs.lstatSync(npath.fromPortablePath(p));
-    }
-  }
-  async chmodPromise(p, mask) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.chmod(npath.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
-    });
-  }
-  chmodSync(p, mask) {
-    return this.realFs.chmodSync(npath.fromPortablePath(p), mask);
-  }
-  async chownPromise(p, uid, gid) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.chown(npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
-    });
-  }
-  chownSync(p, uid, gid) {
-    return this.realFs.chownSync(npath.fromPortablePath(p), uid, gid);
-  }
-  async renamePromise(oldP, newP) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.rename(npath.fromPortablePath(oldP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
-    });
-  }
-  renameSync(oldP, newP) {
-    return this.realFs.renameSync(npath.fromPortablePath(oldP), npath.fromPortablePath(newP));
-  }
-  async copyFilePromise(sourceP, destP, flags = 0) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.copyFile(npath.fromPortablePath(sourceP), npath.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
-    });
-  }
-  copyFileSync(sourceP, destP, flags = 0) {
-    return this.realFs.copyFileSync(npath.fromPortablePath(sourceP), npath.fromPortablePath(destP), flags);
-  }
-  async appendFilePromise(p, content, opts) {
-    return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
-      if (opts) {
-        this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.appendFile(fsNativePath, content, this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  appendFileSync(p, content, opts) {
-    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
-    if (opts) {
-      this.realFs.appendFileSync(fsNativePath, content, opts);
-    } else {
-      this.realFs.appendFileSync(fsNativePath, content);
-    }
-  }
-  async writeFilePromise(p, content, opts) {
-    return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
-      if (opts) {
-        this.realFs.writeFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.writeFile(fsNativePath, content, this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  writeFileSync(p, content, opts) {
-    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
-    if (opts) {
-      this.realFs.writeFileSync(fsNativePath, content, opts);
-    } else {
-      this.realFs.writeFileSync(fsNativePath, content);
-    }
-  }
-  async unlinkPromise(p) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.unlink(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-    });
-  }
-  unlinkSync(p) {
-    return this.realFs.unlinkSync(npath.fromPortablePath(p));
-  }
-  async utimesPromise(p, atime, mtime) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.utimes(npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
-    });
-  }
-  utimesSync(p, atime, mtime) {
-    this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
-  }
-  async lutimesPromiseImpl(p, atime, mtime) {
-    const lutimes = this.realFs.lutimes;
-    if (typeof lutimes === `undefined`)
-      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
-    return await new Promise((resolve, reject) => {
-      lutimes.call(this.realFs, npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
-    });
-  }
-  lutimesSyncImpl(p, atime, mtime) {
-    const lutimesSync = this.realFs.lutimesSync;
-    if (typeof lutimesSync === `undefined`)
-      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
-    lutimesSync.call(this.realFs, npath.fromPortablePath(p), atime, mtime);
-  }
-  async mkdirPromise(p, opts) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
-    });
-  }
-  mkdirSync(p, opts) {
-    return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
-  }
-  async rmdirPromise(p, opts) {
-    return await new Promise((resolve, reject) => {
-      if (opts) {
-        this.realFs.rmdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-      }
-    });
-  }
-  rmdirSync(p, opts) {
-    return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
-  }
-  async linkPromise(existingP, newP) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.link(npath.fromPortablePath(existingP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
-    });
-  }
-  linkSync(existingP, newP) {
-    return this.realFs.linkSync(npath.fromPortablePath(existingP), npath.fromPortablePath(newP));
-  }
-  async symlinkPromise(target, p, type) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
-    });
-  }
-  symlinkSync(target, p, type) {
-    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type);
-  }
-  async readFilePromise(p, encoding) {
-    return await new Promise((resolve, reject) => {
-      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
-      this.realFs.readFile(fsNativePath, encoding, this.makeCallback(resolve, reject));
-    });
-  }
-  readFileSync(p, encoding) {
-    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
-    return this.realFs.readFileSync(fsNativePath, encoding);
-  }
-  async readdirPromise(p, opts) {
-    return await new Promise((resolve, reject) => {
-      if (opts == null ? void 0 : opts.withFileTypes) {
-        this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject));
-      } else {
-        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback((value) => resolve(value), reject));
-      }
-    });
-  }
-  readdirSync(p, opts) {
-    if (opts == null ? void 0 : opts.withFileTypes) {
-      return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true});
-    } else {
-      return this.realFs.readdirSync(npath.fromPortablePath(p));
-    }
-  }
-  async readlinkPromise(p) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.readlink(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
-    }).then((path) => {
-      return npath.toPortablePath(path);
-    });
-  }
-  readlinkSync(p) {
-    return npath.toPortablePath(this.realFs.readlinkSync(npath.fromPortablePath(p)));
-  }
-  async truncatePromise(p, len) {
-    return await new Promise((resolve, reject) => {
-      this.realFs.truncate(npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
-    });
-  }
-  truncateSync(p, len) {
-    return this.realFs.truncateSync(npath.fromPortablePath(p), len);
-  }
-  watch(p, a, b) {
-    return this.realFs.watch(npath.fromPortablePath(p), a, b);
-  }
-  watchFile(p, a, b) {
-    return this.realFs.watchFile(npath.fromPortablePath(p), a, b);
-  }
-  unwatchFile(p, cb) {
-    return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
-  }
-  makeCallback(resolve, reject) {
-    return (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    };
-  }
-}
-
-var Event;
-(function(Event2) {
-  Event2["Change"] = `change`;
-  Event2["Stop"] = `stop`;
-})(Event || (Event = {}));
-var Status;
-(function(Status2) {
-  Status2["Ready"] = `ready`;
-  Status2["Running"] = `running`;
-  Status2["Stopped"] = `stopped`;
-})(Status || (Status = {}));
-function assertStatus(current, expected) {
-  if (current !== expected) {
-    throw new Error(`Invalid StatWatcher status: expected '${expected}', got '${current}'`);
-  }
-}
-class CustomStatWatcher extends events.EventEmitter {
-  constructor(fakeFs, path, {bigint = false} = {}) {
-    super();
-    this.status = Status.Ready;
-    this.changeListeners = new Map();
-    this.startTimeout = null;
-    this.fakeFs = fakeFs;
-    this.path = path;
-    this.bigint = bigint;
-    this.lastStats = this.stat();
-  }
-  static create(fakeFs, path, opts) {
-    const statWatcher = new CustomStatWatcher(fakeFs, path, opts);
-    statWatcher.start();
-    return statWatcher;
-  }
-  start() {
-    assertStatus(this.status, Status.Ready);
-    this.status = Status.Running;
-    this.startTimeout = setTimeout(() => {
-      this.startTimeout = null;
-      if (!this.fakeFs.existsSync(this.path)) {
-        this.emit(Event.Change, this.lastStats, this.lastStats);
-      }
-    }, 3);
-  }
-  stop() {
-    assertStatus(this.status, Status.Running);
-    this.status = Status.Stopped;
-    if (this.startTimeout !== null) {
-      clearTimeout(this.startTimeout);
-      this.startTimeout = null;
-    }
-    this.emit(Event.Stop);
-  }
-  stat() {
-    try {
-      return this.fakeFs.statSync(this.path, {bigint: this.bigint});
-    } catch (error) {
-      const statInstance = this.bigint ? new BigIntStatsEntry() : new StatEntry();
-      return clearStats(statInstance);
-    }
-  }
-  makeInterval(opts) {
-    const interval = setInterval(() => {
-      const currentStats = this.stat();
-      const previousStats = this.lastStats;
-      if (areStatsEqual(currentStats, previousStats))
-        return;
-      this.lastStats = currentStats;
-      this.emit(Event.Change, currentStats, previousStats);
-    }, opts.interval);
-    return opts.persistent ? interval : interval.unref();
-  }
-  registerChangeListener(listener, opts) {
-    this.addListener(Event.Change, listener);
-    this.changeListeners.set(listener, this.makeInterval(opts));
-  }
-  unregisterChangeListener(listener) {
-    this.removeListener(Event.Change, listener);
-    const interval = this.changeListeners.get(listener);
-    if (typeof interval !== `undefined`)
-      clearInterval(interval);
-    this.changeListeners.delete(listener);
-  }
-  unregisterAllChangeListeners() {
-    for (const listener of this.changeListeners.keys()) {
-      this.unregisterChangeListener(listener);
-    }
-  }
-  hasChangeListeners() {
-    return this.changeListeners.size > 0;
-  }
-  ref() {
-    for (const interval of this.changeListeners.values())
-      interval.ref();
-    return this;
-  }
-  unref() {
-    for (const interval of this.changeListeners.values())
-      interval.unref();
-    return this;
-  }
-}
-
-const statWatchersByFakeFS = new WeakMap();
-function watchFile(fakeFs, path, a, b) {
-  let bigint;
-  let persistent;
-  let interval;
-  let listener;
-  switch (typeof a) {
-    case `function`:
-      {
-        bigint = false;
-        persistent = true;
-        interval = 5007;
-        listener = a;
-      }
-      break;
-    default:
-      {
-        ({
-          bigint = false,
-          persistent = true,
-          interval = 5007
-        } = a);
-        listener = b;
-      }
-      break;
-  }
-  let statWatchers = statWatchersByFakeFS.get(fakeFs);
-  if (typeof statWatchers === `undefined`)
-    statWatchersByFakeFS.set(fakeFs, statWatchers = new Map());
-  let statWatcher = statWatchers.get(path);
-  if (typeof statWatcher === `undefined`) {
-    statWatcher = CustomStatWatcher.create(fakeFs, path, {bigint});
-    statWatchers.set(path, statWatcher);
-  }
-  statWatcher.registerChangeListener(listener, {persistent, interval});
-  return statWatcher;
-}
-function unwatchFile(fakeFs, path, cb) {
-  const statWatchers = statWatchersByFakeFS.get(fakeFs);
-  if (typeof statWatchers === `undefined`)
-    return;
-  const statWatcher = statWatchers.get(path);
-  if (typeof statWatcher === `undefined`)
-    return;
-  if (typeof cb === `undefined`)
-    statWatcher.unregisterAllChangeListeners();
-  else
-    statWatcher.unregisterChangeListener(cb);
-  if (!statWatcher.hasChangeListeners()) {
-    statWatcher.stop();
-    statWatchers.delete(path);
-  }
-}
-function unwatchAllFiles(fakeFs) {
-  const statWatchers = statWatchersByFakeFS.get(fakeFs);
-  if (typeof statWatchers === `undefined`)
-    return;
-  for (const path of statWatchers.keys()) {
-    unwatchFile(fakeFs, path);
-  }
-}
-
-var __defProp$3 = Object.defineProperty;
-var __getOwnPropSymbols$4 = Object.getOwnPropertySymbols;
-var __hasOwnProp$4 = Object.prototype.hasOwnProperty;
-var __propIsEnum$4 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$3 = (obj, key, value) => key in obj ? __defProp$3(obj, key, {enumerable: true, configurable: true, writable: true, value}) : obj[key] = value;
-var __spreadValues$3 = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$4.call(b, prop))
-      __defNormalProp$3(a, prop, b[prop]);
-  if (__getOwnPropSymbols$4)
-    for (var prop of __getOwnPropSymbols$4(b)) {
-      if (__propIsEnum$4.call(b, prop))
-        __defNormalProp$3(a, prop, b[prop]);
-    }
-  return a;
-};
-const DEFAULT_COMPRESSION_LEVEL = `mixed`;
-function toUnixTimestamp(time) {
-  if (typeof time === `string` && String(+time) === time)
-    return +time;
-  if (Number.isFinite(time)) {
-    if (time < 0) {
-      return Date.now() / 1e3;
-    } else {
-      return time;
-    }
-  }
-  if (nodeUtils.isDate(time))
-    return time.getTime() / 1e3;
-  throw new Error(`Invalid time`);
-}
-function makeEmptyArchive() {
-  return Buffer.from([
-    80,
-    75,
-    5,
-    6,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  ]);
-}
-class ZipFS extends BasePortableFakeFS {
-  constructor(source, opts) {
-    super();
-    this.lzSource = null;
-    this.listings = new Map();
-    this.entries = new Map();
-    this.fileSources = new Map();
-    this.fds = new Map();
-    this.nextFd = 0;
-    this.ready = false;
-    this.readOnly = false;
-    this.libzip = opts.libzip;
-    const pathOptions = opts;
-    this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
-    source != null ? source : source = makeEmptyArchive();
-    if (typeof source === `string`) {
-      const {baseFs = new NodeFS()} = pathOptions;
-      this.baseFs = baseFs;
-      this.path = source;
-    } else {
-      this.path = null;
-      this.baseFs = null;
-    }
-    if (opts.stats) {
-      this.stats = opts.stats;
-    } else {
-      if (typeof source === `string`) {
-        try {
-          this.stats = this.baseFs.statSync(source);
-        } catch (error) {
-          if (error.code === `ENOENT` && pathOptions.create) {
-            this.stats = makeDefaultStats();
-          } else {
-            throw error;
-          }
-        }
-      } else {
-        this.stats = makeDefaultStats();
-      }
-    }
-    const errPtr = this.libzip.malloc(4);
-    try {
-      let flags = 0;
-      if (typeof source === `string` && pathOptions.create)
-        flags |= this.libzip.ZIP_CREATE | this.libzip.ZIP_TRUNCATE;
-      if (opts.readOnly) {
-        flags |= this.libzip.ZIP_RDONLY;
-        this.readOnly = true;
-      }
-      if (typeof source === `string`) {
-        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
-      } else {
-        const lzSource = this.allocateUnattachedSource(source);
-        try {
-          this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
-          this.lzSource = lzSource;
-        } catch (error) {
-          this.libzip.source.free(lzSource);
-          throw error;
-        }
-      }
-      if (this.zip === 0) {
-        const error = this.libzip.struct.errorS();
-        this.libzip.error.initWithCode(error, this.libzip.getValue(errPtr, `i32`));
-        throw this.makeLibzipError(error);
-      }
-    } finally {
-      this.libzip.free(errPtr);
-    }
-    this.listings.set(PortablePath.root, new Set());
-    const entryCount = this.libzip.getNumEntries(this.zip, 0);
-    for (let t = 0; t < entryCount; ++t) {
-      const raw = this.libzip.getName(this.zip, t, 0);
-      if (ppath.isAbsolute(raw))
-        continue;
-      const p = ppath.resolve(PortablePath.root, raw);
-      this.registerEntry(p, t);
-      if (raw.endsWith(`/`)) {
-        this.registerListing(p);
-      }
-    }
-    this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
-    if (this.symlinkCount === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    this.ready = true;
-  }
-  makeLibzipError(error) {
-    const errorCode = this.libzip.struct.errorCodeZip(error);
-    const strerror = this.libzip.error.strerror(error);
-    const libzipError = new LibzipError(strerror, this.libzip.errors[errorCode]);
-    if (errorCode === this.libzip.errors.ZIP_ER_CHANGED)
-      throw new Error(`Assertion failed: Unexpected libzip error: ${libzipError.message}`);
-    return libzipError;
-  }
-  getExtractHint(hints) {
-    for (const fileName of this.entries.keys()) {
-      const ext = this.pathUtils.extname(fileName);
-      if (hints.relevantExtensions.has(ext)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  getAllFiles() {
-    return Array.from(this.entries.keys());
-  }
-  getRealPath() {
-    if (!this.path)
-      throw new Error(`ZipFS don't have real paths when loaded from a buffer`);
-    return this.path;
-  }
-  getBufferAndClose() {
-    this.prepareClose();
-    if (!this.lzSource)
-      throw new Error(`ZipFS was not created from a Buffer`);
-    try {
-      this.libzip.source.keep(this.lzSource);
-      if (this.libzip.close(this.zip) === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      if (this.libzip.source.open(this.lzSource) === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_END) === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      const size = this.libzip.source.tell(this.lzSource);
-      if (size === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_SET) === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      const buffer = this.libzip.malloc(size);
-      if (!buffer)
-        throw new Error(`Couldn't allocate enough memory`);
-      try {
-        const rc = this.libzip.source.read(this.lzSource, buffer, size);
-        if (rc === -1)
-          throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-        else if (rc < size)
-          throw new Error(`Incomplete read`);
-        else if (rc > size)
-          throw new Error(`Overread`);
-        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
-        return Buffer.from(memory);
-      } finally {
-        this.libzip.free(buffer);
-      }
-    } finally {
-      this.libzip.source.close(this.lzSource);
-      this.libzip.source.free(this.lzSource);
-      this.ready = false;
-    }
-  }
-  prepareClose() {
-    if (!this.ready)
-      throw EBUSY(`archive closed, close`);
-    unwatchAllFiles(this);
-  }
-  saveAndClose() {
-    if (!this.path || !this.baseFs)
-      throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
-    this.prepareClose();
-    if (this.readOnly) {
-      this.discardAndClose();
-      return;
-    }
-    const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === DEFAULT_MODE ? void 0 : this.stats.mode;
-    if (this.entries.size === 0) {
-      this.discardAndClose();
-      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), {mode: newMode});
-    } else {
-      const rc = this.libzip.close(this.zip);
-      if (rc === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      if (typeof newMode !== `undefined`) {
-        this.baseFs.chmodSync(this.path, newMode);
-      }
-    }
-    this.ready = false;
-  }
-  discardAndClose() {
-    this.prepareClose();
-    this.libzip.discard(this.zip);
-    this.ready = false;
-  }
-  resolve(p) {
-    return ppath.resolve(PortablePath.root, p);
-  }
-  async openPromise(p, flags, mode) {
-    return this.openSync(p, flags, mode);
-  }
-  openSync(p, flags, mode) {
-    const fd = this.nextFd++;
-    this.fds.set(fd, {cursor: 0, p});
-    return fd;
-  }
-  hasOpenFileHandles() {
-    return !!this.fds.size;
-  }
-  async opendirPromise(p, opts) {
-    return this.opendirSync(p, opts);
-  }
-  opendirSync(p, opts = {}) {
-    const resolvedP = this.resolveFilename(`opendir '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`opendir '${p}'`);
-    const directoryListing = this.listings.get(resolvedP);
-    if (!directoryListing)
-      throw ENOTDIR(`opendir '${p}'`);
-    const entries = [...directoryListing];
-    const fd = this.openSync(resolvedP, `r`);
-    const onClose = () => {
-      this.closeSync(fd);
-    };
-    return opendir(this, resolvedP, entries, {onClose});
-  }
-  async readPromise(fd, buffer, offset, length, position) {
-    return this.readSync(fd, buffer, offset, length, position);
-  }
-  readSync(fd, buffer, offset = 0, length = buffer.byteLength, position = -1) {
-    const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`read`);
-    let realPosition;
-    if (position === -1 || position === null)
-      realPosition = entry.cursor;
-    else
-      realPosition = position;
-    const source = this.readFileSync(entry.p);
-    source.copy(buffer, offset, realPosition, realPosition + length);
-    const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
-    if (position === -1 || position === null)
-      entry.cursor += bytesRead;
-    return bytesRead;
-  }
-  async writePromise(fd, buffer, offset, length, position) {
-    if (typeof buffer === `string`) {
-      return this.writeSync(fd, buffer, position);
-    } else {
-      return this.writeSync(fd, buffer, offset, length, position);
-    }
-  }
-  writeSync(fd, buffer, offset, length, position) {
-    const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`read`);
-    throw new Error(`Unimplemented`);
-  }
-  async closePromise(fd) {
-    return this.closeSync(fd);
-  }
-  closeSync(fd) {
-    const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`read`);
-    this.fds.delete(fd);
-  }
-  createReadStream(p, {encoding} = {}) {
-    if (p === null)
-      throw new Error(`Unimplemented`);
-    const fd = this.openSync(p, `r`);
-    const stream$1 = Object.assign(new stream.PassThrough({
-      emitClose: true,
-      autoDestroy: true,
-      destroy: (error, callback) => {
-        clearImmediate(immediate);
-        this.closeSync(fd);
-        callback(error);
-      }
-    }), {
-      close() {
-        stream$1.destroy();
-      },
-      bytesRead: 0,
-      path: p
-    });
-    const immediate = setImmediate(async () => {
-      try {
-        const data = await this.readFilePromise(p, encoding);
-        stream$1.bytesRead = data.length;
-        stream$1.end(data);
-      } catch (error) {
-        stream$1.destroy(error);
-      }
-    });
-    return stream$1;
-  }
-  createWriteStream(p, {encoding} = {}) {
-    if (this.readOnly)
-      throw EROFS(`open '${p}'`);
-    if (p === null)
-      throw new Error(`Unimplemented`);
-    const chunks = [];
-    const fd = this.openSync(p, `w`);
-    const stream$1 = Object.assign(new stream.PassThrough({
-      autoDestroy: true,
-      emitClose: true,
-      destroy: (error, callback) => {
-        try {
-          if (error) {
-            callback(error);
-          } else {
-            this.writeFileSync(p, Buffer.concat(chunks), encoding);
-            callback(null);
-          }
-        } catch (err) {
-          callback(err);
-        } finally {
-          this.closeSync(fd);
-        }
-      }
-    }), {
-      bytesWritten: 0,
-      path: p,
-      close() {
-        stream$1.destroy();
-      }
-    });
-    stream$1.on(`data`, (chunk) => {
-      const chunkBuffer = Buffer.from(chunk);
-      stream$1.bytesWritten += chunkBuffer.length;
-      chunks.push(chunkBuffer);
-    });
-    return stream$1;
-  }
-  async realpathPromise(p) {
-    return this.realpathSync(p);
-  }
-  realpathSync(p) {
-    const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`lstat '${p}'`);
-    return resolvedP;
-  }
-  async existsPromise(p) {
-    return this.existsSync(p);
-  }
-  existsSync(p) {
-    if (!this.ready)
-      throw EBUSY(`archive closed, existsSync '${p}'`);
-    if (this.symlinkCount === 0) {
-      const resolvedP2 = ppath.resolve(PortablePath.root, p);
-      return this.entries.has(resolvedP2) || this.listings.has(resolvedP2);
-    }
-    let resolvedP;
-    try {
-      resolvedP = this.resolveFilename(`stat '${p}'`, p);
-    } catch (error) {
-      return false;
-    }
-    return this.entries.has(resolvedP) || this.listings.has(resolvedP);
-  }
-  async accessPromise(p, mode) {
-    return this.accessSync(p, mode);
-  }
-  accessSync(p, mode = fs.constants.F_OK) {
-    const resolvedP = this.resolveFilename(`access '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`access '${p}'`);
-    if (this.readOnly && mode & fs.constants.W_OK) {
-      throw EROFS(`access '${p}'`);
-    }
-  }
-  async statPromise(p, opts) {
-    return this.statSync(p, opts);
-  }
-  statSync(p, opts) {
-    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`stat '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
-      throw ENOTDIR(`stat '${p}'`);
-    return this.statImpl(`stat '${p}'`, resolvedP, opts);
-  }
-  async fstatPromise(fd, opts) {
-    return this.fstatSync(fd, opts);
-  }
-  fstatSync(fd, opts) {
-    const entry = this.fds.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`fstatSync`);
-    const {p} = entry;
-    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`stat '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
-      throw ENOTDIR(`stat '${p}'`);
-    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
-  }
-  async lstatPromise(p, opts) {
-    return this.lstatSync(p, opts);
-  }
-  lstatSync(p, opts) {
-    const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`lstat '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
-      throw ENOTDIR(`lstat '${p}'`);
-    return this.statImpl(`lstat '${p}'`, resolvedP, opts);
-  }
-  statImpl(reason, p, opts = {}) {
-    const entry = this.entries.get(p);
-    if (typeof entry !== `undefined`) {
-      const stat = this.libzip.struct.statS();
-      const rc = this.libzip.statIndex(this.zip, entry, 0, 0, stat);
-      if (rc === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      const uid = this.stats.uid;
-      const gid = this.stats.gid;
-      const size = this.libzip.struct.statSize(stat) >>> 0;
-      const blksize = 512;
-      const blocks = Math.ceil(size / blksize);
-      const mtimeMs = (this.libzip.struct.statMtime(stat) >>> 0) * 1e3;
-      const atimeMs = mtimeMs;
-      const birthtimeMs = mtimeMs;
-      const ctimeMs = mtimeMs;
-      const atime = new Date(atimeMs);
-      const birthtime = new Date(birthtimeMs);
-      const ctime = new Date(ctimeMs);
-      const mtime = new Date(mtimeMs);
-      const type = this.listings.has(p) ? S_IFDIR : this.isSymbolicLink(entry) ? S_IFLNK : S_IFREG;
-      const defaultMode = type === S_IFDIR ? 493 : 420;
-      const mode = type | this.getUnixMode(entry, defaultMode) & 511;
-      const crc = this.libzip.struct.statCrc(stat);
-      const statInstance = Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
-      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
-    }
-    if (this.listings.has(p)) {
-      const uid = this.stats.uid;
-      const gid = this.stats.gid;
-      const size = 0;
-      const blksize = 512;
-      const blocks = 0;
-      const atimeMs = this.stats.mtimeMs;
-      const birthtimeMs = this.stats.mtimeMs;
-      const ctimeMs = this.stats.mtimeMs;
-      const mtimeMs = this.stats.mtimeMs;
-      const atime = new Date(atimeMs);
-      const birthtime = new Date(birthtimeMs);
-      const ctime = new Date(ctimeMs);
-      const mtime = new Date(mtimeMs);
-      const mode = S_IFDIR | 493;
-      const crc = 0;
-      const statInstance = Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
-      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
-    }
-    throw new Error(`Unreachable`);
-  }
-  getUnixMode(index, defaultMode) {
-    const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
-      return defaultMode;
-    return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
-  }
-  registerListing(p) {
-    let listing = this.listings.get(p);
-    if (listing)
-      return listing;
-    const parentListing = this.registerListing(ppath.dirname(p));
-    listing = new Set();
-    parentListing.add(ppath.basename(p));
-    this.listings.set(p, listing);
-    return listing;
-  }
-  registerEntry(p, index) {
-    const parentListing = this.registerListing(ppath.dirname(p));
-    parentListing.add(ppath.basename(p));
-    this.entries.set(p, index);
-  }
-  unregisterListing(p) {
-    this.listings.delete(p);
-    const parentListing = this.listings.get(ppath.dirname(p));
-    parentListing == null ? void 0 : parentListing.delete(ppath.basename(p));
-  }
-  unregisterEntry(p) {
-    this.unregisterListing(p);
-    const entry = this.entries.get(p);
-    this.entries.delete(p);
-    if (typeof entry === `undefined`)
-      return;
-    this.fileSources.delete(entry);
-    if (this.isSymbolicLink(entry)) {
-      this.symlinkCount--;
-    }
-  }
-  deleteEntry(p, index) {
-    this.unregisterEntry(p);
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
-  }
-  resolveFilename(reason, p, resolveLastComponent = true) {
-    if (!this.ready)
-      throw EBUSY(`archive closed, ${reason}`);
-    let resolvedP = ppath.resolve(PortablePath.root, p);
-    if (resolvedP === `/`)
-      return PortablePath.root;
-    const fileIndex = this.entries.get(resolvedP);
-    if (resolveLastComponent && fileIndex !== void 0) {
-      if (this.symlinkCount !== 0 && this.isSymbolicLink(fileIndex)) {
-        const target = this.getFileSource(fileIndex).toString();
-        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true);
-      } else {
-        return resolvedP;
-      }
-    }
-    while (true) {
-      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
-      const isDir = this.listings.has(parentP);
-      const doesExist = this.entries.has(parentP);
-      if (!isDir && !doesExist)
-        throw ENOENT(reason);
-      if (!isDir)
-        throw ENOTDIR(reason);
-      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
-      if (!resolveLastComponent || this.symlinkCount === 0)
-        break;
-      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
-      if (index === -1)
-        break;
-      if (this.isSymbolicLink(index)) {
-        const target = this.getFileSource(index).toString();
-        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
-      } else {
-        break;
-      }
-    }
-    return resolvedP;
-  }
-  allocateBuffer(content) {
-    if (!Buffer.isBuffer(content))
-      content = Buffer.from(content);
-    const buffer = this.libzip.malloc(content.byteLength);
-    if (!buffer)
-      throw new Error(`Couldn't allocate enough memory`);
-    const heap = new Uint8Array(this.libzip.HEAPU8.buffer, buffer, content.byteLength);
-    heap.set(content);
-    return {buffer, byteLength: content.byteLength};
-  }
-  allocateUnattachedSource(content) {
-    const error = this.libzip.struct.errorS();
-    const {buffer, byteLength} = this.allocateBuffer(content);
-    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
-    if (source === 0) {
-      this.libzip.free(error);
-      throw this.makeLibzipError(error);
-    }
-    return source;
-  }
-  allocateSource(content) {
-    const {buffer, byteLength} = this.allocateBuffer(content);
-    const source = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
-    if (source === 0) {
-      this.libzip.free(buffer);
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
-    return source;
-  }
-  setFileSource(p, content) {
-    const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content);
-    const target = ppath.relative(PortablePath.root, p);
-    const lzSource = this.allocateSource(content);
-    try {
-      const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
-      if (newIndex === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      if (this.level !== `mixed`) {
-        let method;
-        if (this.level === 0)
-          method = this.libzip.ZIP_CM_STORE;
-        else
-          method = this.libzip.ZIP_CM_DEFLATE;
-        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
-        if (rc === -1) {
-          throw this.makeLibzipError(this.libzip.getError(this.zip));
-        }
-      }
-      this.fileSources.set(newIndex, buffer);
-      return newIndex;
-    } catch (error) {
-      this.libzip.source.free(lzSource);
-      throw error;
-    }
-  }
-  isSymbolicLink(index) {
-    if (this.symlinkCount === 0)
-      return false;
-    const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (attrs === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
-      return false;
-    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
-    return (attributes & S_IFMT) === S_IFLNK;
-  }
-  getFileSource(index, opts = {asyncDecompress: false}) {
-    const cachedFileSource = this.fileSources.get(index);
-    if (typeof cachedFileSource !== `undefined`)
-      return cachedFileSource;
-    const stat = this.libzip.struct.statS();
-    const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    const size = this.libzip.struct.statCompSize(stat);
-    const compressionMethod = this.libzip.struct.statCompMethod(stat);
-    const buffer = this.libzip.malloc(size);
-    try {
-      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
-      if (file === 0)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      try {
-        const rc2 = this.libzip.fread(file, buffer, size, 0);
-        if (rc2 === -1)
-          throw this.makeLibzipError(this.libzip.file.getError(file));
-        else if (rc2 < size)
-          throw new Error(`Incomplete read`);
-        else if (rc2 > size)
-          throw new Error(`Overread`);
-        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
-        const data = Buffer.from(memory);
-        if (compressionMethod === 0) {
-          this.fileSources.set(index, data);
-          return data;
-        } else if (opts.asyncDecompress) {
-          return new Promise((resolve, reject) => {
-            zlib__default.default.inflateRaw(data, (error, result) => {
-              if (error) {
-                reject(error);
-              } else {
-                this.fileSources.set(index, result);
-                resolve(result);
-              }
-            });
-          });
-        } else {
-          const decompressedData = zlib__default.default.inflateRawSync(data);
-          this.fileSources.set(index, decompressedData);
-          return decompressedData;
-        }
-      } finally {
-        this.libzip.fclose(file);
-      }
-    } finally {
-      this.libzip.free(buffer);
-    }
-  }
-  async chmodPromise(p, mask) {
-    return this.chmodSync(p, mask);
-  }
-  chmodSync(p, mask) {
-    if (this.readOnly)
-      throw EROFS(`chmod '${p}'`);
-    mask &= 493;
-    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
-    const entry = this.entries.get(resolvedP);
-    if (typeof entry === `undefined`)
-      throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
-    const oldMod = this.getUnixMode(entry, S_IFREG | 0);
-    const newMod = oldMod & ~511 | mask;
-    const rc = this.libzip.file.setExternalAttributes(this.zip, entry, 0, 0, this.libzip.ZIP_OPSYS_UNIX, newMod << 16);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
-  }
-  async chownPromise(p, uid, gid) {
-    return this.chownSync(p, uid, gid);
-  }
-  chownSync(p, uid, gid) {
-    throw new Error(`Unimplemented`);
-  }
-  async renamePromise(oldP, newP) {
-    return this.renameSync(oldP, newP);
-  }
-  renameSync(oldP, newP) {
-    throw new Error(`Unimplemented`);
-  }
-  async copyFilePromise(sourceP, destP, flags) {
-    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
-    const source = await this.getFileSource(indexSource, {asyncDecompress: true});
-    const newIndex = this.setFileSource(resolvedDestP, source);
-    if (newIndex !== indexDest) {
-      this.registerEntry(resolvedDestP, newIndex);
-    }
-  }
-  copyFileSync(sourceP, destP, flags = 0) {
-    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
-    const source = this.getFileSource(indexSource);
-    const newIndex = this.setFileSource(resolvedDestP, source);
-    if (newIndex !== indexDest) {
-      this.registerEntry(resolvedDestP, newIndex);
-    }
-  }
-  prepareCopyFile(sourceP, destP, flags = 0) {
-    if (this.readOnly)
-      throw EROFS(`copyfile '${sourceP} -> '${destP}'`);
-    if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
-      throw ENOSYS(`unsupported clone operation`, `copyfile '${sourceP}' -> ${destP}'`);
-    const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
-    const indexSource = this.entries.get(resolvedSourceP);
-    if (typeof indexSource === `undefined`)
-      throw EINVAL(`copyfile '${sourceP}' -> '${destP}'`);
-    const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
-    const indexDest = this.entries.get(resolvedDestP);
-    if ((flags & (fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
-      throw EEXIST(`copyfile '${sourceP}' -> '${destP}'`);
-    return {
-      indexSource,
-      resolvedDestP,
-      indexDest
-    };
-  }
-  async appendFilePromise(p, content, opts) {
-    if (this.readOnly)
-      throw EROFS(`open '${p}'`);
-    if (typeof opts === `undefined`)
-      opts = {flag: `a`};
-    else if (typeof opts === `string`)
-      opts = {flag: `a`, encoding: opts};
-    else if (typeof opts.flag === `undefined`)
-      opts = __spreadValues$3({flag: `a`}, opts);
-    return this.writeFilePromise(p, content, opts);
-  }
-  appendFileSync(p, content, opts = {}) {
-    if (this.readOnly)
-      throw EROFS(`open '${p}'`);
-    if (typeof opts === `undefined`)
-      opts = {flag: `a`};
-    else if (typeof opts === `string`)
-      opts = {flag: `a`, encoding: opts};
-    else if (typeof opts.flag === `undefined`)
-      opts = __spreadValues$3({flag: `a`}, opts);
-    return this.writeFileSync(p, content, opts);
-  }
-  fdToPath(fd, reason) {
-    var _a;
-    const path = (_a = this.fds.get(fd)) == null ? void 0 : _a.p;
-    if (typeof path === `undefined`)
-      throw EBADF(reason);
-    return path;
-  }
-  async writeFilePromise(p, content, opts) {
-    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
-    if (index !== void 0 && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
-      content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content)]);
-    if (encoding !== null)
-      content = content.toString(encoding);
-    const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index)
-      this.registerEntry(resolvedP, newIndex);
-    if (mode !== null) {
-      await this.chmodPromise(resolvedP, mode);
-    }
-  }
-  writeFileSync(p, content, opts) {
-    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
-    if (index !== void 0 && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
-      content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
-    if (encoding !== null)
-      content = content.toString(encoding);
-    const newIndex = this.setFileSource(resolvedP, content);
-    if (newIndex !== index)
-      this.registerEntry(resolvedP, newIndex);
-    if (mode !== null) {
-      this.chmodSync(resolvedP, mode);
-    }
-  }
-  prepareWriteFile(p, opts) {
-    if (typeof p === `number`)
-      p = this.fdToPath(p, `read`);
-    if (this.readOnly)
-      throw EROFS(`open '${p}'`);
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    if (this.listings.has(resolvedP))
-      throw EISDIR(`open '${p}'`);
-    let encoding = null, mode = null;
-    if (typeof opts === `string`) {
-      encoding = opts;
-    } else if (typeof opts === `object`) {
-      ({
-        encoding = null,
-        mode = null
-      } = opts);
-    }
-    const index = this.entries.get(resolvedP);
-    return {
-      encoding,
-      mode,
-      resolvedP,
-      index
-    };
-  }
-  async unlinkPromise(p) {
-    return this.unlinkSync(p);
-  }
-  unlinkSync(p) {
-    if (this.readOnly)
-      throw EROFS(`unlink '${p}'`);
-    const resolvedP = this.resolveFilename(`unlink '${p}'`, p);
-    if (this.listings.has(resolvedP))
-      throw EISDIR(`unlink '${p}'`);
-    const index = this.entries.get(resolvedP);
-    if (typeof index === `undefined`)
-      throw EINVAL(`unlink '${p}'`);
-    this.deleteEntry(resolvedP, index);
-  }
-  async utimesPromise(p, atime, mtime) {
-    return this.utimesSync(p, atime, mtime);
-  }
-  utimesSync(p, atime, mtime) {
-    if (this.readOnly)
-      throw EROFS(`utimes '${p}'`);
-    const resolvedP = this.resolveFilename(`utimes '${p}'`, p);
-    this.utimesImpl(resolvedP, mtime);
-  }
-  async lutimesPromise(p, atime, mtime) {
-    return this.lutimesSync(p, atime, mtime);
-  }
-  lutimesSync(p, atime, mtime) {
-    if (this.readOnly)
-      throw EROFS(`lutimes '${p}'`);
-    const resolvedP = this.resolveFilename(`utimes '${p}'`, p, false);
-    this.utimesImpl(resolvedP, mtime);
-  }
-  utimesImpl(resolvedP, mtime) {
-    if (this.listings.has(resolvedP)) {
-      if (!this.entries.has(resolvedP))
-        this.hydrateDirectory(resolvedP);
-    }
-    const entry = this.entries.get(resolvedP);
-    if (entry === void 0)
-      throw new Error(`Unreachable`);
-    const rc = this.libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
-  }
-  async mkdirPromise(p, opts) {
-    return this.mkdirSync(p, opts);
-  }
-  mkdirSync(p, {mode = 493, recursive = false} = {}) {
-    if (recursive) {
-      this.mkdirpSync(p, {chmod: mode});
-      return;
-    }
-    if (this.readOnly)
-      throw EROFS(`mkdir '${p}'`);
-    const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
-    if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
-      throw EEXIST(`mkdir '${p}'`);
-    this.hydrateDirectory(resolvedP);
-    this.chmodSync(resolvedP, mode);
-  }
-  async rmdirPromise(p, opts) {
-    return this.rmdirSync(p, opts);
-  }
-  rmdirSync(p, {recursive = false} = {}) {
-    if (this.readOnly)
-      throw EROFS(`rmdir '${p}'`);
-    if (recursive) {
-      this.removeSync(p);
-      return;
-    }
-    const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
-    const directoryListing = this.listings.get(resolvedP);
-    if (!directoryListing)
-      throw ENOTDIR(`rmdir '${p}'`);
-    if (directoryListing.size > 0)
-      throw ENOTEMPTY(`rmdir '${p}'`);
-    const index = this.entries.get(resolvedP);
-    if (typeof index === `undefined`)
-      throw EINVAL(`rmdir '${p}'`);
-    this.deleteEntry(p, index);
-  }
-  hydrateDirectory(resolvedP) {
-    const index = this.libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
-    if (index === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    this.registerListing(resolvedP);
-    this.registerEntry(resolvedP, index);
-    return index;
-  }
-  async linkPromise(existingP, newP) {
-    return this.linkSync(existingP, newP);
-  }
-  linkSync(existingP, newP) {
-    throw EOPNOTSUPP(`link '${existingP}' -> '${newP}'`);
-  }
-  async symlinkPromise(target, p) {
-    return this.symlinkSync(target, p);
-  }
-  symlinkSync(target, p) {
-    if (this.readOnly)
-      throw EROFS(`symlink '${target}' -> '${p}'`);
-    const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
-    if (this.listings.has(resolvedP))
-      throw EISDIR(`symlink '${target}' -> '${p}'`);
-    if (this.entries.has(resolvedP))
-      throw EEXIST(`symlink '${target}' -> '${p}'`);
-    const index = this.setFileSource(resolvedP, target);
-    this.registerEntry(resolvedP, index);
-    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (S_IFLNK | 511) << 16);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    this.symlinkCount += 1;
-  }
-  async readFilePromise(p, encoding) {
-    if (typeof encoding === `object`)
-      encoding = encoding ? encoding.encoding : void 0;
-    const data = await this.readFileBuffer(p, {asyncDecompress: true});
-    return encoding ? data.toString(encoding) : data;
-  }
-  readFileSync(p, encoding) {
-    if (typeof encoding === `object`)
-      encoding = encoding ? encoding.encoding : void 0;
-    const data = this.readFileBuffer(p);
-    return encoding ? data.toString(encoding) : data;
-  }
-  readFileBuffer(p, opts = {asyncDecompress: false}) {
-    if (typeof p === `number`)
-      p = this.fdToPath(p, `read`);
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`open '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
-      throw ENOTDIR(`open '${p}'`);
-    if (this.listings.has(resolvedP))
-      throw EISDIR(`read`);
-    const entry = this.entries.get(resolvedP);
-    if (entry === void 0)
-      throw new Error(`Unreachable`);
-    return this.getFileSource(entry, opts);
-  }
-  async readdirPromise(p, opts) {
-    return this.readdirSync(p, opts);
-  }
-  readdirSync(p, opts) {
-    const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`scandir '${p}'`);
-    const directoryListing = this.listings.get(resolvedP);
-    if (!directoryListing)
-      throw ENOTDIR(`scandir '${p}'`);
-    const entries = [...directoryListing];
-    if (!(opts == null ? void 0 : opts.withFileTypes))
-      return entries;
-    return entries.map((name) => {
-      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
-        name
-      });
-    });
-  }
-  async readlinkPromise(p) {
-    const entry = this.prepareReadlink(p);
-    return (await this.getFileSource(entry, {asyncDecompress: true})).toString();
-  }
-  readlinkSync(p) {
-    const entry = this.prepareReadlink(p);
-    return this.getFileSource(entry).toString();
-  }
-  prepareReadlink(p) {
-    const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
-      throw ENOENT(`readlink '${p}'`);
-    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
-      throw ENOTDIR(`open '${p}'`);
-    if (this.listings.has(resolvedP))
-      throw EINVAL(`readlink '${p}'`);
-    const entry = this.entries.get(resolvedP);
-    if (entry === void 0)
-      throw new Error(`Unreachable`);
-    if (!this.isSymbolicLink(entry))
-      throw EINVAL(`readlink '${p}'`);
-    return entry;
-  }
-  async truncatePromise(p, len = 0) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    const index = this.entries.get(resolvedP);
-    if (typeof index === `undefined`)
-      throw EINVAL(`open '${p}'`);
-    const source = await this.getFileSource(index, {asyncDecompress: true});
-    const truncated = Buffer.alloc(len, 0);
-    source.copy(truncated);
-    return await this.writeFilePromise(p, truncated);
-  }
-  truncateSync(p, len = 0) {
-    const resolvedP = this.resolveFilename(`open '${p}'`, p);
-    const index = this.entries.get(resolvedP);
-    if (typeof index === `undefined`)
-      throw EINVAL(`open '${p}'`);
-    const source = this.getFileSource(index);
-    const truncated = Buffer.alloc(len, 0);
-    source.copy(truncated);
-    return this.writeFileSync(p, truncated);
-  }
-  watch(p, a, b) {
-    let persistent;
-    switch (typeof a) {
-      case `function`:
-      case `string`:
-      case `undefined`:
-        {
-          persistent = true;
-        }
-        break;
-      default:
-        {
-          ({persistent = true} = a);
-        }
-        break;
-    }
-    if (!persistent)
-      return {on: () => {
-      }, close: () => {
-      }};
-    const interval = setInterval(() => {
-    }, 24 * 60 * 60 * 1e3);
-    return {on: () => {
-    }, close: () => {
-      clearInterval(interval);
-    }};
-  }
-  watchFile(p, a, b) {
-    const resolvedP = ppath.resolve(PortablePath.root, p);
-    return watchFile(this, resolvedP, a, b);
-  }
-  unwatchFile(p, cb) {
-    const resolvedP = ppath.resolve(PortablePath.root, p);
-    return unwatchFile(this, resolvedP, cb);
-  }
-}
-
-class ProxiedFS extends FakeFS {
-  getExtractHint(hints) {
-    return this.baseFs.getExtractHint(hints);
-  }
-  resolve(path) {
-    return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
-  }
-  getRealPath() {
-    return this.mapFromBase(this.baseFs.getRealPath());
-  }
-  async openPromise(p, flags, mode) {
-    return this.baseFs.openPromise(this.mapToBase(p), flags, mode);
-  }
-  openSync(p, flags, mode) {
-    return this.baseFs.openSync(this.mapToBase(p), flags, mode);
-  }
-  async opendirPromise(p, opts) {
-    return Object.assign(await this.baseFs.opendirPromise(this.mapToBase(p), opts), {path: p});
-  }
-  opendirSync(p, opts) {
-    return Object.assign(this.baseFs.opendirSync(this.mapToBase(p), opts), {path: p});
-  }
-  async readPromise(fd, buffer, offset, length, position) {
-    return await this.baseFs.readPromise(fd, buffer, offset, length, position);
-  }
-  readSync(fd, buffer, offset, length, position) {
-    return this.baseFs.readSync(fd, buffer, offset, length, position);
-  }
-  async writePromise(fd, buffer, offset, length, position) {
-    if (typeof buffer === `string`) {
-      return await this.baseFs.writePromise(fd, buffer, offset);
-    } else {
-      return await this.baseFs.writePromise(fd, buffer, offset, length, position);
-    }
-  }
-  writeSync(fd, buffer, offset, length, position) {
-    if (typeof buffer === `string`) {
-      return this.baseFs.writeSync(fd, buffer, offset);
-    } else {
-      return this.baseFs.writeSync(fd, buffer, offset, length, position);
-    }
-  }
-  async closePromise(fd) {
-    return this.baseFs.closePromise(fd);
-  }
-  closeSync(fd) {
-    this.baseFs.closeSync(fd);
-  }
-  createReadStream(p, opts) {
-    return this.baseFs.createReadStream(p !== null ? this.mapToBase(p) : p, opts);
-  }
-  createWriteStream(p, opts) {
-    return this.baseFs.createWriteStream(p !== null ? this.mapToBase(p) : p, opts);
-  }
-  async realpathPromise(p) {
-    return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
-  }
-  realpathSync(p) {
-    return this.mapFromBase(this.baseFs.realpathSync(this.mapToBase(p)));
-  }
-  async existsPromise(p) {
-    return this.baseFs.existsPromise(this.mapToBase(p));
-  }
-  existsSync(p) {
-    return this.baseFs.existsSync(this.mapToBase(p));
-  }
-  accessSync(p, mode) {
-    return this.baseFs.accessSync(this.mapToBase(p), mode);
-  }
-  async accessPromise(p, mode) {
-    return this.baseFs.accessPromise(this.mapToBase(p), mode);
-  }
-  async statPromise(p, opts) {
-    return this.baseFs.statPromise(this.mapToBase(p), opts);
-  }
-  statSync(p, opts) {
-    return this.baseFs.statSync(this.mapToBase(p), opts);
-  }
-  async fstatPromise(fd, opts) {
-    return this.baseFs.fstatPromise(fd, opts);
-  }
-  fstatSync(fd, opts) {
-    return this.baseFs.fstatSync(fd, opts);
-  }
-  async lstatPromise(p, opts) {
-    return this.baseFs.lstatPromise(this.mapToBase(p), opts);
-  }
-  lstatSync(p, opts) {
-    return this.baseFs.lstatSync(this.mapToBase(p), opts);
-  }
-  async chmodPromise(p, mask) {
-    return this.baseFs.chmodPromise(this.mapToBase(p), mask);
-  }
-  chmodSync(p, mask) {
-    return this.baseFs.chmodSync(this.mapToBase(p), mask);
-  }
-  async chownPromise(p, uid, gid) {
-    return this.baseFs.chownPromise(this.mapToBase(p), uid, gid);
-  }
-  chownSync(p, uid, gid) {
-    return this.baseFs.chownSync(this.mapToBase(p), uid, gid);
-  }
-  async renamePromise(oldP, newP) {
-    return this.baseFs.renamePromise(this.mapToBase(oldP), this.mapToBase(newP));
-  }
-  renameSync(oldP, newP) {
-    return this.baseFs.renameSync(this.mapToBase(oldP), this.mapToBase(newP));
-  }
-  async copyFilePromise(sourceP, destP, flags = 0) {
-    return this.baseFs.copyFilePromise(this.mapToBase(sourceP), this.mapToBase(destP), flags);
-  }
-  copyFileSync(sourceP, destP, flags = 0) {
-    return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
-  }
-  async appendFilePromise(p, content, opts) {
-    return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
-  }
-  appendFileSync(p, content, opts) {
-    return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
-  }
-  async writeFilePromise(p, content, opts) {
-    return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
-  }
-  writeFileSync(p, content, opts) {
-    return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
-  }
-  async unlinkPromise(p) {
-    return this.baseFs.unlinkPromise(this.mapToBase(p));
-  }
-  unlinkSync(p) {
-    return this.baseFs.unlinkSync(this.mapToBase(p));
-  }
-  async utimesPromise(p, atime, mtime) {
-    return this.baseFs.utimesPromise(this.mapToBase(p), atime, mtime);
-  }
-  utimesSync(p, atime, mtime) {
-    return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
-  }
-  async mkdirPromise(p, opts) {
-    return this.baseFs.mkdirPromise(this.mapToBase(p), opts);
-  }
-  mkdirSync(p, opts) {
-    return this.baseFs.mkdirSync(this.mapToBase(p), opts);
-  }
-  async rmdirPromise(p, opts) {
-    return this.baseFs.rmdirPromise(this.mapToBase(p), opts);
-  }
-  rmdirSync(p, opts) {
-    return this.baseFs.rmdirSync(this.mapToBase(p), opts);
-  }
-  async linkPromise(existingP, newP) {
-    return this.baseFs.linkPromise(this.mapToBase(existingP), this.mapToBase(newP));
-  }
-  linkSync(existingP, newP) {
-    return this.baseFs.linkSync(this.mapToBase(existingP), this.mapToBase(newP));
-  }
-  async symlinkPromise(target, p, type) {
-    const mappedP = this.mapToBase(p);
-    if (this.pathUtils.isAbsolute(target))
-      return this.baseFs.symlinkPromise(this.mapToBase(target), mappedP, type);
-    const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
-    const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
-    return this.baseFs.symlinkPromise(mappedTarget, mappedP, type);
-  }
-  symlinkSync(target, p, type) {
-    const mappedP = this.mapToBase(p);
-    if (this.pathUtils.isAbsolute(target))
-      return this.baseFs.symlinkSync(this.mapToBase(target), mappedP, type);
-    const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
-    const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
-    return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
-  }
-  async readFilePromise(p, encoding) {
-    if (encoding === `utf8`) {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    } else {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    }
-  }
-  readFileSync(p, encoding) {
-    if (encoding === `utf8`) {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    } else {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    }
-  }
-  async readdirPromise(p, opts) {
-    return this.baseFs.readdirPromise(this.mapToBase(p), opts);
-  }
-  readdirSync(p, opts) {
-    return this.baseFs.readdirSync(this.mapToBase(p), opts);
-  }
-  async readlinkPromise(p) {
-    return this.mapFromBase(await this.baseFs.readlinkPromise(this.mapToBase(p)));
-  }
-  readlinkSync(p) {
-    return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
-  }
-  async truncatePromise(p, len) {
-    return this.baseFs.truncatePromise(this.mapToBase(p), len);
-  }
-  truncateSync(p, len) {
-    return this.baseFs.truncateSync(this.mapToBase(p), len);
-  }
-  watch(p, a, b) {
-    return this.baseFs.watch(this.mapToBase(p), a, b);
-  }
-  watchFile(p, a, b) {
-    return this.baseFs.watchFile(this.mapToBase(p), a, b);
-  }
-  unwatchFile(p, cb) {
-    return this.baseFs.unwatchFile(this.mapToBase(p), cb);
-  }
-  fsMapToBase(p) {
-    if (typeof p === `number`) {
-      return p;
-    } else {
-      return this.mapToBase(p);
-    }
-  }
-}
-
-class PosixFS extends ProxiedFS {
-  constructor(baseFs) {
-    super(npath);
-    this.baseFs = baseFs;
-  }
-  mapFromBase(path) {
-    return npath.fromPortablePath(path);
-  }
-  mapToBase(path) {
-    return npath.toPortablePath(path);
-  }
-}
-
-const NUMBER_REGEXP = /^[0-9]+$/;
-const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
-const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
-class VirtualFS extends ProxiedFS {
-  static makeVirtualPath(base, component, to) {
-    if (ppath.basename(base) !== `__virtual__`)
-      throw new Error(`Assertion failed: Virtual folders must be named "__virtual__"`);
-    if (!ppath.basename(component).match(VALID_COMPONENT))
-      throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`);
-    const target = ppath.relative(ppath.dirname(base), to);
-    const segments = target.split(`/`);
-    let depth = 0;
-    while (depth < segments.length && segments[depth] === `..`)
-      depth += 1;
-    const finalSegments = segments.slice(depth);
-    const fullVirtualPath = ppath.join(base, component, String(depth), ...finalSegments);
-    return fullVirtualPath;
-  }
-  static resolveVirtual(p) {
-    const match = p.match(VIRTUAL_REGEXP);
-    if (!match || !match[3] && match[5])
-      return p;
-    const target = ppath.dirname(match[1]);
-    if (!match[3] || !match[4])
-      return target;
-    const isnum = NUMBER_REGEXP.test(match[4]);
-    if (!isnum)
-      return p;
-    const depth = Number(match[4]);
-    const backstep = `../`.repeat(depth);
-    const subpath = match[5] || `.`;
-    return VirtualFS.resolveVirtual(ppath.join(target, backstep, subpath));
-  }
-  constructor({baseFs = new NodeFS()} = {}) {
-    super(ppath);
-    this.baseFs = baseFs;
-  }
-  getExtractHint(hints) {
-    return this.baseFs.getExtractHint(hints);
-  }
-  getRealPath() {
-    return this.baseFs.getRealPath();
-  }
-  realpathSync(p) {
-    const match = p.match(VIRTUAL_REGEXP);
-    if (!match)
-      return this.baseFs.realpathSync(p);
-    if (!match[5])
-      return p;
-    const realpath = this.baseFs.realpathSync(this.mapToBase(p));
-    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
-  }
-  async realpathPromise(p) {
-    const match = p.match(VIRTUAL_REGEXP);
-    if (!match)
-      return await this.baseFs.realpathPromise(p);
-    if (!match[5])
-      return p;
-    const realpath = await this.baseFs.realpathPromise(this.mapToBase(p));
-    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
-  }
-  mapToBase(p) {
-    if (p === ``)
-      return p;
-    if (this.pathUtils.isAbsolute(p))
-      return VirtualFS.resolveVirtual(p);
-    const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
-    const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
-    return ppath.relative(resolvedRoot, resolvedP) || PortablePath.dot;
-  }
-  mapFromBase(p) {
-    return p;
-  }
-}
-
-const ZIP_FD = 2147483648;
-const getArchivePart = (path, extension) => {
-  let idx = path.indexOf(extension);
-  if (idx <= 0)
-    return null;
-  let nextCharIdx = idx;
-  while (idx >= 0) {
-    nextCharIdx = idx + extension.length;
-    if (path[nextCharIdx] === ppath.sep)
-      break;
-    if (path[idx - 1] === ppath.sep)
-      return null;
-    idx = path.indexOf(extension, nextCharIdx);
-  }
-  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
-    return null;
-  return path.slice(0, nextCharIdx);
-};
-class ZipOpenFS extends BasePortableFakeFS {
-  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5e3, fileExtensions = null}) {
-    super();
-    this.fdMap = new Map();
-    this.nextFd = 3;
-    this.isZip = new Set();
-    this.notZip = new Set();
-    this.realPaths = new Map();
-    this.limitOpenFilesTimeout = null;
-    this.libzipFactory = typeof libzip !== `function` ? () => libzip : libzip;
-    this.baseFs = baseFs;
-    this.zipInstances = useCache ? new Map() : null;
-    this.filter = filter;
-    this.maxOpenFiles = maxOpenFiles;
-    this.readOnlyArchives = readOnlyArchives;
-    this.maxAge = maxAge;
-    this.fileExtensions = fileExtensions;
-  }
-  static async openPromise(fn, opts) {
-    const zipOpenFs = new ZipOpenFS(opts);
-    try {
-      return await fn(zipOpenFs);
-    } finally {
-      zipOpenFs.saveAndClose();
-    }
-  }
-  get libzip() {
-    if (typeof this.libzipInstance === `undefined`)
-      this.libzipInstance = this.libzipFactory();
-    return this.libzipInstance;
-  }
-  getExtractHint(hints) {
-    return this.baseFs.getExtractHint(hints);
-  }
-  getRealPath() {
-    return this.baseFs.getRealPath();
-  }
-  saveAndClose() {
-    unwatchAllFiles(this);
-    if (this.zipInstances) {
-      for (const [path, {zipFs}] of this.zipInstances.entries()) {
-        zipFs.saveAndClose();
-        this.zipInstances.delete(path);
-      }
-    }
-  }
-  discardAndClose() {
-    unwatchAllFiles(this);
-    if (this.zipInstances) {
-      for (const [path, {zipFs}] of this.zipInstances.entries()) {
-        zipFs.discardAndClose();
-        this.zipInstances.delete(path);
-      }
-    }
-  }
-  resolve(p) {
-    return this.baseFs.resolve(p);
-  }
-  remapFd(zipFs, fd) {
-    const remappedFd = this.nextFd++ | ZIP_FD;
-    this.fdMap.set(remappedFd, [zipFs, fd]);
-    return remappedFd;
-  }
-  async openPromise(p, flags, mode) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.openPromise(p, flags, mode);
-    }, async (zipFs, {subPath}) => {
-      return this.remapFd(zipFs, await zipFs.openPromise(subPath, flags, mode));
-    });
-  }
-  openSync(p, flags, mode) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.openSync(p, flags, mode);
-    }, (zipFs, {subPath}) => {
-      return this.remapFd(zipFs, zipFs.openSync(subPath, flags, mode));
-    });
-  }
-  async opendirPromise(p, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.opendirPromise(p, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.opendirPromise(subPath, opts);
-    }, {
-      requireSubpath: false
-    });
-  }
-  opendirSync(p, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.opendirSync(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.opendirSync(subPath, opts);
-    }, {
-      requireSubpath: false
-    });
-  }
-  async readPromise(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0)
-      return await this.baseFs.readPromise(fd, buffer, offset, length, position);
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`read`);
-    const [zipFs, realFd] = entry;
-    return await zipFs.readPromise(realFd, buffer, offset, length, position);
-  }
-  readSync(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0)
-      return this.baseFs.readSync(fd, buffer, offset, length, position);
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`readSync`);
-    const [zipFs, realFd] = entry;
-    return zipFs.readSync(realFd, buffer, offset, length, position);
-  }
-  async writePromise(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0) {
-      if (typeof buffer === `string`) {
-        return await this.baseFs.writePromise(fd, buffer, offset);
-      } else {
-        return await this.baseFs.writePromise(fd, buffer, offset, length, position);
-      }
-    }
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`write`);
-    const [zipFs, realFd] = entry;
-    if (typeof buffer === `string`) {
-      return await zipFs.writePromise(realFd, buffer, offset);
-    } else {
-      return await zipFs.writePromise(realFd, buffer, offset, length, position);
-    }
-  }
-  writeSync(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0) {
-      if (typeof buffer === `string`) {
-        return this.baseFs.writeSync(fd, buffer, offset);
-      } else {
-        return this.baseFs.writeSync(fd, buffer, offset, length, position);
-      }
-    }
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`writeSync`);
-    const [zipFs, realFd] = entry;
-    if (typeof buffer === `string`) {
-      return zipFs.writeSync(realFd, buffer, offset);
-    } else {
-      return zipFs.writeSync(realFd, buffer, offset, length, position);
-    }
-  }
-  async closePromise(fd) {
-    if ((fd & ZIP_FD) === 0)
-      return await this.baseFs.closePromise(fd);
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`close`);
-    this.fdMap.delete(fd);
-    const [zipFs, realFd] = entry;
-    return await zipFs.closePromise(realFd);
-  }
-  closeSync(fd) {
-    if ((fd & ZIP_FD) === 0)
-      return this.baseFs.closeSync(fd);
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`closeSync`);
-    this.fdMap.delete(fd);
-    const [zipFs, realFd] = entry;
-    return zipFs.closeSync(realFd);
-  }
-  createReadStream(p, opts) {
-    if (p === null)
-      return this.baseFs.createReadStream(p, opts);
-    return this.makeCallSync(p, () => {
-      return this.baseFs.createReadStream(p, opts);
-    }, (zipFs, {archivePath, subPath}) => {
-      const stream = zipFs.createReadStream(subPath, opts);
-      stream.path = npath.fromPortablePath(this.pathUtils.join(archivePath, subPath));
-      return stream;
-    });
-  }
-  createWriteStream(p, opts) {
-    if (p === null)
-      return this.baseFs.createWriteStream(p, opts);
-    return this.makeCallSync(p, () => {
-      return this.baseFs.createWriteStream(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.createWriteStream(subPath, opts);
-    });
-  }
-  async realpathPromise(p) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.realpathPromise(p);
-    }, async (zipFs, {archivePath, subPath}) => {
-      let realArchivePath = this.realPaths.get(archivePath);
-      if (typeof realArchivePath === `undefined`) {
-        realArchivePath = await this.baseFs.realpathPromise(archivePath);
-        this.realPaths.set(archivePath, realArchivePath);
-      }
-      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
-    });
-  }
-  realpathSync(p) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.realpathSync(p);
-    }, (zipFs, {archivePath, subPath}) => {
-      let realArchivePath = this.realPaths.get(archivePath);
-      if (typeof realArchivePath === `undefined`) {
-        realArchivePath = this.baseFs.realpathSync(archivePath);
-        this.realPaths.set(archivePath, realArchivePath);
-      }
-      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
-    });
-  }
-  async existsPromise(p) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.existsPromise(p);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.existsPromise(subPath);
-    });
-  }
-  existsSync(p) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.existsSync(p);
-    }, (zipFs, {subPath}) => {
-      return zipFs.existsSync(subPath);
-    });
-  }
-  async accessPromise(p, mode) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.accessPromise(p, mode);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.accessPromise(subPath, mode);
-    });
-  }
-  accessSync(p, mode) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.accessSync(p, mode);
-    }, (zipFs, {subPath}) => {
-      return zipFs.accessSync(subPath, mode);
-    });
-  }
-  async statPromise(p, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.statPromise(p, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.statPromise(subPath, opts);
-    });
-  }
-  statSync(p, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.statSync(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.statSync(subPath, opts);
-    });
-  }
-  async fstatPromise(fd, opts) {
-    if ((fd & ZIP_FD) === 0)
-      return this.baseFs.fstatPromise(fd, opts);
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`fstat`);
-    const [zipFs, realFd] = entry;
-    return zipFs.fstatPromise(realFd, opts);
-  }
-  fstatSync(fd, opts) {
-    if ((fd & ZIP_FD) === 0)
-      return this.baseFs.fstatSync(fd, opts);
-    const entry = this.fdMap.get(fd);
-    if (typeof entry === `undefined`)
-      throw EBADF(`fstatSync`);
-    const [zipFs, realFd] = entry;
-    return zipFs.fstatSync(realFd, opts);
-  }
-  async lstatPromise(p, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.lstatPromise(p, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.lstatPromise(subPath, opts);
-    });
-  }
-  lstatSync(p, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.lstatSync(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.lstatSync(subPath, opts);
-    });
-  }
-  async chmodPromise(p, mask) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.chmodPromise(p, mask);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.chmodPromise(subPath, mask);
-    });
-  }
-  chmodSync(p, mask) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.chmodSync(p, mask);
-    }, (zipFs, {subPath}) => {
-      return zipFs.chmodSync(subPath, mask);
-    });
-  }
-  async chownPromise(p, uid, gid) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.chownPromise(p, uid, gid);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.chownPromise(subPath, uid, gid);
-    });
-  }
-  chownSync(p, uid, gid) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.chownSync(p, uid, gid);
-    }, (zipFs, {subPath}) => {
-      return zipFs.chownSync(subPath, uid, gid);
-    });
-  }
-  async renamePromise(oldP, newP) {
-    return await this.makeCallPromise(oldP, async () => {
-      return await this.makeCallPromise(newP, async () => {
-        return await this.baseFs.renamePromise(oldP, newP);
-      }, async () => {
-        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      });
-    }, async (zipFsO, {subPath: subPathO}) => {
-      return await this.makeCallPromise(newP, async () => {
-        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      }, async (zipFsN, {subPath: subPathN}) => {
-        if (zipFsO !== zipFsN) {
-          throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-        } else {
-          return await zipFsO.renamePromise(subPathO, subPathN);
-        }
-      });
-    });
-  }
-  renameSync(oldP, newP) {
-    return this.makeCallSync(oldP, () => {
-      return this.makeCallSync(newP, () => {
-        return this.baseFs.renameSync(oldP, newP);
-      }, () => {
-        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      });
-    }, (zipFsO, {subPath: subPathO}) => {
-      return this.makeCallSync(newP, () => {
-        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-      }, (zipFsN, {subPath: subPathN}) => {
-        if (zipFsO !== zipFsN) {
-          throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
-        } else {
-          return zipFsO.renameSync(subPathO, subPathN);
-        }
-      });
-    });
-  }
-  async copyFilePromise(sourceP, destP, flags = 0) {
-    const fallback = async (sourceFs, sourceP2, destFs, destP2) => {
-      if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
-        throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP2}' -> ${destP2}'`), {code: `EXDEV`});
-      if (flags & fs.constants.COPYFILE_EXCL && await this.existsPromise(sourceP2))
-        throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EEXIST`});
-      let content;
-      try {
-        content = await sourceFs.readFilePromise(sourceP2);
-      } catch (error) {
-        throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EINVAL`});
-      }
-      await destFs.writeFilePromise(destP2, content);
-    };
-    return await this.makeCallPromise(sourceP, async () => {
-      return await this.makeCallPromise(destP, async () => {
-        return await this.baseFs.copyFilePromise(sourceP, destP, flags);
-      }, async (zipFsD, {subPath: subPathD}) => {
-        return await fallback(this.baseFs, sourceP, zipFsD, subPathD);
-      });
-    }, async (zipFsS, {subPath: subPathS}) => {
-      return await this.makeCallPromise(destP, async () => {
-        return await fallback(zipFsS, subPathS, this.baseFs, destP);
-      }, async (zipFsD, {subPath: subPathD}) => {
-        if (zipFsS !== zipFsD) {
-          return await fallback(zipFsS, subPathS, zipFsD, subPathD);
-        } else {
-          return await zipFsS.copyFilePromise(subPathS, subPathD, flags);
-        }
-      });
-    });
-  }
-  copyFileSync(sourceP, destP, flags = 0) {
-    const fallback = (sourceFs, sourceP2, destFs, destP2) => {
-      if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
-        throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP2}' -> ${destP2}'`), {code: `EXDEV`});
-      if (flags & fs.constants.COPYFILE_EXCL && this.existsSync(sourceP2))
-        throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EEXIST`});
-      let content;
-      try {
-        content = sourceFs.readFileSync(sourceP2);
-      } catch (error) {
-        throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EINVAL`});
-      }
-      destFs.writeFileSync(destP2, content);
-    };
-    return this.makeCallSync(sourceP, () => {
-      return this.makeCallSync(destP, () => {
-        return this.baseFs.copyFileSync(sourceP, destP, flags);
-      }, (zipFsD, {subPath: subPathD}) => {
-        return fallback(this.baseFs, sourceP, zipFsD, subPathD);
-      });
-    }, (zipFsS, {subPath: subPathS}) => {
-      return this.makeCallSync(destP, () => {
-        return fallback(zipFsS, subPathS, this.baseFs, destP);
-      }, (zipFsD, {subPath: subPathD}) => {
-        if (zipFsS !== zipFsD) {
-          return fallback(zipFsS, subPathS, zipFsD, subPathD);
-        } else {
-          return zipFsS.copyFileSync(subPathS, subPathD, flags);
-        }
-      });
-    });
-  }
-  async appendFilePromise(p, content, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.appendFilePromise(p, content, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.appendFilePromise(subPath, content, opts);
-    });
-  }
-  appendFileSync(p, content, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.appendFileSync(p, content, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.appendFileSync(subPath, content, opts);
-    });
-  }
-  async writeFilePromise(p, content, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.writeFilePromise(p, content, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.writeFilePromise(subPath, content, opts);
-    });
-  }
-  writeFileSync(p, content, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.writeFileSync(p, content, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.writeFileSync(subPath, content, opts);
-    });
-  }
-  async unlinkPromise(p) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.unlinkPromise(p);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.unlinkPromise(subPath);
-    });
-  }
-  unlinkSync(p) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.unlinkSync(p);
-    }, (zipFs, {subPath}) => {
-      return zipFs.unlinkSync(subPath);
-    });
-  }
-  async utimesPromise(p, atime, mtime) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.utimesPromise(p, atime, mtime);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.utimesPromise(subPath, atime, mtime);
-    });
-  }
-  utimesSync(p, atime, mtime) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.utimesSync(p, atime, mtime);
-    }, (zipFs, {subPath}) => {
-      return zipFs.utimesSync(subPath, atime, mtime);
-    });
-  }
-  async mkdirPromise(p, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.mkdirPromise(p, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.mkdirPromise(subPath, opts);
-    });
-  }
-  mkdirSync(p, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.mkdirSync(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.mkdirSync(subPath, opts);
-    });
-  }
-  async rmdirPromise(p, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.rmdirPromise(p, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.rmdirPromise(subPath, opts);
-    });
-  }
-  rmdirSync(p, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.rmdirSync(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.rmdirSync(subPath, opts);
-    });
-  }
-  async linkPromise(existingP, newP) {
-    return await this.makeCallPromise(newP, async () => {
-      return await this.baseFs.linkPromise(existingP, newP);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.linkPromise(existingP, subPath);
-    });
-  }
-  linkSync(existingP, newP) {
-    return this.makeCallSync(newP, () => {
-      return this.baseFs.linkSync(existingP, newP);
-    }, (zipFs, {subPath}) => {
-      return zipFs.linkSync(existingP, subPath);
-    });
-  }
-  async symlinkPromise(target, p, type) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.symlinkPromise(target, p, type);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.symlinkPromise(target, subPath);
-    });
-  }
-  symlinkSync(target, p, type) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.symlinkSync(target, p, type);
-    }, (zipFs, {subPath}) => {
-      return zipFs.symlinkSync(target, subPath);
-    });
-  }
-  async readFilePromise(p, encoding) {
-    return this.makeCallPromise(p, async () => {
-      switch (encoding) {
-        case `utf8`:
-          return await this.baseFs.readFilePromise(p, encoding);
-        default:
-          return await this.baseFs.readFilePromise(p, encoding);
-      }
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.readFilePromise(subPath, encoding);
-    });
-  }
-  readFileSync(p, encoding) {
-    return this.makeCallSync(p, () => {
-      switch (encoding) {
-        case `utf8`:
-          return this.baseFs.readFileSync(p, encoding);
-        default:
-          return this.baseFs.readFileSync(p, encoding);
-      }
-    }, (zipFs, {subPath}) => {
-      return zipFs.readFileSync(subPath, encoding);
-    });
-  }
-  async readdirPromise(p, opts) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.readdirPromise(p, opts);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.readdirPromise(subPath, opts);
-    }, {
-      requireSubpath: false
-    });
-  }
-  readdirSync(p, opts) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.readdirSync(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.readdirSync(subPath, opts);
-    }, {
-      requireSubpath: false
-    });
-  }
-  async readlinkPromise(p) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.readlinkPromise(p);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.readlinkPromise(subPath);
-    });
-  }
-  readlinkSync(p) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.readlinkSync(p);
-    }, (zipFs, {subPath}) => {
-      return zipFs.readlinkSync(subPath);
-    });
-  }
-  async truncatePromise(p, len) {
-    return await this.makeCallPromise(p, async () => {
-      return await this.baseFs.truncatePromise(p, len);
-    }, async (zipFs, {subPath}) => {
-      return await zipFs.truncatePromise(subPath, len);
-    });
-  }
-  truncateSync(p, len) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.truncateSync(p, len);
-    }, (zipFs, {subPath}) => {
-      return zipFs.truncateSync(subPath, len);
-    });
-  }
-  watch(p, a, b) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.watch(p, a, b);
-    }, (zipFs, {subPath}) => {
-      return zipFs.watch(subPath, a, b);
-    });
-  }
-  watchFile(p, a, b) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.watchFile(p, a, b);
-    }, () => {
-      return watchFile(this, p, a, b);
-    });
-  }
-  unwatchFile(p, cb) {
-    return this.makeCallSync(p, () => {
-      return this.baseFs.unwatchFile(p, cb);
-    }, () => {
-      return unwatchFile(this, p, cb);
-    });
-  }
-  async makeCallPromise(p, discard, accept, {requireSubpath = true} = {}) {
-    if (typeof p !== `string`)
-      return await discard();
-    const normalizedP = this.resolve(p);
-    const zipInfo = this.findZip(normalizedP);
-    if (!zipInfo)
-      return await discard();
-    if (requireSubpath && zipInfo.subPath === `/`)
-      return await discard();
-    return await this.getZipPromise(zipInfo.archivePath, async (zipFs) => await accept(zipFs, zipInfo));
-  }
-  makeCallSync(p, discard, accept, {requireSubpath = true} = {}) {
-    if (typeof p !== `string`)
-      return discard();
-    const normalizedP = this.resolve(p);
-    const zipInfo = this.findZip(normalizedP);
-    if (!zipInfo)
-      return discard();
-    if (requireSubpath && zipInfo.subPath === `/`)
-      return discard();
-    return this.getZipSync(zipInfo.archivePath, (zipFs) => accept(zipFs, zipInfo));
-  }
-  findZip(p) {
-    if (this.filter && !this.filter.test(p))
-      return null;
-    let filePath = ``;
-    while (true) {
-      const pathPartWithArchive = p.substr(filePath.length);
-      let archivePart;
-      if (!this.fileExtensions) {
-        archivePart = getArchivePart(pathPartWithArchive, `.zip`);
-      } else {
-        for (const ext of this.fileExtensions) {
-          archivePart = getArchivePart(pathPartWithArchive, ext);
-          if (archivePart) {
-            break;
-          }
-        }
-      }
-      if (!archivePart)
-        return null;
-      filePath = this.pathUtils.join(filePath, archivePart);
-      if (this.isZip.has(filePath) === false) {
-        if (this.notZip.has(filePath))
-          continue;
-        try {
-          if (!this.baseFs.lstatSync(filePath).isFile()) {
-            this.notZip.add(filePath);
-            continue;
-          }
-        } catch {
-          return null;
-        }
-        this.isZip.add(filePath);
-      }
-      return {
-        archivePath: filePath,
-        subPath: this.pathUtils.join(PortablePath.root, p.substr(filePath.length))
-      };
-    }
-  }
-  limitOpenFiles(max) {
-    if (this.zipInstances === null)
-      return;
-    const now = Date.now();
-    let nextExpiresAt = now + this.maxAge;
-    let closeCount = max === null ? 0 : this.zipInstances.size - max;
-    for (const [path, {zipFs, expiresAt, refCount}] of this.zipInstances.entries()) {
-      if (refCount !== 0 || zipFs.hasOpenFileHandles()) {
-        continue;
-      } else if (now >= expiresAt) {
-        zipFs.saveAndClose();
-        this.zipInstances.delete(path);
-        closeCount -= 1;
-        continue;
-      } else if (max === null || closeCount <= 0) {
-        nextExpiresAt = expiresAt;
-        break;
-      }
-      zipFs.saveAndClose();
-      this.zipInstances.delete(path);
-      closeCount -= 1;
-    }
-    if (this.limitOpenFilesTimeout === null && (max === null && this.zipInstances.size > 0 || max !== null)) {
-      this.limitOpenFilesTimeout = setTimeout(() => {
-        this.limitOpenFilesTimeout = null;
-        this.limitOpenFiles(null);
-      }, nextExpiresAt - now).unref();
-    }
-  }
-  async getZipPromise(p, accept) {
-    const getZipOptions = async () => ({
-      baseFs: this.baseFs,
-      libzip: this.libzip,
-      readOnly: this.readOnlyArchives,
-      stats: await this.baseFs.statPromise(p)
-    });
-    if (this.zipInstances) {
-      let cachedZipFs = this.zipInstances.get(p);
-      if (!cachedZipFs) {
-        const zipOptions = await getZipOptions();
-        cachedZipFs = this.zipInstances.get(p);
-        if (!cachedZipFs) {
-          cachedZipFs = {
-            zipFs: new ZipFS(p, zipOptions),
-            expiresAt: 0,
-            refCount: 0
-          };
-        }
-      }
-      this.zipInstances.delete(p);
-      this.limitOpenFiles(this.maxOpenFiles - 1);
-      this.zipInstances.set(p, cachedZipFs);
-      cachedZipFs.expiresAt = Date.now() + this.maxAge;
-      cachedZipFs.refCount += 1;
-      try {
-        return await accept(cachedZipFs.zipFs);
-      } finally {
-        cachedZipFs.refCount -= 1;
-      }
-    } else {
-      const zipFs = new ZipFS(p, await getZipOptions());
-      try {
-        return await accept(zipFs);
-      } finally {
-        zipFs.saveAndClose();
-      }
-    }
-  }
-  getZipSync(p, accept) {
-    const getZipOptions = () => ({
-      baseFs: this.baseFs,
-      libzip: this.libzip,
-      readOnly: this.readOnlyArchives,
-      stats: this.baseFs.statSync(p)
-    });
-    if (this.zipInstances) {
-      let cachedZipFs = this.zipInstances.get(p);
-      if (!cachedZipFs) {
-        cachedZipFs = {
-          zipFs: new ZipFS(p, getZipOptions()),
-          expiresAt: 0,
-          refCount: 0
-        };
-      }
-      this.zipInstances.delete(p);
-      this.limitOpenFiles(this.maxOpenFiles - 1);
-      this.zipInstances.set(p, cachedZipFs);
-      cachedZipFs.expiresAt = Date.now() + this.maxAge;
-      return accept(cachedZipFs.zipFs);
-    } else {
-      const zipFs = new ZipFS(p, getZipOptions());
-      try {
-        return accept(zipFs);
-      } finally {
-        zipFs.saveAndClose();
-      }
-    }
-  }
-}
-
-class URLFS extends ProxiedFS {
-  constructor(baseFs) {
-    super(npath);
-    this.baseFs = baseFs;
-  }
-  mapFromBase(path) {
-    return path;
-  }
-  mapToBase(path) {
-    if (path instanceof url.URL)
-      return url.fileURLToPath(path);
-    return path;
-  }
-}
-
-const SYNC_IMPLEMENTATIONS = new Set([
-  `accessSync`,
-  `appendFileSync`,
-  `createReadStream`,
-  `createWriteStream`,
-  `chmodSync`,
-  `chownSync`,
-  `closeSync`,
-  `copyFileSync`,
-  `linkSync`,
-  `lstatSync`,
-  `fstatSync`,
-  `lutimesSync`,
-  `mkdirSync`,
-  `openSync`,
-  `opendirSync`,
-  `readSync`,
-  `readlinkSync`,
-  `readFileSync`,
-  `readdirSync`,
-  `readlinkSync`,
-  `realpathSync`,
-  `renameSync`,
-  `rmdirSync`,
-  `statSync`,
-  `symlinkSync`,
-  `truncateSync`,
-  `unlinkSync`,
-  `unwatchFile`,
-  `utimesSync`,
-  `watch`,
-  `watchFile`,
-  `writeFileSync`,
-  `writeSync`
-]);
-const ASYNC_IMPLEMENTATIONS = new Set([
-  `accessPromise`,
-  `appendFilePromise`,
-  `chmodPromise`,
-  `chownPromise`,
-  `closePromise`,
-  `copyFilePromise`,
-  `linkPromise`,
-  `fstatPromise`,
-  `lstatPromise`,
-  `lutimesPromise`,
-  `mkdirPromise`,
-  `openPromise`,
-  `opendirPromise`,
-  `readdirPromise`,
-  `realpathPromise`,
-  `readFilePromise`,
-  `readdirPromise`,
-  `readlinkPromise`,
-  `renamePromise`,
-  `rmdirPromise`,
-  `statPromise`,
-  `symlinkPromise`,
-  `truncatePromise`,
-  `unlinkPromise`,
-  `utimesPromise`,
-  `writeFilePromise`,
-  `writeSync`
-]);
-const FILEHANDLE_IMPLEMENTATIONS = new Set([
-  `appendFilePromise`,
-  `chmodPromise`,
-  `chownPromise`,
-  `closePromise`,
-  `readPromise`,
-  `readFilePromise`,
-  `statPromise`,
-  `truncatePromise`,
-  `utimesPromise`,
-  `writePromise`,
-  `writeFilePromise`
-]);
-function patchFs(patchedFs, fakeFs) {
-  fakeFs = new URLFS(fakeFs);
-  const setupFn = (target, name, replacement) => {
-    const orig = target[name];
-    target[name] = replacement;
-    if (typeof (orig == null ? void 0 : orig[nodeUtils.promisify.custom]) !== `undefined`) {
-      replacement[nodeUtils.promisify.custom] = orig[nodeUtils.promisify.custom];
-    }
-  };
-  {
-    setupFn(patchedFs, `exists`, (p, ...args) => {
-      const hasCallback = typeof args[args.length - 1] === `function`;
-      const callback = hasCallback ? args.pop() : () => {
-      };
-      process.nextTick(() => {
-        fakeFs.existsPromise(p).then((exists) => {
-          callback(exists);
-        }, () => {
-          callback(false);
-        });
-      });
-    });
-    setupFn(patchedFs, `read`, (p, buffer, ...args) => {
-      const hasCallback = typeof args[args.length - 1] === `function`;
-      const callback = hasCallback ? args.pop() : () => {
-      };
-      process.nextTick(() => {
-        fakeFs.readPromise(p, buffer, ...args).then((bytesRead) => {
-          callback(null, bytesRead, buffer);
-        }, (error) => {
-          callback(error, 0, buffer);
-        });
-      });
-    });
-    for (const fnName of ASYNC_IMPLEMENTATIONS) {
-      const origName = fnName.replace(/Promise$/, ``);
-      if (typeof patchedFs[origName] === `undefined`)
-        continue;
-      const fakeImpl = fakeFs[fnName];
-      if (typeof fakeImpl === `undefined`)
-        continue;
-      const wrapper = (...args) => {
-        const hasCallback = typeof args[args.length - 1] === `function`;
-        const callback = hasCallback ? args.pop() : () => {
-        };
-        process.nextTick(() => {
-          fakeImpl.apply(fakeFs, args).then((result) => {
-            callback(null, result);
-          }, (error) => {
-            callback(error);
-          });
-        });
-      };
-      setupFn(patchedFs, origName, wrapper);
-    }
-    patchedFs.realpath.native = patchedFs.realpath;
-  }
-  {
-    setupFn(patchedFs, `existsSync`, (p) => {
-      try {
-        return fakeFs.existsSync(p);
-      } catch (error) {
-        return false;
-      }
-    });
-    for (const fnName of SYNC_IMPLEMENTATIONS) {
-      const origName = fnName;
-      if (typeof patchedFs[origName] === `undefined`)
-        continue;
-      const fakeImpl = fakeFs[fnName];
-      if (typeof fakeImpl === `undefined`)
-        continue;
-      setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
-    }
-    patchedFs.realpathSync.native = patchedFs.realpathSync;
-  }
-  {
-    const origEmitWarning = process.emitWarning;
-    process.emitWarning = () => {
-    };
-    let patchedFsPromises;
-    try {
-      patchedFsPromises = patchedFs.promises;
-    } finally {
-      process.emitWarning = origEmitWarning;
-    }
-    if (typeof patchedFsPromises !== `undefined`) {
-      for (const fnName of ASYNC_IMPLEMENTATIONS) {
-        const origName = fnName.replace(/Promise$/, ``);
-        if (typeof patchedFsPromises[origName] === `undefined`)
-          continue;
-        const fakeImpl = fakeFs[fnName];
-        if (typeof fakeImpl === `undefined`)
-          continue;
-        if (fnName === `open`)
-          continue;
-        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
-      }
-      class FileHandle {
-        constructor(fd) {
-          this.fd = fd;
-        }
-      }
-      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
-        const origName = fnName.replace(/Promise$/, ``);
-        const fakeImpl = fakeFs[fnName];
-        if (typeof fakeImpl === `undefined`)
-          continue;
-        setupFn(FileHandle.prototype, origName, function(...args) {
-          return fakeImpl.call(fakeFs, this.fd, ...args);
-        });
-      }
-      setupFn(patchedFsPromises, `open`, async (...args) => {
-        const fd = await fakeFs.openPromise(...args);
-        return new FileHandle(fd);
-      });
-    }
-  }
-  {
-    patchedFs.read[nodeUtils.promisify.custom] = async (p, buffer, ...args) => {
-      const res = fakeFs.readPromise(p, buffer, ...args);
-      return {bytesRead: await res, buffer};
-    };
-  }
 }
 
 var libzipSync = {exports: {}};
@@ -49909,6 +46937,2946 @@ function getLibzipSync() {
   return mod;
 }
 
+class NodeFS extends BasePortableFakeFS {
+  constructor(realFs = fs__default.default) {
+    super();
+    this.realFs = realFs;
+    if (typeof this.realFs.lutimes !== `undefined`) {
+      this.lutimesPromise = this.lutimesPromiseImpl;
+      this.lutimesSync = this.lutimesSyncImpl;
+    }
+  }
+  getExtractHint() {
+    return false;
+  }
+  getRealPath() {
+    return PortablePath.root;
+  }
+  resolve(p) {
+    return ppath.resolve(p);
+  }
+  async openPromise(p, flags, mode) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.open(npath.fromPortablePath(p), flags, mode, this.makeCallback(resolve, reject));
+    });
+  }
+  openSync(p, flags, mode) {
+    return this.realFs.openSync(npath.fromPortablePath(p), flags, mode);
+  }
+  async opendirPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      if (typeof opts !== `undefined`) {
+        this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    }).then((dir) => {
+      return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
+    });
+  }
+  opendirSync(p, opts) {
+    const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
+    return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
+  }
+  async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.read(fd, buffer, offset, length, position, (error, bytesRead) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(bytesRead);
+        }
+      });
+    });
+  }
+  readSync(fd, buffer, offset, length, position) {
+    return this.realFs.readSync(fd, buffer, offset, length, position);
+  }
+  async writePromise(fd, buffer, offset, length, position) {
+    return await new Promise((resolve, reject) => {
+      if (typeof buffer === `string`) {
+        return this.realFs.write(fd, buffer, offset, this.makeCallback(resolve, reject));
+      } else {
+        return this.realFs.write(fd, buffer, offset, length, position, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  writeSync(fd, buffer, offset, length, position) {
+    if (typeof buffer === `string`) {
+      return this.realFs.writeSync(fd, buffer, offset);
+    } else {
+      return this.realFs.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+  async closePromise(fd) {
+    await new Promise((resolve, reject) => {
+      this.realFs.close(fd, this.makeCallback(resolve, reject));
+    });
+  }
+  closeSync(fd) {
+    this.realFs.closeSync(fd);
+  }
+  createReadStream(p, opts) {
+    const realPath = p !== null ? npath.fromPortablePath(p) : p;
+    return this.realFs.createReadStream(realPath, opts);
+  }
+  createWriteStream(p, opts) {
+    const realPath = p !== null ? npath.fromPortablePath(p) : p;
+    return this.realFs.createWriteStream(realPath, opts);
+  }
+  async realpathPromise(p) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.realpath(npath.fromPortablePath(p), {}, this.makeCallback(resolve, reject));
+    }).then((path) => {
+      return npath.toPortablePath(path);
+    });
+  }
+  realpathSync(p) {
+    return npath.toPortablePath(this.realFs.realpathSync(npath.fromPortablePath(p), {}));
+  }
+  async existsPromise(p) {
+    return await new Promise((resolve) => {
+      this.realFs.exists(npath.fromPortablePath(p), resolve);
+    });
+  }
+  accessSync(p, mode) {
+    return this.realFs.accessSync(npath.fromPortablePath(p), mode);
+  }
+  async accessPromise(p, mode) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.access(npath.fromPortablePath(p), mode, this.makeCallback(resolve, reject));
+    });
+  }
+  existsSync(p) {
+    return this.realFs.existsSync(npath.fromPortablePath(p));
+  }
+  async statPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      if (opts) {
+        this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  statSync(p, opts) {
+    if (opts) {
+      return this.realFs.statSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.statSync(npath.fromPortablePath(p));
+    }
+  }
+  async fstatPromise(fd, opts) {
+    return await new Promise((resolve, reject) => {
+      if (opts) {
+        this.realFs.fstat(fd, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.fstat(fd, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  fstatSync(fd, opts) {
+    if (opts) {
+      return this.realFs.fstatSync(fd, opts);
+    } else {
+      return this.realFs.fstatSync(fd);
+    }
+  }
+  async lstatPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      if (opts) {
+        this.realFs.lstat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.lstat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  lstatSync(p, opts) {
+    if (opts) {
+      return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
+    } else {
+      return this.realFs.lstatSync(npath.fromPortablePath(p));
+    }
+  }
+  async chmodPromise(p, mask) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.chmod(npath.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
+    });
+  }
+  chmodSync(p, mask) {
+    return this.realFs.chmodSync(npath.fromPortablePath(p), mask);
+  }
+  async chownPromise(p, uid, gid) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.chown(npath.fromPortablePath(p), uid, gid, this.makeCallback(resolve, reject));
+    });
+  }
+  chownSync(p, uid, gid) {
+    return this.realFs.chownSync(npath.fromPortablePath(p), uid, gid);
+  }
+  async renamePromise(oldP, newP) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.rename(npath.fromPortablePath(oldP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+    });
+  }
+  renameSync(oldP, newP) {
+    return this.realFs.renameSync(npath.fromPortablePath(oldP), npath.fromPortablePath(newP));
+  }
+  async copyFilePromise(sourceP, destP, flags = 0) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.copyFile(npath.fromPortablePath(sourceP), npath.fromPortablePath(destP), flags, this.makeCallback(resolve, reject));
+    });
+  }
+  copyFileSync(sourceP, destP, flags = 0) {
+    return this.realFs.copyFileSync(npath.fromPortablePath(sourceP), npath.fromPortablePath(destP), flags);
+  }
+  async appendFilePromise(p, content, opts) {
+    return await new Promise((resolve, reject) => {
+      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+      if (opts) {
+        this.realFs.appendFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.appendFile(fsNativePath, content, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  appendFileSync(p, content, opts) {
+    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+    if (opts) {
+      this.realFs.appendFileSync(fsNativePath, content, opts);
+    } else {
+      this.realFs.appendFileSync(fsNativePath, content);
+    }
+  }
+  async writeFilePromise(p, content, opts) {
+    return await new Promise((resolve, reject) => {
+      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+      if (opts) {
+        this.realFs.writeFile(fsNativePath, content, opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.writeFile(fsNativePath, content, this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  writeFileSync(p, content, opts) {
+    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+    if (opts) {
+      this.realFs.writeFileSync(fsNativePath, content, opts);
+    } else {
+      this.realFs.writeFileSync(fsNativePath, content);
+    }
+  }
+  async unlinkPromise(p) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.unlink(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+    });
+  }
+  unlinkSync(p) {
+    return this.realFs.unlinkSync(npath.fromPortablePath(p));
+  }
+  async utimesPromise(p, atime, mtime) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.utimes(npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+    });
+  }
+  utimesSync(p, atime, mtime) {
+    this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
+  }
+  async lutimesPromiseImpl(p, atime, mtime) {
+    const lutimes = this.realFs.lutimes;
+    if (typeof lutimes === `undefined`)
+      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+    return await new Promise((resolve, reject) => {
+      lutimes.call(this.realFs, npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+    });
+  }
+  lutimesSyncImpl(p, atime, mtime) {
+    const lutimesSync = this.realFs.lutimesSync;
+    if (typeof lutimesSync === `undefined`)
+      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
+    lutimesSync.call(this.realFs, npath.fromPortablePath(p), atime, mtime);
+  }
+  async mkdirPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+    });
+  }
+  mkdirSync(p, opts) {
+    return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
+  }
+  async rmdirPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      if (opts) {
+        this.realFs.rmdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.rmdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  rmdirSync(p, opts) {
+    return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
+  }
+  async linkPromise(existingP, newP) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.link(npath.fromPortablePath(existingP), npath.fromPortablePath(newP), this.makeCallback(resolve, reject));
+    });
+  }
+  linkSync(existingP, newP) {
+    return this.realFs.linkSync(npath.fromPortablePath(existingP), npath.fromPortablePath(newP));
+  }
+  async symlinkPromise(target, p, type) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.symlink(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type, this.makeCallback(resolve, reject));
+    });
+  }
+  symlinkSync(target, p, type) {
+    return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``)), npath.fromPortablePath(p), type);
+  }
+  async readFilePromise(p, encoding) {
+    return await new Promise((resolve, reject) => {
+      const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+      this.realFs.readFile(fsNativePath, encoding, this.makeCallback(resolve, reject));
+    });
+  }
+  readFileSync(p, encoding) {
+    const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
+    return this.realFs.readFileSync(fsNativePath, encoding);
+  }
+  async readdirPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      if (opts == null ? void 0 : opts.withFileTypes) {
+        this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback((value) => resolve(value), reject));
+      }
+    });
+  }
+  readdirSync(p, opts) {
+    if (opts == null ? void 0 : opts.withFileTypes) {
+      return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true});
+    } else {
+      return this.realFs.readdirSync(npath.fromPortablePath(p));
+    }
+  }
+  async readlinkPromise(p) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.readlink(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+    }).then((path) => {
+      return npath.toPortablePath(path);
+    });
+  }
+  readlinkSync(p) {
+    return npath.toPortablePath(this.realFs.readlinkSync(npath.fromPortablePath(p)));
+  }
+  async truncatePromise(p, len) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.truncate(npath.fromPortablePath(p), len, this.makeCallback(resolve, reject));
+    });
+  }
+  truncateSync(p, len) {
+    return this.realFs.truncateSync(npath.fromPortablePath(p), len);
+  }
+  watch(p, a, b) {
+    return this.realFs.watch(npath.fromPortablePath(p), a, b);
+  }
+  watchFile(p, a, b) {
+    return this.realFs.watchFile(npath.fromPortablePath(p), a, b);
+  }
+  unwatchFile(p, cb) {
+    return this.realFs.unwatchFile(npath.fromPortablePath(p), cb);
+  }
+  makeCallback(resolve, reject) {
+    return (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    };
+  }
+}
+
+var Event;
+(function(Event2) {
+  Event2["Change"] = `change`;
+  Event2["Stop"] = `stop`;
+})(Event || (Event = {}));
+var Status;
+(function(Status2) {
+  Status2["Ready"] = `ready`;
+  Status2["Running"] = `running`;
+  Status2["Stopped"] = `stopped`;
+})(Status || (Status = {}));
+function assertStatus(current, expected) {
+  if (current !== expected) {
+    throw new Error(`Invalid StatWatcher status: expected '${expected}', got '${current}'`);
+  }
+}
+class CustomStatWatcher extends events.EventEmitter {
+  constructor(fakeFs, path, {bigint = false} = {}) {
+    super();
+    this.status = Status.Ready;
+    this.changeListeners = new Map();
+    this.startTimeout = null;
+    this.fakeFs = fakeFs;
+    this.path = path;
+    this.bigint = bigint;
+    this.lastStats = this.stat();
+  }
+  static create(fakeFs, path, opts) {
+    const statWatcher = new CustomStatWatcher(fakeFs, path, opts);
+    statWatcher.start();
+    return statWatcher;
+  }
+  start() {
+    assertStatus(this.status, Status.Ready);
+    this.status = Status.Running;
+    this.startTimeout = setTimeout(() => {
+      this.startTimeout = null;
+      if (!this.fakeFs.existsSync(this.path)) {
+        this.emit(Event.Change, this.lastStats, this.lastStats);
+      }
+    }, 3);
+  }
+  stop() {
+    assertStatus(this.status, Status.Running);
+    this.status = Status.Stopped;
+    if (this.startTimeout !== null) {
+      clearTimeout(this.startTimeout);
+      this.startTimeout = null;
+    }
+    this.emit(Event.Stop);
+  }
+  stat() {
+    try {
+      return this.fakeFs.statSync(this.path, {bigint: this.bigint});
+    } catch (error) {
+      const statInstance = this.bigint ? new BigIntStatsEntry() : new StatEntry();
+      return clearStats(statInstance);
+    }
+  }
+  makeInterval(opts) {
+    const interval = setInterval(() => {
+      const currentStats = this.stat();
+      const previousStats = this.lastStats;
+      if (areStatsEqual(currentStats, previousStats))
+        return;
+      this.lastStats = currentStats;
+      this.emit(Event.Change, currentStats, previousStats);
+    }, opts.interval);
+    return opts.persistent ? interval : interval.unref();
+  }
+  registerChangeListener(listener, opts) {
+    this.addListener(Event.Change, listener);
+    this.changeListeners.set(listener, this.makeInterval(opts));
+  }
+  unregisterChangeListener(listener) {
+    this.removeListener(Event.Change, listener);
+    const interval = this.changeListeners.get(listener);
+    if (typeof interval !== `undefined`)
+      clearInterval(interval);
+    this.changeListeners.delete(listener);
+  }
+  unregisterAllChangeListeners() {
+    for (const listener of this.changeListeners.keys()) {
+      this.unregisterChangeListener(listener);
+    }
+  }
+  hasChangeListeners() {
+    return this.changeListeners.size > 0;
+  }
+  ref() {
+    for (const interval of this.changeListeners.values())
+      interval.ref();
+    return this;
+  }
+  unref() {
+    for (const interval of this.changeListeners.values())
+      interval.unref();
+    return this;
+  }
+}
+
+const statWatchersByFakeFS = new WeakMap();
+function watchFile(fakeFs, path, a, b) {
+  let bigint;
+  let persistent;
+  let interval;
+  let listener;
+  switch (typeof a) {
+    case `function`:
+      {
+        bigint = false;
+        persistent = true;
+        interval = 5007;
+        listener = a;
+      }
+      break;
+    default:
+      {
+        ({
+          bigint = false,
+          persistent = true,
+          interval = 5007
+        } = a);
+        listener = b;
+      }
+      break;
+  }
+  let statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`)
+    statWatchersByFakeFS.set(fakeFs, statWatchers = new Map());
+  let statWatcher = statWatchers.get(path);
+  if (typeof statWatcher === `undefined`) {
+    statWatcher = CustomStatWatcher.create(fakeFs, path, {bigint});
+    statWatchers.set(path, statWatcher);
+  }
+  statWatcher.registerChangeListener(listener, {persistent, interval});
+  return statWatcher;
+}
+function unwatchFile(fakeFs, path, cb) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`)
+    return;
+  const statWatcher = statWatchers.get(path);
+  if (typeof statWatcher === `undefined`)
+    return;
+  if (typeof cb === `undefined`)
+    statWatcher.unregisterAllChangeListeners();
+  else
+    statWatcher.unregisterChangeListener(cb);
+  if (!statWatcher.hasChangeListeners()) {
+    statWatcher.stop();
+    statWatchers.delete(path);
+  }
+}
+function unwatchAllFiles(fakeFs) {
+  const statWatchers = statWatchersByFakeFS.get(fakeFs);
+  if (typeof statWatchers === `undefined`)
+    return;
+  for (const path of statWatchers.keys()) {
+    unwatchFile(fakeFs, path);
+  }
+}
+
+var __defProp$3 = Object.defineProperty;
+var __getOwnPropSymbols$4 = Object.getOwnPropertySymbols;
+var __hasOwnProp$4 = Object.prototype.hasOwnProperty;
+var __propIsEnum$4 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$3 = (obj, key, value) => key in obj ? __defProp$3(obj, key, {enumerable: true, configurable: true, writable: true, value}) : obj[key] = value;
+var __spreadValues$3 = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$4.call(b, prop))
+      __defNormalProp$3(a, prop, b[prop]);
+  if (__getOwnPropSymbols$4)
+    for (var prop of __getOwnPropSymbols$4(b)) {
+      if (__propIsEnum$4.call(b, prop))
+        __defNormalProp$3(a, prop, b[prop]);
+    }
+  return a;
+};
+const DEFAULT_COMPRESSION_LEVEL = `mixed`;
+function toUnixTimestamp(time) {
+  if (typeof time === `string` && String(+time) === time)
+    return +time;
+  if (Number.isFinite(time)) {
+    if (time < 0) {
+      return Date.now() / 1e3;
+    } else {
+      return time;
+    }
+  }
+  if (nodeUtils.isDate(time))
+    return time.getTime() / 1e3;
+  throw new Error(`Invalid time`);
+}
+function makeEmptyArchive() {
+  return Buffer.from([
+    80,
+    75,
+    5,
+    6,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ]);
+}
+class ZipFS extends BasePortableFakeFS {
+  constructor(source, opts = {}) {
+    super();
+    this.lzSource = null;
+    this.listings = new Map();
+    this.entries = new Map();
+    this.fileSources = new Map();
+    this.fds = new Map();
+    this.nextFd = 0;
+    this.ready = false;
+    this.readOnly = false;
+    var _a;
+    this.libzip = (_a = opts.libzip) != null ? _a : getLibzipSync();
+    const pathOptions = opts;
+    this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
+    source != null ? source : source = makeEmptyArchive();
+    if (typeof source === `string`) {
+      const {baseFs = new NodeFS()} = pathOptions;
+      this.baseFs = baseFs;
+      this.path = source;
+    } else {
+      this.path = null;
+      this.baseFs = null;
+    }
+    if (opts.stats) {
+      this.stats = opts.stats;
+    } else {
+      if (typeof source === `string`) {
+        try {
+          this.stats = this.baseFs.statSync(source);
+        } catch (error) {
+          if (error.code === `ENOENT` && pathOptions.create) {
+            this.stats = makeDefaultStats();
+          } else {
+            throw error;
+          }
+        }
+      } else {
+        this.stats = makeDefaultStats();
+      }
+    }
+    const errPtr = this.libzip.malloc(4);
+    try {
+      let flags = 0;
+      if (typeof source === `string` && pathOptions.create)
+        flags |= this.libzip.ZIP_CREATE | this.libzip.ZIP_TRUNCATE;
+      if (opts.readOnly) {
+        flags |= this.libzip.ZIP_RDONLY;
+        this.readOnly = true;
+      }
+      if (typeof source === `string`) {
+        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
+      } else {
+        const lzSource = this.allocateUnattachedSource(source);
+        try {
+          this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
+          this.lzSource = lzSource;
+        } catch (error) {
+          this.libzip.source.free(lzSource);
+          throw error;
+        }
+      }
+      if (this.zip === 0) {
+        const error = this.libzip.struct.errorS();
+        this.libzip.error.initWithCode(error, this.libzip.getValue(errPtr, `i32`));
+        throw this.makeLibzipError(error);
+      }
+    } finally {
+      this.libzip.free(errPtr);
+    }
+    this.listings.set(PortablePath.root, new Set());
+    const entryCount = this.libzip.getNumEntries(this.zip, 0);
+    for (let t = 0; t < entryCount; ++t) {
+      const raw = this.libzip.getName(this.zip, t, 0);
+      if (ppath.isAbsolute(raw))
+        continue;
+      const p = ppath.resolve(PortablePath.root, raw);
+      this.registerEntry(p, t);
+      if (raw.endsWith(`/`)) {
+        this.registerListing(p);
+      }
+    }
+    this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
+    if (this.symlinkCount === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.ready = true;
+  }
+  makeLibzipError(error) {
+    const errorCode = this.libzip.struct.errorCodeZip(error);
+    const strerror = this.libzip.error.strerror(error);
+    const libzipError = new LibzipError(strerror, this.libzip.errors[errorCode]);
+    if (errorCode === this.libzip.errors.ZIP_ER_CHANGED)
+      throw new Error(`Assertion failed: Unexpected libzip error: ${libzipError.message}`);
+    return libzipError;
+  }
+  getExtractHint(hints) {
+    for (const fileName of this.entries.keys()) {
+      const ext = this.pathUtils.extname(fileName);
+      if (hints.relevantExtensions.has(ext)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  getAllFiles() {
+    return Array.from(this.entries.keys());
+  }
+  getRealPath() {
+    if (!this.path)
+      throw new Error(`ZipFS don't have real paths when loaded from a buffer`);
+    return this.path;
+  }
+  getBufferAndClose() {
+    this.prepareClose();
+    if (!this.lzSource)
+      throw new Error(`ZipFS was not created from a Buffer`);
+    try {
+      this.libzip.source.keep(this.lzSource);
+      if (this.libzip.close(this.zip) === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      if (this.libzip.source.open(this.lzSource) === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_END) === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      const size = this.libzip.source.tell(this.lzSource);
+      if (size === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_SET) === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      const buffer = this.libzip.malloc(size);
+      if (!buffer)
+        throw new Error(`Couldn't allocate enough memory`);
+      try {
+        const rc = this.libzip.source.read(this.lzSource, buffer, size);
+        if (rc === -1)
+          throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+        else if (rc < size)
+          throw new Error(`Incomplete read`);
+        else if (rc > size)
+          throw new Error(`Overread`);
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
+        return Buffer.from(memory);
+      } finally {
+        this.libzip.free(buffer);
+      }
+    } finally {
+      this.libzip.source.close(this.lzSource);
+      this.libzip.source.free(this.lzSource);
+      this.ready = false;
+    }
+  }
+  prepareClose() {
+    if (!this.ready)
+      throw EBUSY(`archive closed, close`);
+    unwatchAllFiles(this);
+  }
+  saveAndClose() {
+    if (!this.path || !this.baseFs)
+      throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
+    this.prepareClose();
+    if (this.readOnly) {
+      this.discardAndClose();
+      return;
+    }
+    const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === DEFAULT_MODE ? void 0 : this.stats.mode;
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), {mode: newMode});
+    } else {
+      const rc = this.libzip.close(this.zip);
+      if (rc === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      if (typeof newMode !== `undefined`) {
+        this.baseFs.chmodSync(this.path, newMode);
+      }
+    }
+    this.ready = false;
+  }
+  discardAndClose() {
+    this.prepareClose();
+    this.libzip.discard(this.zip);
+    this.ready = false;
+  }
+  resolve(p) {
+    return ppath.resolve(PortablePath.root, p);
+  }
+  async openPromise(p, flags, mode) {
+    return this.openSync(p, flags, mode);
+  }
+  openSync(p, flags, mode) {
+    const fd = this.nextFd++;
+    this.fds.set(fd, {cursor: 0, p});
+    return fd;
+  }
+  hasOpenFileHandles() {
+    return !!this.fds.size;
+  }
+  async opendirPromise(p, opts) {
+    return this.opendirSync(p, opts);
+  }
+  opendirSync(p, opts = {}) {
+    const resolvedP = this.resolveFilename(`opendir '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`opendir '${p}'`);
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw ENOTDIR(`opendir '${p}'`);
+    const entries = [...directoryListing];
+    const fd = this.openSync(resolvedP, `r`);
+    const onClose = () => {
+      this.closeSync(fd);
+    };
+    return opendir(this, resolvedP, entries, {onClose});
+  }
+  async readPromise(fd, buffer, offset, length, position) {
+    return this.readSync(fd, buffer, offset, length, position);
+  }
+  readSync(fd, buffer, offset = 0, length = buffer.byteLength, position = -1) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    let realPosition;
+    if (position === -1 || position === null)
+      realPosition = entry.cursor;
+    else
+      realPosition = position;
+    const source = this.readFileSync(entry.p);
+    source.copy(buffer, offset, realPosition, realPosition + length);
+    const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
+    if (position === -1 || position === null)
+      entry.cursor += bytesRead;
+    return bytesRead;
+  }
+  async writePromise(fd, buffer, offset, length, position) {
+    if (typeof buffer === `string`) {
+      return this.writeSync(fd, buffer, position);
+    } else {
+      return this.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+  writeSync(fd, buffer, offset, length, position) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    throw new Error(`Unimplemented`);
+  }
+  async closePromise(fd) {
+    return this.closeSync(fd);
+  }
+  closeSync(fd) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    this.fds.delete(fd);
+  }
+  createReadStream(p, {encoding} = {}) {
+    if (p === null)
+      throw new Error(`Unimplemented`);
+    const fd = this.openSync(p, `r`);
+    const stream$1 = Object.assign(new stream.PassThrough({
+      emitClose: true,
+      autoDestroy: true,
+      destroy: (error, callback) => {
+        clearImmediate(immediate);
+        this.closeSync(fd);
+        callback(error);
+      }
+    }), {
+      close() {
+        stream$1.destroy();
+      },
+      bytesRead: 0,
+      path: p
+    });
+    const immediate = setImmediate(async () => {
+      try {
+        const data = await this.readFilePromise(p, encoding);
+        stream$1.bytesRead = data.length;
+        stream$1.end(data);
+      } catch (error) {
+        stream$1.destroy(error);
+      }
+    });
+    return stream$1;
+  }
+  createWriteStream(p, {encoding} = {}) {
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    if (p === null)
+      throw new Error(`Unimplemented`);
+    const chunks = [];
+    const fd = this.openSync(p, `w`);
+    const stream$1 = Object.assign(new stream.PassThrough({
+      autoDestroy: true,
+      emitClose: true,
+      destroy: (error, callback) => {
+        try {
+          if (error) {
+            callback(error);
+          } else {
+            this.writeFileSync(p, Buffer.concat(chunks), encoding);
+            callback(null);
+          }
+        } catch (err) {
+          callback(err);
+        } finally {
+          this.closeSync(fd);
+        }
+      }
+    }), {
+      bytesWritten: 0,
+      path: p,
+      close() {
+        stream$1.destroy();
+      }
+    });
+    stream$1.on(`data`, (chunk) => {
+      const chunkBuffer = Buffer.from(chunk);
+      stream$1.bytesWritten += chunkBuffer.length;
+      chunks.push(chunkBuffer);
+    });
+    return stream$1;
+  }
+  async realpathPromise(p) {
+    return this.realpathSync(p);
+  }
+  realpathSync(p) {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`lstat '${p}'`);
+    return resolvedP;
+  }
+  async existsPromise(p) {
+    return this.existsSync(p);
+  }
+  existsSync(p) {
+    if (!this.ready)
+      throw EBUSY(`archive closed, existsSync '${p}'`);
+    if (this.symlinkCount === 0) {
+      const resolvedP2 = ppath.resolve(PortablePath.root, p);
+      return this.entries.has(resolvedP2) || this.listings.has(resolvedP2);
+    }
+    let resolvedP;
+    try {
+      resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    } catch (error) {
+      return false;
+    }
+    return this.entries.has(resolvedP) || this.listings.has(resolvedP);
+  }
+  async accessPromise(p, mode) {
+    return this.accessSync(p, mode);
+  }
+  accessSync(p, mode = fs.constants.F_OK) {
+    const resolvedP = this.resolveFilename(`access '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`access '${p}'`);
+    if (this.readOnly && mode & fs.constants.W_OK) {
+      throw EROFS(`access '${p}'`);
+    }
+  }
+  async statPromise(p, opts) {
+    return this.statSync(p, opts);
+  }
+  statSync(p, opts) {
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`stat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`stat '${p}'`);
+    return this.statImpl(`stat '${p}'`, resolvedP, opts);
+  }
+  async fstatPromise(fd, opts) {
+    return this.fstatSync(fd, opts);
+  }
+  fstatSync(fd, opts) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fstatSync`);
+    const {p} = entry;
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`stat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`stat '${p}'`);
+    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
+  }
+  async lstatPromise(p, opts) {
+    return this.lstatSync(p, opts);
+  }
+  lstatSync(p, opts) {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`lstat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`lstat '${p}'`);
+    return this.statImpl(`lstat '${p}'`, resolvedP, opts);
+  }
+  statImpl(reason, p, opts = {}) {
+    const entry = this.entries.get(p);
+    if (typeof entry !== `undefined`) {
+      const stat = this.libzip.struct.statS();
+      const rc = this.libzip.statIndex(this.zip, entry, 0, 0, stat);
+      if (rc === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      const uid = this.stats.uid;
+      const gid = this.stats.gid;
+      const size = this.libzip.struct.statSize(stat) >>> 0;
+      const blksize = 512;
+      const blocks = Math.ceil(size / blksize);
+      const mtimeMs = (this.libzip.struct.statMtime(stat) >>> 0) * 1e3;
+      const atimeMs = mtimeMs;
+      const birthtimeMs = mtimeMs;
+      const ctimeMs = mtimeMs;
+      const atime = new Date(atimeMs);
+      const birthtime = new Date(birthtimeMs);
+      const ctime = new Date(ctimeMs);
+      const mtime = new Date(mtimeMs);
+      const type = this.listings.has(p) ? S_IFDIR : this.isSymbolicLink(entry) ? S_IFLNK : S_IFREG;
+      const defaultMode = type === S_IFDIR ? 493 : 420;
+      const mode = type | this.getUnixMode(entry, defaultMode) & 511;
+      const crc = this.libzip.struct.statCrc(stat);
+      const statInstance = Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
+      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
+    }
+    if (this.listings.has(p)) {
+      const uid = this.stats.uid;
+      const gid = this.stats.gid;
+      const size = 0;
+      const blksize = 512;
+      const blocks = 0;
+      const atimeMs = this.stats.mtimeMs;
+      const birthtimeMs = this.stats.mtimeMs;
+      const ctimeMs = this.stats.mtimeMs;
+      const mtimeMs = this.stats.mtimeMs;
+      const atime = new Date(atimeMs);
+      const birthtime = new Date(birthtimeMs);
+      const ctime = new Date(ctimeMs);
+      const mtime = new Date(mtimeMs);
+      const mode = S_IFDIR | 493;
+      const crc = 0;
+      const statInstance = Object.assign(new StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
+      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
+    }
+    throw new Error(`Unreachable`);
+  }
+  getUnixMode(index, defaultMode) {
+    const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+      return defaultMode;
+    return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+  }
+  registerListing(p) {
+    let listing = this.listings.get(p);
+    if (listing)
+      return listing;
+    const parentListing = this.registerListing(ppath.dirname(p));
+    listing = new Set();
+    parentListing.add(ppath.basename(p));
+    this.listings.set(p, listing);
+    return listing;
+  }
+  registerEntry(p, index) {
+    const parentListing = this.registerListing(ppath.dirname(p));
+    parentListing.add(ppath.basename(p));
+    this.entries.set(p, index);
+  }
+  unregisterListing(p) {
+    this.listings.delete(p);
+    const parentListing = this.listings.get(ppath.dirname(p));
+    parentListing == null ? void 0 : parentListing.delete(ppath.basename(p));
+  }
+  unregisterEntry(p) {
+    this.unregisterListing(p);
+    const entry = this.entries.get(p);
+    this.entries.delete(p);
+    if (typeof entry === `undefined`)
+      return;
+    this.fileSources.delete(entry);
+    if (this.isSymbolicLink(entry)) {
+      this.symlinkCount--;
+    }
+  }
+  deleteEntry(p, index) {
+    this.unregisterEntry(p);
+    const rc = this.libzip.delete(this.zip, index);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+  }
+  resolveFilename(reason, p, resolveLastComponent = true) {
+    if (!this.ready)
+      throw EBUSY(`archive closed, ${reason}`);
+    let resolvedP = ppath.resolve(PortablePath.root, p);
+    if (resolvedP === `/`)
+      return PortablePath.root;
+    const fileIndex = this.entries.get(resolvedP);
+    if (resolveLastComponent && fileIndex !== void 0) {
+      if (this.symlinkCount !== 0 && this.isSymbolicLink(fileIndex)) {
+        const target = this.getFileSource(fileIndex).toString();
+        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true);
+      } else {
+        return resolvedP;
+      }
+    }
+    while (true) {
+      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
+      const isDir = this.listings.has(parentP);
+      const doesExist = this.entries.has(parentP);
+      if (!isDir && !doesExist)
+        throw ENOENT(reason);
+      if (!isDir)
+        throw ENOTDIR(reason);
+      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
+      if (!resolveLastComponent || this.symlinkCount === 0)
+        break;
+      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
+      if (index === -1)
+        break;
+      if (this.isSymbolicLink(index)) {
+        const target = this.getFileSource(index).toString();
+        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
+      } else {
+        break;
+      }
+    }
+    return resolvedP;
+  }
+  allocateBuffer(content) {
+    if (!Buffer.isBuffer(content))
+      content = Buffer.from(content);
+    const buffer = this.libzip.malloc(content.byteLength);
+    if (!buffer)
+      throw new Error(`Couldn't allocate enough memory`);
+    const heap = new Uint8Array(this.libzip.HEAPU8.buffer, buffer, content.byteLength);
+    heap.set(content);
+    return {buffer, byteLength: content.byteLength};
+  }
+  allocateUnattachedSource(content) {
+    const error = this.libzip.struct.errorS();
+    const {buffer, byteLength} = this.allocateBuffer(content);
+    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
+    if (source === 0) {
+      this.libzip.free(error);
+      throw this.makeLibzipError(error);
+    }
+    return source;
+  }
+  allocateSource(content) {
+    const {buffer, byteLength} = this.allocateBuffer(content);
+    const source = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
+    if (source === 0) {
+      this.libzip.free(buffer);
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+    return source;
+  }
+  setFileSource(p, content) {
+    const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content);
+    const target = ppath.relative(PortablePath.root, p);
+    const lzSource = this.allocateSource(content);
+    try {
+      const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
+      if (newIndex === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      if (this.level !== `mixed`) {
+        let method;
+        if (this.level === 0)
+          method = this.libzip.ZIP_CM_STORE;
+        else
+          method = this.libzip.ZIP_CM_DEFLATE;
+        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
+        if (rc === -1) {
+          throw this.makeLibzipError(this.libzip.getError(this.zip));
+        }
+      }
+      this.fileSources.set(newIndex, buffer);
+      return newIndex;
+    } catch (error) {
+      this.libzip.source.free(lzSource);
+      throw error;
+    }
+  }
+  isSymbolicLink(index) {
+    if (this.symlinkCount === 0)
+      return false;
+    const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
+    if (attrs === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+      return false;
+    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+    return (attributes & S_IFMT) === S_IFLNK;
+  }
+  getFileSource(index, opts = {asyncDecompress: false}) {
+    const cachedFileSource = this.fileSources.get(index);
+    if (typeof cachedFileSource !== `undefined`)
+      return cachedFileSource;
+    const stat = this.libzip.struct.statS();
+    const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const size = this.libzip.struct.statCompSize(stat);
+    const compressionMethod = this.libzip.struct.statCompMethod(stat);
+    const buffer = this.libzip.malloc(size);
+    try {
+      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
+      if (file === 0)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      try {
+        const rc2 = this.libzip.fread(file, buffer, size, 0);
+        if (rc2 === -1)
+          throw this.makeLibzipError(this.libzip.file.getError(file));
+        else if (rc2 < size)
+          throw new Error(`Incomplete read`);
+        else if (rc2 > size)
+          throw new Error(`Overread`);
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
+        const data = Buffer.from(memory);
+        if (compressionMethod === 0) {
+          this.fileSources.set(index, data);
+          return data;
+        } else if (opts.asyncDecompress) {
+          return new Promise((resolve, reject) => {
+            zlib__default.default.inflateRaw(data, (error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                this.fileSources.set(index, result);
+                resolve(result);
+              }
+            });
+          });
+        } else {
+          const decompressedData = zlib__default.default.inflateRawSync(data);
+          this.fileSources.set(index, decompressedData);
+          return decompressedData;
+        }
+      } finally {
+        this.libzip.fclose(file);
+      }
+    } finally {
+      this.libzip.free(buffer);
+    }
+  }
+  async chmodPromise(p, mask) {
+    return this.chmodSync(p, mask);
+  }
+  chmodSync(p, mask) {
+    if (this.readOnly)
+      throw EROFS(`chmod '${p}'`);
+    mask &= 493;
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
+    const entry = this.entries.get(resolvedP);
+    if (typeof entry === `undefined`)
+      throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
+    const oldMod = this.getUnixMode(entry, S_IFREG | 0);
+    const newMod = oldMod & ~511 | mask;
+    const rc = this.libzip.file.setExternalAttributes(this.zip, entry, 0, 0, this.libzip.ZIP_OPSYS_UNIX, newMod << 16);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+  }
+  async chownPromise(p, uid, gid) {
+    return this.chownSync(p, uid, gid);
+  }
+  chownSync(p, uid, gid) {
+    throw new Error(`Unimplemented`);
+  }
+  async renamePromise(oldP, newP) {
+    return this.renameSync(oldP, newP);
+  }
+  renameSync(oldP, newP) {
+    throw new Error(`Unimplemented`);
+  }
+  async copyFilePromise(sourceP, destP, flags) {
+    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+    const source = await this.getFileSource(indexSource, {asyncDecompress: true});
+    const newIndex = this.setFileSource(resolvedDestP, source);
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
+  }
+  copyFileSync(sourceP, destP, flags = 0) {
+    const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+    const source = this.getFileSource(indexSource);
+    const newIndex = this.setFileSource(resolvedDestP, source);
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
+  }
+  prepareCopyFile(sourceP, destP, flags = 0) {
+    if (this.readOnly)
+      throw EROFS(`copyfile '${sourceP} -> '${destP}'`);
+    if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
+      throw ENOSYS(`unsupported clone operation`, `copyfile '${sourceP}' -> ${destP}'`);
+    const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
+    const indexSource = this.entries.get(resolvedSourceP);
+    if (typeof indexSource === `undefined`)
+      throw EINVAL(`copyfile '${sourceP}' -> '${destP}'`);
+    const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
+    const indexDest = this.entries.get(resolvedDestP);
+    if ((flags & (fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
+      throw EEXIST(`copyfile '${sourceP}' -> '${destP}'`);
+    return {
+      indexSource,
+      resolvedDestP,
+      indexDest
+    };
+  }
+  async appendFilePromise(p, content, opts) {
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    if (typeof opts === `undefined`)
+      opts = {flag: `a`};
+    else if (typeof opts === `string`)
+      opts = {flag: `a`, encoding: opts};
+    else if (typeof opts.flag === `undefined`)
+      opts = __spreadValues$3({flag: `a`}, opts);
+    return this.writeFilePromise(p, content, opts);
+  }
+  appendFileSync(p, content, opts = {}) {
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    if (typeof opts === `undefined`)
+      opts = {flag: `a`};
+    else if (typeof opts === `string`)
+      opts = {flag: `a`, encoding: opts};
+    else if (typeof opts.flag === `undefined`)
+      opts = __spreadValues$3({flag: `a`}, opts);
+    return this.writeFileSync(p, content, opts);
+  }
+  fdToPath(fd, reason) {
+    var _a;
+    const path = (_a = this.fds.get(fd)) == null ? void 0 : _a.p;
+    if (typeof path === `undefined`)
+      throw EBADF(reason);
+    return path;
+  }
+  async writeFilePromise(p, content, opts) {
+    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
+    if (index !== void 0 && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content)]);
+    if (encoding !== null)
+      content = content.toString(encoding);
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index)
+      this.registerEntry(resolvedP, newIndex);
+    if (mode !== null) {
+      await this.chmodPromise(resolvedP, mode);
+    }
+  }
+  writeFileSync(p, content, opts) {
+    const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
+    if (index !== void 0 && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
+    if (encoding !== null)
+      content = content.toString(encoding);
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index)
+      this.registerEntry(resolvedP, newIndex);
+    if (mode !== null) {
+      this.chmodSync(resolvedP, mode);
+    }
+  }
+  prepareWriteFile(p, opts) {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`open '${p}'`);
+    let encoding = null, mode = null;
+    if (typeof opts === `string`) {
+      encoding = opts;
+    } else if (typeof opts === `object`) {
+      ({
+        encoding = null,
+        mode = null
+      } = opts);
+    }
+    const index = this.entries.get(resolvedP);
+    return {
+      encoding,
+      mode,
+      resolvedP,
+      index
+    };
+  }
+  async unlinkPromise(p) {
+    return this.unlinkSync(p);
+  }
+  unlinkSync(p) {
+    if (this.readOnly)
+      throw EROFS(`unlink '${p}'`);
+    const resolvedP = this.resolveFilename(`unlink '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`unlink '${p}'`);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`unlink '${p}'`);
+    this.deleteEntry(resolvedP, index);
+  }
+  async utimesPromise(p, atime, mtime) {
+    return this.utimesSync(p, atime, mtime);
+  }
+  utimesSync(p, atime, mtime) {
+    if (this.readOnly)
+      throw EROFS(`utimes '${p}'`);
+    const resolvedP = this.resolveFilename(`utimes '${p}'`, p);
+    this.utimesImpl(resolvedP, mtime);
+  }
+  async lutimesPromise(p, atime, mtime) {
+    return this.lutimesSync(p, atime, mtime);
+  }
+  lutimesSync(p, atime, mtime) {
+    if (this.readOnly)
+      throw EROFS(`lutimes '${p}'`);
+    const resolvedP = this.resolveFilename(`utimes '${p}'`, p, false);
+    this.utimesImpl(resolvedP, mtime);
+  }
+  utimesImpl(resolvedP, mtime) {
+    if (this.listings.has(resolvedP)) {
+      if (!this.entries.has(resolvedP))
+        this.hydrateDirectory(resolvedP);
+    }
+    const entry = this.entries.get(resolvedP);
+    if (entry === void 0)
+      throw new Error(`Unreachable`);
+    const rc = this.libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+  }
+  async mkdirPromise(p, opts) {
+    return this.mkdirSync(p, opts);
+  }
+  mkdirSync(p, {mode = 493, recursive = false} = {}) {
+    if (recursive) {
+      this.mkdirpSync(p, {chmod: mode});
+      return;
+    }
+    if (this.readOnly)
+      throw EROFS(`mkdir '${p}'`);
+    const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
+    if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
+      throw EEXIST(`mkdir '${p}'`);
+    this.hydrateDirectory(resolvedP);
+    this.chmodSync(resolvedP, mode);
+  }
+  async rmdirPromise(p, opts) {
+    return this.rmdirSync(p, opts);
+  }
+  rmdirSync(p, {recursive = false} = {}) {
+    if (this.readOnly)
+      throw EROFS(`rmdir '${p}'`);
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
+    const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw ENOTDIR(`rmdir '${p}'`);
+    if (directoryListing.size > 0)
+      throw ENOTEMPTY(`rmdir '${p}'`);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`rmdir '${p}'`);
+    this.deleteEntry(p, index);
+  }
+  hydrateDirectory(resolvedP) {
+    const index = this.libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
+    if (index === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.registerListing(resolvedP);
+    this.registerEntry(resolvedP, index);
+    return index;
+  }
+  async linkPromise(existingP, newP) {
+    return this.linkSync(existingP, newP);
+  }
+  linkSync(existingP, newP) {
+    throw EOPNOTSUPP(`link '${existingP}' -> '${newP}'`);
+  }
+  async symlinkPromise(target, p) {
+    return this.symlinkSync(target, p);
+  }
+  symlinkSync(target, p) {
+    if (this.readOnly)
+      throw EROFS(`symlink '${target}' -> '${p}'`);
+    const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`symlink '${target}' -> '${p}'`);
+    if (this.entries.has(resolvedP))
+      throw EEXIST(`symlink '${target}' -> '${p}'`);
+    const index = this.setFileSource(resolvedP, target);
+    this.registerEntry(resolvedP, index);
+    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (S_IFLNK | 511) << 16);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.symlinkCount += 1;
+  }
+  async readFilePromise(p, encoding) {
+    if (typeof encoding === `object`)
+      encoding = encoding ? encoding.encoding : void 0;
+    const data = await this.readFileBuffer(p, {asyncDecompress: true});
+    return encoding ? data.toString(encoding) : data;
+  }
+  readFileSync(p, encoding) {
+    if (typeof encoding === `object`)
+      encoding = encoding ? encoding.encoding : void 0;
+    const data = this.readFileBuffer(p);
+    return encoding ? data.toString(encoding) : data;
+  }
+  readFileBuffer(p, opts = {asyncDecompress: false}) {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`open '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`open '${p}'`);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`read`);
+    const entry = this.entries.get(resolvedP);
+    if (entry === void 0)
+      throw new Error(`Unreachable`);
+    return this.getFileSource(entry, opts);
+  }
+  async readdirPromise(p, opts) {
+    return this.readdirSync(p, opts);
+  }
+  readdirSync(p, opts) {
+    const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`scandir '${p}'`);
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw ENOTDIR(`scandir '${p}'`);
+    const entries = [...directoryListing];
+    if (!(opts == null ? void 0 : opts.withFileTypes))
+      return entries;
+    return entries.map((name) => {
+      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+        name
+      });
+    });
+  }
+  async readlinkPromise(p) {
+    const entry = this.prepareReadlink(p);
+    return (await this.getFileSource(entry, {asyncDecompress: true})).toString();
+  }
+  readlinkSync(p) {
+    const entry = this.prepareReadlink(p);
+    return this.getFileSource(entry).toString();
+  }
+  prepareReadlink(p) {
+    const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`readlink '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`open '${p}'`);
+    if (this.listings.has(resolvedP))
+      throw EINVAL(`readlink '${p}'`);
+    const entry = this.entries.get(resolvedP);
+    if (entry === void 0)
+      throw new Error(`Unreachable`);
+    if (!this.isSymbolicLink(entry))
+      throw EINVAL(`readlink '${p}'`);
+    return entry;
+  }
+  async truncatePromise(p, len = 0) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`open '${p}'`);
+    const source = await this.getFileSource(index, {asyncDecompress: true});
+    const truncated = Buffer.alloc(len, 0);
+    source.copy(truncated);
+    return await this.writeFilePromise(p, truncated);
+  }
+  truncateSync(p, len = 0) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`open '${p}'`);
+    const source = this.getFileSource(index);
+    const truncated = Buffer.alloc(len, 0);
+    source.copy(truncated);
+    return this.writeFileSync(p, truncated);
+  }
+  watch(p, a, b) {
+    let persistent;
+    switch (typeof a) {
+      case `function`:
+      case `string`:
+      case `undefined`:
+        {
+          persistent = true;
+        }
+        break;
+      default:
+        {
+          ({persistent = true} = a);
+        }
+        break;
+    }
+    if (!persistent)
+      return {on: () => {
+      }, close: () => {
+      }};
+    const interval = setInterval(() => {
+    }, 24 * 60 * 60 * 1e3);
+    return {on: () => {
+    }, close: () => {
+      clearInterval(interval);
+    }};
+  }
+  watchFile(p, a, b) {
+    const resolvedP = ppath.resolve(PortablePath.root, p);
+    return watchFile(this, resolvedP, a, b);
+  }
+  unwatchFile(p, cb) {
+    const resolvedP = ppath.resolve(PortablePath.root, p);
+    return unwatchFile(this, resolvedP, cb);
+  }
+}
+
+class ProxiedFS extends FakeFS {
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
+  }
+  resolve(path) {
+    return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
+  }
+  getRealPath() {
+    return this.mapFromBase(this.baseFs.getRealPath());
+  }
+  async openPromise(p, flags, mode) {
+    return this.baseFs.openPromise(this.mapToBase(p), flags, mode);
+  }
+  openSync(p, flags, mode) {
+    return this.baseFs.openSync(this.mapToBase(p), flags, mode);
+  }
+  async opendirPromise(p, opts) {
+    return Object.assign(await this.baseFs.opendirPromise(this.mapToBase(p), opts), {path: p});
+  }
+  opendirSync(p, opts) {
+    return Object.assign(this.baseFs.opendirSync(this.mapToBase(p), opts), {path: p});
+  }
+  async readPromise(fd, buffer, offset, length, position) {
+    return await this.baseFs.readPromise(fd, buffer, offset, length, position);
+  }
+  readSync(fd, buffer, offset, length, position) {
+    return this.baseFs.readSync(fd, buffer, offset, length, position);
+  }
+  async writePromise(fd, buffer, offset, length, position) {
+    if (typeof buffer === `string`) {
+      return await this.baseFs.writePromise(fd, buffer, offset);
+    } else {
+      return await this.baseFs.writePromise(fd, buffer, offset, length, position);
+    }
+  }
+  writeSync(fd, buffer, offset, length, position) {
+    if (typeof buffer === `string`) {
+      return this.baseFs.writeSync(fd, buffer, offset);
+    } else {
+      return this.baseFs.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+  async closePromise(fd) {
+    return this.baseFs.closePromise(fd);
+  }
+  closeSync(fd) {
+    this.baseFs.closeSync(fd);
+  }
+  createReadStream(p, opts) {
+    return this.baseFs.createReadStream(p !== null ? this.mapToBase(p) : p, opts);
+  }
+  createWriteStream(p, opts) {
+    return this.baseFs.createWriteStream(p !== null ? this.mapToBase(p) : p, opts);
+  }
+  async realpathPromise(p) {
+    return this.mapFromBase(await this.baseFs.realpathPromise(this.mapToBase(p)));
+  }
+  realpathSync(p) {
+    return this.mapFromBase(this.baseFs.realpathSync(this.mapToBase(p)));
+  }
+  async existsPromise(p) {
+    return this.baseFs.existsPromise(this.mapToBase(p));
+  }
+  existsSync(p) {
+    return this.baseFs.existsSync(this.mapToBase(p));
+  }
+  accessSync(p, mode) {
+    return this.baseFs.accessSync(this.mapToBase(p), mode);
+  }
+  async accessPromise(p, mode) {
+    return this.baseFs.accessPromise(this.mapToBase(p), mode);
+  }
+  async statPromise(p, opts) {
+    return this.baseFs.statPromise(this.mapToBase(p), opts);
+  }
+  statSync(p, opts) {
+    return this.baseFs.statSync(this.mapToBase(p), opts);
+  }
+  async fstatPromise(fd, opts) {
+    return this.baseFs.fstatPromise(fd, opts);
+  }
+  fstatSync(fd, opts) {
+    return this.baseFs.fstatSync(fd, opts);
+  }
+  async lstatPromise(p, opts) {
+    return this.baseFs.lstatPromise(this.mapToBase(p), opts);
+  }
+  lstatSync(p, opts) {
+    return this.baseFs.lstatSync(this.mapToBase(p), opts);
+  }
+  async chmodPromise(p, mask) {
+    return this.baseFs.chmodPromise(this.mapToBase(p), mask);
+  }
+  chmodSync(p, mask) {
+    return this.baseFs.chmodSync(this.mapToBase(p), mask);
+  }
+  async chownPromise(p, uid, gid) {
+    return this.baseFs.chownPromise(this.mapToBase(p), uid, gid);
+  }
+  chownSync(p, uid, gid) {
+    return this.baseFs.chownSync(this.mapToBase(p), uid, gid);
+  }
+  async renamePromise(oldP, newP) {
+    return this.baseFs.renamePromise(this.mapToBase(oldP), this.mapToBase(newP));
+  }
+  renameSync(oldP, newP) {
+    return this.baseFs.renameSync(this.mapToBase(oldP), this.mapToBase(newP));
+  }
+  async copyFilePromise(sourceP, destP, flags = 0) {
+    return this.baseFs.copyFilePromise(this.mapToBase(sourceP), this.mapToBase(destP), flags);
+  }
+  copyFileSync(sourceP, destP, flags = 0) {
+    return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
+  }
+  async appendFilePromise(p, content, opts) {
+    return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
+  }
+  appendFileSync(p, content, opts) {
+    return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
+  }
+  async writeFilePromise(p, content, opts) {
+    return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
+  }
+  writeFileSync(p, content, opts) {
+    return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
+  }
+  async unlinkPromise(p) {
+    return this.baseFs.unlinkPromise(this.mapToBase(p));
+  }
+  unlinkSync(p) {
+    return this.baseFs.unlinkSync(this.mapToBase(p));
+  }
+  async utimesPromise(p, atime, mtime) {
+    return this.baseFs.utimesPromise(this.mapToBase(p), atime, mtime);
+  }
+  utimesSync(p, atime, mtime) {
+    return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
+  }
+  async mkdirPromise(p, opts) {
+    return this.baseFs.mkdirPromise(this.mapToBase(p), opts);
+  }
+  mkdirSync(p, opts) {
+    return this.baseFs.mkdirSync(this.mapToBase(p), opts);
+  }
+  async rmdirPromise(p, opts) {
+    return this.baseFs.rmdirPromise(this.mapToBase(p), opts);
+  }
+  rmdirSync(p, opts) {
+    return this.baseFs.rmdirSync(this.mapToBase(p), opts);
+  }
+  async linkPromise(existingP, newP) {
+    return this.baseFs.linkPromise(this.mapToBase(existingP), this.mapToBase(newP));
+  }
+  linkSync(existingP, newP) {
+    return this.baseFs.linkSync(this.mapToBase(existingP), this.mapToBase(newP));
+  }
+  async symlinkPromise(target, p, type) {
+    const mappedP = this.mapToBase(p);
+    if (this.pathUtils.isAbsolute(target))
+      return this.baseFs.symlinkPromise(this.mapToBase(target), mappedP, type);
+    const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
+    const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
+    return this.baseFs.symlinkPromise(mappedTarget, mappedP, type);
+  }
+  symlinkSync(target, p, type) {
+    const mappedP = this.mapToBase(p);
+    if (this.pathUtils.isAbsolute(target))
+      return this.baseFs.symlinkSync(this.mapToBase(target), mappedP, type);
+    const mappedAbsoluteTarget = this.mapToBase(this.pathUtils.join(this.pathUtils.dirname(p), target));
+    const mappedTarget = this.baseFs.pathUtils.relative(this.baseFs.pathUtils.dirname(mappedP), mappedAbsoluteTarget);
+    return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
+  }
+  async readFilePromise(p, encoding) {
+    if (encoding === `utf8`) {
+      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
+    } else {
+      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
+    }
+  }
+  readFileSync(p, encoding) {
+    if (encoding === `utf8`) {
+      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
+    } else {
+      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
+    }
+  }
+  async readdirPromise(p, opts) {
+    return this.baseFs.readdirPromise(this.mapToBase(p), opts);
+  }
+  readdirSync(p, opts) {
+    return this.baseFs.readdirSync(this.mapToBase(p), opts);
+  }
+  async readlinkPromise(p) {
+    return this.mapFromBase(await this.baseFs.readlinkPromise(this.mapToBase(p)));
+  }
+  readlinkSync(p) {
+    return this.mapFromBase(this.baseFs.readlinkSync(this.mapToBase(p)));
+  }
+  async truncatePromise(p, len) {
+    return this.baseFs.truncatePromise(this.mapToBase(p), len);
+  }
+  truncateSync(p, len) {
+    return this.baseFs.truncateSync(this.mapToBase(p), len);
+  }
+  watch(p, a, b) {
+    return this.baseFs.watch(this.mapToBase(p), a, b);
+  }
+  watchFile(p, a, b) {
+    return this.baseFs.watchFile(this.mapToBase(p), a, b);
+  }
+  unwatchFile(p, cb) {
+    return this.baseFs.unwatchFile(this.mapToBase(p), cb);
+  }
+  fsMapToBase(p) {
+    if (typeof p === `number`) {
+      return p;
+    } else {
+      return this.mapToBase(p);
+    }
+  }
+}
+
+class PosixFS extends ProxiedFS {
+  constructor(baseFs) {
+    super(npath);
+    this.baseFs = baseFs;
+  }
+  mapFromBase(path) {
+    return npath.fromPortablePath(path);
+  }
+  mapToBase(path) {
+    return npath.toPortablePath(path);
+  }
+}
+
+const NUMBER_REGEXP = /^[0-9]+$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
+const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
+class VirtualFS extends ProxiedFS {
+  static makeVirtualPath(base, component, to) {
+    if (ppath.basename(base) !== `__virtual__`)
+      throw new Error(`Assertion failed: Virtual folders must be named "__virtual__"`);
+    if (!ppath.basename(component).match(VALID_COMPONENT))
+      throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`);
+    const target = ppath.relative(ppath.dirname(base), to);
+    const segments = target.split(`/`);
+    let depth = 0;
+    while (depth < segments.length && segments[depth] === `..`)
+      depth += 1;
+    const finalSegments = segments.slice(depth);
+    const fullVirtualPath = ppath.join(base, component, String(depth), ...finalSegments);
+    return fullVirtualPath;
+  }
+  static resolveVirtual(p) {
+    const match = p.match(VIRTUAL_REGEXP);
+    if (!match || !match[3] && match[5])
+      return p;
+    const target = ppath.dirname(match[1]);
+    if (!match[3] || !match[4])
+      return target;
+    const isnum = NUMBER_REGEXP.test(match[4]);
+    if (!isnum)
+      return p;
+    const depth = Number(match[4]);
+    const backstep = `../`.repeat(depth);
+    const subpath = match[5] || `.`;
+    return VirtualFS.resolveVirtual(ppath.join(target, backstep, subpath));
+  }
+  constructor({baseFs = new NodeFS()} = {}) {
+    super(ppath);
+    this.baseFs = baseFs;
+  }
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
+  }
+  getRealPath() {
+    return this.baseFs.getRealPath();
+  }
+  realpathSync(p) {
+    const match = p.match(VIRTUAL_REGEXP);
+    if (!match)
+      return this.baseFs.realpathSync(p);
+    if (!match[5])
+      return p;
+    const realpath = this.baseFs.realpathSync(this.mapToBase(p));
+    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
+  }
+  async realpathPromise(p) {
+    const match = p.match(VIRTUAL_REGEXP);
+    if (!match)
+      return await this.baseFs.realpathPromise(p);
+    if (!match[5])
+      return p;
+    const realpath = await this.baseFs.realpathPromise(this.mapToBase(p));
+    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
+  }
+  mapToBase(p) {
+    if (p === ``)
+      return p;
+    if (this.pathUtils.isAbsolute(p))
+      return VirtualFS.resolveVirtual(p);
+    const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
+    const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
+    return ppath.relative(resolvedRoot, resolvedP) || PortablePath.dot;
+  }
+  mapFromBase(p) {
+    return p;
+  }
+}
+
+const ZIP_FD = 2147483648;
+const getArchivePart = (path, extension) => {
+  let idx = path.indexOf(extension);
+  if (idx <= 0)
+    return null;
+  let nextCharIdx = idx;
+  while (idx >= 0) {
+    nextCharIdx = idx + extension.length;
+    if (path[nextCharIdx] === ppath.sep)
+      break;
+    if (path[idx - 1] === ppath.sep)
+      return null;
+    idx = path.indexOf(extension, nextCharIdx);
+  }
+  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
+    return null;
+  return path.slice(0, nextCharIdx);
+};
+class ZipOpenFS extends BasePortableFakeFS {
+  constructor({libzip = getLibzipSync, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5e3, fileExtensions = null} = {}) {
+    super();
+    this.fdMap = new Map();
+    this.nextFd = 3;
+    this.isZip = new Set();
+    this.notZip = new Set();
+    this.realPaths = new Map();
+    this.limitOpenFilesTimeout = null;
+    this.libzipFactory = typeof libzip !== `function` ? () => libzip : libzip;
+    this.baseFs = baseFs;
+    this.zipInstances = useCache ? new Map() : null;
+    this.filter = filter;
+    this.maxOpenFiles = maxOpenFiles;
+    this.readOnlyArchives = readOnlyArchives;
+    this.maxAge = maxAge;
+    this.fileExtensions = fileExtensions;
+  }
+  static async openPromise(fn, opts) {
+    const zipOpenFs = new ZipOpenFS(opts);
+    try {
+      return await fn(zipOpenFs);
+    } finally {
+      zipOpenFs.saveAndClose();
+    }
+  }
+  get libzip() {
+    if (typeof this.libzipInstance === `undefined`)
+      this.libzipInstance = this.libzipFactory();
+    return this.libzipInstance;
+  }
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
+  }
+  getRealPath() {
+    return this.baseFs.getRealPath();
+  }
+  saveAndClose() {
+    unwatchAllFiles(this);
+    if (this.zipInstances) {
+      for (const [path, {zipFs}] of this.zipInstances.entries()) {
+        zipFs.saveAndClose();
+        this.zipInstances.delete(path);
+      }
+    }
+  }
+  discardAndClose() {
+    unwatchAllFiles(this);
+    if (this.zipInstances) {
+      for (const [path, {zipFs}] of this.zipInstances.entries()) {
+        zipFs.discardAndClose();
+        this.zipInstances.delete(path);
+      }
+    }
+  }
+  resolve(p) {
+    return this.baseFs.resolve(p);
+  }
+  remapFd(zipFs, fd) {
+    const remappedFd = this.nextFd++ | ZIP_FD;
+    this.fdMap.set(remappedFd, [zipFs, fd]);
+    return remappedFd;
+  }
+  async openPromise(p, flags, mode) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.openPromise(p, flags, mode);
+    }, async (zipFs, {subPath}) => {
+      return this.remapFd(zipFs, await zipFs.openPromise(subPath, flags, mode));
+    });
+  }
+  openSync(p, flags, mode) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.openSync(p, flags, mode);
+    }, (zipFs, {subPath}) => {
+      return this.remapFd(zipFs, zipFs.openSync(subPath, flags, mode));
+    });
+  }
+  async opendirPromise(p, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.opendirPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.opendirPromise(subPath, opts);
+    }, {
+      requireSubpath: false
+    });
+  }
+  opendirSync(p, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.opendirSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.opendirSync(subPath, opts);
+    }, {
+      requireSubpath: false
+    });
+  }
+  async readPromise(fd, buffer, offset, length, position) {
+    if ((fd & ZIP_FD) === 0)
+      return await this.baseFs.readPromise(fd, buffer, offset, length, position);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    const [zipFs, realFd] = entry;
+    return await zipFs.readPromise(realFd, buffer, offset, length, position);
+  }
+  readSync(fd, buffer, offset, length, position) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.readSync(fd, buffer, offset, length, position);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`readSync`);
+    const [zipFs, realFd] = entry;
+    return zipFs.readSync(realFd, buffer, offset, length, position);
+  }
+  async writePromise(fd, buffer, offset, length, position) {
+    if ((fd & ZIP_FD) === 0) {
+      if (typeof buffer === `string`) {
+        return await this.baseFs.writePromise(fd, buffer, offset);
+      } else {
+        return await this.baseFs.writePromise(fd, buffer, offset, length, position);
+      }
+    }
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`write`);
+    const [zipFs, realFd] = entry;
+    if (typeof buffer === `string`) {
+      return await zipFs.writePromise(realFd, buffer, offset);
+    } else {
+      return await zipFs.writePromise(realFd, buffer, offset, length, position);
+    }
+  }
+  writeSync(fd, buffer, offset, length, position) {
+    if ((fd & ZIP_FD) === 0) {
+      if (typeof buffer === `string`) {
+        return this.baseFs.writeSync(fd, buffer, offset);
+      } else {
+        return this.baseFs.writeSync(fd, buffer, offset, length, position);
+      }
+    }
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`writeSync`);
+    const [zipFs, realFd] = entry;
+    if (typeof buffer === `string`) {
+      return zipFs.writeSync(realFd, buffer, offset);
+    } else {
+      return zipFs.writeSync(realFd, buffer, offset, length, position);
+    }
+  }
+  async closePromise(fd) {
+    if ((fd & ZIP_FD) === 0)
+      return await this.baseFs.closePromise(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`close`);
+    this.fdMap.delete(fd);
+    const [zipFs, realFd] = entry;
+    return await zipFs.closePromise(realFd);
+  }
+  closeSync(fd) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.closeSync(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`closeSync`);
+    this.fdMap.delete(fd);
+    const [zipFs, realFd] = entry;
+    return zipFs.closeSync(realFd);
+  }
+  createReadStream(p, opts) {
+    if (p === null)
+      return this.baseFs.createReadStream(p, opts);
+    return this.makeCallSync(p, () => {
+      return this.baseFs.createReadStream(p, opts);
+    }, (zipFs, {archivePath, subPath}) => {
+      const stream = zipFs.createReadStream(subPath, opts);
+      stream.path = npath.fromPortablePath(this.pathUtils.join(archivePath, subPath));
+      return stream;
+    });
+  }
+  createWriteStream(p, opts) {
+    if (p === null)
+      return this.baseFs.createWriteStream(p, opts);
+    return this.makeCallSync(p, () => {
+      return this.baseFs.createWriteStream(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.createWriteStream(subPath, opts);
+    });
+  }
+  async realpathPromise(p) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.realpathPromise(p);
+    }, async (zipFs, {archivePath, subPath}) => {
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = await this.baseFs.realpathPromise(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, await zipFs.realpathPromise(subPath)));
+    });
+  }
+  realpathSync(p) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.realpathSync(p);
+    }, (zipFs, {archivePath, subPath}) => {
+      let realArchivePath = this.realPaths.get(archivePath);
+      if (typeof realArchivePath === `undefined`) {
+        realArchivePath = this.baseFs.realpathSync(archivePath);
+        this.realPaths.set(archivePath, realArchivePath);
+      }
+      return this.pathUtils.join(realArchivePath, this.pathUtils.relative(PortablePath.root, zipFs.realpathSync(subPath)));
+    });
+  }
+  async existsPromise(p) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.existsPromise(p);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.existsPromise(subPath);
+    });
+  }
+  existsSync(p) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.existsSync(p);
+    }, (zipFs, {subPath}) => {
+      return zipFs.existsSync(subPath);
+    });
+  }
+  async accessPromise(p, mode) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.accessPromise(p, mode);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.accessPromise(subPath, mode);
+    });
+  }
+  accessSync(p, mode) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.accessSync(p, mode);
+    }, (zipFs, {subPath}) => {
+      return zipFs.accessSync(subPath, mode);
+    });
+  }
+  async statPromise(p, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.statPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.statPromise(subPath, opts);
+    });
+  }
+  statSync(p, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.statSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.statSync(subPath, opts);
+    });
+  }
+  async fstatPromise(fd, opts) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fstatPromise(fd, opts);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fstat`);
+    const [zipFs, realFd] = entry;
+    return zipFs.fstatPromise(realFd, opts);
+  }
+  fstatSync(fd, opts) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fstatSync(fd, opts);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fstatSync`);
+    const [zipFs, realFd] = entry;
+    return zipFs.fstatSync(realFd, opts);
+  }
+  async lstatPromise(p, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.lstatPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.lstatPromise(subPath, opts);
+    });
+  }
+  lstatSync(p, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.lstatSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.lstatSync(subPath, opts);
+    });
+  }
+  async chmodPromise(p, mask) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.chmodPromise(p, mask);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.chmodPromise(subPath, mask);
+    });
+  }
+  chmodSync(p, mask) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.chmodSync(p, mask);
+    }, (zipFs, {subPath}) => {
+      return zipFs.chmodSync(subPath, mask);
+    });
+  }
+  async chownPromise(p, uid, gid) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.chownPromise(p, uid, gid);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.chownPromise(subPath, uid, gid);
+    });
+  }
+  chownSync(p, uid, gid) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.chownSync(p, uid, gid);
+    }, (zipFs, {subPath}) => {
+      return zipFs.chownSync(subPath, uid, gid);
+    });
+  }
+  async renamePromise(oldP, newP) {
+    return await this.makeCallPromise(oldP, async () => {
+      return await this.makeCallPromise(newP, async () => {
+        return await this.baseFs.renamePromise(oldP, newP);
+      }, async () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      });
+    }, async (zipFsO, {subPath: subPathO}) => {
+      return await this.makeCallPromise(newP, async () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      }, async (zipFsN, {subPath: subPathN}) => {
+        if (zipFsO !== zipFsN) {
+          throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+        } else {
+          return await zipFsO.renamePromise(subPathO, subPathN);
+        }
+      });
+    });
+  }
+  renameSync(oldP, newP) {
+    return this.makeCallSync(oldP, () => {
+      return this.makeCallSync(newP, () => {
+        return this.baseFs.renameSync(oldP, newP);
+      }, () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      });
+    }, (zipFsO, {subPath: subPathO}) => {
+      return this.makeCallSync(newP, () => {
+        throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+      }, (zipFsN, {subPath: subPathN}) => {
+        if (zipFsO !== zipFsN) {
+          throw Object.assign(new Error(`EEXDEV: cross-device link not permitted`), {code: `EEXDEV`});
+        } else {
+          return zipFsO.renameSync(subPathO, subPathN);
+        }
+      });
+    });
+  }
+  async copyFilePromise(sourceP, destP, flags = 0) {
+    const fallback = async (sourceFs, sourceP2, destFs, destP2) => {
+      if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
+        throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP2}' -> ${destP2}'`), {code: `EXDEV`});
+      if (flags & fs.constants.COPYFILE_EXCL && await this.existsPromise(sourceP2))
+        throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EEXIST`});
+      let content;
+      try {
+        content = await sourceFs.readFilePromise(sourceP2);
+      } catch (error) {
+        throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EINVAL`});
+      }
+      await destFs.writeFilePromise(destP2, content);
+    };
+    return await this.makeCallPromise(sourceP, async () => {
+      return await this.makeCallPromise(destP, async () => {
+        return await this.baseFs.copyFilePromise(sourceP, destP, flags);
+      }, async (zipFsD, {subPath: subPathD}) => {
+        return await fallback(this.baseFs, sourceP, zipFsD, subPathD);
+      });
+    }, async (zipFsS, {subPath: subPathS}) => {
+      return await this.makeCallPromise(destP, async () => {
+        return await fallback(zipFsS, subPathS, this.baseFs, destP);
+      }, async (zipFsD, {subPath: subPathD}) => {
+        if (zipFsS !== zipFsD) {
+          return await fallback(zipFsS, subPathS, zipFsD, subPathD);
+        } else {
+          return await zipFsS.copyFilePromise(subPathS, subPathD, flags);
+        }
+      });
+    });
+  }
+  copyFileSync(sourceP, destP, flags = 0) {
+    const fallback = (sourceFs, sourceP2, destFs, destP2) => {
+      if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
+        throw Object.assign(new Error(`EXDEV: cross-device clone not permitted, copyfile '${sourceP2}' -> ${destP2}'`), {code: `EXDEV`});
+      if (flags & fs.constants.COPYFILE_EXCL && this.existsSync(sourceP2))
+        throw Object.assign(new Error(`EEXIST: file already exists, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EEXIST`});
+      let content;
+      try {
+        content = sourceFs.readFileSync(sourceP2);
+      } catch (error) {
+        throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP2}' -> '${destP2}'`), {code: `EINVAL`});
+      }
+      destFs.writeFileSync(destP2, content);
+    };
+    return this.makeCallSync(sourceP, () => {
+      return this.makeCallSync(destP, () => {
+        return this.baseFs.copyFileSync(sourceP, destP, flags);
+      }, (zipFsD, {subPath: subPathD}) => {
+        return fallback(this.baseFs, sourceP, zipFsD, subPathD);
+      });
+    }, (zipFsS, {subPath: subPathS}) => {
+      return this.makeCallSync(destP, () => {
+        return fallback(zipFsS, subPathS, this.baseFs, destP);
+      }, (zipFsD, {subPath: subPathD}) => {
+        if (zipFsS !== zipFsD) {
+          return fallback(zipFsS, subPathS, zipFsD, subPathD);
+        } else {
+          return zipFsS.copyFileSync(subPathS, subPathD, flags);
+        }
+      });
+    });
+  }
+  async appendFilePromise(p, content, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.appendFilePromise(p, content, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.appendFilePromise(subPath, content, opts);
+    });
+  }
+  appendFileSync(p, content, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.appendFileSync(p, content, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.appendFileSync(subPath, content, opts);
+    });
+  }
+  async writeFilePromise(p, content, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.writeFilePromise(p, content, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.writeFilePromise(subPath, content, opts);
+    });
+  }
+  writeFileSync(p, content, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.writeFileSync(p, content, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.writeFileSync(subPath, content, opts);
+    });
+  }
+  async unlinkPromise(p) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.unlinkPromise(p);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.unlinkPromise(subPath);
+    });
+  }
+  unlinkSync(p) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unlinkSync(p);
+    }, (zipFs, {subPath}) => {
+      return zipFs.unlinkSync(subPath);
+    });
+  }
+  async utimesPromise(p, atime, mtime) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.utimesPromise(p, atime, mtime);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.utimesPromise(subPath, atime, mtime);
+    });
+  }
+  utimesSync(p, atime, mtime) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.utimesSync(p, atime, mtime);
+    }, (zipFs, {subPath}) => {
+      return zipFs.utimesSync(subPath, atime, mtime);
+    });
+  }
+  async mkdirPromise(p, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.mkdirPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.mkdirPromise(subPath, opts);
+    });
+  }
+  mkdirSync(p, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.mkdirSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.mkdirSync(subPath, opts);
+    });
+  }
+  async rmdirPromise(p, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.rmdirPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.rmdirPromise(subPath, opts);
+    });
+  }
+  rmdirSync(p, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.rmdirSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.rmdirSync(subPath, opts);
+    });
+  }
+  async linkPromise(existingP, newP) {
+    return await this.makeCallPromise(newP, async () => {
+      return await this.baseFs.linkPromise(existingP, newP);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.linkPromise(existingP, subPath);
+    });
+  }
+  linkSync(existingP, newP) {
+    return this.makeCallSync(newP, () => {
+      return this.baseFs.linkSync(existingP, newP);
+    }, (zipFs, {subPath}) => {
+      return zipFs.linkSync(existingP, subPath);
+    });
+  }
+  async symlinkPromise(target, p, type) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.symlinkPromise(target, p, type);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.symlinkPromise(target, subPath);
+    });
+  }
+  symlinkSync(target, p, type) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.symlinkSync(target, p, type);
+    }, (zipFs, {subPath}) => {
+      return zipFs.symlinkSync(target, subPath);
+    });
+  }
+  async readFilePromise(p, encoding) {
+    return this.makeCallPromise(p, async () => {
+      switch (encoding) {
+        case `utf8`:
+          return await this.baseFs.readFilePromise(p, encoding);
+        default:
+          return await this.baseFs.readFilePromise(p, encoding);
+      }
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.readFilePromise(subPath, encoding);
+    });
+  }
+  readFileSync(p, encoding) {
+    return this.makeCallSync(p, () => {
+      switch (encoding) {
+        case `utf8`:
+          return this.baseFs.readFileSync(p, encoding);
+        default:
+          return this.baseFs.readFileSync(p, encoding);
+      }
+    }, (zipFs, {subPath}) => {
+      return zipFs.readFileSync(subPath, encoding);
+    });
+  }
+  async readdirPromise(p, opts) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.readdirPromise(p, opts);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.readdirPromise(subPath, opts);
+    }, {
+      requireSubpath: false
+    });
+  }
+  readdirSync(p, opts) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.readdirSync(p, opts);
+    }, (zipFs, {subPath}) => {
+      return zipFs.readdirSync(subPath, opts);
+    }, {
+      requireSubpath: false
+    });
+  }
+  async readlinkPromise(p) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.readlinkPromise(p);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.readlinkPromise(subPath);
+    });
+  }
+  readlinkSync(p) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.readlinkSync(p);
+    }, (zipFs, {subPath}) => {
+      return zipFs.readlinkSync(subPath);
+    });
+  }
+  async truncatePromise(p, len) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.truncatePromise(p, len);
+    }, async (zipFs, {subPath}) => {
+      return await zipFs.truncatePromise(subPath, len);
+    });
+  }
+  truncateSync(p, len) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.truncateSync(p, len);
+    }, (zipFs, {subPath}) => {
+      return zipFs.truncateSync(subPath, len);
+    });
+  }
+  watch(p, a, b) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watch(p, a, b);
+    }, (zipFs, {subPath}) => {
+      return zipFs.watch(subPath, a, b);
+    });
+  }
+  watchFile(p, a, b) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.watchFile(p, a, b);
+    }, () => {
+      return watchFile(this, p, a, b);
+    });
+  }
+  unwatchFile(p, cb) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.unwatchFile(p, cb);
+    }, () => {
+      return unwatchFile(this, p, cb);
+    });
+  }
+  async makeCallPromise(p, discard, accept, {requireSubpath = true} = {}) {
+    if (typeof p !== `string`)
+      return await discard();
+    const normalizedP = this.resolve(p);
+    const zipInfo = this.findZip(normalizedP);
+    if (!zipInfo)
+      return await discard();
+    if (requireSubpath && zipInfo.subPath === `/`)
+      return await discard();
+    return await this.getZipPromise(zipInfo.archivePath, async (zipFs) => await accept(zipFs, zipInfo));
+  }
+  makeCallSync(p, discard, accept, {requireSubpath = true} = {}) {
+    if (typeof p !== `string`)
+      return discard();
+    const normalizedP = this.resolve(p);
+    const zipInfo = this.findZip(normalizedP);
+    if (!zipInfo)
+      return discard();
+    if (requireSubpath && zipInfo.subPath === `/`)
+      return discard();
+    return this.getZipSync(zipInfo.archivePath, (zipFs) => accept(zipFs, zipInfo));
+  }
+  findZip(p) {
+    if (this.filter && !this.filter.test(p))
+      return null;
+    let filePath = ``;
+    while (true) {
+      const pathPartWithArchive = p.substr(filePath.length);
+      let archivePart;
+      if (!this.fileExtensions) {
+        archivePart = getArchivePart(pathPartWithArchive, `.zip`);
+      } else {
+        for (const ext of this.fileExtensions) {
+          archivePart = getArchivePart(pathPartWithArchive, ext);
+          if (archivePart) {
+            break;
+          }
+        }
+      }
+      if (!archivePart)
+        return null;
+      filePath = this.pathUtils.join(filePath, archivePart);
+      if (this.isZip.has(filePath) === false) {
+        if (this.notZip.has(filePath))
+          continue;
+        try {
+          if (!this.baseFs.lstatSync(filePath).isFile()) {
+            this.notZip.add(filePath);
+            continue;
+          }
+        } catch {
+          return null;
+        }
+        this.isZip.add(filePath);
+      }
+      return {
+        archivePath: filePath,
+        subPath: this.pathUtils.join(PortablePath.root, p.substr(filePath.length))
+      };
+    }
+  }
+  limitOpenFiles(max) {
+    if (this.zipInstances === null)
+      return;
+    const now = Date.now();
+    let nextExpiresAt = now + this.maxAge;
+    let closeCount = max === null ? 0 : this.zipInstances.size - max;
+    for (const [path, {zipFs, expiresAt, refCount}] of this.zipInstances.entries()) {
+      if (refCount !== 0 || zipFs.hasOpenFileHandles()) {
+        continue;
+      } else if (now >= expiresAt) {
+        zipFs.saveAndClose();
+        this.zipInstances.delete(path);
+        closeCount -= 1;
+        continue;
+      } else if (max === null || closeCount <= 0) {
+        nextExpiresAt = expiresAt;
+        break;
+      }
+      zipFs.saveAndClose();
+      this.zipInstances.delete(path);
+      closeCount -= 1;
+    }
+    if (this.limitOpenFilesTimeout === null && (max === null && this.zipInstances.size > 0 || max !== null)) {
+      this.limitOpenFilesTimeout = setTimeout(() => {
+        this.limitOpenFilesTimeout = null;
+        this.limitOpenFiles(null);
+      }, nextExpiresAt - now).unref();
+    }
+  }
+  async getZipPromise(p, accept) {
+    const getZipOptions = async () => ({
+      baseFs: this.baseFs,
+      libzip: this.libzip,
+      readOnly: this.readOnlyArchives,
+      stats: await this.baseFs.statPromise(p)
+    });
+    if (this.zipInstances) {
+      let cachedZipFs = this.zipInstances.get(p);
+      if (!cachedZipFs) {
+        const zipOptions = await getZipOptions();
+        cachedZipFs = this.zipInstances.get(p);
+        if (!cachedZipFs) {
+          cachedZipFs = {
+            zipFs: new ZipFS(p, zipOptions),
+            expiresAt: 0,
+            refCount: 0
+          };
+        }
+      }
+      this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
+      this.zipInstances.set(p, cachedZipFs);
+      cachedZipFs.expiresAt = Date.now() + this.maxAge;
+      cachedZipFs.refCount += 1;
+      try {
+        return await accept(cachedZipFs.zipFs);
+      } finally {
+        cachedZipFs.refCount -= 1;
+      }
+    } else {
+      const zipFs = new ZipFS(p, await getZipOptions());
+      try {
+        return await accept(zipFs);
+      } finally {
+        zipFs.saveAndClose();
+      }
+    }
+  }
+  getZipSync(p, accept) {
+    const getZipOptions = () => ({
+      baseFs: this.baseFs,
+      libzip: this.libzip,
+      readOnly: this.readOnlyArchives,
+      stats: this.baseFs.statSync(p)
+    });
+    if (this.zipInstances) {
+      let cachedZipFs = this.zipInstances.get(p);
+      if (!cachedZipFs) {
+        cachedZipFs = {
+          zipFs: new ZipFS(p, getZipOptions()),
+          expiresAt: 0,
+          refCount: 0
+        };
+      }
+      this.zipInstances.delete(p);
+      this.limitOpenFiles(this.maxOpenFiles - 1);
+      this.zipInstances.set(p, cachedZipFs);
+      cachedZipFs.expiresAt = Date.now() + this.maxAge;
+      return accept(cachedZipFs.zipFs);
+    } else {
+      const zipFs = new ZipFS(p, getZipOptions());
+      try {
+        return accept(zipFs);
+      } finally {
+        zipFs.saveAndClose();
+      }
+    }
+  }
+}
+
+class URLFS extends ProxiedFS {
+  constructor(baseFs) {
+    super(npath);
+    this.baseFs = baseFs;
+  }
+  mapFromBase(path) {
+    return path;
+  }
+  mapToBase(path) {
+    if (path instanceof url.URL)
+      return url.fileURLToPath(path);
+    return path;
+  }
+}
+
+const SYNC_IMPLEMENTATIONS = new Set([
+  `accessSync`,
+  `appendFileSync`,
+  `createReadStream`,
+  `createWriteStream`,
+  `chmodSync`,
+  `chownSync`,
+  `closeSync`,
+  `copyFileSync`,
+  `linkSync`,
+  `lstatSync`,
+  `fstatSync`,
+  `lutimesSync`,
+  `mkdirSync`,
+  `openSync`,
+  `opendirSync`,
+  `readSync`,
+  `readlinkSync`,
+  `readFileSync`,
+  `readdirSync`,
+  `readlinkSync`,
+  `realpathSync`,
+  `renameSync`,
+  `rmdirSync`,
+  `statSync`,
+  `symlinkSync`,
+  `truncateSync`,
+  `unlinkSync`,
+  `unwatchFile`,
+  `utimesSync`,
+  `watch`,
+  `watchFile`,
+  `writeFileSync`,
+  `writeSync`
+]);
+const ASYNC_IMPLEMENTATIONS = new Set([
+  `accessPromise`,
+  `appendFilePromise`,
+  `chmodPromise`,
+  `chownPromise`,
+  `closePromise`,
+  `copyFilePromise`,
+  `linkPromise`,
+  `fstatPromise`,
+  `lstatPromise`,
+  `lutimesPromise`,
+  `mkdirPromise`,
+  `openPromise`,
+  `opendirPromise`,
+  `readdirPromise`,
+  `realpathPromise`,
+  `readFilePromise`,
+  `readdirPromise`,
+  `readlinkPromise`,
+  `renamePromise`,
+  `rmdirPromise`,
+  `statPromise`,
+  `symlinkPromise`,
+  `truncatePromise`,
+  `unlinkPromise`,
+  `utimesPromise`,
+  `writeFilePromise`,
+  `writeSync`
+]);
+const FILEHANDLE_IMPLEMENTATIONS = new Set([
+  `appendFilePromise`,
+  `chmodPromise`,
+  `chownPromise`,
+  `closePromise`,
+  `readPromise`,
+  `readFilePromise`,
+  `statPromise`,
+  `truncatePromise`,
+  `utimesPromise`,
+  `writePromise`,
+  `writeFilePromise`
+]);
+function patchFs(patchedFs, fakeFs) {
+  fakeFs = new URLFS(fakeFs);
+  const setupFn = (target, name, replacement) => {
+    const orig = target[name];
+    target[name] = replacement;
+    if (typeof (orig == null ? void 0 : orig[nodeUtils.promisify.custom]) !== `undefined`) {
+      replacement[nodeUtils.promisify.custom] = orig[nodeUtils.promisify.custom];
+    }
+  };
+  {
+    setupFn(patchedFs, `exists`, (p, ...args) => {
+      const hasCallback = typeof args[args.length - 1] === `function`;
+      const callback = hasCallback ? args.pop() : () => {
+      };
+      process.nextTick(() => {
+        fakeFs.existsPromise(p).then((exists) => {
+          callback(exists);
+        }, () => {
+          callback(false);
+        });
+      });
+    });
+    setupFn(patchedFs, `read`, (p, buffer, ...args) => {
+      const hasCallback = typeof args[args.length - 1] === `function`;
+      const callback = hasCallback ? args.pop() : () => {
+      };
+      process.nextTick(() => {
+        fakeFs.readPromise(p, buffer, ...args).then((bytesRead) => {
+          callback(null, bytesRead, buffer);
+        }, (error) => {
+          callback(error, 0, buffer);
+        });
+      });
+    });
+    for (const fnName of ASYNC_IMPLEMENTATIONS) {
+      const origName = fnName.replace(/Promise$/, ``);
+      if (typeof patchedFs[origName] === `undefined`)
+        continue;
+      const fakeImpl = fakeFs[fnName];
+      if (typeof fakeImpl === `undefined`)
+        continue;
+      const wrapper = (...args) => {
+        const hasCallback = typeof args[args.length - 1] === `function`;
+        const callback = hasCallback ? args.pop() : () => {
+        };
+        process.nextTick(() => {
+          fakeImpl.apply(fakeFs, args).then((result) => {
+            callback(null, result);
+          }, (error) => {
+            callback(error);
+          });
+        });
+      };
+      setupFn(patchedFs, origName, wrapper);
+    }
+    patchedFs.realpath.native = patchedFs.realpath;
+  }
+  {
+    setupFn(patchedFs, `existsSync`, (p) => {
+      try {
+        return fakeFs.existsSync(p);
+      } catch (error) {
+        return false;
+      }
+    });
+    for (const fnName of SYNC_IMPLEMENTATIONS) {
+      const origName = fnName;
+      if (typeof patchedFs[origName] === `undefined`)
+        continue;
+      const fakeImpl = fakeFs[fnName];
+      if (typeof fakeImpl === `undefined`)
+        continue;
+      setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
+    }
+    patchedFs.realpathSync.native = patchedFs.realpathSync;
+  }
+  {
+    const origEmitWarning = process.emitWarning;
+    process.emitWarning = () => {
+    };
+    let patchedFsPromises;
+    try {
+      patchedFsPromises = patchedFs.promises;
+    } finally {
+      process.emitWarning = origEmitWarning;
+    }
+    if (typeof patchedFsPromises !== `undefined`) {
+      for (const fnName of ASYNC_IMPLEMENTATIONS) {
+        const origName = fnName.replace(/Promise$/, ``);
+        if (typeof patchedFsPromises[origName] === `undefined`)
+          continue;
+        const fakeImpl = fakeFs[fnName];
+        if (typeof fakeImpl === `undefined`)
+          continue;
+        if (fnName === `open`)
+          continue;
+        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
+      }
+      class FileHandle {
+        constructor(fd) {
+          this.fd = fd;
+        }
+      }
+      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
+        const origName = fnName.replace(/Promise$/, ``);
+        const fakeImpl = fakeFs[fnName];
+        if (typeof fakeImpl === `undefined`)
+          continue;
+        setupFn(FileHandle.prototype, origName, function(...args) {
+          return fakeImpl.call(fakeFs, this.fd, ...args);
+        });
+      }
+      setupFn(patchedFsPromises, `open`, async (...args) => {
+        const fd = await fakeFs.openPromise(...args);
+        return new FileHandle(fd);
+      });
+    }
+  }
+  {
+    patchedFs.read[nodeUtils.promisify.custom] = async (p, buffer, ...args) => {
+      const res = fakeFs.readPromise(p, buffer, ...args);
+      return {bytesRead: await res, buffer};
+    };
+  }
+}
+
 var __defProp$2 = Object.defineProperty;
 var __defProps$1 = Object.defineProperties;
 var __getOwnPropDescs$1 = Object.getOwnPropertyDescriptors;
@@ -51130,7 +51098,6 @@ const defaultPnpapiResolution = __filename;
 const defaultFsLayer = new VirtualFS({
   baseFs: new ZipOpenFS({
     baseFs: nodeFs,
-    libzip: () => getLibzipSync(),
     maxOpenFiles: 80,
     readOnlyArchives: true
   })

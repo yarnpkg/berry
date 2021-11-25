@@ -1,4 +1,4 @@
-import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {Libzip, getLibzipSync}                                                                                                                       from '@yarnpkg/libzip';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 import {isDate}                                                                                                                                      from 'util';
@@ -19,7 +19,7 @@ export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
 
 export type ZipBufferOptions = {
-  libzip: Libzip;
+  libzip?: Libzip;
   readOnly?: boolean;
   stats?: Stats;
   level?: ZipCompression;
@@ -89,17 +89,17 @@ export class ZipFS extends BasePortableFakeFS {
   private ready = false;
   private readOnly = false;
 
-  constructor(p: PortablePath, opts: ZipPathOptions);
+  constructor(p: PortablePath, opts?: ZipPathOptions);
   /**
    * Create a ZipFS in memory
    * @param data If null; an empty zip file will be created
    */
-  constructor(data: Buffer | null, opts: ZipBufferOptions);
+  constructor(data: Buffer | null, opts?: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions) {
+  constructor(source: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions = {}) {
     super();
 
-    this.libzip = opts.libzip;
+    this.libzip = opts.libzip ?? getLibzipSync();
 
     const pathOptions = opts as ZipPathOptions;
     this.level = typeof pathOptions.level !== `undefined`

@@ -1,16 +1,15 @@
-import {getLibzipPromise, getLibzipSync} from '@yarnpkg/libzip';
-import fs                                from 'fs';
-import {pathToFileURL}                   from 'url';
-import {promisify}                       from 'util';
+import fs                                              from 'fs';
+import {pathToFileURL}                                 from 'url';
+import {promisify}                                     from 'util';
 
-import {NodeFS}                          from '../sources/NodeFS';
-import {PosixFS}                         from '../sources/PosixFS';
-import {extendFs}                        from '../sources/patchFs';
-import {Filename, npath, PortablePath}   from '../sources/path';
-import {xfs}                             from '../sources/xfs';
-import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
+import {NodeFS}                                        from '../sources/NodeFS';
+import {PosixFS}                                       from '../sources/PosixFS';
+import {extendFs}                                      from '../sources/patchFs';
+import {Filename, npath, PortablePath}                 from '../sources/path';
+import {xfs}                                           from '../sources/xfs';
+import {statUtils, ZipFS, ZipOpenFS, getLibzipPromise} from '../sources';
 
-import {ZIP_FILE1, ZIP_DIR1}             from './ZipOpenFS.test';
+import {ZIP_FILE1, ZIP_DIR1}                           from './ZipOpenFS.test';
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
@@ -148,7 +147,7 @@ describe(`patchedFs`, () => {
     const tmpdir = xfs.mktempSync();
     const nativeTmpdir = npath.fromPortablePath(tmpdir);
 
-    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {libzip: getLibzipSync(), create: true});
+    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {create: true});
     await zipFs.writeFilePromise(`/a.txt` as PortablePath, `foo`);
 
     zipFs.saveAndClose();
@@ -177,7 +176,7 @@ describe(`patchedFs`, () => {
     const tmpdir = xfs.mktempSync();
     const nativeTmpdir = npath.fromPortablePath(tmpdir);
 
-    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {libzip: getLibzipSync(), create: true});
+    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {create: true});
     await zipFs.writeFilePromise(`/a.txt` as PortablePath, ``);
 
     zipFs.saveAndClose();

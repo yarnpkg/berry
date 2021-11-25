@@ -1,9 +1,8 @@
-import {LinkOptions, structUtils}                      from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, ppath, Filename}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                              from '@yarnpkg/libzip';
-import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/nm';
-import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
-import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
+import {LinkOptions, structUtils}                                from '@yarnpkg/core';
+import {VirtualFS, ZipOpenFS, ppath, Filename, getLibzipPromise} from '@yarnpkg/fslib';
+import {NodeModulesPackageNode, buildNodeModulesTree}            from '@yarnpkg/nm';
+import {PnpInstaller, PnpLinker}                                 from '@yarnpkg/plugin-pnp';
+import {PnpSettings, makeRuntimeApi, DependencyTarget}           from '@yarnpkg/pnp';
 
 export class PnpLooseLinker extends PnpLinker {
   protected mode = `loose`;

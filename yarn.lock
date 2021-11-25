@@ -5576,7 +5576,6 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/json-proxy": "workspace:^"
-    "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-link": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
@@ -6116,7 +6115,6 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/nm": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
@@ -6202,7 +6200,6 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    "@yarnpkg/libzip": "workspace:^"
     clipanion: ^3.2.0-rc.4
     tslib: ^1.13.0
   peerDependencies:
@@ -6349,7 +6346,6 @@ __metadata:
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
-    "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     resolve.exports: ^1.1.0
@@ -27066,7 +27062,6 @@ typescript@^3.8.3:
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^"
-    "@yarnpkg/libzip": "workspace:^"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2

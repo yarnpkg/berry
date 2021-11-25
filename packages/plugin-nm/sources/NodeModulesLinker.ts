@@ -4,8 +4,7 @@ import {Linker, LinkOptions, MinimalLinkOptions, LinkType}                 from 
 import {LocatorHash, Descriptor, DependencyMeta, Configuration}            from '@yarnpkg/core';
 import {MessageName, Project, FetchResult, Installer}                      from '@yarnpkg/core';
 import {PortablePath, npath, ppath, toFilename, Filename}                  from '@yarnpkg/fslib';
-import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath}                     from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                  from '@yarnpkg/libzip';
+import {VirtualFS, ZipOpenFS, xfs, FakeFS, NativePath, getLibzipPromise}   from '@yarnpkg/fslib';
 import {buildNodeModulesTree}                                              from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits} from '@yarnpkg/nm';
 import {parseSyml}                                                         from '@yarnpkg/parsers';

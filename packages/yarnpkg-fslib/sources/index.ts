@@ -46,6 +46,9 @@ export {VirtualFS}                 from './VirtualFS';
 export {ZipFS}                     from './ZipFS';
 export {ZipOpenFS}                 from './ZipOpenFS';
 
+export {getLibzipPromise, getLibzipSync} from '@yarnpkg/libzip';
+export type {Libzip} from '@yarnpkg/libzip';
+
 export {patchFs, extendFs} from './patchFs';
 
 export {xfs} from './xfs';

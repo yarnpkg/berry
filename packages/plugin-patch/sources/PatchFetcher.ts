@@ -1,8 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report} from '@yarnpkg/core';
 import {Locator}                                                                      from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                             from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                             from '@yarnpkg/libzip';
+import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath, getLibzipPromise}           from '@yarnpkg/fslib';
 
 import * as patchUtils                                                                from './patchUtils';
 import {UnmatchedHunkError}                                                           from './tools/UnmatchedHunkError';

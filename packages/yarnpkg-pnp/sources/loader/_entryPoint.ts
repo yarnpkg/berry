@@ -1,5 +1,4 @@
 import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ZipOpenFS, ProxiedFS, ppath} from '@yarnpkg/fslib';
-import {getLibzipSync}                                                                    from '@yarnpkg/libzip';
 import fs                                                                                 from 'fs';
 import Module                                                                             from 'module';
 import StringDecoder                                                                      from 'string_decoder';
@@ -29,7 +28,6 @@ const defaultPnpapiResolution = __filename;
 const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
   baseFs: new ZipOpenFS({
     baseFs: nodeFs,
-    libzip: () => getLibzipSync(),
     maxOpenFiles: 80,
     readOnlyArchives: true,
   }),

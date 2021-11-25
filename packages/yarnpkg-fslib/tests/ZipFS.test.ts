@@ -1,4 +1,3 @@
-import {getLibzipSync}                 from '@yarnpkg/libzip';
 import {S_IFREG}                       from 'constants';
 import fs                              from 'fs';
 
@@ -89,9 +88,8 @@ describe(`ZipFS`, () => {
       }
     };
 
-    const libzip = getLibzipSync();
     const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip` as Filename);
-    const zipFs = new ZipFS(tmpfile, {libzip, create: true});
+    const zipFs = new ZipFS(tmpfile, {create: true});
 
     zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
@@ -105,7 +103,7 @@ describe(`ZipFS`, () => {
     // asserts(zipFs);
     zipFs.saveAndClose();
 
-    const zipFs2 = new ZipFS(tmpfile, {libzip});
+    const zipFs2 = new ZipFS(tmpfile);
     asserts(zipFs2);
     zipFs2.discardAndClose();
   });
@@ -131,22 +129,20 @@ describe(`ZipFS`, () => {
       expect(readFileContents(zipFs, p, null)).toEqual(`file content`);
     };
 
-    const libzip = getLibzipSync();
     const tmpfile = ppath.resolve(xfs.mktempSync(), `test2.zip` as Filename);
-    const zipFs = new ZipFS(tmpfile, {libzip, create: true});
+    const zipFs = new ZipFS(tmpfile, {create: true});
     await zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
     zipFs.saveAndClose();
 
-    const zipFs2 = new ZipFS(tmpfile, {libzip});
+    const zipFs2 = new ZipFS(tmpfile);
     readSyncAsserts(zipFs2);
     zipFs2.discardAndClose();
   });
 
   it(`defaults the readSync read length to the buffer size`, async () => {
     const p = `/dir/file` as PortablePath;
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
     await zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(p, `file content`);
 
@@ -162,26 +158,24 @@ describe(`ZipFS`, () => {
   });
 
   it(`can create a zip file in memory`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
     const zipContent = zipFs.getBufferAndClose();
 
-    const zipFs2 = new ZipFS(zipContent, {libzip});
+    const zipFs2 = new ZipFS(zipContent);
     expect(zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
   });
 
   it(`can handle nested symlinks`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
     zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
     zipFs.symlinkSync(`/foo.txt` as PortablePath, `/linkA` as PortablePath);
     zipFs.symlinkSync(`/linkA` as PortablePath, `/linkB` as PortablePath);
 
-    const zipFs2 = new ZipFS(zipFs.getBufferAndClose(), {libzip});
+    const zipFs2 = new ZipFS(zipFs.getBufferAndClose());
 
     expect(zipFs2.readFileSync(`/linkA` as PortablePath, `utf8`)).toEqual(`Test`);
     expect(zipFs2.readFileSync(`/linkB` as PortablePath, `utf8`)).toEqual(`Test`);
@@ -190,19 +184,17 @@ describe(`ZipFS`, () => {
   });
 
   it(`returns the same content for sync and async reads`, async () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
     zipFs.writeFileSync(`/foo.txt` as PortablePath, `Test`);
 
-    const zipFs2 = new ZipFS(zipFs.getBufferAndClose(), {libzip});
+    const zipFs2 = new ZipFS(zipFs.getBufferAndClose());
 
     expect(await zipFs2.readFilePromise(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
     expect(zipFs2.readFileSync(`/foo.txt` as PortablePath, `utf8`)).toEqual(`Test`);
   });
 
   it(`should support unlinking files`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const dir = `/foo` as PortablePath;
     zipFs.mkdirSync(dir);
@@ -222,8 +214,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support removing empty directories`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const dir = `/foo` as PortablePath;
     const subdir = `/foo/bar` as PortablePath;
@@ -241,8 +232,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should not support removing non-empty directories`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const dir = `/foo` as PortablePath;
     zipFs.mkdirSync(dir);
@@ -256,8 +246,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support removing non-empty directories via zipFs.removeSync`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const dir = `/foo` as PortablePath;
     const subdir = `/foo/bar` as PortablePath;
@@ -278,8 +267,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support read after write`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const file = `/foo.txt` as PortablePath;
     zipFs.writeFileSync(file, `Test`);
@@ -293,15 +281,14 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(archive, {libzip, create: true});
+    const zipFs = new ZipFS(archive, {create: true});
 
     const file = `/foo.txt` as PortablePath;
     zipFs.writeFileSync(file, `Hello World`);
 
     zipFs.saveAndClose();
 
-    const zipFs2 = new ZipFS(archive, {libzip});
+    const zipFs2 = new ZipFS(archive);
 
     expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
     expect(() => zipFs2.writeFileSync(file, `Goodbye World`)).not.toThrow();
@@ -310,8 +297,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support write after write`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const file = `/foo.txt` as PortablePath;
 
@@ -325,15 +311,14 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(archive, {libzip, create: true});
+    const zipFs = new ZipFS(archive, {create: true});
 
     const file = `/foo.txt` as PortablePath;
     zipFs.writeFileSync(file, `Hello World`);
 
     zipFs.saveAndClose();
 
-    const zipFs2 = new ZipFS(archive, {libzip});
+    const zipFs2 = new ZipFS(archive);
 
     expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
     expect(zipFs2.readFileSync(file, `utf8`)).toStrictEqual(`Hello World`);
@@ -342,8 +327,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support truncate`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const file = `/foo.txt` as PortablePath;
 
@@ -362,8 +346,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support watchFile and unwatchFile`, () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const file = `/foo.txt` as PortablePath;
 
@@ -442,8 +425,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should accept invalid paths on watchFile (ENOTDIR)`, async () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const file = `/foo.txt/package.json` as PortablePath;
 
@@ -471,7 +453,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`closes the fd created in createReadStream when the stream is closed early`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
     zipFs.writeFileSync(`/foo.txt` as Filename, `foo`.repeat(10000));
 
     expect(zipFs.hasOpenFileHandles()).toBe(false);
@@ -499,7 +481,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should close the createWriteStream when destroyed`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
 
     const writeStream = zipFs.createWriteStream(`/foo.txt` as Filename);
 
@@ -523,7 +505,7 @@ describe(`ZipFS`, () => {
 
   it(`should stop the watcher on closing the archive`, async () => {
     await useFakeTime(advanceTimeBy => {
-      const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+      const zipFs = new ZipFS(null);
 
       zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
 
@@ -537,8 +519,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support opendir`, async () => {
-    const libzip = getLibzipSync();
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
 
     const folder = `/foo` as PortablePath;
     zipFs.mkdirSync(folder);
@@ -575,7 +556,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`closes the fd created in opendir when the Dir is closed early`, () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
     zipFs.mkdirSync(`/foo` as PortablePath);
 
     expect(zipFs.hasOpenFileHandles()).toBe(false);
@@ -588,7 +569,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should emit the 'end' event from large reads in createReadStream`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
     zipFs.writeFileSync(`/foo.txt` as Filename, `foo`.repeat(10000));
 
     const stream = zipFs.createReadStream(`/foo.txt` as Filename);
@@ -626,7 +607,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should return bigint stats`, () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
     zipFs.mkdirSync(`/foo` as PortablePath);
 
     expect(
@@ -650,22 +631,18 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
-    const zipFs = new ZipFS(archive, {libzip, create: true});
+    const zipFs = new ZipFS(archive, {create: true});
     zipFs.saveAndClose();
 
     expect(xfs.existsSync(archive)).toStrictEqual(true);
-    expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+    expect(new ZipFS(archive).readdirSync(PortablePath.root)).toHaveLength(0);
   });
 
   it(`should support saving an empty zip archive (unlink after write)`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
-    const zipFs = new ZipFS(archive, {libzip, create: true});
+    const zipFs = new ZipFS(archive, {create: true});
 
     zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
     zipFs.unlinkSync(`/foo.txt` as PortablePath);
@@ -673,29 +650,25 @@ describe(`ZipFS`, () => {
     zipFs.saveAndClose();
 
     expect(xfs.existsSync(archive)).toStrictEqual(true);
-    expect(new ZipFS(archive, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+    expect(new ZipFS(archive).readdirSync(PortablePath.root)).toHaveLength(0);
   });
 
   it(`should support getting the buffer from an empty in-memory zip archive`, () => {
-    const libzip = getLibzipSync();
-
-    const zipFs = new ZipFS(null, {libzip});
+    const zipFs = new ZipFS(null);
     const buffer = zipFs.getBufferAndClose();
 
     expect(buffer).toStrictEqual(makeEmptyArchive());
 
-    expect(new ZipFS(buffer, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+    expect(new ZipFS(buffer).readdirSync(PortablePath.root)).toHaveLength(0);
   });
 
   ifNotWin32It(`should preserve the umask`, async () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
     await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
 
-    const zipFs = new ZipFS(archive, {libzip});
+    const zipFs = new ZipFS(archive);
     await zipFs.writeFilePromise(`/foo.txt` as PortablePath, `foo`);
 
     zipFs.saveAndClose();
@@ -707,11 +680,9 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
     await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
 
-    const zipFs = new ZipFS(archive, {libzip});
+    const zipFs = new ZipFS(archive);
 
     zipFs.saveAndClose();
 
@@ -722,11 +693,9 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
     await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
 
-    const zipFs = new ZipFS(archive, {libzip});
+    const zipFs = new ZipFS(archive);
     await zipFs.writeFilePromise(`/foo.txt` as PortablePath, `foo`);
 
     await xfs.unlinkPromise(archive);
@@ -740,11 +709,9 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
     await xfs.writeFilePromise(archive, makeEmptyArchive(), {mode: 0o754});
 
-    const zipFs = new ZipFS(archive, {libzip});
+    const zipFs = new ZipFS(archive);
 
     await xfs.unlinkPromise(archive);
 
@@ -757,9 +724,7 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
-    const zipFs = new ZipFS(archive, {libzip, create: true});
+    const zipFs = new ZipFS(archive, {create: true});
     await zipFs.writeFilePromise(`/foo.txt` as PortablePath, `foo`);
 
     zipFs.saveAndClose();
@@ -771,9 +736,7 @@ describe(`ZipFS`, () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
 
-    const libzip = getLibzipSync();
-
-    const zipFs = new ZipFS(archive, {libzip, create: true});
+    const zipFs = new ZipFS(archive, {create: true});
 
     zipFs.saveAndClose();
 
@@ -781,7 +744,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support chmod`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
 
     zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
     zipFs.chmodSync(`/foo.txt` as Filename, 0o754);
@@ -795,7 +758,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support writeFile mode`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
 
     zipFs.writeFileSync(`/foo.txt` as Filename, `foo`, {mode: 0o754});
     expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
@@ -807,7 +770,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support appendFile mode`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
 
     zipFs.appendFileSync(`/foo.txt` as Filename, `foo`, {mode: 0o754});
     expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
@@ -819,7 +782,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support mkdir mode`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
 
     zipFs.mkdirSync(`/foo` as Filename, {mode: 0o754});
     expect(zipFs.statSync(`/foo` as Filename).mode & 0o777).toBe(0o754);
@@ -831,7 +794,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should support fd in writeFile and readFile`, async () => {
-    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    const zipFs = new ZipFS(null);
 
     zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);

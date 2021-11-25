@@ -1,4 +1,4 @@
-import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
+import {Libzip, getLibzipSync}                                                                                                                       from '@yarnpkg/libzip';
 import {BigIntStats, constants, Stats}                                                                                                               from 'fs';
 
 import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
@@ -46,7 +46,7 @@ export const getArchivePart = (path: string, extension: string) => {
 export type ZipOpenFSOptions = {
   baseFs?: FakeFS<PortablePath>;
   filter?: RegExp | null;
-  libzip: Libzip | (() => Libzip);
+  libzip?: Libzip | (() => Libzip);
   maxOpenFiles?: number;
   readOnlyArchives?: boolean;
   useCache?: boolean;
@@ -102,7 +102,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
   private notZip: Set<PortablePath> = new Set();
   private realPaths: Map<PortablePath, PortablePath> = new Map();
 
-  constructor({libzip, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000, fileExtensions = null}: ZipOpenFSOptions) {
+  constructor({libzip = getLibzipSync, baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, readOnlyArchives = false, useCache = true, maxAge = 5000, fileExtensions = null}: ZipOpenFSOptions = {}) {
     super();
 
     this.libzipFactory = typeof libzip !== `function`

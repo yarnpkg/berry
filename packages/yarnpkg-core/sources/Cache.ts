@@ -1,6 +1,5 @@
 import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
-import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                          from '@yarnpkg/fslib';
-import {getLibzipPromise}                                               from '@yarnpkg/libzip';
+import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL, getLibzipPromise}        from '@yarnpkg/fslib';
 import {randomBytes}                                                    from 'crypto';
 import fs                                                               from 'fs';
 
