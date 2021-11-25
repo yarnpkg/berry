@@ -382,5 +382,22 @@ describe(`Commands`, () => {
         expect(cacheAfter.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
       }),
     );
+    test(`it should throw a proper error if not find any locator`,
+      makeTemporaryEnv(
+        {
+          workspaces: [`workspace`],
+        },
+        async ({path, run, source}) => {
+          await xfs.mkdirPromise(`${path}/non-workspace`);
+          await xfs.writeJsonPromise(`${path}/non-workspace/package.json`, {
+            name: `non-workspace`,
+          });
+
+          await expect(run(`install`, {cwd: `${path}/non-workspace`})).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringMatching(/The nearest package directory \(.+\) doesn't seem to be part of the project declared in .+\./g),
+          });
+        },
+      ));
   });
 });

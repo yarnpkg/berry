@@ -637,7 +637,7 @@ export class Project {
           }
           return locator;
         }
-      } catch (_) {}
+      } catch {}
     }
 
     return null;
