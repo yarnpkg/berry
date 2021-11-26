@@ -28,6 +28,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Reporting for Git errors has been improved.
 - The resolution step now has a progress indicator.
 
+## 3.1.1
+
+- Updates the PnP compatibility layer for TypeScript 4.5
+
 ## 3.1.0
 
 ### Commands
