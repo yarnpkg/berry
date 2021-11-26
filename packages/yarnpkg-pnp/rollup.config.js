@@ -2,6 +2,7 @@ import cjs                  from '@rollup/plugin-commonjs';
 import resolve              from '@rollup/plugin-node-resolve';
 import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
+import {defineConfig}       from 'rollup';
 import {brotliCompressSync} from 'zlib';
 
 function wrapOutput() {
@@ -21,8 +22,8 @@ function wrapOutput() {
   };
 }
 
-/** @type {Array<import('rollup').RollupOptions>} */
-const options = [
+// eslint-disable-next-line arca/no-default-export
+export default defineConfig([
   {
     treeshake: {
       propertyReadSideEffects: false,
@@ -89,7 +90,4 @@ const options = [
       wrapOutput(),
     ],
   },
-];
-
-// eslint-disable-next-line arca/no-default-export
-export default options;
+]);

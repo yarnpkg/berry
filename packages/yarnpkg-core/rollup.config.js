@@ -3,6 +3,7 @@ import resolve              from '@rollup/plugin-node-resolve';
 import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
 import {terser}             from 'rollup-plugin-terser';
+import {defineConfig}       from 'rollup';
 import {brotliCompressSync} from 'zlib';
 
 function wrapOutput() {
@@ -23,39 +24,37 @@ function wrapOutput() {
 }
 
 // eslint-disable-next-line arca/no-default-export
-export default [
-  {
-    treeshake: {
-      propertyReadSideEffects: false,
-      unknownGlobalSideEffects: false,
-      tryCatchDeoptimization: false,
-    },
-    input: `./sources/worker-zip/Worker.ts`,
-    output: {
-      file: `./sources/worker-zip/index.js`,
-      format: `cjs`,
-      strict: false,
-      generatedCode: `es2015`,
-    },
-    plugins: [
-      resolve({
-        extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],
-        rootDir: path.join(__dirname, `../../`),
-        jail: path.join(__dirname, `../../`),
-        preferBuiltins: true,
-      }),
-      esbuild({
-        tsconfig: false,
-        target: `node12`,
-        define: {
-          document: `undefined`,
-          XMLHttpRequest: `undefined`,
-          crypto: `undefined`,
-        },
-      }),
-      cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
-      terser({ecma: 2019}),
-      wrapOutput(),
-    ],
+export default defineConfig({
+  treeshake: {
+    propertyReadSideEffects: false,
+    unknownGlobalSideEffects: false,
+    tryCatchDeoptimization: false,
   },
-];
+  input: `./sources/worker-zip/Worker.ts`,
+  output: {
+    file: `./sources/worker-zip/index.js`,
+    format: `cjs`,
+    strict: false,
+    generatedCode: `es2015`,
+  },
+  plugins: [
+    resolve({
+      extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],
+      rootDir: path.join(__dirname, `../../`),
+      jail: path.join(__dirname, `../../`),
+      preferBuiltins: true,
+    }),
+    esbuild({
+      tsconfig: false,
+      target: `node12`,
+      define: {
+        document: `undefined`,
+        XMLHttpRequest: `undefined`,
+        crypto: `undefined`,
+      },
+    }),
+    cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
+    terser({ecma: 2019}),
+    wrapOutput(),
+  ],
+});
