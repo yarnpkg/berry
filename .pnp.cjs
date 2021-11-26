@@ -44915,8 +44915,10 @@ class ZipOpenFS extends BasePortableFakeFS {
       return this.baseFs.createReadStream(p, opts);
     return this.makeCallSync(p, () => {
       return this.baseFs.createReadStream(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.createReadStream(subPath, opts);
+    }, (zipFs, {archivePath, subPath}) => {
+      const stream = zipFs.createReadStream(subPath, opts);
+      stream.path = npath.fromPortablePath(this.pathUtils.join(archivePath, subPath));
+      return stream;
     });
   }
   createWriteStream(p, opts) {
