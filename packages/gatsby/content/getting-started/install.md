@@ -1,8 +1,9 @@
 ---
 category: getting-started
 path: /getting-started/install
-title: "2 - Installation"
+title: Installation
 description: Yarn's in-depth installation guide.
+order: 2
 ---
 
 ## Install Corepack
