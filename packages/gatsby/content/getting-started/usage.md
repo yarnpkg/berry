@@ -1,7 +1,7 @@
 ---
 category: getting-started
 path: /getting-started/usage
-title: "3 - Usage"
+title: "Usage"
 description: A short overview of Yarn's most used commands.
 ---
 
