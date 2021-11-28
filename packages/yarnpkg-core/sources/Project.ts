@@ -1739,15 +1739,19 @@ export class Project {
 
   async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
-    if (!xfs.existsSync(installStatePath)) {
+
+    let installState: InstallState;
+    try {
+      const installStateBuffer = await gunzip(await xfs.readFilePromise(installStatePath)) as Buffer;
+      installState = v8.deserialize(installStateBuffer);
+      this.installStateChecksum = hashUtils.makeHash(installStateBuffer);
+    } catch {
+      // If for whatever reason the install state can't be restored
+      // carry on as if it doesn't exist.
       if (restoreResolutions)
         await this.applyLightResolution();
       return;
     }
-
-    const installStateBuffer = await gunzip(await xfs.readFilePromise(installStatePath)) as Buffer;
-    this.installStateChecksum = hashUtils.makeHash(installStateBuffer);
-    const installState: InstallState = v8.deserialize(installStateBuffer);
 
     if (restoreInstallersCustomData)
       if (typeof installState.installersCustomData !== `undefined`)
