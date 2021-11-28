@@ -1,7 +1,7 @@
 ---
 category: getting-started
 path: /getting-started
-title: "1 - Introduction"
+title: "Introduction"
 description: An introduction to Yarn, a package manager for your code.
 ---
 
