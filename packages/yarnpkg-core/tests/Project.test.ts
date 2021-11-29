@@ -298,7 +298,7 @@ describe(`Project`, () => {
       const statePath = configuration.get(`installStatePath`);
       await xfs.writeFilePromise(statePath, `invalid state`);
 
-      await expect(project.restoreInstallState()).resolves.toEqual(undefined);
+      await expect(project.restoreInstallState()).resolves.toBeUndefined();
     });
   });
 });
