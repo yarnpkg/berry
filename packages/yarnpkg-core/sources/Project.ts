@@ -666,7 +666,7 @@ export class Project {
 
     const realResolver = opts.resolver || this.configuration.makeResolver();
 
-    const legacyMigrationResolver = new LegacyMigrationResolver();
+    const legacyMigrationResolver = new LegacyMigrationResolver(realResolver);
     await legacyMigrationResolver.setup(this, {report: opts.report});
 
     const resolverChain = opts.lockfileOnly
