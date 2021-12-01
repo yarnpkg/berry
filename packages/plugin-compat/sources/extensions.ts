@@ -703,4 +703,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'webpack-cli': optionalPeerDep,
     },
   }],
+  // https://github.com/slorber/responsive-loader/pull/1/files
+  [`@docusaurus/responsive-loader@<1.5.0`, {
+    peerDependenciesMeta: {
+      sharp: optionalPeerDep,
+      jimp: optionalPeerDep,
+    },
+  }],
 ];
