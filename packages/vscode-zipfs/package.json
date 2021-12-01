@@ -41,7 +41,12 @@
     "commands": [
       {
         "command": "zipfs.mountZipFile",
-        "title": "Mount as Zip",
+        "title": "Mount Zip",
+        "category": "Zip"
+      },
+      {
+        "command": "zipfs.unmountZipFile",
+        "title": "Unmount Zip",
         "category": "Zip"
       },
       {
@@ -53,8 +58,13 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "resourceLangId == zip",
+          "when": "resourceLangId == zip && !explorerResourceIsRoot",
           "command": "zipfs.mountZipFile",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == zip && explorerResourceIsRoot",
+          "command": "zipfs.unmountZipFile",
           "group": "navigation"
         }
       ],
@@ -62,6 +72,10 @@
         {
           "when": "false",
           "command": "zipfs.mountZipFile"
+        },
+        {
+          "when": "false",
+          "command": "zipfs.unmountZipFile"
         },
         {
           "when": "editorLangId == zip",
