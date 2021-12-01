@@ -30,7 +30,7 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yes | yarn create svelte@next my-app && cd my-app
-        yarn
+        yes | YARN_PNP_ENABLE_ESM_LOADER=true yarn create svelte@next my-app && cd my-app
+        YARN_PNP_ENABLE_ESM_LOADER=true yarn
         yarn build
 
