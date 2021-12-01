@@ -283,4 +283,22 @@ describe(`Project`, () => {
       }
     });
   });
+
+  it(`should recover from a corrupted install state`, async() => {
+    await xfs.mktempPromise(async dir => {
+      await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {name: `foo`});
+      await xfs.writeFilePromise(ppath.join(dir, Filename.lockfile), ``);
+
+      const configuration = getConfiguration(dir);
+      const {project} = await Project.find(configuration, dir);
+      const cache = await Cache.find(configuration);
+
+      await project.install({cache, report: new ThrowReport()});
+
+      const statePath = configuration.get(`installStatePath`);
+      await xfs.writeFilePromise(statePath, `invalid state`);
+
+      await expect(project.restoreInstallState()).resolves.toBeUndefined();
+    });
+  });
 });
