@@ -251,9 +251,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  // pending the implementation of this suggestion:
-  // https://github.com/nodejs/node/issues/33226#issuecomment-791603173
-  test.skip(
+  test(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },

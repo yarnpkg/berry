@@ -26,6 +26,7 @@ export function tryParseURL(str: string) {
 
 export function getFileFormat(filepath: string): string | null {
   const ext = path.extname(filepath);
+  const isMain = process.argv[1] === filepath;
 
   switch (ext) {
     case `.mjs`: {
@@ -59,6 +60,8 @@ export function getFileFormat(filepath: string): string | null {
     // --experimental-loader behavior but is required to work around
     // https://github.com/nodejs/node/issues/33226
     default: {
+      if (!isMain)
+        return null;
       const pkg = nodeUtils.readPackageScope(filepath);
       if (!pkg)
         return `commonjs`;
