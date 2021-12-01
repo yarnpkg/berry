@@ -3,6 +3,12 @@ import * as structUtils                                  from './structUtils';
 import {Descriptor, Locator}                             from './types';
 
 export class LockfileResolver implements Resolver {
+  private readonly resolver: Resolver;
+
+  constructor(resolver: Resolver) {
+    this.resolver = resolver;
+  }
+
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
     if (resolution)
@@ -17,7 +23,7 @@ export class LockfileResolver implements Resolver {
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (opts.project.originalPackages.has(locator.locatorHash))
+    if (opts.project.originalPackages.has(locator.locatorHash) && !opts.project.lockfileNeedsRefresh)
       return true;
 
     return false;
@@ -32,7 +38,7 @@ export class LockfileResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return this.resolver.getResolutionDependencies(descriptor, opts);
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
@@ -57,7 +63,6 @@ export class LockfileResolver implements Resolver {
 
   async resolve(locator: Locator, opts: ResolveOptions) {
     const pkg = opts.project.originalPackages.get(locator.locatorHash);
-
     if (!pkg)
       throw new Error(`The lockfile resolver isn't meant to resolve packages - they should already have been stored into a cache`);
 

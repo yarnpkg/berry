@@ -55,6 +55,8 @@ export class GitResolver implements Resolver {
       languageName: manifest.languageName || opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.HARD,
 
+      conditions: manifest.getConditions(),
+
       dependencies: manifest.dependencies,
       peerDependencies: manifest.peerDependencies,
 

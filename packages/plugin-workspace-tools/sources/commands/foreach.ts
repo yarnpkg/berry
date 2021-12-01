@@ -1,13 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, Workspace}    from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport} from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils}               from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                from 'clipanion';
-import micromatch                                          from 'micromatch';
-import {cpus}                                              from 'os';
-import pLimit                                              from 'p-limit';
-import {Writable}                                          from 'stream';
-import * as t                                              from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
+import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils}                         from '@yarnpkg/core';
+import {gitUtils}                                                    from '@yarnpkg/plugin-git';
+import {Command, Option, Usage, UsageError}                          from 'clipanion';
+import micromatch                                                    from 'micromatch';
+import {cpus}                                                        from 'os';
+import pLimit                                                        from 'p-limit';
+import {Writable}                                                    from 'stream';
+import * as t                                                        from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
@@ -32,6 +33,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
       - If \`--from\` is set, Yarn will use the packages matching the 'from' glob as the starting point for any recursive search.
+
+      - If \`--since\` is set, Yarn will only run the command on workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -104,6 +107,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     description: `Avoid running the command on private workspaces`,
   });
 
+  since = Option.String(`--since`, {
+    description: `Only include workspaces that have been changed since the specified ref.`,
+    tolerateBoolean: true,
+  });
+
   commandName = Option.String();
   args = Option.Proxy();
 
@@ -113,6 +121,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
     if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+
+    await project.restoreInstallState();
 
     const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
     const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
@@ -126,14 +136,22 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
+    const rootCandidates = this.since
+      ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
+      : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
+
     const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);
     const fromCandidates: Array<Workspace> = this.from.length > 0
-      ? [rootWorkspace, ...rootWorkspace.getRecursiveWorkspaceChildren()].filter(fromPredicate)
-      : [rootWorkspace];
+      ? rootCandidates.filter(fromPredicate)
+      : rootCandidates;
 
-    const candidates = this.recursive
-      ? [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceDependencies()]).flat()]
-      : [...fromCandidates, ...fromCandidates.map(candidate => [...candidate.getRecursiveWorkspaceChildren()]).flat()];
+    const candidates = new Set([...fromCandidates, ...(fromCandidates.map(candidate => [...(
+      this.recursive
+        ? this.since
+          ? candidate.getRecursiveWorkspaceDependents()
+          : candidate.getRecursiveWorkspaceDependencies()
+        : candidate.getRecursiveWorkspaceChildren()
+    )])).flat()]);
 
     const workspaces: Array<Workspace> = [];
 
@@ -151,8 +169,12 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     }
 
     for (const workspace of candidates) {
-      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript)
-        continue;
+      if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript) {
+        const accessibleBinaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
+        if (!accessibleBinaries.has(scriptName)) {
+          continue;
+        }
+      }
 
       // Prevents infinite loop in the case of configuring a script as such:
       // "lint": "yarn workspaces foreach --all lint"

@@ -21,7 +21,7 @@ module.exports = {
       selector: `default`,
       format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
       filter: {
-        regex: `^(__.*|__non_webpack_module__|__non_webpack_require__|npm(_[a-z]+)+)$`,
+        regex: `^(__.*|__non_webpack_require__|npm(_[a-z]+)+)$`,
         match: false,
       },
       leadingUnderscore: `allow`,
@@ -32,6 +32,28 @@ module.exports = {
     '@typescript-eslint/indent': [`error`, 2, {
       SwitchCase: 1,
       ignoredNodes: [`TSTypeParameterInstantiation`],
+    }],
+
+    '@typescript-eslint/member-delimiter-style': [`error`, {
+      multiline: {
+        delimiter: `semi`,
+        requireLast: true,
+      },
+      singleline: {
+        requireLast: false,
+      },
+      overrides: {
+        interface: {
+          singleline: {
+            delimiter: `semi`,
+          },
+        },
+        typeLiteral: {
+          singleline: {
+            delimiter: `comma`,
+          },
+        },
+      },
     }],
 
     '@typescript-eslint/quotes': [`error`, `backtick`],

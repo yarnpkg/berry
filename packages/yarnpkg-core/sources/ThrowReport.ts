@@ -1,12 +1,20 @@
-import {MessageName}          from './MessageName';
-import {Report, TimerOptions} from './Report';
-import {Locator}              from './types';
+import {MessageName}                          from './MessageName';
+import {Report, SectionOptions, TimerOptions} from './Report';
+import {Locator}                              from './types';
 
 export class ThrowReport extends Report {
   reportCacheHit(locator: Locator) {
   }
 
   reportCacheMiss(locator: Locator) {
+  }
+
+  startSectionSync<T>(opts: SectionOptions, cb: () => T) {
+    return cb();
+  }
+
+  async startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>) {
+    return await cb();
   }
 
   startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;

@@ -34,16 +34,16 @@
       "examples": ["./exampleCA.pem"]
     },
     "changesetBaseRefs": {
-      "_package": "@yarnpkg/plugin-version",
-      "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, and upstream/master. Supports git branches, tags, and commits.",
+      "_package": "@yarnpkg/plugin-git",
+      "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, upstream/master, main, origin/main, and upstream/main. Supports git branches, tags, and commits.",
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": ["master", "origin/master", "upstream/master"]
+      "default": ["master", "origin/master", "upstream/master", "main", "origin/main", "upstream/main"]
     },
     "changesetIgnorePatterns": {
-      "_package": "@yarnpkg/plugin-version",
+      "_package": "@yarnpkg/plugin-git",
       "description": "An Array of glob patterns. Files matching the following patterns (in terms of relative paths compared to the root of the project) will be ignored by the `yarn version check` command.",
       "type": "array",
       "items": {
@@ -363,6 +363,12 @@
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
     },
+    "nmSelfReferences": {
+      "_package": "@yarnpkg/plugin-nm",
+      "description": "Defines whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks. This setting can be overriden per-workspace through the [`installConfig.selfReferences` field](/configuration/manifest#installConfig.selfReferences).",
+      "type": "boolean",
+      "default": true
+    },
     "nmMode": {
       "_package": "@yarnpkg/plugin-nm",
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
@@ -372,16 +378,23 @@
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `node-modules`.",
+      "description": "Defines what linker should be used for installing Node packages (useful to enable the node-modules plugin), one of: `pnp`, `pnpm` and `node-modules`.",
       "type": "string",
-      "enum": ["pnp", "node-modules"],
-      "default": "pnp"
+      "default": "pnp",
+      "examples": ["pnp", "pnpm", "node-modules"]
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
       "description": "If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.",
       "type": "boolean",
       "default": false
+    },
+    "npmAuditRegistry": {
+      "_package": "@yarnpkg/plugin-npm",
+      "description": "Defines the registry that must be used when auditing dependencies. Doesn't need to be defined, in which case the value of `npmRegistryServer` will be used.",
+      "type": "string",
+      "format": "uri",
+      "examples": ["https://npm.pkg.github.com"]
     },
     "npmAuthIdent": {
       "_package": "@yarnpkg/plugin-npm",
@@ -543,6 +556,12 @@
       "format": "uri-reference",
       "default": "./.pnp.data.json"
     },
+    "pnpEnableEsmLoader": {
+      "_package": "@yarnpkg/plugin-pnp",
+      "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`). Yarn tries to automatically detect whether ESM support is required.",
+      "type": "boolean",
+      "default": false
+    },
     "pnpEnableInlining": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "If true (the default), Yarn will generate a single `.pnp.cjs` file that contains all the required data for your project to work properly. If toggled off, Yarn will also generate a `.pnp.data.json` file meant to be consumed by the `@yarnpkg/pnp` package.",
@@ -604,6 +623,12 @@
       "type": "boolean",
       "default": false
     },
+    "preferTruncatedLines": {
+      "_package": "@yarnpkg/core",
+      "description": "If true, Yarn will truncate lines that would go beyond the size of the terminal. If progress bars are disabled, lines will never be truncated. Forgettable lines (e.g. the fetch step logs) are always truncated.",
+      "type": "boolean",
+      "default": false
+    },
     "progressBarStyle": {
       "_package": "@yarnpkg/core",
       "description": "Which style of progress bar should be used (only when progress bars are enabled). Valid values can be found [here](https://github.com/yarnpkg/berry/blob/ac2668904bdcd804e531291c749b9d17b8d3acd7/packages/yarnpkg-core/sources/StreamReport.ts#L40).",
@@ -617,6 +642,32 @@
       "type": "string",
       "pattern": "^[^<>:;,?\"*|/]+$",
       "default": ".yarnrc.yml"
+    },
+    "supportedArchitectures": {
+      "_package": "@yarnpkg/core",
+      "description": "Defines the systems for which Yarn should install packages.",
+      "type": "object",
+      "properties": {
+        "os": {
+          "description": "The list of operating systems to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "darwin", "linux", "win32"]
+        },
+        "cpu": {
+          "description": "The list of CPUs to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "x86", "ia32"]
+        }
+      },
+      "_exampleKeys": ["os", "cpu"]
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",

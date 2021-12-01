@@ -8,10 +8,10 @@ import * as miscUtils                                                           
 import {getContent as getZipWorkerSource, ConvertToZipPayload}                                       from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
-  baseFs?: FakeFS<PortablePath>,
-  prefixPath?: PortablePath | null,
-  compressionLevel?: ZipCompression,
-  inMemory?: boolean,
+  baseFs?: FakeFS<PortablePath>;
+  prefixPath?: PortablePath | null;
+  compressionLevel?: ZipCompression;
+  inMemory?: boolean;
 }
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
@@ -34,9 +34,9 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
 }
 
 export interface ExtractBufferOptions {
-  compressionLevel?: ZipCompression,
-  prefixPath?: PortablePath,
-  stripComponents?: number,
+  compressionLevel?: ZipCompression;
+  prefixPath?: PortablePath;
+  stripComponents?: number;
 }
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
@@ -67,7 +67,9 @@ async function * parseTar(tgz: Buffer) {
   });
 
   parser.on(`close`, () => {
-    passthrough.destroy();
+    if (!passthrough.destroyed) {
+      passthrough.end();
+    }
   });
 
   parser.end(tgz);

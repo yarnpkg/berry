@@ -16,8 +16,8 @@ const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[
 const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
 
 export type VirtualFSOptions = {
-  baseFs?: FakeFS<PortablePath>,
-  folderName?: Filename,
+  baseFs?: FakeFS<PortablePath>;
+  folderName?: Filename;
 };
 
 export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
@@ -104,6 +104,9 @@ export class VirtualFS extends ProxiedFS<PortablePath, PortablePath> {
   }
 
   mapToBase(p: PortablePath): PortablePath {
+    if (p === ``)
+      return p;
+
     if (this.pathUtils.isAbsolute(p))
       return VirtualFS.resolveVirtual(p);
 

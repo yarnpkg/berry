@@ -358,3 +358,13 @@ workspace(WorkspaceCwd), workspace_field(WorkspaceCwd, 'name', _).
 ```
 
 For more information about the parameters that must be instantiated when calling the predicate reported by the error message, consult the [dedicated page](/features/constraints#query-predicate) from our documentation.
+
+## YN0076 - `INCOMPATIBLE_ARCHITECTURE`
+
+A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) fields) as being incompatible with the system architecture. Its postinstall scripts will not run on this system.
+
+## YN0077 - `GHOST_ARCHITECTURE`
+
+Some native packages may be excluded from the install if they signal they don't support the systems the project is intended for. This detection is typically based on your current system parameters, but it can be configured using the [`supportedArchitectures` config option](/configuration/yarnrc#supportedArchitectures). If your os or cpu are missing from this list, Yarn will skip the packages and raise a warning.
+
+Note that all fields from `supportedArchitectures` default to `current`, which is a dynamic value depending on your local parameters. For instance, if you wish to support "my current os, whatever it is, plus linux", you can set `supportedArchitectures.os` to `["current", "linux"]`.

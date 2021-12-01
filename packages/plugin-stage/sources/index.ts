@@ -7,7 +7,7 @@ export interface Hooks {
   populateYarnPaths?: (
     project: Project,
     definePath: (path: PortablePath | null) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 }
 
 const plugin: Plugin = {

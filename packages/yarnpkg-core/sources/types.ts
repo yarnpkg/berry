@@ -21,17 +21,17 @@ export interface Ident {
    * Unique hash of a package scope and name. Used as key in various places,
    * so that two idents can be quickly compared.
    */
-  identHash: IdentHash,
+  identHash: IdentHash;
 
   /**
    * Scope of the package, without the `@` prefix (eg. `types`).
    */
-  scope: string | null,
+  scope: string | null;
 
   /**
    * Name of the package (eg. `node`).
    */
-  name: string,
+  name: string;
 }
 
 /**
@@ -53,12 +53,12 @@ export interface Descriptor extends Ident {
    * Unique hash of a package descriptor. Used as key in various places, so
    * that two descriptors can be quickly compared.
    */
-  descriptorHash: DescriptorHash,
+  descriptorHash: DescriptorHash;
 
   /**
    * The range associated with this descriptor. (eg. `^1.0.0`)
    */
-  range: string,
+  range: string;
 }
 
 /**
@@ -83,12 +83,12 @@ export interface Locator extends Ident {
    * Unique hash of a package locator. Used as key in various places so that
    * two locators can be quickly compared.
    */
-  locatorHash: LocatorHash,
+  locatorHash: LocatorHash;
 
   /**
    * A package reference uniquely identifies a package (eg. `1.2.3`).
    */
-  reference: string,
+  reference: string;
 }
 
 /**
@@ -120,42 +120,48 @@ export interface Package extends Locator {
   /**
    * The version of the package, if available.
    */
-  version: string | null,
+  version: string | null;
 
   /**
    * The "language" of the package (eg. `node`), for use with multi-linkers.
    * Currently experimental; will probably be renamed before stable release.
    */
-  languageName: string,
+  languageName: string;
 
   /**
    * Describes the type of the file system link for a package.
    */
-  linkType: LinkType,
+  linkType: LinkType;
+
+  /**
+   * A set of constraints indicating whether the package supports the host
+   * environment.
+   */
+  conditions?: string | null;
 
   /**
    * A map of the package's dependencies. There's no distinction between prod
    * dependencies and dev dependencies, because those have already been merged
    * together during the resolution process.
    */
-  dependencies: Map<IdentHash, Descriptor>,
+  dependencies: Map<IdentHash, Descriptor>;
 
   /**
    * A map of the package's peer dependencies.
    */
-  peerDependencies: Map<IdentHash, Descriptor>,
+  peerDependencies: Map<IdentHash, Descriptor>;
 
   /**
    * Map with additional information about direct dependencies.
    */
-  dependenciesMeta: Map<string, Map<string | null, DependencyMeta>>,
+  dependenciesMeta: Map<string, Map<string | null, DependencyMeta>>;
 
   /**
    * Map with additional information about peer dependencies.
    *
    * The keys are stringified idents, for example: `@scope/name`
    */
-  peerDependenciesMeta: Map<string, PeerDependencyMeta>,
+  peerDependenciesMeta: Map<string, PeerDependencyMeta>;
 
   /**
    * All `bin` entries  defined by the package
@@ -166,7 +172,7 @@ export interface Package extends Locator {
    * binaries they export, which is too slow for a command that might be
    * called at every keystroke)
    */
-  bin: Map<string, PortablePath>,
+  bin: Map<string, PortablePath>;
 }
 
 export enum PackageExtensionType {
@@ -186,7 +192,7 @@ export type PackageExtension = (
   | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
   | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
 ) & {
-  status: PackageExtensionStatus,
-  userProvided: boolean,
-  parentDescriptor: Descriptor,
+  status: PackageExtensionStatus;
+  userProvided: boolean;
+  parentDescriptor: Descriptor;
 };

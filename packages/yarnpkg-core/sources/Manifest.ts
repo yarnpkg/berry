@@ -38,6 +38,7 @@ export interface PublishConfig {
 
 export interface InstallConfig {
   hoistingLimits?: string;
+  selfReferences?: boolean;
 }
 
 export class Manifest {
@@ -295,7 +296,22 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, normalizeSlashes(value));
+        // Some registries incorrectly normalize the `bin` field of
+        // scoped packages to be invalid filenames.
+        // E.g. from
+        // {
+        //   "name": "@yarnpkg/doctor",
+        //   "bin": "index.js"
+        // }
+        // to
+        // {
+        //   "name": "@yarnpkg/doctor",
+        //   "bin": {
+        //     "@yarnpkg/doctor": "index.js"
+        //   }
+        // }
+        const binaryIdent = structUtils.parseIdent(key);
+        this.bin.set(binaryIdent.name, normalizeSlashes(value));
       }
     }
 
@@ -555,6 +571,12 @@ export class Manifest {
           } else {
             errors.push(new Error(`Invalid hoisting limits definition`));
           }
+        } else if (key == `selfReferences`) {
+          if (typeof data.installConfig.selfReferences == `boolean`) {
+            this.installConfig.selfReferences = data.installConfig.selfReferences;
+          } else {
+            errors.push(new Error(`Invalid selfReferences definition, must be a boolean value`));
+          }
         } else {
           errors.push(new Error(`Unrecognized installConfig key: ${key}`));
         }
@@ -656,6 +678,17 @@ export class Manifest {
       return true;
 
     return false;
+  }
+
+  getConditions() {
+    const fields: Array<string> = [];
+
+    if (this.os && this.os.length > 0)
+      fields.push(toConditionLine(`os`, this.os));
+    if (this.cpu && this.cpu.length > 0)
+      fields.push(toConditionLine(`cpu`, this.cpu));
+
+    return fields.length > 0 ? fields.join(` & `) : null;
   }
 
   isCompatibleWithOS(os: string): boolean {
@@ -975,4 +1008,23 @@ function tryParseOptionalBoolean(value: unknown, {yamlCompatibilityMode}: {yamlC
     return value;
 
   return null;
+}
+
+function toConditionToken(name: string, raw: string) {
+  const index = raw.search(/[^!]/);
+  if (index === -1)
+    return `invalid`;
+
+  const prefix = index % 2 === 0 ? `` : `!`;
+  const value = raw.slice(index);
+
+  return `${prefix}${name}=${value}`;
+}
+
+function toConditionLine(name: string, rawTokens: Array<string>) {
+  if (rawTokens.length === 1) {
+    return toConditionToken(name, rawTokens[0]);
+  } else {
+    return `(${rawTokens.map(raw => toConditionToken(name, raw)).join(` | `)})`;
+  }
 }

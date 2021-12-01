@@ -63,9 +63,9 @@ Plugins can also register their own commands. To do this, we just have to write 
 module.exports = {
   name: `plugin-hello-world`,
   factory: require => {
-    const {Command} = require(`clipanion`);
+    const {BaseCommand} = require(`@yarnpkg/cli`);
 
-    class HelloWorldCommand extends Command {
+    class HelloWorldCommand extends BaseCommand {
       static paths = [[`hello`]];
 
       async execute() {
@@ -88,10 +88,11 @@ Now, try to run `yarn hello`. You'll see your message appear! Note that you can 
 module.exports = {
   name: `plugin-addition`,
   factory: require => {
-    const {Command, Option} = require(`clipanion`);
+    const {BaseCommand} = require(`@yarnpkg/cli`);
+    const {Option} = require(`clipanion`);
     const t = require(`typanion`);
 
-    class AdditionCommand extends Command {
+    class AdditionCommand extends BaseCommand {
       static paths = [[`addition`]];
 
       // Show descriptive usage for a --help argument passed to this command

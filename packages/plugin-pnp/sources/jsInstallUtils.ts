@@ -1,29 +1,24 @@
 import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, Report, structUtils} from '@yarnpkg/core';
 import {Filename, ppath}                                                                                                                      from '@yarnpkg/fslib';
 
-export type ManifestCompatibilityDataRequirements = {
-  manifest: Pick<Manifest, 'cpu' | 'os'>,
-};
+export function checkManifestCompatibility(pkg: Package) {
+  return structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]});
+}
 
-export function checkAndReportManifestCompatibility(pkg: Package, requirements: ManifestCompatibilityDataRequirements, label: string, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
-  if (!Manifest.isManifestFieldCompatible(requirements.manifest.os, process.platform)) {
-    report?.reportWarningOnce(MessageName.INCOMPATIBLE_OS, `${structUtils.prettyLocator(configuration, pkg)} The platform ${process.platform} is incompatible with this module, ${label} skipped.`);
-    return false;
-  }
-
-  if (!Manifest.isManifestFieldCompatible(requirements.manifest.cpu, process.arch)) {
-    report?.reportWarningOnce(MessageName.INCOMPATIBLE_CPU, `${structUtils.prettyLocator(configuration, pkg)} The CPU architecture ${process.arch} is incompatible with this module, ${label} skipped.`);
+export function checkAndReportManifestCompatibility(pkg: Package, label: string, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
+  if (!checkManifestCompatibility(pkg)) {
+    report?.reportWarningOnce(MessageName.INCOMPATIBLE_ARCHITECTURE, `${structUtils.prettyLocator(configuration, pkg)} The ${process.platform}-${process.arch} architecture is incompatible with this module, ${label} skipped.`);
     return false;
   }
 
   return true;
 }
 
-export type ExtractBuildScriptDataRequirements = ManifestCompatibilityDataRequirements & {
-  manifest: Pick<Manifest, 'scripts'>,
+export type ExtractBuildScriptDataRequirements = {
+  manifest: Pick<Manifest, 'scripts'>;
   misc: {
-    hasBindingGyp: boolean,
-  },
+    hasBindingGyp: boolean;
+  };
 };
 
 export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScriptDataRequirements, dependencyMeta: DependencyMeta, {configuration, report}: {configuration: Configuration, report?: Report | null}) {
@@ -55,7 +50,7 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
     return [];
   }
 
-  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, requirements, `build`, {configuration, report});
+  const isManifestCompatible = checkAndReportManifestCompatibility(pkg, `build`, {configuration, report});
   if (!isManifestCompatible)
     return [];
 

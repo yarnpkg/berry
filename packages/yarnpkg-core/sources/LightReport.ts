@@ -1,16 +1,16 @@
-import {Writable}                from 'stream';
+import {Writable}                             from 'stream';
 
-import {Configuration}           from './Configuration';
-import {MessageName}             from './MessageName';
-import {Report, TimerOptions}    from './Report';
-import {formatNameWithHyperlink} from './StreamReport';
-import * as formatUtils          from './formatUtils';
-import {Locator}                 from './types';
+import {Configuration}                        from './Configuration';
+import {MessageName}                          from './MessageName';
+import {Report, SectionOptions, TimerOptions} from './Report';
+import {formatNameWithHyperlink}              from './StreamReport';
+import * as formatUtils                       from './formatUtils';
+import {Locator}                              from './types';
 
 export type LightReportOptions = {
-  configuration: Configuration,
-  stdout: Writable,
-  suggestInstall?: boolean,
+  configuration: Configuration;
+  stdout: Writable;
+  suggestInstall?: boolean;
 };
 
 export class LightReport extends Report {
@@ -56,6 +56,14 @@ export class LightReport extends Report {
   }
 
   reportCacheMiss(locator: Locator) {
+  }
+
+  startSectionSync<T>(opts: SectionOptions, cb: () => T) {
+    return cb();
+  }
+
+  async startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>) {
+    return await cb();
   }
 
   startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;

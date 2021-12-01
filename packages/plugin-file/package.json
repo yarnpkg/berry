@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-file",
-  "version": "2.3.0-rc.5",
+  "version": "2.3.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -31,6 +31,5 @@
   ],
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  },
-  "stableVersion": "2.2.1"
+  }
 }

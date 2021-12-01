@@ -49,7 +49,7 @@ async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
 
 type OnResolveParams = {
   resolvedPath: string | null;
-  watchFiles: Array<string>
+  watchFiles: Array<string>;
   error?: Error;
 };
 
@@ -81,11 +81,11 @@ async function defaultOnResolve(args: OnResolveArgs, {resolvedPath, error, watch
 }
 
 export type PluginOptions = {
-  baseDir?: string,
-  extensions?: Array<string>,
-  filter?: RegExp,
-  onResolve?: (args: OnResolveArgs, params: OnResolveParams) => Promise<OnResolveResult | null>,
-  onLoad?: (args: OnLoadArgs) => Promise<OnLoadResult>,
+  baseDir?: string;
+  extensions?: Array<string>;
+  filter?: RegExp;
+  onResolve?: (args: OnResolveArgs, params: OnResolveParams) => Promise<OnResolveResult | null>;
+  onLoad?: (args: OnLoadArgs) => Promise<OnLoadResult>;
 };
 
 export function pnpPlugin({

@@ -9,7 +9,7 @@ import {NodeFS}                                                                 
 import {ZipFS}                                                                                                                                       from './ZipFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
-import {Filename, FSPath, PortablePath, ppath}                                                                                                       from './path';
+import {Filename, FSPath, npath, PortablePath, ppath}                                                                                                from './path';
 
 const ZIP_FD = 0x80000000;
 
@@ -44,17 +44,17 @@ export const getArchivePart = (path: string, extension: string) => {
 };
 
 export type ZipOpenFSOptions = {
-  baseFs?: FakeFS<PortablePath>,
-  filter?: RegExp | null,
-  libzip: Libzip | (() => Libzip),
-  maxOpenFiles?: number,
-  readOnlyArchives?: boolean,
-  useCache?: boolean,
+  baseFs?: FakeFS<PortablePath>;
+  filter?: RegExp | null;
+  libzip: Libzip | (() => Libzip);
+  maxOpenFiles?: number;
+  readOnlyArchives?: boolean;
+  useCache?: boolean;
   /**
    * Maximum age in ms.
    * ZipFS instances are pruned from the cache if they aren't accessed within this amount of time.
    */
-  maxAge?: number,
+  maxAge?: number;
   /**
    * Which file extensions will be interpreted as zip files. Useful for supporting other formats
    * packaged as zips, such as .docx.
@@ -302,8 +302,13 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
     return this.makeCallSync(p, () => {
       return this.baseFs.createReadStream(p, opts);
-    }, (zipFs, {subPath}) => {
-      return zipFs.createReadStream(subPath, opts);
+    }, (zipFs, {archivePath, subPath}) => {
+      const stream = zipFs.createReadStream(subPath, opts);
+      // This is a very hacky workaround. `ZipOpenFS` shouldn't have to work with `NativePath`s.
+      // Ref: https://github.com/yarnpkg/berry/pull/3774
+      // TODO: think of a better solution
+      stream.path = npath.fromPortablePath(this.pathUtils.join(archivePath, subPath));
+      return stream;
     });
   }
 

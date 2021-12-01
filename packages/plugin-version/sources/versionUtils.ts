@@ -1,9 +1,25 @@
-import {AllDependencies, execUtils, miscUtils, hashUtils, Workspace, structUtils, Project, Manifest, IdentHash, Report, MessageName, WorkspaceResolver} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                                                                                                      from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                       from '@yarnpkg/parsers';
-import {UsageError}                                                                                                                                     from 'clipanion';
-import omit                                                                                                                                             from 'lodash/omit';
-import semver                                                                                                                                           from 'semver';
+import {AllDependencies, miscUtils, hashUtils, Workspace, structUtils, Project, Manifest, IdentHash, Report, MessageName, WorkspaceResolver} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                                                                                           from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                            from '@yarnpkg/parsers';
+import {gitUtils}                                                                                                                            from '@yarnpkg/plugin-git';
+import {UsageError}                                                                                                                          from 'clipanion';
+import omit                                                                                                                                  from 'lodash/omit';
+import semver                                                                                                                                from 'semver';
+
+/**
+ * @deprecated Use `gitUtils.fetchBase` instead
+ */
+export const fetchBase = gitUtils.fetchBase;
+
+/**
+ * @deprecated Use `gitUtils.fetchRoot` instead
+ */
+export const fetchRoot = gitUtils.fetchRoot;
+
+/**
+ * @deprecated Use `gitUtils.fetchChangedFiles` instead
+ */
+export const fetchChangedFiles = gitUtils.fetchChangedFiles;
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
@@ -29,88 +45,26 @@ export function validateReleaseDecision(decision: unknown): string {
   return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
 }
 
-export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
-  if (baseRefs.length === 0)
-    throw new UsageError(`Can't run this command with zero base refs specified.`);
-
-  const ancestorBases = [];
-
-  for (const candidate of baseRefs) {
-    const {code} = await execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {cwd: root});
-    if (code === 0) {
-      ancestorBases.push(candidate);
-    }
-  }
-
-  if (ancestorBases.length === 0)
-    throw new UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
-
-  const {stdout: mergeBaseStdout} = await execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {cwd: root, strict: true});
-  const hash = mergeBaseStdout.trim();
-
-  const {stdout: showStdout} = await execUtils.execvp(`git`, [`show`, `--quiet`, `--pretty=format:%s`, hash], {cwd: root, strict: true});
-  const title = showStdout.trim();
-
-  return {hash, title};
-}
-
-export async function fetchRoot(initialCwd: PortablePath) {
-  // Note: We can't just use `git rev-parse --show-toplevel`, because on Windows
-  // it may return long paths even when the cwd uses short paths, and we have no
-  // way to detect it from Node (not even realpath).
-
-  let match: PortablePath | null = null;
-
-  let cwd: PortablePath;
-  let nextCwd = initialCwd;
-  do {
-    cwd = nextCwd;
-    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
-      match = cwd;
-    nextCwd = ppath.dirname(cwd);
-  } while (match === null && nextCwd !== cwd);
-
-  return match;
-}
-
-// Note: This returns all changed files from the git diff, which can include
-// files not belonging to a workspace
-export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
-  const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
-
-  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
-  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
-
-  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
-  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
-
-  const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
-
-  return ignorePattern
-    ? changedFiles.filter(p => !ppath.relative(project.cwd, p).match(ignorePattern))
-    : changedFiles;
-}
-
 export type VersionFile = {
-  project: Project,
+  project: Project;
 
-  changedFiles: Set<PortablePath>,
-  changedWorkspaces: Set<Workspace>,
+  changedFiles: Set<PortablePath>;
+  changedWorkspaces: Set<Workspace>;
 
-  releaseRoots: Set<Workspace>,
-  releases: Releases,
+  releaseRoots: Set<Workspace>;
+  releases: Releases;
 
-  saveAll: () => Promise<void>,
+  saveAll: () => Promise<void>;
 } & ({
-  root: PortablePath,
+  root: PortablePath;
 
-  baseHash: string,
-  baseTitle: string,
+  baseHash: string;
+  baseTitle: string;
 } | {
-  root: null,
+  root: null;
 
-  baseHash: null,
-  baseTitle: null,
+  baseHash: null;
+  baseTitle: null;
 });
 
 export async function resolveVersionFiles(project: Project, {prerelease = null}: {prerelease?: string | null} = {}) {
@@ -222,14 +176,14 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
   if (configuration.projectCwd === null)
     throw new UsageError(`This command can only be run from within a Yarn project`);
 
-  const root = await fetchRoot(configuration.projectCwd);
+  const root = await gitUtils.fetchRoot(configuration.projectCwd);
 
   const base = root !== null
-    ? await fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)})
+    ? await gitUtils.fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)})
     : null;
 
   const changedFiles = root !== null
-    ? await fetchChangedFiles(root, {base: base!.hash, project})
+    ? await gitUtils.fetchChangedFiles(root, {base: base!.hash, project})
     : [];
 
   const deferredVersionFolder = configuration.get(`deferredVersionFolder`);
@@ -531,8 +485,8 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
 }
 
 const placeholders: Map<string, {
-  extract: (parts: Array<string | number>) => [string | number, Array<string | number>] | null,
-  generate: (previous?: number) => string,
+  extract: (parts: Array<string | number>) => [string | number, Array<string | number>] | null;
+  generate: (previous?: number) => string;
 }> = new Map([
   [`%n`, {
     extract: parts => {

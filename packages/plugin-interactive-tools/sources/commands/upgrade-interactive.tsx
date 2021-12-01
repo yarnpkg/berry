@@ -149,28 +149,28 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const Prompt = () => {
       return (
-        <Box flexDirection="row">
-          <Box flexDirection="column" width={49}>
+        <Box flexDirection={`row`}>
+          <Box flexDirection={`column`} width={49}>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<up>`}</Text>/<Text bold color="cyanBright">{`<down>`}</Text> to select packages.
+                Press <Text bold color={`cyanBright`}>{`<up>`}</Text>/<Text bold color={`cyanBright`}>{`<down>`}</Text> to select packages.
               </Text>
             </Box>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<left>`}</Text>/<Text bold color="cyanBright">{`<right>`}</Text> to select versions.
+                Press <Text bold color={`cyanBright`}>{`<left>`}</Text>/<Text bold color={`cyanBright`}>{`<right>`}</Text> to select versions.
               </Text>
             </Box>
           </Box>
-          <Box flexDirection="column">
+          <Box flexDirection={`column`}>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<enter>`}</Text> to install.
+                Press <Text bold color={`cyanBright`}>{`<enter>`}</Text> to install.
               </Text>
             </Box>
             <Box marginLeft={1}>
               <Text>
-                Press <Text bold color="cyanBright">{`<ctrl+c>`}</Text> to abort.
+                Press <Text bold color={`cyanBright`}>{`<ctrl+c>`}</Text> to abort.
               </Text>
             </Box>
           </Box>
@@ -180,15 +180,15 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const Header = () => {
       return (
-        <Box flexDirection="row" paddingTop={1} paddingBottom={1}>
+        <Box flexDirection={`row`} paddingTop={1} paddingBottom={1}>
           <Box width={50}>
             <Text bold>
-              <Text color="greenBright">?</Text> Pick the packages you want to upgrade.
+              <Text color={`greenBright`}>?</Text> Pick the packages you want to upgrade.
             </Text>
           </Box>
-          <Box width={17}><Text bold underline color="gray">Current</Text></Box>
-          <Box width={17}><Text bold underline color="gray">Range</Text></Box>
-          <Box width={17}><Text bold underline color="gray">Latest</Text></Box>
+          <Box width={17}><Text bold underline color={`gray`}>Current</Text></Box>
+          <Box width={17}><Text bold underline color={`gray`}>Range</Text></Box>
+          <Box width={17}><Text bold underline color={`gray`}>Latest</Text></Box>
         </Box>
       );
     };
@@ -208,7 +208,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           </Box>
           {suggestions !== null
             ? <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
-            : <Box marginLeft={2}><Text color="gray">Fetching suggestions...</Text></Box>
+            : <Box marginLeft={2}><Text color={`gray`}>Fetching suggestions...</Text></Box>
           }
         </Box>
       </>;

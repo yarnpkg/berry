@@ -12,10 +12,10 @@ export enum LinkStrategy {
 }
 
 export type CopyOptions = {
-  linkStrategy: LinkStrategy | null,
-  stableTime: boolean,
-  stableSort: boolean,
-  overwrite: boolean,
+  linkStrategy: LinkStrategy | null;
+  stableTime: boolean;
+  stableSort: boolean;
+  overwrite: boolean;
 };
 
 export type Operations =

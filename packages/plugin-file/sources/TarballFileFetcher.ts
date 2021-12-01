@@ -28,6 +28,7 @@ export class TarballFileFetcher implements Fetcher {
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
       loader: () => this.fetchFromDisk(locator, opts),
       skipIntegrityCheck: opts.skipIntegrityCheck,
+      ...opts.cacheOptions,
     });
 
     return {

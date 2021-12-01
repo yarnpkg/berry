@@ -5,13 +5,13 @@ const HEADER_REGEXP = /^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@.*/;
 
 export type HunkHeader = {
   original: {
-    start: number,
-    length: number,
-  },
+    start: number;
+    length: number;
+  };
   patched: {
-    start: number,
-    length: number,
-  },
+    start: number;
+    length: number;
+  };
 };
 
 export function getPath(p: string) {
@@ -49,51 +49,51 @@ export enum PatchMutationType {
 }
 
 export type PatchMutationPart = {
-  type: PatchMutationType,
-  lines: Array<string>,
-  noNewlineAtEndOfFile: boolean,
+  type: PatchMutationType;
+  lines: Array<string>;
+  noNewlineAtEndOfFile: boolean;
 };
 
 type FileRename = {
-  type: `rename`,
-  semverExclusivity: string | null,
-  fromPath: PortablePath,
-  toPath: PortablePath,
+  type: `rename`;
+  semverExclusivity: string | null;
+  fromPath: PortablePath;
+  toPath: PortablePath;
 };
 
 type FileModeChange = {
-  type: `mode change`,
-  semverExclusivity: string | null,
-  path: PortablePath,
-  oldMode: FileMode,
-  newMode: FileMode,
+  type: `mode change`;
+  semverExclusivity: string | null;
+  path: PortablePath;
+  oldMode: FileMode;
+  newMode: FileMode;
 };
 
 export type FilePatch = {
-  type: `patch`,
-  semverExclusivity: string | null,
-  path: PortablePath,
-  hunks: Array<Hunk>,
-  beforeHash: string | null,
-  afterHash: string | null,
+  type: `patch`;
+  semverExclusivity: string | null;
+  path: PortablePath;
+  hunks: Array<Hunk>;
+  beforeHash: string | null;
+  afterHash: string | null;
 };
 
 type FileDeletion = {
-  type: `file deletion`
-  semverExclusivity: string | null,
-  path: PortablePath,
-  mode: FileMode,
-  hunk: Hunk | null,
-  hash: string | null,
+  type: `file deletion`;
+  semverExclusivity: string | null;
+  path: PortablePath;
+  mode: FileMode;
+  hunk: Hunk | null;
+  hash: string | null;
 };
 
 type FileCreation = {
-  type: `file creation`,
-  semverExclusivity: string | null,
-  mode: FileMode,
-  path: PortablePath,
-  hunk: Hunk | null,
-  hash: string | null,
+  type: `file creation`;
+  semverExclusivity: string | null;
+  mode: FileMode;
+  path: PortablePath;
+  hunk: Hunk | null;
+  hash: string | null;
 };
 
 export type PatchFilePart =
@@ -111,25 +111,25 @@ type State =
   | `parsing hunks`;
 
 type FileDeets = {
-  semverExclusivity: string | null,
-  diffLineFromPath: string | null,
-  diffLineToPath: string | null,
-  oldMode: string | null,
-  newMode: string | null,
-  deletedFileMode: string | null,
-  newFileMode: string | null,
-  renameFrom: string | null,
-  renameTo: string | null,
-  beforeHash: string | null,
-  afterHash: string | null,
-  fromPath: string | null,
-  toPath: string | null,
-  hunks: Array<Hunk> | null,
+  semverExclusivity: string | null;
+  diffLineFromPath: string | null;
+  diffLineToPath: string | null;
+  oldMode: string | null;
+  newMode: string | null;
+  deletedFileMode: string | null;
+  newFileMode: string | null;
+  renameFrom: string | null;
+  renameTo: string | null;
+  beforeHash: string | null;
+  afterHash: string | null;
+  fromPath: string | null;
+  toPath: string | null;
+  hunks: Array<Hunk> | null;
 };
 
 export type Hunk = {
-  header: HunkHeader,
-  parts: Array<PatchMutationPart>,
+  header: HunkHeader;
+  parts: Array<PatchMutationPart>;
 };
 
 const emptyFilePatch = (): FileDeets => ({

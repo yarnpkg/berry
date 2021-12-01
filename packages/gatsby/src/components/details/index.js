@@ -134,7 +134,7 @@ const icons = {
 
 export const Di = ({icon, title, description}) => (
   <DiBox>
-    {icon && <img src={icons[icon]} alt="" />}
+    {icon && <img src={icons[icon]} alt={``} />}
     <dt>{title}</dt>
     <span />
     <dd>{description}</dd>
@@ -478,10 +478,10 @@ export class Details extends Component {
         if (readmeLoading)
           return null;
 
-        return <div>no readme found <span role="img" aria-label="sad emotion">😢</span></div>;
+        return <div>no readme found <span role={`img`} aria-label={`sad emotion`}>😢</span></div>;
       }
       return (
-        <ReadMore text="Display full readme">
+        <ReadMore text={`Display full readme`}>
           <Markdown
             source={this.state.readme}
             repository={this.state.repository}
@@ -511,11 +511,11 @@ export class Details extends Component {
         </h2>
         <p>But that means it is now yours!</p>
         <Instructions>
-          <Copyable pre="$ ">mkdir {this.props.objectID}</Copyable>
-          <Copyable pre="$ ">cd {this.props.objectID}</Copyable>
-          <Copyable pre="$ ">yarn init -2</Copyable>
+          <Copyable pre={`$ `}>mkdir {this.props.objectID}</Copyable>
+          <Copyable pre={`$ `}>cd {this.props.objectID}</Copyable>
+          <Copyable pre={`$ `}>yarn init -2</Copyable>
           <p>Make your package</p>
-          <Copyable pre="$ ">yarn npm publish</Copyable>
+          <Copyable pre={`$ `}>yarn npm publish</Copyable>
         </Instructions>
       </InvalidPackage>
     );
@@ -539,18 +539,18 @@ export class Details extends Component {
             vulns={this.state.vulns}
             vulnsUrl={this.state.vulnsUrl}
           />
-          <Section id="readme">
+          <Section id={`readme`}>
             <SectionTitle icon={IcoReadme}>
-              <a href="#readme">readme</a>
+              <a href={`#readme`}>readme</a>
             </SectionTitle>
             {this.maybeRenderReadme()}
           </Section>
           {this.state.changelog && (
-            <Section id="changelog">
+            <Section id={`changelog`}>
               <SectionTitle icon={IcoChangelog}>
-                <a href="#changelog">changelog</a>
+                <a href={`#changelog`}>changelog</a>
               </SectionTitle>
-              <ReadMore text="Display full changelog">
+              <ReadMore text={`Display full changelog`}>
                 <Markdown
                   source={this.state.changelog}
                   repository={this.state.repository}

@@ -7,10 +7,11 @@ import {PnpApi}                                                    from '../type
 
 import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
 import {Manager}                                                   from './makeManager';
+import * as nodeUtils                                              from './nodeUtils';
 
 export type ApplyPatchOptions = {
-  fakeFs: FakeFS<PortablePath>,
-  manager: Manager,
+  fakeFs: FakeFS<PortablePath>;
+  manager: Manager;
 };
 
 type PatchedModule = Module & {
@@ -19,10 +20,6 @@ type PatchedModule = Module & {
 };
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
-  // @ts-expect-error
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
-
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
    */
@@ -78,7 +75,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Builtins are managed by the regular Node loader
 
-    if (isBuiltinModule(request)) {
+    if (nodeUtils.isBuiltinModule(request)) {
       try {
         enableNativeHooks = false;
         return originalModuleLoad.call(Module, request, parent, isMain);
@@ -129,10 +126,10 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = entry.cache[modulePath] as PatchedModule;
+    const cacheEntry = entry.cache[modulePath] as PatchedModule | undefined;
     if (cacheEntry) {
-      // When a dynamic import is used in CJS files Node adds the module
-      // to the cache but doesn't load it so we do it here.
+      // When the Node ESM loader encounters CJS modules it adds them
+      // to the cache but doesn't load them so we do that here.
       //
       // Keep track of and check if the module is already loading to
       // handle circular requires.
@@ -142,6 +139,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
         try {
           cacheEntry.isLoading = true;
+
+          // The main module is exposed as a global variable
+          if (isMain) {
+            process.mainModule = cacheEntry;
+            cacheEntry.id = `.`;
+          }
+
           cacheEntry.load(modulePath);
         } finally {
           cacheEntry.isLoading = false;
@@ -158,8 +162,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     entry.cache[modulePath] = module;
 
-    // The main module is exposed as global variable
-
+    // The main module is exposed as a global variable
     if (isMain) {
       process.mainModule = module;
       module.id = `.`;
@@ -239,7 +242,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: (NodeModule & {pnpApiPath?: PortablePath}) | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
-    if (isBuiltinModule(request))
+    if (nodeUtils.isBuiltinModule(request))
       return request;
 
     if (!enableNativeHooks)
@@ -360,19 +363,21 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     if (request === `pnpapi`)
       return false;
 
-    // Node sometimes call this function with an absolute path and a `null` set
-    // of paths. This would cause the resolution to fail. To avoid that, we
-    // fallback on the regular resolution. We only do this when `isMain` is
-    // true because the Node default resolution doesn't handle well in-zip
-    // paths, even absolute, so we try to use it as little as possible.
-    if (!enableNativeHooks || (isMain && npath.isAbsolute(request)))
+    if (!enableNativeHooks)
       return originalFindPath.call(Module, request, paths, isMain);
 
-    for (const path of paths || []) {
+    // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L490-L494
+    const isAbsolute = npath.isAbsolute(request);
+    if (isAbsolute)
+      paths = [``];
+    else if (!paths || paths.length === 0)
+      return false;
+
+    for (const path of paths) {
       let resolution: string | false;
 
       try {
-        const pnpApiPath = opts.manager.findApiPathFor(path);
+        const pnpApiPath = opts.manager.findApiPathFor(isAbsolute ? request : path);
         if (pnpApiPath !== null) {
           const api = opts.manager.getApiEntry(pnpApiPath, true).instance;
           resolution = api.resolveRequest(request, path) || false;

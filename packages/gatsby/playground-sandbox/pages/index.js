@@ -11,7 +11,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div className={`container`}>
       <Head>
         <title>Sherlock Playground</title>
       </Head>
@@ -19,12 +19,12 @@ const Home = () => {
       <main>
         <iframe
           ref={iframeEl}
-          title="playground"
+          title={`playground`}
           src={`${WEBSITE_URL}/playground/frame`}
-          allow="fullscreen"
-          width="100%"
-          height="100%"
-          frameBorder="0"
+          allow={`fullscreen`}
+          width={`100%`}
+          height={`100%`}
+          frameBorder={`0`}
         />
       </main>
     </div>

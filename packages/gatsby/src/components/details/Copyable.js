@@ -128,12 +128,12 @@ export const Copyable = ({tag = `div`, pre, children}) => {
         {pre}
         <span ref={copyTextRef}>{children}</span>
       </Content>
-      <object type="stop/styling">
+      <object type={`stop/styling`}>
         <Button onClick={event => {
           event.preventDefault();
           copy(copyTextRef.current);
         }}>
-          <img src={statusImage} alt=""/>
+          <img src={statusImage} alt={``}/>
         copy
         </Button>
       </object>

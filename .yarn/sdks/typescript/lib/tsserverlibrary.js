@@ -30,7 +30,7 @@ const moduleWrapper = tsserver => {
 
   function toEditorPath(str) {
     // We add the `zip:` prefix to both `.zip/` paths and virtual paths
-    if (isAbsolute(str) && !str.match(/^\^zip:/) && (str.match(/\.zip\//) || isVirtual(str))) {
+    if (isAbsolute(str) && !str.match(/^\^?(zip:|\/zip\/)/) && (str.match(/\.zip\//) || isVirtual(str))) {
       // We also take the opportunity to turn virtual paths into physical ones;
       // this makes it much easier to work with workspaces that list peer
       // dependencies, since otherwise Ctrl+Click would bring us to the virtual
@@ -60,8 +60,16 @@ const moduleWrapper = tsserver => {
           //
           // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
           //
-          case `vscode`: {
+          // Update Oct 8 2021: VSCode changed their format in 1.61.
+          // Before | ^zip:/c:/foo/bar.zip/package.json
+          // After  | ^/zip//c:/foo/bar.zip/package.json
+          //
+          case `vscode <1.61`: {
             str = `^zip:${str}`;
+          } break;
+
+          case `vscode`: {
+            str = `^/zip/${str}`;
           } break;
 
           // To make "go to definition" work,
@@ -106,8 +114,8 @@ const moduleWrapper = tsserver => {
       case `vscode`:
       default: {
         return process.platform === `win32`
-          ? str.replace(/^\^?zip:\//, ``)
-          : str.replace(/^\^?zip:/, ``);
+          ? str.replace(/^\^?(zip:|\/zip)\/+/, ``)
+          : str.replace(/^\^?(zip:|\/zip)\/+/, `/`);
       } break;
     }
   }
@@ -145,6 +153,9 @@ const moduleWrapper = tsserver => {
         typeof parsedMessage.arguments.hostInfo === `string`
       ) {
         hostInfo = parsedMessage.arguments.hostInfo;
+        if (hostInfo === `vscode` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\/1\.([1-5][0-9]|60)\./)) {
+          hostInfo += ` <1.61`;
+        }
       }
 
       return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {

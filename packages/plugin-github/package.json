@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-github",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {

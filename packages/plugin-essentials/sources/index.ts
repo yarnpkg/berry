@@ -57,7 +57,7 @@ export interface Hooks {
     target: suggestUtils.Target,
     descriptor: Descriptor,
     strategies: Array<suggestUtils.Strategy>
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
    * Called when a dependency range is replaced inside a workspace. Note that
@@ -70,7 +70,7 @@ export interface Hooks {
     target: suggestUtils.Target,
     fromDescriptor: Descriptor,
     toDescriptor: Descriptor,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
    * Called when a dependency range is removed from a workspace. Note that
@@ -82,7 +82,7 @@ export interface Hooks {
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
    * Called by `yarn info`. The `extra` field is the set of parameters passed
@@ -97,7 +97,7 @@ export interface Hooks {
     pkg: Package,
     extra: Set<string>,
     registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 }
 
 declare module '@yarnpkg/core' {

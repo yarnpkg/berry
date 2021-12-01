@@ -16,12 +16,12 @@ const CdnBox = styled.article`
 
 const JsDelivr = ({name, version}) => (
   <Di
-    title="jsDelivr"
+    title={`jsDelivr`}
     description={
       <a
         href={`https://cdn.jsdelivr.net/npm/${name}@${version}/`}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={`_blank`}
+        rel={`noopener noreferrer`}
       >
         cdn.jsdelivr.net/npm/{name}/
       </a>
@@ -31,12 +31,12 @@ const JsDelivr = ({name, version}) => (
 
 const Unpkg = ({name, version}) => (
   <Di
-    title="unpkg"
+    title={`unpkg`}
     description={
       <a
         href={`https://unpkg.com/${name}@${version}/`}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={`_blank`}
+        rel={`noopener noreferrer`}
       >
         unpkg.com/{name}/
       </a>
@@ -46,12 +46,12 @@ const Unpkg = ({name, version}) => (
 
 const BundleRun = ({name, version}) => (
   <Di
-    title="bundle.run"
+    title={`bundle.run`}
     description={
       <a
         href={`https://bundle.run/${name}@${version}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={`_blank`}
+        rel={`noopener noreferrer`}
       >
         bundle.run/{name}
       </a>

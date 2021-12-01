@@ -76,28 +76,33 @@ export enum SettingsType {
   MAP = `MAP`,
 }
 
+export type SupportedArchitectures = {
+  os: Array<string> | null;
+  cpu: Array<string> | null;
+};
+
 export type FormatType = formatUtils.Type;
 export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
-  description: string,
-  type: T,
+  description: string;
+  type: T;
 } & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
-  properties: {[propertyName: string]: SettingsDefinition},
+  properties: {[propertyName: string]: SettingsDefinition};
 };
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
-  valueDefinition: SettingsDefinitionNoDefault,
-  normalizeKeys?: (key: string) => string,
+  valueDefinition: SettingsDefinitionNoDefault;
+  normalizeKeys?: (key: string) => string;
 };
 
 export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
-  default: any,
-  defaultText?: any,
-  isNullable?: boolean,
-  values?: Array<any>,
+  default: any;
+  defaultText?: any;
+  isNullable?: boolean;
+  values?: Array<any>;
 };
 
 export type SettingsDefinitionNoDefault =
@@ -111,8 +116,8 @@ export type SettingsDefinition =
   | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
-  modules: Map<string, any>,
-  plugins: Set<string>,
+  modules: Map<string, any>;
+  plugins: Set<string>;
 };
 
 // General rules:
@@ -283,6 +288,26 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  supportedArchitectures: {
+    description: `Architectures that Yarn will fetch and inject into the resolver`,
+    type: SettingsType.SHAPE,
+    properties: {
+      os: {
+        description: `Array of supported process.platform strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+      cpu: {
+        description: `Array of supported process.arch strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+    },
   },
 
   // Settings related to network access
@@ -518,6 +543,7 @@ export interface ConfigurationValueMap {
   defaultLanguageName: string;
   defaultProtocol: string;
   enableTransparentWorkspaces: boolean;
+  supportedArchitectures: miscUtils.ToMapValue<SupportedArchitectures>;
 
   enableMirror: boolean;
   enableNetwork: boolean;
@@ -551,9 +577,9 @@ export interface ConfigurationValueMap {
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
-    dependencies?: Map<string, string>,
-    peerDependencies?: Map<string, string>,
-    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>,
+    dependencies?: Map<string, string>;
+    peerDependencies?: Map<string, string>;
+    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>;
   }>>;
 }
 
@@ -832,10 +858,10 @@ export enum ProjectLookup {
 }
 
 export type FindProjectOptions = {
-  lookup?: ProjectLookup,
-  strict?: boolean,
-  usePath?: boolean,
-  useRc?: boolean,
+  lookup?: ProjectLookup;
+  strict?: boolean;
+  usePath?: boolean;
+  useRc?: boolean;
 };
 
 export class Configuration {
@@ -1085,7 +1111,7 @@ export class Configuration {
       path: PortablePath;
       cwd: PortablePath;
       data: any;
-      strict?: boolean
+      strict?: boolean;
     }> = [];
 
     let nextCwd = startingCwd;
@@ -1419,6 +1445,20 @@ export class Configuration {
     return linkers;
   }
 
+  getSupportedArchitectures() {
+    const supportedArchitectures = this.get(`supportedArchitectures`);
+
+    let os = supportedArchitectures.get(`os`);
+    if (os !== null)
+      os = os.map(value => value === `current` ? process.platform : value);
+
+    let cpu = supportedArchitectures.get(`cpu`);
+    if (cpu !== null)
+      cpu = cpu.map(value => value === `current` ? process.arch : value);
+
+    return {os, cpu};
+  }
+
   async refreshPackageExtensions() {
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
@@ -1531,6 +1571,19 @@ export class Configuration {
         : `${descriptor.name}`;
     };
 
+    // I don't like implicit dependencies, but package authors are reluctant to
+    // use optional peer dependencies because they would print warnings in older
+    // npm releases.
+
+    for (const identString of pkg.peerDependenciesMeta.keys()) {
+      const ident = structUtils.parseIdent(identString);
+
+      if (!pkg.peerDependencies.has(ident.identHash)) {
+        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
+      }
+    }
+
+    // Automatically add corresponding `@types` optional peer dependencies
     for (const descriptor of pkg.peerDependencies.values()) {
       if (descriptor.scope === `types`)
         continue;
@@ -1542,21 +1595,10 @@ export class Configuration {
       if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(stringifiedTypesIdent))
         continue;
 
+      pkg.peerDependencies.set(typesIdent.identHash, structUtils.makeDescriptor(typesIdent, `*`));
       pkg.peerDependenciesMeta.set(stringifiedTypesIdent, {
         optional: true,
       });
-    }
-
-    // I don't like implicit dependencies, but package authors are reluctant to
-    // use optional peer dependencies because they would print warnings in older
-    // npm releases.
-
-    for (const identString of pkg.peerDependenciesMeta.keys()) {
-      const ident = structUtils.parseIdent(identString);
-
-      if (!pkg.peerDependencies.has(ident.identHash)) {
-        pkg.peerDependencies.set(ident.identHash, structUtils.makeDescriptor(ident, `*`));
-      }
     }
 
     // We sort the dependencies so that further iterations always occur in the

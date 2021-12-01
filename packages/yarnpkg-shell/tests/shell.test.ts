@@ -123,22 +123,13 @@ describe(`Shell`, () => {
       });
     });
 
-    it(`should support a escaped arguments`, async () => {
+    it(`should support empty string as argument`, async () => {
       await expect(bufferResult(
-        `echo "\\x1b[1;31m red text \\x1b[0m"`,
+        `node -pe "process.argv[2]" "" 1`,
       )).resolves.toMatchObject({
-        stdout: `\x1b[1;31m red text \x1b[0m\n`,
+        stdout: `1\n`,
       });
     });
-
-    // TODO:
-    // it(`should support a empty arguments`, async () => {
-    //   await expect(bufferResult(
-    //     `bash -c "echo \\$1" "" 1`,
-    //   )).resolves.toMatchObject({
-    //     stdout: `1\n`,
-    //   });
-    // });
 
     it(`should exit with an exit code 0 when everything looks fine`, async () => {
       await expect(bufferResult(
@@ -471,7 +462,7 @@ describe(`Shell`, () => {
       });
 
       it(`should support the $RANDOM variable`, async () => {
-        async function getNumbers(result: Promise<{ exitCode: number; stdout: string; stderr: string; }>): Promise<Array<number>> {
+        async function getNumbers(result: Promise<{ exitCode: number, stdout: string, stderr: string }>): Promise<Array<number>> {
           const {exitCode, stdout, stderr} = await result;
 
           if (exitCode !== 0)
@@ -663,6 +654,40 @@ describe(`Shell`, () => {
       it(`should support empty default arguments`, async () => {
         await expect(bufferResult(
           `echo "foo\${DOESNT_EXIST:-}bar"`,
+        )).resolves.toMatchObject({
+          stdout: `foobar\n`,
+        });
+      });
+
+      it(`should support alternative arguments via \${ARG:+...}`, async () => {
+        await expect(bufferResult(
+          `echo "\${FOOBAR:+hello world}"`,
+          [],
+          {env: {FOOBAR: `goodbye world`}},
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+
+        await expect(bufferResult(
+          `echo "\${FOOBAR:+hello world}"`,
+        )).resolves.toMatchObject({
+          stdout: ``,
+        });
+      });
+
+      it(`should support alternative arguments via \${N:+...}`, async () => {
+        await expect(bufferResult(
+          `echo "\${1:+hello world}"`,
+        )).resolves.toMatchObject({
+          stdout: `hello world\n`,
+        });
+      });
+
+      it(`should support alternative default arguments`, async () => {
+        await expect(bufferResult(
+          `echo "foo\${FOOBAR:+}bar"`,
+          [],
+          {env: {FOOBAR: `goodbye world`}},
         )).resolves.toMatchObject({
           stdout: `foobar\n`,
         });
@@ -1082,7 +1107,7 @@ describe(`Shell`, () => {
 
       it(`should pipe the result of a command into another (two commands, native into pipe)`, async () => {
         await expect(bufferResult([
-          `node -e 'process.stdout.write("abcdefgh\\\\n");'`,
+          `node -e 'process.stdout.write("abcdefgh\\n");'`,
           `test-builtin`,
         ].join(` | `))).resolves.toMatchObject({
           stdout: `aceg\n`,
@@ -1101,7 +1126,7 @@ describe(`Shell`, () => {
 
       it(`should pipe the result of a command into another (no builtins)`, async () => {
         await expect(bufferResult([
-          `node -e 'process.stdout.write("hello world\\\\n")'`,
+          `node -e 'process.stdout.write("hello world\\n")'`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
         ].join(` | `))).resolves.toMatchObject({
