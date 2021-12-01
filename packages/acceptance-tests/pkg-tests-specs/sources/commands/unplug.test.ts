@@ -1,5 +1,5 @@
-import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
-import {yarn}                     from 'pkg-tests-core';
+import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
+import {yarn}                               from 'pkg-tests-core';
 
 const {readManifest} = yarn;
 
@@ -194,6 +194,36 @@ describe(`Commands`, () => {
           locator: `@types/is-number@npm:1.0.0`,
           version: `1.0.0`,
         });
+      }),
+    );
+
+    test(
+      `it should not use an outdated install state`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `^1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+
+        // Lock the resolution to a version that isn't the latest to
+        // check that the descriptor isn't unlocked during the unplug
+        await run(`install`);
+        await run(`set`, `resolution`, `no-deps@npm:^1.0.0`, `npm:1.0.0`);
+
+        // Sanity check
+        await expect(xfs.readFilePromise(lockfilePath, `utf8`)).resolves.toContain(`resolution: "no-deps@npm:1.0.0"`);
+
+        // Simulate switching to a branch where the version is different and back again
+        await xfs.copyFilePromise(lockfilePath, ppath.join(path, `original.lock` as Filename));
+        await run(`up`, `no-deps`, `-R`);
+        await expect(xfs.readFilePromise(lockfilePath, `utf8`)).resolves.toContain(`resolution: "no-deps@npm:1.1.0"`);
+        await xfs.copyFilePromise(ppath.join(path, `original.lock` as Filename), lockfilePath);
+
+        // If a stale install state was used this will either fail or unlock the descriptor
+        await run(`unplug`, `no-deps`);
+
+        await expect(xfs.readFilePromise(lockfilePath, `utf8`)).resolves.toContain(`resolution: "no-deps@npm:1.0.0"`);
       }),
     );
   });
