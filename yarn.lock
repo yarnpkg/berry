@@ -3637,9 +3637,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "@rollup/plugin-commonjs@npm:18.0.0"
+"@rollup/plugin-commonjs@npm:^21.0.1":
+  version: 21.0.1
+  resolution: "@rollup/plugin-commonjs@npm:21.0.1"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     commondir: ^1.0.1
@@ -3649,8 +3649,8 @@ __metadata:
     magic-string: ^0.25.7
     resolve: ^1.17.0
   peerDependencies:
-    rollup: ^2.30.0
-  checksum: 1e8d2589aba7593e21bc440e48add955e26e60320abbc9255cdc6c57437312faccc47965f459c8c844728765077b58526e2959a8dc68657453944f63034a4155
+    rollup: ^2.38.3
+  checksum: 3e56be58c72d655face6f361f85923ddcc3cc07760b5a3a91cfc728115dfed358fc595781148c512d53a03be8c703133379f228e78fd2aed8655fae9d83800b6
   languageName: node
   linkType: hard
 
@@ -5462,7 +5462,7 @@ __metadata:
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
-    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
@@ -6236,7 +6236,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
-    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:^"
@@ -26914,7 +26914,7 @@ typescript@^3.8.3:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^"

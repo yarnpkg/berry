@@ -7391,18 +7391,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@rollup/plugin-commonjs", [
-        ["npm:18.0.0", {
-          "packageLocation": "./.yarn/cache/@rollup-plugin-commonjs-npm-18.0.0-6e9288de62-1e8d2589ab.zip/node_modules/@rollup/plugin-commonjs/",
+        ["npm:21.0.1", {
+          "packageLocation": "./.yarn/cache/@rollup-plugin-commonjs-npm-21.0.1-a250ff7740-3e56be58c7.zip/node_modules/@rollup/plugin-commonjs/",
           "packageDependencies": [
-            ["@rollup/plugin-commonjs", "npm:18.0.0"]
+            ["@rollup/plugin-commonjs", "npm:21.0.1"]
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-commonjs-virtual-6346e6754f/0/cache/@rollup-plugin-commonjs-npm-18.0.0-6e9288de62-1e8d2589ab.zip/node_modules/@rollup/plugin-commonjs/",
+        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-commonjs-virtual-32fac872ac/0/cache/@rollup-plugin-commonjs-npm-21.0.1-a250ff7740-3e56be58c7.zip/node_modules/@rollup/plugin-commonjs/",
           "packageDependencies": [
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
-            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
+            ["@rollup/pluginutils", "virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0"],
             ["@types/rollup", null],
             ["commondir", "npm:1.0.1"],
             ["estree-walker", "npm:2.0.2"],
@@ -7431,7 +7431,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@rollup-plugin-node-resolve-virtual-ae233f33e2/0/cache/@rollup-plugin-node-resolve-npm-11.2.1-1cea144df4-6f3b3ecf9a.zip/node_modules/@rollup/plugin-node-resolve/",
           "packageDependencies": [
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
-            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0"],
             ["@types/resolve", "npm:1.17.1"],
             ["@types/rollup", null],
             ["builtin-modules", "npm:3.2.0"],
@@ -7462,10 +7462,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-b3203f5e42/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
+        ["virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-0b57be64af/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
           "packageDependencies": [
-            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0"],
             ["@types/estree", "npm:0.0.39"],
             ["@types/rollup", null],
             ["estree-walker", "npm:1.0.1"],
@@ -10415,7 +10415,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@arcanis/slice-ansi", "npm:1.1.1"],
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
@@ -15711,7 +15711,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-pnp/",
           "packageDependencies": [
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/node", "npm:13.7.0"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
@@ -40461,7 +40461,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/vscode-zipfs/",
           "packageDependencies": [
             ["vscode-zipfs", "workspace:packages/vscode-zipfs"],
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/vscode", "npm:1.54.0"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -41851,7 +41851,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 
 const fs = require('fs');
 const path = require('path');
-const require$$2 = require('crypto');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
@@ -41883,7 +41882,6 @@ function _interopNamespace(e) {
 
 const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
-const require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
 const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
@@ -45738,12 +45736,9 @@ function patchFs(patchedFs, fakeFs) {
   }
 }
 
-function createCommonjsModule(fn) {
-  var module = { exports: {} };
-	return fn(module, module.exports), module.exports;
-}
+var libzipSync = {exports: {}};
 
-var libzipSync = createCommonjsModule(function (module, exports) {
+(function (module, exports) {
 var frozenFs = Object.assign({}, fs__default.default);
 var createModule = function() {
   var _scriptDir = void 0;
@@ -46312,7 +46307,7 @@ var createModule = function() {
     function getRandomDevice() {
       {
         try {
-          var crypto_module = require$$2__default.default;
+          var crypto_module = require("crypto");
           return function() {
             return crypto_module["randomBytes"](1)[0];
           };
@@ -49685,7 +49680,9 @@ var createModule = function() {
   };
 }();
 module.exports = createModule;
-});
+}(libzipSync));
+
+const createModule = libzipSync.exports;
 
 const number64 = [
   `number`,
@@ -49841,7 +49838,7 @@ const makeInterface = (libzip) => ({
 let mod = null;
 function getLibzipSync() {
   if (mod === null)
-    mod = makeInterface(libzipSync());
+    mod = makeInterface(createModule());
   return mod;
 }
 

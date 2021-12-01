@@ -71,7 +71,7 @@
     }
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:^",

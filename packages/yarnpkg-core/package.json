@@ -40,7 +40,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",

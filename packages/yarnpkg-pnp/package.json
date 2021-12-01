@@ -10,7 +10,7 @@
     "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
