@@ -7,7 +7,7 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "homepage": "https://github.com/yarnpkg/berry/blob/master/packages/vscode-zipfs",
   "icon": "icon.png",
-  "version": "2.4.1-rc.2",
+  "version": "2.4.1-rc.4",
   "engines": {
     "vscode": "^1.54.0",
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
@@ -41,7 +41,12 @@
     "commands": [
       {
         "command": "zipfs.mountZipFile",
-        "title": "Mount as Zip",
+        "title": "Mount Zip",
+        "category": "Zip"
+      },
+      {
+        "command": "zipfs.unmountZipFile",
+        "title": "Unmount Zip",
         "category": "Zip"
       },
       {
@@ -53,8 +58,13 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "resourceLangId == zip",
+          "when": "resourceLangId == zip && !explorerResourceIsRoot",
           "command": "zipfs.mountZipFile",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == zip && explorerResourceIsRoot",
+          "command": "zipfs.unmountZipFile",
           "group": "navigation"
         }
       ],
@@ -62,6 +72,10 @@
         {
           "when": "false",
           "command": "zipfs.mountZipFile"
+        },
+        {
+          "when": "false",
+          "command": "zipfs.unmountZipFile"
         },
         {
           "when": "editorLangId == zip",

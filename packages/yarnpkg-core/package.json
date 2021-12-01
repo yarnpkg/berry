@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/core",
-  "version": "3.2.0-rc.4",
+  "version": "3.2.0-rc.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@arcanis/slice-ansi": "^1.0.2",
+    "@arcanis/slice-ansi": "^1.1.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/fslib": "workspace:^",
@@ -55,7 +55,8 @@
     "@yarnpkg/plugin-pnp": "workspace:^",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
     "rollup": "^2.43.0",
-    "rollup-plugin-esbuild": "^3.0.2"
+    "rollup-plugin-esbuild": "^3.0.2",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
     "build:zip:worker": "rollup -c",
