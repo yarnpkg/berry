@@ -53,7 +53,7 @@ export default function Template({data}) {
         keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split(`/`).reverse()[0]]}
       />
       <PrerenderedMarkdown title={frontmatter.title} editUrl={getGitPageUrl(fileAbsolutePath)}>
-        {body}
+        {html}
       </PrerenderedMarkdown>
     </LayoutContentNav>
   </>;
