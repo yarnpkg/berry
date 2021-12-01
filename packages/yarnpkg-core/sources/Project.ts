@@ -694,7 +694,7 @@ export class Project {
     const descriptorResolutionPromises = new Map<DescriptorHash, Promise<Package>>();
 
     const dependencyResolutionLocator = this.topLevelWorkspace.anchoredLocator;
-    const allResolutionDependencyPackages = new Set<LocatorHash>();
+    const resolutionDependencies = new Set<LocatorHash>();
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
@@ -774,12 +774,12 @@ export class Project {
         if (typeof alias !== `undefined`)
           return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
 
-        const resolutionDependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
-        const resolvedDependencies = new Map(await miscUtils.allSettledSafe(resolutionDependencies.map(async dependency => {
+        const resolutionDependenciesList = resolver.getResolutionDependencies(descriptor, resolveOptions);
+        const resolvedDependencies = new Map(await miscUtils.allSettledSafe(resolutionDependenciesList.map(async dependency => {
           const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
 
           const resolvedPackage = await scheduleDescriptorResolution(bound);
-          allResolutionDependencyPackages.add(resolvedPackage.locatorHash);
+          resolutionDependencies.add(resolvedPackage.locatorHash);
 
           return [dependency.descriptorHash, resolvedPackage] as const;
         })));
@@ -848,7 +848,7 @@ export class Project {
       allPackages,
     });
 
-    for (const locatorHash of allResolutionDependencyPackages)
+    for (const locatorHash of resolutionDependencies)
       optionalBuilds.delete(locatorHash);
 
     // All descriptors still referenced within the volatileDescriptors set are
@@ -1855,8 +1855,8 @@ function applyVirtualResolutionMutations({
 
   accessibleLocators = new Set(),
   optionalBuilds = new Set(),
-  volatileDescriptors = new Set(),
   peerRequirements = new Map(),
+  volatileDescriptors = new Set(),
 
   report,
 
@@ -1870,8 +1870,8 @@ function applyVirtualResolutionMutations({
 
   accessibleLocators?: Set<LocatorHash>;
   optionalBuilds?: Set<LocatorHash>;
-  volatileDescriptors?: Set<DescriptorHash>;
   peerRequirements?: Project['peerRequirements'];
+  volatileDescriptors?: Set<DescriptorHash>;
 
   report: Report | null;
 
@@ -2166,9 +2166,6 @@ function applyVirtualResolutionMutations({
       stable = true;
 
       for (const [physicalLocator, virtualDescriptor, virtualPackage] of newVirtualInstances) {
-        if (!allPackages.has(virtualPackage.locatorHash))
-          continue;
-
         const otherVirtualInstances = miscUtils.getMapWithDefault(allVirtualInstances, physicalLocator.locatorHash);
 
         // We take all the dependencies from the new virtual instance and
@@ -2205,8 +2202,6 @@ function applyVirtualResolutionMutations({
         if (masterDescriptor === virtualDescriptor)
           continue;
 
-        stable = false;
-
         allPackages.delete(virtualPackage.locatorHash);
         allDescriptors.delete(virtualDescriptor.descriptorHash);
         allResolutions.delete(virtualDescriptor.descriptorHash);
@@ -2222,6 +2217,9 @@ function applyVirtualResolutionMutations({
           const pkg = allPackages.get(dependent);
           if (typeof pkg === `undefined`)
             continue;
+
+          if (pkg.dependencies.get(virtualDescriptor.identHash)!.descriptorHash !== masterDescriptor.descriptorHash)
+            stable = false;
 
           pkg.dependencies.set(virtualDescriptor.identHash, masterDescriptor);
         }
