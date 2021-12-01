@@ -77,6 +77,10 @@ export class NpmSemverFetcher implements Fetcher {
     // From time to time the npm registry returns http urls instead of https 🤡
     url = url.replace(/^https?:(\/\/(?:[^/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
 
+    // The Cloudflare mirror is a literal proxy, and its tarball still reference the original urls
+    if (registry === `https://registry.npmjs.cf`)
+      url = url.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.npmjs.cf$1`);
+
     // The yarnpkg and npmjs registries are interchangeable for that matter, so we uniformize them
     registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
     url = url.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
