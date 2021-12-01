@@ -15,6 +15,9 @@ export class PnpmLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
+    if (opts.project.configuration.get(`nodeLinker`) !== `pnpm`)
+      throw new Error(`Assertion failed: Expected the pnpm linker to be enabled`);
+
     const customDataKey = getCustomDataKey();
     const customData = opts.project.installersCustomData.get(customDataKey) as PnpmCustomData | undefined;
     if (!customData)
@@ -28,6 +31,9 @@ export class PnpmLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null> {
+    if (opts.project.configuration.get(`nodeLinker`) !== `pnpm`)
+      return null;
+
     const customDataKey = getCustomDataKey();
     const customData = opts.project.installersCustomData.get(customDataKey) as any;
     if (!customData)
@@ -229,19 +235,18 @@ class PnpmInstaller implements Installer {
 
           const storeEntryPath = ppath.join(storeLocation, storeEntry as Filename);
 
-          removals.push(xfs.readdirPromise(storeEntryPath)
-            .then(entries => {
-              return Promise.all(entries.map(async entry => {
-                const p = ppath.join(storeEntryPath, entry);
-                if (entry === Filename.nodeModules) {
-                  const extraneous = await getNodeModulesListing(p);
-                  extraneous.delete(identComponents.join(ppath.sep) as PortablePath);
-                  return cleanNodeModules(p, extraneous);
-                } else {
-                  return xfs.removePromise(p);
-                }
-              }));
-            })
+          removals.push(xfs.readdirPromise(storeEntryPath).then(entries => {
+            return Promise.all(entries.map(async entry => {
+              const p = ppath.join(storeEntryPath, entry);
+              if (entry === Filename.nodeModules) {
+                const extraneous = await getNodeModulesListing(p);
+                extraneous.delete(identComponents.join(ppath.sep) as PortablePath);
+                return cleanNodeModules(p, extraneous);
+              } else {
+                return xfs.removePromise(p);
+              }
+            }));
+          })
             .catch(error => {
               if (error.code !== `ENOENT`) {
                 throw error;
