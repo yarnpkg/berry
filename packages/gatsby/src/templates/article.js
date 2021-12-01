@@ -35,9 +35,9 @@ export default function Template({data}) {
     const item = {
       to: path,
       name: title,
-    }
+    };
 
-    if (typeof order === 'number') {
+    if (typeof order === `number`) {
       orderedItems[order - 1] = item;
     } else {
       items.push(item);
