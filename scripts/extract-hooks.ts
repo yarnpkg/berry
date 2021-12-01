@@ -10,7 +10,7 @@ async function parseFile(p: string) {
     p,
     content,
     ts.ScriptTarget.ES2015,
-    /*setParentNodes */ true,
+    /* setParentNodes */ true,
   );
 }
 

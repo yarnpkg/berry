@@ -1,4 +1,4 @@
-const {execute}  = require(`@yarnpkg/monorepo/scripts/extract-hooks`);
+const {execute} = require(`@yarnpkg/monorepo/scripts/extract-hooks`);
 
 const fs = require(`fs`);
 const path = require(`path`);
