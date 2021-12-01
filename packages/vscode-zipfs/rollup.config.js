@@ -9,11 +9,6 @@ const mode = process.env.NODE_ENV || `production`;
 // eslint-disable-next-line arca/no-default-export
 export default async () =>
   defineConfig({
-    treeshake: {
-      propertyReadSideEffects: false,
-      unknownGlobalSideEffects: false,
-      tryCatchDeoptimization: false,
-    },
     input: `./sources/index.ts`,
     output: {
       file: `./build/index.js`,

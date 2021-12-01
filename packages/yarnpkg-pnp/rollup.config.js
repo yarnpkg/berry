@@ -25,11 +25,6 @@ function wrapOutput() {
 // eslint-disable-next-line arca/no-default-export
 export default defineConfig([
   {
-    treeshake: {
-      propertyReadSideEffects: false,
-      unknownGlobalSideEffects: false,
-      tryCatchDeoptimization: false,
-    },
     input: `./sources/loader/_entryPoint.ts`,
     output: {
       file: `./sources/hook.js`,
@@ -59,11 +54,6 @@ export default defineConfig([
     ],
   },
   {
-    treeshake: {
-      propertyReadSideEffects: false,
-      unknownGlobalSideEffects: false,
-      tryCatchDeoptimization: false,
-    },
     input: `./sources/esm-loader/loader.ts`,
     output: {
       file: `./sources/esm-loader/built-loader.js`,

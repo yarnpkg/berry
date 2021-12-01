@@ -45746,6 +45746,9 @@ function createCommonjsModule(fn) {
 var libzipSync = createCommonjsModule(function (module, exports) {
 var frozenFs = Object.assign({}, fs__default.default);
 var createModule = function() {
+  var _scriptDir = void 0;
+  if (typeof __filename !== "undefined")
+    _scriptDir = _scriptDir || __filename;
   return function(createModule2) {
     createModule2 = createModule2 || {};
     var Module = typeof createModule2 !== "undefined" ? createModule2 : {};
@@ -45811,6 +45814,12 @@ var createModule = function() {
       }
     }
     moduleOverrides = null;
+    if (Module["arguments"])
+      ;
+    if (Module["thisProgram"])
+      ;
+    if (Module["quit"])
+      ;
     var STACK_ALIGN = 16;
     function alignMemory(size, factor) {
       if (!factor)
@@ -45820,6 +45829,7 @@ var createModule = function() {
     var wasmBinary;
     if (Module["wasmBinary"])
       wasmBinary = Module["wasmBinary"];
+    Module["noExitRuntime"] || true;
     if (typeof WebAssembly !== "object") {
       abort("no native wasm support detected");
     }
@@ -46043,6 +46053,7 @@ var createModule = function() {
       Module["HEAPF32"] = HEAPF32 = new Float32Array(buf);
       Module["HEAPF64"] = HEAPF64 = new Float64Array(buf);
     }
+    Module["INITIAL_MEMORY"] || 16777216;
     var wasmTable;
     var __ATPRERUN__ = [];
     var __ATINIT__ = [];
@@ -47627,7 +47638,7 @@ var createModule = function() {
       },
       mayCreate: function(dir, name) {
         try {
-          FS.lookupNode(dir, name);
+          var node = FS.lookupNode(dir, name);
           return 20;
         } catch (e) {
         }

@@ -25,11 +25,6 @@ function wrapOutput() {
 
 // eslint-disable-next-line arca/no-default-export
 export default defineConfig({
-  treeshake: {
-    propertyReadSideEffects: false,
-    unknownGlobalSideEffects: false,
-    tryCatchDeoptimization: false,
-  },
   input: `./sources/worker-zip/Worker.ts`,
   output: {
     file: `./sources/worker-zip/index.js`,
