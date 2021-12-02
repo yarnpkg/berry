@@ -7391,18 +7391,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@rollup/plugin-commonjs", [
-        ["npm:18.0.0", {
-          "packageLocation": "./.yarn/cache/@rollup-plugin-commonjs-npm-18.0.0-6e9288de62-1e8d2589ab.zip/node_modules/@rollup/plugin-commonjs/",
+        ["npm:21.0.1", {
+          "packageLocation": "./.yarn/cache/@rollup-plugin-commonjs-npm-21.0.1-a250ff7740-3e56be58c7.zip/node_modules/@rollup/plugin-commonjs/",
           "packageDependencies": [
-            ["@rollup/plugin-commonjs", "npm:18.0.0"]
+            ["@rollup/plugin-commonjs", "npm:21.0.1"]
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-commonjs-virtual-6346e6754f/0/cache/@rollup-plugin-commonjs-npm-18.0.0-6e9288de62-1e8d2589ab.zip/node_modules/@rollup/plugin-commonjs/",
+        ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-commonjs-virtual-32fac872ac/0/cache/@rollup-plugin-commonjs-npm-21.0.1-a250ff7740-3e56be58c7.zip/node_modules/@rollup/plugin-commonjs/",
           "packageDependencies": [
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
-            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
+            ["@rollup/pluginutils", "virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0"],
             ["@types/rollup", null],
             ["commondir", "npm:1.0.1"],
             ["estree-walker", "npm:2.0.2"],
@@ -7410,7 +7410,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-reference", "npm:1.2.1"],
             ["magic-string", "npm:0.25.7"],
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -7431,14 +7431,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@rollup-plugin-node-resolve-virtual-ae233f33e2/0/cache/@rollup-plugin-node-resolve-npm-11.2.1-1cea144df4-6f3b3ecf9a.zip/node_modules/@rollup/plugin-node-resolve/",
           "packageDependencies": [
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
-            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0"],
             ["@types/resolve", "npm:1.17.1"],
             ["@types/rollup", null],
             ["builtin-modules", "npm:3.2.0"],
             ["deepmerge", "npm:4.2.2"],
             ["is-module", "npm:1.0.0"],
             ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -7462,15 +7462,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-b3203f5e42/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
+        ["virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-0b57be64af/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
           "packageDependencies": [
-            ["@rollup/pluginutils", "virtual:6346e6754f83d67eb6d67a3beb7fa21607c85604b76a2bc41c7e363e05225a8d482457c0ef38e2ced24338a832b12b16971fc526b58aec0152c5c0d45147343d#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:32fac872acd7e47fff0388a995a86fbed0a090c55152ee9c7a400e6258412f03627b1c604436c9df3ed04b4c5ad9e94c3514ceae9f8ebea2d24d8e455026a86f#npm:3.1.0"],
             ["@types/estree", "npm:0.0.39"],
             ["@types/rollup", null],
             ["estree-walker", "npm:1.0.1"],
             ["picomatch", "npm:2.2.3"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -7485,7 +7485,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/rollup", null],
             ["estree-walker", "npm:2.0.2"],
             ["picomatch", "npm:2.2.3"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/rollup",
@@ -10415,7 +10415,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@arcanis/slice-ansi", "npm:1.1.1"],
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/cross-spawn", "npm:6.0.0"],
             ["@types/diff", "npm:4.0.2"],
@@ -10456,7 +10456,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["p-queue", "npm:6.6.2"],
             ["pluralize", "npm:7.0.0"],
             ["pretty-bytes", "npm:5.6.0"],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["rollup-plugin-terser", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:7.0.2"],
             ["semver", "npm:7.3.5"],
@@ -15711,7 +15711,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/yarnpkg-pnp/",
           "packageDependencies": [
             ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/node", "npm:13.7.0"],
             ["@yarnpkg/builder", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-builder"],
@@ -15723,7 +15723,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
               "npm:0.11.20"
             ]],
             ["resolve.exports", "npm:1.1.0"],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["tslib", "npm:1.13.0"],
             ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=493e53"],
@@ -36171,10 +36171,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["rollup", [
-        ["npm:2.45.2", {
-          "packageLocation": "./.yarn/cache/rollup-npm-2.45.2-3c532e57ff-c049bedc19.zip/node_modules/rollup/",
+        ["npm:2.59.0", {
+          "packageLocation": "./.yarn/cache/rollup-npm-2.59.0-72e7408354-9fbaa72b8f.zip/node_modules/rollup/",
           "packageDependencies": [
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"]
           ],
           "linkType": "HARD",
@@ -36201,7 +36201,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ]],
             ["joycon", "npm:3.0.1"],
             ["jsonc-parser", "npm:3.0.0"],
-            ["rollup", "npm:2.45.2"]
+            ["rollup", "npm:2.59.0"]
           ],
           "packagePeers": [
             "@types/esbuild",
@@ -36227,7 +36227,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/code-frame", "npm:7.12.13"],
             ["@types/rollup", null],
             ["jest-worker", "npm:26.6.2"],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["serialize-javascript", "npm:4.0.0"],
             ["terser", "npm:5.9.0"]
           ],
@@ -40461,7 +40461,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/vscode-zipfs/",
           "packageDependencies": [
             ["vscode-zipfs", "workspace:packages/vscode-zipfs"],
-            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:18.0.0"],
+            ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],
             ["@types/vscode", "npm:1.54.0"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -40470,7 +40470,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
               "esbuild-wasm",
               "npm:0.11.20"
             ]],
-            ["rollup", "npm:2.45.2"],
+            ["rollup", "npm:2.59.0"],
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],
             ["rollup-plugin-terser", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:7.0.2"],
             ["tslib", "npm:1.13.0"],
@@ -41851,7 +41851,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 
 const fs = require('fs');
 const path = require('path');
-const require$$2 = require('crypto');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
@@ -41861,31 +41860,28 @@ const stream = require('stream');
 const zlib = require('zlib');
 const events = require('events');
 
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+const _interopDefaultLegacy = e => e && typeof e === 'object' && 'default' in e ? e : { default: e };
 
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
-  var n = Object.create(null);
+  const n = Object.create(null);
   if (e) {
-    Object.keys(e).forEach(function (k) {
+    for (const k in e) {
       if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
+        const d = Object.getOwnPropertyDescriptor(e, k);
         Object.defineProperty(n, k, d.get ? d : {
           enumerable: true,
-          get: function () {
-            return e[k];
-          }
+          get: () => e[k]
         });
       }
-    });
+    }
   }
-  n['default'] = e;
+  n.default = e;
   return Object.freeze(n);
 }
 
 const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
-const require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
 const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
@@ -42099,15 +42095,15 @@ const Filename = {
   pnpCjs: `.pnp.cjs`,
   rc: `.yarnrc.yml`
 };
-const npath = Object.create(path__default['default']);
-const ppath = Object.create(path__default['default'].posix);
+const npath = Object.create(path__default.default);
+const ppath = Object.create(path__default.default.posix);
 npath.cwd = () => process.cwd();
 ppath.cwd = () => toPortablePath(process.cwd());
 ppath.resolve = (...segments) => {
   if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
-    return path__default['default'].posix.resolve(...segments);
+    return path__default.default.posix.resolve(...segments);
   } else {
-    return path__default['default'].posix.resolve(ppath.cwd(), ...segments);
+    return path__default.default.posix.resolve(ppath.cwd(), ...segments);
   }
 };
 const contains = function(pathUtils, from, to) {
@@ -42276,7 +42272,7 @@ function makeCloneLinkOperation(opFs, destination, source, sourceStat, linkStrat
   if (typeof isCloneSupported === `undefined`) {
     return async () => {
       try {
-        await opFs.copyFilePromise(source, destination, fs__default['default'].constants.COPYFILE_FICLONE_FORCE);
+        await opFs.copyFilePromise(source, destination, fs__default.default.constants.COPYFILE_FICLONE_FORCE);
         isCloneSupportedCache.set(opFs, true);
       } catch (err) {
         if (err.code === `ENOSYS` || err.code === `ENOTSUP`) {
@@ -42289,7 +42285,7 @@ function makeCloneLinkOperation(opFs, destination, source, sourceStat, linkStrat
     };
   } else {
     if (isCloneSupported) {
-      return async () => opFs.copyFilePromise(source, destination, fs__default['default'].constants.COPYFILE_FICLONE_FORCE);
+      return async () => opFs.copyFilePromise(source, destination, fs__default.default.constants.COPYFILE_FICLONE_FORCE);
     } else {
       return makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy);
     }
@@ -42306,7 +42302,7 @@ async function copyFile(prelayout, postlayout, updateTime, destinationFs, destin
     }
   }
   const linkStrategy = (_a = opts.linkStrategy) != null ? _a : null;
-  const op = destinationFs === sourceFs ? linkStrategy !== null ? makeCloneLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.copyFilePromise(source, destination, fs__default['default'].constants.COPYFILE_FICLONE) : linkStrategy !== null ? makeLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
+  const op = destinationFs === sourceFs ? linkStrategy !== null ? makeCloneLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.copyFilePromise(source, destination, fs__default.default.constants.COPYFILE_FICLONE) : linkStrategy !== null ? makeLinkOperation(destinationFs, destination, source, sourceStat, linkStrategy) : async () => destinationFs.writeFilePromise(destination, await sourceFs.readFilePromise(source));
   prelayout.push(async () => op());
   return true;
 }
@@ -42802,7 +42798,7 @@ function normalizeLineEndings(originalContent, newContent) {
 }
 
 class NodeFS extends BasePortableFakeFS {
-  constructor(realFs = fs__default['default']) {
+  constructor(realFs = fs__default.default) {
     super();
     this.realFs = realFs;
     if (typeof this.realFs.lutimes !== `undefined`) {
@@ -44007,7 +44003,7 @@ class ZipFS extends BasePortableFakeFS {
           return data;
         } else if (opts.asyncDecompress) {
           return new Promise((resolve, reject) => {
-            zlib__default['default'].inflateRaw(data, (error, result) => {
+            zlib__default.default.inflateRaw(data, (error, result) => {
               if (error) {
                 reject(error);
               } else {
@@ -44017,7 +44013,7 @@ class ZipFS extends BasePortableFakeFS {
             });
           });
         } else {
-          const decompressedData = zlib__default['default'].inflateRawSync(data);
+          const decompressedData = zlib__default.default.inflateRawSync(data);
           this.fileSources.set(index, decompressedData);
           return decompressedData;
         }
@@ -45740,15 +45736,12 @@ function patchFs(patchedFs, fakeFs) {
   }
 }
 
-function createCommonjsModule(fn) {
-  var module = { exports: {} };
-	return fn(module, module.exports), module.exports;
-}
+var libzipSync = {exports: {}};
 
-var libzipSync = createCommonjsModule(function (module, exports) {
-var frozenFs = Object.assign({}, fs__default['default']);
+(function (module, exports) {
+var frozenFs = Object.assign({}, fs__default.default);
 var createModule = function() {
-  var _scriptDir = typeof document !== "undefined" && document.currentScript ? document.currentScript.src : void 0;
+  var _scriptDir = void 0;
   if (typeof __filename !== "undefined")
     _scriptDir = _scriptDir || __filename;
   return function(createModule2) {
@@ -45788,7 +45781,7 @@ var createModule = function() {
         if (!nodeFS)
           nodeFS = frozenFs;
         if (!nodePath)
-          nodePath = path__default['default'];
+          nodePath = path__default.default;
         filename = nodePath["normalize"](filename);
         return nodeFS["readFileSync"](filename, binary ? null : "utf8");
       };
@@ -45817,11 +45810,11 @@ var createModule = function() {
     }
     moduleOverrides = null;
     if (Module["arguments"])
-      Module["arguments"];
+      ;
     if (Module["thisProgram"])
-      Module["thisProgram"];
+      ;
     if (Module["quit"])
-      Module["quit"];
+      ;
     var STACK_ALIGN = 16;
     function alignMemory(size, factor) {
       if (!factor)
@@ -46312,15 +46305,9 @@ var createModule = function() {
       }
     };
     function getRandomDevice() {
-      if (typeof crypto === "object" && typeof crypto["getRandomValues"] === "function") {
-        var randomBuffer = new Uint8Array(1);
-        return function() {
-          crypto.getRandomValues(randomBuffer);
-          return randomBuffer[0];
-        };
-      } else {
+      {
         try {
-          var crypto_module = require$$2__default['default'];
+          var crypto_module = require("crypto");
           return function() {
             return crypto_module["randomBytes"](1)[0];
           };
@@ -48763,9 +48750,7 @@ var createModule = function() {
       forceLoadFile: function(obj) {
         if (obj.isDevice || obj.isFolder || obj.link || obj.contents)
           return true;
-        if (typeof XMLHttpRequest !== "undefined") {
-          throw new Error("Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.");
-        } else if (read_) {
+        if (read_) {
           try {
             obj.contents = intArrayFromString(read_(obj.url), true);
             obj.usedBytes = obj.contents.length;
@@ -48777,84 +48762,7 @@ var createModule = function() {
         }
       },
       createLazyFile: function(parent, name, url, canRead, canWrite) {
-        function LazyUint8Array() {
-          this.lengthKnown = false;
-          this.chunks = [];
-        }
-        LazyUint8Array.prototype.get = function LazyUint8Array_get(idx) {
-          if (idx > this.length - 1 || idx < 0) {
-            return void 0;
-          }
-          var chunkOffset = idx % this.chunkSize;
-          var chunkNum = idx / this.chunkSize | 0;
-          return this.getter(chunkNum)[chunkOffset];
-        };
-        LazyUint8Array.prototype.setDataGetter = function LazyUint8Array_setDataGetter(getter) {
-          this.getter = getter;
-        };
-        LazyUint8Array.prototype.cacheLength = function LazyUint8Array_cacheLength() {
-          var xhr = new XMLHttpRequest();
-          xhr.open("HEAD", url, false);
-          xhr.send(null);
-          if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304))
-            throw new Error("Couldn't load " + url + ". Status: " + xhr.status);
-          var datalength = Number(xhr.getResponseHeader("Content-length"));
-          var header;
-          var hasByteServing = (header = xhr.getResponseHeader("Accept-Ranges")) && header === "bytes";
-          var usesGzip = (header = xhr.getResponseHeader("Content-Encoding")) && header === "gzip";
-          var chunkSize = 1024 * 1024;
-          if (!hasByteServing)
-            chunkSize = datalength;
-          var doXHR = function(from, to) {
-            if (from > to)
-              throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!");
-            if (to > datalength - 1)
-              throw new Error("only " + datalength + " bytes available! programmer error!");
-            var xhr2 = new XMLHttpRequest();
-            xhr2.open("GET", url, false);
-            if (datalength !== chunkSize)
-              xhr2.setRequestHeader("Range", "bytes=" + from + "-" + to);
-            if (typeof Uint8Array != "undefined")
-              xhr2.responseType = "arraybuffer";
-            if (xhr2.overrideMimeType) {
-              xhr2.overrideMimeType("text/plain; charset=x-user-defined");
-            }
-            xhr2.send(null);
-            if (!(xhr2.status >= 200 && xhr2.status < 300 || xhr2.status === 304))
-              throw new Error("Couldn't load " + url + ". Status: " + xhr2.status);
-            if (xhr2.response !== void 0) {
-              return new Uint8Array(xhr2.response || []);
-            } else {
-              return intArrayFromString(xhr2.responseText || "", true);
-            }
-          };
-          var lazyArray2 = this;
-          lazyArray2.setDataGetter(function(chunkNum) {
-            var start = chunkNum * chunkSize;
-            var end = (chunkNum + 1) * chunkSize - 1;
-            end = Math.min(end, datalength - 1);
-            if (typeof lazyArray2.chunks[chunkNum] === "undefined") {
-              lazyArray2.chunks[chunkNum] = doXHR(start, end);
-            }
-            if (typeof lazyArray2.chunks[chunkNum] === "undefined")
-              throw new Error("doXHR failed!");
-            return lazyArray2.chunks[chunkNum];
-          });
-          if (usesGzip || !datalength) {
-            chunkSize = datalength = 1;
-            datalength = this.getter(0).length;
-            chunkSize = datalength;
-            out("LazyFiles on gzip forces download of the whole file when length is accessed");
-          }
-          this._length = datalength;
-          this._chunkSize = chunkSize;
-          this.lengthKnown = true;
-        };
-        if (typeof XMLHttpRequest !== "undefined") {
-          throw "Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc";
-          var lazyArray = new LazyUint8Array();
-          var properties = {isDevice: false, contents: lazyArray};
-        } else {
+        var properties; {
           var properties = {isDevice: false, url};
         }
         var node = FS.createFile(parent, name, properties, canRead, canWrite);
@@ -49592,7 +49500,7 @@ var createModule = function() {
     FS.staticInit();
     {
       var fs = frozenFs;
-      var NODEJS_PATH = path__default['default'];
+      var NODEJS_PATH = path__default.default;
       NODEFS.staticInit();
     }
     {
@@ -49772,7 +49680,9 @@ var createModule = function() {
   };
 }();
 module.exports = createModule;
-});
+}(libzipSync));
+
+const createModule = libzipSync.exports;
 
 const number64 = [
   `number`,
@@ -49928,7 +49838,7 @@ const makeInterface = (libzip) => ({
 let mod = null;
 function getLibzipSync() {
   if (mod === null)
-    mod = makeInterface(libzipSync());
+    mod = makeInterface(createModule());
   return mod;
 }
 
@@ -50020,7 +49930,7 @@ function applyPatch(pnpapi, opts) {
   const defaultCache = {};
   let enableNativeHooks = true;
   process.versions.pnp = String(pnpapi.VERSIONS.std);
-  const moduleExports = require$$0__default['default'];
+  const moduleExports = require$$0__default.default;
   moduleExports.findPnpApi = (lookupSource) => {
     const lookupPath = lookupSource instanceof url.URL ? url.fileURLToPath(lookupSource) : lookupSource;
     const apiPath = opts.manager.findApiPathFor(lookupPath);
@@ -50232,7 +50142,7 @@ Require stack:
     }
     return false;
   };
-  patchFs(fs__default['default'], new PosixFS(opts.fakeFs));
+  patchFs(fs__default.default, new PosixFS(opts.fakeFs));
 }
 
 function hydrateRuntimeState(data, {basePath}) {
@@ -51146,7 +51056,7 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
-const localFs = __spreadValues({}, fs__default['default']);
+const localFs = __spreadValues({}, fs__default.default);
 const nodeFs = new NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
@@ -51197,7 +51107,7 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       fakeFs: defaultFsLayer,
       manager
     });
-    dynamicFsLayer.baseFs = new NodeFS(fs__default['default']);
+    dynamicFsLayer.baseFs = new NodeFS(fs__default.default);
   }
 });
 manager = makeManager(defaultApi, {
@@ -51206,7 +51116,7 @@ manager = makeManager(defaultApi, {
 if (module.parent && module.parent.id === `internal/preload`) {
   defaultApi.setup();
   if (module.filename) {
-    delete require$$0__default['default']._cache[module.filename];
+    delete require$$0__default.default._cache[module.filename];
   }
 }
 if (process.mainModule === module) {
@@ -51243,7 +51153,7 @@ if (process.mainModule === module) {
     }
   } else {
     let buffer = ``;
-    const decoder = new StringDecoder__default['default'].StringDecoder();
+    const decoder = new StringDecoder__default.default.StringDecoder();
     process.stdin.on(`data`, (chunk) => {
       buffer += decoder.write(chunk);
       do {
