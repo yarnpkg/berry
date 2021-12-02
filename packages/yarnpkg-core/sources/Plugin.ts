@@ -41,11 +41,11 @@ export type WrapNetworkRequestInfo = httpUtils.Options & {
   body: httpUtils.Body;
 };
 
-export type Hooks = {
+export interface Hooks {
   /**
    * Called when the package extensions are setup. Can be used to inject new
-   * ones (for example, that's what the compat plugin uses to workaround
-   * metadata problems).
+   * ones. That's for example what the compat plugin uses to automatically fix
+   * packages with known flaws.
    */
   registerPackageExtensions?: (
     configuration: Configuration,
@@ -69,8 +69,10 @@ export type Hooks = {
   ) => Promise<void>;
 
   /**
-   * Called when a script is getting executed. You must call the executor, or the
-   * script won't be called at all.
+   * Called as a script is getting executed. The `executor` function parameter,
+   * when called, will execute the script. You can use this mechanism to wrap
+   * script executions, for example to run some validation or add some
+   * performance monitoring.
    */
   wrapScriptExecution?: (
     executor: () => Promise<number>,
@@ -81,18 +83,20 @@ export type Hooks = {
   ) => Promise<() => Promise<number>>;
 
   /**
-   * Called when a network request is being made. You must call the network request (networkRequest),
-   * or the request will not be made at all.
+   * Called when a network request is being made. The `executor` function
+   * parameter, when called, will trigger the network request. You can use this
+   * mechanism to wrap network requests, for example to run some validation or
+   * add some logging.
    */
   wrapNetworkRequest?: (
-    networkRequest: () => Promise<any>,
+    executor: () => Promise<any>,
     extra: WrapNetworkRequestInfo
   ) => Promise<() => Promise<any>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
    * to detect whether packages must be rebuilt (typically when the Node
-   * version changes)
+   * version changes).
    */
   globalHashGeneration?: (
     project: Project,
@@ -100,8 +104,15 @@ export type Hooks = {
   ) => Promise<void>;
 
   /**
-   * Before the resolution runs; should be use to setup new aliases that won't
-   * persist on the project instance itself.
+   * Called during the resolution, once for each resolved package and each of
+   * their dependencies. By returning a new dependency descriptor you can
+   * replace the original one by a different range.
+   *
+   * Note that when multiple plugins are registered on `reduceDependency` they
+   * will be executed in definition order. In that case, `dependency` will
+   * always refer to the dependency as it currently is, whereas
+   * `initialDependency` will be the descriptor before any plugin attempted to
+   * change it.
    */
   reduceDependency?: (
     dependency: Descriptor,
@@ -121,8 +132,8 @@ export type Hooks = {
   ) => void;
 
   /**
-   * Called during the `Validation step` of the `install` method from the `Project`
-   * class.
+   * Called during the `Validation step` of the `install` method from the
+   * `Project` class.
    */
   validateProject?: (
     project: Project,
@@ -133,8 +144,8 @@ export type Hooks = {
   ) => void;
 
   /**
-   * Called during the `Validation step` of the `install` method from the `Project`
-   * class by the `validateProject` hook.
+   * Called during the `Validation step` of the `install` method from the
+   * `Project` class by the `validateProject` hook.
    */
   validateWorkspace?: (
     workspace: Workspace,
@@ -145,7 +156,8 @@ export type Hooks = {
   ) => void;
 
   /**
-   * Used to notify the core of all the potential artifacts of the available linkers.
+   * Used to notify the core of all the potential artifacts of the available
+   * linkers.
    */
   populateYarnPaths?: (
     project: Project,
@@ -153,12 +165,13 @@ export type Hooks = {
   ) => Promise<void>;
 
   /**
-   * Called when user requests to clean global cache
+   * Called when the user requests to clean the global cache. Plugins should
+   * use this hook to remove their own global artifacts.
    */
   cleanGlobalArtifacts?: (
     configuration: Configuration,
   ) => Promise<void>;
-};
+}
 
 export type Plugin<PluginHooks = any> = {
   configuration?: Partial<ConfigurationDefinitionMap>;

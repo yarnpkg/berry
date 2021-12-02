@@ -60,6 +60,9 @@
     "gatsby-cli": {
       "built": false
     },
+    "gatsby-plugin-mdx@2.14.0": {
+      "unplugged": true
+    },
     "gatsby-telemetry": {
       "built": false
     },
