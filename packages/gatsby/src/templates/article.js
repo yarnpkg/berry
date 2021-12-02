@@ -23,16 +23,30 @@ function getGitPageUrl(postAbsolutePath) {
 }
 
 // eslint-disable-next-line arca/no-default-export
-export default function Template({data, pageContext: {category}}) {
+export default function Template({data}) {
   const {allMarkdownRemark, markdownRemark} = data;
   const {frontmatter, html, fileAbsolutePath} = markdownRemark;
 
+  const orderedItems = [];
+  const items = [];
+
+  for (const {node} of allMarkdownRemark.edges) {
+    const {path, title, order} = node.frontmatter;
+    const item = {
+      to: path,
+      name: title,
+    };
+
+    if (typeof order === `number`) {
+      orderedItems[order - 1] = item;
+    } else {
+      items.push(item);
+    }
+  }
+
   return <>
     <Global styles={GlobalStyleOverrides} />
-    <LayoutContentNav items={allMarkdownRemark.edges.map(({node}) => ({
-      to: node.frontmatter.path,
-      name: node.frontmatter.title,
-    }))}>
+    <LayoutContentNav items={orderedItems.concat(items)}>
       <SEO
         title={frontmatter.title}
         description={frontmatter.description}
@@ -56,6 +70,7 @@ export const pageQuery = graphql`
           frontmatter {
             path
             title
+            order
           }
         }
       }

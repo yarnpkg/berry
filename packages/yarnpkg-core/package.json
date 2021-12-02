@@ -40,7 +40,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",
@@ -54,7 +54,7 @@
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
-    "rollup": "^2.43.0",
+    "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2"
   },

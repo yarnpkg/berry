@@ -85,13 +85,13 @@
     }
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
-    "rollup": "^2.43.0",
+    "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "vsce": "^1.85.1"

@@ -3637,9 +3637,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "@rollup/plugin-commonjs@npm:18.0.0"
+"@rollup/plugin-commonjs@npm:^21.0.1":
+  version: 21.0.1
+  resolution: "@rollup/plugin-commonjs@npm:21.0.1"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     commondir: ^1.0.1
@@ -3649,8 +3649,8 @@ __metadata:
     magic-string: ^0.25.7
     resolve: ^1.17.0
   peerDependencies:
-    rollup: ^2.30.0
-  checksum: 1e8d2589aba7593e21bc440e48add955e26e60320abbc9255cdc6c57437312faccc47965f459c8c844728765077b58526e2959a8dc68657453944f63034a4155
+    rollup: ^2.38.3
+  checksum: 3e56be58c72d655face6f361f85923ddcc3cc07760b5a3a91cfc728115dfed358fc595781148c512d53a03be8c703133379f228e78fd2aed8655fae9d83800b6
   languageName: node
   linkType: hard
 
@@ -5462,7 +5462,7 @@ __metadata:
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
-    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/cross-spawn": 6.0.0
     "@types/diff": ^4.0.2
@@ -5500,7 +5500,7 @@ __metadata:
     p-queue: ^6.0.0
     pluralize: ^7.0.0
     pretty-bytes: ^5.1.0
-    rollup: ^2.43.0
+    rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     rollup-plugin-terser: ^7.0.2
     semver: ^7.1.2
@@ -6236,7 +6236,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/pnp@workspace:packages/yarnpkg-pnp"
   dependencies:
-    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/node": ^13.7.0
     "@yarnpkg/builder": "workspace:^"
@@ -6245,7 +6245,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     resolve.exports: ^1.1.0
-    rollup: ^2.43.0
+    rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     tslib: ^1.13.0
     typescript: ^4.5.2
@@ -12765,7 +12765,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"fsevents@^2.1.2, fsevents@~2.3.1":
+"fsevents@^2.1.2, fsevents@npm:~2.3.2, fsevents@~2.3.1":
   version: 2.3.2
   resolution: "fsevents@npm:2.3.2"
   dependencies:
@@ -12785,7 +12785,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.1#~builtin<compat/fsevents>":
+"fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.1#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
   resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
   dependencies:
@@ -23204,17 +23204,17 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.43.0":
-  version: 2.45.2
-  resolution: "rollup@npm:2.45.2"
+"rollup@npm:^2.59.0":
+  version: 2.59.0
+  resolution: "rollup@npm:2.59.0"
   dependencies:
-    fsevents: ~2.3.1
+    fsevents: ~2.3.2
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: c049bedc191199842fab13248fdd74dbb33262b5a42ce35abe268037aa8be0f9a32739f2e28c74e7aaacae514fbb637ef79a20ef784f7a33b33587da479065bb
+  checksum: 9fbaa72b8ff840b366f4da3ba35379a3d115fd52e1dced1693995005a9ff7e1699829ff16d8eb65c0a9eff26b57b4914dca7511f22e4d900af8c757d7129124d
   languageName: node
   linkType: hard
 
@@ -26914,13 +26914,13 @@ typescript@^3.8.3:
   version: 0.0.0-use.local
   resolution: "vscode-zipfs@workspace:packages/vscode-zipfs"
   dependencies:
-    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     esbuild: "npm:esbuild-wasm@^0.11.20"
-    rollup: ^2.43.0
+    rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     rollup-plugin-terser: ^7.0.2
     tslib: ^1.13.0
