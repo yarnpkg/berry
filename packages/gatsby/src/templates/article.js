@@ -25,7 +25,7 @@ function getGitPageUrl(postAbsolutePath) {
 // eslint-disable-next-line arca/no-default-export
 export default function Template({data}) {
   const {allMdx, mdx} = data;
-  const {frontmatter, html, fileAbsolutePath} = mdx;
+  const {frontmatter, body, fileAbsolutePath} = mdx;
 
   const orderedItems = [];
   const items = [];
@@ -53,7 +53,7 @@ export default function Template({data}) {
         keywords={[`package manager`, `yarn`, `yarnpkg`, frontmatter.path.split(`/`).reverse()[0]]}
       />
       <PrerenderedMarkdown title={frontmatter.title} editUrl={getGitPageUrl(fileAbsolutePath)}>
-        {html}
+        {body}
       </PrerenderedMarkdown>
     </LayoutContentNav>
   </>;
