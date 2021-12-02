@@ -35,10 +35,13 @@ export class NodeModulesLinker implements Linker {
   private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
 
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
+    return this.isEnabled(opts);
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
+    if (!this.isEnabled(opts))
+      throw new Error(`Assertion failed: Expected the node-modules linker to be enabled`);
+
     const workspace = opts.project.tryWorkspaceByLocator(locator);
     if (workspace)
       return workspace.cwd;
@@ -62,6 +65,9 @@ export class NodeModulesLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
+    if (!this.isEnabled(opts))
+      return null;
+
     const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
       return await findInstallState(opts.project, {unrollAliases: true});
     });
@@ -88,6 +94,10 @@ export class NodeModulesLinker implements Linker {
 
   makeInstaller(opts: LinkOptions) {
     return new NodeModulesInstaller(opts);
+  }
+
+  private isEnabled(opts: MinimalLinkOptions) {
+    return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
   }
 }
 

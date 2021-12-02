@@ -25,16 +25,13 @@ export class PnpLinker implements Linker {
   private pnpCache: Map<string, PnpApi> = new Map();
 
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
-      return false;
-
-    if (opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return false;
-
-    return true;
+    return this.isEnabled(opts);
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
+    if (!this.isEnabled(opts))
+      throw new Error(`Assertion failed: Expected the PnP linker to be enabled`);
+
     const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
@@ -53,6 +50,9 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
+    if (!this.isEnabled(opts))
+      return null;
+
     const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
       return null;
@@ -70,6 +70,16 @@ export class PnpLinker implements Linker {
 
   makeInstaller(opts: LinkOptions) {
     return new PnpInstaller(opts);
+  }
+
+  private isEnabled(opts: MinimalLinkOptions) {
+    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
+      return false;
+
+    if (opts.project.configuration.get(`pnpMode`) !== this.mode)
+      return false;
+
+    return true;
   }
 }
 
