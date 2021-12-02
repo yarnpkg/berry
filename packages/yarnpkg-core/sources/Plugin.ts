@@ -1,6 +1,7 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
 import {Writable, Readable}                                                                   from 'stream';
+import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
 import {Fetcher}                                                                              from './Fetcher';
@@ -9,6 +10,7 @@ import {MessageName}                                                            
 import {Project, InstallOptions}                                                              from './Project';
 import {Resolver, ResolveOptions}                                                             from './Resolver';
 import {Workspace}                                                                            from './Workspace';
+import * as httpUtils                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -33,6 +35,11 @@ export interface LinkerPlugin {
 export interface ResolverPlugin {
   new(): Resolver;
 }
+
+export type WrapNetworkRequestInfo = httpUtils.Options & {
+  target: string | URL;
+  body: httpUtils.Body;
+};
 
 export interface Hooks {
   /**
@@ -64,7 +71,7 @@ export interface Hooks {
   /**
    * Called as a script is getting executed. The `executor` function parameter,
    * when called, will execute the script. You can use this mechanism to wrap
-   * script execution, for example to run some validation or add some
+   * script executions, for example to run some validation or add some
    * performance monitoring.
    */
   wrapScriptExecution?: (
@@ -74,6 +81,17 @@ export interface Hooks {
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>;
+
+  /**
+   * Called when a network request is being made. The `executor` function
+   * parameter, when called, will trigger the network request. You can use this
+   * mechanism to wrap network requests, for example to run some validation or
+   * add some logging.
+   */
+  wrapNetworkRequest?: (
+    executor: () => Promise<any>,
+    extra: WrapNetworkRequestInfo
+  ) => Promise<() => Promise<any>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use

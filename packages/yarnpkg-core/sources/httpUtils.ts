@@ -172,6 +172,52 @@ export type Options = {
 };
 
 export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
+  const realRequest = async () => await requestImpl(target, body, {configuration, headers, jsonRequest, jsonResponse, method});
+
+  const executor = await configuration.reduceHook(hooks => {
+    return hooks.wrapNetworkRequest;
+  }, realRequest, {target, body, configuration, headers, jsonRequest, jsonResponse, method});
+
+  return await executor();
+}
+
+export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
+  let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
+    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration}).then(response => {
+      cache.set(target, response.body);
+      return response.body;
+    });
+  });
+
+  if (Buffer.isBuffer(entry) === false)
+    entry = await entry;
+
+  if (jsonResponse) {
+    return JSON.parse(entry.toString());
+  } else {
+    return entry;
+  }
+}
+
+export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), options);
+
+  return response.body;
+}
+
+export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), options);
+
+  return response.body;
+}
+
+export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), options);
+
+  return response.body;
+}
+
+async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
   const url = typeof target === `string` ? new URL(target) : target;
 
   const networkConfig = getNetworkSettings(url, {configuration});
@@ -230,40 +276,4 @@ export async function request(target: string | URL, body: Body, {configuration, 
   return configuration.getLimit(`networkConcurrency`)(() => {
     return gotClient(url) as unknown as Response<any>;
   });
-}
-
-export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
-  let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
-    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration}).then(response => {
-      cache.set(target, response.body);
-      return response.body;
-    });
-  });
-
-  if (Buffer.isBuffer(entry) === false)
-    entry = await entry;
-
-  if (jsonResponse) {
-    return JSON.parse(entry.toString());
-  } else {
-    return entry;
-  }
-}
-
-export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), options);
-
-  return response.body;
-}
-
-export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), options);
-
-  return response.body;
-}
-
-export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), options);
-
-  return response.body;
 }

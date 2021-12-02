@@ -2,6 +2,7 @@ import cjs                  from '@rollup/plugin-commonjs';
 import resolve              from '@rollup/plugin-node-resolve';
 import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
+import {defineConfig}       from 'rollup';
 import {brotliCompressSync} from 'zlib';
 
 function wrapOutput() {
@@ -21,8 +22,8 @@ function wrapOutput() {
   };
 }
 
-/** @type {Array<import('rollup').RollupOptions>} */
-const options = [
+// eslint-disable-next-line arca/no-default-export
+export default defineConfig([
   {
     input: `./sources/loader/_entryPoint.ts`,
     output: {
@@ -30,7 +31,7 @@ const options = [
       format: `cjs`,
       exports: `default`,
       strict: false,
-      preferConst: true,
+      generatedCode: `es2015`,
     },
     plugins: [
       resolve({
@@ -39,7 +40,15 @@ const options = [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `node12`}),
+      esbuild({
+        tsconfig: false,
+        target: `node12`,
+        define: {
+          document: `undefined`,
+          XMLHttpRequest: `undefined`,
+          crypto: `undefined`,
+        },
+      }),
       cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
       wrapOutput(),
     ],
@@ -49,6 +58,7 @@ const options = [
     output: {
       file: `./sources/esm-loader/built-loader.js`,
       format: `esm`,
+      generatedCode: `es2015`,
     },
     plugins: [
       resolve({
@@ -57,12 +67,17 @@ const options = [
         jail: path.join(__dirname, `../../`),
         preferBuiltins: true,
       }),
-      esbuild({tsconfig: false, target: `node12`}),
+      esbuild({
+        tsconfig: false,
+        target: `node12`,
+        define: {
+          document: `undefined`,
+          XMLHttpRequest: `undefined`,
+          crypto: `undefined`,
+        },
+      }),
       cjs({requireReturnsDefault: `preferred`}),
       wrapOutput(),
     ],
   },
-];
-
-// eslint-disable-next-line arca/no-default-export
-export default options;
+]);
