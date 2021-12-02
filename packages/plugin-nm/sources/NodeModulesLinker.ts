@@ -40,7 +40,7 @@ export class NodeModulesLinker implements Linker {
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
     if (!this.isEnabled(opts))
-      throw new Error(`Assertion failed: Expected the npm linker to be enabled`);
+      throw new Error(`Assertion failed: Expected the node-modules linker to be enabled`);
 
     const workspace = opts.project.tryWorkspaceByLocator(locator);
     if (workspace)
