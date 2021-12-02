@@ -81,7 +81,8 @@ export type Hooks = {
   ) => Promise<() => Promise<number>>;
 
   /**
-   * Called when a network request is being made.
+   * Called when a network request is being made. You must call the network request (networkRequest),
+   * or the request will not be made at all.
    */
   wrapNetworkRequest?: (
     networkRequest: () => Promise<any>,
