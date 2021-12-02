@@ -11,10 +11,13 @@ export type PnpmCustomData = {
 
 export class PnpmLinker implements Linker {
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
-    return opts.project.configuration.get(`nodeLinker`) === `pnpm`;
+    return this.isEnabled(opts);
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
+    if (!this.isEnabled(opts))
+      throw new Error(`Assertion failed: Expected the pnpm linker to be enabled`);
+
     const customDataKey = getCustomDataKey();
     const customData = opts.project.installersCustomData.get(customDataKey) as PnpmCustomData | undefined;
     if (!customData)
@@ -28,6 +31,9 @@ export class PnpmLinker implements Linker {
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null> {
+    if (!this.isEnabled(opts))
+      return null;
+
     const customDataKey = getCustomDataKey();
     const customData = opts.project.installersCustomData.get(customDataKey) as any;
     if (!customData)
@@ -58,6 +64,10 @@ export class PnpmLinker implements Linker {
 
   makeInstaller(opts: LinkOptions) {
     return new PnpmInstaller(opts);
+  }
+
+  private isEnabled(opts: MinimalLinkOptions) {
+    return opts.project.configuration.get(`nodeLinker`) === `pnpm`;
   }
 }
 
