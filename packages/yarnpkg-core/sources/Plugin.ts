@@ -1,6 +1,7 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
 import {Writable, Readable}                                                                   from 'stream';
+import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
 import {Fetcher}                                                                              from './Fetcher';
@@ -9,6 +10,7 @@ import {MessageName}                                                            
 import {Project, InstallOptions}                                                              from './Project';
 import {Resolver, ResolveOptions}                                                             from './Resolver';
 import {Workspace}                                                                            from './Workspace';
+import * as httpUtils                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -33,6 +35,11 @@ export interface LinkerPlugin {
 export interface ResolverPlugin {
   new(): Resolver;
 }
+
+export type WrapNetworkRequestInfo = httpUtils.Options & {
+  target: string | URL;
+  body: httpUtils.Body;
+};
 
 export type Hooks = {
   /**
@@ -62,7 +69,7 @@ export type Hooks = {
   ) => Promise<void>;
 
   /**
-   * When a script is getting executed. You must call the executor, or the
+   * Called when a script is getting executed. You must call the executor, or the
    * script won't be called at all.
    */
   wrapScriptExecution?: (
@@ -72,6 +79,15 @@ export type Hooks = {
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>;
+
+  /**
+   * Called when a network request is being made. You must call the network request (networkRequest),
+   * or the request will not be made at all.
+   */
+  wrapNetworkRequest?: (
+    networkRequest: () => Promise<any>,
+    extra: WrapNetworkRequestInfo
+  ) => Promise<() => Promise<any>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
