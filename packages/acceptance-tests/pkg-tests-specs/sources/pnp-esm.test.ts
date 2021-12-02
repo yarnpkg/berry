@@ -259,7 +259,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import('./cjs-bin').then(console.log)`);
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import bin from './cjs-bin';\nconsole.log(bin)`);
         await xfs.writeFilePromise(ppath.join(path, `cjs-bin` as Filename), `module.exports = {foo: 'bar'}`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
