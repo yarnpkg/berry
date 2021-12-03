@@ -21856,9 +21856,34 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["npm:2.6.2", {
           "packageLocation": "./.yarn/cache/eslint-module-utils-npm-2.6.2-20e7fcde89-814591f494.zip/node_modules/eslint-module-utils/",
           "packageDependencies": [
-            ["eslint-module-utils", "npm:2.6.2"],
+            ["eslint-module-utils", "npm:2.6.2"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:e651dd32144b981d8ec0734664f2a8c6bcd04c806360c83dc7c53d303685d9a26bfe398a3fab0d395b86dd985dc17c3e73e3d3a9d5b561503ee44cc8216708dc#npm:2.6.2", {
+          "packageLocation": "./.yarn/__virtual__/eslint-module-utils-virtual-3ee7e1c1cd/0/cache/eslint-module-utils-npm-2.6.2-20e7fcde89-814591f494.zip/node_modules/eslint-module-utils/",
+          "packageDependencies": [
+            ["eslint-module-utils", "virtual:e651dd32144b981d8ec0734664f2a8c6bcd04c806360c83dc7c53d303685d9a26bfe398a3fab0d395b86dd985dc17c3e73e3d3a9d5b561503ee44cc8216708dc#npm:2.6.2"],
+            ["@types/eslint-import-resolver-node", null],
+            ["@types/eslint-import-resolver-typescript", null],
+            ["@types/eslint-import-resolver-webpack", null],
+            ["@types/typescript-eslint__parser", null],
+            ["@typescript-eslint/parser", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:4.31.2"],
             ["debug", "virtual:11708fcd8b5d4d05ff1d66e93d462ef2e0e1a37e2f059f1c5142e31570731629f92bd79531af0543bc9cc3e8328e18d21151650e1e20b8209c0416b889b286e6#npm:3.2.7"],
+            ["eslint-import-resolver-node", "npm:0.3.6"],
+            ["eslint-import-resolver-typescript", null],
+            ["eslint-import-resolver-webpack", null],
             ["pkg-dir", "npm:2.0.0"]
+          ],
+          "packagePeers": [
+            "@types/eslint-import-resolver-node",
+            "@types/eslint-import-resolver-typescript",
+            "@types/eslint-import-resolver-webpack",
+            "@types/typescript-eslint__parser",
+            "@typescript-eslint/parser",
+            "eslint-import-resolver-node",
+            "eslint-import-resolver-typescript",
+            "eslint-import-resolver-webpack"
           ],
           "linkType": "HARD",
         }]
@@ -21935,13 +21960,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["eslint-plugin-import", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:2.24.2"],
             ["@types/eslint", null],
+            ["@types/typescript-eslint__parser", null],
+            ["@typescript-eslint/parser", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:4.31.2"],
             ["array-includes", "npm:3.1.3"],
             ["array.prototype.flat", "npm:1.2.4"],
             ["debug", "virtual:2bcc47d217f870e3d52f0e55493dc34fd3da852877f7db32fa2940cc320151746026495daf6a34a974488cf5a949d93be1e2dc1ffba036faf081a9b15fcd2252#npm:2.6.9"],
             ["doctrine", "npm:2.1.0"],
             ["eslint", "npm:7.32.0"],
             ["eslint-import-resolver-node", "npm:0.3.6"],
-            ["eslint-module-utils", "npm:2.6.2"],
+            ["eslint-module-utils", "virtual:e651dd32144b981d8ec0734664f2a8c6bcd04c806360c83dc7c53d303685d9a26bfe398a3fab0d395b86dd985dc17c3e73e3d3a9d5b561503ee44cc8216708dc#npm:2.6.2"],
             ["find-up", "npm:2.1.0"],
             ["has", "npm:1.0.3"],
             ["is-core-module", "npm:2.6.0"],
@@ -21954,6 +21981,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "packagePeers": [
             "@types/eslint",
+            "@types/typescript-eslint__parser",
+            "@typescript-eslint/parser",
             "eslint"
           ],
           "linkType": "HARD",
