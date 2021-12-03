@@ -7,7 +7,7 @@ const useScroll = () => {
     try {
       return sessionStorage.getItem(`berry:navigation:${id}`);
     } catch {
-      return 0;
+      return undefined;
     }
   };
 
