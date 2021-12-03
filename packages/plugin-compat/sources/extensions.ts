@@ -710,4 +710,19 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       jimp: optionalPeerDep,
     },
   }],
+  // https://github.com/import-js/eslint-plugin-import/pull/2283
+  [`eslint-module-utils@*`, {
+    peerDependenciesMeta: {
+      'eslint-import-resolver-node': optionalPeerDep,
+      'eslint-import-resolver-typescript': optionalPeerDep,
+      'eslint-import-resolver-webpack': optionalPeerDep,
+      '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
+  // https://github.com/import-js/eslint-plugin-import/pull/2283
+  [`eslint-plugin-import@*`, {
+    peerDependenciesMeta: {
+      '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
 ];

@@ -1,0 +1,10 @@
+{
+  "name": "gatsby-plugin-yarn-introspection",
+  "version": "0.0.0",
+  "peerDependencies": {
+    "gatsby": "^3.7.0"
+  },
+  "dependencies": {
+    "@yarnpkg/monorepo": "workspace:^"
+  }
+}

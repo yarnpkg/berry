@@ -2036,14 +2036,6 @@ function applyVirtualResolutionMutations({
         continue;
       }
 
-      // The stack overflow is checked against two level because a workspace
-      // may have a dev dependency on another workspace that lists the first
-      // one as a regular dependency. In this case the loop will break so we
-      // don't need to throw an exception.
-      const stackDepth = virtualStack.get(pkg.locatorHash);
-      if (typeof stackDepth === `number` && stackDepth >= 2)
-        reportStackOverflow();
-
       let virtualizedDescriptor: Descriptor;
       let virtualizedPackage: Package;
 
@@ -2121,6 +2113,15 @@ function applyVirtualResolutionMutations({
       thirdPass.push(() => {
         if (!allPackages.has(virtualizedPackage.locatorHash))
           return;
+
+        // The stack overflow is checked against two level because a workspace
+        // may have a dev dependency on another workspace that lists the first
+        // one as a regular dependency. In this case the loop will break so we
+        // don't need to throw an exception.
+        const stackDepth = virtualStack.get(pkg.locatorHash);
+
+        if (typeof stackDepth === `number` && stackDepth >= 2)
+          reportStackOverflow();
 
         const current = virtualStack.get(pkg.locatorHash);
         const next = typeof current !== `undefined` ? current + 1 : 1;

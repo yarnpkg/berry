@@ -4,11 +4,17 @@ const useScroll = () => {
   const ref = useRef();
 
   const readBrowserStorage = id => {
-    return sessionStorage.getItem(`berry:navigation:${id}`);
+    try {
+      return sessionStorage.getItem(`berry:navigation:${id}`);
+    } catch {
+      return undefined;
+    }
   };
 
   const setBrowserStorage = (id, pos) => {
-    sessionStorage.setItem(`berry:navigation:${id}`, pos.toString());
+    try {
+      sessionStorage.setItem(`berry:navigation:${id}`, pos.toString());
+    } catch {}
   };
 
   useLayoutEffect(() => {
