@@ -513,14 +513,15 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd}), nmMode};
 }
 
-const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean}): Promise<any> => {
+const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean, allowSymlink?: boolean}): Promise<any> => {
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
   try {
     if (!options.innerLoop) {
-      const stats = await xfs.lstatPromise(dir);
-      if (stats.isSymbolicLink()) {
+      const stats = options.allowSymlink ? await xfs.statPromise(dir) : await xfs.lstatPromise(dir);
+      if (options.allowSymlink && !stats.isDirectory() ||
+        (!options.allowSymlink && stats.isSymbolicLink())) {
         await xfs.unlinkPromise(dir);
         return;
       }
@@ -1021,7 +1022,8 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (prevNode.children.has(NODE_MODULES))
         await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: false});
 
-      await removeDir(location, {contentsOnly: location === rootNmDirPath});
+      const isRootNmLocation = ppath.basename(location) === NODE_MODULES && locationTree.has(ppath.join(ppath.dirname(location), ppath.sep));
+      await removeDir(location, {contentsOnly: location === rootNmDirPath, allowSymlink: isRootNmLocation});
     } else {
       for (const [segment, prevChildNode] of prevNode.children) {
         const childNode = node.children.get(segment);
@@ -1038,7 +1040,8 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (segment === `.`)
         continue;
       const childNode = node ? node.children.get(segment) : node;
-      await removeOutdatedDirs(ppath.join(location, segment), prevChildNode, childNode);
+      const dirPath = ppath.join(location, segment);
+      await removeOutdatedDirs(dirPath, prevChildNode, childNode);
     }
   }
 
@@ -1048,12 +1051,10 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
       if (node.children.has(NODE_MODULES))
         await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: true});
 
-      // 1. If old directory is a symlink removeDir will remove it, regardless contentsOnly value
-      // 2. If old and new directories are hard links - we pass contentsOnly: true
-      // so that removeDir cleared only contents
-      // 3. If new directory is a symlink - we pass contentsOnly: false
-      // so that removeDir removed the whole directory
-      await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
+      // 1. If new directory is a symlink, we need to remove it fully
+      // 2. If new directory is a hardlink - we just need to clean it up
+      const isRootNmLocation = ppath.basename(location) === NODE_MODULES && locationTree.has(ppath.join(ppath.dirname(location), ppath.sep));
+      await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD, allowSymlink: isRootNmLocation});
     } else {
       if (!areRealLocatorsEqual(node.locator, prevNode.locator))
         await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});

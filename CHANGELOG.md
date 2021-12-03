@@ -14,6 +14,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### Installs
 
+- The node-modules linker now tolerates if node_modules is a symbolic link and does not recreates it
 - The pnpm linker has received various improvements:
   - It will now remove the `node_modules/.store` and `node_modules` folders if they are empty.
   - It now supports running binaries of soft links.
