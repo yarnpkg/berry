@@ -20,6 +20,7 @@
   "exclude": [
     "packages/*/lib",
     "packages/yarnpkg-doctor/fixtures",
-    "packages/gatsby"
+    "packages/gatsby",
+    "packages/yarnpkg-libzip/artifacts"
   ]
 }

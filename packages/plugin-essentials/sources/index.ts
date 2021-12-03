@@ -16,6 +16,7 @@ import runEntry                                                 from './commands
 import versionEntry                                             from './commands/entries/version';
 import exec                                                     from './commands/exec';
 import explainPeerRequirements                                  from './commands/explain/peerRequirements';
+import explain                                                  from './commands/explain';
 import info                                                     from './commands/info';
 import install                                                  from './commands/install';
 import link                                                     from './commands/link';
@@ -144,6 +145,7 @@ const plugin: Plugin = {
     dedupe,
     exec,
     explainPeerRequirements,
+    explain,
     info,
     install,
     link,

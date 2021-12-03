@@ -27,7 +27,7 @@
     "@yarnpkg/shell": "workspace:^",
     "chalk": "^3.0.0",
     "ci-info": "^3.2.0",
-    "clipanion": "^3.0.1",
+    "clipanion": "^3.2.0-rc.4",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",
     "typanion": "^3.3.0",
