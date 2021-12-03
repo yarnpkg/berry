@@ -60,27 +60,28 @@ const SLICES = [
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.2
   {
     from: `8e0e8703b9c95013aec7819e4593d099cdf7763a`,
-    to: `545d5a8c5409dac447a668d4e7d315702fd115d6`,
+    to: `178a67b4663d80b0fcbea542e7255b4499b51708`,
     onto: `bfc55b5762443c37ecdef08a3b5a4e057b4d1e85`,
     range: `>=4.2 <4.3`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.3
   {
     from: `530aad19e4ac19d35cb6b200168c91ce86cb0050`,
-    to: `6d7d4d2ce0df8e65a2c86a20c014c053ef530ea3`,
+    to: `ffa54c5a104e7940b5c23666ddffbf44878f9d9f`,
     onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
     range: `>=4.3 <4.4`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.4
   {
     from: `793bfe32745bf6797924354b0fd5be62cf01950c`,
-    to: `88a10595c32309fc26eb4a7f5a858d98e883dae0`,
+    to: `20ffca2f3c48591c971e6606a55b7b1820d8a64f`,
     onto: `a10409ccaa3604790dc45f52ef0402eb49015dcf`,
     range: `>=4.4 <4.5`,
   },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.5
   {
     from: `79fe5d206f89e5f1585807bdcd7feeb567a69646`,
-    to: `79fe5d206f89e5f1585807bdcd7feeb567a69646`,
+    to: `fff89a12766fa485e35b1c65d8631d109c4e2c0e`,
     onto: `7893f689fedcfe28a499d119d34844840bce9160`,
     range: `>=4.5.2`,
   },
