@@ -541,7 +541,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/snowpackjs/rollup-plugin-polyfill-node/pull/30
-  [`rollup-plugin-polyfill-node@*`, {
+  [`rollup-plugin-polyfill-node@<=0.8.0`, {
     peerDependencies: {
       rollup: `^1.20.0 || ^2.0.0`,
     },
