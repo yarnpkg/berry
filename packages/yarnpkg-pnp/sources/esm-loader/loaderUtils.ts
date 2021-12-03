@@ -48,16 +48,27 @@ export function getFileFormat(filepath: string): string | null {
         `Unknown file extension ".json" for ${filepath}`,
       );
     }
-    // Matching files without extensions deviates from Node's default
-    // behaviour but is a fix for https://github.com/nodejs/node/issues/33226
-    case ``:
     case `.js`: {
       const pkg = nodeUtils.readPackageScope(filepath);
-      if (pkg) {
-        return pkg.data.type ?? `commonjs`;
-      }
+      // assume CJS for files outside of a package boundary
+      if (!pkg)
+        return `commonjs`;
+      return pkg.data.type ?? `commonjs`;
+    }
+    // Matching files beyond those handled above deviates from Node's default
+    // --experimental-loader behavior but is required to work around
+    // https://github.com/nodejs/node/issues/33226
+    default: {
+      const isMain = process.argv[1] === filepath;
+      if (!isMain)
+        return null;
+      const pkg = nodeUtils.readPackageScope(filepath);
+      if (!pkg)
+        return `commonjs`;
+      // prevent extensions beyond .mjs or .js from loading as ESM
+      if (pkg.data.type === `module`)
+        return null;
+      return pkg.data.type ?? `commonjs`;
     }
   }
-
-  return null;
 }

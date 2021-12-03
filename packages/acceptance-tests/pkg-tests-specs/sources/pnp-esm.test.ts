@@ -194,7 +194,25 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should not allow unknown extensions`,
+    `it should load commonjs with an unknown extension`,
+    makeTemporaryEnv(
+      {
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.ts` as Filename), `console.log(typeof require === 'undefined')`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index.ts`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `false\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should not allow unknown extensions with {type: "module"}`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -214,7 +232,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
   // Tests https://github.com/nodejs/node/issues/33226
   test(
-    `it should not load extensionless commonjs files as ESM`,
+    `it should load extensionless commonjs files as an entrypoint`,
     makeTemporaryEnv(
       { },
       {
@@ -228,6 +246,49 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index`)).resolves.toMatchObject({
           code: 0,
           stdout: `false\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should not allow extensionless commonjs imports`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import bin from './cjs-bin';\nconsole.log(bin)`);
+        await xfs.writeFilePromise(ppath.join(path, `cjs-bin` as Filename), `module.exports = {foo: 'bar'}`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index.mjs`)).rejects.toMatchObject({
+          code: 1,
+          stderr: expect.stringContaining(`Unknown file extension`),
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should not allow extensionless files with {"type": "module"}`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), ``);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index`)).rejects.toMatchObject({
+          code: 1,
+          stderr: expect.stringContaining(`Unknown file extension`),
         });
       },
     ),
