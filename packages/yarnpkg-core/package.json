@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "3.2.0-rc.6",
+  "version": "3.2.0-rc.7",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
