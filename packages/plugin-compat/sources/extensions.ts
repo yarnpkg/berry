@@ -703,4 +703,26 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'webpack-cli': optionalPeerDep,
     },
   }],
+  // https://github.com/slorber/responsive-loader/pull/1/files
+  [`@docusaurus/responsive-loader@<1.5.0`, {
+    peerDependenciesMeta: {
+      sharp: optionalPeerDep,
+      jimp: optionalPeerDep,
+    },
+  }],
+  // https://github.com/import-js/eslint-plugin-import/pull/2283
+  [`eslint-module-utils@*`, {
+    peerDependenciesMeta: {
+      'eslint-import-resolver-node': optionalPeerDep,
+      'eslint-import-resolver-typescript': optionalPeerDep,
+      'eslint-import-resolver-webpack': optionalPeerDep,
+      '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
+  // https://github.com/import-js/eslint-plugin-import/pull/2283
+  [`eslint-plugin-import@*`, {
+    peerDependenciesMeta: {
+      '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
 ];

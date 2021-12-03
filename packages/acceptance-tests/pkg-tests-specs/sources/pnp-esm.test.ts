@@ -1,4 +1,4 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -142,57 +142,6 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should support named exports in commonjs files`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          'no-deps-exports': `1.0.0`,
-        },
-        type: `module`,
-      },
-      async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
-
-        await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
-          `import {foo} from 'no-deps-exports';\nconsole.log(foo)`,
-        );
-
-        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `42\n`,
-        });
-      },
-    ),
-  );
-
-  test(
-    `it should always set default as module.exports when importing a commonjs file`,
-    makeTemporaryEnv(
-      {
-        type: `module`,
-      },
-      async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
-
-        await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
-          `import foo from './foo.cjs';\nconsole.log(foo)`,
-        );
-        await xfs.writeFilePromise(
-          ppath.join(path, `foo.cjs` as Filename),
-          `module.exports.default = 42`,
-        );
-
-        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `{ default: 42 }\n`,
-        });
-      },
-    ),
-  );
-
-  test(
     `it should respect exports`,
     makeTemporaryEnv(
       {
@@ -228,21 +177,17 @@ describe(`Plug'n'Play - ESM`, () => {
       {
         type: `module`,
         dependencies: {
-          foo: `portal:./pkg`,
+          'no-deps': `1.0.0`,
         },
       },
       async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `pkg` as Filename));
-        await xfs.writeJsonPromise(ppath.join(path, `pkg/package.json` as Filename), {});
-        await xfs.writeFilePromise(ppath.join(path, `pkg/index.js` as Filename), `module.exports = 42`);
-
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import foo from 'foo';\nconsole.log(foo)`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import pkg from 'no-deps';\nconsole.log(pkg)`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
-          stdout: `42\n`,
+          stdout: `{ name: 'no-deps', version: '1.0.0' }\n`,
         });
       },
     ),
@@ -255,21 +200,21 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log('foo')`);
+        await xfs.writeFilePromise(ppath.join(path, `index.ts` as Filename), ``);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await expect(run(`node`, `./index`)).rejects.toMatchObject({
+        await expect(run(`node`, `./index.ts`)).rejects.toMatchObject({
           code: 1,
-          stderr: expect.stringContaining(`Unknown file extension ""`),
+          stderr: expect.stringContaining(`Unknown file extension ".ts"`),
         });
       },
     ),
   );
 
-  // Tests the workaround for https://github.com/nodejs/node/issues/33226
+  // Tests https://github.com/nodejs/node/issues/33226
   test(
-    `it should not enter ESM mode just because the loader is present`,
+    `it should not load extensionless commonjs files as ESM`,
     makeTemporaryEnv(
       { },
       {
@@ -289,37 +234,19 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should enter ESM mode when entrypoint is ESM`,
+    `it should support ESM binaries`,
     makeTemporaryEnv(
       {
-        workspaces: [`workspace`],
         dependencies: {
-          pkg: `workspace:*`,
+          'no-deps-bins-esm': `1.0.0`,
         },
       },
       async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `workspace` as PortablePath));
-        await xfs.writeJsonPromise(ppath.join(path, `workspace/package.json` as PortablePath), {
-          name: `pkg`,
-          type: `module`,
-          bin: `index.mjs`,
-          peerDependencies: {
-            'no-deps': `*`,
-          },
-        });
-        await xfs.writeFilePromise(ppath.join(path, `workspace/index.mjs` as Filename), `import 'fs'; console.log('foo')`);
-
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        // Ensure path is virtual (ie node can't find it by default)
-        await expect(run(`bin`, `pkg`)).resolves.toMatchObject({
+        await expect(run(`no-deps-bins-esm`)).resolves.toMatchObject({
           code: 0,
-          stdout: expect.stringContaining(`__virtual__`),
-        });
-
-        await expect(run(`pkg`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `foo\n`,
+          stdout: `42\n`,
         });
       },
     ),
@@ -340,7 +267,7 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should work with dynamic imports in esm mode`,
+    `it should support dynamic imports in ESM mode`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -360,27 +287,55 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  // Requires the ESM loader to be loaded but currently that enters ESM
-  // mode and would test the incorrect code path
-  test.skip(
-    `it should work with dynamic imports in commonjs mode`,
+  test(
+    `it should support dynamic imports in commonjs mode`,
     makeTemporaryEnv(
       {
         dependencies: {
           "no-deps": `1.0.0`,
+          "is-number": `1.0.0`,
         },
       },
       {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import('no-deps').then(() => console.log(42))`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `require('no-deps');\nimport('is-number').then(() => console.log(42))`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await expect(run(`node`, `index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: expect.stringMatching(`42\n`),
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should set the main module`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `
+            console.log({
+              require: typeof require,
+              main: require.main === module,
+              mainModule: process.mainModule === module,
+            });
+          `,
+        );
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `{ require: 'function', main: true, mainModule: true }\n`,
         });
       },
     ),

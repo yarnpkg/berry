@@ -296,7 +296,22 @@ export class Manifest {
           continue;
         }
 
-        this.bin.set(key, normalizeSlashes(value));
+        // Some registries incorrectly normalize the `bin` field of
+        // scoped packages to be invalid filenames.
+        // E.g. from
+        // {
+        //   "name": "@yarnpkg/doctor",
+        //   "bin": "index.js"
+        // }
+        // to
+        // {
+        //   "name": "@yarnpkg/doctor",
+        //   "bin": {
+        //     "@yarnpkg/doctor": "index.js"
+        //   }
+        // }
+        const binaryIdent = structUtils.parseIdent(key);
+        this.bin.set(binaryIdent.name, normalizeSlashes(value));
       }
     }
 

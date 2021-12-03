@@ -7,37 +7,6 @@ const builtinModules = new Set(Module.builtinModules || Object.keys(process.bind
 
 export const isBuiltinModule = (request: string) => request.startsWith(`node:`) || builtinModules.has(request);
 
-// https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
-export function resolveMainPath(main: NativePath) {
-  let mainPath = Module._findPath(npath.resolve(main), null, true);
-  if (!mainPath)
-    return false;
-
-  // const preserveSymlinksMain = getOptionValue(`--preserve-symlinks-main`);
-  // if (!preserveSymlinksMain)
-  mainPath = fs.realpathSync(mainPath);
-
-  return mainPath;
-}
-
-// https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L26-L41
-export function shouldUseESMLoader(mainPath: NativePath) {
-  // const userLoader = getOptionValue(`--experimental-loader`);
-  // if (userLoader)
-  //   return true;
-  // const esModuleSpecifierResolution =
-  //   getOptionValue(`--experimental-specifier-resolution`);
-  // if (esModuleSpecifierResolution === `node`)
-  //   return true;
-  // Determine the module format of the main
-  if (mainPath && mainPath.endsWith(`.mjs`))
-    return true;
-  if (!mainPath || mainPath.endsWith(`.cjs`))
-    return false;
-  const pkg = readPackageScope(mainPath);
-  return pkg && pkg.data.type === `module`;
-}
-
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
 export function readPackageScope(checkPath: NativePath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);

@@ -408,7 +408,7 @@ describe(`Commands`, () => {
           workspaces: [`packages/*`],
           scripts: {
             [`test:foo`]: `yarn workspaces foreach run test:bar`,
-            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1]).replace(/\\\\\\\\/g, "/")' "$INIT_CWD"`,
+            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1]).replace(/\\\\/g, "/")' "$INIT_CWD"`,
           },
         },
         async ({path, run}) => {
@@ -539,6 +539,30 @@ describe(`Commands`, () => {
 
         await expect(run(`workspaces`, `foreach`, `--since`, `--recursive`, `run`, `print`)).resolves.toMatchSnapshot();
       }),
+    );
+
+    test(
+      `it should run on workspaces with matching binaries`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        },
+        {
+          plugins: [
+            require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
+          ],
+        },
+        async ({run}) => {
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `run`, `has-bin-entries`, `binary-executed`)).resolves.toMatchObject({
+            code: 0,
+            stdout: expect.stringContaining(`binary-executed`),
+          });
+        },
+      ),
     );
   });
 });

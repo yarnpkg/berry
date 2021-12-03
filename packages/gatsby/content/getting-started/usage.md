@@ -1,8 +1,9 @@
 ---
 category: getting-started
 path: /getting-started/usage
-title: "3 - Usage"
+title: Usage
 description: A short overview of Yarn's most used commands.
+order: 3
 ---
 
 Now that you have Yarn [installed](/getting-started/install), you can start using it! Here are some of the most common commands you'll need.

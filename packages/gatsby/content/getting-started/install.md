@@ -1,69 +1,56 @@
 ---
 category: getting-started
 path: /getting-started/install
-title: "2 - Installation"
+title: Installation
 description: Yarn's in-depth installation guide.
+order: 2
 ---
 
-> **Migrating from Yarn 1**
->
-> We've been compiling helpful advice when porting over from Yarn 1 on the following [Migration Guide](/getting-started/migration). Give it a look and contribute to it if you see things that aren't covered yet! Make sure to consult the [PnP Compatibility Table](/features/pnp#compatibility-table) and [enable the node-modules plugin](/getting-started/migration#if-required-enable-the-node-modules-plugin) if required!
+## Install Corepack
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+The preferred way to manage Yarn is through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html), a new binary shipped with all Node.js releases starting from 16.10. It acts as an intermediary between you and Yarn, and lets you use different package manager versions across multiple projects without having to check-in the Yarn binary anymore.
 
-## About global installs
+### Node.js >=16.10
 
-Using a single package manager across your system has always been a problem. To be stable, installs need to be run with the same package manager version across environments, otherwise there's a risk we introduce accidental breaking changes between versions - after all, that's why the concept of lockfile was introduced in the first place! And with Yarn being in a sense your very first project dependency, it should make sense to "lock it" as well.
-
-For this reason, Yarn 2 and later are meant to be managed on a by-project basis. Don't worry, little will change! Just make sure to first install the global Yarn binary that we will use to spawn the local ones:
-
-```
-npm install -g yarn
-```
-
-Once you've followed the instructions (running `yarn --version` from your home directory should yield something like `1.22.0`), go to the next section to see how to actually enable Yarn 2 on your project.
-
-> You've probably remarked the global Yarn is from the "Classic" line (1.x). This is expected! One extra perk of this system is that projects configured for Yarn 1 will keep using it instead of suddenly having to migrate to the 2.x configuration format. We wouldn't have had to do this if Yarn had been "project locked" from the beginning, but [hindsight is 20/20](https://en.wiktionary.org/wiki/hindsight_is_20/20) 😉
-
-## Per-project install
-
-1. Install the Yarn global binary to its latest version:
+Corepack is included by default with all Node.js installs, but is currently opt-in. To enable it, run the following command:
 
 ```bash
-npm install -g yarn
+corepack enable
 ```
 
-2. Move into your project folder:
+### Node.js <16.10
+
+Corepack isn't included with Node.js in versions before the 16.10; to address that, run:
 
 ```bash
-cd ~/path/to/project
+npm i -g corepack
 ```
 
-3. Run the following:
+## Initializing your project
+
+Just run the following command. It will generate some files inside your current directory; add them all to your next commit, and you'll be done!
 
 ```bash
-yarn set version berry
+yarn init -2
 ```
 
-> "Berry" is the codename for all versions of Yarn from 2 onwards: 2.x, 3.x, etc. It's also the name of our [repository](https://github.com/yarnpkg/berry)!
+> **Note:** By default, `yarn init -2` will setup your project to be compatible with [Zero-Installs](/features/zero-installs), which requires checking-in your cache in your repository; check your [`.gitignore`](/getting-started/qa#which-files-should-be-gitignored) if you wish to disable this.
 
-4. Commit new & updated files. See: [Which files should be gitignored?](/getting-started/qa#which-files-should-be-gitignored)
+> **Note:** In case you're migrating from Yarn 1.x and hit a blocker, you might want to take a look at our [Migration Guide](/getting-started/migration). It isn't always needed, but a fairly comprehensive resource of how to solve issues that may arise in the transition.
 
 ## Updating to the latest versions
 
-Should you later want to update Yarn to the latest version, just run:
+Any time you'll want to update Yarn to the latest version, just run:
 
 ```bash
-yarn set version latest
+yarn set version stable
 ```
 
-Yarn will then download the most recent binary from our website, and install it in your projects. Don't forget to run a new install to update your artifacts, and to commit the results!
+Yarn will then configure your project to use the most recent stable binary. Don't forget to run a new install to update your artifacts before committing the results!
 
 ## Installing the latest build fresh from master
 
-From time to time even the most recent releases aren't enough, and you then will want to try out the very latest master to check if a bug has been fixed. This has become very simple with Yarn 2! Just run the following command:
+From time to time even the most recent releases aren't enough, and you then will want to try out the very latest master branch to check if a bug has been fixed. This has become very simple! Just run the following command:
 
 ```bash
 yarn set version from sources

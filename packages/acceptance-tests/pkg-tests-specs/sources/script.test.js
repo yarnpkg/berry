@@ -555,6 +555,71 @@ describe(`Scripts tests`, () => {
           ]);
         }),
       );
+
+      test(
+        `it should run the bin of self-require-trap`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`self-require-trap`]: `1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(run(`run`, `self-require-trap`)).resolves.toMatchObject({
+              code: 0,
+              stdout: `42\n`,
+              stderr: ``,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should run the bin of self-require-trap (aliased)`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`aliased`]: `npm:self-require-trap@1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(run(`run`, `self-require-trap`)).resolves.toMatchObject({
+              code: 0,
+              stdout: `42\n`,
+              stderr: ``,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should run the bin of a soft-link`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`soft-link`]: `portal:./soft-link`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await xfs.mkdirPromise(`${path}/soft-link`);
+            await xfs.writeJsonPromise(`${path}/soft-link/package.json`, {
+              name: `soft-link`,
+              version: `1.0.0`,
+              bin: `./bin`,
+            });
+            await xfs.writeFilePromise(`${path}/soft-link/bin.js`, `console.log(42);\n`);
+
+            await run(`install`);
+
+            await expect(run(`run`, `soft-link`)).resolves.toMatchObject({
+              code: 0,
+              stdout: `42\n`,
+              stderr: ``,
+            });
+          },
+        ),
+      );
     });
   }
 });
