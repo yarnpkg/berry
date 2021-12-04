@@ -81,4 +81,34 @@ describe(`Cache`, () => {
       });
     }),
   );
+
+  // https://github.com/nih-at/libzip/issues/89
+  // https://github.com/arcanis/libzip/commit/2fc2e1083cef164dc7e1bf112f5e6c8e165a2b5d
+  test(
+    `it should ignore timezones`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`, {
+          env: {
+            TZ: `Etc/GMT-0`,
+          },
+        });
+
+        await expect(
+          run(`install`, `--immutable`, `--immutable-cache`, `--check-cache`, {
+            env: {
+              TZ: `Etc/GMT-1`,
+            },
+          }),
+        ).resolves.toMatchObject({
+          code: 0,
+        });
+      },
+    ),
+  );
 });
