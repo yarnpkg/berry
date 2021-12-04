@@ -21,7 +21,7 @@ When working with monorepos, a hard task often is to figure out which packages s
 
 ## Auto-updated dependencies
 
-When running the `yarn version` command to upgrade the version of a workspace, every other workspace that depend on the first one through a basic semver ranges (`^x.y.z`, `~x.y.z`, ...) will get auto-updated to reference the new version. For example, let's say we have the following workspaces:
+When running the `yarn version` command to upgrade the version of a workspace, every other workspace that depend on the first one through a basic [semver ranges](/advanced/semver) will get auto-updated to reference the new version. For example, let's say we have the following workspaces:
 
 ```
 /packages/common (1.0.0)

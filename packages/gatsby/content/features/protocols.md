@@ -13,19 +13,19 @@ description: An in-depth guide to Yarn's various protocols.
 
 The following protocols can be used by any dependency entry listed in the `dependencies` or `devDependencies` fields. While they work regardless of the context we strongly recommend you to only use semver ranges on published packages as they are the one common protocol whose semantic is clearly defined across all package managers.
 
-| Name          | Example                                 | Description                                                                                                                       |
-| ------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Semver        | `^1.2.3`                                | Resolves from the default registry                                                                                                 |
-| Tag           | `latest`                                | Resolves from the default registry                                                                                                 |
-| Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                     |
-| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                   |
-| GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                         |
-| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                   |
-| File          | `file:./my-package`                     | Copies the target location into the cache                                                                                         |
-| Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                   |
-| Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                     |
-| Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                   |
-| Workspace     | `workspace:*`                           | Creates a link to a package in another workspace                                                                                   |
+| Name          | Example                                 | Description                                                                                                                      |
+| ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Semver        | `^1.2.3`                                | Resolves from the default registry following [semver](/advanced/semver)                                                          |
+| Tag           | `latest`                                | Resolves from the default registry                                                                                               |
+| Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                   |
+| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                 |
+| GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                       |
+| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                 |
+| File          | `file:./my-package`                     | Copies the target location into the cache                                                                                        |
+| Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                 |
+| Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                   |
+| Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                 |
+| Workspace     | `workspace:*`                           | Creates a link to a package in another workspace                                                                                 |
 | [Exec](#exec) | `exec:./my-generator-package`           | <sup>*Experimental & Plugin*</sup><br/>Instructs Yarn to execute the specified Node script and use its output as package content |
 
 ## Details
