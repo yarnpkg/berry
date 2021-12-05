@@ -182,7 +182,7 @@
     },
     "globalFolder": {
       "_package": "@yarnpkg/core",
-      "description": "The path where all system-global files (for example the list of all packages registered through `yarn link`) are stored.",
+      "description": "The path where all system-global files are stored.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["./.yarn/global"]
