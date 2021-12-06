@@ -169,7 +169,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: null,
   },
   globalFolder: {
-    description: `Folder where are stored the system-wide settings`,
+    description: `Folder where all system-global files are stored`,
     type: SettingsType.ABSOLUTE_PATH,
     default: folderUtils.getDefaultGlobalFolder(),
   },
