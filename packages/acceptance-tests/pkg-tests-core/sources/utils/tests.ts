@@ -333,21 +333,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         throw new Error(`Assertion failed: Invalid request type`);
 
       const {username} = parsedRequest;
-      const otp = request.headers[`npm-otp`];
 
       const user = validLogins[username];
       if (!user) {
         processError(response, 401, `Unauthorized`);
-        return;
-      }
-
-      if (user.requiresOtp && user.otp !== otp) {
-        response.writeHead(401, {
-          [`Content-Type`]: `application/json`,
-          [`www-authenticate`]: `OTP`,
-        });
-
-        response.end();
         return;
       }
 
@@ -538,12 +527,26 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
           const {authorization} = req.headers;
           if (authorization != null) {
-            const auth = validAuthorizations.get(authorization);
-            if (!auth) {
+            const user = validAuthorizations.get(authorization);
+            if (!user) {
               sendError(res, 401, `Invalid token`);
               return;
-            } else if (parsedRequest.type === RequestType.Whoami) {
-              parsedRequest.login = auth;
+            }
+
+            const otp = req.headers[`npm-otp`];
+
+            if (user.requiresOtp && user.otp !== otp) {
+              res.writeHead(401, {
+                [`Content-Type`]: `application/json`,
+                [`www-authenticate`]: `OTP`,
+              });
+
+              res.end();
+              return;
+            }
+
+            if (parsedRequest.type === RequestType.Whoami) {
+              parsedRequest.login = user;
             }
           } else if (needsAuth(parsedRequest)) {
             sendError(res, 401, `Authentication required`);

@@ -23,7 +23,7 @@ describe(`npmPublishUtils.getGitHead`, () =>   {
 
     await run(`npm`, `publish`, {
       env: {
-        YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+        YARN_NPM_AUTH_TOKEN: `316158de-64b3-413e-a244-2de2b8d1c80f`,
       },
     });
   }));
@@ -37,8 +37,38 @@ describe(`npmPublishUtils.getGitHead`, () =>   {
 
       await run(`npm`, `publish`, {
         env: {
-          YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+          YARN_NPM_AUTH_TOKEN: `316158de-64b3-413e-a244-2de2b8d1c80f`,
         },
       });
+    }));
+});
+
+describe(`--otp`, () =>   {
+  test(`should fail when invalid otp is given`,
+    makeTemporaryEnv({
+      name: `otp-required`,
+      version: `1.0.0`,
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(run(`npm`, `publish`, `--otp`, `invalid_otp`, {
+        env: {
+          YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+        },
+      })).rejects.toThrow();
+    }));
+
+  test(`should accept an otp and skip prompting for it`,
+    makeTemporaryEnv({
+      name: `otp-required`,
+      version: `1.0.0`,
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(run(`npm`, `publish`, `--otp`, `1234`, {
+        env: {
+          YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+        },
+      })).resolves.toBeTruthy();
     }));
 });
