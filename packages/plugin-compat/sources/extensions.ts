@@ -725,4 +725,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       '@typescript-eslint/parser': optionalPeerDep,
     },
   }],
+  // https://github.com/GoogleChromeLabs/critters/pull/91
+  [`critters-webpack-plugin@*`, {
+    peerDependenciesMeta: {
+      'html-webpack-plugin': optionalPeerDep,
+    },
+  }],
 ];
