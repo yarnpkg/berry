@@ -82,7 +82,7 @@ With the `.yarn/sdks` in place TypeScript support should work out of the box wit
 
 ##### Supporting go-to-definition et al.
 
-> **Note:** Due to a bug in [Neovim's URI handling](https://github.com/neovim/neovim/pull/14959) go-to-definition is only supported in neovim-nightly.
+> **Note:** Requires Neovim version >=0.6
 
 As well as the [vim-rzip](https://github.com/lbrayner/vim-rzip) plugin you'll also need the following snippet to handle Yarn PnP's URIs emitted from [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server). See [lbrayner/vim-rzip#15](https://github.com/lbrayner/vim-rzip/issues/15) for further details.
 
@@ -111,15 +111,15 @@ function! RzipOverride()
     exe "au! zip BufReadCmd ".g:zipPlugin_ext
 
     " order is important here, setup name of new buffer correctly then fallback to vim-rzip's handling
-    autocmd zip BufReadCmd   zipfile:*  call ClearDuplicateBuffers(expand("<amatch>"))
-    autocmd zip BufReadCmd   zipfile:*  call rzip#Read(DecodeURI(expand("<amatch>")), 1)
+    autocmd zip BufReadCmd   zipfile:*  call ClearDuplicateBuffers(expand("<afile>"))
+    autocmd zip BufReadCmd   zipfile:*  call rzip#Read(DecodeURI(expand("<afile>")), 1)
 
     if has("unix")
-        autocmd zip BufReadCmd   zipfile:*/*  call ClearDuplicateBuffers(expand("<amatch>"))
-        autocmd zip BufReadCmd   zipfile:*/*  call rzip#Read(DecodeURI(expand("<amatch>")), 1)
+        autocmd zip BufReadCmd   zipfile:*/*  call ClearDuplicateBuffers(expand("<afile>"))
+        autocmd zip BufReadCmd   zipfile:*/*  call rzip#Read(DecodeURI(expand("<afile>")), 1)
     endif
 
-    exe "au zip BufReadCmd ".g:zipPlugin_ext."  call rzip#Browse(DecodeURI(expand('<amatch>')))"
+    exe "au zip BufReadCmd ".g:zipPlugin_ext."  call rzip#Browse(DecodeURI(expand('<afile>')))"
 endfunction
 
 autocmd VimEnter * call RzipOverride()
