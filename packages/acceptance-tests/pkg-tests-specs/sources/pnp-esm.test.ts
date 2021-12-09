@@ -401,4 +401,25 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+
+  test(
+    `it should suppress the experimental ESM loader warning`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), ``);
+
+        await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: ``,
+        });
+      },
+    ),
+  );
 });
