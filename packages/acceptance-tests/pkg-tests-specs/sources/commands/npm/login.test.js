@@ -84,7 +84,7 @@ describe(`Commands`, () => {
         await expect(
           run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: validLogins.fooUser.npmAuthToken,
+              TEST_NPM_USER: validLogins.fooUser.username,
               TEST_NPM_PASSWORD: `incorrect password`,
             },
           }),
@@ -103,7 +103,7 @@ describe(`Commands`, () => {
               TEST_NPM_2FA_TOKEN: `incorrect OTP`,
             },
           }),
-        ).rejects.toThrowError(/Invalid authentication \(attempted as foo-user\)/);
+        ).rejects.toThrowError(/Invalid authentication \(attempted as otp-user\)/);
       }),
     );
 

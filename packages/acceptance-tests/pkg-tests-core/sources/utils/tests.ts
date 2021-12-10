@@ -266,6 +266,20 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
   if (serverUrl !== null)
     return Promise.resolve(serverUrl);
 
+  const applyOtpValidation = (req: IncomingMessage, res: ServerResponse, user: Login) => {
+    const otp = req.headers[`npm-otp`];
+    if (user.npmOtpToken === null || otp === user.npmOtpToken)
+      return true;
+
+    res.writeHead(401, {
+      [`Content-Type`]: `application/json`,
+      [`www-authenticate`]: `OTP`,
+    });
+
+    res.end();
+    return false;
+  };
+
   const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
       if (parsedRequest.type !== RequestType.PackageInfo)
@@ -359,18 +373,17 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       if (parsedRequest.type !== RequestType.Login)
         throw new Error(`Assertion failed: Invalid request type`);
 
-      const {username} = parsedRequest;
+      const user = [...Object.values(validLogins)].find(user => {
+        return user.username === parsedRequest.username;
+      });
 
-      if (!Object.prototype.hasOwnProperty.call(validLogins, username)) {
+      if (typeof user === `undefined`) {
         processError(response, 401, `Unauthorized`);
         return;
       }
 
-      const user = validLogins[username as keyof typeof validLogins];
-      if (!user) {
-        processError(response, 401, `Unauthorized`);
+      if (!applyOtpValidation(request, response, user))
         return;
-      }
 
       let rawData = ``;
 
@@ -383,7 +396,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           return processError(response, 401, `Unauthorized`);
         }
 
-        if (body.name !== username || body.password !== user.password)
+        if (body.name !== user.username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
 
         const data = JSON.stringify({token: user.npmAuthToken});
@@ -544,16 +557,8 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
               return;
             }
 
-            const otp = req.headers[`npm-otp`];
-            if (user.npmOtpToken !== null && otp !== user.npmOtpToken) {
-              res.writeHead(401, {
-                [`Content-Type`]: `application/json`,
-                [`www-authenticate`]: `OTP`,
-              });
-
-              res.end();
+            if (!applyOtpValidation(req, res, user))
               return;
-            }
 
             if (parsedRequest.type === RequestType.Whoami) {
               parsedRequest.login = user;

@@ -24,7 +24,7 @@ describe(`publish`, () =>   {
 
     await run(`npm`, `publish`, {
       env: {
-        YARN_NPM_AUTH_TOKEN: validLogins.testUser.npmAuthToken,
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
       },
     });
   }));
@@ -37,7 +37,7 @@ describe(`publish`, () =>   {
 
     await run(`npm`, `publish`, {
       env: {
-        YARN_NPM_AUTH_TOKEN: validLogins.testUser.npmAuthToken,
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
       },
     });
   }));
@@ -62,7 +62,7 @@ describe(`publish`, () =>   {
   }, async ({path, run, source}) => {
     await run(`install`);
 
-    await expect(run(`npm`, `publish`, `--otp`, `1234`, {
+    await expect(run(`npm`, `publish`, `--otp`, validLogins.otpUser.npmOtpToken, {
       env: {
         YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
       },
