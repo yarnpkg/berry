@@ -4805,6 +4805,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^8":
+  version: 8.3.3
+  resolution: "@types/uuid@npm:8.3.3"
+  checksum: 3f340155bb1161f9ffa7163926d6222fea8f3505c23619b72bcc230883354926672c08a06510c7a543f73553c792a84444cc1744cff631b4ba988763e4bd7a8f
+  languageName: node
+  linkType: hard
+
 "@types/vfile-message@npm:*":
   version: 1.0.1
   resolution: "@types/vfile-message@npm:1.0.1"
@@ -20740,6 +20747,7 @@ __metadata:
     "@types/semver": ^7.1.0
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
+    "@types/uuid": ^8
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -20755,6 +20763,7 @@ __metadata:
     super-resolve: ^1.0.0
     tar-fs: ^1.16.0
     tslib: ^1.13.0
+    uuid: ^8.3.2
   languageName: unknown
   linkType: soft
 
@@ -26867,6 +26876,15 @@ typescript@^3.8.3:
   bin:
     uuid: dist/bin/uuid
   checksum: f5b7b5cc28accac68d5c083fd51cca64896639ebd4cca88c6cfb363801aaa83aa439c86dfc8446ea250a7a98d17afd2ad9e88d9d4958c79a412eccb93bae29de
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
   languageName: node
   linkType: hard
 

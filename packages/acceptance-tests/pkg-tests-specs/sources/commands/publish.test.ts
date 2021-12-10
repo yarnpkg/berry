@@ -2,9 +2,10 @@ export {};
 
 const {
   exec: {execFile},
+  tests: {validLogins},
 } = require(`pkg-tests-core`);
 
-describe(`npmPublishUtils.getGitHead`, () =>   {
+describe(`publish`, () =>   {
   test(`it should detect the gitHead for this repo`, makeTemporaryEnv({
     name: `githead-required`,
     version: `1.0.0`,
@@ -23,22 +24,48 @@ describe(`npmPublishUtils.getGitHead`, () =>   {
 
     await run(`npm`, `publish`, {
       env: {
-        YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
       },
     });
   }));
 
-  test(`it should not detect the gitHead for this repo`,
+  test(`it should not detect the gitHead for this repo`, makeTemporaryEnv({
+    name: `githead-forbidden`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    await run(`npm`, `publish`, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
+      },
+    });
+  }));
+
+  test(`should fail when invalid otp is given`,
     makeTemporaryEnv({
-      name: `githead-forbidden`,
+      name: `otp-required`,
       version: `1.0.0`,
     }, async ({path, run, source}) => {
       await run(`install`);
 
-      await run(`npm`, `publish`, {
+      await expect(run(`npm`, `publish`, `--otp`, `invalid_otp`, {
         env: {
-          YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+          YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
         },
-      });
+      })).rejects.toThrow();
     }));
+
+  test(`should accept an otp and skip prompting for it`, makeTemporaryEnv({
+    name: `otp-required`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    await expect(run(`npm`, `publish`, `--otp`, validLogins.otpUser.npmOtpToken, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
+      },
+    })).resolves.toBeTruthy();
+  }));
 });

@@ -14,10 +14,6 @@ export enum AuthType {
   ALWAYS_AUTH,
 }
 
-type AuthOptions = {
-  authType?: AuthType;
-};
-
 type RegistryOptions = {
   ident: Ident;
   registry?: string;
@@ -26,7 +22,10 @@ type RegistryOptions = {
   registry: string;
 };
 
-export type Options = httpUtils.Options & AuthOptions & RegistryOptions;
+export type Options = httpUtils.Options & RegistryOptions & {
+  authType?: AuthType;
+  otp?: string;
+};
 
 /**
  * Consumes all 401 Unauthorized errors and reports them as `AUTHENTICATION_INVALID`.
@@ -74,7 +73,7 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
 }
 
-export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
@@ -84,17 +83,19 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
+  if (otp)
+    headers = {...headers, ...getOtpHeaders(otp)};
 
   try {
     return await httpUtils.post(registry + path, body, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error)) {
+    if (!isOtpError(error) || otp) {
       await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
     }
 
-    const otp = await askForOtp();
+    otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
@@ -108,7 +109,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
@@ -118,6 +119,8 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
+  if (otp)
+    headers = {...headers, ...getOtpHeaders(otp)};
 
   try {
     return await httpUtils.put(registry + path, body, {configuration, headers, ...rest});
@@ -128,7 +131,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
       throw error;
     }
 
-    const otp = await askForOtp();
+    otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
@@ -142,7 +145,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, ...rest}: Options & {attemptedAs?: string}) {
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   if (ident && typeof registry === `undefined`)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
@@ -152,17 +155,19 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
+  if (otp)
+    headers = {...headers, ...getOtpHeaders(otp)};
 
   try {
     return await httpUtils.del(registry + path, {configuration, headers, ...rest});
   } catch (error) {
-    if (!isOtpError(error)) {
+    if (!isOtpError(error) || otp) {
       await handleInvalidAuthenticationError(error, {attemptedAs, registry, configuration, headers});
 
       throw error;
     }
 
-    const otp = await askForOtp();
+    otp = await askForOtp();
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP

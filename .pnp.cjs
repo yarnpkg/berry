@@ -8834,6 +8834,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/uuid", [
+        ["npm:8.3.3", {
+          "packageLocation": "./.yarn/cache/@types-uuid-npm-8.3.3-805fed50df-3f340155bb.zip/node_modules/@types/uuid/",
+          "packageDependencies": [
+            ["@types/uuid", "npm:8.3.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/vfile", [
         ["npm:3.0.2", {
           "packageLocation": "./.yarn/cache/@types-vfile-npm-3.0.2-5a6f4624c4-ab62e98474.zip/node_modules/@types/vfile/",
@@ -32935,6 +32944,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/semver", "npm:7.1.0"],
             ["@types/serve-static", "npm:1.13.3"],
             ["@types/tar-fs", "npm:1.16.1"],
+            ["@types/uuid", "npm:8.3.3"],
             ["@yarnpkg/cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/yarnpkg-cli"],
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],
@@ -32949,7 +32959,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["serve-static", "npm:1.14.1"],
             ["super-resolve", "npm:1.0.0"],
             ["tar-fs", "npm:1.16.3"],
-            ["tslib", "npm:1.13.0"]
+            ["tslib", "npm:1.13.0"],
+            ["uuid", "npm:8.3.2"]
           ],
           "linkType": "SOFT",
         }]
@@ -40478,6 +40489,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/uuid-npm-7.0.3-2b088bd924-f5b7b5cc28.zip/node_modules/uuid/",
           "packageDependencies": [
             ["uuid", "npm:7.0.3"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:8.3.2", {
+          "packageLocation": "./.yarn/cache/uuid-npm-8.3.2-eca0baba53-5575a8a75c.zip/node_modules/uuid/",
+          "packageDependencies": [
+            ["uuid", "npm:8.3.2"]
           ],
           "linkType": "HARD",
         }]

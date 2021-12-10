@@ -10,6 +10,7 @@ import pem                               from 'pem';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
 import {promisify}                       from 'util';
+import {v5 as uuidv5}                    from 'uuid';
 import {Gzip}                            from 'zlib';
 
 import {ExecResult}                      from './exec';
@@ -66,13 +67,39 @@ export type Request = {
   localName: string;
 };
 
-export interface Login {
+export class Login {
   username: string;
   password: string;
-  requiresOtp: boolean;
-  otp?: string;
-  npmAuthToken: string;
+
+  npmOtpToken: string | null;
+  npmAuthToken: string | null;
+
+  npmAuthIdent: {
+    decoded: string;
+    encoded: string;
+  };
+
+  constructor(username: string, {otp}: {otp?: boolean} = {}) {
+    this.username = username;
+    this.password = crypto.createHash(`sha1`).update(username).digest(`hex`);
+
+    this.npmOtpToken = otp ? Buffer.from(this.password, `hex`).slice(0, 4).join(``) : null;
+    this.npmAuthToken = uuidv5(this.password, `06030d6c-8c43-412a-ad0a-787f1fb9e31e`);
+
+    const authIdent = `${this.username}:${this.password}`;
+
+    this.npmAuthIdent = {
+      decoded: authIdent,
+      encoded: Buffer.from(authIdent).toString(`base64`),
+    };
+  }
 }
+
+export const validLogins = {
+  fooUser: new Login(`foo-user`),
+  barUser: new Login(`bar-user`),
+  otpUser: new Login(`otp-user`, {otp: true}),
+} as const;
 
 let whitelist = new Map();
 let recording: Array<Request> | null = null;
@@ -239,6 +266,20 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
   if (serverUrl !== null)
     return Promise.resolve(serverUrl);
 
+  const applyOtpValidation = (req: IncomingMessage, res: ServerResponse, user: Login) => {
+    const otp = req.headers[`npm-otp`];
+    if (user.npmOtpToken === null || otp === user.npmOtpToken)
+      return true;
+
+    res.writeHead(401, {
+      [`Content-Type`]: `application/json`,
+      [`www-authenticate`]: `OTP`,
+    });
+
+    res.end();
+    return false;
+  };
+
   const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
       if (parsedRequest.type !== RequestType.PackageInfo)
@@ -332,24 +373,17 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       if (parsedRequest.type !== RequestType.Login)
         throw new Error(`Assertion failed: Invalid request type`);
 
-      const {username} = parsedRequest;
-      const otp = request.headers[`npm-otp`];
+      const user = [...Object.values(validLogins)].find(user => {
+        return user.username === parsedRequest.username;
+      });
 
-      const user = validLogins[username];
-      if (!user) {
+      if (typeof user === `undefined`) {
         processError(response, 401, `Unauthorized`);
         return;
       }
 
-      if (user.requiresOtp && user.otp !== otp) {
-        response.writeHead(401, {
-          [`Content-Type`]: `application/json`,
-          [`www-authenticate`]: `OTP`,
-        });
-
-        response.end();
+      if (!applyOtpValidation(request, response, user))
         return;
-      }
 
       let rawData = ``;
 
@@ -362,7 +396,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           return processError(response, 401, `Unauthorized`);
         }
 
-        if (body.name !== username || body.password !== user.password)
+        if (body.name !== user.username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
 
         const data = JSON.stringify({token: user.npmAuthToken});
@@ -495,33 +529,12 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     }
   };
 
-  const validLogins: Record<string, Login> = {
-    testUser: {
-      username: `testUser`,
-      password: `password`,
-      requiresOtp: true,
-      otp: `1234`,
-      npmAuthToken: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
-    },
-    anotherTestUser: {
-      username: `anotherTestUser`,
-      password: `password123`,
-      requiresOtp: false,
-      npmAuthToken: `316158de-64b3-413e-a244-2de2b8d1c80f`,
-    },
-    username: {
-      username: `username`,
-      password: `a very secure password`,
-      npmAuthToken: `123456df-64b3-413e-a244-2de2b8d1c80f`,
-      requiresOtp: false,
-    },
-  };
+  const validAuthorizations = new Map<string, Login>();
 
-  const validAuthorizations = new Map<string, Login>([
-    [`Bearer 686159dc-64b3-413e-a244-2de2b8d1c36f`, validLogins.testUser],
-    [`Bearer 316158de-64b3-413e-a244-2de2b8d1c80f`, validLogins.anotherTestUser],
-    [`Basic dXNlcm5hbWU6YSB2ZXJ5IHNlY3VyZSBwYXNzd29yZA==`, validLogins.username],
-  ]);
+  for (const user of Object.values(validLogins)) {
+    validAuthorizations.set(`Bearer ${user.npmAuthToken}`, user);
+    validAuthorizations.set(`Basic ${user.npmAuthIdent.encoded}`, user);
+  }
 
   return new Promise((resolve, reject) => {
     const listener: http.RequestListener = (req, res) =>
@@ -538,12 +551,17 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
           const {authorization} = req.headers;
           if (authorization != null) {
-            const auth = validAuthorizations.get(authorization);
-            if (!auth) {
+            const user = validAuthorizations.get(authorization);
+            if (!user) {
               sendError(res, 401, `Invalid token`);
               return;
-            } else if (parsedRequest.type === RequestType.Whoami) {
-              parsedRequest.login = auth;
+            }
+
+            if (!applyOtpValidation(req, res, user))
+              return;
+
+            if (parsedRequest.type === RequestType.Whoami) {
+              parsedRequest.login = user;
             }
           } else if (needsAuth(parsedRequest)) {
             sendError(res, 401, `Authentication required`);
