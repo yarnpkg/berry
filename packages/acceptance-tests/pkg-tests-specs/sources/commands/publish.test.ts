@@ -2,9 +2,10 @@ export {};
 
 const {
   exec: {execFile},
+  tests: {validLogins},
 } = require(`pkg-tests-core`);
 
-describe(`npmPublishUtils.getGitHead`, () =>   {
+describe(`publish`, () =>   {
   test(`it should detect the gitHead for this repo`, makeTemporaryEnv({
     name: `githead-required`,
     version: `1.0.0`,
@@ -23,27 +24,24 @@ describe(`npmPublishUtils.getGitHead`, () =>   {
 
     await run(`npm`, `publish`, {
       env: {
-        YARN_NPM_AUTH_TOKEN: `316158de-64b3-413e-a244-2de2b8d1c80f`,
+        YARN_NPM_AUTH_TOKEN: validLogins.testUser.npmAuthToken,
       },
     });
   }));
 
-  test(`it should not detect the gitHead for this repo`,
-    makeTemporaryEnv({
-      name: `githead-forbidden`,
-      version: `1.0.0`,
-    }, async ({path, run, source}) => {
-      await run(`install`);
+  test(`it should not detect the gitHead for this repo`, makeTemporaryEnv({
+    name: `githead-forbidden`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
 
-      await run(`npm`, `publish`, {
-        env: {
-          YARN_NPM_AUTH_TOKEN: `316158de-64b3-413e-a244-2de2b8d1c80f`,
-        },
-      });
-    }));
-});
+    await run(`npm`, `publish`, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.testUser.npmAuthToken,
+      },
+    });
+  }));
 
-describe(`--otp`, () =>   {
   test(`should fail when invalid otp is given`,
     makeTemporaryEnv({
       name: `otp-required`,
@@ -53,22 +51,21 @@ describe(`--otp`, () =>   {
 
       await expect(run(`npm`, `publish`, `--otp`, `invalid_otp`, {
         env: {
-          YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
+          YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
         },
       })).rejects.toThrow();
     }));
 
-  test(`should accept an otp and skip prompting for it`,
-    makeTemporaryEnv({
-      name: `otp-required`,
-      version: `1.0.0`,
-    }, async ({path, run, source}) => {
-      await run(`install`);
+  test(`should accept an otp and skip prompting for it`, makeTemporaryEnv({
+    name: `otp-required`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
 
-      await expect(run(`npm`, `publish`, `--otp`, `1234`, {
-        env: {
-          YARN_NPM_AUTH_TOKEN: `686159dc-64b3-413e-a244-2de2b8d1c36f`,
-        },
-      })).resolves.toBeTruthy();
-    }));
+    await expect(run(`npm`, `publish`, `--otp`, `1234`, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
+      },
+    })).resolves.toBeTruthy();
+  }));
 });
