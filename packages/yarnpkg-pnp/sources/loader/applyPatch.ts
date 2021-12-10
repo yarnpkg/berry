@@ -396,5 +396,21 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
+  // When using the ESM loader Node.js prints the following warning
+  //
+  // (node:14632) ExperimentalWarning: --experimental-loader is an experimental feature. This feature could change at any time
+  // (Use `node --trace-warnings ...` to show where the warning was created)
+  //
+  // Having this warning show up once is "fine" but it's also printed
+  // for each Worker that is created so it ends up spamming stderr.
+  // Since that doesn't provide any value we suppress the warning.
+  const originalEmitWarning = process.emitWarning;
+  process.emitWarning = function (warning: string | Error, name?: string | undefined, ctor?: Function | undefined) {
+    if (name === `ExperimentalWarning` && typeof warning === `string` && warning.includes(`--experimental-loader`))
+      return;
+
+    originalEmitWarning.apply(process, arguments as any);
+  };
+
   patchFs(fs, new PosixFS(opts.fakeFs));
 }

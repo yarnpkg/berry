@@ -50209,6 +50209,12 @@ Require stack:
     }
     return false;
   };
+  const originalEmitWarning = process.emitWarning;
+  process.emitWarning = function(warning, name, ctor) {
+    if (name === `ExperimentalWarning` && typeof warning === `string` && warning.includes(`--experimental-loader`))
+      return;
+    originalEmitWarning.apply(process, arguments);
+  };
   patchFs(fs__default.default, new PosixFS(opts.fakeFs));
 }
 
