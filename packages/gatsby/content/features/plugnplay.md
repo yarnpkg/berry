@@ -139,6 +139,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | Storybook | Starting from 6.0+ |
 | TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
 | TypeScript-ESLint | Starting from 2.12+ |
+| VSCode-Stylelint | Starting from 1.1+ |
 | WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
 
