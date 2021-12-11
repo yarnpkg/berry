@@ -731,4 +731,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'html-webpack-plugin': optionalPeerDep,
     },
   }],
+  // https://github.com/terser/terser/commit/05b23eeb682d732484ad51b19bf528258fd5dc2a
+  [`terser@<=5.10.0`, {
+    dependencies: {
+      acorn: `^8.5.0`,
+    },
+  }],
 ];
