@@ -53,7 +53,7 @@ describe(`publish`, () =>   {
         env: {
           YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
         },
-      })).rejects.toThrow();
+      })).rejects.toThrowError(/Invalid OTP token/);
     }));
 
   test(`should accept an otp and skip prompting for it`, makeTemporaryEnv({

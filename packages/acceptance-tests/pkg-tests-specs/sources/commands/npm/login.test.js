@@ -103,7 +103,7 @@ describe(`Commands`, () => {
               TEST_NPM_2FA_TOKEN: `incorrect OTP`,
             },
           }),
-        ).rejects.toThrowError(/Invalid authentication \(attempted as otp-user\)/);
+        ).rejects.toThrowError(/Invalid OTP token/);
       }),
     );
 
