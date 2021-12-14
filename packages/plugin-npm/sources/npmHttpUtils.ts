@@ -34,6 +34,9 @@ export type Options = httpUtils.Options & RegistryOptions & {
  * a prohibited action, such as publishing a package with a similar name to an existing package.
  */
 export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
+  if (isOtpError(error))
+    throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid OTP token`);
+
   if (error.originalError?.name === `HTTPError` && error.originalError?.response.statusCode === 401) {
     throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid authentication (${typeof attemptedAs !== `string` ? `as ${await whoami(registry, headers, {configuration})}` : `attempted as ${attemptedAs}`})`);
   }
