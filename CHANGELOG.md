@@ -28,6 +28,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn workspaces foreach run` is now able to run binaries
 - The `node` field inside the `npm_config_user_agent` Yarn sets will now include a leading `v`.
 - Yarn is now able to recover from a corrupted install state.
+- Yarn is now able to migrate classic lockfiles containing unconventional tarball URLs
 
 ### Miscellaneous Features
 
