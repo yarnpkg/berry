@@ -179,7 +179,6 @@ export type SupportedSdk =
   | 'prettier'
   | 'typescript-language-server'
   | 'typescript'
-  | 'stylelint'
   | 'svelte-language-server'
   | 'flow-bin';
 

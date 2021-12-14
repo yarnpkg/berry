@@ -28,7 +28,6 @@ Generally speaking:
 | Builtin VSCode TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
 | [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
 | [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
-| [vscode-stylelint](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint) | [stylelint](https://stylelint.io/) |
 | [flow-for-vscode*](https://marketplace.visualstudio.com/items?itemName=flowtype.flow-for-vscode) | [flow-bin](https://flow.org/) |
 
 > \* Flow is currently [incompatible with PnP](/features/pnp#incompatible).
