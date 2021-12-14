@@ -737,4 +737,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       acorn: `^8.5.0`,
     },
   }],
+  // https://github.com/facebook/create-react-app/pull/11751
+  [`babel-preset-react-app@10.0.x`, {
+    dependencies: {
+      '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
+    },
+  }],
 ];
