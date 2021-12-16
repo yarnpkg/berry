@@ -10,7 +10,7 @@ order: 2
 
 The preferred way to manage Yarn is through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html), a new binary shipped with all Node.js releases starting from 16.10. It acts as an intermediary between you and Yarn, and lets you use different package manager versions across multiple projects without having to check-in the Yarn binary anymore.
 
-### Node.js >=16.10
+### Node.js >=[16.9.0](https://nodejs.org/en/blog/release/v16.9.0/)
 
 Corepack is included by default with all Node.js installs, but is currently opt-in. To enable it, run the following command:
 
@@ -18,7 +18,7 @@ Corepack is included by default with all Node.js installs, but is currently opt-
 corepack enable
 ```
 
-### Node.js <16.10
+### Node.js <16.9.0
 
 Corepack isn't included with Node.js in versions before the 16.10; to address that, run:
 
