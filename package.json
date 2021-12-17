@@ -31,6 +31,7 @@
     "clipanion": "^3.2.0-rc.4",
     "eslint": "^8.2.0",
     "github-api": "^3.2.2",
+    "globby": "^11.0.1",
     "jest": "^26.0.1",
     "jest-environment-node": "^26.0.1",
     "jest-junit": "^10.0.0",

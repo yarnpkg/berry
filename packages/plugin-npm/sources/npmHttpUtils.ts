@@ -3,7 +3,7 @@ import {MessageName, ReportError}        from '@yarnpkg/core';
 import {prompt}                          from 'enquirer';
 import {URL}                             from 'url';
 
-import {Hooks}                           from './Hooks';
+import {Hooks}                           from './index';
 import * as npmConfigUtils               from './npmConfigUtils';
 import {MapLike}                         from './npmConfigUtils';
 

@@ -1,5 +1,6 @@
 import {Cli, Command, Option, UsageError} from 'clipanion';
 import fs                                 from 'fs';
+import globby                             from 'globby';
 import path                               from 'path';
 import ts                                 from 'typescript';
 
@@ -21,15 +22,25 @@ type HookDefinition = {
   comment?: string;
 };
 
-async function processFile(file: ts.SourceFile) {
+async function processFile(file: ts.SourceFile, {allowHooks = true}: {allowHooks?: boolean} = {}) {
   const hooks: Array<HookDefinition> = [];
   let isInsideInterface = false;
 
   const processNode = (node: ts.Node) => {
     switch (node.kind) {
+      case ts.SyntaxKind.TypeAliasDeclaration: {
+        const typeAliasNode = node as ts.TypeAliasDeclaration;
+        if (typeAliasNode.name.getText() === `Hooks`) {
+          throw new UsageError(`Hooks should only be declared using interfaces, not type aliases (in ${file.fileName})`);
+        }
+      } break;
+
       case ts.SyntaxKind.InterfaceDeclaration: {
         const interfaceNode = node as ts.InterfaceDeclaration;
         if (interfaceNode.name.getText() === `Hooks`) {
+          if (!allowHooks)
+            throw new UsageError(`Hooks aren't allowed in ${file.fileName}`);
+
           isInsideInterface = true;
           ts.forEachChild(node, processNode);
           isInsideInterface = false;
@@ -109,6 +120,21 @@ async function execute(files: Array<string>) {
 }
 
 exports.execute = execute;
+
+async function checkForInvalidHookLocations(patterns: string | Array<string>, ignore: Array<string>) {
+  const allFiles = await globby(patterns, {
+    absolute: true,
+    ignore,
+  });
+
+  const processPromises = [];
+  for (const absolutePath of allFiles)
+    processPromises.push(Promise.resolve().then(() => parseFile(absolutePath).then(file => processFile(file, {allowHooks: false}))));
+
+  await Promise.all(processPromises);
+}
+
+exports.checkForInvalidHookLocations = checkForInvalidHookLocations;
 
 if (require.main === module) {
   Cli.from([
