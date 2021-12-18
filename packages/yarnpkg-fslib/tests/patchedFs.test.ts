@@ -5,7 +5,7 @@ import {promisify}                       from 'util';
 
 import {NodeFS}                          from '../sources/NodeFS';
 import {PosixFS}                         from '../sources/PosixFS';
-import {extendFs}                        from '../sources/patchFs';
+import {extendFs}                        from '../sources/patchFs/patchFs';
 import {Filename, npath, PortablePath}   from '../sources/path';
 import {xfs}                             from '../sources/xfs';
 import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
@@ -291,5 +291,17 @@ describe(`patchedFs`, () => {
 
       expect((patchedFs.statSync(p)).mode & 0o777).toBe(0o744);
     });
+  });
+
+  it(`should support FileHandle.stat`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const fd = await patchedFs.promises.open(__filename, `r`);
+    const fdStats = await fd.stat();
+    await fd.close();
+
+    const syncStats = patchedFs.statSync(__filename);
+
+    expect(statUtils.areStatsEqual(fdStats, syncStats)).toEqual(true);
   });
 });

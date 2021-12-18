@@ -47,7 +47,7 @@ export {VirtualFS}                 from './VirtualFS';
 export {ZipFS}                     from './ZipFS';
 export {ZipOpenFS}                 from './ZipOpenFS';
 
-export {patchFs, extendFs} from './patchFs';
+export {patchFs, extendFs} from './patchFs/patchFs';
 
 export {xfs} from './xfs';
 export type {XFS} from './xfs';
