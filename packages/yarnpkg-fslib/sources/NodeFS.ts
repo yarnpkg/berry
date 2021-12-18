@@ -230,6 +230,16 @@ export class NodeFS extends BasePortableFakeFS {
     }
   }
 
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.fchmod(fd, mask, this.makeCallback(resolve, reject));
+    });
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.realFs.fchmodSync(fd, mask);
+  }
+
   async chmodPromise(p: PortablePath, mask: number) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.chmod(npath.fromPortablePath(p), mask, this.makeCallback(resolve, reject));

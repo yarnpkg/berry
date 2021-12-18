@@ -12,6 +12,8 @@ import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
 
 import {ZIP_FILE1, ZIP_DIR1}             from './ZipOpenFS.test';
 
+const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
+
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
     const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
@@ -256,5 +258,38 @@ describe(`patchedFs`, () => {
     } finally {
       patchedFs.closeSync(fd);
     }
+  });
+
+  ifNotWin32It(`should support fchmodSync`, async () => {
+    await xfs.mktempPromise(async dir => {
+      const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+      const p = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+
+      const fd = patchedFs.openSync(p, `w`);
+      patchedFs.fchmodSync(fd, 0o744);
+      patchedFs.closeSync(fd);
+
+      expect((patchedFs.statSync(p)).mode & 0o777).toBe(0o744);
+    });
+  });
+
+  ifNotWin32It(`should support fchmod`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const p = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+
+      const fd = patchedFs.openSync(p, `w`);
+
+      await new Promise<void>((resolve, reject) => {
+        patchedFs.fchmod(fd, 0o744, err => {
+          err ? reject(err) : resolve();
+        });
+      });
+
+      patchedFs.closeSync(fd);
+
+      expect((patchedFs.statSync(p)).mode & 0o777).toBe(0o744);
+    });
   });
 });
