@@ -124,6 +124,8 @@ export function getNetworkSettings(target: string | URL, opts: { configuration: 
     caFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
+    key: undefined,
+    cert: undefined,
   };
 
   const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
@@ -254,6 +256,8 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
   const caFilePath = networkConfig.caFilePath;
+  const certificate = networkConfig.cert ?? undefined;
+  const key = networkConfig.key ?? undefined;
 
   const {default: got} = await import(`got`);
 
@@ -269,6 +273,8 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     https: {
       rejectUnauthorized,
       certificateAuthority,
+      certificate,
+      key,
     },
     ...gotOptions,
   });

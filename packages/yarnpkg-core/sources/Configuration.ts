@@ -379,12 +379,32 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.STRING,
           default: null,
         },
+        key: {
+          description: `Value of the private key in PEM format`,
+          type: SettingsType.STRING,
+          default: null,
+        },
+        cert: {
+          description: `Value of the certificate chain in PEM format`,
+          type: SettingsType.STRING,
+          default: null,
+        },
       },
     },
   },
   caFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
     type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  key: {
+    description: `Value of the private key in PEM format`,
+    type: SettingsType.STRING,
+    default: null,
+  },
+  cert: {
+    description: `Value of the certificate chain in PEM format`,
+    type: SettingsType.STRING,
     default: null,
   },
   enableStrictSsl: {
@@ -558,8 +578,12 @@ export interface ConfigurationValueMap {
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
+    key: string | null;
+    cert: string | null;
   }>>;
   caFilePath: PortablePath | null;
+  key: string | null;
+  cert: string | null;
   enableStrictSsl: boolean;
 
   logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
