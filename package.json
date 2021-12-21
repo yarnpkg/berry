@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@arcanis/sherlock": "^2.0.2",
+    "@arcanis/sherlock": "^2.0.3",
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
