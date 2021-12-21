@@ -126,7 +126,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `
-          await import(new URL('./foo.mjs?cache=false', import.meta.url))
+          import(new URL('./foo.mjs?cache=false', import.meta.url))
         `);
         await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), ``);
 
