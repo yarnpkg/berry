@@ -77,4 +77,10 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**engines**](https://github.com/devoto13/yarn-plugin-engines) by [**Yaroslav Admin**](https://github.com/devoto13) - enforces a Node version range specified in the `package.json`'s `engines.node` field
 
+- [**licenses**](https://github.com/mhassan1/yarn-plugin-licenses) by [**Marc Hassan**](https://github.com/mhassan1) - adds `yarn licenses` commands that are similar to the ones in Yarn v1
+
+- [**aws-codeartifact**](https://github.com/mhassan1/yarn-plugin-aws-codeartifact) by [**Marc Hassan**](https://github.com/mhassan1) - resolves authentication for AWS CodeArtifact NPM registries
+
+- [**after-install**](https://github.com/mhassan1/yarn-plugin-after-install) by [**Marc Hassan**](https://github.com/mhassan1) - adds support for an `afterInstall` hook that runs after every `yarn install`
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
