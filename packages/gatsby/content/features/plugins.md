@@ -71,6 +71,8 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**az-cli-auth**](https://github.com/FishandRichardsonPC/yarn-plugin-az-cli-auth) by [**Fish & Richardson P.C**](https://fr.com) - Uses the az cli to generate auth tokens when using azure devops repos
 
+- [**gcp-auth**](https://github.com/AndyClausen/yarn-plugin-gcp-auth) by [**Andreas Clausen**](https://github.com/AndyClausen) - Uses gcloud to generate access tokens when using Google Artifact Registry repos
+
 - [**outdated**](https://github.com/mskelton/yarn-plugin-outdated) by [**Mark Skelton**](https://github.com/mskelton) - lists outdated dependencies similar to the Yarn 1.x `outdated` command
 
 - [**engines**](https://github.com/devoto13/yarn-plugin-engines) by [**Yaroslav Admin**](https://github.com/devoto13) - enforces a Node version range specified in the `package.json`'s `engines.node` field
