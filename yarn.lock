@@ -151,9 +151,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arcanis/sherlock@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@arcanis/sherlock@npm:2.0.2"
+"@arcanis/sherlock@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@arcanis/sherlock@npm:2.0.3"
   dependencies:
     "@actions/core": ^1.2.6
     "@octokit/rest": ^16.28.7
@@ -171,7 +171,7 @@ __metadata:
       built: false
   bin:
     sherlock: lib/boot.js
-  checksum: 627bee24a738edb07d177afb16586593e926e435b8055c888b7505a225215bb7a77997dfd2f4f4596c82c8b22b7dfa7a7c0521efb44e72857be07790fa059240
+  checksum: ccfa417b9239bcd6c592c11f03ac35f56763547bd48f6dfa91ac99b2ef018cf090687506b67d8d3254920fd1d2f175a0a1bc04ca19b29bf422656be81ffd77fc
   languageName: node
   linkType: hard
 
@@ -5825,7 +5825,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/monorepo@workspace:."
   dependencies:
-    "@arcanis/sherlock": ^2.0.2
+    "@arcanis/sherlock": ^2.0.3
     "@babel/cli": ^7.10.1
     "@babel/core": ^7.10.2
     "@babel/plugin-proposal-class-properties": ^7.10.1
