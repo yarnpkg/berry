@@ -94,6 +94,52 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
+    `it should allow relative imports with search params`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import './foo.mjs?cache=false'`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), ``);
+
+        await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: ``,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should allow absolute imports with search params`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `
+          await import(new URL('./foo.mjs?cache=false', import.meta.url))
+        `);
+        await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), ``);
+
+        await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
+          code: 0,
+          stdout: ``,
+          stderr: ``,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should not resolve extensions`,
     makeTemporaryEnv(
       {

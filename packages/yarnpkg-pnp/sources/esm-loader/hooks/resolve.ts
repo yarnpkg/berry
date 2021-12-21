@@ -7,6 +7,7 @@ import {PnpApi}                       from '../../types';
 import * as loaderUtils               from '../loaderUtils';
 
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+const isRelativeRegexp = /^\.{0,2}\//;
 
 export async function resolve(
   originalSpecifier: string,
@@ -18,12 +19,12 @@ export async function resolve(
     return defaultResolver(originalSpecifier, context, defaultResolver);
 
   let specifier = originalSpecifier;
-  const url = loaderUtils.tryParseURL(specifier);
+  const url = loaderUtils.tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : undefined);
   if (url) {
     if (url.protocol !== `file:`)
       return defaultResolver(originalSpecifier, context, defaultResolver);
 
-    specifier = fileURLToPath(specifier);
+    specifier = fileURLToPath(url);
   }
 
   const {parentURL, conditions = []} = context;
