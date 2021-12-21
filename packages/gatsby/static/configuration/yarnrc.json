@@ -33,13 +33,12 @@
       "format": "uri-reference",
       "examples": ["./exampleCA.pem"]
     },
-    "cert": {
+    "httpsCertFilePath": {
       "_package": "@yarnpkg/core",
-      "description": "Value of the certificate chain in PEM format.",
+      "description": "Path to file containing certificate chain in PEM format.",
       "type": "string",
-      "examples": [
-        "qwe2qeqwtretereqwdasdqweq"
-      ]
+      "format": "uri-reference",
+      "examples": ["./exampleCert.pem"]
     },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
@@ -269,11 +268,12 @@
       "format": "uri-reference",
       "default": "./.yarn/install-state.gz"
     },
-    "key": {
+    "httpsKeyFilePath": {
       "_package": "@yarnpkg/core",
-      "description": "Value of the private key in PEM format.",
+      "description": "Path to file containing private key in PEM format.",
       "type": "string",
-      "examples": ["qwe2qeqwtretereqwdasdqweq"]
+      "format": "uri-reference",
+      "examples": ["./exampleKey.pem"]
     },
     "logFilters": {
       "description": "Defines overrides for log levels for message names or message text. Through this setting you can hide specific messages or give them a more important visibility.",
@@ -355,8 +355,8 @@
             "caFilePath": {
               "$ref": "#/properties/caFilePath"
             },
-            "cert": {
-              "$ref": "#/properties/cert"
+            "httpsCertFilePath": {
+              "$ref": "#/properties/httpsCertFilePath"
             },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
@@ -367,11 +367,11 @@
             "httpsProxy": {
               "$ref": "#/properties/httpsProxy"
             },
-            "key": {
-              "$ref": "#/properties/key"
+            "httpsKeyFilePath": {
+              "$ref": "#/properties/httpsKeyFilePath"
             }
           },
-          "_exampleKeys": ["caFilePath", "cert", "enableNetwork", "httpProxy", "httpsProxy", "key"]
+          "_exampleKeys": ["caFilePath", "httpsCertFilePath", "enableNetwork", "httpProxy", "httpsProxy", "httpsKeyFilePath"]
         }
       },
       "_exampleKeys": ["*.example.com"]

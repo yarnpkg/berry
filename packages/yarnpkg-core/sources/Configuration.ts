@@ -379,14 +379,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.STRING,
           default: null,
         },
-        key: {
-          description: `Value of the private key in PEM format`,
-          type: SettingsType.STRING,
+        httpsKeyFilePath: {
+          description: `Path to file containing private key in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
           default: null,
         },
-        cert: {
-          description: `Value of the certificate chain in PEM format`,
-          type: SettingsType.STRING,
+        httpsCertFilePath: {
+          description: `Path to file containing certificate chain in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
           default: null,
         },
       },
@@ -397,14 +397,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
-  key: {
-    description: `Value of the private key in PEM format`,
-    type: SettingsType.STRING,
+  httpsKeyFilePath: {
+    description: `Path to file containing private key in PEM format`,
+    type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
-  cert: {
-    description: `Value of the certificate chain in PEM format`,
-    type: SettingsType.STRING,
+  httpsCertFilePath: {
+    description: `Path to file containing certificate chain in PEM format`,
+    type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
   enableStrictSsl: {
@@ -578,12 +578,12 @@ export interface ConfigurationValueMap {
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
-    key: string | null;
-    cert: string | null;
+    httpsKeyFilePath: PortablePath | null;
+    httpsCertFilePath: PortablePath | null;
   }>>;
   caFilePath: PortablePath | null;
-  key: string | null;
-  cert: string | null;
+  httpsKeyFilePath: PortablePath | null;
+  httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
   logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
