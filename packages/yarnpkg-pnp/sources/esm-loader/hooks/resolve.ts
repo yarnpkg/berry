@@ -68,7 +68,16 @@ export async function resolve(
   if (!result)
     throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);
 
+  const resultURL = pathToFileURL(result);
+
+  // Node preserves the `search` and `hash` to allow cache busting
+  // https://github.com/nodejs/node/blob/85d4cd307957bd35e7c723d0f1d2b77175fd9b0f/lib/internal/modules/esm/resolve.js#L405-L406
+  if (url) {
+    resultURL.search = url.search;
+    resultURL.hash = url.hash;
+  }
+
   return {
-    url: pathToFileURL(result).href,
+    url: resultURL.href,
   };
 }

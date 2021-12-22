@@ -116,6 +116,37 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
+    `it should preserve search params in the resolve result (cache busting)`,
+    makeTemporaryEnv(
+      {},
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `
+          (async () => {
+            process.env.FOO = '1';
+            console.log((await import('./foo.mjs')).default); // 1
+            process.env.FOO = '2';
+            console.log((await import('./foo.mjs')).default); // 1
+            console.log((await import('./foo.mjs?rev=42')).default); // 2
+            console.log((await import('./foo.mjs?rev=42')).default); // 2
+          })();
+        `);
+        await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), `export default process.env.FOO`);
+
+        await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `1\n1\n2\n2\n`,
+          stderr: ``,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should allow absolute imports with search params`,
     makeTemporaryEnv(
       {},
