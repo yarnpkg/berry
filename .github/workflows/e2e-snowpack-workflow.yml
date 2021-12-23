@@ -33,6 +33,9 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-snowpack-app my-csa-ts --template @snowpack/app-template-react-typescript --use-yarn
-        cd my-csa-ts && yarn build
+        cd my-csa-ts
+        # Snowpack executes `yarn pnpify tsc`
+        cat package.json | jq '.scripts.pnpify="tsc"' | tee package.json
+        yarn build
       if: |
         always()
