@@ -33,6 +33,6 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-snowpack-app my-csa-ts --template @snowpack/app-template-react-typescript --use-yarn
-        cd my-csa-ts && yarn add @types/mocha && yarn build
+        cd my-csa-ts && yarn build
       if: |
         always()
