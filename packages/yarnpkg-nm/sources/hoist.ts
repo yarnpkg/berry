@@ -47,7 +47,7 @@
  */
 type PackageName = string;
 export enum HoisterDependencyKind {
-  REGULAR, WORKSPACE, PORTAL,
+  REGULAR, WORKSPACE, EXTERNAL_SOFT_LINK,
 }
 export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number, dependencyKind?: HoisterDependencyKind};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
@@ -459,7 +459,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
   }
 
   if (isHoistable) {
-    isHoistable = node.dependencyKind !== HoisterDependencyKind.PORTAL || node.dependencies.size === 0;
+    isHoistable = node.dependencyKind !== HoisterDependencyKind.EXTERNAL_SOFT_LINK || node.dependencies.size === 0;
     if (outputReason && !isHoistable) {
       reason = `- portal with unhoisted dependencies`;
     }
