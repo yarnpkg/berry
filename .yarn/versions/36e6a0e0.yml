@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/eslint-config": patch
   "@yarnpkg/plugin-npm": patch
 
 declined:
