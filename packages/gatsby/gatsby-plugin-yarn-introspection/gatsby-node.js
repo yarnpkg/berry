@@ -1,4 +1,4 @@
-const {execute, checkForInvalidHookLocations} = require(`@yarnpkg/monorepo/scripts/extract-hooks`);
+const {execute} = require(`@yarnpkg/monorepo/scripts/extract-hooks`);
 
 const fs = require(`fs`);
 const path = require(`path`);
@@ -24,10 +24,7 @@ exports.sourceNodes = async ({actions, createNodeId, createContentDigest}, opts)
     ...indexList,
   ];
 
-  const [data] = await Promise.all([
-    execute(files),
-    checkForInvalidHookLocations(`${packageDirectory}/**/*.{ts,tsx}`, files),
-  ]);
+  const data = await execute(files);
 
   createNode({
     id: createNodeId(`yarn-hooks`),

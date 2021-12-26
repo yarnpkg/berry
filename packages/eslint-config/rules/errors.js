@@ -74,11 +74,5 @@ module.exports = {
         jest: true,
       },
     },
-    {
-      files: [`packages/acceptance-tests/pkg-tests-specs/**/*.test.{js,ts}`],
-      globals: {
-        makeTemporaryEnv: `readonly`,
-      },
-    },
   ],
 };

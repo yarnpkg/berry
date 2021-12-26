@@ -1,6 +1,5 @@
 import {Cli, Command, Option, UsageError} from 'clipanion';
 import fs                                 from 'fs';
-import globby                             from 'globby';
 import path                               from 'path';
 import ts                                 from 'typescript';
 
@@ -22,7 +21,7 @@ type HookDefinition = {
   comment?: string;
 };
 
-async function processFile(file: ts.SourceFile, {allowHooks = true}: {allowHooks?: boolean} = {}) {
+async function processFile(file: ts.SourceFile) {
   const hooks: Array<HookDefinition> = [];
   let isInsideInterface = false;
 
@@ -38,9 +37,6 @@ async function processFile(file: ts.SourceFile, {allowHooks = true}: {allowHooks
       case ts.SyntaxKind.InterfaceDeclaration: {
         const interfaceNode = node as ts.InterfaceDeclaration;
         if (interfaceNode.name.getText() === `Hooks`) {
-          if (!allowHooks)
-            throw new UsageError(`Hooks aren't allowed in ${file.fileName}`);
-
           isInsideInterface = true;
           ts.forEachChild(node, processNode);
           isInsideInterface = false;
@@ -120,21 +116,6 @@ async function execute(files: Array<string>) {
 }
 
 exports.execute = execute;
-
-async function checkForInvalidHookLocations(patterns: string | Array<string>, ignore: Array<string>) {
-  const allFiles = await globby(patterns, {
-    absolute: true,
-    ignore,
-  });
-
-  const processPromises = [];
-  for (const absolutePath of allFiles)
-    processPromises.push(Promise.resolve().then(() => parseFile(absolutePath).then(file => processFile(file, {allowHooks: false}))));
-
-  await Promise.all(processPromises);
-}
-
-exports.checkForInvalidHookLocations = checkForInvalidHookLocations;
 
 if (require.main === module) {
   Cli.from([
