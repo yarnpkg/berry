@@ -126,7 +126,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | --- | --- |
 | Babel | Starting from `resolve` 1.9 |
 | Create-React-App | Starting from 2.0+ |
-| ESLint | Some compatibility issues w/ shared configs |
+| ESLint | Some compatibility issues w/ shared configs (fixable using [@rushstack/eslint-patch](https://yarnpkg.com/package/@rushstack/eslint-patch)) |
 | Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
 | Gulp | Supported with version 4.0+ | 
 | Husky | Starting from 4.0.0-1+ |
