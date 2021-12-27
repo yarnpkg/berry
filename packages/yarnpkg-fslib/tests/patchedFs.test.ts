@@ -304,4 +304,28 @@ describe(`patchedFs`, () => {
 
     expect(statUtils.areStatsEqual(fdStats, syncStats)).toEqual(true);
   });
+
+  it(`should support FileHandle.write`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      const fd = await patchedFs.promises.open(filepath, `w`);
+
+      await expect(fd.write(`foo`)).resolves.toMatchObject({
+        buffer: `foo`,
+        bytesWritten: 3,
+      });
+
+      const data = Buffer.from(`bar`);
+      await expect(fd.write(data)).resolves.toMatchObject({
+        buffer: data,
+        bytesWritten: 3,
+      });
+
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
+    });
+  });
 });

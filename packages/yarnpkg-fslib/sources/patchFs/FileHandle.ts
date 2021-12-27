@@ -43,6 +43,20 @@ interface Abortable {
   signal?: AbortSignal | undefined;
 }
 
+
+type WriteArgsBuffer<TBuffer extends Uint8Array> = [
+  buffer: TBuffer,
+  offset?: number | null,
+  length?: number | null,
+  position?: number | null,
+];
+
+type WriteArgsString = [
+  data: string,
+  position?: number | null,
+  encoding?: BufferEncoding | null,
+];
+
 // TODO: Implement the Ref counter
 export class FileHandle<P extends Path> {
   #baseFs: FakeFS<P>;
@@ -188,18 +202,19 @@ export class FileHandle<P extends Path> {
     throw new Error(`Method not implemented.`);
   }
 
-  write(
-    buffer: Buffer,
-    offset?: number | null,
-    length?: number | null,
-    position?: number | null
-  ): Promise<{ bytesWritten: number, buffer: Buffer }>;
-  write(
-    data: string,
-    position?: number | null,
-    encoding?: BufferEncoding | null,
-  ): Promise<{ bytesWritten: number, buffer: string }> {
-    throw new Error(`Method not implemented.`);
+  async write(...args: WriteArgsString): Promise<{ bytesWritten: number, buffer: string }>
+  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer>): Promise<{ bytesWritten: number, buffer: TBuffer }>;
+  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer> | WriteArgsString): Promise<{ bytesWritten: number, buffer: string | TBuffer }> {
+    if (ArrayBuffer.isView(args[0])) {
+      const [buffer, offset, length, position] = args as WriteArgsBuffer<TBuffer>;
+      const bytesWritten = await this.#baseFs.writePromise(this.fd, buffer as unknown as Buffer, offset ?? undefined, length ?? undefined, position ?? undefined);
+      return {bytesWritten, buffer};
+    } else {
+      const [data, position, encoding] = args as WriteArgsString;
+      // @ts-expect-error - FIXME: Types/implementation need to be updated in FakeFS
+      const bytesWritten = await this.#baseFs.writePromise(this.fd, data, position, encoding);
+      return {bytesWritten, buffer: data};
+    }
   }
 
   // FIXME: Missing FakeFS version
