@@ -96,7 +96,7 @@ module.exports = {
       static paths = [[`addition`]];
 
       // Show descriptive usage for a --help argument passed to this command
-      static usage = Command.Usage({
+      static usage = BaseCommand.Usage({
         description: `hello world!`,
         details: `
           This command will print a nice message.
