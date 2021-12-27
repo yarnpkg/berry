@@ -147,9 +147,9 @@ Hooks are numerous, and we're still working on them. Some might be added, remove
 
 > **Note:** We don't yet have a list of hooks. If you're interested to improve this documentation by generating the hook list from our source code, please contact us on our Discord server!
 
-## Using a the Yarn API
+## Using the Yarn API
 
-Most Yarn's hooks are called with various arguments that tell you more about the context under which the hook is being called. The exact argument list is different for each hook, but in general they are of the types defined in the [`@yarnpkg/core` library](/api).
+Most of Yarn's hooks are called with various arguments that tell you more about the context under which the hook is being called. The exact argument list is different for each hook, but in general they are of the types defined in the [`@yarnpkg/core` library](/api).
 
 In this example, we will integrate with the `afterAllInstalled` hook in order to print some basic information about the dependency tree after each install. This hook gets invoked with an additional parameter that is the public [`Project`](/api/classes/yarnpkg_core.project.html) instance where lie most of the information Yarn has collected about the project: dependencies, package manifests, workspace information, and so on.
 
@@ -188,6 +188,14 @@ module.exports = {
 This is getting interesting. As you can see, we accessed the [`storedDescriptors`](/api/classes/yarnpkg_core.project.html#storeddescriptors) and [`storedPackages`](/api/classes/yarnpkg_core.project.html#storedpackages) fields from our project instance, and iterated over them to obtain the number of non-virtual items (virtual packages are described in more details [here](/advanced/lexicon#virtual-package)). This is a very simple use case, but we could have done many more things: the project root is located in the [`cwd`](/api/classes/yarnpkg_core.project.html#cwd) property, the workspaces are exposed as [`workspaces`](https://yarnpkg.com/api/classes/yarnpkg_core.project.html#workspaces), the link between descriptors and packages can be made via [`storedResolutions`](/api/classes/yarnpkg_core.project.html#storedresolutions), ... etc.
 
 Note that we've only scratched the surface of the `Project` class instance! The Yarn core provides many other classes (and hooks) that allow you to work with the cache, download packages, trigger http requests, ... and much more, as listed in the [API documentation](/api/). Next time you want to write a plugin, give it a look, there's almost certainly an utility there that will allow you to avoid having to reimplement the wheel.
+
+## Dynamically loading plugins using the `YARN_PLUGINS` environment variable
+
+While plugins are usually declared inside `.yarnrc.yml` configuration files, those represent the user-facing configuration that third-party tools shouldn't modify without the user's permission.
+
+The `YARN_PLUGINS` environment variable is a semicolon-separated list of plugin paths that Yarn will dynamically load when called. Paths are resolved relative to the `startingCwd` Yarn is called in.
+
+Packages can use this mechanism to dynamically register plugins and query the Yarn API using commands without having to explicitly depend on the Yarn packages and deal with potential version mismatches.
 
 ## Official hooks
 
