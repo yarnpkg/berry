@@ -461,7 +461,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
   if (isHoistable) {
     isHoistable = node.dependencyKind !== HoisterDependencyKind.EXTERNAL_SOFT_LINK || node.dependencies.size === 0;
     if (outputReason && !isHoistable) {
-      reason = `- portal with unhoisted dependencies`;
+      reason = `- external soft link with unhoisted dependencies`;
     }
   }
 
