@@ -1,31 +1,26 @@
 import {cpus}   from 'os';
-import PQueue   from 'p-queue';
+import PLimit   from 'p-limit';
 import {Worker} from 'worker_threads';
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
-type PoolWorker<TOut> = Worker & {[kTaskInfo]: null | {resolve: (value: TOut) => void, reject: (reason?: any) => void}};
+type PoolWorker<TOut> = Worker & {
+  [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
+};
 
 export class WorkerPool<TIn, TOut> {
-  private pool: Array<PoolWorker<TOut>> = [];
-  private queue = new PQueue({
-    concurrency: Math.max(1, cpus().length),
-  });
+  private workers: Array<PoolWorker<TOut>> = [];
+  private limit = PLimit(Math.max(1, cpus().length));
 
   constructor(private source: string) {
-    const timeout = setTimeout(() => {
-      if (this.queue.size !== 0 || this.queue.pending !== 0)
-        return;
-
-      for (const worker of this.pool)
-        worker.terminate();
-
-      this.pool = [];
-    }, 1000).unref();
-
-    this.queue.on(`idle`, () => {
-      timeout.refresh();
-    });
+    setInterval(() => {
+      if (this.limit.pendingCount == 0 && this.limit.activeCount === 0) {
+        // Start terminating one worker at a time when there are no tasks left.
+        // This allows the pool to scale down without having to re-create the
+        // entire pool when there is a short amount of time without tasks.
+        this.workers.pop()?.terminate();
+      }
+    }, 5000).unref();
   }
 
   private createWorker() {
@@ -36,13 +31,13 @@ export class WorkerPool<TIn, TOut> {
 
     worker.on(`message`, (result: TOut) => {
       if (!worker[kTaskInfo])
-        throw new Error(`Assertion failed: Worker sent a message without having a task assigned`);
+        throw new Error(`Assertion failed: Worker sent a result without having a task assigned`);
 
       worker[kTaskInfo]!.resolve(result);
       worker[kTaskInfo] = null;
 
       worker.unref();
-      this.pool.push(worker);
+      this.workers.push(worker);
     });
 
     worker.on(`error`, err => {
@@ -61,8 +56,8 @@ export class WorkerPool<TIn, TOut> {
   }
 
   run(data: TIn) {
-    return this.queue.add(() => {
-      const worker = this.pool.pop() ?? this.createWorker();
+    return this.limit(() => {
+      const worker = this.workers.pop() ?? this.createWorker();
       worker.ref();
 
       return new Promise<TOut>((resolve, reject) => {

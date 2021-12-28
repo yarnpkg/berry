@@ -10285,7 +10285,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.4"],\
             ["mkdirp", "npm:0.5.5"],\
             ["p-limit", "npm:2.2.0"],\
-            ["p-queue", "npm:6.6.2"],\
             ["pluralize", "npm:7.0.0"],\
             ["pretty-bytes", "npm:5.6.0"],\
             ["rollup", "npm:2.59.0"],\

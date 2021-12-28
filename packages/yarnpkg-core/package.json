@@ -27,7 +27,6 @@
     "micromatch": "^4.0.2",
     "mkdirp": "^0.5.1",
     "p-limit": "^2.2.0",
-    "p-queue": "^6.0.0",
     "pluralize": "^7.0.0",
     "pretty-bytes": "^5.1.0",
     "semver": "^7.1.2",
