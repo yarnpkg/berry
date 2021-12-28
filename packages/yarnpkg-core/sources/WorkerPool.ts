@@ -14,7 +14,7 @@ export class WorkerPool<TIn, TOut> {
 
   constructor(private source: string) {
     setInterval(() => {
-      if (this.limit.pendingCount == 0 && this.limit.activeCount === 0) {
+      if (this.limit.pendingCount === 0 && this.limit.activeCount === 0) {
         // Start terminating one worker at a time when there are no tasks left.
         // This allows the pool to scale down without having to re-create the
         // entire pool when there is a short amount of time without tasks.
