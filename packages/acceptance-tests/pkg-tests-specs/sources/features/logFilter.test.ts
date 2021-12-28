@@ -225,16 +225,16 @@ describe(`Features`, () => {
       let {stdout} = await run(`install`);
       // sanity check
       expect(stdout).toMatch(/Project validation/);
-      expect(stdout).toMatch(/Resolutions field will be ignored/);
+      expect(stdout).toMatch(/foo: Field only allowed in top-level workspace manifest, will be ignored: resolutions/);
 
       await run(`config`, `set`, `logFilters`, `--json`, JSON.stringify([{
-        text: `foo: Resolutions field will be ignored`,
+        text: `foo: Field only allowed in top-level workspace manifest, will be ignored: resolutions`,
         level: `discard`,
       }]));
 
       ({stdout} = await run(`install`));
       expect(stdout).not.toMatch(/Project validation/);
-      expect(stdout).not.toMatch(/Resolutions field will be ignored/);
+      expect(stdout).not.toMatch(/foo: Field only allowed in top-level workspace manifest, will be ignored: resolutions/);
     }));
 
     test(`it should not print the peer dependencies footer if the section contents are discarded via logFilters`, makeTemporaryEnv({
