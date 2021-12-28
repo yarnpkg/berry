@@ -49950,6 +49950,7 @@ var ErrorCode;
 (function(ErrorCode2) {
   ErrorCode2["API_ERROR"] = `API_ERROR`;
   ErrorCode2["BUILTIN_NODE_RESOLUTION_FAILED"] = `BUILTIN_NODE_RESOLUTION_FAILED`;
+  ErrorCode2["EXPORTS_RESOLUTION_FAILED"] = `EXPORTS_RESOLUTION_FAILED`;
   ErrorCode2["MISSING_DEPENDENCY"] = `MISSING_DEPENDENCY`;
   ErrorCode2["MISSING_PEER_DEPENDENCY"] = `MISSING_PEER_DEPENDENCY`;
   ErrorCode2["QUALIFIED_PATH_RESOLUTION_FAILED"] = `QUALIFIED_PATH_RESOLUTION_FAILED`;
@@ -49964,8 +49965,8 @@ const MODULE_NOT_FOUND_ERRORS = new Set([
   ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
   ErrorCode.UNDECLARED_DEPENDENCY
 ]);
-function makeError(pnpCode, message, data = {}) {
-  const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
+function makeError(pnpCode, message, data = {}, code) {
+  code != null ? code : code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
   const propertySpec = {
     configurable: true,
     writable: true,
@@ -50550,10 +50551,15 @@ function makeApi(runtimeState, opts) {
     }
     if (!isRelativeRegexp.test(subpath))
       subpath = `./${subpath}`;
-    const resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
-      conditions,
-      unsafe: true
-    });
+    let resolvedExport;
+    try {
+      resolvedExport = resolve(pkgJson, ppath.normalize(subpath), {
+        conditions,
+        unsafe: true
+      });
+    } catch (error) {
+      throw makeError(ErrorCode.EXPORTS_RESOLUTION_FAILED, error.message, {unqualifiedPath: getPathForDisplay(unqualifiedPath), locator, pkgJson, subpath: getPathForDisplay(subpath), conditions}, `ERR_PACKAGE_PATH_NOT_EXPORTED`);
+    }
     if (typeof resolvedExport === `string`)
       return ppath.join(packageLocation, resolvedExport);
     return null;
@@ -50900,14 +50906,14 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
 
 Missing package: ${containingPackage.name}@${containingPackage.reference}
 Expected package location: ${getPathForDisplay(packageLocation)}
-`, {unqualifiedPath: unqualifiedPathForDisplay});
+`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
         }
       }
       throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of those files can be found on the disk.
 
 Source path: ${unqualifiedPathForDisplay}
 ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
-`).join(``)}`, {unqualifiedPath: unqualifiedPathForDisplay});
+`).join(``)}`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
     }
   }
   function resolveRequest(request, issuer, {considerBuiltins, extensions, conditions} = {}) {
@@ -50917,14 +50923,17 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
     if (unqualifiedPath === null)
       return null;
     const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
-    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath, conditions) : unqualifiedPath;
-    try {
-      return resolveUnqualified(remappedPath, {extensions});
-    } catch (resolutionError) {
-      if (resolutionError.pnpCode === `QUALIFIED_PATH_RESOLUTION_FAILED`)
-        Object.assign(resolutionError.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
-      throw resolutionError;
-    }
+    const wrapError = (fn, errorCode) => {
+      try {
+        return fn();
+      } catch (resolutionError) {
+        if (resolutionError.pnpCode === errorCode)
+          Object.assign(resolutionError.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
+        throw resolutionError;
+      }
+    };
+    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? wrapError(() => resolveUnqualifiedExport(request, unqualifiedPath, conditions), ErrorCode.EXPORTS_RESOLUTION_FAILED) : unqualifiedPath;
+    return wrapError(() => resolveUnqualified(remappedPath, {extensions}), ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED);
   }
   function resolveVirtual(request) {
     const normalized = ppath.normalize(request);
