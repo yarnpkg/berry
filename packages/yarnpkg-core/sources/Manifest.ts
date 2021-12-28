@@ -84,9 +84,14 @@ export class Manifest {
   public raw: {[key: string]: any} = {};
 
   /**
-   * errors found in the raw manifest while loading
+   * Errors found in the raw manifest while loading.
    */
   public errors: Array<Error> = [];
+
+  /**
+   * Errors about these fields will be pushed to `this.errors` during the validation step if they are not declared inside the top-level workspace manifest.
+   */
+  public topLevelWorkspaceFields: Set<string> = new Set();
 
   static readonly fileName = `package.json` as Filename;
 
@@ -186,6 +191,7 @@ export class Manifest {
 
     this.raw = data;
     const errors: Array<Error> = [];
+    const topLevelWorkspaceFields: Set<string> = new Set();
 
     this.name = null;
     if (typeof data.name === `string`) {
@@ -427,6 +433,8 @@ export class Manifest {
           errors.push(new Error(`Invalid built meta field for '${pattern}'`));
           continue;
         }
+        if (typeof built !== `undefined`)
+          topLevelWorkspaceFields.add(`dependenciesMeta ➤ ${pattern} ➤ built`);
 
         const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
         if (optional === null) {
@@ -439,6 +447,8 @@ export class Manifest {
           errors.push(new Error(`Invalid unplugged meta field for '${pattern}'`));
           continue;
         }
+        if (typeof unplugged !== `undefined`)
+          topLevelWorkspaceFields.add(`dependenciesMeta ➤ ${pattern} ➤ unplugged`);
 
         Object.assign(dependencyMeta, {built, optional, unplugged});
       }
@@ -467,6 +477,8 @@ export class Manifest {
 
     this.resolutions = [];
     if (typeof data.resolutions === `object` && data.resolutions !== null) {
+      topLevelWorkspaceFields.add(`resolutions`);
+
       for (const [pattern, reference] of Object.entries(data.resolutions)) {
         if (typeof reference !== `string`) {
           errors.push(new Error(`Invalid resolution entry for '${pattern}'`));
@@ -624,6 +636,7 @@ export class Manifest {
       this.preferUnplugged = null;
 
     this.errors = errors;
+    this.topLevelWorkspaceFields = topLevelWorkspaceFields;
   }
 
   getForScope(type: string) {
