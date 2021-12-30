@@ -14,7 +14,7 @@ A CLI tool designed for creating, building, and managing complex plugins.
 
 ## Installation
 
-`yarn add -D @yarnpkg/builder typescript`
+`yarn add -D @yarnpkg/builder`
 
 ## Commands
 

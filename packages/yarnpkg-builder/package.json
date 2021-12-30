@@ -19,9 +19,6 @@
     "@yarnpkg/monorepo": "workspace:^",
     "typescript": "^4.5.2"
   },
-  "peerDependencies": {
-    "typescript": "*"
-  },
   "scripts": {
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\"",

@@ -5397,8 +5397,6 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typescript: ^4.5.2
-  peerDependencies:
-    typescript: "*"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
