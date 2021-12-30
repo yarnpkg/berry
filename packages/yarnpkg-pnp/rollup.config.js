@@ -80,4 +80,32 @@ export default defineConfig([
       wrapOutput(),
     ],
   },
+  ...[`index`, `microkernel`].map(name =>
+    defineConfig({
+      input: `./sources/${name}.ts`,
+      output: {
+        file: `./lib/${name}.js`,
+        format: `cjs`,
+        generatedCode: `es2015`,
+      },
+      plugins: [
+        resolve({
+          extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],
+          rootDir: path.join(__dirname, `../../`),
+          jail: path.join(__dirname, `../../`),
+          preferBuiltins: true,
+        }),
+        esbuild({
+          tsconfig: false,
+          target: `node12`,
+          define: {
+            document: `undefined`,
+            XMLHttpRequest: `undefined`,
+            crypto: `undefined`,
+          },
+        }),
+        cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
+      ],
+    }),
+  ),
 ]);
