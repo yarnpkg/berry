@@ -5439,7 +5439,6 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typanion: ^3.3.0
-    typescript: ^4.5.2
     yup: ^0.32.9
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
@@ -5815,7 +5814,6 @@ __metadata:
     node-emoji: ^1.8.1
     tau-prolog: ^0.2.66
     tslib: ^1.13.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -5875,7 +5873,6 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     tslib: ^1.13.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
   languageName: unknown
@@ -5975,7 +5972,6 @@ __metadata:
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6147,7 +6143,6 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     clipanion: ^3.2.0-rc.4
     tslib: ^1.13.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6168,7 +6163,6 @@ __metadata:
     algoliasearch: ^4.2.0
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6196,7 +6190,6 @@ __metadata:
     react: ^16.13.1
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6219,7 +6212,6 @@ __metadata:
     p-limit: ^2.2.0
     tslib: ^1.13.0
     typanion: ^3.3.0
-    typescript: ^4.5.2
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"

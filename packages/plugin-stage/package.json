@@ -15,8 +15,7 @@
   "devDependencies": {
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^",
-    "typescript": "^4.5.2"
+    "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
     "build:plugin-stage": "builder build plugin",

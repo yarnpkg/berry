@@ -24,8 +24,7 @@
     "@types/lodash": "^4.14.136",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^",
-    "typescript": "^4.5.2"
+    "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
     "build:plugin-constraints": "builder build plugin",
