@@ -16,7 +16,6 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
-    "fs-extra": "^7.0.1",
     "lodash": "^4.17.15",
     "pkg-tests-core": "workspace:^",
     "semver": "^7.1.2",
