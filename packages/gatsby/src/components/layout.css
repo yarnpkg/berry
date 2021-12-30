@@ -11,6 +11,9 @@ body {
 
   font-family: "Open Sans", sans-serif;
   line-height: 1.5;
+  
+  /* match banner + topbar height to avoid hiding anchor link targets below topbar */
+  scroll-padding-top: 100px;
 }
 
 code {
