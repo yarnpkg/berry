@@ -1,9 +1,9 @@
 releases:
   "@yarnpkg/cli": minor
-  "@yarnpkg/plugin-compat": minor
   "@yarnpkg/plugin-patch": minor
 
 declined:
+  - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
