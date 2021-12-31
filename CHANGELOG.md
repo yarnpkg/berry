@@ -11,6 +11,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Commands
 
 - A new `yarn explain` command has been added. It can be used to explain an error code or list all available error codes.
+- `yarn upgrade-interactive` now has improved paging:
+  - The suggestions that fit in the viewport will be fetched in the foreground and will load one-by-one.
+  - The suggestions that don't will be fetched in the background and will be loaded in batches to increase responsiveness and reduce input lag.
+  - Most notably, you won't have to wait for all of the suggestions to be fetched (which took a very long time before on large monorepos) before you can start navigating through the list.
 
 ### Installs
 
