@@ -218,7 +218,8 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    const immutable = this.immutable ?? configuration.get(`enableImmutableInstalls`);
+    const updateMode = this.mode === InstallMode.UpdateLockfile;
+    const immutable = (this.immutable ?? configuration.get(`enableImmutableInstalls`)) && !updateMode;
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -291,7 +292,7 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration, {immutable: this.immutableCache, check: this.checkCache});
+    const cache = await Cache.find(configuration, {immutable: this.immutableCache && !updateMode, check: this.checkCache});
 
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
