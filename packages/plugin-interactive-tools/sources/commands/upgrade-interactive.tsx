@@ -280,14 +280,16 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         backgroundDependencyGroups.reduce((lock, group) =>
           Promise.all(group.map(descriptor => Promise.resolve().then(() => getSuggestionsForDescriptor(descriptor))))
             .then(async newSuggestions => {
+              newSuggestions = newSuggestions.filter(suggestion => suggestion !== null);
+
               await lock;
               if (mountedRef.current) {
                 setSuggestions(suggestions => {
                   const firstEmptySlot = suggestions.findIndex(suggestion => suggestion === null);
                   return suggestions
                     .slice(0, firstEmptySlot)
-                    .concat(newSuggestions.filter(suggestion => suggestion !== null))
-                    .concat(suggestions.slice(firstEmptySlot + 1));
+                    .concat(newSuggestions)
+                    .concat(suggestions.slice(firstEmptySlot + newSuggestions.length));
                 });
               }
             }), foregroundLock,
