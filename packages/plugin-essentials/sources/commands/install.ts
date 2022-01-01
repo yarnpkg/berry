@@ -219,9 +219,8 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const updateMode = this.mode === InstallMode.UpdateLockfile;
-    if (updateMode && (this.immutable || this.immutableCache)) {
+    if (updateMode && (this.immutable || this.immutableCache))
       throw new UsageError(`\`--immutable\` and \`--immutable-cache\` cannot be used with \`--mode=update-lockfile\``);
-    }
 
     const immutable = (this.immutable ?? configuration.get(`enableImmutableInstalls`)) && !updateMode;
 
