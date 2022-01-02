@@ -417,15 +417,15 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run}) => {
         await expect(run(`install`, `--mode=update-lockfile`, `--immutable`)).rejects.toMatchObject({
           code: 1,
-          stdout: expect.stringMatching(/`--immutable` and `--immutable-cache` cannot be used with `--mode=update-lockfile`/g),
+          stdout: expect.stringMatching(/--immutable and --immutable-cache cannot be used with --mode=update-lockfile/g),
         });
         await expect(run(`install`, `--mode=update-lockfile`, `--immutable-cache`)).rejects.toMatchObject({
           code: 1,
-          stdout: expect.stringMatching(/`--immutable` and `--immutable-cache` cannot be used with `--mode=update-lockfile`/g),
+          stdout: expect.stringMatching(/--immutable and --immutable-cache cannot be used with --mode=update-lockfile/g),
         });
         await expect(run(`install`, `--mode=update-lockfile`, `--immutable`, `--immutable-cache`)).rejects.toMatchObject({
           code: 1,
-          stdout: expect.stringMatching(/`--immutable` and `--immutable-cache` cannot be used with `--mode=update-lockfile`/g),
+          stdout: expect.stringMatching(/--immutable and --immutable-cache cannot be used with --mode=update-lockfile/g),
         });
       }),
     );
