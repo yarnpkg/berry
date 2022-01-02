@@ -413,7 +413,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should throw when \`--immutable\` or \`--immutable-cache\` specified with \`--mode=update-lockfile\``,
+      `it should throw when \`--immutable\` or \`--immutable-cache\` is specified with \`--mode=update-lockfile\``,
       makeTemporaryEnv({}, async ({path, run}) => {
         await expect(run(`install`, `--mode=update-lockfile`, `--immutable`)).rejects.toMatchObject({
           code: 1,
