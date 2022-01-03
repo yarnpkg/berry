@@ -89,7 +89,7 @@ module.exports = {
   name: `plugin-addition`,
   factory: require => {
     const {BaseCommand} = require(`@yarnpkg/cli`);
-    const {Option} = require(`clipanion`);
+    const {Command, Option} = require(`clipanion`);
     const t = require(`typanion`);
 
     class AdditionCommand extends BaseCommand {
