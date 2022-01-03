@@ -7,6 +7,7 @@ import {PnpApi}                       from '../../types';
 import * as loaderUtils               from '../loaderUtils';
 
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
+const isRelativeRegexp = /^\.{0,2}\//;
 
 export async function resolve(
   originalSpecifier: string,
@@ -18,12 +19,12 @@ export async function resolve(
     return defaultResolver(originalSpecifier, context, defaultResolver);
 
   let specifier = originalSpecifier;
-  const url = loaderUtils.tryParseURL(specifier);
+  const url = loaderUtils.tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : undefined);
   if (url) {
     if (url.protocol !== `file:`)
       return defaultResolver(originalSpecifier, context, defaultResolver);
 
-    specifier = fileURLToPath(specifier);
+    specifier = fileURLToPath(url);
   }
 
   const {parentURL, conditions = []} = context;
@@ -67,7 +68,16 @@ export async function resolve(
   if (!result)
     throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);
 
+  const resultURL = pathToFileURL(result);
+
+  // Node preserves the `search` and `hash` to allow cache busting
+  // https://github.com/nodejs/node/blob/85d4cd307957bd35e7c723d0f1d2b77175fd9b0f/lib/internal/modules/esm/resolve.js#L405-L406
+  if (url) {
+    resultURL.search = url.search;
+    resultURL.hash = url.hash;
+  }
+
   return {
-    url: pathToFileURL(result).href,
+    url: resultURL.href,
   };
 }
