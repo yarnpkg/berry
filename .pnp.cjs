@@ -50421,8 +50421,6 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
-  const builtinModules = new Set(require$$0.Module.builtinModules || Object.keys(process.binding(`natives`)));
-  const isBuiltinModule = (request) => builtinModules.has(request) || request.startsWith(`node:`);
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
   const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/;
   const isDirRegExp = /\/$/;

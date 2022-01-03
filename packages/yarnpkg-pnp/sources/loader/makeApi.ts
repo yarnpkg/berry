@@ -7,6 +7,7 @@ import {inspect}                                                                
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
+import * as nodeUtils                                                                                                                                                                      from './nodeUtils';
 
 export type MakeApiOptions = {
   allowDebug?: boolean;
@@ -18,10 +19,6 @@ export type MakeApiOptions = {
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
-
-  // @ts-expect-error
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   // Splits a require request into its components, or return null if the request is a file path
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
@@ -531,7 +528,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && isBuiltinModule(request))
+    if (considerBuiltins && nodeUtils.isBuiltinModule(request))
       return null;
 
     const requestForDisplay = getPathForDisplay(request);
@@ -700,7 +697,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && isBuiltinModule(request)) {
+        if (!considerBuiltins && nodeUtils.isBuiltinModule(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
@@ -856,7 +853,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         ? isPathIgnored(issuer)
         : false;
 
-    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored()
+    const remappedPath = (!considerBuiltins || !nodeUtils.isBuiltinModule(request)) && !isIssuerIgnored()
       ? resolveUnqualifiedExport(request, unqualifiedPath, conditions)
       : unqualifiedPath;
 
