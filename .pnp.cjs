@@ -37603,6 +37603,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/terser-npm-4.7.0-81206a218e-18ccfa0517.zip/node_modules/terser/",
           "packageDependencies": [
             ["terser", "npm:4.7.0"],
+            ["acorn", "npm:8.5.0"],
             ["commander", "npm:2.20.0"],
             ["source-map", "npm:0.6.1"],
             ["source-map-support", "npm:0.5.20"]
@@ -37613,6 +37614,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/terser-npm-5.9.0-16d6a713ce-11c1246b19.zip/node_modules/terser/",
           "packageDependencies": [
             ["terser", "npm:5.9.0"],
+            ["acorn", "npm:8.5.0"],
             ["commander", "npm:2.20.0"],
             ["source-map", "npm:0.7.3"],
             ["source-map-support", "npm:0.5.20"]
