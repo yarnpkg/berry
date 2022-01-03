@@ -18,14 +18,7 @@ jobs:
         token: ${{secrets.YARNBOT_TOKEN}}
         fetch-depth: 0
 
-    - name: 'Install Node'
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
-
-    - name: 'Build the standard bundle'
-      run: |
-        node ./scripts/run-yarn.js build:cli
+    - uses: ./.github/actions/prepare
 
     - name: 'Update, commit, and upload the artifacts'
       run: |
