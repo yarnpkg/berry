@@ -223,6 +223,7 @@ export default class YarnCommand extends BaseCommand {
       throw new UsageError(`${formatUtils.pretty(configuration, `--immutable`, formatUtils.Type.CODE)} and ${formatUtils.pretty(configuration, `--immutable-cache`, formatUtils.Type.CODE)} cannot be used with ${formatUtils.pretty(configuration, `--mode=update-lockfile`, formatUtils.Type.CODE)}`);
 
     const immutable = (this.immutable ?? configuration.get(`enableImmutableInstalls`)) && !updateMode;
+    const immutableCache = this.immutableCache && !updateMode;
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -295,7 +296,7 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration, {immutable: this.immutableCache && !updateMode, check: this.checkCache});
+    const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
