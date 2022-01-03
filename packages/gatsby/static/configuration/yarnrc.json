@@ -33,6 +33,13 @@
       "format": "uri-reference",
       "examples": ["./exampleCA.pem"]
     },
+    "httpsCertFilePath": {
+      "_package": "@yarnpkg/core",
+      "description": "Path to file containing certificate chain in PEM format.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./exampleCert.pem"]
+    },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
       "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, upstream/master, main, origin/main, and upstream/main. Supports git branches, tags, and commits.",
@@ -261,6 +268,13 @@
       "format": "uri-reference",
       "default": "./.yarn/install-state.gz"
     },
+    "httpsKeyFilePath": {
+      "_package": "@yarnpkg/core",
+      "description": "Path to file containing private key in PEM format.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./exampleKey.pem"]
+    },
     "logFilters": {
       "description": "Defines overrides for log levels for message names or message text. Through this setting you can hide specific messages or give them a more important visibility.",
       "type": "array",
@@ -341,6 +355,9 @@
             "caFilePath": {
               "$ref": "#/properties/caFilePath"
             },
+            "httpsCertFilePath": {
+              "$ref": "#/properties/httpsCertFilePath"
+            },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
             },
@@ -349,9 +366,12 @@
             },
             "httpsProxy": {
               "$ref": "#/properties/httpsProxy"
+            },
+            "httpsKeyFilePath": {
+              "$ref": "#/properties/httpsKeyFilePath"
             }
           },
-          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsProxy"]
+          "_exampleKeys": ["caFilePath", "httpsCertFilePath", "enableNetwork", "httpProxy", "httpsProxy", "httpsKeyFilePath"]
         }
       },
       "_exampleKeys": ["*.example.com"]

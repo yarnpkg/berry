@@ -379,11 +379,31 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.STRING,
           default: null,
         },
+        httpsKeyFilePath: {
+          description: `Path to file containing private key in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
+        httpsCertFilePath: {
+          description: `Path to file containing certificate chain in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
       },
     },
   },
   caFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  httpsKeyFilePath: {
+    description: `Path to file containing private key in PEM format`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  httpsCertFilePath: {
+    description: `Path to file containing certificate chain in PEM format`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
@@ -558,8 +578,12 @@ export interface ConfigurationValueMap {
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
+    httpsKeyFilePath: PortablePath | null;
+    httpsCertFilePath: PortablePath | null;
   }>>;
   caFilePath: PortablePath | null;
+  httpsKeyFilePath: PortablePath | null;
+  httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
   logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
