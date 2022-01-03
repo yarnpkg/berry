@@ -83,4 +83,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**after-install**](https://github.com/mhassan1/yarn-plugin-after-install) by [**Marc Hassan**](https://github.com/mhassan1) - adds support for an `afterInstall` hook that runs after every `yarn install`
 
+- [**yaml-manifest**](https://github.com/lyleunderwood/yarn-plugin-yaml-manifest) by [**Lyle Underwood**](https://github.com/lyleunderwood) - use a `package.yml` with comments and whitespace that is automatically synchronized with `package.json`
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
