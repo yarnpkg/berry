@@ -46,11 +46,14 @@
  * until you run out of candidates for current tree root.
  */
 type PackageName = string;
-export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number, isWorkspace?: boolean};
+export enum HoisterDependencyKind {
+  REGULAR, WORKSPACE, EXTERNAL_SOFT_LINK,
+}
+export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number, dependencyKind?: HoisterDependencyKind};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
 type Ident = string;
-type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Map<PackageName, Array<string>>, hoistedTo: Map<PackageName, string>, hoistPriority: number, isWorkspace: boolean};
+type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Map<PackageName, Array<string>>, hoistedTo: Map<PackageName, string>, hoistPriority: number, dependencyKind: HoisterDependencyKind};
 
 /**
  * Mapping which packages depend on a given package alias + ident. It is used to determine hoisting weight,
@@ -237,7 +240,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
   if (node.decoupled)
     return node;
 
-  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistPriority, isWorkspace, hoistedFrom, hoistedTo} = node;
+  const {name, references, ident, locator, dependencies, originalDependencies, hoistedDependencies, peerNames, reasons, isHoistBorder, hoistPriority, dependencyKind, hoistedFrom, hoistedTo} = node;
   // To perform node hoisting from parent node we must clone parent nodes up to the root node,
   // because some other package in the tree might depend on the parent package where hoisting
   // cannot be performed
@@ -254,7 +257,7 @@ const decoupleGraphNode = (parent: HoisterWorkTree, node: HoisterWorkTree): Hois
     decoupled: true,
     isHoistBorder,
     hoistPriority,
-    isWorkspace,
+    dependencyKind,
     hoistedFrom: new Map(hoistedFrom),
     hoistedTo: new Map(hoistedTo),
   };
@@ -449,9 +452,16 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     reason = `- self-reference`;
 
   if (isHoistable) {
-    isHoistable = !node.isWorkspace;
+    isHoistable = node.dependencyKind !== HoisterDependencyKind.WORKSPACE;
     if (outputReason && !isHoistable) {
       reason = `- workspace`;
+    }
+  }
+
+  if (isHoistable) {
+    isHoistable = node.dependencyKind !== HoisterDependencyKind.EXTERNAL_SOFT_LINK || node.dependencies.size === 0;
+    if (outputReason && !isHoistable) {
+      reason = `- external soft link with unhoisted dependencies`;
     }
   }
 
@@ -467,7 +477,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     // It is difficult to find all common ancestors, but there is one easy to find common ancestor -
     // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
     // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
-    isHoistable = !parentNode.isWorkspace || parentNode.hoistedFrom.has(node.name) || rootNodePathLocators.size === 1;
+    isHoistable = parentNode.dependencyKind !== HoisterDependencyKind.WORKSPACE || parentNode.hoistedFrom.has(node.name) || rootNodePathLocators.size === 1;
     if (outputReason && !isHoistable) {
       reason = parentNode.reasons.get(node.name)!;
     }
@@ -773,7 +783,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     decoupled: true,
     isHoistBorder: true,
     hoistPriority: 0,
-    isWorkspace: true,
+    dependencyKind: HoisterDependencyKind.WORKSPACE,
     hoistedFrom: new Map(),
     hoistedTo: new Map(),
   };
@@ -784,7 +794,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     let workNode = seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
-      const {name, identName, reference, peerNames, hoistPriority, isWorkspace} = node;
+      const {name, identName, reference, peerNames, hoistPriority, dependencyKind} = node;
       const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
@@ -799,7 +809,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         decoupled: true,
         isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
         hoistPriority: hoistPriority || 0,
-        isWorkspace: isWorkspace || false,
+        dependencyKind: dependencyKind || HoisterDependencyKind.REGULAR,
         hoistedFrom: new Map(),
         hoistedTo: new Map(),
       };
