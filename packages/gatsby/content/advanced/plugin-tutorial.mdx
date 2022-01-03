@@ -89,14 +89,14 @@ module.exports = {
   name: `plugin-addition`,
   factory: require => {
     const {BaseCommand} = require(`@yarnpkg/cli`);
-    const {Option} = require(`clipanion`);
+    const {Command, Option} = require(`clipanion`);
     const t = require(`typanion`);
 
     class AdditionCommand extends BaseCommand {
       static paths = [[`addition`]];
 
       // Show descriptive usage for a --help argument passed to this command
-      static usage = BaseCommand.Usage({
+      static usage = Command.Usage({
         description: `hello world!`,
         details: `
           This command will print a nice message.
