@@ -4,37 +4,20 @@
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
-    "@babel/core": "^7.10.2",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/esbuild-plugin-pnp": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
-    "@yarnpkg/pnpify": "workspace:^",
-    "babel-loader": "^8.1.0",
     "chalk": "^3.0.0",
     "clipanion": "^3.2.0-rc.4",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
-    "filesize": "^4.1.2",
-    "fork-ts-checker-webpack-plugin": "^5.0.0",
     "semver": "^7.1.2",
-    "terser-webpack-plugin": "^3.0.4",
-    "ts-loader": "^7.0.5",
-    "tslib": "^1.13.0",
-    "val-loader": "^2.1.1",
-    "webpack": "^5.1.1",
-    "webpack-merge": "^4.2.2"
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
-    "@datadog/build-plugin": "0.3.6",
-    "@types/filesize": "4.1.0",
     "@types/semver": "^7.1.0",
-    "@types/terser-webpack-plugin": "^3.0.0",
-    "@types/webpack-merge": "^4.1.5",
     "@yarnpkg/monorepo": "workspace:^",
     "typescript": "^4.5.2"
-  },
-  "peerDependencies": {
-    "typescript": "*"
   },
   "scripts": {
     "postpack": "rm -rf lib",

@@ -45,13 +45,13 @@ jobs:
 
           if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/hook.js; then
             git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
-            yarn build:pnp:cjs
+            yarn build:pnp:hook
             SHOULD_RUN_AN_INSTALL=1
           fi
 
           if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/esm-loader/built-loader.js; then
             git checkout --theirs packages/yarnpkg-pnp/sources/esm-loader/built-loader.js
-            yarn build:pnp:esm
+            yarn build:pnp:hook
             SHOULD_RUN_AN_INSTALL=1
           fi
 

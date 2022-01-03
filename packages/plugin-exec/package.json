@@ -4,7 +4,6 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "tslib": "^1.13.0"
   },
@@ -12,8 +11,8 @@
     "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^",
-    "typescript": "^4.5.2"
+    "@yarnpkg/builder": "workspace:^",
+    "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
     "build:plugin-exec": "builder build plugin",

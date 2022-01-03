@@ -5,27 +5,22 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@types/node": "^13.7.0",
-    "@yarnpkg/fslib": "workspace:^",
-    "resolve.exports": "^1.1.0",
-    "tslib": "^1.13.0"
+    "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "@yarnpkg/monorepo": "workspace:^",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
+    "resolve.exports": "^1.1.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
-    "typescript": "^4.5.2",
-    "webpack": "^5.1.1",
-    "webpack-cli": "^4.0.0-beta.8"
+    "tslib": "^1.13.0"
   },
   "scripts": {
     "build:pnp:hook": "rollup -c",
     "update:pnp:hook": "run build:pnp:hook && yarn install",
-    "build:pnp": "webpack-cli --config webpack.config.pkg.js",
+    "build:pnp": "rollup -c",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile packages/yarnpkg-pnp --emitDeclarationOnly && run build:pnp",
     "release": "yarn npm publish",
