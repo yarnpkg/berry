@@ -49714,23 +49714,20 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
     }
   }
   function resolveRequest(request, issuer, {considerBuiltins, extensions, conditions} = {}) {
-    const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
-    if (request === `pnpapi`)
-      return unqualifiedPath;
-    if (unqualifiedPath === null)
-      return null;
-    const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
-    const wrapError = (fn, errorCode) => {
-      try {
-        return fn();
-      } catch (resolutionError) {
-        if (resolutionError.pnpCode === errorCode)
-          Object.assign(resolutionError.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
-        throw resolutionError;
-      }
-    };
-    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? wrapError(() => resolveUnqualifiedExport(request, unqualifiedPath, conditions), ErrorCode.EXPORTS_RESOLUTION_FAILED) : unqualifiedPath;
-    return wrapError(() => resolveUnqualified(remappedPath, {extensions}), ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED);
+    try {
+      const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+      if (request === `pnpapi`)
+        return unqualifiedPath;
+      if (unqualifiedPath === null)
+        return null;
+      const isIssuerIgnored = () => issuer !== null ? isPathIgnored(issuer) : false;
+      const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath, conditions) : unqualifiedPath;
+      return resolveUnqualified(remappedPath, {extensions});
+    } catch (error) {
+      if (Object.prototype.hasOwnProperty.call(error, `pnpCode`))
+        Object.assign(error.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
+      throw error;
+    }
   }
   function resolveVirtual(request) {
     const normalized = ppath.normalize(request);
