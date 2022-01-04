@@ -1,6 +1,6 @@
 import styled                             from '@emotion/styled';
 import {connectHits, connectStateResults} from 'react-instantsearch-dom';
-import {CurrentRefinements, Stats}        from 'react-instantsearch-dom';
+import {Stats}                            from 'react-instantsearch-dom';
 import React                              from 'react';
 
 import {Hit}                              from '../hit';
@@ -69,28 +69,6 @@ const ResultsContainer = styled.div`
 const SearchFooter = styled.div`
   text-align: center;
   margin-bottom: 50px;
-`;
-
-const RefinementContainer = styled.div`
-  .ais-CurrentRefinements-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.8125rem;
-  }
-
-  .ais-CurrentRefinements-category {
-    display: inline-block;
-    border: 1px solid #eceeef;
-    border-radius: 2px;
-    margin-right: 0.5em;
-    padding: 0 0.5em;
-  }
-
-  .ais-CurrentRefinements-delete {
-    background: none;
-    border: none;
-  }
 `;
 
 const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => <>
