@@ -992,8 +992,8 @@ export class Configuration {
     type CoreKeys = keyof typeof coreDefinitions;
     type CoreFields = {[key in CoreKeys]: any};
 
-    const pickCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const excludeCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => rest;
+    const pickCoreFields = ({dotenvPath, ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({dotenvPath, ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const excludeCoreFields = ({dotenvPath, ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => rest;
 
     const configuration = new Configuration(startingCwd);
     configuration.importSettings(pickCoreFields(coreDefinitions));
