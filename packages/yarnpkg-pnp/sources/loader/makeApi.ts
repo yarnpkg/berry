@@ -849,38 +849,34 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions}: ResolveRequestOptions = {}): PortablePath | null {
-    const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+    try {
+      const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
-    // If the request is the pnpapi, we can just return the unqualifiedPath
-    // without having to apply the exports resolution or the extension resolution
-    // (opts.pnpapiResolution is always a full path - makeManager enforces this by stat-ing it)
-    if (request === `pnpapi`)
-      return unqualifiedPath;
+      // If the request is the pnpapi, we can just return the unqualifiedPath
+      // without having to apply the exports resolution or the extension resolution
+      // (opts.pnpapiResolution is always a full path - makeManager enforces this by stat-ing it)
+      if (request === `pnpapi`)
+        return unqualifiedPath;
 
-    if (unqualifiedPath === null)
-      return null;
+      if (unqualifiedPath === null)
+        return null;
 
-    const isIssuerIgnored = () =>
-      issuer !== null
-        ? isPathIgnored(issuer)
-        : false;
+      const isIssuerIgnored = () =>
+        issuer !== null
+          ? isPathIgnored(issuer)
+          : false;
 
-    const wrapError = <T>(fn: () => T, errorCode: ErrorCode) => {
-      try {
-        return fn();
-      } catch (resolutionError) {
-        if (resolutionError.pnpCode === errorCode)
-          Object.assign(resolutionError.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
+      const remappedPath = (!considerBuiltins || !nodeUtils.isBuiltinModule(request)) && !isIssuerIgnored()
+        ? resolveUnqualifiedExport(request, unqualifiedPath, conditions)
+        : unqualifiedPath;
 
-        throw resolutionError;
-      }
-    };
+      return resolveUnqualified(remappedPath, {extensions});
+    } catch (error) {
+      if (Object.prototype.hasOwnProperty.call(error, `pnpCode`))
+        Object.assign(error.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
 
-    const remappedPath = (!considerBuiltins || !nodeUtils.isBuiltinModule(request)) && !isIssuerIgnored()
-      ? wrapError(() => resolveUnqualifiedExport(request, unqualifiedPath, conditions), ErrorCode.EXPORTS_RESOLUTION_FAILED)
-      : unqualifiedPath;
-
-    return wrapError(() => resolveUnqualified(remappedPath, {extensions}), ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED);
+      throw error;
+    }
   }
 
   function resolveVirtual(request: PortablePath) {
