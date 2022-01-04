@@ -14,7 +14,6 @@ import IcoHotT2       from '../../images/search/ico-hot-t2.svg';
 import IcoHotT3       from '../../images/search/ico-hot-t3.svg';
 import IcoHotT4       from '../../images/search/ico-hot-t4.svg';
 import IcoNpm         from '../../images/search/ico-npm.svg';
-import IcoTypeScript  from '../../images/search/ico-typescript.svg';
 
 import {
   getDownloadBucket,
