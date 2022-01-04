@@ -20,6 +20,45 @@ const Hits = connectHits(({hits, onTagClick, onOwnerClick, searchState}) =>
   )),
 );
 
+const InfoBar = styled.div`
+  display: flex;
+
+  background: #2188b6;
+  color: rgba(255, 255, 255, 0.8);
+`;
+
+const InfoContainer = styled.div`
+  display: flex;
+
+  margin: 0 auto 0 auto;
+  padding: 0 15px 0 15px;
+  width: 1140px;
+  max-width: 100%;
+`;
+
+const StatsText = styled.div`
+  flex: none;
+  padding: 0.7rem 0;
+  margin-right: 1rem;
+`;
+
+const Sponsors = styled.a`
+  padding: 0.7rem 0;
+
+  flex: none;
+  margin-left: auto;
+
+  color: inherit;
+
+  span {
+    display: inline-block;
+
+    color: #85ecf7;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+`;
+
 const ResultsContainer = styled.div`
   margin: 0 auto 0 auto;
   padding: 0 15px 0 15px;
@@ -32,15 +71,11 @@ const SearchFooter = styled.div`
   margin-bottom: 50px;
 `;
 
-const StatsText = styled.div`
-  padding: 0 16px 0 16px;
-`;
-
 const RefinementContainer = styled.div`
   .ais-CurrentRefinements-list {
     list-style-type: none;
     padding: 0;
-    margin-top: 0.5em;
+    margin: 0;
     font-size: 0.8125rem;
   }
 
@@ -58,19 +93,18 @@ const RefinementContainer = styled.div`
   }
 `;
 
-const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => (
+const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => <>
+  <InfoBar>
+    <InfoContainer>
+      <StatsText>
+        <Stats translations={{stats: (num, time) => `found ${num.toLocaleString(`en`)} packages in ${time}ms`}}/>
+      </StatsText>
+      <Sponsors href={`https://www.doppler.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=yarn&utm_source=github`}>
+        Thanks to <span>Doppler</span>, the Universal Secrets Platform, for sponsoring Yarn!
+      </Sponsors>
+    </InfoContainer>
+  </InfoBar>
   <ResultsContainer>
-    <StatsText>
-      <RefinementContainer>
-        <CurrentRefinements />
-      </RefinementContainer>
-      <Stats
-        translations={{
-          stats: (num, time) =>
-            `found ${num.toLocaleString(`en`)} packages in ${time}ms`,
-        }}
-      />
-    </StatsText>
     <Hits onTagClick={onTagClick} onOwnerClick={onOwnerClick} searchState={searchState} />
     <Pagination pagination={pagination} />
     <SearchFooter>
@@ -82,7 +116,7 @@ const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => (
       .
     </SearchFooter>
   </ResultsContainer>
-);
+</>;
 
 const NoPackagesFound = styled.div`
   padding: 0 15px;
