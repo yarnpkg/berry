@@ -3,6 +3,7 @@ import {PortablePath, npath, xfs}                                               
 import {execFileSync}                                                                      from 'child_process';
 import {isCI}                                                                              from 'ci-info';
 import {Cli, UsageError}                                                                   from 'clipanion';
+import {config}                                                                            from 'dotenv';
 import {realpathSync}                                                                      from 'fs';
 
 import {pluginCommands}                                                                    from './pluginCommands';
@@ -69,6 +70,17 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       usePath: true,
       strict: false,
     });
+
+    // If dotenvPath is specified, environment variables at that path are loaded into process.env
+    const dotenvPath = configuration.get(`dotenvPath`);
+    if (dotenvPath) {
+      if (!xfs.existsSync(dotenvPath)) {
+        process.stdout.write(cli.error(new Error(`The "dotenvPath" option has been set (in ${configuration.sources.get(`dotenvPath`)}), but the specified location doesn't exist (${dotenvPath}).`)));
+        process.exitCode = 1;
+      } else {
+        config({path: dotenvPath});
+      }
+    }
 
     const yarnPath: PortablePath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);

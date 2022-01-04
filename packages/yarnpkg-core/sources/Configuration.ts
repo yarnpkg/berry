@@ -145,6 +145,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: null,
   },
 
+  dotenvPath: {
+    description: `Path to .env file; environment variables are loaded into process.env prior to any command execution`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+
   // Settings related to proxying all Yarn calls to a specific executable
   yarnPath: {
     description: `Path to the local executable that must be used over the global one`,
@@ -534,6 +540,7 @@ export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
 
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;
+  dotenvPath: PortablePath | null;
 
   yarnPath: PortablePath;
   ignorePath: boolean;

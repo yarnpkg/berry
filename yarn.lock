@@ -5435,6 +5435,7 @@ __metadata:
     chalk: ^3.0.0
     ci-info: ^3.2.0
     clipanion: ^3.2.0-rc.4
+    dotenv: ^10.0.0
     micromatch: ^4.0.2
     semver: ^7.1.2
     tslib: ^1.13.0
@@ -10509,6 +10510,13 @@ __metadata:
   dependencies:
     is-obj: ^2.0.0
   checksum: 709a8208bff4fc4d5a11e357957a9e59ed625d7db909d14ea1e0dbeb30d26c25325a6e64ea27ed96fb17978cc13c7e38cf30bac17bb81eb9b5a740a4fe909a87
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "dotenv@npm:10.0.0"
+  checksum: f412c5fe8c24fbe313d302d2500e247ba8a1946492db405a4de4d30dd0eb186a88a43f13c958c5a7de303938949c4231c56994f97d05c4bc1f22478d631b4005
   languageName: node
   linkType: hard
 

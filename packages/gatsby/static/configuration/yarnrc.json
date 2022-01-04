@@ -103,6 +103,13 @@
       "format": "uri-reference",
       "default": "./.yarn/versions"
     },
+    "dotenvPath": {
+      "_package": "@yarnpkg/core",
+      "description": "Path to .env file; environment variables are loaded into process.env prior to any command execution",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./.env"]
+    },
     "enableColors": {
       "_package": "@yarnpkg/core",
       "description": "If true (by default detects terminal capabilities), Yarn will format its pretty-print its output by using colors to differentiate important parts of its messages.",
