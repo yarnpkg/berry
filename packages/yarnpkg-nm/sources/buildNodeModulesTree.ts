@@ -3,7 +3,7 @@ import {toFilename, npath, ppath}                                             fr
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}                                    from './hoist';
+import {hoist, HoisterTree, HoisterResult, HoisterDependencyKind}             from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -284,7 +284,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
-    isWorkspace: true,
+    dependencyKind: HoisterDependencyKind.WORKSPACE,
   };
 
   const nodes = new Map<string, HoisterTree>();
@@ -302,7 +302,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation);
 
     if (!node) {
-      const isWorkspace = pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
+      let dependencyKind = HoisterDependencyKind.REGULAR;
+      if (isExternalSoftLinkPackage)
+        dependencyKind = HoisterDependencyKind.EXTERNAL_SOFT_LINK;
+      else if (pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX))
+        dependencyKind = HoisterDependencyKind.WORKSPACE;
+
+
       node = {
         name,
         identName: locator.name,
@@ -310,8 +316,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         dependencies: new Set(),
         // View peer dependencies as regular dependencies for workspaces
         // (meeting workspace peer dependency constraints is sometimes hard, sometimes impossible for the nm linker)
-        peerNames: isWorkspace ? new Set() : pkg.packagePeers,
-        isWorkspace,
+        peerNames: dependencyKind === HoisterDependencyKind.WORKSPACE ? new Set() : pkg.packagePeers,
+        dependencyKind,
       };
 
       nodes.set(nodeKey, node);

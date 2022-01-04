@@ -272,13 +272,12 @@ class PnpmInstaller implements Installer {
           removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
 
       await Promise.all(removals);
-
-      await removeIfEmpty(storeLocation);
     }
 
     // Wait for the package installs to catch up
     await this.asyncActions.wait(),
 
+    await removeIfEmpty(storeLocation);
     await removeIfEmpty(getNodeModulesLocation(this.opts.project));
 
     return {

@@ -153,7 +153,6 @@ jobs:
 
     - name: 'Build bundle & plugins'
       run: |
-        export BUILD_MONITORING_ENABLED=1
         node --version
         node ./scripts/run-yarn.js build:pnp:hook
         node ./scripts/run-yarn.js build:cli
@@ -167,8 +166,6 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-version
         node ./scripts/run-yarn.js build:plugin-workspace-tools
       shell: bash
-      env:
-        DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
     - uses: actions/upload-artifact@v2
       with:

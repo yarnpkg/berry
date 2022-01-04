@@ -68,9 +68,6 @@
     },
     "svg2png": {
       "unplugged": true
-    },
-    "webpack-cli": {
-      "built": false
     }
   },
   "scripts": {

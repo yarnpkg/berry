@@ -397,5 +397,37 @@ describe(`Commands`, () => {
         expect(cacheAfter.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
       }),
     );
+
+    test(
+      `it should disable immutable installs when using \`--mode=update-lockfile\``,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run}) => {
+        await xfs.writeFilePromise(`${path}/${Filename.rc}`, `enableImmutableInstalls: true`);
+
+        const {stdout} = await run(`install`, `--mode=update-lockfile`);
+        expect(stdout).not.toMatch(/YN0028/g);
+      }),
+    );
+
+    test(
+      `it should throw when \`--immutable\` or \`--immutable-cache\` is specified with \`--mode=update-lockfile\``,
+      makeTemporaryEnv({}, async ({path, run}) => {
+        await expect(run(`install`, `--mode=update-lockfile`, `--immutable`)).rejects.toMatchObject({
+          code: 1,
+          stdout: expect.stringMatching(/--immutable and --immutable-cache cannot be used with --mode=update-lockfile/g),
+        });
+        await expect(run(`install`, `--mode=update-lockfile`, `--immutable-cache`)).rejects.toMatchObject({
+          code: 1,
+          stdout: expect.stringMatching(/--immutable and --immutable-cache cannot be used with --mode=update-lockfile/g),
+        });
+        await expect(run(`install`, `--mode=update-lockfile`, `--immutable`, `--immutable-cache`)).rejects.toMatchObject({
+          code: 1,
+          stdout: expect.stringMatching(/--immutable and --immutable-cache cannot be used with --mode=update-lockfile/g),
+        });
+      }),
+    );
   });
 });

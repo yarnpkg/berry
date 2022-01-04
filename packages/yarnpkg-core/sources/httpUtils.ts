@@ -16,7 +16,7 @@ import * as miscUtils                                        from './miscUtils';
 export {RequestError} from 'got';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
-const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
+const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -31,11 +31,11 @@ function parseProxy(specifier: string) {
   return {proxy};
 }
 
-async function getCachedCertificate(caFilePath: PortablePath) {
-  return miscUtils.getFactoryWithDefault(certCache, caFilePath, () => {
-    return xfs.readFilePromise(caFilePath).then(cert => {
-      certCache.set(caFilePath, cert);
-      return cert;
+async function getCachedFile(filePath: PortablePath) {
+  return miscUtils.getFactoryWithDefault(fileCache, filePath, () => {
+    return xfs.readFilePromise(filePath).then(file => {
+      fileCache.set(filePath, file);
+      return file;
     });
   });
 }
@@ -124,6 +124,8 @@ export function getNetworkSettings(target: string | URL, opts: { configuration: 
     caFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
+    httpsKeyFilePath: undefined,
+    httpsCertFilePath: undefined,
   };
 
   const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
@@ -254,11 +256,19 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
   const caFilePath = networkConfig.caFilePath;
+  const httpsCertFilePath = networkConfig.httpsCertFilePath;
+  const httpsKeyFilePath = networkConfig.httpsKeyFilePath;
 
   const {default: got} = await import(`got`);
 
   const certificateAuthority = caFilePath
-    ? await getCachedCertificate(caFilePath)
+    ? await getCachedFile(caFilePath)
+    : undefined;
+  const certificate = httpsCertFilePath
+    ? await getCachedFile(httpsCertFilePath)
+    : undefined;
+  const key = httpsKeyFilePath
+    ? await getCachedFile(httpsKeyFilePath)
     : undefined;
 
   const gotClient = got.extend({
@@ -269,6 +279,8 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     https: {
       rejectUnauthorized,
       certificateAuthority,
+      certificate,
+      key,
     },
     ...gotOptions,
   });

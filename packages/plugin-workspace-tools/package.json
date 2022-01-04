@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
-  "version": "3.1.1-rc.6",
+  "version": "3.1.1-rc.8",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -21,8 +21,7 @@
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/plugin-git": "workspace:^",
-    "typescript": "^4.5.2"
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "scripts": {
     "build:plugin-workspace-tools": "builder build plugin",

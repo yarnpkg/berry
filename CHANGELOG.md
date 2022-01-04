@@ -25,10 +25,12 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - `@yarnpkg/pnpify` now escapes paths correctly
 - The ESM loader is now enabled regardless of the entrypoint module type, this fixes support for dynamic imports in commonjs modules when the entrypoint is also commonjs
+- The ESM loader is now able to resolve relative imports with search parameters
 - `yarn workspaces foreach run` is now able to run binaries
 - The `node` field inside the `npm_config_user_agent` Yarn sets will now include a leading `v`.
 - Yarn is now able to recover from a corrupted install state.
 - Yarn is now able to migrate classic lockfiles containing unconventional tarball URLs
+- The nm linker hoists portals after hoisting their dependencies first
 
 ### Miscellaneous Features
 
