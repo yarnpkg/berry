@@ -14,7 +14,6 @@ import IcoHotT2       from '../../images/search/ico-hot-t2.svg';
 import IcoHotT3       from '../../images/search/ico-hot-t3.svg';
 import IcoHotT4       from '../../images/search/ico-hot-t4.svg';
 import IcoNpm         from '../../images/search/ico-npm.svg';
-import IcoTypeScript  from '../../images/search/ico-typescript.svg';
 
 import {
   getDownloadBucket,
@@ -247,21 +246,25 @@ const HitVersion = styled.span`
   vertical-align: middle;
 `;
 
-const IconTypeScript = styled.img`
-  margin-left: 0.2em;
-  width: 0.8em;
-  height: 0.8em;
-  vertical-align: baseline;
+const HitTypeScript = styled.span`
+  font-size: 0.75rem;
+  border: solid 1px transparent;
+  color: #ffffff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-right: 8px;
+  letter-spacing: 0.2px;
+  background: #0380d9;
 `;
 
 export const TypeScript = ({name, ts}) => {
   if (ts === false)
     return null;
 
-  const iconTypescript = <IconTypeScript
-    src={IcoTypeScript}
+  const iconTypescript = <HitTypeScript
     alt={`TypeScript support: ${ts}`}
     title={`TypeScript support: ${ts}`}
+    children={ts === `definitely-typed` ? `DT` : `TS`}
   />;
 
   if (ts !== `definitely-typed`)
@@ -312,8 +315,8 @@ export const Hit = ({hit, onTagClick, onOwnerClick, searchState}) => (
     />
     <License type={hit.license} />
     <Deprecated deprecated={hit.deprecated} />
-    <HitVersion>{hit.version}</HitVersion>
     <TypeScript name={hit.name} ts={hit.types.ts} />
+    <HitVersion>{hit.version}</HitVersion>
     <HitDescription>
       {hit.deprecated ? (
         hit.deprecated
