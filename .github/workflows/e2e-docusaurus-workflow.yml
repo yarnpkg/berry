@@ -1,0 +1,36 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-docusaurus-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Docusaurus'
+jobs:
+  chore:
+    name: 'Validating Docusaurus'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn dlx create-docusaurus@latest my-website classic && cd my-website
+        yarn build
+
+    - name: 'Running the TypeScript integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn dlx create-docusaurus@latest my-website-ts classic --typescript && cd my-website-ts
+        yarn build
+      if: |
+        always()
