@@ -212,7 +212,7 @@ export const Links = ({name, homepage, repository}) => (
 );
 
 const HitItem = styled.div`
-  padding: 1.5rem 1rem 2rem;
+  padding: 1.5rem 0 2rem;
   border-bottom: 1px solid #eceeef;
   position: relative;
 `;
