@@ -726,7 +726,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/GoogleChromeLabs/critters/pull/91
-  [`critters-webpack-plugin@*`, {
+  [`critters-webpack-plugin@<3.0.2`, {
     peerDependenciesMeta: {
       'html-webpack-plugin': optionalPeerDep,
     },
