@@ -843,7 +843,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
   let installChangedByUser = false;
 
   const syncNodeWithDisk = (parentPath: PortablePath, entry: Filename, parentNode: LocationNode, refinedNode: LocationNode, nodeModulesDiskEntries: Set<Filename>) => {
-    let isExistOnDisk = true;
+    let doesExistOnDisk = true;
     const entryPath = ppath.join(parentPath, entry);
     let childNodeModulesDiskEntries = new Set<Filename>();
 
@@ -854,7 +854,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
       } catch (e) {
       }
 
-      isExistOnDisk = !!stats;
+      doesExistOnDisk = !!stats;
 
       if (!stats) {
         installChangedByUser = true;
@@ -893,11 +893,11 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
         }
       }
     } else {
-      isExistOnDisk = nodeModulesDiskEntries.has(entry);
+      doesExistOnDisk = nodeModulesDiskEntries.has(entry);
     }
 
     const node = parentNode.children.get(entry)!;
-    if (isExistOnDisk) {
+    if (doesExistOnDisk) {
       const {linkType, locator} = node;
       const childRefinedNode = {children: new Map(), linkType, locator};
       refinedNode.children.set(entry, childRefinedNode);
