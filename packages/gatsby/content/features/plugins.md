@@ -71,8 +71,18 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**az-cli-auth**](https://github.com/FishandRichardsonPC/yarn-plugin-az-cli-auth) by [**Fish & Richardson P.C**](https://fr.com) - Uses the az cli to generate auth tokens when using azure devops repos
 
+- [**gcp-auth**](https://github.com/AndyClausen/yarn-plugin-gcp-auth) by [**Andreas Clausen**](https://github.com/AndyClausen) - Uses gcloud to generate access tokens when using Google Artifact Registry repos
+
 - [**outdated**](https://github.com/mskelton/yarn-plugin-outdated) by [**Mark Skelton**](https://github.com/mskelton) - lists outdated dependencies similar to the Yarn 1.x `outdated` command
 
 - [**engines**](https://github.com/devoto13/yarn-plugin-engines) by [**Yaroslav Admin**](https://github.com/devoto13) - enforces a Node version range specified in the `package.json`'s `engines.node` field
+
+- [**licenses**](https://github.com/mhassan1/yarn-plugin-licenses) by [**Marc Hassan**](https://github.com/mhassan1) - adds `yarn licenses` commands that are similar to the ones in Yarn v1
+
+- [**aws-codeartifact**](https://github.com/mhassan1/yarn-plugin-aws-codeartifact) by [**Marc Hassan**](https://github.com/mhassan1) - resolves authentication for AWS CodeArtifact NPM registries
+
+- [**after-install**](https://github.com/mhassan1/yarn-plugin-after-install) by [**Marc Hassan**](https://github.com/mhassan1) - adds support for an `afterInstall` hook that runs after every `yarn install`
+
+- [**yaml-manifest**](https://github.com/lyleunderwood/yarn-plugin-yaml-manifest) by [**Lyle Underwood**](https://github.com/lyleunderwood) - use a `package.yml` with comments and whitespace that is automatically synchronized with `package.json`
 
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!

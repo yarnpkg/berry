@@ -3,7 +3,7 @@ import {PortablePath, npath, ppath}                                             
 import {PackageInformation, PackageStore, RuntimeState, SerializedState, PhysicalPackageLocator} from '../types';
 
 export type HydrateRuntimeStateOptions = {
-  basePath: string,
+  basePath: string;
 };
 
 export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRuntimeStateOptions): RuntimeState {

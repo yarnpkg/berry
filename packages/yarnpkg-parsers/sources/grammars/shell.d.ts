@@ -10,7 +10,7 @@ export type ArgumentSegment =
   | {type: `text`, text: string}
   | {type: `glob`, pattern: string}
   | {type: `shell`, shell: ShellLine, quoted: boolean}
-  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean}
+  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, alternativeValue?: Array<ValueArgument>, quoted: boolean}
   | {type: `arithmetic`, arithmetic: ArithmeticExpression};
 
 export type Argument =
@@ -18,73 +18,73 @@ export type Argument =
   | ValueArgument;
 
 export type RedirectArgument = {
-  type: `redirection`,
-  subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`,
-  fd: number | null,
-  args: Array<ValueArgument>
+  type: `redirection`;
+  subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`;
+  fd: number | null;
+  args: Array<ValueArgument>;
 };
 
 export type ValueArgument =
   | {type: `argument`, segments: Array<ArgumentSegment>};
 
 export type EnvSegment = {
-  name: string,
-  args: [] | [ValueArgument],
+  name: string;
+  args: [] | [ValueArgument];
 };
 
 export type Command = {
-  type: `command`,
-  args: Array<Argument>,
-  envs: Array<EnvSegment>,
+  type: `command`;
+  args: Array<Argument>;
+  envs: Array<EnvSegment>;
 } | {
-  type: `subshell`,
-  subshell: ShellLine,
-  args: Array<RedirectArgument>,
+  type: `subshell`;
+  subshell: ShellLine;
+  args: Array<RedirectArgument>;
 } | {
-  type: `group`,
-  group: ShellLine,
-  args: Array<RedirectArgument>,
+  type: `group`;
+  group: ShellLine;
+  args: Array<RedirectArgument>;
 } | {
-  type: `envs`,
-  envs: Array<EnvSegment>
+  type: `envs`;
+  envs: Array<EnvSegment>;
 };
 
 export type CommandChain = Command & {
-  then?: CommandChainThen,
+  then?: CommandChainThen;
 };
 
 export type CommandChainThen = {
-  type: `|&` | `|`,
-  chain: CommandChain,
+  type: `|&` | `|`;
+  chain: CommandChain;
 };
 
 export type CommandLine = {
-  chain: CommandChain,
-  then?: CommandLineThen,
+  chain: CommandChain;
+  then?: CommandLineThen;
 };
 
 export type CommandLineThen = {
-  type: `&&` | `||`,
-  line: CommandLine,
+  type: `&&` | `||`;
+  line: CommandLine;
 };
 
 export type ShellLine = Array<{
-  type: ';' | '&',
-  command: CommandLine,
+  type: ';' | '&';
+  command: CommandLine;
 }>;
 
 export type ArithmeticPrimary = {
-  type: `number`,
-  value: number,
+  type: `number`;
+  value: number;
 } | {
-  type: `variable`,
-  name: string,
+  type: `variable`;
+  name: string;
 };
 
 export type ArithmeticOperatorExpression = {
   type: `multiplication` | `division` | `addition` | `subtraction`;
-  left: ArithmeticExpression,
-  right: ArithmeticExpression,
+  left: ArithmeticExpression;
+  right: ArithmeticExpression;
 };
 
 export type ArithmeticExpression = ArithmeticPrimary | ArithmeticOperatorExpression;

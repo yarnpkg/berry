@@ -49,6 +49,42 @@ describe(`Basic tests`, () => {
       );
 
       test(
+        `it should correctly install a single scoped dependency that contains no sub-dependencies`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`@types/no-deps`]: `1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(source(`require('@types/no-deps')`)).resolves.toMatchObject({
+              name: `@types/no-deps`,
+              version: `1.0.0`,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should correctly install a single aliased dependency that contains no sub-dependencies`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`aliased`]: `npm:no-deps@1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(source(`require('aliased')`)).resolves.toMatchObject({
+              name: `no-deps`,
+              version: `1.0.0`,
+            });
+          },
+        ),
+      );
+
+      test(
         `it should correctly install a dependency that itself contains a fixed dependency`,
         makeTemporaryEnv(
           {
@@ -479,7 +515,7 @@ describe(`Basic tests`, () => {
       );
 
       test(
-        `it should allow accessing a package via too many slashes`,
+        `it should support self-requires in direct dependencies`,
         makeTemporaryEnv(
           {
             dependencies: {[`various-requires`]: `1.0.0`},
@@ -488,8 +524,103 @@ describe(`Basic tests`, () => {
           async ({path, run, source}) => {
             await run(`install`);
 
-            await expect(source(`require('various-requires//self')`)).resolves.toMatchObject({
+            await expect(source(`require('various-requires/self')`)).resolves.toMatchObject({
               name: `various-requires`,
+              version: `1.0.0`,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should support self-requires in transitive dependencies`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`self-require-dep`]: `1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(source(`require('self-require-dep/self')`)).resolves.toMatchObject({
+              name: `various-requires`,
+              version: `1.0.0`,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should not add the implicit self dependency if an explicit one already exists`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`self-require-trap`]: `1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            // We run 2 installs because while refactoring the pnpm linker, running a second install highlighted a symlink issue
+            for (let i = 0; i < 2; i++) {
+              await run(`install`);
+
+              await expect(source(`require('self-require-trap')`)).resolves.toMatchObject({
+                name: `self-require-trap`,
+                version: `1.0.0`,
+              });
+
+              await expect(source(`require('self-require-trap/self')`)).resolves.toMatchObject({
+                name: `self-require-trap`,
+                version: `2.0.0`,
+              });
+            }
+          },
+        ),
+      );
+
+      test(
+        `it should not add the implicit self dependency if an explicit one already exists (aliases)`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`aliased`]: `npm:self-require-trap@1.0.0`},
+          },
+          config,
+          async ({path, run, source}) => {
+            // We run 2 installs because while refactoring the pnpm linker, running a second install highlighted a symlink issue
+            for (let i = 0; i < 2; i++) {
+              await run(`install`);
+
+              await expect(source(`require('aliased')`)).resolves.toMatchObject({
+                name: `self-require-trap`,
+                version: `1.0.0`,
+              });
+
+              await expect(source(`require('aliased/self')`)).resolves.toMatchObject({
+                name: `self-require-trap`,
+                version: `2.0.0`,
+              });
+            }
+          },
+        ),
+      );
+
+      test(
+        `it should correctly install a soft-link`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`soft-link`]: `portal:./soft-link`},
+          },
+          config,
+          async ({path, run, source}) => {
+            await xfs.mkdirPromise(`${path}/soft-link`);
+            await xfs.writeJsonPromise(`${path}/soft-link/package.json`, {
+              name: `soft-link`,
+              version: `1.0.0`,
+            });
+            await xfs.writeFilePromise(`${path}/soft-link/index.js`, `module.exports = require('./package.json');\n`);
+
+            await run(`install`);
+
+            await expect(source(`require('soft-link')`)).resolves.toMatchObject({
+              name: `soft-link`,
               version: `1.0.0`,
             });
           },

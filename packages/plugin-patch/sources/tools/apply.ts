@@ -220,19 +220,19 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
 }
 
 type Push = {
-  type: `push`,
-  line: string,
+  type: `push`;
+  line: string;
 };
 
 type Pop = {
-  type: `pop`,
+  type: `pop`;
 };
 
 type Splice = {
-  type: `splice`,
-  index: number,
-  numToDelete: number,
-  linesToInsert: Array<string>,
+  type: `splice`;
+  index: number;
+  numToDelete: number;
+  linesToInsert: Array<string>;
 };
 
 type Modification =

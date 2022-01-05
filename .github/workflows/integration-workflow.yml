@@ -35,7 +35,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -52,19 +52,19 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
-    - name: 'Check that the PnP hook is consistent with a fresh build (fix w/ "git merge master && yarn update:pnp:hook")'
+    - name: 'Check that the PnP hooks are consistent with a fresh build (fix w/ "git merge master && yarn update:pnp:hook")'
       run: |
         if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-{fslib,libzip,pnp}/sources/**/*' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js build:pnp:hook
-          [[ $(git diff --name-only packages/yarnpkg-pnp/sources/hook.js | wc -l) -eq 0 ]]
+          [[ $(git diff --name-only packages/yarnpkg-pnp/sources/{hook.js,esm-loader/built-loader.js} | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -76,7 +76,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -88,7 +88,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -100,7 +100,7 @@ jobs:
         fi
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
@@ -109,27 +109,35 @@ jobs:
         node ./scripts/run-yarn.js version check
       shell: bash
       if: |
-        github.event.pull_request != ''
+        always() && github.event.pull_request != ''
 
     - name: 'Check for linting errors (fix w/ "yarn test:lint --fix")'
       run: |
         node ./scripts/run-yarn.js test:lint
       shell: bash
+      if: |
+        always()
 
     - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
       run: |
         node ./scripts/run-yarn.js constraints
       shell: bash
+      if: |
+        always()
 
     - name: 'Check for type errors'
       run: |
         node ./scripts/run-yarn.js typecheck:all
       shell: bash
+      if: |
+        always()
 
     - name: 'Check for duplicate dependencies (fix w/ "yarn dedupe")'
       run: |
         node ./scripts/run-yarn.js dedupe --check
       shell: bash
+      if: |
+        always()
 
   build:
     name: 'Build artifacts'
@@ -145,7 +153,6 @@ jobs:
 
     - name: 'Build bundle & plugins'
       run: |
-        export BUILD_MONITORING_ENABLED=1
         node --version
         node ./scripts/run-yarn.js build:pnp:hook
         node ./scripts/run-yarn.js build:cli
@@ -159,8 +166,6 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-version
         node ./scripts/run-yarn.js build:plugin-workspace-tools
       shell: bash
-      env:
-        DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
     - uses: actions/upload-artifact@v2
       with:
@@ -172,6 +177,8 @@ jobs:
     - name: 'Build vscode-zipfs'
       run: |
         node ./scripts/run-yarn.js package:vscode-zipfs
+      if: |
+        always()
 
     - uses: actions/upload-artifact@v2
       with:
@@ -186,6 +193,7 @@ jobs:
         - 12
         - 14
         - 16
+        - 17
         platform:
         - ubuntu-latest
         - windows-latest
@@ -217,3 +225,5 @@ jobs:
       run: |
         node ./scripts/run-yarn.js test:unit
       shell: bash
+      if: |
+        always()

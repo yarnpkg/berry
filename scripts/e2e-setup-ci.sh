@@ -8,7 +8,12 @@ TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
 
 # We want to ensure we're using the latest release
-export PATH="${HERE_DIR}/bin:${PATH}"
+ROOT_DIR="$(dirname ${HERE_DIR})"
+export PATH="${ROOT_DIR}/packages/yarnpkg-cli/bundles:${PATH}"
+cp "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn.js" "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn"
+cp "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn.js" "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarnpkg"
+chmod +x "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn"
+chmod +x "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarnpkg"
 
 echo PATH: $PATH
 echo Yarn Path: $(which yarn)
@@ -22,6 +27,15 @@ export YARN_ENABLE_IMMUTABLE_INSTALLS=0
 
 # We want to make sure the projects work in a monorepo
 export YARN_PNP_FALLBACK_MODE=none
+
+# TODO: Remove when either of these issues are fixed
+# - https://github.com/nodejs/node/issues/39140
+# - https://github.com/nodejs/node/issues/37782
+# - https://github.com/facebook/jest/issues/12060
+# Due to a bug in `jest-worker` and/or Node.js adding a loader
+# causes our e2e tests to time out so require the tests that needs it
+# to explicitly enable it
+export YARN_PNP_ENABLE_ESM_LOADER=false
 
 # Otherwise git commit doesn't work, and some tools require it
 git config --global user.email "you@example.com"

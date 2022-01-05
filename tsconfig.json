@@ -18,8 +18,9 @@
     "useUnknownInCatchVariables": false
   },
   "exclude": [
-    "packages/*/lib",
+    "packages/*/{lib,bin,bundles}",
     "packages/yarnpkg-doctor/fixtures",
-    "packages/gatsby"
+    "packages/gatsby",
+    "packages/yarnpkg-libzip/artifacts"
   ]
 }

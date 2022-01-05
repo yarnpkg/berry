@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/core",
-  "version": "3.1.0-rc.12",
+  "version": "3.2.0-rc.10",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "@arcanis/slice-ansi": "^1.0.2",
+    "@arcanis/slice-ansi": "^1.1.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
     "@yarnpkg/fslib": "workspace:^",
@@ -17,7 +17,7 @@
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "ci-info": "^3.2.0",
-    "clipanion": "^3.0.1",
+    "clipanion": "^3.2.0-rc.4",
     "cross-spawn": "7.0.3",
     "diff": "^4.0.1",
     "globby": "^11.0.1",
@@ -40,7 +40,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^4.0.2",
@@ -54,8 +54,9 @@
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
-    "rollup": "^2.43.0",
-    "rollup-plugin-esbuild": "^3.0.2"
+    "rollup": "^2.59.0",
+    "rollup-plugin-esbuild": "^3.0.2",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
     "build:zip:worker": "rollup -c",
@@ -78,5 +79,5 @@
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
   },
-  "stableVersion": "3.0.0"
+  "stableVersion": "3.1.0"
 }

@@ -37,6 +37,16 @@ for (const redirectLine of redirectLines) {
 
 /** @type {import('gatsby').GatsbyNode} */
 module.exports = {
+  createSchemaCustomization: ({actions}) => {
+    const {createTypes} = actions;
+    const typeDefs = `
+      type Mdx implements Node {
+        fileAbsolutePath: String
+      }
+    `;
+    createTypes(typeDefs);
+  },
+
   onCreateWebpackConfig: ({actions}) => {
     const gatsbyReq = createRequire(require.resolve(`gatsby/package.json`));
     const webpack = gatsbyReq(`webpack`);
@@ -61,7 +71,7 @@ module.exports = {
 
   createPages: async ({actions: {createPage, createRedirect}, graphql}) => {
     const everything = await graphql(`{
-      allMarkdownRemark {
+      allMdx {
         edges {
           node {
             frontmatter {
@@ -73,7 +83,7 @@ module.exports = {
       }
     }`);
 
-    for (const {node} of everything.data.allMarkdownRemark.edges) {
+    for (const {node} of everything.data.allMdx.edges) {
       createPage({
         path: node.frontmatter.path,
         component: `${__dirname}/src/templates/article.js`,

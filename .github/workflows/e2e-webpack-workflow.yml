@@ -6,6 +6,7 @@ on:
     - master
   pull_request:
     paths:
+    - .github/actions/prepare/action.yml
     - .github/workflows/e2e-webpack-workflow.yml
     - scripts/e2e-setup-ci.sh
 
@@ -18,14 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - name: 'Install Node'
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
-
-    - name: 'Build the standard bundle'
-      run: |
-        node ./scripts/run-yarn.js build:cli
+    - uses: ./.github/actions/prepare
 
     - name: 'Vanilla Webpack'
       run: |
@@ -57,6 +51,8 @@ jobs:
         yarn webpack info
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello raw-loader" ]]
+      if: |
+        always()
 
     - name: 'ts-loader'
       run: |
@@ -75,6 +71,8 @@ jobs:
         yarn webpack info
         yarn webpack
         [[ "$(node dist/main.js)" = "Hello ts-loader" ]]
+      if: |
+        always()
 
     - name: 'less-loader'
       run: |
@@ -96,6 +94,8 @@ jobs:
         ls dist | grep "main.js"
         ls dist | grep ".svg"
         ls dist | grep ".woff2"
+      if: |
+        always()
 
     - name: 'less-loader + thread-loader'
       run: |
@@ -121,3 +121,5 @@ jobs:
         ls dist | grep "main.js"
         ls dist | grep ".svg"
         ls dist | grep ".woff2"
+      if: |
+        always()

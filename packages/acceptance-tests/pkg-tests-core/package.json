@@ -12,6 +12,7 @@
     "@types/semver": "^7.1.0",
     "@types/serve-static": "1.13.3",
     "@types/tar-fs": "^1.16.1",
+    "@types/uuid": "^8",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
@@ -35,5 +36,8 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
   }
 }

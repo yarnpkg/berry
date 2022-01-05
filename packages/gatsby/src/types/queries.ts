@@ -1,13 +1,13 @@
 export type SiteMetadata = {
-  title: string,
-  description: string,
-  author: string,
+  title: string;
+  description: string;
+  author: string;
 };
 
 export type Site = {
-  siteMetadata: SiteMetadata,
+  siteMetadata: SiteMetadata;
 };
 
 export type Query = {
-  site: Site,
+  site: Site;
 };

@@ -109,9 +109,9 @@ export class IntegrationsFile {
 }
 
 type TemplateOptions = {
-  setupEnv?: boolean,
-  usePnpify?: boolean,
-  wrapModule?: string,
+  setupEnv?: boolean;
+  usePnpify?: boolean;
+  wrapModule?: string;
 };
 
 const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false, wrapModule}: TemplateOptions) => [
@@ -175,13 +175,12 @@ export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, 
 export type GenerateDefaultWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<void>;
 
 export type SupportedSdk =
- | 'eslint'
- | 'prettier'
- | 'typescript-language-server'
- | 'typescript'
- | 'stylelint'
- | 'svelte-language-server'
- | 'flow-bin';
+  | 'eslint'
+  | 'prettier'
+  | 'typescript-language-server'
+  | 'typescript'
+  | 'svelte-language-server'
+  | 'flow-bin';
 
 export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
 
@@ -189,7 +188,6 @@ export type IntegrationSdks = Array<
   | [null, GenerateDefaultWrapper | null]
   | [SupportedSdk, GenerateIntegrationWrapper | null]
 >;
-
 
 export class Wrapper {
   private name: PortablePath;
@@ -231,7 +229,7 @@ export class Wrapper {
     await this.writeFile(relPackagePath, {...options, mode: 0o755});
   }
 
-  async writeFile(relPackagePath: PortablePath, options: TemplateOptions & {mode?: number} = {}) {
+  async writeFile(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath, mode?: number} = {}) {
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
@@ -242,7 +240,7 @@ export class Wrapper {
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
 
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, relPackagePath), options), {
+    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, options.requirePath ?? relPackagePath), options), {
       mode: options.mode,
     });
 

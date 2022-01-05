@@ -64,6 +64,7 @@ export default class NpmLoginCommand extends BaseCommand {
       });
 
       const url = `/-/user/org.couchdb.user:${encodeURIComponent(credentials.name)}`;
+
       const response = await npmHttpUtils.put(url, credentials, {
         attemptedAs: credentials.name,
         configuration,
@@ -140,8 +141,8 @@ async function getCredentials({registry, report, stdin, stdout}: {registry: stri
   report.reportSeparator();
 
   const {username, password} = await prompt<{
-    username: string,
-    password: string,
+    username: string;
+    password: string;
   }>([{
     type: `input`,
     name: `username`,

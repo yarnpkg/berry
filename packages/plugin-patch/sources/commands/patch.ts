@@ -14,7 +14,9 @@ export default class PatchCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `prepare a package for patching`,
     details: `
-      This command will cause a package to be extracted in a temporary directory (under a folder named "patch-workdir"). This folder will be editable at will; running \`yarn patch\` inside it will then cause Yarn to generate a patchfile and register it into your top-level manifest (cf the \`patch:\` protocol).
+      This command will cause a package to be extracted in a temporary directory intended to be editable at will.
+      
+      Once you're done with your changes, run \`yarn patch-commit -s <path>\` (with \`<path>\` being the temporary directory you received) to generate a patchfile and register it into your top-level manifest via the \`patch:\` protocol. Run \`yarn patch-commit -h\` for more details.
     `,
   });
 
@@ -72,7 +74,7 @@ export default class PatchCommand extends BaseCommand {
 
       report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, locator)} got extracted with success!`);
       report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);
-      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit ${process.platform === `win32` ? `"` : ``}${npath.fromPortablePath(temp)}${process.platform === `win32` ? `"` : ``}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
+      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit -s ${process.platform === `win32` ? `"` : ``}${npath.fromPortablePath(temp)}${process.platform === `win32` ? `"` : ``}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
     });
   }
 }

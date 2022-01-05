@@ -16,7 +16,7 @@ import * as miscUtils                                        from './miscUtils';
 export {RequestError} from 'got';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
-const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
+const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -31,11 +31,11 @@ function parseProxy(specifier: string) {
   return {proxy};
 }
 
-async function getCachedCertificate(caFilePath: PortablePath) {
-  return miscUtils.getFactoryWithDefault(certCache, caFilePath, () => {
-    return xfs.readFilePromise(caFilePath).then(cert => {
-      certCache.set(caFilePath, cert);
-      return cert;
+async function getCachedFile(filePath: PortablePath) {
+  return miscUtils.getFactoryWithDefault(fileCache, filePath, () => {
+    return xfs.readFilePromise(filePath).then(file => {
+      fileCache.set(filePath, file);
+      return file;
     });
   });
 }
@@ -124,6 +124,8 @@ export function getNetworkSettings(target: string | URL, opts: { configuration: 
     caFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
+    httpsKeyFilePath: undefined,
+    httpsCertFilePath: undefined,
   };
 
   const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
@@ -163,73 +165,22 @@ export enum Method {
 }
 
 export type Options = {
-  configuration: Configuration,
+  configuration: Configuration;
   customErrorMessage?: (err: RequestError) => string | null;
   headers?: {[headerName: string]: string};
-  jsonRequest?: boolean,
-  jsonResponse?: boolean,
-  method?: Method,
+  jsonRequest?: boolean;
+  jsonResponse?: boolean;
+  method?: Method;
 };
 
 export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
-  const url = typeof target === `string` ? new URL(target) : target;
+  const realRequest = async () => await requestImpl(target, body, {configuration, headers, jsonRequest, jsonResponse, method});
 
-  const networkConfig = getNetworkSettings(url, {configuration});
-  if (networkConfig.enableNetwork === false)
-    throw new Error(`Request to '${url.href}' has been blocked because of your configuration settings`);
+  const executor = await configuration.reduceHook(hooks => {
+    return hooks.wrapNetworkRequest;
+  }, realRequest, {target, body, configuration, headers, jsonRequest, jsonResponse, method});
 
-  if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
-    throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
-
-  const agent = {
-    http: networkConfig.httpProxy
-      ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
-      : globalHttpAgent,
-    https: networkConfig.httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
-      : globalHttpsAgent,
-  };
-
-  const gotOptions: ExtendOptions = {agent, headers, method};
-  gotOptions.responseType = jsonResponse
-    ? `json`
-    : `buffer`;
-
-  if (body !== null) {
-    if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
-      gotOptions.body = body;
-    } else {
-      // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
-      gotOptions.json = body;
-    }
-  }
-
-  const socketTimeout = configuration.get(`httpTimeout`);
-  const retry = configuration.get(`httpRetry`);
-  const rejectUnauthorized = configuration.get(`enableStrictSsl`);
-  const caFilePath = networkConfig.caFilePath;
-
-  const {default: got} = await import(`got`);
-
-  const certificateAuthority = caFilePath
-    ? await getCachedCertificate(caFilePath)
-    : undefined;
-
-  const gotClient = got.extend({
-    timeout: {
-      socket: socketTimeout,
-    },
-    retry,
-    https: {
-      rejectUnauthorized,
-      certificateAuthority,
-    },
-    ...gotOptions,
-  });
-
-  return configuration.getLimit(`networkConcurrency`)(() => {
-    return gotClient(url) as unknown as Response<any>;
-  });
+  return await executor();
 }
 
 export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
@@ -266,4 +217,75 @@ export async function del(target: string, {customErrorMessage, ...options}: Opti
   const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), options);
 
   return response.body;
+}
+
+async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
+  const url = typeof target === `string` ? new URL(target) : target;
+
+  const networkConfig = getNetworkSettings(url, {configuration});
+  if (networkConfig.enableNetwork === false)
+    throw new Error(`Request to '${url.href}' has been blocked because of your configuration settings`);
+
+  if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
+    throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
+
+  const agent = {
+    http: networkConfig.httpProxy
+      ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
+      : globalHttpAgent,
+    https: networkConfig.httpsProxy
+      ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
+      : globalHttpsAgent,
+  };
+
+  const gotOptions: ExtendOptions = {agent, headers, method};
+  gotOptions.responseType = jsonResponse
+    ? `json`
+    : `buffer`;
+
+  if (body !== null) {
+    if (Buffer.isBuffer(body) || (!jsonRequest && typeof body === `string`)) {
+      gotOptions.body = body;
+    } else {
+      // @ts-expect-error: The got types only allow an object, but got can stringify any valid JSON
+      gotOptions.json = body;
+    }
+  }
+
+  const socketTimeout = configuration.get(`httpTimeout`);
+  const retry = configuration.get(`httpRetry`);
+  const rejectUnauthorized = configuration.get(`enableStrictSsl`);
+  const caFilePath = networkConfig.caFilePath;
+  const httpsCertFilePath = networkConfig.httpsCertFilePath;
+  const httpsKeyFilePath = networkConfig.httpsKeyFilePath;
+
+  const {default: got} = await import(`got`);
+
+  const certificateAuthority = caFilePath
+    ? await getCachedFile(caFilePath)
+    : undefined;
+  const certificate = httpsCertFilePath
+    ? await getCachedFile(httpsCertFilePath)
+    : undefined;
+  const key = httpsKeyFilePath
+    ? await getCachedFile(httpsKeyFilePath)
+    : undefined;
+
+  const gotClient = got.extend({
+    timeout: {
+      socket: socketTimeout,
+    },
+    retry,
+    https: {
+      rejectUnauthorized,
+      certificateAuthority,
+      certificate,
+      key,
+    },
+    ...gotOptions,
+  });
+
+  return configuration.getLimit(`networkConcurrency`)(() => {
+    return gotClient(url) as unknown as Response<any>;
+  });
 }

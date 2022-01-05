@@ -8,6 +8,7 @@ on:
     - master
   pull_request:
     paths:
+    - .github/actions/prepare/action.yml
     - .github/workflows/e2e-snowpack-workflow.yml
     - scripts/e2e-setup-ci.sh
 
@@ -20,14 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - name: 'Install Node'
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
-
-    - name: 'Build the standard bundle'
-      run: |
-        node ./scripts/run-yarn.js build:cli
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the integration test'
       run: |
@@ -39,4 +33,9 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-snowpack-app my-csa-ts --template @snowpack/app-template-react-typescript --use-yarn
-        cd my-csa-ts && yarn add @types/mocha && yarn build
+        cd my-csa-ts
+        # Snowpack executes `yarn pnpify tsc`
+        cat package.json | jq '.scripts.pnpify="tsc"' | tee package.json
+        yarn build
+      if: |
+        always()

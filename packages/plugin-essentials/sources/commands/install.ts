@@ -3,7 +3,7 @@ import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, f
 import {xfs, ppath, Filename}                                                                            from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                        from '@yarnpkg/parsers';
 import CI                                                                                                from 'ci-info';
-import {Command, Option, Usage}                                                                          from 'clipanion';
+import {Command, Option, Usage, UsageError}                                                              from 'clipanion';
 import * as t                                                                                            from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -218,7 +218,12 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    const immutable = this.immutable ?? configuration.get(`enableImmutableInstalls`);
+    const updateMode = this.mode === InstallMode.UpdateLockfile;
+    if (updateMode && (this.immutable || this.immutableCache))
+      throw new UsageError(`${formatUtils.pretty(configuration, `--immutable`, formatUtils.Type.CODE)} and ${formatUtils.pretty(configuration, `--immutable-cache`, formatUtils.Type.CODE)} cannot be used with ${formatUtils.pretty(configuration, `--mode=update-lockfile`, formatUtils.Type.CODE)}`);
+
+    const immutable = (this.immutable ?? configuration.get(`enableImmutableInstalls`)) && !updateMode;
+    const immutableCache = this.immutableCache && !updateMode;
 
     if (configuration.projectCwd !== null) {
       const fixReport = await StreamReport.start({
@@ -291,7 +296,7 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration, {immutable: this.immutableCache, check: this.checkCache});
+    const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);

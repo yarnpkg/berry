@@ -1,5 +1,0 @@
-releases:
-  "@yarnpkg/esbuild-plugin-pnp": major
-
-declined:
-  - "@yarnpkg/builder"

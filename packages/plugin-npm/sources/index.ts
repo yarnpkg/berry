@@ -34,6 +34,11 @@ const authSettings = {
 };
 
 const registrySettings = {
+  npmAuditRegistry: {
+    description: `Registry to query for audit reports`,
+    type: SettingsType.STRING as const,
+    default: null,
+  },
   npmPublishRegistry: {
     description: `Registry to push packages to`,
     type: SettingsType.STRING as const,
@@ -52,6 +57,7 @@ declare module '@yarnpkg/core' {
     npmAuthIdent: string | null;
     npmAuthToken: string | null;
 
+    npmAuditRegistry: string | null;
     npmPublishRegistry: string | null;
     npmRegistryServer: string;
 

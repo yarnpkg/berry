@@ -7,21 +7,18 @@ import {inspect}                                                                
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
+import * as nodeUtils                                                                                                                                                                      from './nodeUtils';
 
 export type MakeApiOptions = {
-  allowDebug?: boolean,
-  compatibilityMode?: boolean,
-  fakeFs: FakeFS<PortablePath>,
-  pnpapiResolution: NativePath,
+  allowDebug?: boolean;
+  compatibilityMode?: boolean;
+  fakeFs: FakeFS<PortablePath>;
+  pnpapiResolution: NativePath;
 };
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
-
-  // @ts-expect-error
-  const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-  const isBuiltinModule = (request: string) => builtinModules.has(request) || request.startsWith(`node:`);
 
   // Splits a require request into its components, or return null if the request is a file path
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
@@ -194,12 +191,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return false;
   }
 
+  const defaultExportsConditions = new Set([`default`, `node`, `require`]);
+
   /**
    * Implements the node resolution for the "exports" field
    *
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
-  function applyNodeExportsResolution(unqualifiedPath: PortablePath) {
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {
       resolveIgnored: true,
       includeDiscardFromLookup: true,
@@ -231,11 +230,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       subpath = `./${subpath}` as PortablePath;
 
     const resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
-      browser: false,
-      require: true,
       // TODO: implement support for the --conditions flag
       // Waiting on https://github.com/nodejs/node/issues/36935
-      conditions: [],
+      // @ts-expect-error - Type should be Iterable<string>
+      conditions,
+      unsafe: true,
     });
 
     if (typeof resolvedExport === `string`)
@@ -529,7 +528,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && isBuiltinModule(request))
+    if (considerBuiltins && nodeUtils.isBuiltinModule(request))
       return null;
 
     const requestForDisplay = getPathForDisplay(request);
@@ -698,7 +697,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && isBuiltinModule(request)) {
+        if (!considerBuiltins && nodeUtils.isBuiltinModule(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
@@ -778,12 +777,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath) {
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request))
       return unqualifiedPath;
 
-    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath);
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, conditions);
     if (unqualifiedExportPath) {
       return ppath.normalize(unqualifiedExportPath);
     } else {
@@ -837,7 +836,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions}: ResolveRequestOptions = {}): PortablePath | null {
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions}: ResolveRequestOptions = {}): PortablePath | null {
     const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
     // If the request is the pnpapi, we can just return the unqualifiedPath
@@ -854,8 +853,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         ? isPathIgnored(issuer)
         : false;
 
-    const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored()
-      ? resolveUnqualifiedExport(request, unqualifiedPath)
+    const remappedPath = (!considerBuiltins || !nodeUtils.isBuiltinModule(request)) && !isIssuerIgnored()
+      ? resolveUnqualifiedExport(request, unqualifiedPath, conditions)
       : unqualifiedPath;
 
     try {

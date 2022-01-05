@@ -1,0 +1,4 @@
+declined:
+  - "@yarnpkg/core"
+  - "@yarnpkg/libzip"
+  - "@yarnpkg/pnp"

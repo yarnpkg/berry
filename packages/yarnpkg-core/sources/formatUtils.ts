@@ -1,6 +1,7 @@
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import CI                                                                   from 'ci-info';
+import {ColorFormat, formatMarkdownish}                                     from 'clipanion';
 import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
 
@@ -44,6 +45,8 @@ export const Type = {
   DEPENDENT: `DEPENDENT`,
   PACKAGE_EXTENSION: `PACKAGE_EXTENSION`,
   SETTING: `SETTING`,
+
+  MARKDOWN: `MARKDOWN`,
 } as const;
 
 export type Type = keyof typeof Type;
@@ -91,11 +94,11 @@ const colors = new Map<Type, [string, number] | null>([
 // properly type the `format` method from Configuration. Since transforms are
 // internal to this file, it should be fine.
 const validateTransform = <T>(spec: {
-  pretty: (configuration: any, val: T) => string,
-  json: (val: T) => any
+  pretty: (configuration: any, val: T) => string;
+  json: (val: T) => any;
 }): {
-  pretty: (configuration: any, val: T) => string,
-  json: (val: T) => any,
+  pretty: (configuration: any, val: T) => string;
+  json: (val: T) => any;
 } => spec;
 
 const transforms = {
@@ -243,6 +246,15 @@ const transforms = {
       return npath.fromPortablePath(filePath) as string;
     },
   }),
+
+  [Type.MARKDOWN]: validateTransform({
+    pretty: (configuration: Configuration, {text, format, paragraphs}: {text: string, format: ColorFormat, paragraphs: boolean}) => {
+      return formatMarkdownish(text, {format, paragraphs});
+    },
+    json: ({text}: {text: string, format: ColorFormat, paragraphs: boolean}) => {
+      return text;
+    },
+  }),
 };
 
 type AllTransforms = typeof transforms;
@@ -350,6 +362,12 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
     throw new Error(`Assertion failed: Expected the value to be a string, got ${typeof value}`);
 
   return value;
+}
+
+export function jsonOrPretty<T extends Type>(outputJson: boolean, configuration: Configuration, [value, formatType]: Tuple<T>) {
+  return outputJson
+    ? json(value, formatType)
+    : pretty(configuration, value, formatType);
 }
 
 export function mark(configuration: Configuration) {

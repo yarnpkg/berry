@@ -1,10 +1,6 @@
-import styled   from '@emotion/styled';
-import React    from 'react';
-import html     from 'remark-html';
-import markdown from 'remark-parse';
-import unified  from 'unified';
-
-import useCache from '../utils/useCache';
+import styled        from '@emotion/styled';
+import {MDXRenderer} from 'gatsby-plugin-mdx';
+import React         from 'react';
 
 const Container = styled.article`
   line-height: 1.7;
@@ -179,24 +175,12 @@ export const PrerenderedMarkdown = ({title, children, editUrl}) => <>
       <Title>
         {title.match(/^`.*`$/) ? <code>{title.slice(1, -1)}</code> : title}
       </Title>
-      {editUrl && <EditLink target="_blank" href={editUrl}>Edit this page on GitHub</EditLink>}
+      {editUrl && <EditLink target={`_blank`} href={editUrl}>Edit this page on GitHub</EditLink>}
     </TitleContainer>
-    <Content dangerouslySetInnerHTML={{__html: children}} />
+    <Content>
+      <MDXRenderer>
+        {children}
+      </MDXRenderer>
+    </Content>
   </Container>
 </>;
-
-export const Markdown = ({title, children}) => {
-  const document = useCache(() => {
-    return unified().use(markdown).use(html, {
-      sanitize: true,
-    }).process(children);
-  }, [
-    children,
-  ]);
-
-  return document ? <>
-    <PrerenderedMarkdown title={title}>
-      {String(document)}
-    </PrerenderedMarkdown>
-  </> : null;
-};

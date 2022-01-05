@@ -9,7 +9,7 @@ export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   await wrapper.writeManifest();
 
   await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
-  await wrapper.writeFile(`lib/api.js` as PortablePath);
+  await wrapper.writeFile(`lib/api.js` as PortablePath, {requirePath: `` as PortablePath});
 
   return wrapper;
 };
@@ -180,7 +180,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             typeof parsedMessage.arguments.hostInfo === \`string\`
           ) {
             hostInfo = parsedMessage.arguments.hostInfo;
-            if (hostInfo === \`vscode\` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\\/1\\.[1-5][0-9]\\./)) {
+            if (hostInfo === \`vscode\` && process.env.VSCODE_IPC_HOOK && process.env.VSCODE_IPC_HOOK.match(/Code\\/1\\.([1-5][0-9]|60)\\./)) {
               hostInfo += \` <1.61\`;
             }
           }
@@ -216,17 +216,6 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
   return wrapper;
 };
 
-export const generateStylelintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`stylelint` as PortablePath, {pnpApi, target});
-
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/stylelint.js` as PortablePath);
-  await wrapper.writeFile(`lib/index.js` as PortablePath);
-
-  return wrapper;
-};
-
 export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`svelte-language-server` as PortablePath, {pnpApi, target});
 
@@ -252,7 +241,6 @@ export const BASE_SDKS: BaseSdks = [
   [`prettier`, generatePrettierBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],
   [`typescript`, generateTypescriptBaseWrapper],
-  [`stylelint`, generateStylelintBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
   [`flow-bin`, generateFlowBinBaseWrapper],
 ];

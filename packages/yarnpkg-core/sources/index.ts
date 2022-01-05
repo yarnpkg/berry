@@ -22,8 +22,8 @@ export {LightReport}                                                            
 export type {Linker, LinkOptions, MinimalLinkOptions}                                                     from './Linker';
 export {Manifest}                                                                                         from './Manifest';
 export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMeta}                       from './Manifest';
-export {MessageName}                                                                                      from './MessageName';
-export type {CommandContext, Hooks, Plugin}                                                               from './Plugin';
+export {MessageName, parseMessageName, stringifyMessageName}                                              from './MessageName';
+export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                       from './Plugin';
 export type {PeerRequirement}                                                                             from './Project';
 export {Project, InstallMode}                                                                             from './Project';
 export {TAG_REGEXP}                                                                                       from './ProtocolResolver';

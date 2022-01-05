@@ -1,0 +1,30 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-svelte-kit-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E SvelteKit'
+jobs:
+  chore:
+    name: 'Validating SvelteKit'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yes | YARN_PNP_ENABLE_ESM_LOADER=true yarn create svelte@next my-app && cd my-app
+        YARN_PNP_ENABLE_ESM_LOADER=true yarn
+        yarn build
+

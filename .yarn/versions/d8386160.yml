@@ -1,0 +1,7 @@
+releases:
+  "@yarnpkg/eslint-config": minor
+
+declined:
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/libui"

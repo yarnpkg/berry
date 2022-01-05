@@ -15,12 +15,12 @@ enum PrettyJsonState {
 
 type PrettyJsonMachine = {
   [key: string]: {
-    collapsed: boolean,
+    collapsed: boolean;
     next: {
-      [key: string]: PrettyJsonState,
-      [`*`]: PrettyJsonState,
-    },
-  },
+      [key: string]: PrettyJsonState;
+      [`*`]: PrettyJsonState;
+    };
+  };
 };
 
 const prettyJsonMachine: PrettyJsonMachine = {

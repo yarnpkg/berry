@@ -6,6 +6,7 @@ on:
     - master
   pull_request:
     paths:
+    - .github/actions/prepare/action.yml
     - .github/workflows/e2e-eslint-workflow.yml
     - scripts/e2e-setup-ci.sh
 
@@ -18,14 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - name: 'Install Node'
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
-
-    - name: 'Build the standard bundle'
-      run: |
-        node ./scripts/run-yarn.js build:cli
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the integration test'
       run: |
@@ -56,3 +50,5 @@ jobs:
 
         echo 'const f = () => 42;' | tee ko.ts
         ! yarn eslint ko.ts
+      if: |
+        always()

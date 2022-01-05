@@ -11,6 +11,9 @@ body {
 
   font-family: "Open Sans", sans-serif;
   line-height: 1.5;
+  
+  /* match banner + topbar height to avoid hiding anchor link targets below topbar */
+  scroll-padding-top: 100px;
 }
 
 code {
@@ -48,3 +51,38 @@ th:last-child {
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=PT+Mono&display=swap');
+
+
+.anchor.before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%);
+  padding-right: 8px;
+}
+.anchor.after {
+  display: inline-block;
+  padding-left: 8px;
+}
+h1 .anchor svg,
+h2 .anchor svg,
+h3 .anchor svg,
+h4 .anchor svg,
+h5 .anchor svg,
+h6 .anchor svg {
+  visibility: hidden;
+}
+h1:hover .anchor svg,
+h2:hover .anchor svg,
+h3:hover .anchor svg,
+h4:hover .anchor svg,
+h5:hover .anchor svg,
+h6:hover .anchor svg,
+h1 .anchor:focus svg,
+h2 .anchor:focus svg,
+h3 .anchor:focus svg,
+h4 .anchor:focus svg,
+h5 .anchor:focus svg,
+h6 .anchor:focus svg {
+  visibility: visible;
+}

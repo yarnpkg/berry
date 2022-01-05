@@ -1,6 +1,6 @@
 const {
   fs: {createTemporaryFolder, readFile, writeFile},
-  tests: {startPackageServer},
+  tests: {startPackageServer, validLogins},
 } = require(`pkg-tests-core`);
 
 const SPEC_RC_FILENAME = `.spec-yarnrc`;
@@ -27,8 +27,8 @@ describe(`Commands`, () => {
             env: {
               HOME: homePath,
               USERPROFILE: homePath,
-              TEST_NPM_USER: `anotherTestUser`,
-              TEST_NPM_PASSWORD: `password123`,
+              TEST_NPM_USER: validLogins.fooUser.username,
+              TEST_NPM_PASSWORD: validLogins.fooUser.password,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -60,9 +60,9 @@ describe(`Commands`, () => {
             env: {
               HOME: homePath,
               USERPROFILE: homePath,
-              TEST_NPM_USER: `testUser`,
-              TEST_NPM_PASSWORD: `password`,
-              TEST_NPM_2FA_TOKEN: `1234`,
+              TEST_NPM_USER: validLogins.otpUser.username,
+              TEST_NPM_PASSWORD: validLogins.otpUser.password,
+              TEST_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -84,11 +84,11 @@ describe(`Commands`, () => {
         await expect(
           run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: `anotherTestUser`,
+              TEST_NPM_USER: validLogins.fooUser.username,
               TEST_NPM_PASSWORD: `incorrect password`,
             },
           }),
-        ).rejects.toThrowError(/Invalid authentication \(attempted as anotherTestUser\)/);
+        ).rejects.toThrowError(/Invalid authentication \(attempted as foo-user\)/);
       }),
     );
 
@@ -98,12 +98,12 @@ describe(`Commands`, () => {
         await expect(
           run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: `testUser`,
-              TEST_NPM_PASSWORD: `password`,
+              TEST_NPM_USER: validLogins.otpUser.username,
+              TEST_NPM_PASSWORD: validLogins.otpUser.password,
               TEST_NPM_2FA_TOKEN: `incorrect OTP`,
             },
           }),
-        ).rejects.toThrowError(/Invalid authentication \(attempted as testUser\)/);
+        ).rejects.toThrowError(/Invalid OTP token/);
       }),
     );
 
@@ -128,8 +128,8 @@ describe(`Commands`, () => {
             env: {
               HOME: homePath,
               USERPROFILE: homePath,
-              TEST_NPM_USER: `anotherTestUser`,
-              TEST_NPM_PASSWORD: `password123`,
+              TEST_NPM_USER: validLogins.fooUser.username,
+              TEST_NPM_PASSWORD: validLogins.fooUser.password,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -168,9 +168,9 @@ describe(`Commands`, () => {
             env: {
               HOME: homePath,
               USERPROFILE: homePath,
-              TEST_NPM_USER: `testUser`,
-              TEST_NPM_PASSWORD: `password`,
-              TEST_NPM_2FA_TOKEN: `1234`,
+              TEST_NPM_USER: validLogins.otpUser.username,
+              TEST_NPM_PASSWORD: validLogins.otpUser.password,
+              TEST_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));

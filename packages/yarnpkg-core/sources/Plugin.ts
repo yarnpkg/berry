@@ -1,6 +1,7 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
 import {Writable, Readable}                                                                   from 'stream';
+import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
 import {Fetcher}                                                                              from './Fetcher';
@@ -9,6 +10,7 @@ import {MessageName}                                                            
 import {Project, InstallOptions}                                                              from './Project';
 import {Resolver, ResolveOptions}                                                             from './Resolver';
 import {Workspace}                                                                            from './Workspace';
+import * as httpUtils                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
 
 type ProcessEnvironment = {[key: string]: string};
@@ -20,6 +22,7 @@ export type CommandContext = {
   stdin: Readable;
   stdout: Writable;
   stderr: Writable;
+  colorDepth: number;
 };
 
 export interface FetcherPlugin {
@@ -34,11 +37,16 @@ export interface ResolverPlugin {
   new(): Resolver;
 }
 
-export type Hooks = {
+export type WrapNetworkRequestInfo = httpUtils.Options & {
+  target: string | URL;
+  body: httpUtils.Body;
+};
+
+export interface Hooks {
   /**
    * Called when the package extensions are setup. Can be used to inject new
-   * ones (for example, that's what the compat plugin uses to workaround
-   * metadata problems).
+   * ones. That's for example what the compat plugin uses to automatically fix
+   * packages with known flaws.
    */
   registerPackageExtensions?: (
     configuration: Configuration,
@@ -59,11 +67,13 @@ export type Hooks = {
     project: Project,
     env: ProcessEnvironment,
     makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
-   * When a script is getting executed. You must call the executor, or the
-   * script won't be called at all.
+   * Called as a script is getting executed. The `executor` function parameter,
+   * when called, will execute the script. You can use this mechanism to wrap
+   * script executions, for example to run some validation or add some
+   * performance monitoring.
    */
   wrapScriptExecution?: (
     executor: () => Promise<number>,
@@ -71,21 +81,39 @@ export type Hooks = {
     locator: Locator,
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
-  ) => Promise<() => Promise<number>>,
+  ) => Promise<() => Promise<number>>;
+
+  /**
+   * Called when a network request is being made. The `executor` function
+   * parameter, when called, will trigger the network request. You can use this
+   * mechanism to wrap network requests, for example to run some validation or
+   * add some logging.
+   */
+  wrapNetworkRequest?: (
+    executor: () => Promise<any>,
+    extra: WrapNetworkRequestInfo
+  ) => Promise<() => Promise<any>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
    * to detect whether packages must be rebuilt (typically when the Node
-   * version changes)
+   * version changes).
    */
   globalHashGeneration?: (
     project: Project,
     contributeHash: (data: string | Buffer) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
-   * Before the resolution runs; should be use to setup new aliases that won't
-   * persist on the project instance itself.
+   * Called during the resolution, once for each resolved package and each of
+   * their dependencies. By returning a new dependency descriptor you can
+   * replace the original one by a different range.
+   *
+   * Note that when multiple plugins are registered on `reduceDependency` they
+   * will be executed in definition order. In that case, `dependency` will
+   * always refer to the dependency as it currently is, whereas
+   * `initialDependency` will be the descriptor before any plugin attempted to
+   * change it.
    */
   reduceDependency?: (
     dependency: Descriptor,
@@ -93,7 +121,7 @@ export type Hooks = {
     locator: Locator,
     initialDependency: Descriptor,
     extra: {resolver: Resolver, resolveOptions: ResolveOptions},
-  ) => Promise<Descriptor>,
+  ) => Promise<Descriptor>;
 
   /**
    * Called after the `install` method from the `Project` class successfully
@@ -102,53 +130,55 @@ export type Hooks = {
   afterAllInstalled?: (
     project: Project,
     options: InstallOptions
-  ) => void,
+  ) => void;
 
   /**
-   * Called during the `Validation step` of the `install` method from the `Project`
-   * class.
+   * Called during the `Validation step` of the `install` method from the
+   * `Project` class.
    */
   validateProject?: (
     project: Project,
     report: {
-      reportWarning: (name: MessageName, text: string) => void,
-      reportError: (name: MessageName, text: string) => void,
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
     }
   ) => void;
 
   /**
-   * Called during the `Validation step` of the `install` method from the `Project`
-   * class by the `validateProject` hook.
+   * Called during the `Validation step` of the `install` method from the
+   * `Project` class by the `validateProject` hook.
    */
   validateWorkspace?: (
     workspace: Workspace,
     report: {
-      reportWarning: (name: MessageName, text: string) => void,
-      reportError: (name: MessageName, text: string) => void,
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
     }
   ) => void;
 
   /**
-   * Used to notify the core of all the potential artifacts of the available linkers.
+   * Used to notify the core of all the potential artifacts of the available
+   * linkers.
    */
   populateYarnPaths?: (
     project: Project,
     definePath: (path: PortablePath | null) => void,
-  ) => Promise<void>,
+  ) => Promise<void>;
 
   /**
-   * Called when user requests to clean global cache
+   * Called when the user requests to clean the global cache. Plugins should
+   * use this hook to remove their own global artifacts.
    */
   cleanGlobalArtifacts?: (
     configuration: Configuration,
   ) => Promise<void>;
-};
+}
 
 export type Plugin<PluginHooks = any> = {
-  configuration?: Partial<ConfigurationDefinitionMap>,
-  commands?: Array<CommandClass<CommandContext>>,
-  fetchers?: Array<FetcherPlugin>,
-  linkers?: Array<LinkerPlugin>,
-  resolvers?: Array<ResolverPlugin>,
-  hooks?: PluginHooks,
+  configuration?: Partial<ConfigurationDefinitionMap>;
+  commands?: Array<CommandClass<CommandContext>>;
+  fetchers?: Array<FetcherPlugin>;
+  linkers?: Array<LinkerPlugin>;
+  resolvers?: Array<ResolverPlugin>;
+  hooks?: PluginHooks;
 };

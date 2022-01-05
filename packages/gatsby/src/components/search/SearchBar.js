@@ -55,12 +55,12 @@ export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owne
       }}
     />
     <VirtualRefinementList
-      attribute="keywords"
+      attribute={`keywords`}
       defaultRefinement={tags}
       onRefine={tags => setTags(tags)}
     />
     <VirtualRefinementList
-      attribute="owner.name"
+      attribute={`owner.name`}
       defaultRefinement={owners}
       onRefine={owners => setOwners(owners)}
     />

@@ -4,7 +4,7 @@ import {ProxiedFS}           from './ProxiedFS';
 import {PortablePath, ppath} from './path';
 
 export type CwdFSOptions = {
-  baseFs?: FakeFS<PortablePath>,
+  baseFs?: FakeFS<PortablePath>;
 };
 
 export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {

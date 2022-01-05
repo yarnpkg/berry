@@ -14,7 +14,7 @@ import {dynamicRequireNoCache}                                                  
 import {resolveNodeModulesPath, ResolvedPath}                                                                                      from './resolveNodeModulesPath';
 
 export type NodeModulesFSOptions = {
-  realFs?: typeof fs,
+  realFs?: typeof fs;
   pnpifyFs?: boolean;
 };
 
@@ -37,7 +37,7 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
 }
 
 interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
-  baseFs?: FakeFS<PortablePath>
+  baseFs?: FakeFS<PortablePath>;
   pnpifyFs?: boolean;
 }
 
@@ -147,11 +147,11 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   }
 
   private resolveLink(opts: {
-    p: PortablePath,
-    op: string,
-    onSymlink: (stats: fs.Stats | fs.BigIntStats, targetPath: PortablePath) => any
-    onRealPath: (targetPath: PortablePath) => any
-    statOptions?: {bigint: boolean}
+    p: PortablePath;
+    op: string;
+    onSymlink: (stats: fs.Stats | fs.BigIntStats, targetPath: PortablePath) => any;
+    onRealPath: (targetPath: PortablePath) => any;
+    statOptions?: {bigint: boolean};
   }) {
     const {p, onSymlink, onRealPath, statOptions} = opts;
 

@@ -10,6 +10,7 @@
 node_modules
 yarn-error.log
 
+.DS_Store
 .history
 
 junit.xml
@@ -32,9 +33,6 @@ package.tgz
 
 # Those packages are built inline and the JS files must not be checked-in
 /packages/yarnpkg-libui/sources/**/*.js
-
-# We check-in the PnP hook because it would be heavy to regenerate it before each bundle build
-!/packages/yarnpkg-pnp/lib/hook.js
 
 /vscode-case-study
 

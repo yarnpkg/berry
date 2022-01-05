@@ -48,6 +48,15 @@ setup-yarn2-nm() {
     "compressionLevel: 0"
 }
 
+setup-yarn2-pnpm() {
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "nodeLinker: pnpm"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "enableGlobalCache: true"
+  >> "$BENCH_DIR/.yarnrc.yml" echo \
+    "compressionLevel: 0"
+}
+
 case $PACKAGE_MANAGER in
   classic)
     bench install-full-cold \
@@ -81,6 +90,22 @@ case $PACKAGE_MANAGER in
   yarn-nm)
     setup-yarn2
     setup-yarn2-nm
+    bench install-full-cold \
+      --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
+      'yarn install'
+    bench install-cache-only \
+      --prepare 'rm -rf .yarn node_modules yarn.lock' \
+      'yarn install'
+    bench install-cache-and-lock \
+      --prepare 'rm -rf .yarn node_modules' \
+      'yarn install'
+    bench install-ready \
+      --prepare 'yarn remove dummy-pkg || true' \
+      'yarn add dummy-pkg@link:./dummy-pkg'
+    ;;
+  yarn-pnpm)
+    setup-yarn2
+    setup-yarn2-pnpm
     bench install-full-cold \
       --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
       'yarn install'

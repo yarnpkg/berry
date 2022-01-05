@@ -18,25 +18,18 @@ jobs:
         token: ${{secrets.YARNBOT_TOKEN}}
         fetch-depth: 0
 
-    - name: 'Install Node'
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
+    - uses: ./.github/actions/prepare
 
-    - name: 'Build the standard bundle'
-      run: |
-        node ./scripts/run-yarn.js build:cli
-
-    - name: 'Update, commit, and upload the hook'
+    - name: 'Update, commit, and upload the artifacts'
       run: |
         PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{github.event.inputs.pr}}')
-        
+
         PR_REPO=$(jq -r .head.repo.full_name <<< "$PR_META")
         PR_REF=$(jq -r .head.ref <<< "$PR_META")
 
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
-        
+
         git remote add pr-source https://'${{secrets.YARNBOT_TOKEN}}'@github.com/"$PR_REPO".git
 
         git fetch pr-source "$PR_REF":local
@@ -52,15 +45,26 @@ jobs:
 
           if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/hook.js; then
             git checkout --theirs packages/yarnpkg-pnp/sources/hook.js
-            yarn update:pnp:hook
+            yarn build:pnp:hook
+            SHOULD_RUN_AN_INSTALL=1
           fi
-          
+
+          if git diff --name-only --diff-filter=U | grep packages/yarnpkg-pnp/sources/esm-loader/built-loader.js; then
+            git checkout --theirs packages/yarnpkg-pnp/sources/esm-loader/built-loader.js
+            yarn build:pnp:hook
+            SHOULD_RUN_AN_INSTALL=1
+          fi
+
+          if [[ "$SHOULD_RUN_AN_INSTALL" == "1" ]]; then
+            yarn install
+          fi
+
           if git diff --name-only --diff-filter=U | grep packages/yarnpkg-parsers/sources/grammars/shell.js; then
             git checkout --theirs packages/yarnpkg-parsers/sources/grammars/shell.js
             yarn grammar:shell
           fi
 
-          git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js packages/yarnpkg-parsers/sources/grammars/shell.js
+          git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js packages/yarnpkg-pnp/sources/esm-loader/built-loader.js packages/yarnpkg-parsers/sources/grammars/shell.js
           git commit -m 'Auto-merge with master'
         fi
 
