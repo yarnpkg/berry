@@ -189,6 +189,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/yarnpkg-shell"
       },
       {
+        "name": "@yarnpkg/tools",
+        "reference": "workspace:packages/yarnpkg-tools"
+      },
+      {
         "name": "pkg-tests-core",
         "reference": "workspace:packages/acceptance-tests/pkg-tests-core"
       },
@@ -245,6 +249,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/pnpify", ["workspace:packages/yarnpkg-pnpify"]],
       ["@yarnpkg/sdks", ["workspace:packages/yarnpkg-sdks"]],
       ["@yarnpkg/shell", ["workspace:packages/yarnpkg-shell"]],
+      ["@yarnpkg/tools", ["workspace:packages/yarnpkg-tools"]],
       ["acceptance-tests-229a13", ["workspace:packages/acceptance-tests"]],
       ["pkg-tests-core", ["workspace:packages/acceptance-tests/pkg-tests-core"]],
       ["pkg-tests-fixtures", ["workspace:packages/acceptance-tests/pkg-tests-fixtures"]],
@@ -15296,6 +15301,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["stream-buffers", "npm:3.0.2"],
             ["strip-ansi", "npm:6.0.1"],
             ["tslib", "npm:1.13.0"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["@yarnpkg/tools", [
+        ["workspace:packages/yarnpkg-tools", {
+          "packageLocation": "./packages/yarnpkg-tools/",
+          "packageDependencies": [
+            ["@yarnpkg/tools", "workspace:packages/yarnpkg-tools"]
           ],
           "linkType": "SOFT",
         }]

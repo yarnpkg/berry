@@ -6297,6 +6297,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/tools@workspace:packages/yarnpkg-tools":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/tools@workspace:packages/yarnpkg-tools"
+  languageName: unknown
+  linkType: soft
+
 "@zkochan/cmd-shim@npm:^5.1.0":
   version: 5.1.0
   resolution: "@zkochan/cmd-shim@npm:5.1.0"
