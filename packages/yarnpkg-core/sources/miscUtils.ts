@@ -251,7 +251,7 @@ export class AsyncActions {
   private limit: Limit;
 
   constructor(limit: number) {
-    this.limit = pLimit(10);
+    this.limit = pLimit(limit);
   }
 
   set(key: string, factory: () => Promise<void>) {
