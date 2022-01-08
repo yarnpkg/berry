@@ -33,7 +33,7 @@ export default class SdkCommand extends Command {
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
 
-      For more details on Editor SDKs, please consult the dedicated page from our website: https://yarnpkg.com/sdks/cli/default.
+      For more details on Editor SDKs, please consult the dedicated page from our website: https://yarnpkg.com/getting-started/editor-sdks.
     `,
     examples: [[
       `Generate the base SDKs`,
