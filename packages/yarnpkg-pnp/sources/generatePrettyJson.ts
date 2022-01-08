@@ -154,6 +154,16 @@ const prettyJsonMachine: PrettyJsonMachine = {
   },
 };
 
+function stringifyKey(key: string) {
+  // This check isn't exhaustive, there are more valid `IdentifierName`s that we don't need to quote.
+  // Here's an example of a proper check that would be way too overkill for our use case:
+  // https://github.com/babel/babel/blob/a6d77d07b461064deda6bdae308a0c70cacdd280/packages/babel-helper-validator-identifier/src/identifier.ts#L85
+  if (key.match(/^[\w$]+$/))
+    return key;
+
+  return JSON.stringify(key);
+}
+
 function generateCollapsedArray(data: Array<any>, state: PrettyJsonState, indent: string) {
   let result = ``;
 
@@ -208,7 +218,7 @@ function generateCollapsedObject(data: {[key: string]: any}, state: PrettyJsonSt
     if (typeof value === `undefined`)
       continue;
 
-    result += JSON.stringify(key);
+    result += stringifyKey(key);
     result += `: `;
     result += generateNext(key, value, state, indent).replace(/^ +/g, ``);
     if (t + 1 < T) {
@@ -238,7 +248,7 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
       continue;
 
     result += nextIndent;
-    result += JSON.stringify(key);
+    result += stringifyKey(key);
     result += `: `;
     result += generateNext(key, value, state, nextIndent).replace(/^ +/g, ``);
 
