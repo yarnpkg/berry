@@ -112,19 +112,19 @@ module.exports = {
       options: {
         binaries: [
           {
-            namespace: null,
+            package: null,
             binary: `${__dirname}/../../scripts/run-yarn.js`,
           },
           {
-            namespace: `pnpify`,
+            package: `@yarnpkg/pnpify`,
             binary: `${__dirname}/../../scripts/run-pnpify.js`,
           },
           {
-            namespace: `sdks`,
+            package: `@yarnpkg/sdks`,
             binary: `${__dirname}/../../scripts/run-sdks.js`,
           },
           {
-            namespace: `builder`,
+            package: `@yarnpkg/builder`,
             binary: `${__dirname}/../../scripts/run-builder.js`,
           },
         ],

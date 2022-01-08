@@ -48,6 +48,11 @@ const Content = styled.div`
     background-color: #fff3e2;
   }
 
+  blockquote > ul {
+    margin: 0;
+    padding: 0.5em 2em;
+  }
+
   blockquote > p {
     margin: 0;
   }
