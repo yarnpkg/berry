@@ -25,6 +25,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - It now supports running binaries of soft links.
   - It will now create self-references for packages that don't depend on other versions of themselves.
   - It will now remove scope folders (e.g. `node_modules/@yarnpkg`) if they are empty or after removing a scoped dependency.
+- `.pnp.cjs` files with inlined data will now store the data in a JSON string literal instead of an object literal [to improve startup performance](https://v8.dev/blog/cost-of-javascript-2019#json).
 
 ### Bugfixes
 
