@@ -139,6 +139,12 @@
       "type": "boolean",
       "examples": [false]
     },
+    "enableMessageNames": {
+      "_package": "@yarnpkg/core",
+      "description": "If true, Yarn will prefix most messages with codes suitable for search engines.",
+      "type": "boolean",
+      "default": true
+    },
     "enableMirror": {
       "_package": "@yarnpkg/core",
       "description": "If true (the default), Yarn will use the global folder as indirection between the network and the actual cache. This makes installs much faster for projects that don't already benefit from Zero-Installs.",
