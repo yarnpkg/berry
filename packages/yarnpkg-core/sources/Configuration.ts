@@ -79,6 +79,7 @@ export enum SettingsType {
 export type SupportedArchitectures = {
   os: Array<string> | null;
   cpu: Array<string> | null;
+  libc: Array<string> | null;
 };
 
 export type FormatType = formatUtils.Type;
@@ -302,6 +303,13 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       },
       cpu: {
         description: `Array of supported process.arch strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+      libc: {
+        description: `Array of supported libc libraries, or null to target them all`,
         type: SettingsType.STRING,
         isArray: true,
         isNullable: true,
@@ -1469,18 +1477,23 @@ export class Configuration {
     return linkers;
   }
 
-  getSupportedArchitectures() {
+  getSupportedArchitectures(): nodeUtils.ArchitectureSet {
+    const architecture = nodeUtils.getArchitecture();
     const supportedArchitectures = this.get(`supportedArchitectures`);
 
     let os = supportedArchitectures.get(`os`);
     if (os !== null)
-      os = os.map(value => value === `current` ? process.platform : value);
+      os = os.map(value => value === `current` ? architecture.os : value);
 
     let cpu = supportedArchitectures.get(`cpu`);
     if (cpu !== null)
-      cpu = cpu.map(value => value === `current` ? process.arch : value);
+      cpu = cpu.map(value => value === `current` ? architecture.cpu : value);
 
-    return {os, cpu};
+    let libc = supportedArchitectures.get(`libc`);
+    if (libc !== null)
+      libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
+
+    return {os, cpu, libc};
   }
 
   async refreshPackageExtensions() {
