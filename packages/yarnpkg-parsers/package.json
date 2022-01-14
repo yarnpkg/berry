@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
+    "chevrotain": "^9.1.0",
     "js-yaml": "^3.10.0",
     "tslib": "^1.13.0"
   },

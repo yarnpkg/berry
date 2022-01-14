@@ -10627,6 +10627,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],
             ["@types/js-yaml", "npm:3.12.5"],
+            ["chevrotain", "npm:9.1.0"],
             ["js-yaml", "npm:3.14.1"],
             ["pegjs", "npm:0.10.0"],
             ["tslib", "npm:1.13.0"]

@@ -5774,6 +5774,7 @@ __metadata:
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
     "@types/js-yaml": ^3.11.1
+    chevrotain: ^9.1.0
     js-yaml: ^3.10.0
     pegjs: ^0.10.0
     tslib: ^1.13.0
