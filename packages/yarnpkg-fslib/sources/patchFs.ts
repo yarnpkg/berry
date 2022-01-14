@@ -21,7 +21,6 @@ const SYNC_IMPLEMENTATIONS = new Set([
   `mkdirSync`,
   `openSync`,
   `opendirSync`,
-  `readSync`,
   `readlinkSync`,
   `readFileSync`,
   `readdirSync`,
@@ -84,6 +83,37 @@ const FILEHANDLE_IMPLEMENTATIONS = new Set([
   `writePromise`,
   `writeFilePromise`,
 ]);
+
+//#region readSync types
+interface ReadSyncOptions {
+  /**
+   * @default 0
+   */
+  offset?: number | undefined;
+  /**
+   * @default `length of buffer`
+   */
+  length?: number | undefined;
+  /**
+   * @default null
+   */
+  position?: number | null | undefined;
+}
+
+type readSyncArguments = [
+  fd: number,
+  buffer: Buffer,
+  offset: number,
+  length: number,
+  position?: number | null,
+];
+
+type readSyncOptionsArguments = [
+  fd: number,
+  buffer: Buffer,
+  opts?: ReadSyncOptions,
+];
+//#endregion
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   // We wrap the `fakeFs` with a `URLFS` to add support for URL instances
@@ -165,6 +195,31 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       } catch (error) {
         return false;
       }
+    });
+
+    // Adapted from https://github.com/nodejs/node/blob/e5c1fd7a2a1801fd75bdde23b260488e85453eb2/lib/fs.js#L684-L725
+    setupFn(patchedFs, `readSync`, (...args: readSyncArguments | readSyncOptionsArguments) => {
+      let [fd, buffer, offset, length, position] = args as readSyncArguments;
+
+      if (args.length <= 3) {
+        // Assume fs.read(fd, buffer, options)
+        const options = (args as readSyncOptionsArguments)[2] || {};
+
+        ({offset = 0, length = buffer.byteLength, position} = options);
+      }
+
+      if (offset == null)
+        offset = 0;
+
+      length |= 0;
+
+      if (length === 0)
+        return 0;
+
+      if (position == null)
+        position = -1;
+
+      return fakeFs.readSync(fd, buffer, offset, length, position);
     });
 
     for (const fnName of SYNC_IMPLEMENTATIONS) {

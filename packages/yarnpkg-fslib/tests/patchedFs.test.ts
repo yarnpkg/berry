@@ -199,4 +199,20 @@ describe(`patchedFs`, () => {
 
     expect(patchedFs.readFileSync(`${nativeTmpdir}/archive.zip/a.txt`, `utf8`)).toStrictEqual(`foo`);
   });
+
+  it(`should support readSync using options`, () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const fd = patchedFs.openSync(__filename, `r`);
+
+    const buffer = Buffer.alloc(128);
+    try {
+      // @ts-expect-error - Node types are out of date
+      const bytesRead = patchedFs.readSync(fd, buffer);
+
+      expect(bytesRead).toEqual(buffer.byteLength);
+    } finally {
+      patchedFs.closeSync(fd);
+    }
+  });
 });
