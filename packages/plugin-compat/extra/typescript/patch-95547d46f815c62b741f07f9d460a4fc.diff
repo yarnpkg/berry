@@ -1,0 +1,2846 @@
+diff --git a/lib/tsc.js b/lib/tsc.js
+index e144201b5..21c462e0c 100644
+semver exclusivity >=4.5.2 <4.6
+--- a/lib/tsc.js
++++ b/lib/tsc.js
+@@ -4776,6 +4776,9 @@ var ts;
+                     : new Buffer(input, encoding);
+             }
+             function isFileSystemCaseSensitive() {
++                if (process.versions.pnp) {
++                    return true;
++                }
+                 if (platform === "win32" || platform === "win64") {
+                     return false;
+                 }
+@@ -33750,15 +33753,15 @@ var ts;
+         }
+     }
+     ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
+-    function getDefaultTypeRoots(currentDirectory, host) {
++    function getNodeModulesTypeRoots(currentDirectory, host) {
+         if (!host.directoryExists) {
+             return [ts.combinePaths(currentDirectory, nodeModulesAtTypes)];
+         }
+-        var typeRoots;
++        var typeRoots = [];
+         ts.forEachAncestorDirectory(ts.normalizePath(currentDirectory), function (directory) {
+             var atTypes = ts.combinePaths(directory, nodeModulesAtTypes);
+             if (host.directoryExists(atTypes)) {
+-                (typeRoots || (typeRoots = [])).push(atTypes);
++                typeRoots.push(atTypes);
+             }
+             return undefined;
+         });
+@@ -33769,6 +33772,37 @@ var ts;
+         var useCaseSensitiveFileNames = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+         return ts.comparePaths(path1, path2, !useCaseSensitiveFileNames) === 0;
+     }
++    function getPnpTypeRoots(currentDirectory) {
++        var pnpapi = getPnpApi(currentDirectory);
++        if (!pnpapi) {
++            return [];
++        }
++        currentDirectory = ts.sys.resolvePath(currentDirectory);
++        var currentPackage = pnpapi.findPackageLocator("".concat(currentDirectory, "/"));
++        if (!currentPackage) {
++            return [];
++        }
++        var packageDependencies = pnpapi.getPackageInformation(currentPackage).packageDependencies;
++        var typeRoots = [];
++        for (var _i = 0, _a = Array.from(packageDependencies.entries()); _i < _a.length; _i++) {
++            var _b = _a[_i], name = _b[0], referencish = _b[1];
++            if (name.startsWith(typesPackagePrefix) && referencish !== null) {
++                var dependencyLocator = pnpapi.getLocator(name, referencish);
++                var packageLocation = pnpapi.getPackageInformation(dependencyLocator).packageLocation;
++                typeRoots.push(ts.getDirectoryPath(packageLocation));
++            }
++        }
++        return typeRoots;
++    }
++    ts.getPnpTypeRoots = getPnpTypeRoots;
++    var typesPackagePrefix = "@types/";
++    function getDefaultTypeRoots(currentDirectory, host) {
++        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
++        var pnpTypes = getPnpTypeRoots(currentDirectory);
++        if (nmTypes.length > 0 || pnpTypes.length > 0) {
++            return __spreadArray(__spreadArray([], nmTypes, true), pnpTypes, true);
++        }
++    }
+     function resolveTypeReferenceDirective(typeReferenceDirectiveName, containingFile, options, host, redirectedReference, cache) {
+         var traceEnabled = isTraceEnabled(options, host);
+         if (redirectedReference) {
+@@ -33878,7 +33912,9 @@ var ts;
+                 }
+                 var result_4;
+                 if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
+-                    var searchResult = loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, undefined, undefined);
++                    var searchResult = getPnpApi(initialLocationForSecondaryLookup)
++                        ? tryLoadModuleUsingPnpResolution(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, undefined, undefined)
++                        : loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, undefined, undefined);
+                     result_4 = searchResult && searchResult.value;
+                 }
+                 else {
+@@ -34425,7 +34461,9 @@ var ts;
+                     if (traceEnabled) {
+                         trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
+                     }
+-                    resolved_1 = loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
++                    resolved_1 = getPnpApi(containingDirectory)
++                        ? tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference)
++                        : loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
+                 }
+                 if (!resolved_1)
+                     return undefined;
+@@ -35038,6 +35076,14 @@ var ts;
+     }
+     function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+         var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, undefined, undefined);
++    }
++    function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++        var candidate = ts.normalizePath(ts.combinePaths(packageDirectory, rest));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, undefined, undefined, true, state, cache, redirectedReference, candidate, rest, packageDirectory);
++    }
++    function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++        var _a;
+         var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+         if (!(state.features & NodeResolutionFeatures.Exports)) {
+             if (packageInfo) {
+@@ -35049,7 +35095,9 @@ var ts;
+                 return withPackageId(packageInfo, fromDirectory);
+             }
+         }
+-        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageName;
++        if (rest === undefined)
++            (_a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest);
+         var loader = function (extensions, candidate, onlyRecordFailures, state) {
+             var _a;
+             if (packageInfo && packageInfo.packageJsonContent.exports && state.features & NodeResolutionFeatures.Exports) {
+@@ -35060,7 +35108,8 @@ var ts;
+             return withPackageId(packageInfo, pathAndExtension);
+         };
+         if (rest !== "") {
+-            var packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
++            if (packageDirectory === undefined)
++                packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
+             packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
+             if (packageInfo && packageInfo.versionPaths) {
+                 if (state.traceEnabled) {
+@@ -35198,6 +35247,47 @@ var ts;
+     function toSearchResult(value) {
+         return value !== undefined ? { value: value } : undefined;
+     }
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function loadPnpPackageResolution(packageName, containingDirectory) {
++        try {
++            var resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, "".concat(containingDirectory, "/"), { considerBuiltins: false });
++            return ts.normalizeSlashes(resolution).replace(/\/$/, "");
++        }
++        catch (_a) {
++        }
++    }
++    function loadPnpTypePackageResolution(packageName, containingDirectory) {
++        return loadPnpPackageResolution(getTypesPackageName(packageName), containingDirectory);
++    }
++    function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++        var packageFullResolution = packageResolution
++            ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference)
++            : undefined;
++        var resolved;
++        if (packageFullResolution) {
++            resolved = packageFullResolution;
++        }
++        else if (extensions === Extensions.TypeScript || extensions === Extensions.DtsOnly) {
++            var typePackageResolution = loadPnpTypePackageResolution(packageName, containingDirectory);
++            var typePackageFullResolution = typePackageResolution
++                ? loadModuleFromPnpResolution(Extensions.DtsOnly, typePackageResolution, rest, state, cache, redirectedReference)
++                : undefined;
++            if (typePackageFullResolution) {
++                resolved = typePackageFullResolution;
++            }
++        }
++        if (resolved) {
++            return toSearchResult(resolved);
++        }
++    }
+ })(ts || (ts = {}));
+ var ts;
+ (function (ts) {
+@@ -92735,6 +92825,7 @@ var ts;
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["None"] = 0] = "None";
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
++        ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Resolutions"] = 3] = "Resolutions";
+     })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
+     function updateSharedExtendedConfigFileWatcher(projectPath, options, extendedConfigFilesMap, createExtendedConfigFileWatch, toPath) {
+         var _a;
+@@ -98597,6 +98688,26 @@ var ts;
+                 return undefined;
+             }
+             var parts = getNodeModulePathParts(path);
++            var packageName;
++            if (!parts && typeof process.versions.pnp !== "undefined") {
++                var findPnpApi = require("module").findPnpApi;
++                var pnpApi = findPnpApi(path);
++                var locator = pnpApi === null || pnpApi === void 0 ? void 0 : pnpApi.findPackageLocator(path);
++                if (locator !== null && locator !== undefined) {
++                    var sourceLocator = pnpApi.findPackageLocator("".concat(sourceDirectory, "/"));
++                    if (locator === sourceLocator) {
++                        return undefined;
++                    }
++                    var information = pnpApi.getPackageInformation(locator);
++                    packageName = locator.name;
++                    parts = {
++                        topLevelNodeModulesIndex: undefined,
++                        topLevelPackageNameIndex: undefined,
++                        packageRootIndex: information.packageLocation.length - 1,
++                        fileNameIndex: path.lastIndexOf("/"),
++                    };
++                }
++            }
+             if (!parts) {
+                 return undefined;
+             }
+@@ -98632,14 +98743,18 @@ var ts;
+             if (isRedirect && !isPackageRootPath) {
+                 return undefined;
+             }
+-            var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-            var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-            if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-                return undefined;
++            if (typeof process.versions.pnp === "undefined") {
++                var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++                var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++                if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++                    return undefined;
++                }
+             }
+-            var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-            var packageName = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+-            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageName === nodeModulesDirectoryName ? undefined : packageName;
++            var nodeModulesDirectoryName = typeof packageName !== "undefined"
++                ? packageName + moduleSpecifier.substring(parts.packageRootIndex)
++                : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++            var packageNameFromPath = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageNameFromPath === nodeModulesDirectoryName ? undefined : packageNameFromPath;
+             function tryDirectoryWithPackageJson(packageRootIndex) {
+                 var packageRootPath = path.substring(0, packageRootIndex);
+                 var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
+@@ -99387,6 +99502,10 @@ var ts;
+         if (configFileName) {
+             configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
+         }
++        var pnpFileWatcher;
++        if (typeof process.versions.pnp !== "undefined") {
++            pnpFileWatcher = watchFile(require.resolve("pnpapi"), scheduleResolutionReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
++        }
+         var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
+         ts.setGetSourceFileAsHashVersioned(compilerHost, host);
+         var getNewSourceFile = compilerHost.getSourceFile;
+@@ -99458,6 +99577,10 @@ var ts;
+                 configFileWatcher.close();
+                 configFileWatcher = undefined;
+             }
++            if (pnpFileWatcher) {
++                pnpFileWatcher.close();
++                pnpFileWatcher = undefined;
++            }
+             extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
+             extendedConfigCache = undefined;
+             if (sharedExtendedConfigFileWatchers) {
+@@ -99494,7 +99617,8 @@ var ts;
+         function getCurrentProgram() {
+             return builderProgram && builderProgram.getProgramOrUndefined();
+         }
+-        function synchronizeProgram() {
++        function synchronizeProgram(forceAllFilesAsInvalidated) {
++            if (forceAllFilesAsInvalidated === void 0) { forceAllFilesAsInvalidated = false; }
+             writeLog("Synchronizing program");
+             clearInvalidateResolutionsOfFailedLookupLocations();
+             var program = getCurrentBuilderProgram();
+@@ -99504,7 +99628,7 @@ var ts;
+                     resolutionCache.clear();
+                 }
+             }
+-            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution);
++            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution || forceAllFilesAsInvalidated);
+             if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
+                 if (hasChangedConfigFileParsingErrors) {
+                     builderProgram = createProgram(undefined, undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
+@@ -99691,6 +99815,12 @@ var ts;
+             reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
+             scheduleProgramUpdate();
+         }
++        function scheduleResolutionReload() {
++            writeLog("Clearing resolutions");
++            resolutionCache.clear();
++            reloadLevel = ts.ConfigFileProgramReloadLevel.Resolutions;
++            scheduleProgramUpdate();
++        }
+         function updateProgramWithWatchStatus() {
+             timerToUpdateProgram = undefined;
+             reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
+@@ -99706,6 +99836,10 @@ var ts;
+                     ts.perfLogger.logStartUpdateProgram("FullConfigReload");
+                     reloadConfigFile();
+                     break;
++                case ts.ConfigFileProgramReloadLevel.Resolutions:
++                    ts.perfLogger.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++                    synchronizeProgram(true);
++                    break;
+                 default:
+                     ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
+                     synchronizeProgram();
+diff --git a/lib/tsserver.js b/lib/tsserver.js
+index 6499e34af..2ee1a5416 100644
+semver exclusivity >=4.5.2 <4.6
+--- a/lib/tsserver.js
++++ b/lib/tsserver.js
+@@ -7515,6 +7515,11 @@ var ts;
+                     : new Buffer(input, encoding);
+             }
+             function isFileSystemCaseSensitive() {
++                // The PnP runtime is always case-sensitive
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    return true;
++                }
+                 // win32\win64 are case insensitive platforms
+                 if (platform === "win32" || platform === "win64") {
+                     return false;
+@@ -41403,18 +41408,17 @@ var ts;
+     ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
+     /**
+      * Returns the path to every node_modules/@types directory from some ancestor directory.
+-     * Returns undefined if there are none.
+      */
+-    function getDefaultTypeRoots(currentDirectory, host) {
++    function getNodeModulesTypeRoots(currentDirectory, host) {
+         if (!host.directoryExists) {
+             return [ts.combinePaths(currentDirectory, nodeModulesAtTypes)];
+             // And if it doesn't exist, tough.
+         }
+-        var typeRoots;
++        var typeRoots = [];
+         ts.forEachAncestorDirectory(ts.normalizePath(currentDirectory), function (directory) {
+             var atTypes = ts.combinePaths(directory, nodeModulesAtTypes);
+             if (host.directoryExists(atTypes)) {
+-                (typeRoots || (typeRoots = [])).push(atTypes);
++                typeRoots.push(atTypes);
+             }
+             return undefined;
+         });
+@@ -41425,6 +41429,42 @@ var ts;
+         var useCaseSensitiveFileNames = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+         return ts.comparePaths(path1, path2, !useCaseSensitiveFileNames) === 0 /* EqualTo */;
+     }
++    /**
++     * @internal
++     */
++    function getPnpTypeRoots(currentDirectory) {
++        var pnpapi = getPnpApi(currentDirectory);
++        if (!pnpapi) {
++            return [];
++        }
++        // Some TS consumers pass relative paths that aren't normalized
++        currentDirectory = ts.sys.resolvePath(currentDirectory);
++        var currentPackage = pnpapi.findPackageLocator("".concat(currentDirectory, "/"));
++        if (!currentPackage) {
++            return [];
++        }
++        var packageDependencies = pnpapi.getPackageInformation(currentPackage).packageDependencies;
++        var typeRoots = [];
++        for (var _i = 0, _a = Array.from(packageDependencies.entries()); _i < _a.length; _i++) {
++            var _b = _a[_i], name = _b[0], referencish = _b[1];
++            // eslint-disable-next-line no-null/no-null
++            if (name.startsWith(typesPackagePrefix) && referencish !== null) {
++                var dependencyLocator = pnpapi.getLocator(name, referencish);
++                var packageLocation = pnpapi.getPackageInformation(dependencyLocator).packageLocation;
++                typeRoots.push(ts.getDirectoryPath(packageLocation));
++            }
++        }
++        return typeRoots;
++    }
++    ts.getPnpTypeRoots = getPnpTypeRoots;
++    var typesPackagePrefix = "@types/";
++    function getDefaultTypeRoots(currentDirectory, host) {
++        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
++        var pnpTypes = getPnpTypeRoots(currentDirectory);
++        if (nmTypes.length > 0 || pnpTypes.length > 0) {
++            return __spreadArray(__spreadArray([], nmTypes, true), pnpTypes, true);
++        }
++    }
+     /**
+      * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
+      * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
+@@ -41541,7 +41581,9 @@ var ts;
+                 }
+                 var result_4;
+                 if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
+-                    var searchResult = loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
++                    var searchResult = getPnpApi(initialLocationForSecondaryLookup)
++                        ? tryLoadModuleUsingPnpResolution(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined)
++                        : loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
+                     result_4 = searchResult && searchResult.value;
+                 }
+                 else {
+@@ -42211,7 +42253,9 @@ var ts;
+                     if (traceEnabled) {
+                         trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
+                     }
+-                    resolved_1 = loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
++                    resolved_1 = getPnpApi(containingDirectory)
++                        ? tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference)
++                        : loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
+                 }
+                 if (!resolved_1)
+                     return undefined;
+@@ -42872,6 +42916,14 @@ var ts;
+     }
+     function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+         var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, /* rest */ undefined, /* packageDirectory */ undefined);
++    }
++    function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++        var candidate = ts.normalizePath(ts.combinePaths(packageDirectory, rest));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, /*moduleName*/ undefined, /*nodeModulesDirectory*/ undefined, /*nodeModulesDirectoryExists*/ true, state, cache, redirectedReference, candidate, rest, packageDirectory);
++    }
++    function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++        var _a;
+         // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
+         var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+         // But only if we're not respecting export maps (if we are, we might redirect around this location)
+@@ -42885,7 +42937,9 @@ var ts;
+                 return withPackageId(packageInfo, fromDirectory);
+             }
+         }
+-        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageName;
++        if (rest === undefined)
++            (_a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest);
+         var loader = function (extensions, candidate, onlyRecordFailures, state) {
+             var _a;
+             // package exports are higher priority than file/directory lookups (and, if there's exports present, blocks them)
+@@ -42897,7 +42951,8 @@ var ts;
+             return withPackageId(packageInfo, pathAndExtension);
+         };
+         if (rest !== "") { // If "rest" is empty, we just did this search above.
+-            var packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
++            if (packageDirectory === undefined)
++                packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
+             // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
+             packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
+             if (packageInfo && packageInfo.versionPaths) {
+@@ -43056,6 +43111,58 @@ var ts;
+     function toSearchResult(value) {
+         return value !== undefined ? { value: value } : undefined;
+     }
++    /**
++     * We only allow PnP to be used as a resolution strategy if TypeScript
++     * itself is executed under a PnP runtime (and we only allow it to access
++     * the current PnP runtime, not any on the disk). This ensures that we
++     * don't execute potentially malicious code that didn't already have a
++     * chance to be executed (if we're running within the runtime, it means
++     * that the runtime has already been executed).
++     * @internal
++     */
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function loadPnpPackageResolution(packageName, containingDirectory) {
++        try {
++            var resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, "".concat(containingDirectory, "/"), { considerBuiltins: false });
++            return ts.normalizeSlashes(resolution).replace(/\/$/, "");
++        }
++        catch (_a) {
++            // Nothing to do
++        }
++    }
++    function loadPnpTypePackageResolution(packageName, containingDirectory) {
++        return loadPnpPackageResolution(getTypesPackageName(packageName), containingDirectory);
++    }
++    /* @internal */
++    function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++        var packageFullResolution = packageResolution
++            ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference)
++            : undefined;
++        var resolved;
++        if (packageFullResolution) {
++            resolved = packageFullResolution;
++        }
++        else if (extensions === Extensions.TypeScript || extensions === Extensions.DtsOnly) {
++            var typePackageResolution = loadPnpTypePackageResolution(packageName, containingDirectory);
++            var typePackageFullResolution = typePackageResolution
++                ? loadModuleFromPnpResolution(Extensions.DtsOnly, typePackageResolution, rest, state, cache, redirectedReference)
++                : undefined;
++            if (typePackageFullResolution) {
++                resolved = typePackageFullResolution;
++            }
++        }
++        if (resolved) {
++            return toSearchResult(resolved);
++        }
++    }
+ })(ts || (ts = {}));
+ /* @internal */
+ var ts;
+@@ -112528,6 +112635,8 @@ var ts;
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
+         /** Reload completely by re-reading contents of config file from disk and updating program */
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
++        /** Reload the resolutions */
++        ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Resolutions"] = 3] = "Resolutions";
+     })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
+     /**
+      * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
+@@ -119332,6 +119441,30 @@ var ts;
+                 return undefined;
+             }
+             var parts = getNodeModulePathParts(path);
++            var packageName;
++            if (!parts && typeof process.versions.pnp !== "undefined") {
++                var findPnpApi = require("module").findPnpApi;
++                var pnpApi = findPnpApi(path);
++                var locator = pnpApi === null || pnpApi === void 0 ? void 0 : pnpApi.findPackageLocator(path);
++                // eslint-disable-next-line no-null/no-null
++                if (locator !== null && locator !== undefined) {
++                    var sourceLocator = pnpApi.findPackageLocator("".concat(sourceDirectory, "/"));
++                    // Don't use the package name when the imported file is inside
++                    // the source directory (prefer a relative path instead)
++                    if (locator === sourceLocator) {
++                        return undefined;
++                    }
++                    var information = pnpApi.getPackageInformation(locator);
++                    packageName = locator.name;
++                    parts = {
++                        topLevelNodeModulesIndex: undefined,
++                        topLevelPackageNameIndex: undefined,
++                        // The last character from packageLocation is the trailing "/", we want to point to it
++                        packageRootIndex: information.packageLocation.length - 1,
++                        fileNameIndex: path.lastIndexOf("/"),
++                    };
++                }
++            }
+             if (!parts) {
+                 return undefined;
+             }
+@@ -119370,18 +119503,24 @@ var ts;
+             if (isRedirect && !isPackageRootPath) {
+                 return undefined;
+             }
+-            var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-            // Get a path that's relative to node_modules or the importing file's path
+-            // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
+-            var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-            if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-                return undefined;
++            // If PnP is enabled the node_modules entries we'll get will always be relevant even if they
++            // are located in a weird path apparently outside of the source directory
++            if (typeof process.versions.pnp === "undefined") {
++                var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++                // Get a path that's relative to node_modules or the importing file's path
++                // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
++                var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++                if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++                    return undefined;
++                }
+             }
+             // If the module was found in @types, get the actual Node package name
+-            var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-            var packageName = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++            var nodeModulesDirectoryName = typeof packageName !== "undefined"
++                ? packageName + moduleSpecifier.substring(parts.packageRootIndex)
++                : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++            var packageNameFromPath = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+             // For classic resolution, only allow importing from node_modules/@types, not other node_modules
+-            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageName === nodeModulesDirectoryName ? undefined : packageName;
++            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageNameFromPath === nodeModulesDirectoryName ? undefined : packageNameFromPath;
+             function tryDirectoryWithPackageJson(packageRootIndex) {
+                 var packageRootPath = path.substring(0, packageRootIndex);
+                 var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
+@@ -120196,6 +120335,10 @@ var ts;
+         if (configFileName) {
+             configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
+         }
++        var pnpFileWatcher;
++        if (typeof process.versions.pnp !== "undefined") {
++            pnpFileWatcher = watchFile(require.resolve("pnpapi"), scheduleResolutionReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
++        }
+         var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
+         ts.setGetSourceFileAsHashVersioned(compilerHost, host);
+         // Members for CompilerHost
+@@ -120274,6 +120417,10 @@ var ts;
+                 configFileWatcher.close();
+                 configFileWatcher = undefined;
+             }
++            if (pnpFileWatcher) {
++                pnpFileWatcher.close();
++                pnpFileWatcher = undefined;
++            }
+             extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
+             extendedConfigCache = undefined;
+             if (sharedExtendedConfigFileWatchers) {
+@@ -120310,7 +120457,8 @@ var ts;
+         function getCurrentProgram() {
+             return builderProgram && builderProgram.getProgramOrUndefined();
+         }
+-        function synchronizeProgram() {
++        function synchronizeProgram(forceAllFilesAsInvalidated) {
++            if (forceAllFilesAsInvalidated === void 0) { forceAllFilesAsInvalidated = false; }
+             writeLog("Synchronizing program");
+             clearInvalidateResolutionsOfFailedLookupLocations();
+             var program = getCurrentBuilderProgram();
+@@ -120321,7 +120469,7 @@ var ts;
+                 }
+             }
+             // All resolutions are invalid if user provided resolutions
+-            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution);
++            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution || forceAllFilesAsInvalidated);
+             if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
+                 if (hasChangedConfigFileParsingErrors) {
+                     builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
+@@ -120531,6 +120679,12 @@ var ts;
+             reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
+             scheduleProgramUpdate();
+         }
++        function scheduleResolutionReload() {
++            writeLog("Clearing resolutions");
++            resolutionCache.clear();
++            reloadLevel = ts.ConfigFileProgramReloadLevel.Resolutions;
++            scheduleProgramUpdate();
++        }
+         function updateProgramWithWatchStatus() {
+             timerToUpdateProgram = undefined;
+             reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
+@@ -120546,6 +120700,10 @@ var ts;
+                     ts.perfLogger.logStartUpdateProgram("FullConfigReload");
+                     reloadConfigFile();
+                     break;
++                case ts.ConfigFileProgramReloadLevel.Resolutions:
++                    ts.perfLogger.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++                    synchronizeProgram(/*forceAllFilesAsInvalidated*/ true);
++                    break;
+                 default:
+                     ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
+                     synchronizeProgram();
+@@ -126060,7 +126218,7 @@ var ts;
+      * Don't include something from a `node_modules` that isn't actually reachable by a global import.
+      * A relative import to node_modules is usually a bad idea.
+      */
+-    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++    function isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath) {
+         // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
+         var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
+         var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
+@@ -126068,6 +126226,33 @@ var ts;
+             || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
+             || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
+     }
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function isImportablePathPnp(fromPath, toPath) {
++        var pnpApi = getPnpApi(fromPath);
++        var fromLocator = pnpApi.findPackageLocator(fromPath);
++        var toLocator = pnpApi.findPackageLocator(toPath);
++        // eslint-disable-next-line no-null/no-null
++        if (toLocator === null) {
++            return false;
++        }
++        var fromInfo = pnpApi.getPackageInformation(fromLocator);
++        var toReference = fromInfo.packageDependencies.get(toLocator.name);
++        return toReference === toLocator.reference;
++    }
++    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++        if (getPnpApi(fromPath)) {
++            return isImportablePathPnp(fromPath, toPath);
++        }
++        else {
++            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
++        }
++    }
+     function forEachExternalModuleToImportFrom(program, host, useAutoImportProvider, cb) {
+         var _a, _b;
+         forEachExternalModule(program.getTypeChecker(), program.getSourceFiles(), function (module, file) { return cb(module, file, program, /*isFromPackageJson*/ false); });
+@@ -127887,6 +128072,7 @@ var ts;
+              *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
+              */
+             function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
++                var _a, _b;
+                 var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
+                 var result = [];
+                 var extensionOptions = getExtensionOptions(compilerOptions);
+@@ -127899,8 +128085,8 @@ var ts;
+                     }
+                 }
+                 var fragmentDirectory = getFragmentDirectory(fragment);
+-                for (var _i = 0, _a = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _a.length; _i++) {
+-                    var ambientName = _a[_i];
++                for (var _i = 0, _c = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _c.length; _i++) {
++                    var ambientName = _c[_i];
+                     result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                 }
+                 getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
+@@ -127915,18 +128101,39 @@ var ts;
+                                 result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                             }
+                         };
+-                        for (var _b = 0, _c = enumerateNodeModulesVisibleToScript(host, scriptPath); _b < _c.length; _b++) {
+-                            var moduleName = _c[_b];
++                        for (var _d = 0, _e = enumerateNodeModulesVisibleToScript(host, scriptPath); _d < _e.length; _d++) {
++                            var moduleName = _e[_d];
+                             _loop_4(moduleName);
+                         }
+                     }
+                     if (!foundGlobal) {
+-                        ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
+-                            var nodeModules = ts.combinePaths(ancestor, "node_modules");
+-                            if (ts.tryDirectoryExists(host, nodeModules)) {
+-                                getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                        var pnpapi = (_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath);
++                        if (pnpapi) {
++                            // Splits a require request into its components, or return null if the request is a file path
++                            var pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
++                            var dependencyNameMatch = fragment.match(pathRegExp);
++                            if (dependencyNameMatch) {
++                                var dependencyName = dependencyNameMatch[1], subPath = dependencyNameMatch[2];
++                                var unqualified = void 0;
++                                try {
++                                    unqualified = pnpapi.resolveToUnqualified(dependencyName, scriptPath, { considerBuiltins: false });
++                                }
++                                catch (_f) {
++                                    // It's fine if the resolution fails
++                                }
++                                if (unqualified) {
++                                    getCompletionEntriesForDirectoryFragment(subPath, ts.normalizePath(unqualified), extensionOptions, host, /*exclude*/ undefined, result);
++                                }
+                             }
+-                        });
++                        }
++                        else {
++                            ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
++                                var nodeModules = ts.combinePaths(ancestor, "node_modules");
++                                if (ts.tryDirectoryExists(host, nodeModules)) {
++                                    getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                                }
++                            });
++                        }
+                     }
+                 }
+                 return result;
+@@ -128027,6 +128234,7 @@ var ts;
+                 return addReplacementSpans(toComplete, range.pos + prefix.length, names);
+             }
+             function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
++                var _a, _b;
+                 if (result === void 0) { result = []; }
+                 // Check for typings specified in compiler options
+                 var seen = new ts.Map();
+@@ -128035,11 +128243,19 @@ var ts;
+                     var root = typeRoots_1[_i];
+                     getCompletionEntriesFromDirectories(root);
+                 }
+-                // Also get all @types typings installed in visible node_modules directories
+-                for (var _a = 0, _b = ts.findPackageJsons(scriptPath, host); _a < _b.length; _a++) {
+-                    var packageJson = _b[_a];
+-                    var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
+-                    getCompletionEntriesFromDirectories(typesDir);
++                if ((_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath)) {
++                    for (var _c = 0, _d = ts.getPnpTypeRoots(scriptPath); _c < _d.length; _c++) {
++                        var root = _d[_c];
++                        getCompletionEntriesFromDirectories(root);
++                    }
++                }
++                else {
++                    // Also get all @types typings installed in visible node_modules directories
++                    for (var _e = 0, _f = ts.findPackageJsons(scriptPath, host); _e < _f.length; _e++) {
++                        var packageJson = _f[_e];
++                        var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
++                        getCompletionEntriesFromDirectories(typesDir);
++                    }
+                 }
+                 return result;
+                 function getCompletionEntriesFromDirectories(directory) {
+@@ -157142,9 +157358,9 @@ var ts;
+                 if (isTopLevelDeclarationStatement(statement) &&
+                     !isExported(sourceFile, statement, useEs6Exports) &&
+                     forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
+-                    var exports = addExport(statement, useEs6Exports);
+-                    if (exports)
+-                        return exports;
++                    var exports_1 = addExport(statement, useEs6Exports);
++                    if (exports_1)
++                        return exports_1;
+                 }
+                 return statement;
+             });
+@@ -165972,6 +166188,40 @@ var ts;
+                 return this.projectReferences;
+             };
+             ConfiguredProject.prototype.updateReferences = function (refs) {
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    // With Plug'n'Play, dependencies that list peer dependencies
++                    // are "virtualized": they are resolved to a unique (virtual)
++                    // path that the underlying filesystem layer then resolve back
++                    // to the original location.
++                    //
++                    // When a workspace depends on another workspace with peer
++                    // dependencies, this other workspace will thus be resolved to
++                    // a unique path that won't match what the initial project has
++                    // listed in its `references` field, and TS thus won't leverage
++                    // the reference at all.
++                    //
++                    // To avoid that, we compute here the virtualized paths for the
++                    // user-provided references in our references by directly querying
++                    // the PnP API. This way users don't have to know the virtual paths,
++                    // but we still support them just fine even through references.
++                    var basePath_1 = this.getCurrentDirectory();
++                    var findPnpApi_1 = require("module").findPnpApi;
++                    var getPnpPath_1 = function (path) {
++                        try {
++                            var pnpApi = findPnpApi_1("".concat(path, "/"));
++                            var targetLocator = pnpApi.findPackageLocator("".concat(path, "/"));
++                            var packageLocation = pnpApi.getPackageInformation(targetLocator).packageLocation;
++                            var request = ts.combinePaths(targetLocator.name, ts.getRelativePathFromDirectory(packageLocation, path, /*ignoreCase*/ false));
++                            return pnpApi.resolveToUnqualified(request, "".concat(basePath_1, "/"));
++                        }
++                        catch (_a) {
++                            // something went wrong with the resolution, try not to fail
++                            return path;
++                        }
++                    };
++                    refs = refs === null || refs === void 0 ? void 0 : refs.map(function (r) { return (__assign(__assign({}, r), { path: getPnpPath_1(r.path) })); });
++                }
+                 this.projectReferences = refs;
+                 this.potentialProjectReferences = undefined;
+             };
+@@ -166588,6 +166838,7 @@ var ts;
+                         watchDirectory: ts.returnNoopFileWatcher,
+                     } :
+                     ts.getWatchFactory(this.host, watchLogLevel, log, getDetailWatchInfo);
++                this.pnpWatcher = this.watchPnpFile();
+             }
+             ProjectService.prototype.toPath = function (fileName) {
+                 return ts.toPath(fileName, this.currentDirectory, this.toCanonicalFileName);
+@@ -168440,7 +168691,7 @@ var ts;
+             };
+             ProjectService.prototype.setHostConfiguration = function (args) {
+                 var _this = this;
+-                var _a;
++                var _a, _b;
+                 if (args.file) {
+                     var info = this.getScriptInfoForNormalizedPath(server.toNormalizedPath(args.file));
+                     if (info) {
+@@ -168458,7 +168709,7 @@ var ts;
+                         this.logger.info("Format host information updated");
+                     }
+                     if (args.preferences) {
+-                        var _b = this.hostConfiguration.preferences, lazyConfiguredProjectsFromExternalProject = _b.lazyConfiguredProjectsFromExternalProject, includePackageJsonAutoImports = _b.includePackageJsonAutoImports;
++                        var _c = this.hostConfiguration.preferences, lazyConfiguredProjectsFromExternalProject = _c.lazyConfiguredProjectsFromExternalProject, includePackageJsonAutoImports = _c.includePackageJsonAutoImports;
+                         this.hostConfiguration.preferences = __assign(__assign({}, this.hostConfiguration.preferences), args.preferences);
+                         if (lazyConfiguredProjectsFromExternalProject && !this.hostConfiguration.preferences.lazyConfiguredProjectsFromExternalProject) {
+                             // Load configured projects for external projects that are pending reload
+@@ -168484,6 +168735,8 @@ var ts;
+                     if (args.watchOptions) {
+                         this.hostConfiguration.watchOptions = (_a = convertWatchOptions(args.watchOptions)) === null || _a === void 0 ? void 0 : _a.watchOptions;
+                         this.logger.info("Host watch options changed to ".concat(JSON.stringify(this.hostConfiguration.watchOptions), ", it will be take effect for next watches."));
++                        (_b = this.pnpWatcher) === null || _b === void 0 ? void 0 : _b.close();
++                        this.watchPnpFile();
+                     }
+                 }
+             };
+@@ -169478,6 +169731,27 @@ var ts;
+                 });
+             };
+             /*@internal*/
++            ProjectService.prototype.watchPnpFile = function () {
++                var _this = this;
++                if (typeof process.versions.pnp === "undefined") {
++                    return;
++                }
++                var findPnpApi = require("module").findPnpApi;
++                // eslint-disable-next-line no-null/no-null
++                var pnpFileName = findPnpApi(__filename).resolveRequest("pnpapi", /*issuer*/ null);
++                return this.watchFactory.watchFile(pnpFileName, function () {
++                    _this.forEachProject(function (project) {
++                        for (var _i = 0, _a = project.getScriptInfos(); _i < _a.length; _i++) {
++                            var info = _a[_i];
++                            project.resolutionCache.invalidateResolutionOfFile(info.path);
++                        }
++                        project.markAsDirty();
++                        updateProjectIfDirty(project);
++                    });
++                    _this.delayEnsureProjectForOpenFiles();
++                }, ts.PollingInterval.Low, this.hostConfiguration.watchOptions, ts.WatchType.ConfigFile);
++            };
++            /*@internal*/
+             ProjectService.prototype.watchPackageJsonFile = function (path) {
+                 var _this = this;
+                 var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
+@@ -174351,6 +174625,11 @@ var ts;
+                         }
+                         try {
+                             var args = [ts.combinePaths(__dirname, "watchGuard.js"), path];
++                            if (typeof process.versions.pnp !== "undefined") {
++                                var findPnpApi = require("module").findPnpApi;
++                                // eslint-disable-next-line no-null/no-null
++                                args.unshift("-r", findPnpApi(__filename).resolveRequest("pnpapi", /* issuer */ null));
++                            }
+                             if (logger.hasLevel(server.LogLevel.verbose)) {
+                                 logger.info("Starting ".concat(process.execPath, " with args:").concat(server.stringifyIndented(args)));
+                             }
+@@ -174611,6 +174890,11 @@ var ts;
+                             break;
+                         }
+                     }
++                    if (typeof process.versions.pnp !== "undefined") {
++                        var findPnpApi = require("module").findPnpApi;
++                        // eslint-disable-next-line no-null/no-null
++                        execArgv.unshift("-r", findPnpApi(__filename).resolveRequest("pnpapi", /* issuer */ null));
++                    }
+                     this.installer = childProcess.fork(ts.combinePaths(__dirname, "typingsInstaller.js"), args, { execArgv: execArgv });
+                     this.installer.on("message", function (m) { return _this.handleMessage(m); });
+                     // We have to schedule this event to the next tick
+diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
+index 160c6c94d..cfc193f46 100644
+semver exclusivity >=4.5.2 <4.6
+--- a/lib/tsserverlibrary.js
++++ b/lib/tsserverlibrary.js
+@@ -7709,6 +7709,11 @@ var ts;
+                     : new Buffer(input, encoding);
+             }
+             function isFileSystemCaseSensitive() {
++                // The PnP runtime is always case-sensitive
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    return true;
++                }
+                 // win32\win64 are case insensitive platforms
+                 if (platform === "win32" || platform === "win64") {
+                     return false;
+@@ -41597,18 +41602,17 @@ var ts;
+     ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
+     /**
+      * Returns the path to every node_modules/@types directory from some ancestor directory.
+-     * Returns undefined if there are none.
+      */
+-    function getDefaultTypeRoots(currentDirectory, host) {
++    function getNodeModulesTypeRoots(currentDirectory, host) {
+         if (!host.directoryExists) {
+             return [ts.combinePaths(currentDirectory, nodeModulesAtTypes)];
+             // And if it doesn't exist, tough.
+         }
+-        var typeRoots;
++        var typeRoots = [];
+         ts.forEachAncestorDirectory(ts.normalizePath(currentDirectory), function (directory) {
+             var atTypes = ts.combinePaths(directory, nodeModulesAtTypes);
+             if (host.directoryExists(atTypes)) {
+-                (typeRoots || (typeRoots = [])).push(atTypes);
++                typeRoots.push(atTypes);
+             }
+             return undefined;
+         });
+@@ -41619,6 +41623,42 @@ var ts;
+         var useCaseSensitiveFileNames = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+         return ts.comparePaths(path1, path2, !useCaseSensitiveFileNames) === 0 /* EqualTo */;
+     }
++    /**
++     * @internal
++     */
++    function getPnpTypeRoots(currentDirectory) {
++        var pnpapi = getPnpApi(currentDirectory);
++        if (!pnpapi) {
++            return [];
++        }
++        // Some TS consumers pass relative paths that aren't normalized
++        currentDirectory = ts.sys.resolvePath(currentDirectory);
++        var currentPackage = pnpapi.findPackageLocator("".concat(currentDirectory, "/"));
++        if (!currentPackage) {
++            return [];
++        }
++        var packageDependencies = pnpapi.getPackageInformation(currentPackage).packageDependencies;
++        var typeRoots = [];
++        for (var _i = 0, _a = Array.from(packageDependencies.entries()); _i < _a.length; _i++) {
++            var _b = _a[_i], name = _b[0], referencish = _b[1];
++            // eslint-disable-next-line no-null/no-null
++            if (name.startsWith(typesPackagePrefix) && referencish !== null) {
++                var dependencyLocator = pnpapi.getLocator(name, referencish);
++                var packageLocation = pnpapi.getPackageInformation(dependencyLocator).packageLocation;
++                typeRoots.push(ts.getDirectoryPath(packageLocation));
++            }
++        }
++        return typeRoots;
++    }
++    ts.getPnpTypeRoots = getPnpTypeRoots;
++    var typesPackagePrefix = "@types/";
++    function getDefaultTypeRoots(currentDirectory, host) {
++        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
++        var pnpTypes = getPnpTypeRoots(currentDirectory);
++        if (nmTypes.length > 0 || pnpTypes.length > 0) {
++            return __spreadArray(__spreadArray([], nmTypes, true), pnpTypes, true);
++        }
++    }
+     /**
+      * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
+      * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
+@@ -41735,7 +41775,9 @@ var ts;
+                 }
+                 var result_4;
+                 if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
+-                    var searchResult = loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
++                    var searchResult = getPnpApi(initialLocationForSecondaryLookup)
++                        ? tryLoadModuleUsingPnpResolution(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined)
++                        : loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
+                     result_4 = searchResult && searchResult.value;
+                 }
+                 else {
+@@ -42405,7 +42447,9 @@ var ts;
+                     if (traceEnabled) {
+                         trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
+                     }
+-                    resolved_1 = loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
++                    resolved_1 = getPnpApi(containingDirectory)
++                        ? tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference)
++                        : loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
+                 }
+                 if (!resolved_1)
+                     return undefined;
+@@ -43066,6 +43110,14 @@ var ts;
+     }
+     function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+         var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, /* rest */ undefined, /* packageDirectory */ undefined);
++    }
++    function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++        var candidate = ts.normalizePath(ts.combinePaths(packageDirectory, rest));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, /*moduleName*/ undefined, /*nodeModulesDirectory*/ undefined, /*nodeModulesDirectoryExists*/ true, state, cache, redirectedReference, candidate, rest, packageDirectory);
++    }
++    function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++        var _a;
+         // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
+         var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+         // But only if we're not respecting export maps (if we are, we might redirect around this location)
+@@ -43079,7 +43131,9 @@ var ts;
+                 return withPackageId(packageInfo, fromDirectory);
+             }
+         }
+-        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageName;
++        if (rest === undefined)
++            (_a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest);
+         var loader = function (extensions, candidate, onlyRecordFailures, state) {
+             var _a;
+             // package exports are higher priority than file/directory lookups (and, if there's exports present, blocks them)
+@@ -43091,7 +43145,8 @@ var ts;
+             return withPackageId(packageInfo, pathAndExtension);
+         };
+         if (rest !== "") { // If "rest" is empty, we just did this search above.
+-            var packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
++            if (packageDirectory === undefined)
++                packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
+             // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
+             packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
+             if (packageInfo && packageInfo.versionPaths) {
+@@ -43250,6 +43305,58 @@ var ts;
+     function toSearchResult(value) {
+         return value !== undefined ? { value: value } : undefined;
+     }
++    /**
++     * We only allow PnP to be used as a resolution strategy if TypeScript
++     * itself is executed under a PnP runtime (and we only allow it to access
++     * the current PnP runtime, not any on the disk). This ensures that we
++     * don't execute potentially malicious code that didn't already have a
++     * chance to be executed (if we're running within the runtime, it means
++     * that the runtime has already been executed).
++     * @internal
++     */
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function loadPnpPackageResolution(packageName, containingDirectory) {
++        try {
++            var resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, "".concat(containingDirectory, "/"), { considerBuiltins: false });
++            return ts.normalizeSlashes(resolution).replace(/\/$/, "");
++        }
++        catch (_a) {
++            // Nothing to do
++        }
++    }
++    function loadPnpTypePackageResolution(packageName, containingDirectory) {
++        return loadPnpPackageResolution(getTypesPackageName(packageName), containingDirectory);
++    }
++    /* @internal */
++    function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++        var packageFullResolution = packageResolution
++            ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference)
++            : undefined;
++        var resolved;
++        if (packageFullResolution) {
++            resolved = packageFullResolution;
++        }
++        else if (extensions === Extensions.TypeScript || extensions === Extensions.DtsOnly) {
++            var typePackageResolution = loadPnpTypePackageResolution(packageName, containingDirectory);
++            var typePackageFullResolution = typePackageResolution
++                ? loadModuleFromPnpResolution(Extensions.DtsOnly, typePackageResolution, rest, state, cache, redirectedReference)
++                : undefined;
++            if (typePackageFullResolution) {
++                resolved = typePackageFullResolution;
++            }
++        }
++        if (resolved) {
++            return toSearchResult(resolved);
++        }
++    }
+ })(ts || (ts = {}));
+ /* @internal */
+ var ts;
+@@ -112722,6 +112829,8 @@ var ts;
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
+         /** Reload completely by re-reading contents of config file from disk and updating program */
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
++        /** Reload the resolutions */
++        ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Resolutions"] = 3] = "Resolutions";
+     })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
+     /**
+      * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
+@@ -119526,6 +119635,30 @@ var ts;
+                 return undefined;
+             }
+             var parts = getNodeModulePathParts(path);
++            var packageName;
++            if (!parts && typeof process.versions.pnp !== "undefined") {
++                var findPnpApi = require("module").findPnpApi;
++                var pnpApi = findPnpApi(path);
++                var locator = pnpApi === null || pnpApi === void 0 ? void 0 : pnpApi.findPackageLocator(path);
++                // eslint-disable-next-line no-null/no-null
++                if (locator !== null && locator !== undefined) {
++                    var sourceLocator = pnpApi.findPackageLocator("".concat(sourceDirectory, "/"));
++                    // Don't use the package name when the imported file is inside
++                    // the source directory (prefer a relative path instead)
++                    if (locator === sourceLocator) {
++                        return undefined;
++                    }
++                    var information = pnpApi.getPackageInformation(locator);
++                    packageName = locator.name;
++                    parts = {
++                        topLevelNodeModulesIndex: undefined,
++                        topLevelPackageNameIndex: undefined,
++                        // The last character from packageLocation is the trailing "/", we want to point to it
++                        packageRootIndex: information.packageLocation.length - 1,
++                        fileNameIndex: path.lastIndexOf("/"),
++                    };
++                }
++            }
+             if (!parts) {
+                 return undefined;
+             }
+@@ -119564,18 +119697,24 @@ var ts;
+             if (isRedirect && !isPackageRootPath) {
+                 return undefined;
+             }
+-            var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-            // Get a path that's relative to node_modules or the importing file's path
+-            // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
+-            var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-            if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-                return undefined;
++            // If PnP is enabled the node_modules entries we'll get will always be relevant even if they
++            // are located in a weird path apparently outside of the source directory
++            if (typeof process.versions.pnp === "undefined") {
++                var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++                // Get a path that's relative to node_modules or the importing file's path
++                // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
++                var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++                if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++                    return undefined;
++                }
+             }
+             // If the module was found in @types, get the actual Node package name
+-            var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-            var packageName = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++            var nodeModulesDirectoryName = typeof packageName !== "undefined"
++                ? packageName + moduleSpecifier.substring(parts.packageRootIndex)
++                : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++            var packageNameFromPath = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+             // For classic resolution, only allow importing from node_modules/@types, not other node_modules
+-            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageName === nodeModulesDirectoryName ? undefined : packageName;
++            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageNameFromPath === nodeModulesDirectoryName ? undefined : packageNameFromPath;
+             function tryDirectoryWithPackageJson(packageRootIndex) {
+                 var packageRootPath = path.substring(0, packageRootIndex);
+                 var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
+@@ -120390,6 +120529,10 @@ var ts;
+         if (configFileName) {
+             configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
+         }
++        var pnpFileWatcher;
++        if (typeof process.versions.pnp !== "undefined") {
++            pnpFileWatcher = watchFile(require.resolve("pnpapi"), scheduleResolutionReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
++        }
+         var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
+         ts.setGetSourceFileAsHashVersioned(compilerHost, host);
+         // Members for CompilerHost
+@@ -120468,6 +120611,10 @@ var ts;
+                 configFileWatcher.close();
+                 configFileWatcher = undefined;
+             }
++            if (pnpFileWatcher) {
++                pnpFileWatcher.close();
++                pnpFileWatcher = undefined;
++            }
+             extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
+             extendedConfigCache = undefined;
+             if (sharedExtendedConfigFileWatchers) {
+@@ -120504,7 +120651,8 @@ var ts;
+         function getCurrentProgram() {
+             return builderProgram && builderProgram.getProgramOrUndefined();
+         }
+-        function synchronizeProgram() {
++        function synchronizeProgram(forceAllFilesAsInvalidated) {
++            if (forceAllFilesAsInvalidated === void 0) { forceAllFilesAsInvalidated = false; }
+             writeLog("Synchronizing program");
+             clearInvalidateResolutionsOfFailedLookupLocations();
+             var program = getCurrentBuilderProgram();
+@@ -120515,7 +120663,7 @@ var ts;
+                 }
+             }
+             // All resolutions are invalid if user provided resolutions
+-            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution);
++            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution || forceAllFilesAsInvalidated);
+             if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
+                 if (hasChangedConfigFileParsingErrors) {
+                     builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
+@@ -120725,6 +120873,12 @@ var ts;
+             reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
+             scheduleProgramUpdate();
+         }
++        function scheduleResolutionReload() {
++            writeLog("Clearing resolutions");
++            resolutionCache.clear();
++            reloadLevel = ts.ConfigFileProgramReloadLevel.Resolutions;
++            scheduleProgramUpdate();
++        }
+         function updateProgramWithWatchStatus() {
+             timerToUpdateProgram = undefined;
+             reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
+@@ -120740,6 +120894,10 @@ var ts;
+                     ts.perfLogger.logStartUpdateProgram("FullConfigReload");
+                     reloadConfigFile();
+                     break;
++                case ts.ConfigFileProgramReloadLevel.Resolutions:
++                    ts.perfLogger.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++                    synchronizeProgram(/*forceAllFilesAsInvalidated*/ true);
++                    break;
+                 default:
+                     ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
+                     synchronizeProgram();
+@@ -126642,7 +126800,7 @@ var ts;
+      * Don't include something from a `node_modules` that isn't actually reachable by a global import.
+      * A relative import to node_modules is usually a bad idea.
+      */
+-    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++    function isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath) {
+         // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
+         var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
+         var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
+@@ -126650,6 +126808,33 @@ var ts;
+             || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
+             || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
+     }
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function isImportablePathPnp(fromPath, toPath) {
++        var pnpApi = getPnpApi(fromPath);
++        var fromLocator = pnpApi.findPackageLocator(fromPath);
++        var toLocator = pnpApi.findPackageLocator(toPath);
++        // eslint-disable-next-line no-null/no-null
++        if (toLocator === null) {
++            return false;
++        }
++        var fromInfo = pnpApi.getPackageInformation(fromLocator);
++        var toReference = fromInfo.packageDependencies.get(toLocator.name);
++        return toReference === toLocator.reference;
++    }
++    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++        if (getPnpApi(fromPath)) {
++            return isImportablePathPnp(fromPath, toPath);
++        }
++        else {
++            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
++        }
++    }
+     function forEachExternalModuleToImportFrom(program, host, useAutoImportProvider, cb) {
+         var _a, _b;
+         forEachExternalModule(program.getTypeChecker(), program.getSourceFiles(), function (module, file) { return cb(module, file, program, /*isFromPackageJson*/ false); });
+@@ -128469,6 +128654,7 @@ var ts;
+              *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
+              */
+             function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
++                var _a, _b;
+                 var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
+                 var result = [];
+                 var extensionOptions = getExtensionOptions(compilerOptions);
+@@ -128481,8 +128667,8 @@ var ts;
+                     }
+                 }
+                 var fragmentDirectory = getFragmentDirectory(fragment);
+-                for (var _i = 0, _a = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _a.length; _i++) {
+-                    var ambientName = _a[_i];
++                for (var _i = 0, _c = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _c.length; _i++) {
++                    var ambientName = _c[_i];
+                     result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                 }
+                 getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
+@@ -128497,18 +128683,39 @@ var ts;
+                                 result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                             }
+                         };
+-                        for (var _b = 0, _c = enumerateNodeModulesVisibleToScript(host, scriptPath); _b < _c.length; _b++) {
+-                            var moduleName = _c[_b];
++                        for (var _d = 0, _e = enumerateNodeModulesVisibleToScript(host, scriptPath); _d < _e.length; _d++) {
++                            var moduleName = _e[_d];
+                             _loop_4(moduleName);
+                         }
+                     }
+                     if (!foundGlobal) {
+-                        ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
+-                            var nodeModules = ts.combinePaths(ancestor, "node_modules");
+-                            if (ts.tryDirectoryExists(host, nodeModules)) {
+-                                getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                        var pnpapi = (_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath);
++                        if (pnpapi) {
++                            // Splits a require request into its components, or return null if the request is a file path
++                            var pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
++                            var dependencyNameMatch = fragment.match(pathRegExp);
++                            if (dependencyNameMatch) {
++                                var dependencyName = dependencyNameMatch[1], subPath = dependencyNameMatch[2];
++                                var unqualified = void 0;
++                                try {
++                                    unqualified = pnpapi.resolveToUnqualified(dependencyName, scriptPath, { considerBuiltins: false });
++                                }
++                                catch (_f) {
++                                    // It's fine if the resolution fails
++                                }
++                                if (unqualified) {
++                                    getCompletionEntriesForDirectoryFragment(subPath, ts.normalizePath(unqualified), extensionOptions, host, /*exclude*/ undefined, result);
++                                }
+                             }
+-                        });
++                        }
++                        else {
++                            ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
++                                var nodeModules = ts.combinePaths(ancestor, "node_modules");
++                                if (ts.tryDirectoryExists(host, nodeModules)) {
++                                    getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                                }
++                            });
++                        }
+                     }
+                 }
+                 return result;
+@@ -128609,6 +128816,7 @@ var ts;
+                 return addReplacementSpans(toComplete, range.pos + prefix.length, names);
+             }
+             function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
++                var _a, _b;
+                 if (result === void 0) { result = []; }
+                 // Check for typings specified in compiler options
+                 var seen = new ts.Map();
+@@ -128617,11 +128825,19 @@ var ts;
+                     var root = typeRoots_1[_i];
+                     getCompletionEntriesFromDirectories(root);
+                 }
+-                // Also get all @types typings installed in visible node_modules directories
+-                for (var _a = 0, _b = ts.findPackageJsons(scriptPath, host); _a < _b.length; _a++) {
+-                    var packageJson = _b[_a];
+-                    var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
+-                    getCompletionEntriesFromDirectories(typesDir);
++                if ((_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath)) {
++                    for (var _c = 0, _d = ts.getPnpTypeRoots(scriptPath); _c < _d.length; _c++) {
++                        var root = _d[_c];
++                        getCompletionEntriesFromDirectories(root);
++                    }
++                }
++                else {
++                    // Also get all @types typings installed in visible node_modules directories
++                    for (var _e = 0, _f = ts.findPackageJsons(scriptPath, host); _e < _f.length; _e++) {
++                        var packageJson = _f[_e];
++                        var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
++                        getCompletionEntriesFromDirectories(typesDir);
++                    }
+                 }
+                 return result;
+                 function getCompletionEntriesFromDirectories(directory) {
+@@ -157724,9 +157940,9 @@ var ts;
+                 if (isTopLevelDeclarationStatement(statement) &&
+                     !isExported(sourceFile, statement, useEs6Exports) &&
+                     forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
+-                    var exports = addExport(statement, useEs6Exports);
+-                    if (exports)
+-                        return exports;
++                    var exports_1 = addExport(statement, useEs6Exports);
++                    if (exports_1)
++                        return exports_1;
+                 }
+                 return statement;
+             });
+@@ -166166,6 +166382,40 @@ var ts;
+                 return this.projectReferences;
+             };
+             ConfiguredProject.prototype.updateReferences = function (refs) {
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    // With Plug'n'Play, dependencies that list peer dependencies
++                    // are "virtualized": they are resolved to a unique (virtual)
++                    // path that the underlying filesystem layer then resolve back
++                    // to the original location.
++                    //
++                    // When a workspace depends on another workspace with peer
++                    // dependencies, this other workspace will thus be resolved to
++                    // a unique path that won't match what the initial project has
++                    // listed in its `references` field, and TS thus won't leverage
++                    // the reference at all.
++                    //
++                    // To avoid that, we compute here the virtualized paths for the
++                    // user-provided references in our references by directly querying
++                    // the PnP API. This way users don't have to know the virtual paths,
++                    // but we still support them just fine even through references.
++                    var basePath_1 = this.getCurrentDirectory();
++                    var findPnpApi_1 = require("module").findPnpApi;
++                    var getPnpPath_1 = function (path) {
++                        try {
++                            var pnpApi = findPnpApi_1("".concat(path, "/"));
++                            var targetLocator = pnpApi.findPackageLocator("".concat(path, "/"));
++                            var packageLocation = pnpApi.getPackageInformation(targetLocator).packageLocation;
++                            var request = ts.combinePaths(targetLocator.name, ts.getRelativePathFromDirectory(packageLocation, path, /*ignoreCase*/ false));
++                            return pnpApi.resolveToUnqualified(request, "".concat(basePath_1, "/"));
++                        }
++                        catch (_a) {
++                            // something went wrong with the resolution, try not to fail
++                            return path;
++                        }
++                    };
++                    refs = refs === null || refs === void 0 ? void 0 : refs.map(function (r) { return (__assign(__assign({}, r), { path: getPnpPath_1(r.path) })); });
++                }
+                 this.projectReferences = refs;
+                 this.potentialProjectReferences = undefined;
+             };
+@@ -166782,6 +167032,7 @@ var ts;
+                         watchDirectory: ts.returnNoopFileWatcher,
+                     } :
+                     ts.getWatchFactory(this.host, watchLogLevel, log, getDetailWatchInfo);
++                this.pnpWatcher = this.watchPnpFile();
+             }
+             ProjectService.prototype.toPath = function (fileName) {
+                 return ts.toPath(fileName, this.currentDirectory, this.toCanonicalFileName);
+@@ -168634,7 +168885,7 @@ var ts;
+             };
+             ProjectService.prototype.setHostConfiguration = function (args) {
+                 var _this = this;
+-                var _a;
++                var _a, _b;
+                 if (args.file) {
+                     var info = this.getScriptInfoForNormalizedPath(server.toNormalizedPath(args.file));
+                     if (info) {
+@@ -168652,7 +168903,7 @@ var ts;
+                         this.logger.info("Format host information updated");
+                     }
+                     if (args.preferences) {
+-                        var _b = this.hostConfiguration.preferences, lazyConfiguredProjectsFromExternalProject = _b.lazyConfiguredProjectsFromExternalProject, includePackageJsonAutoImports = _b.includePackageJsonAutoImports;
++                        var _c = this.hostConfiguration.preferences, lazyConfiguredProjectsFromExternalProject = _c.lazyConfiguredProjectsFromExternalProject, includePackageJsonAutoImports = _c.includePackageJsonAutoImports;
+                         this.hostConfiguration.preferences = __assign(__assign({}, this.hostConfiguration.preferences), args.preferences);
+                         if (lazyConfiguredProjectsFromExternalProject && !this.hostConfiguration.preferences.lazyConfiguredProjectsFromExternalProject) {
+                             // Load configured projects for external projects that are pending reload
+@@ -168678,6 +168929,8 @@ var ts;
+                     if (args.watchOptions) {
+                         this.hostConfiguration.watchOptions = (_a = convertWatchOptions(args.watchOptions)) === null || _a === void 0 ? void 0 : _a.watchOptions;
+                         this.logger.info("Host watch options changed to ".concat(JSON.stringify(this.hostConfiguration.watchOptions), ", it will be take effect for next watches."));
++                        (_b = this.pnpWatcher) === null || _b === void 0 ? void 0 : _b.close();
++                        this.watchPnpFile();
+                     }
+                 }
+             };
+@@ -169672,6 +169925,27 @@ var ts;
+                 });
+             };
+             /*@internal*/
++            ProjectService.prototype.watchPnpFile = function () {
++                var _this = this;
++                if (typeof process.versions.pnp === "undefined") {
++                    return;
++                }
++                var findPnpApi = require("module").findPnpApi;
++                // eslint-disable-next-line no-null/no-null
++                var pnpFileName = findPnpApi(__filename).resolveRequest("pnpapi", /*issuer*/ null);
++                return this.watchFactory.watchFile(pnpFileName, function () {
++                    _this.forEachProject(function (project) {
++                        for (var _i = 0, _a = project.getScriptInfos(); _i < _a.length; _i++) {
++                            var info = _a[_i];
++                            project.resolutionCache.invalidateResolutionOfFile(info.path);
++                        }
++                        project.markAsDirty();
++                        updateProjectIfDirty(project);
++                    });
++                    _this.delayEnsureProjectForOpenFiles();
++                }, ts.PollingInterval.Low, this.hostConfiguration.watchOptions, ts.WatchType.ConfigFile);
++            };
++            /*@internal*/
+             ProjectService.prototype.watchPackageJsonFile = function (path) {
+                 var _this = this;
+                 var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
+diff --git a/lib/typescript.js b/lib/typescript.js
+index 0b317307b..da58afb9e 100644
+semver exclusivity >=4.5.2 <4.6
+--- a/lib/typescript.js
++++ b/lib/typescript.js
+@@ -7709,6 +7709,11 @@ var ts;
+                     : new Buffer(input, encoding);
+             }
+             function isFileSystemCaseSensitive() {
++                // The PnP runtime is always case-sensitive
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    return true;
++                }
+                 // win32\win64 are case insensitive platforms
+                 if (platform === "win32" || platform === "win64") {
+                     return false;
+@@ -41597,18 +41602,17 @@ var ts;
+     ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
+     /**
+      * Returns the path to every node_modules/@types directory from some ancestor directory.
+-     * Returns undefined if there are none.
+      */
+-    function getDefaultTypeRoots(currentDirectory, host) {
++    function getNodeModulesTypeRoots(currentDirectory, host) {
+         if (!host.directoryExists) {
+             return [ts.combinePaths(currentDirectory, nodeModulesAtTypes)];
+             // And if it doesn't exist, tough.
+         }
+-        var typeRoots;
++        var typeRoots = [];
+         ts.forEachAncestorDirectory(ts.normalizePath(currentDirectory), function (directory) {
+             var atTypes = ts.combinePaths(directory, nodeModulesAtTypes);
+             if (host.directoryExists(atTypes)) {
+-                (typeRoots || (typeRoots = [])).push(atTypes);
++                typeRoots.push(atTypes);
+             }
+             return undefined;
+         });
+@@ -41619,6 +41623,42 @@ var ts;
+         var useCaseSensitiveFileNames = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+         return ts.comparePaths(path1, path2, !useCaseSensitiveFileNames) === 0 /* EqualTo */;
+     }
++    /**
++     * @internal
++     */
++    function getPnpTypeRoots(currentDirectory) {
++        var pnpapi = getPnpApi(currentDirectory);
++        if (!pnpapi) {
++            return [];
++        }
++        // Some TS consumers pass relative paths that aren't normalized
++        currentDirectory = ts.sys.resolvePath(currentDirectory);
++        var currentPackage = pnpapi.findPackageLocator("".concat(currentDirectory, "/"));
++        if (!currentPackage) {
++            return [];
++        }
++        var packageDependencies = pnpapi.getPackageInformation(currentPackage).packageDependencies;
++        var typeRoots = [];
++        for (var _i = 0, _a = Array.from(packageDependencies.entries()); _i < _a.length; _i++) {
++            var _b = _a[_i], name = _b[0], referencish = _b[1];
++            // eslint-disable-next-line no-null/no-null
++            if (name.startsWith(typesPackagePrefix) && referencish !== null) {
++                var dependencyLocator = pnpapi.getLocator(name, referencish);
++                var packageLocation = pnpapi.getPackageInformation(dependencyLocator).packageLocation;
++                typeRoots.push(ts.getDirectoryPath(packageLocation));
++            }
++        }
++        return typeRoots;
++    }
++    ts.getPnpTypeRoots = getPnpTypeRoots;
++    var typesPackagePrefix = "@types/";
++    function getDefaultTypeRoots(currentDirectory, host) {
++        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
++        var pnpTypes = getPnpTypeRoots(currentDirectory);
++        if (nmTypes.length > 0 || pnpTypes.length > 0) {
++            return __spreadArray(__spreadArray([], nmTypes, true), pnpTypes, true);
++        }
++    }
+     /**
+      * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
+      * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
+@@ -41735,7 +41775,9 @@ var ts;
+                 }
+                 var result_4;
+                 if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
+-                    var searchResult = loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
++                    var searchResult = getPnpApi(initialLocationForSecondaryLookup)
++                        ? tryLoadModuleUsingPnpResolution(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined)
++                        : loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
+                     result_4 = searchResult && searchResult.value;
+                 }
+                 else {
+@@ -42405,7 +42447,9 @@ var ts;
+                     if (traceEnabled) {
+                         trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
+                     }
+-                    resolved_1 = loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
++                    resolved_1 = getPnpApi(containingDirectory)
++                        ? tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference)
++                        : loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
+                 }
+                 if (!resolved_1)
+                     return undefined;
+@@ -43066,6 +43110,14 @@ var ts;
+     }
+     function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+         var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, /* rest */ undefined, /* packageDirectory */ undefined);
++    }
++    function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++        var candidate = ts.normalizePath(ts.combinePaths(packageDirectory, rest));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, /*moduleName*/ undefined, /*nodeModulesDirectory*/ undefined, /*nodeModulesDirectoryExists*/ true, state, cache, redirectedReference, candidate, rest, packageDirectory);
++    }
++    function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++        var _a;
+         // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
+         var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+         // But only if we're not respecting export maps (if we are, we might redirect around this location)
+@@ -43079,7 +43131,9 @@ var ts;
+                 return withPackageId(packageInfo, fromDirectory);
+             }
+         }
+-        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageName;
++        if (rest === undefined)
++            (_a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest);
+         var loader = function (extensions, candidate, onlyRecordFailures, state) {
+             var _a;
+             // package exports are higher priority than file/directory lookups (and, if there's exports present, blocks them)
+@@ -43091,7 +43145,8 @@ var ts;
+             return withPackageId(packageInfo, pathAndExtension);
+         };
+         if (rest !== "") { // If "rest" is empty, we just did this search above.
+-            var packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
++            if (packageDirectory === undefined)
++                packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
+             // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
+             packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
+             if (packageInfo && packageInfo.versionPaths) {
+@@ -43250,6 +43305,58 @@ var ts;
+     function toSearchResult(value) {
+         return value !== undefined ? { value: value } : undefined;
+     }
++    /**
++     * We only allow PnP to be used as a resolution strategy if TypeScript
++     * itself is executed under a PnP runtime (and we only allow it to access
++     * the current PnP runtime, not any on the disk). This ensures that we
++     * don't execute potentially malicious code that didn't already have a
++     * chance to be executed (if we're running within the runtime, it means
++     * that the runtime has already been executed).
++     * @internal
++     */
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function loadPnpPackageResolution(packageName, containingDirectory) {
++        try {
++            var resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, "".concat(containingDirectory, "/"), { considerBuiltins: false });
++            return ts.normalizeSlashes(resolution).replace(/\/$/, "");
++        }
++        catch (_a) {
++            // Nothing to do
++        }
++    }
++    function loadPnpTypePackageResolution(packageName, containingDirectory) {
++        return loadPnpPackageResolution(getTypesPackageName(packageName), containingDirectory);
++    }
++    /* @internal */
++    function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++        var packageFullResolution = packageResolution
++            ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference)
++            : undefined;
++        var resolved;
++        if (packageFullResolution) {
++            resolved = packageFullResolution;
++        }
++        else if (extensions === Extensions.TypeScript || extensions === Extensions.DtsOnly) {
++            var typePackageResolution = loadPnpTypePackageResolution(packageName, containingDirectory);
++            var typePackageFullResolution = typePackageResolution
++                ? loadModuleFromPnpResolution(Extensions.DtsOnly, typePackageResolution, rest, state, cache, redirectedReference)
++                : undefined;
++            if (typePackageFullResolution) {
++                resolved = typePackageFullResolution;
++            }
++        }
++        if (resolved) {
++            return toSearchResult(resolved);
++        }
++    }
+ })(ts || (ts = {}));
+ /* @internal */
+ var ts;
+@@ -112722,6 +112829,8 @@ var ts;
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
+         /** Reload completely by re-reading contents of config file from disk and updating program */
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
++        /** Reload the resolutions */
++        ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Resolutions"] = 3] = "Resolutions";
+     })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
+     /**
+      * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
+@@ -119526,6 +119635,30 @@ var ts;
+                 return undefined;
+             }
+             var parts = getNodeModulePathParts(path);
++            var packageName;
++            if (!parts && typeof process.versions.pnp !== "undefined") {
++                var findPnpApi = require("module").findPnpApi;
++                var pnpApi = findPnpApi(path);
++                var locator = pnpApi === null || pnpApi === void 0 ? void 0 : pnpApi.findPackageLocator(path);
++                // eslint-disable-next-line no-null/no-null
++                if (locator !== null && locator !== undefined) {
++                    var sourceLocator = pnpApi.findPackageLocator("".concat(sourceDirectory, "/"));
++                    // Don't use the package name when the imported file is inside
++                    // the source directory (prefer a relative path instead)
++                    if (locator === sourceLocator) {
++                        return undefined;
++                    }
++                    var information = pnpApi.getPackageInformation(locator);
++                    packageName = locator.name;
++                    parts = {
++                        topLevelNodeModulesIndex: undefined,
++                        topLevelPackageNameIndex: undefined,
++                        // The last character from packageLocation is the trailing "/", we want to point to it
++                        packageRootIndex: information.packageLocation.length - 1,
++                        fileNameIndex: path.lastIndexOf("/"),
++                    };
++                }
++            }
+             if (!parts) {
+                 return undefined;
+             }
+@@ -119564,18 +119697,24 @@ var ts;
+             if (isRedirect && !isPackageRootPath) {
+                 return undefined;
+             }
+-            var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-            // Get a path that's relative to node_modules or the importing file's path
+-            // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
+-            var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-            if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-                return undefined;
++            // If PnP is enabled the node_modules entries we'll get will always be relevant even if they
++            // are located in a weird path apparently outside of the source directory
++            if (typeof process.versions.pnp === "undefined") {
++                var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++                // Get a path that's relative to node_modules or the importing file's path
++                // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
++                var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++                if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++                    return undefined;
++                }
+             }
+             // If the module was found in @types, get the actual Node package name
+-            var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-            var packageName = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++            var nodeModulesDirectoryName = typeof packageName !== "undefined"
++                ? packageName + moduleSpecifier.substring(parts.packageRootIndex)
++                : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++            var packageNameFromPath = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+             // For classic resolution, only allow importing from node_modules/@types, not other node_modules
+-            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageName === nodeModulesDirectoryName ? undefined : packageName;
++            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageNameFromPath === nodeModulesDirectoryName ? undefined : packageNameFromPath;
+             function tryDirectoryWithPackageJson(packageRootIndex) {
+                 var packageRootPath = path.substring(0, packageRootIndex);
+                 var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
+@@ -120390,6 +120529,10 @@ var ts;
+         if (configFileName) {
+             configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
+         }
++        var pnpFileWatcher;
++        if (typeof process.versions.pnp !== "undefined") {
++            pnpFileWatcher = watchFile(require.resolve("pnpapi"), scheduleResolutionReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
++        }
+         var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
+         ts.setGetSourceFileAsHashVersioned(compilerHost, host);
+         // Members for CompilerHost
+@@ -120468,6 +120611,10 @@ var ts;
+                 configFileWatcher.close();
+                 configFileWatcher = undefined;
+             }
++            if (pnpFileWatcher) {
++                pnpFileWatcher.close();
++                pnpFileWatcher = undefined;
++            }
+             extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
+             extendedConfigCache = undefined;
+             if (sharedExtendedConfigFileWatchers) {
+@@ -120504,7 +120651,8 @@ var ts;
+         function getCurrentProgram() {
+             return builderProgram && builderProgram.getProgramOrUndefined();
+         }
+-        function synchronizeProgram() {
++        function synchronizeProgram(forceAllFilesAsInvalidated) {
++            if (forceAllFilesAsInvalidated === void 0) { forceAllFilesAsInvalidated = false; }
+             writeLog("Synchronizing program");
+             clearInvalidateResolutionsOfFailedLookupLocations();
+             var program = getCurrentBuilderProgram();
+@@ -120515,7 +120663,7 @@ var ts;
+                 }
+             }
+             // All resolutions are invalid if user provided resolutions
+-            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution);
++            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution || forceAllFilesAsInvalidated);
+             if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
+                 if (hasChangedConfigFileParsingErrors) {
+                     builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
+@@ -120725,6 +120873,12 @@ var ts;
+             reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
+             scheduleProgramUpdate();
+         }
++        function scheduleResolutionReload() {
++            writeLog("Clearing resolutions");
++            resolutionCache.clear();
++            reloadLevel = ts.ConfigFileProgramReloadLevel.Resolutions;
++            scheduleProgramUpdate();
++        }
+         function updateProgramWithWatchStatus() {
+             timerToUpdateProgram = undefined;
+             reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
+@@ -120740,6 +120894,10 @@ var ts;
+                     ts.perfLogger.logStartUpdateProgram("FullConfigReload");
+                     reloadConfigFile();
+                     break;
++                case ts.ConfigFileProgramReloadLevel.Resolutions:
++                    ts.perfLogger.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++                    synchronizeProgram(/*forceAllFilesAsInvalidated*/ true);
++                    break;
+                 default:
+                     ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
+                     synchronizeProgram();
+@@ -126642,7 +126800,7 @@ var ts;
+      * Don't include something from a `node_modules` that isn't actually reachable by a global import.
+      * A relative import to node_modules is usually a bad idea.
+      */
+-    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++    function isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath) {
+         // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
+         var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
+         var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
+@@ -126650,6 +126808,33 @@ var ts;
+             || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
+             || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
+     }
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function isImportablePathPnp(fromPath, toPath) {
++        var pnpApi = getPnpApi(fromPath);
++        var fromLocator = pnpApi.findPackageLocator(fromPath);
++        var toLocator = pnpApi.findPackageLocator(toPath);
++        // eslint-disable-next-line no-null/no-null
++        if (toLocator === null) {
++            return false;
++        }
++        var fromInfo = pnpApi.getPackageInformation(fromLocator);
++        var toReference = fromInfo.packageDependencies.get(toLocator.name);
++        return toReference === toLocator.reference;
++    }
++    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++        if (getPnpApi(fromPath)) {
++            return isImportablePathPnp(fromPath, toPath);
++        }
++        else {
++            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
++        }
++    }
+     function forEachExternalModuleToImportFrom(program, host, useAutoImportProvider, cb) {
+         var _a, _b;
+         forEachExternalModule(program.getTypeChecker(), program.getSourceFiles(), function (module, file) { return cb(module, file, program, /*isFromPackageJson*/ false); });
+@@ -128469,6 +128654,7 @@ var ts;
+              *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
+              */
+             function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
++                var _a, _b;
+                 var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
+                 var result = [];
+                 var extensionOptions = getExtensionOptions(compilerOptions);
+@@ -128481,8 +128667,8 @@ var ts;
+                     }
+                 }
+                 var fragmentDirectory = getFragmentDirectory(fragment);
+-                for (var _i = 0, _a = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _a.length; _i++) {
+-                    var ambientName = _a[_i];
++                for (var _i = 0, _c = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _c.length; _i++) {
++                    var ambientName = _c[_i];
+                     result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                 }
+                 getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
+@@ -128497,18 +128683,39 @@ var ts;
+                                 result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                             }
+                         };
+-                        for (var _b = 0, _c = enumerateNodeModulesVisibleToScript(host, scriptPath); _b < _c.length; _b++) {
+-                            var moduleName = _c[_b];
++                        for (var _d = 0, _e = enumerateNodeModulesVisibleToScript(host, scriptPath); _d < _e.length; _d++) {
++                            var moduleName = _e[_d];
+                             _loop_4(moduleName);
+                         }
+                     }
+                     if (!foundGlobal) {
+-                        ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
+-                            var nodeModules = ts.combinePaths(ancestor, "node_modules");
+-                            if (ts.tryDirectoryExists(host, nodeModules)) {
+-                                getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                        var pnpapi = (_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath);
++                        if (pnpapi) {
++                            // Splits a require request into its components, or return null if the request is a file path
++                            var pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
++                            var dependencyNameMatch = fragment.match(pathRegExp);
++                            if (dependencyNameMatch) {
++                                var dependencyName = dependencyNameMatch[1], subPath = dependencyNameMatch[2];
++                                var unqualified = void 0;
++                                try {
++                                    unqualified = pnpapi.resolveToUnqualified(dependencyName, scriptPath, { considerBuiltins: false });
++                                }
++                                catch (_f) {
++                                    // It's fine if the resolution fails
++                                }
++                                if (unqualified) {
++                                    getCompletionEntriesForDirectoryFragment(subPath, ts.normalizePath(unqualified), extensionOptions, host, /*exclude*/ undefined, result);
++                                }
+                             }
+-                        });
++                        }
++                        else {
++                            ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
++                                var nodeModules = ts.combinePaths(ancestor, "node_modules");
++                                if (ts.tryDirectoryExists(host, nodeModules)) {
++                                    getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                                }
++                            });
++                        }
+                     }
+                 }
+                 return result;
+@@ -128609,6 +128816,7 @@ var ts;
+                 return addReplacementSpans(toComplete, range.pos + prefix.length, names);
+             }
+             function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
++                var _a, _b;
+                 if (result === void 0) { result = []; }
+                 // Check for typings specified in compiler options
+                 var seen = new ts.Map();
+@@ -128617,11 +128825,19 @@ var ts;
+                     var root = typeRoots_1[_i];
+                     getCompletionEntriesFromDirectories(root);
+                 }
+-                // Also get all @types typings installed in visible node_modules directories
+-                for (var _a = 0, _b = ts.findPackageJsons(scriptPath, host); _a < _b.length; _a++) {
+-                    var packageJson = _b[_a];
+-                    var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
+-                    getCompletionEntriesFromDirectories(typesDir);
++                if ((_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath)) {
++                    for (var _c = 0, _d = ts.getPnpTypeRoots(scriptPath); _c < _d.length; _c++) {
++                        var root = _d[_c];
++                        getCompletionEntriesFromDirectories(root);
++                    }
++                }
++                else {
++                    // Also get all @types typings installed in visible node_modules directories
++                    for (var _e = 0, _f = ts.findPackageJsons(scriptPath, host); _e < _f.length; _e++) {
++                        var packageJson = _f[_e];
++                        var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
++                        getCompletionEntriesFromDirectories(typesDir);
++                    }
+                 }
+                 return result;
+                 function getCompletionEntriesFromDirectories(directory) {
+@@ -157724,9 +157940,9 @@ var ts;
+                 if (isTopLevelDeclarationStatement(statement) &&
+                     !isExported(sourceFile, statement, useEs6Exports) &&
+                     forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
+-                    var exports = addExport(statement, useEs6Exports);
+-                    if (exports)
+-                        return exports;
++                    var exports_1 = addExport(statement, useEs6Exports);
++                    if (exports_1)
++                        return exports_1;
+                 }
+                 return statement;
+             });
+diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
+index bdd26eb4e..2e0e6adba 100644
+semver exclusivity >=4.5.2 <4.6
+--- a/lib/typescriptServices.js
++++ b/lib/typescriptServices.js
+@@ -7709,6 +7709,11 @@ var ts;
+                     : new Buffer(input, encoding);
+             }
+             function isFileSystemCaseSensitive() {
++                // The PnP runtime is always case-sensitive
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    return true;
++                }
+                 // win32\win64 are case insensitive platforms
+                 if (platform === "win32" || platform === "win64") {
+                     return false;
+@@ -41597,18 +41602,17 @@ var ts;
+     ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
+     /**
+      * Returns the path to every node_modules/@types directory from some ancestor directory.
+-     * Returns undefined if there are none.
+      */
+-    function getDefaultTypeRoots(currentDirectory, host) {
++    function getNodeModulesTypeRoots(currentDirectory, host) {
+         if (!host.directoryExists) {
+             return [ts.combinePaths(currentDirectory, nodeModulesAtTypes)];
+             // And if it doesn't exist, tough.
+         }
+-        var typeRoots;
++        var typeRoots = [];
+         ts.forEachAncestorDirectory(ts.normalizePath(currentDirectory), function (directory) {
+             var atTypes = ts.combinePaths(directory, nodeModulesAtTypes);
+             if (host.directoryExists(atTypes)) {
+-                (typeRoots || (typeRoots = [])).push(atTypes);
++                typeRoots.push(atTypes);
+             }
+             return undefined;
+         });
+@@ -41619,6 +41623,42 @@ var ts;
+         var useCaseSensitiveFileNames = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+         return ts.comparePaths(path1, path2, !useCaseSensitiveFileNames) === 0 /* EqualTo */;
+     }
++    /**
++     * @internal
++     */
++    function getPnpTypeRoots(currentDirectory) {
++        var pnpapi = getPnpApi(currentDirectory);
++        if (!pnpapi) {
++            return [];
++        }
++        // Some TS consumers pass relative paths that aren't normalized
++        currentDirectory = ts.sys.resolvePath(currentDirectory);
++        var currentPackage = pnpapi.findPackageLocator("".concat(currentDirectory, "/"));
++        if (!currentPackage) {
++            return [];
++        }
++        var packageDependencies = pnpapi.getPackageInformation(currentPackage).packageDependencies;
++        var typeRoots = [];
++        for (var _i = 0, _a = Array.from(packageDependencies.entries()); _i < _a.length; _i++) {
++            var _b = _a[_i], name = _b[0], referencish = _b[1];
++            // eslint-disable-next-line no-null/no-null
++            if (name.startsWith(typesPackagePrefix) && referencish !== null) {
++                var dependencyLocator = pnpapi.getLocator(name, referencish);
++                var packageLocation = pnpapi.getPackageInformation(dependencyLocator).packageLocation;
++                typeRoots.push(ts.getDirectoryPath(packageLocation));
++            }
++        }
++        return typeRoots;
++    }
++    ts.getPnpTypeRoots = getPnpTypeRoots;
++    var typesPackagePrefix = "@types/";
++    function getDefaultTypeRoots(currentDirectory, host) {
++        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
++        var pnpTypes = getPnpTypeRoots(currentDirectory);
++        if (nmTypes.length > 0 || pnpTypes.length > 0) {
++            return __spreadArray(__spreadArray([], nmTypes, true), pnpTypes, true);
++        }
++    }
+     /**
+      * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
+      * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
+@@ -41735,7 +41775,9 @@ var ts;
+                 }
+                 var result_4;
+                 if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
+-                    var searchResult = loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
++                    var searchResult = getPnpApi(initialLocationForSecondaryLookup)
++                        ? tryLoadModuleUsingPnpResolution(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined)
++                        : loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
+                     result_4 = searchResult && searchResult.value;
+                 }
+                 else {
+@@ -42405,7 +42447,9 @@ var ts;
+                     if (traceEnabled) {
+                         trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
+                     }
+-                    resolved_1 = loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
++                    resolved_1 = getPnpApi(containingDirectory)
++                        ? tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference)
++                        : loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
+                 }
+                 if (!resolved_1)
+                     return undefined;
+@@ -43066,6 +43110,14 @@ var ts;
+     }
+     function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+         var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, /* rest */ undefined, /* packageDirectory */ undefined);
++    }
++    function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++        var candidate = ts.normalizePath(ts.combinePaths(packageDirectory, rest));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, /*moduleName*/ undefined, /*nodeModulesDirectory*/ undefined, /*nodeModulesDirectoryExists*/ true, state, cache, redirectedReference, candidate, rest, packageDirectory);
++    }
++    function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++        var _a;
+         // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
+         var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+         // But only if we're not respecting export maps (if we are, we might redirect around this location)
+@@ -43079,7 +43131,9 @@ var ts;
+                 return withPackageId(packageInfo, fromDirectory);
+             }
+         }
+-        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageName;
++        if (rest === undefined)
++            (_a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest);
+         var loader = function (extensions, candidate, onlyRecordFailures, state) {
+             var _a;
+             // package exports are higher priority than file/directory lookups (and, if there's exports present, blocks them)
+@@ -43091,7 +43145,8 @@ var ts;
+             return withPackageId(packageInfo, pathAndExtension);
+         };
+         if (rest !== "") { // If "rest" is empty, we just did this search above.
+-            var packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
++            if (packageDirectory === undefined)
++                packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
+             // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
+             packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
+             if (packageInfo && packageInfo.versionPaths) {
+@@ -43250,6 +43305,58 @@ var ts;
+     function toSearchResult(value) {
+         return value !== undefined ? { value: value } : undefined;
+     }
++    /**
++     * We only allow PnP to be used as a resolution strategy if TypeScript
++     * itself is executed under a PnP runtime (and we only allow it to access
++     * the current PnP runtime, not any on the disk). This ensures that we
++     * don't execute potentially malicious code that didn't already have a
++     * chance to be executed (if we're running within the runtime, it means
++     * that the runtime has already been executed).
++     * @internal
++     */
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function loadPnpPackageResolution(packageName, containingDirectory) {
++        try {
++            var resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, "".concat(containingDirectory, "/"), { considerBuiltins: false });
++            return ts.normalizeSlashes(resolution).replace(/\/$/, "");
++        }
++        catch (_a) {
++            // Nothing to do
++        }
++    }
++    function loadPnpTypePackageResolution(packageName, containingDirectory) {
++        return loadPnpPackageResolution(getTypesPackageName(packageName), containingDirectory);
++    }
++    /* @internal */
++    function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++        var packageFullResolution = packageResolution
++            ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference)
++            : undefined;
++        var resolved;
++        if (packageFullResolution) {
++            resolved = packageFullResolution;
++        }
++        else if (extensions === Extensions.TypeScript || extensions === Extensions.DtsOnly) {
++            var typePackageResolution = loadPnpTypePackageResolution(packageName, containingDirectory);
++            var typePackageFullResolution = typePackageResolution
++                ? loadModuleFromPnpResolution(Extensions.DtsOnly, typePackageResolution, rest, state, cache, redirectedReference)
++                : undefined;
++            if (typePackageFullResolution) {
++                resolved = typePackageFullResolution;
++            }
++        }
++        if (resolved) {
++            return toSearchResult(resolved);
++        }
++    }
+ })(ts || (ts = {}));
+ /* @internal */
+ var ts;
+@@ -112722,6 +112829,8 @@ var ts;
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
+         /** Reload completely by re-reading contents of config file from disk and updating program */
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
++        /** Reload the resolutions */
++        ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Resolutions"] = 3] = "Resolutions";
+     })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
+     /**
+      * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
+@@ -119526,6 +119635,30 @@ var ts;
+                 return undefined;
+             }
+             var parts = getNodeModulePathParts(path);
++            var packageName;
++            if (!parts && typeof process.versions.pnp !== "undefined") {
++                var findPnpApi = require("module").findPnpApi;
++                var pnpApi = findPnpApi(path);
++                var locator = pnpApi === null || pnpApi === void 0 ? void 0 : pnpApi.findPackageLocator(path);
++                // eslint-disable-next-line no-null/no-null
++                if (locator !== null && locator !== undefined) {
++                    var sourceLocator = pnpApi.findPackageLocator("".concat(sourceDirectory, "/"));
++                    // Don't use the package name when the imported file is inside
++                    // the source directory (prefer a relative path instead)
++                    if (locator === sourceLocator) {
++                        return undefined;
++                    }
++                    var information = pnpApi.getPackageInformation(locator);
++                    packageName = locator.name;
++                    parts = {
++                        topLevelNodeModulesIndex: undefined,
++                        topLevelPackageNameIndex: undefined,
++                        // The last character from packageLocation is the trailing "/", we want to point to it
++                        packageRootIndex: information.packageLocation.length - 1,
++                        fileNameIndex: path.lastIndexOf("/"),
++                    };
++                }
++            }
+             if (!parts) {
+                 return undefined;
+             }
+@@ -119564,18 +119697,24 @@ var ts;
+             if (isRedirect && !isPackageRootPath) {
+                 return undefined;
+             }
+-            var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-            // Get a path that's relative to node_modules or the importing file's path
+-            // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
+-            var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-            if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-                return undefined;
++            // If PnP is enabled the node_modules entries we'll get will always be relevant even if they
++            // are located in a weird path apparently outside of the source directory
++            if (typeof process.versions.pnp === "undefined") {
++                var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++                // Get a path that's relative to node_modules or the importing file's path
++                // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
++                var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++                if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++                    return undefined;
++                }
+             }
+             // If the module was found in @types, get the actual Node package name
+-            var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-            var packageName = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++            var nodeModulesDirectoryName = typeof packageName !== "undefined"
++                ? packageName + moduleSpecifier.substring(parts.packageRootIndex)
++                : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++            var packageNameFromPath = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+             // For classic resolution, only allow importing from node_modules/@types, not other node_modules
+-            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageName === nodeModulesDirectoryName ? undefined : packageName;
++            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageNameFromPath === nodeModulesDirectoryName ? undefined : packageNameFromPath;
+             function tryDirectoryWithPackageJson(packageRootIndex) {
+                 var packageRootPath = path.substring(0, packageRootIndex);
+                 var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
+@@ -120390,6 +120529,10 @@ var ts;
+         if (configFileName) {
+             configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
+         }
++        var pnpFileWatcher;
++        if (typeof process.versions.pnp !== "undefined") {
++            pnpFileWatcher = watchFile(require.resolve("pnpapi"), scheduleResolutionReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
++        }
+         var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
+         ts.setGetSourceFileAsHashVersioned(compilerHost, host);
+         // Members for CompilerHost
+@@ -120468,6 +120611,10 @@ var ts;
+                 configFileWatcher.close();
+                 configFileWatcher = undefined;
+             }
++            if (pnpFileWatcher) {
++                pnpFileWatcher.close();
++                pnpFileWatcher = undefined;
++            }
+             extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
+             extendedConfigCache = undefined;
+             if (sharedExtendedConfigFileWatchers) {
+@@ -120504,7 +120651,8 @@ var ts;
+         function getCurrentProgram() {
+             return builderProgram && builderProgram.getProgramOrUndefined();
+         }
+-        function synchronizeProgram() {
++        function synchronizeProgram(forceAllFilesAsInvalidated) {
++            if (forceAllFilesAsInvalidated === void 0) { forceAllFilesAsInvalidated = false; }
+             writeLog("Synchronizing program");
+             clearInvalidateResolutionsOfFailedLookupLocations();
+             var program = getCurrentBuilderProgram();
+@@ -120515,7 +120663,7 @@ var ts;
+                 }
+             }
+             // All resolutions are invalid if user provided resolutions
+-            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution);
++            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution || forceAllFilesAsInvalidated);
+             if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
+                 if (hasChangedConfigFileParsingErrors) {
+                     builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
+@@ -120725,6 +120873,12 @@ var ts;
+             reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
+             scheduleProgramUpdate();
+         }
++        function scheduleResolutionReload() {
++            writeLog("Clearing resolutions");
++            resolutionCache.clear();
++            reloadLevel = ts.ConfigFileProgramReloadLevel.Resolutions;
++            scheduleProgramUpdate();
++        }
+         function updateProgramWithWatchStatus() {
+             timerToUpdateProgram = undefined;
+             reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
+@@ -120740,6 +120894,10 @@ var ts;
+                     ts.perfLogger.logStartUpdateProgram("FullConfigReload");
+                     reloadConfigFile();
+                     break;
++                case ts.ConfigFileProgramReloadLevel.Resolutions:
++                    ts.perfLogger.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++                    synchronizeProgram(/*forceAllFilesAsInvalidated*/ true);
++                    break;
+                 default:
+                     ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
+                     synchronizeProgram();
+@@ -126642,7 +126800,7 @@ var ts;
+      * Don't include something from a `node_modules` that isn't actually reachable by a global import.
+      * A relative import to node_modules is usually a bad idea.
+      */
+-    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++    function isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath) {
+         // If it's in a `node_modules` but is not reachable from here via a global import, don't bother.
+         var toNodeModules = ts.forEachAncestorDirectory(toPath, function (ancestor) { return ts.getBaseFileName(ancestor) === "node_modules" ? ancestor : undefined; });
+         var toNodeModulesParent = toNodeModules && ts.getDirectoryPath(getCanonicalFileName(toNodeModules));
+@@ -126650,6 +126808,33 @@ var ts;
+             || ts.startsWith(getCanonicalFileName(fromPath), toNodeModulesParent)
+             || (!!globalCachePath && ts.startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent));
+     }
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function isImportablePathPnp(fromPath, toPath) {
++        var pnpApi = getPnpApi(fromPath);
++        var fromLocator = pnpApi.findPackageLocator(fromPath);
++        var toLocator = pnpApi.findPackageLocator(toPath);
++        // eslint-disable-next-line no-null/no-null
++        if (toLocator === null) {
++            return false;
++        }
++        var fromInfo = pnpApi.getPackageInformation(fromLocator);
++        var toReference = fromInfo.packageDependencies.get(toLocator.name);
++        return toReference === toLocator.reference;
++    }
++    function isImportablePath(fromPath, toPath, getCanonicalFileName, globalCachePath) {
++        if (getPnpApi(fromPath)) {
++            return isImportablePathPnp(fromPath, toPath);
++        }
++        else {
++            return isImportablePathNode(fromPath, toPath, getCanonicalFileName, globalCachePath);
++        }
++    }
+     function forEachExternalModuleToImportFrom(program, host, useAutoImportProvider, cb) {
+         var _a, _b;
+         forEachExternalModule(program.getTypeChecker(), program.getSourceFiles(), function (module, file) { return cb(module, file, program, /*isFromPackageJson*/ false); });
+@@ -128469,6 +128654,7 @@ var ts;
+              *          This includes all files that are found in node_modules/moduleName/ with acceptable file extensions
+              */
+             function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, compilerOptions, host, typeChecker) {
++                var _a, _b;
+                 var baseUrl = compilerOptions.baseUrl, paths = compilerOptions.paths;
+                 var result = [];
+                 var extensionOptions = getExtensionOptions(compilerOptions);
+@@ -128481,8 +128667,8 @@ var ts;
+                     }
+                 }
+                 var fragmentDirectory = getFragmentDirectory(fragment);
+-                for (var _i = 0, _a = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _a.length; _i++) {
+-                    var ambientName = _a[_i];
++                for (var _i = 0, _c = getAmbientModuleCompletions(fragment, fragmentDirectory, typeChecker); _i < _c.length; _i++) {
++                    var ambientName = _c[_i];
+                     result.push(nameAndKind(ambientName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                 }
+                 getCompletionEntriesFromTypings(host, compilerOptions, scriptPath, fragmentDirectory, extensionOptions, result);
+@@ -128497,18 +128683,39 @@ var ts;
+                                 result.push(nameAndKind(moduleName, "external module name" /* externalModuleName */, /*extension*/ undefined));
+                             }
+                         };
+-                        for (var _b = 0, _c = enumerateNodeModulesVisibleToScript(host, scriptPath); _b < _c.length; _b++) {
+-                            var moduleName = _c[_b];
++                        for (var _d = 0, _e = enumerateNodeModulesVisibleToScript(host, scriptPath); _d < _e.length; _d++) {
++                            var moduleName = _e[_d];
+                             _loop_4(moduleName);
+                         }
+                     }
+                     if (!foundGlobal) {
+-                        ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
+-                            var nodeModules = ts.combinePaths(ancestor, "node_modules");
+-                            if (ts.tryDirectoryExists(host, nodeModules)) {
+-                                getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                        var pnpapi = (_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath);
++                        if (pnpapi) {
++                            // Splits a require request into its components, or return null if the request is a file path
++                            var pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
++                            var dependencyNameMatch = fragment.match(pathRegExp);
++                            if (dependencyNameMatch) {
++                                var dependencyName = dependencyNameMatch[1], subPath = dependencyNameMatch[2];
++                                var unqualified = void 0;
++                                try {
++                                    unqualified = pnpapi.resolveToUnqualified(dependencyName, scriptPath, { considerBuiltins: false });
++                                }
++                                catch (_f) {
++                                    // It's fine if the resolution fails
++                                }
++                                if (unqualified) {
++                                    getCompletionEntriesForDirectoryFragment(subPath, ts.normalizePath(unqualified), extensionOptions, host, /*exclude*/ undefined, result);
++                                }
+                             }
+-                        });
++                        }
++                        else {
++                            ts.forEachAncestorDirectory(scriptPath, function (ancestor) {
++                                var nodeModules = ts.combinePaths(ancestor, "node_modules");
++                                if (ts.tryDirectoryExists(host, nodeModules)) {
++                                    getCompletionEntriesForDirectoryFragment(fragment, nodeModules, extensionOptions, host, /*exclude*/ undefined, result);
++                                }
++                            });
++                        }
+                     }
+                 }
+                 return result;
+@@ -128609,6 +128816,7 @@ var ts;
+                 return addReplacementSpans(toComplete, range.pos + prefix.length, names);
+             }
+             function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDirectory, extensionOptions, result) {
++                var _a, _b;
+                 if (result === void 0) { result = []; }
+                 // Check for typings specified in compiler options
+                 var seen = new ts.Map();
+@@ -128617,11 +128825,19 @@ var ts;
+                     var root = typeRoots_1[_i];
+                     getCompletionEntriesFromDirectories(root);
+                 }
+-                // Also get all @types typings installed in visible node_modules directories
+-                for (var _a = 0, _b = ts.findPackageJsons(scriptPath, host); _a < _b.length; _a++) {
+-                    var packageJson = _b[_a];
+-                    var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
+-                    getCompletionEntriesFromDirectories(typesDir);
++                if ((_b = (_a = require("module")).findPnpApi) === null || _b === void 0 ? void 0 : _b.call(_a, scriptPath)) {
++                    for (var _c = 0, _d = ts.getPnpTypeRoots(scriptPath); _c < _d.length; _c++) {
++                        var root = _d[_c];
++                        getCompletionEntriesFromDirectories(root);
++                    }
++                }
++                else {
++                    // Also get all @types typings installed in visible node_modules directories
++                    for (var _e = 0, _f = ts.findPackageJsons(scriptPath, host); _e < _f.length; _e++) {
++                        var packageJson = _f[_e];
++                        var typesDir = ts.combinePaths(ts.getDirectoryPath(packageJson), "node_modules/@types");
++                        getCompletionEntriesFromDirectories(typesDir);
++                    }
+                 }
+                 return result;
+                 function getCompletionEntriesFromDirectories(directory) {
+@@ -157724,9 +157940,9 @@ var ts;
+                 if (isTopLevelDeclarationStatement(statement) &&
+                     !isExported(sourceFile, statement, useEs6Exports) &&
+                     forEachTopLevelDeclaration(statement, function (d) { return needExport.has(ts.Debug.checkDefined(d.symbol)); })) {
+-                    var exports = addExport(statement, useEs6Exports);
+-                    if (exports)
+-                        return exports;
++                    var exports_1 = addExport(statement, useEs6Exports);
++                    if (exports_1)
++                        return exports_1;
+                 }
+                 return statement;
+             });
+diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
+index 7a0fd43fa..cbbe83fb8 100644
+semver exclusivity >=4.5.2 <4.6
+--- a/lib/typingsInstaller.js
++++ b/lib/typingsInstaller.js
+@@ -7504,6 +7504,11 @@ var ts;
+                     : new Buffer(input, encoding);
+             }
+             function isFileSystemCaseSensitive() {
++                // The PnP runtime is always case-sensitive
++                // @ts-ignore
++                if (process.versions.pnp) {
++                    return true;
++                }
+                 // win32\win64 are case insensitive platforms
+                 if (platform === "win32" || platform === "win64") {
+                     return false;
+@@ -41392,18 +41397,17 @@ var ts;
+     ts.getEffectiveTypeRoots = getEffectiveTypeRoots;
+     /**
+      * Returns the path to every node_modules/@types directory from some ancestor directory.
+-     * Returns undefined if there are none.
+      */
+-    function getDefaultTypeRoots(currentDirectory, host) {
++    function getNodeModulesTypeRoots(currentDirectory, host) {
+         if (!host.directoryExists) {
+             return [ts.combinePaths(currentDirectory, nodeModulesAtTypes)];
+             // And if it doesn't exist, tough.
+         }
+-        var typeRoots;
++        var typeRoots = [];
+         ts.forEachAncestorDirectory(ts.normalizePath(currentDirectory), function (directory) {
+             var atTypes = ts.combinePaths(directory, nodeModulesAtTypes);
+             if (host.directoryExists(atTypes)) {
+-                (typeRoots || (typeRoots = [])).push(atTypes);
++                typeRoots.push(atTypes);
+             }
+             return undefined;
+         });
+@@ -41414,6 +41418,42 @@ var ts;
+         var useCaseSensitiveFileNames = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+         return ts.comparePaths(path1, path2, !useCaseSensitiveFileNames) === 0 /* EqualTo */;
+     }
++    /**
++     * @internal
++     */
++    function getPnpTypeRoots(currentDirectory) {
++        var pnpapi = getPnpApi(currentDirectory);
++        if (!pnpapi) {
++            return [];
++        }
++        // Some TS consumers pass relative paths that aren't normalized
++        currentDirectory = ts.sys.resolvePath(currentDirectory);
++        var currentPackage = pnpapi.findPackageLocator("".concat(currentDirectory, "/"));
++        if (!currentPackage) {
++            return [];
++        }
++        var packageDependencies = pnpapi.getPackageInformation(currentPackage).packageDependencies;
++        var typeRoots = [];
++        for (var _i = 0, _a = Array.from(packageDependencies.entries()); _i < _a.length; _i++) {
++            var _b = _a[_i], name = _b[0], referencish = _b[1];
++            // eslint-disable-next-line no-null/no-null
++            if (name.startsWith(typesPackagePrefix) && referencish !== null) {
++                var dependencyLocator = pnpapi.getLocator(name, referencish);
++                var packageLocation = pnpapi.getPackageInformation(dependencyLocator).packageLocation;
++                typeRoots.push(ts.getDirectoryPath(packageLocation));
++            }
++        }
++        return typeRoots;
++    }
++    ts.getPnpTypeRoots = getPnpTypeRoots;
++    var typesPackagePrefix = "@types/";
++    function getDefaultTypeRoots(currentDirectory, host) {
++        var nmTypes = getNodeModulesTypeRoots(currentDirectory, host);
++        var pnpTypes = getPnpTypeRoots(currentDirectory);
++        if (nmTypes.length > 0 || pnpTypes.length > 0) {
++            return __spreadArray(__spreadArray([], nmTypes, true), pnpTypes, true);
++        }
++    }
+     /**
+      * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
+      * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
+@@ -41530,7 +41570,9 @@ var ts;
+                 }
+                 var result_4;
+                 if (!ts.isExternalModuleNameRelative(typeReferenceDirectiveName)) {
+-                    var searchResult = loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
++                    var searchResult = getPnpApi(initialLocationForSecondaryLookup)
++                        ? tryLoadModuleUsingPnpResolution(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined)
++                        : loadModuleFromNearestNodeModulesDirectory(Extensions.DtsOnly, typeReferenceDirectiveName, initialLocationForSecondaryLookup, moduleResolutionState, /*cache*/ undefined, /*redirectedReference*/ undefined);
+                     result_4 = searchResult && searchResult.value;
+                 }
+                 else {
+@@ -42200,7 +42242,9 @@ var ts;
+                     if (traceEnabled) {
+                         trace(host, ts.Diagnostics.Loading_module_0_from_node_modules_folder_target_file_type_1, moduleName, Extensions[extensions]);
+                     }
+-                    resolved_1 = loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
++                    resolved_1 = getPnpApi(containingDirectory)
++                        ? tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference)
++                        : loadModuleFromNearestNodeModulesDirectory(extensions, moduleName, containingDirectory, state, cache, redirectedReference);
+                 }
+                 if (!resolved_1)
+                     return undefined;
+@@ -42861,6 +42905,14 @@ var ts;
+     }
+     function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+         var candidate = ts.normalizePath(ts.combinePaths(nodeModulesDirectory, moduleName));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, /* rest */ undefined, /* packageDirectory */ undefined);
++    }
++    function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++        var candidate = ts.normalizePath(ts.combinePaths(packageDirectory, rest));
++        return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, /*moduleName*/ undefined, /*nodeModulesDirectory*/ undefined, /*nodeModulesDirectoryExists*/ true, state, cache, redirectedReference, candidate, rest, packageDirectory);
++    }
++    function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++        var _a;
+         // First look for a nested package.json, as in `node_modules/foo/bar/package.json`.
+         var packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+         // But only if we're not respecting export maps (if we are, we might redirect around this location)
+@@ -42874,7 +42926,9 @@ var ts;
+                 return withPackageId(packageInfo, fromDirectory);
+             }
+         }
+-        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageName;
++        if (rest === undefined)
++            (_a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest);
+         var loader = function (extensions, candidate, onlyRecordFailures, state) {
+             var _a;
+             // package exports are higher priority than file/directory lookups (and, if there's exports present, blocks them)
+@@ -42886,7 +42940,8 @@ var ts;
+             return withPackageId(packageInfo, pathAndExtension);
+         };
+         if (rest !== "") { // If "rest" is empty, we just did this search above.
+-            var packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
++            if (packageDirectory === undefined)
++                packageDirectory = ts.combinePaths(nodeModulesDirectory, packageName);
+             // Don't use a "types" or "main" from here because we're not loading the root, but a subdirectory -- just here for the packageId and path mappings.
+             packageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state);
+             if (packageInfo && packageInfo.versionPaths) {
+@@ -43045,6 +43100,58 @@ var ts;
+     function toSearchResult(value) {
+         return value !== undefined ? { value: value } : undefined;
+     }
++    /**
++     * We only allow PnP to be used as a resolution strategy if TypeScript
++     * itself is executed under a PnP runtime (and we only allow it to access
++     * the current PnP runtime, not any on the disk). This ensures that we
++     * don't execute potentially malicious code that didn't already have a
++     * chance to be executed (if we're running within the runtime, it means
++     * that the runtime has already been executed).
++     * @internal
++     */
++    function getPnpApi(path) {
++        var findPnpApi = require("module").findPnpApi;
++        if (findPnpApi === undefined) {
++            return undefined;
++        }
++        return findPnpApi("".concat(path, "/"));
++    }
++    function loadPnpPackageResolution(packageName, containingDirectory) {
++        try {
++            var resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, "".concat(containingDirectory, "/"), { considerBuiltins: false });
++            return ts.normalizeSlashes(resolution).replace(/\/$/, "");
++        }
++        catch (_a) {
++            // Nothing to do
++        }
++    }
++    function loadPnpTypePackageResolution(packageName, containingDirectory) {
++        return loadPnpPackageResolution(getTypesPackageName(packageName), containingDirectory);
++    }
++    /* @internal */
++    function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++        var _a = parsePackageName(moduleName), packageName = _a.packageName, rest = _a.rest;
++        var packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++        var packageFullResolution = packageResolution
++            ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference)
++            : undefined;
++        var resolved;
++        if (packageFullResolution) {
++            resolved = packageFullResolution;
++        }
++        else if (extensions === Extensions.TypeScript || extensions === Extensions.DtsOnly) {
++            var typePackageResolution = loadPnpTypePackageResolution(packageName, containingDirectory);
++            var typePackageFullResolution = typePackageResolution
++                ? loadModuleFromPnpResolution(Extensions.DtsOnly, typePackageResolution, rest, state, cache, redirectedReference)
++                : undefined;
++            if (typePackageFullResolution) {
++                resolved = typePackageFullResolution;
++            }
++        }
++        if (resolved) {
++            return toSearchResult(resolved);
++        }
++    }
+ })(ts || (ts = {}));
+ /* @internal */
+ var ts;
+@@ -112517,6 +112624,8 @@ var ts;
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Partial"] = 1] = "Partial";
+         /** Reload completely by re-reading contents of config file from disk and updating program */
+         ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Full"] = 2] = "Full";
++        /** Reload the resolutions */
++        ConfigFileProgramReloadLevel[ConfigFileProgramReloadLevel["Resolutions"] = 3] = "Resolutions";
+     })(ConfigFileProgramReloadLevel = ts.ConfigFileProgramReloadLevel || (ts.ConfigFileProgramReloadLevel = {}));
+     /**
+      * Updates the map of shared extended config file watches with a new set of extended config files from a base config file of the project
+@@ -119321,6 +119430,30 @@ var ts;
+                 return undefined;
+             }
+             var parts = getNodeModulePathParts(path);
++            var packageName;
++            if (!parts && typeof process.versions.pnp !== "undefined") {
++                var findPnpApi = require("module").findPnpApi;
++                var pnpApi = findPnpApi(path);
++                var locator = pnpApi === null || pnpApi === void 0 ? void 0 : pnpApi.findPackageLocator(path);
++                // eslint-disable-next-line no-null/no-null
++                if (locator !== null && locator !== undefined) {
++                    var sourceLocator = pnpApi.findPackageLocator("".concat(sourceDirectory, "/"));
++                    // Don't use the package name when the imported file is inside
++                    // the source directory (prefer a relative path instead)
++                    if (locator === sourceLocator) {
++                        return undefined;
++                    }
++                    var information = pnpApi.getPackageInformation(locator);
++                    packageName = locator.name;
++                    parts = {
++                        topLevelNodeModulesIndex: undefined,
++                        topLevelPackageNameIndex: undefined,
++                        // The last character from packageLocation is the trailing "/", we want to point to it
++                        packageRootIndex: information.packageLocation.length - 1,
++                        fileNameIndex: path.lastIndexOf("/"),
++                    };
++                }
++            }
+             if (!parts) {
+                 return undefined;
+             }
+@@ -119359,18 +119492,24 @@ var ts;
+             if (isRedirect && !isPackageRootPath) {
+                 return undefined;
+             }
+-            var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-            // Get a path that's relative to node_modules or the importing file's path
+-            // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
+-            var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-            if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-                return undefined;
++            // If PnP is enabled the node_modules entries we'll get will always be relevant even if they
++            // are located in a weird path apparently outside of the source directory
++            if (typeof process.versions.pnp === "undefined") {
++                var globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++                // Get a path that's relative to node_modules or the importing file's path
++                // if node_modules folder is in this folder or any of its parent folders, no need to keep it.
++                var pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++                if (!(ts.startsWith(sourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && ts.startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++                    return undefined;
++                }
+             }
+             // If the module was found in @types, get the actual Node package name
+-            var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-            var packageName = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++            var nodeModulesDirectoryName = typeof packageName !== "undefined"
++                ? packageName + moduleSpecifier.substring(parts.packageRootIndex)
++                : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++            var packageNameFromPath = ts.getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+             // For classic resolution, only allow importing from node_modules/@types, not other node_modules
+-            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageName === nodeModulesDirectoryName ? undefined : packageName;
++            return ts.getEmitModuleResolutionKind(options) === ts.ModuleResolutionKind.Classic && packageNameFromPath === nodeModulesDirectoryName ? undefined : packageNameFromPath;
+             function tryDirectoryWithPackageJson(packageRootIndex) {
+                 var packageRootPath = path.substring(0, packageRootIndex);
+                 var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
+@@ -120185,6 +120324,10 @@ var ts;
+         if (configFileName) {
+             configFileWatcher = watchFile(configFileName, scheduleProgramReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
+         }
++        var pnpFileWatcher;
++        if (typeof process.versions.pnp !== "undefined") {
++            pnpFileWatcher = watchFile(require.resolve("pnpapi"), scheduleResolutionReload, ts.PollingInterval.High, watchOptions, ts.WatchType.ConfigFile);
++        }
+         var compilerHost = ts.createCompilerHostFromProgramHost(host, function () { return compilerOptions; }, directoryStructureHost);
+         ts.setGetSourceFileAsHashVersioned(compilerHost, host);
+         // Members for CompilerHost
+@@ -120263,6 +120406,10 @@ var ts;
+                 configFileWatcher.close();
+                 configFileWatcher = undefined;
+             }
++            if (pnpFileWatcher) {
++                pnpFileWatcher.close();
++                pnpFileWatcher = undefined;
++            }
+             extendedConfigCache === null || extendedConfigCache === void 0 ? void 0 : extendedConfigCache.clear();
+             extendedConfigCache = undefined;
+             if (sharedExtendedConfigFileWatchers) {
+@@ -120299,7 +120446,8 @@ var ts;
+         function getCurrentProgram() {
+             return builderProgram && builderProgram.getProgramOrUndefined();
+         }
+-        function synchronizeProgram() {
++        function synchronizeProgram(forceAllFilesAsInvalidated) {
++            if (forceAllFilesAsInvalidated === void 0) { forceAllFilesAsInvalidated = false; }
+             writeLog("Synchronizing program");
+             clearInvalidateResolutionsOfFailedLookupLocations();
+             var program = getCurrentBuilderProgram();
+@@ -120310,7 +120458,7 @@ var ts;
+                 }
+             }
+             // All resolutions are invalid if user provided resolutions
+-            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution);
++            var hasInvalidatedResolution = resolutionCache.createHasInvalidatedResolution(userProvidedResolution || changesAffectResolution || forceAllFilesAsInvalidated);
+             if (ts.isProgramUptoDate(getCurrentProgram(), rootFileNames, compilerOptions, getSourceVersion, fileExists, hasInvalidatedResolution, hasChangedAutomaticTypeDirectiveNames, getParsedCommandLine, projectReferences)) {
+                 if (hasChangedConfigFileParsingErrors) {
+                     builderProgram = createProgram(/*rootNames*/ undefined, /*options*/ undefined, compilerHost, builderProgram, configFileParsingDiagnostics, projectReferences);
+@@ -120520,6 +120668,12 @@ var ts;
+             reloadLevel = ts.ConfigFileProgramReloadLevel.Full;
+             scheduleProgramUpdate();
+         }
++        function scheduleResolutionReload() {
++            writeLog("Clearing resolutions");
++            resolutionCache.clear();
++            reloadLevel = ts.ConfigFileProgramReloadLevel.Resolutions;
++            scheduleProgramUpdate();
++        }
+         function updateProgramWithWatchStatus() {
+             timerToUpdateProgram = undefined;
+             reportWatchDiagnostic(ts.Diagnostics.File_change_detected_Starting_incremental_compilation);
+@@ -120535,6 +120689,10 @@ var ts;
+                     ts.perfLogger.logStartUpdateProgram("FullConfigReload");
+                     reloadConfigFile();
+                     break;
++                case ts.ConfigFileProgramReloadLevel.Resolutions:
++                    ts.perfLogger.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++                    synchronizeProgram(/*forceAllFilesAsInvalidated*/ true);
++                    break;
+                 default:
+                     ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
+                     synchronizeProgram();
