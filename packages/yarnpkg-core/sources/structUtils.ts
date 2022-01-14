@@ -16,7 +16,7 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
-const conditionRegex = /(os|cpu)=([a-z0-9_-]+)/;
+const conditionRegex = /(os|cpu|libc)=([a-z0-9_-]+)/;
 const conditionParser = makeParser(conditionRegex);
 
 /**

@@ -4,6 +4,8 @@
   "optionalDependencies": {
     "native-bar-x64": "1.0.0",
     "native-foo-x64": "1.0.0",
-    "native-foo-x86": "1.0.0"
+    "native-foo-x86": "1.0.0",
+    "native-libc-glibc": "1.0.0",
+    "native-libc-musl": "1.0.0"
   }
 }
