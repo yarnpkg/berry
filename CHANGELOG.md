@@ -16,6 +16,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - The suggestions that fit in the viewport will be fetched in the foreground and will load one-by-one.
   - The suggestions that don't will be fetched in the background and will be loaded in batches to increase responsiveness and reduce input lag.
   - Most notably, you won't have to wait for all of the suggestions to be fetched (which took a very long time before on large monorepos) before you can start navigating through the list.
+- `yarn npm info` now supports displaying information about a tagged version of a package (e.g. `yarn npm info vue@next`).
 
 ### Installs
 
