@@ -11,6 +11,7 @@ function getLibc() {
   const report: any = process.report?.getReport() ?? {};
   const sharedObjects: Array<string> = report.sharedObjects ?? [];
 
+  // Matches the first group if libc, second group if musl
   const libcRegExp = /\/(?:(ld-linux-|[^/]+-linux-gnu\/)|(libc.musl-|ld-musl-))/;
 
   return miscUtils.mapAndFind(sharedObjects, entry => {
