@@ -115,6 +115,33 @@ type readSyncOptionsArguments = [
 ];
 //#endregion
 
+//#region read types
+type ReadOptions = ReadSyncOptions & { buffer?: Buffer };
+
+type ReadCallback = (
+  err: NodeJS.ErrnoException | null,
+  bytesRead: number,
+  buffer: Buffer
+) => void;
+
+type readArguments = [
+  fd: number,
+  buffer: Buffer,
+  offset: number,
+  length: number,
+  position: number | null | undefined,
+  callback: ReadCallback,
+];
+
+type readArgumentsOptions = [
+  fd: number,
+  opts: ReadOptions,
+  callback: ReadCallback,
+];
+
+type readArgumentCallback = [fd: number, callback: ReadCallback];
+//#endregion
+
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   // We wrap the `fakeFs` with a `URLFS` to add support for URL instances
   fakeFs = new URLFS(fakeFs);
@@ -144,12 +171,50 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       });
     });
 
-    setupFn(patchedFs, `read`, (p: number, buffer: Buffer, ...args: Array<any>) => {
-      const hasCallback = typeof args[args.length - 1] === `function`;
-      const callback = hasCallback ? args.pop() : () => {};
+    // Adapted from https://github.com/nodejs/node/blob/e5c1fd7a2a1801fd75bdde23b260488e85453eb2/lib/fs.js#L603-L667
+    setupFn(patchedFs, `read`, (...args: readArguments | readArgumentsOptions | readArgumentCallback) => {
+      let [fd, buffer, offset, length, position, callback] = args as readArguments;
+
+      if (args.length <= 3) {
+        // Assume fs.read(fd, options, callback)
+        let options: ReadOptions = {};
+        if (args.length < 3) {
+          // This is fs.read(fd, callback)
+          // buffer will be the callback
+          callback = (args as readArgumentCallback)[1];
+        } else {
+          // This is fs.read(fd, {}, callback)
+          // buffer will be the options object
+          // offset is the callback
+          options = (args as readArgumentsOptions)[1];
+          callback = (args as readArgumentsOptions)[2];
+        }
+
+        ({
+          buffer = Buffer.alloc(16384),
+          offset = 0,
+          length = buffer.byteLength,
+          position,
+        } = options);
+      }
+
+      if (offset == null)
+        offset = 0;
+
+      length |= 0;
+
+      if (length === 0) {
+        process.nextTick(() => {
+          callback(null, 0, buffer);
+        });
+        return;
+      }
+
+      if (position == null)
+        position = -1;
 
       process.nextTick(() => {
-        fakeFs.readPromise(p, buffer, ...args).then(bytesRead => {
+        fakeFs.readPromise(fd, buffer, offset, length, position).then(bytesRead => {
           callback(null, bytesRead, buffer);
         }, error => {
           // https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/fs.js#L655-L658
