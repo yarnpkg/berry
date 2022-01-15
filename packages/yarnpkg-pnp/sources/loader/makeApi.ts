@@ -1,4 +1,4 @@
-import {ppath, Filename, Stats}                                                                                                                                                            from '@yarnpkg/fslib';
+import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
 import {Module}                                                                                                                                                                            from 'module';
 import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
@@ -820,17 +820,19 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       if (containingPackage) {
         const {packageLocation} = getPackageInformationSafe(containingPackage);
 
-        let stat: Stats | undefined;
+        let exists = true;
         try {
-          stat = opts.fakeFs.statSync(packageLocation);
+          opts.fakeFs.accessSync(packageLocation);
         } catch (err) {
-          if (err.code !== `ENOENT`) {
+          if (err.code === `ENOENT`) {
+            exists = false;
+          } else {
             const readableError: string = (err.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0: string) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
           }
         }
 
-        if (!stat) {
+        if (!exists) {
           const errorMessage = packageLocation.includes(`/unplugged/`)
             ? `Required unplugged package missing from disk. This may happen when switching branches without running installs (unplugged packages must be fully materialized on disk to work).`
             : `Required package missing from disk. If you keep your packages inside your repository then restarting the Node process may be enough. Otherwise, try to run an install first.`;
