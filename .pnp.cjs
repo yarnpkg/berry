@@ -49698,11 +49698,13 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
       const containingPackage = findPackageLocator(unqualifiedPath);
       if (containingPackage) {
         const {packageLocation} = getPackageInformationSafe(containingPackage);
-        let stat;
+        let exists = true;
         try {
-          stat = opts.fakeFs.statSync(packageLocation);
+          opts.fakeFs.accessSync(packageLocation);
         } catch (err) {
-          if (err.code !== `ENOENT`) {
+          if (err.code === `ENOENT`) {
+            exists = false;
+          } else {
             const readableError = ((_b = (_a = err.message) != null ? _a : err) != null ? _b : `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).
 
@@ -49711,7 +49713,7 @@ Expected package location: ${getPathForDisplay(packageLocation)}
 `, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
           }
         }
-        if (!stat) {
+        if (!exists) {
           const errorMessage = packageLocation.includes(`/unplugged/`) ? `Required unplugged package missing from disk. This may happen when switching branches without running installs (unplugged packages must be fully materialized on disk to work).` : `Required package missing from disk. If you keep your packages inside your repository then restarting the Node process may be enough. Otherwise, try to run an install first.`;
           throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `${errorMessage}
 
