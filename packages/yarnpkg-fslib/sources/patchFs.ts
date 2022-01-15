@@ -180,12 +180,9 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         let options: ReadOptions = {};
         if (args.length < 3) {
           // This is fs.read(fd, callback)
-          // buffer will be the callback
           callback = (args as ReadArgumentsCallback)[1];
         } else {
           // This is fs.read(fd, {}, callback)
-          // buffer will be the options object
-          // offset is the callback
           options = (args as ReadArgumentsOptions)[1];
           callback = (args as ReadArgumentsOptions)[2];
         }
