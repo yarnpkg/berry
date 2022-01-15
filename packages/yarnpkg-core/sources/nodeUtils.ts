@@ -11,7 +11,7 @@ function getLibc() {
   const report: any = process.report?.getReport() ?? {};
   const sharedObjects: Array<string> = report.sharedObjects ?? [];
 
-  const libcRegExp = /\/(?:(ld-linux)|(ld-musl))-/;
+  const libcRegExp = /\/(?:(ld-linux-|[^/]+-linux-gnu\/)|(libc.musl-|ld-musl-))/;
 
   return miscUtils.mapAndFind(sharedObjects, entry => {
     const match = entry.match(libcRegExp);
