@@ -100,7 +100,7 @@ interface ReadSyncOptions {
   position?: number | null | undefined;
 }
 
-type readSyncArguments = [
+type ReadSyncArguments = [
   fd: number,
   buffer: Buffer,
   offset: number,
@@ -108,7 +108,7 @@ type readSyncArguments = [
   position?: number | null,
 ];
 
-type readSyncOptionsArguments = [
+type ReadSyncArgumentsOptions = [
   fd: number,
   buffer: Buffer,
   opts?: ReadSyncOptions,
@@ -124,7 +124,7 @@ type ReadCallback = (
   buffer: Buffer
 ) => void;
 
-type readArguments = [
+type ReadArguments = [
   fd: number,
   buffer: Buffer,
   offset: number,
@@ -133,13 +133,13 @@ type readArguments = [
   callback: ReadCallback,
 ];
 
-type readArgumentsOptions = [
+type ReadArgumentsOptions = [
   fd: number,
   opts: ReadOptions,
   callback: ReadCallback,
 ];
 
-type readArgumentCallback = [fd: number, callback: ReadCallback];
+type ReadArgumentsCallback = [fd: number, callback: ReadCallback];
 //#endregion
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
@@ -172,8 +172,8 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     });
 
     // Adapted from https://github.com/nodejs/node/blob/e5c1fd7a2a1801fd75bdde23b260488e85453eb2/lib/fs.js#L603-L667
-    setupFn(patchedFs, `read`, (...args: readArguments | readArgumentsOptions | readArgumentCallback) => {
-      let [fd, buffer, offset, length, position, callback] = args as readArguments;
+    setupFn(patchedFs, `read`, (...args: ReadArguments | ReadArgumentsOptions | ReadArgumentsCallback) => {
+      let [fd, buffer, offset, length, position, callback] = args as ReadArguments;
 
       if (args.length <= 3) {
         // Assume fs.read(fd, options, callback)
@@ -181,13 +181,13 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (args.length < 3) {
           // This is fs.read(fd, callback)
           // buffer will be the callback
-          callback = (args as readArgumentCallback)[1];
+          callback = (args as ReadArgumentsCallback)[1];
         } else {
           // This is fs.read(fd, {}, callback)
           // buffer will be the options object
           // offset is the callback
-          options = (args as readArgumentsOptions)[1];
-          callback = (args as readArgumentsOptions)[2];
+          options = (args as ReadArgumentsOptions)[1];
+          callback = (args as ReadArgumentsOptions)[2];
         }
 
         ({
@@ -263,12 +263,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     });
 
     // Adapted from https://github.com/nodejs/node/blob/e5c1fd7a2a1801fd75bdde23b260488e85453eb2/lib/fs.js#L684-L725
-    setupFn(patchedFs, `readSync`, (...args: readSyncArguments | readSyncOptionsArguments) => {
-      let [fd, buffer, offset, length, position] = args as readSyncArguments;
+    setupFn(patchedFs, `readSync`, (...args: ReadSyncArguments | ReadSyncArgumentsOptions) => {
+      let [fd, buffer, offset, length, position] = args as ReadSyncArguments;
 
       if (args.length <= 3) {
         // Assume fs.read(fd, buffer, options)
-        const options = (args as readSyncOptionsArguments)[2] || {};
+        const options = (args as ReadSyncArgumentsOptions)[2] || {};
 
         ({offset = 0, length = buffer.byteLength, position} = options);
       }
