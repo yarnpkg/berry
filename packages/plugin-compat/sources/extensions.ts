@@ -749,4 +749,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       typescript: optionalPeerDep,
     },
   }],
+  // https://github.com/antfu/unplugin-vue2-script-setup/pull/100
+  [`unplugin-vue2-script-setup@<0.9.1`, {
+    peerDependencies: {
+      '@vue/composition-api': `^1.4.3`,
+      '@vue/runtime-dom': `^3.2.26`,
+    },
+  }],
 ];
