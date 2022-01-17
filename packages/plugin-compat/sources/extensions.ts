@@ -743,4 +743,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
     },
   }],
+  // https://github.com/vuejs/eslint-config-typescript/pull/39
+  [`@vue/eslint-config-typescript@*`, {
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
 ];
