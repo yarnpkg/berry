@@ -36,6 +36,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Yarn is now able to recover from a corrupted install state.
 - Yarn is now able to migrate classic lockfiles containing unconventional tarball URLs
 - The nm linker hoists portals after hoisting their dependencies first
+- The PnP filesystem now handles `read` and `readSync` using options
 
 ### Miscellaneous Features
 

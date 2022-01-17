@@ -44433,7 +44433,6 @@ const SYNC_IMPLEMENTATIONS = new Set([
   `mkdirSync`,
   `openSync`,
   `opendirSync`,
-  `readSync`,
   `readlinkSync`,
   `readFileSync`,
   `readdirSync`,
@@ -44516,12 +44515,36 @@ function patchFs(patchedFs, fakeFs) {
         });
       });
     });
-    setupFn(patchedFs, `read`, (p, buffer, ...args) => {
-      const hasCallback = typeof args[args.length - 1] === `function`;
-      const callback = hasCallback ? args.pop() : () => {
-      };
+    setupFn(patchedFs, `read`, (...args) => {
+      let [fd, buffer, offset, length, position, callback] = args;
+      if (args.length <= 3) {
+        let options = {};
+        if (args.length < 3) {
+          callback = args[1];
+        } else {
+          options = args[1];
+          callback = args[2];
+        }
+        ({
+          buffer = Buffer.alloc(16384),
+          offset = 0,
+          length = buffer.byteLength,
+          position
+        } = options);
+      }
+      if (offset == null)
+        offset = 0;
+      length |= 0;
+      if (length === 0) {
+        process.nextTick(() => {
+          callback(null, 0, buffer);
+        });
+        return;
+      }
+      if (position == null)
+        position = -1;
       process.nextTick(() => {
-        fakeFs.readPromise(p, buffer, ...args).then((bytesRead) => {
+        fakeFs.readPromise(fd, buffer, offset, length, position).then((bytesRead) => {
           callback(null, bytesRead, buffer);
         }, (error) => {
           callback(error, 0, buffer);
@@ -44558,6 +44581,21 @@ function patchFs(patchedFs, fakeFs) {
       } catch (error) {
         return false;
       }
+    });
+    setupFn(patchedFs, `readSync`, (...args) => {
+      let [fd, buffer, offset, length, position] = args;
+      if (args.length <= 3) {
+        const options = args[2] || {};
+        ({offset = 0, length = buffer.byteLength, position} = options);
+      }
+      if (offset == null)
+        offset = 0;
+      length |= 0;
+      if (length === 0)
+        return 0;
+      if (position == null)
+        position = -1;
+      return fakeFs.readSync(fd, buffer, offset, length, position);
     });
     for (const fnName of SYNC_IMPLEMENTATIONS) {
       const origName = fnName;
