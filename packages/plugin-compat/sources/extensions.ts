@@ -529,7 +529,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/npm/metavuln-calculator/pull/8
-  [`@npmcli/metavuln-calculator@*`, {
+  [`@npmcli/metavuln-calculator@<2.0.0`, {
     dependencies: {
       'json-parse-even-better-errors': `^2.3.1`,
     },
