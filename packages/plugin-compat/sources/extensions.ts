@@ -547,7 +547,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/snowpackjs/snowpack/pull/3673
-  [`snowpack@*`, {
+  [`snowpack@<3.8.6`, {
     dependencies: {
       'magic-string': `^0.25.7`,
     },
