@@ -282,7 +282,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/gatsbyjs/gatsby/pull/28759
-  [`gatsby-plugin-sharp@*`, {
+  [`gatsby-plugin-sharp@<=4.6.0-next.3`, {
     dependencies: {
       [`debug`]: `^4.3.1`,
     },
