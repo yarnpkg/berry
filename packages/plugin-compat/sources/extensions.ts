@@ -535,7 +535,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/npm/bin-links/pull/17
-  [`bin-links@*`, {
+  [`bin-links@<2.3.0`, {
     dependencies: {
       'mkdirp-infer-owner': `^1.0.2`,
     },
