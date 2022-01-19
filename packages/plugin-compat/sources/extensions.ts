@@ -288,7 +288,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/gatsbyjs/gatsby/pull/28759
-  [`gatsby-react-router-scroll@*`, {
+  [`gatsby-react-router-scroll@<=5.6.0-next.0`, {
     dependencies: {
       [`prop-types`]: `^15.7.2`,
     },
