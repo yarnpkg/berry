@@ -15,9 +15,7 @@ export function generateLoader(shebang: string | null | undefined, loader: strin
     `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
     `}\n`,
     `\n`,
-    `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
-    loader.replace(/^/gm, `  `),
-    `}\n`,
+    loader,
     `\n`,
     getTemplate(),
   ].join(``);
@@ -38,15 +36,21 @@ function generateStringLiteral(value: string) {
 
 function generateInlinedSetup(data: SerializedState) {
   return [
-    `return hydrateRuntimeState(JSON.parse(${generateStringLiteral(generatePrettyJson(data))}), {basePath: basePath || __dirname});\n`,
+    `const RAW_RUNTIME_STATE =\n`,
+    `${generateStringLiteral(generatePrettyJson(data))};\n\n`,
+    `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
+    `  return hydrateRuntimeState(JSON.parse(RAW_RUNTIME_STATE), {basePath: basePath || __dirname});\n`,
+    `}\n`,
   ].join(``);
 }
 
 function generateSplitSetup(dataLocation: string) {
   return [
-    `var path = require('path');\n`,
-    `var dataLocation = path.resolve(__dirname, ${JSON.stringify(dataLocation)});\n`,
-    `return hydrateRuntimeState(require(dataLocation), {basePath: basePath || path.dirname(dataLocation)});\n`,
+    `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
+    `  const path = require('path');\n`,
+    `  const dataLocation = path.resolve(__dirname, ${JSON.stringify(dataLocation)});\n`,
+    `  return hydrateRuntimeState(require(dataLocation), {basePath: basePath || path.dirname(dataLocation)});\n`,
+    `}\n`,
   ].join(``);
 }
 
