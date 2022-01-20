@@ -27,9 +27,6 @@ jobs:
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra && cd my-cra
 
-        # TODO: Remove when https://github.com/webpack-contrib/mini-css-extract-plugin/issues/896 is fixed
-        yarn set resolution mini-css-extract-plugin@npm:^2.4.5 2.4.5
-
         # TODO: Remove when create-react-app fixes their ESLint setup
         yarn add -D eslint-config-react-app eslint
 
