@@ -29,6 +29,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+\\"native-libc-glibc@npm:1.0.0\\":
+  version: 1.0.0
+  resolution: \\"native-libc-glibc@npm:1.0.0\\"
+  conditions: libc=glibc
+  languageName: node
+  linkType: hard
+
+\\"native-libc-musl@npm:1.0.0\\":
+  version: 1.0.0
+  resolution: \\"native-libc-musl@npm:1.0.0\\"
+  conditions: libc=musl
+  languageName: node
+  linkType: hard
+
 \\"optional-native@npm:1.0.0\\":
   version: 1.0.0
   resolution: \\"optional-native@npm:1.0.0\\"
@@ -36,6 +50,8 @@ __metadata:
     native-bar-x64: 1.0.0
     native-foo-x64: 1.0.0
     native-foo-x86: 1.0.0
+    native-libc-glibc: 1.0.0
+    native-libc-musl: 1.0.0
   dependenciesMeta:
     native-bar-x64:
       optional: true
@@ -43,7 +59,11 @@ __metadata:
       optional: true
     native-foo-x86:
       optional: true
-  checksum: 0e662ccf2f901c37aa95cc3e8bee87315782ca27582521644c86e1ee44367a31a0201049bad23109ca9783efc9ac70bc7dae8619c31f2b6472830b7cf1670f0d
+    native-libc-glibc:
+      optional: true
+    native-libc-musl:
+      optional: true
+  checksum: b62ce5449e2631a9bc4d264ca9cd32cdb96465d6d739cca3378a4e48cf2db199e01c83e97cccee2f657709e5b79403b0cd4dcbc3aa6a96608c11b17b72df3e2c
   languageName: node
   linkType: hard
 
