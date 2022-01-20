@@ -8,6 +8,11 @@ export function builtinModules(): Set<string> {
 }
 
 function getLibc() {
+  // It seems that Node randomly crashes with no output under some circumstances when running a getReport().
+  // Since Windows has no libc anyway, shortcut this path.
+  if (process.platform === `win32`)
+    return null;
+
   const report: any = process.report?.getReport() ?? {};
   const sharedObjects: Array<string> = report.sharedObjects ?? [];
 
