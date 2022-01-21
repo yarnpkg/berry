@@ -824,10 +824,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         try {
           opts.fakeFs.accessSync(packageLocation);
         } catch (err) {
-          if (err.code === `ENOENT`) {
+          if (err?.code === `ENOENT`) {
             exists = false;
           } else {
-            const readableError: string = (err.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0: string) => $0.toLowerCase());
+            const readableError: string = (err?.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0: string) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
           }
         }
