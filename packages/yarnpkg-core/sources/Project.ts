@@ -31,6 +31,7 @@ import {isFolderInside}                                                 from './
 import * as formatUtils                                                 from './formatUtils';
 import * as hashUtils                                                   from './hashUtils';
 import * as miscUtils                                                   from './miscUtils';
+import * as nodeUtils                                                   from './nodeUtils';
 import * as scriptUtils                                                 from './scriptUtils';
 import * as semverUtils                                                 from './semverUtils';
 import * as structUtils                                                 from './structUtils';
@@ -41,7 +42,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 5;
+const LOCKFILE_VERSION = 6;
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -859,6 +860,7 @@ export class Project {
       allResolutions.delete(descriptorHash);
     }
 
+    const currentArchitecture = nodeUtils.getArchitectureSet();
     const supportedArchitectures = this.configuration.getSupportedArchitectures();
 
     const conditionalLocators = new Set<LocatorHash>();
@@ -872,7 +874,7 @@ export class Project {
         continue;
 
       if (!structUtils.isPackageCompatible(pkg, supportedArchitectures)) {
-        if (structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+        if (structUtils.isPackageCompatible(pkg, currentArchitecture)) {
           opts.report.reportWarningOnce(MessageName.GHOST_ARCHITECTURE, `${
             structUtils.prettyLocator(this.configuration, pkg)
           }: Your current architecture (${

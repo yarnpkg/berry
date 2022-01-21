@@ -27,9 +27,18 @@ function generateJsonString(data: SerializedState) {
   return JSON.stringify(data, null, 2);
 }
 
+function generateStringLiteral(value: string) {
+  return `'${
+    value
+      .replace(/\\/g, `\\\\`)
+      .replace(/'/g, `\\'`)
+      .replace(/\n/g, `\\\n`)
+  }'`;
+}
+
 function generateInlinedSetup(data: SerializedState) {
   return [
-    `return hydrateRuntimeState(${generatePrettyJson(data)}, {basePath: basePath || __dirname});\n`,
+    `return hydrateRuntimeState(JSON.parse(${generateStringLiteral(generatePrettyJson(data))}), {basePath: basePath || __dirname});\n`,
   ].join(``);
 }
 
