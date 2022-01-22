@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/monorepo": "workspace:^",
-    "typescript": "^4.5.2"
+    "typescript": "4.6.0-beta"
   },
   "scripts": {
     "postpack": "rm -rf lib",
