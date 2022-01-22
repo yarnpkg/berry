@@ -82,3 +82,20 @@ export function validRange(potentialRange: string): semver.Range | null {
   rangesCache.set(potentialRange, range);
   return range;
 }
+
+/**
+ The RegExp from https://semver.org/ but modified to
+ - allow the version to start with `(?:[\Wv=]*?)`
+ - allow the version to end with `(?:\W*)`
+ - place the valid version in capture group one
+ */
+const CLEAN_SEMVER_REGEXP = /^(?:[\Wv=]*?)((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\W*)$/;
+
+/**
+ * Cleans the potential version by removing leading/trailing whitespace and '=v' prefix
+ * @returns A valid SemVer string, otherwise null
+ */
+export function clean(potentialVersion: string): string | null {
+  const version = CLEAN_SEMVER_REGEXP.exec(potentialVersion);
+  return version ? version[1] : null;
+}
