@@ -80,9 +80,9 @@ const SLICES = [
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.5
   {
-    from: `9232978f8e54f073b5451d0bf2737d42a0fd672f`,
-    to: `3a2388d39d41d000b5c5f9bcd48096b39fcedf8f`,
-    onto: `55e13e9115b3cc5458d76c39da1211dc28d7b51f`,
+    from: `79fe5d206f89e5f1585807bdcd7feeb567a69646`,
+    to: `fff89a12766fa485e35b1c65d8631d109c4e2c0e`,
+    onto: `7893f689fedcfe28a499d119d34844840bce9160`,
     range: `>=4.5.2 <4.6`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.6
