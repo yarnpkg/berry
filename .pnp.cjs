@@ -288,7 +288,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-junit", "npm:10.0.0"],\
             ["micromatch", "npm:4.0.4"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -8893,7 +8893,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpp", "npm:3.2.0"],\
             ["semver", "npm:7.3.5"],\
             ["tsutils", "virtual:5e27cd7a319c4b7c3909eb012bf293660fa275bf4eddce08571aa0562ef7b9b8f3c02315f6dad27820a35a49c368107bf917cd6e2a8d99abe84b6a230d415fc4#npm:3.21.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "packagePeers": [\
             "@types/eslint",\
@@ -9062,7 +9062,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/typescript-estree", "virtual:fe98bd70d13aaca1010fe6d701118ea3af3e45d43c8d6c5a099bc3b50f958b72e1ed6da100c174f4c93673179c6f276656d496d7d151b1435a7d2a99739ef29a#npm:5.3.1"],\
             ["debug", "virtual:904b3fada4a3265c4dfeed8c42d6542b5b497582d17441c86eea102109bfc3b9e1825aad904bc43dd1b94603ff4820b8cb2ebcf24cfbaf45ecee04e5bc1076b8#npm:4.3.2"],\
             ["eslint", "npm:8.2.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "packagePeers": [\
             "@types/eslint",\
@@ -9218,7 +9218,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-glob", "npm:4.0.3"],\
             ["semver", "npm:7.3.5"],\
             ["tsutils", "virtual:5e27cd7a319c4b7c3909eb012bf293660fa275bf4eddce08571aa0562ef7b9b8f3c02315f6dad27820a35a49c368107bf917cd6e2a8d99abe84b6a230d415fc4#npm:3.21.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "packagePeers": [\
             "@types/typescript",\
@@ -9641,7 +9641,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ]],\
             ["semver", "npm:7.3.5"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10317,7 +10317,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.4"],\
             ["p-limit", "npm:2.2.0"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10368,7 +10368,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:8.2.0"],\
             ["eslint-plugin-arca", "npm:0.12.1"],\
             ["eslint-plugin-react", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:7.25.1"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "packagePeers": [\
             "@types/eslint",\
@@ -10500,7 +10500,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.17.0-3"],\
             ["typedoc-neo-theme", "npm:1.0.7"],\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"],\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"],\
             ["unescape-html", "npm:1.1.0"],\
             ["unfetch", "npm:4.1.0"],\
             ["unified", "npm:7.1.0"],\
@@ -10603,7 +10603,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-junit", "npm:10.0.0"],\
             ["micromatch", "npm:4.0.4"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -29884,7 +29884,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],\
             ["react-lifecycles-compat", "npm:3.0.4"],\
             ["shallowequal", "npm:1.1.0"],\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=142761"]\
           ],\
           "packagePeers": [\
             "@types/react-dom",\
@@ -38224,7 +38224,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tsutils", "virtual:5e27cd7a319c4b7c3909eb012bf293660fa275bf4eddce08571aa0562ef7b9b8f3c02315f6dad27820a35a49c368107bf917cd6e2a8d99abe84b6a230d415fc4#npm:3.21.0"],\
             ["@types/typescript", null],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "packagePeers": [\
             "@types/typescript",\
@@ -38466,7 +38466,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc-default-themes", "npm:0.8.0-0"],\
             ["typedoc-neo-theme", "npm:1.0.7"],\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "packagePeers": [\
             "@strictsoftware/typedoc-plugin-monorepo",\
@@ -38501,7 +38501,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc-default-themes", "npm:0.8.0-0"],\
             ["typedoc-neo-theme", null],\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=142761"]\
           ],\
           "packagePeers": [\
             "@strictsoftware/typedoc-plugin-monorepo",\
@@ -38535,7 +38535,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc-default-themes", "npm:0.7.2"],\
             ["typedoc-neo-theme", "npm:1.0.7"],\
             ["typedoc-plugin-yarn", null],\
-            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=142761"]\
           ],\
           "packagePeers": [\
             "@strictsoftware/typedoc-plugin-monorepo",\
@@ -38588,30 +38588,30 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
             ["typedoc", "virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#npm:0.17.0-3"],\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=142761"]\
           ],\
           "linkType": "SOFT"\
         }]\
       ]],\
       ["typescript", [\
-        ["patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=de8f8a", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-3cd91a85c0-61283b54e3.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=142761", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-12949a040d-61283b54e3.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=142761"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=de8f8a", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-b705f34e64-dc7141ab55.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=142761", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-759716ff0b-dc7141ab55.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=142761"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-2d2a037988-e25e689eba.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-cfb63a4597-de441a1c00.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=de8f8a"]\
+            ["typescript", "patch:typescript@npm%3A4.6.0-beta#~builtin<compat/typescript>::version=4.6.0-beta&hash=142761"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -41007,7 +41007,7 @@ npath.toPortablePath = toPortablePath;
 npath.contains = (from, to) => contains(npath, from, to);
 ppath.contains = (from, to) => contains(ppath, from, to);
 const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
-const UNC_WINDOWS_PATH_REGEXP = /^\\\\(\.\\)?(.*)$/;
+const UNC_WINDOWS_PATH_REGEXP = /^\/\/(\.\/)?(.*)$/;
 const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
 const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
 function fromPortablePath(p) {
@@ -41025,12 +41025,13 @@ function fromPortablePath(p) {
 function toPortablePath(p) {
   if (process.platform !== `win32`)
     return p;
+  p = p.replace(/\\/g, `/`);
   let windowsPathMatch, uncWindowsPathMatch;
   if (windowsPathMatch = p.match(WINDOWS_PATH_REGEXP))
     p = `/${windowsPathMatch[1]}`;
   else if (uncWindowsPathMatch = p.match(UNC_WINDOWS_PATH_REGEXP))
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
-  return p.replace(/\\/g, `/`);
+  return p;
 }
 function convertPath(targetPathUtils, sourcePath) {
   return targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
@@ -49725,6 +49726,7 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
     }
   }
   function resolveUnqualified(unqualifiedPath, {extensions = Object.keys(require$$0.Module._extensions)} = {}) {
+    var _a, _b;
     const candidates = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
     if (qualifiedPath) {
@@ -49734,7 +49736,22 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
       const containingPackage = findPackageLocator(unqualifiedPath);
       if (containingPackage) {
         const {packageLocation} = getPackageInformationSafe(containingPackage);
-        if (!opts.fakeFs.existsSync(packageLocation)) {
+        let exists = true;
+        try {
+          opts.fakeFs.accessSync(packageLocation);
+        } catch (err) {
+          if ((err == null ? void 0 : err.code) === `ENOENT`) {
+            exists = false;
+          } else {
+            const readableError = ((_b = (_a = err == null ? void 0 : err.message) != null ? _a : err) != null ? _b : `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
+            throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).
+
+Missing package: ${containingPackage.name}@${containingPackage.reference}
+Expected package location: ${getPathForDisplay(packageLocation)}
+`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
+          }
+        }
+        if (!exists) {
           const errorMessage = packageLocation.includes(`/unplugged/`) ? `Required unplugged package missing from disk. This may happen when switching branches without running installs (unplugged packages must be fully materialized on disk to work).` : `Required package missing from disk. If you keep your packages inside your repository then restarting the Node process may be enough. Otherwise, try to run an install first.`;
           throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `${errorMessage}
 
@@ -49743,7 +49760,7 @@ Expected package location: ${getPathForDisplay(packageLocation)}
 `, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
         }
       }
-      throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed - none of those files can be found on the disk.
+      throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Qualified path resolution failed: we looked for the following paths, but none could be accessed.
 
 Source path: ${unqualifiedPathForDisplay}
 ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}

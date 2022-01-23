@@ -691,6 +691,15 @@
           },
           "default": [],
           "_exampleItems": ["current", "x86", "ia32"]
+        },
+        "libc": {
+          "description": "The list of standard libraries to cover.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "_exampleItems": ["current", "glibc", "musl"]
         }
       },
       "_exampleKeys": ["os", "cpu"]

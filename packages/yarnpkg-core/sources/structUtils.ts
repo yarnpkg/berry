@@ -8,6 +8,7 @@ import {Workspace}                              from './Workspace';
 import * as formatUtils                         from './formatUtils';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
+import * as nodeUtils                           from './nodeUtils';
 import * as structUtils                         from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
@@ -15,7 +16,7 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
-const conditionRegex = /(os|cpu)=([a-z0-9_-]+)/;
+const conditionRegex = /(os|cpu|libc)=([a-z0-9_-]+)/;
 const conditionParser = makeParser(conditionRegex);
 
 /**
@@ -811,7 +812,7 @@ export function getIdentVendorPath(ident: Ident) {
 /**
  * Returns whether the given package is compatible with the specified environment.
  */
-export function isPackageCompatible(pkg: Package, architectures: {os: Array<string> | null, cpu: Array<string> | null}) {
+export function isPackageCompatible(pkg: Package, architectures: nodeUtils.ArchitectureSet) {
   if (!pkg.conditions)
     return true;
 
