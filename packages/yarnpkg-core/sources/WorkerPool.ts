@@ -11,19 +11,27 @@ type PoolWorker<TOut> = Worker & {
 export class WorkerPool<TIn, TOut> {
   private workers: Array<PoolWorker<TOut>> = [];
   private limit = PLimit(Math.max(1, cpus().length));
+  private cleanupInterval: ReturnType<typeof setInterval>;
 
   constructor(private source: string) {
-    setInterval(() => {
+    this.cleanupInterval = setInterval(() => {
       if (this.limit.pendingCount === 0 && this.limit.activeCount === 0) {
         // Start terminating one worker at a time when there are no tasks left.
         // This allows the pool to scale down without having to re-create the
         // entire pool when there is a short amount of time without tasks.
-        this.workers.pop()?.terminate();
+        const worker = this.workers.pop();
+        if (worker) {
+          worker.terminate();
+        } else {
+          clearInterval(this.cleanupInterval);
+        }
       }
     }, 5000).unref();
   }
 
   private createWorker() {
+    this.cleanupInterval.refresh();
+
     const worker = new Worker(this.source, {
       eval: true,
       execArgv: [...process.execArgv, `--unhandled-rejections=strict`],
