@@ -28,13 +28,11 @@ jobs:
         # TODO: Remove once https://github.com/yarnpkg/berry/blob/bd146ccddf95aae9c99c0c48d86b1d8997f1dccf/scripts/e2e-setup-ci.sh#L31-L38 is fixed
         YARN_PNP_ENABLE_ESM_LOADER=true
 
-        # TODO: Angular should be fixed to detect the correct package manger to install with
-        # but for now skip the install and do it manually
-        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --skip-install
+        # TODO: Angular should be fixed to detect the correct package manager to install with
+        # but for now we need to specify it
+        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
 
         cd berry-angular
-
-        yarn
 
         # TODO: Remove when https://github.com/angular/angular-cli/issues/16980#issuecomment-1006028280 is fixed
         mkdir node_modules

@@ -38,6 +38,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Yarn is now able to migrate classic lockfiles containing unconventional tarball URLs
 - The nm linker hoists portals after hoisting their dependencies first
 - The PnP filesystem now handles `read` and `readSync` using options
+- The PnP filesystem now handles UNC paths using forward slashes
+- The ESBuild plugin will no longer allow access to Node.js builtins if the `platform` isn't set to Node.
 - SemVer ranges with build metadata can now be resolved.
 
 ### Miscellaneous Features

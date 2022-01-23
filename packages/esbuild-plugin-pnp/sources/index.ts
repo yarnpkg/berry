@@ -104,6 +104,8 @@ export function pnpPlugin({
 
       const externals = parseExternals(build.initialOptions.external ?? []);
 
+      const isPlatformNode = (build.initialOptions.platform ?? `browser`) === `node`;
+
       build.onResolve({filter}, args => {
         if (isExternal(args.path, externals))
           return {external: true};
@@ -122,7 +124,7 @@ export function pnpPlugin({
         let error;
         try {
           path = pnpApi.resolveRequest(args.path, effectiveImporter, {
-            considerBuiltins: true,
+            considerBuiltins: isPlatformNode,
             extensions,
           });
         } catch (e) {
