@@ -85,11 +85,11 @@ export function validRange(potentialRange: string): semver.Range | null {
 
 /**
  The RegExp from https://semver.org/ but modified to
- - allow the version to start with `(?:[\Wv=]*?)`
- - allow the version to end with `(?:\W*)`
+ - allow the version to start with `(?:[\sv=]*?)`
+ - allow the version to end with `(?:\s*)`
  - place the valid version in capture group one
  */
-const CLEAN_SEMVER_REGEXP = /^(?:[\Wv=]*?)((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\W*)$/;
+const CLEAN_SEMVER_REGEXP = /^(?:[\sv=]*?)((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\s*)$/;
 
 /**
  * Cleans the potential version by removing leading/trailing whitespace and '=v' prefix
