@@ -37,6 +37,23 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it should allow semver ranges with build metadata`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`no-deps-build-metadata`]: `npm:1.0.0+123`},
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps-build-metadata')`)).resolves.toMatchObject({
+            name: `no-deps-build-metadata`,
+            version: `1.0.0+123`,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should allow fetching packages that have an unconventional url (semver)`,
       makeTemporaryEnv(
         {

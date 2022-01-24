@@ -40,6 +40,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The PnP filesystem now handles `read` and `readSync` using options
 - The PnP filesystem now handles UNC paths using forward slashes
 - The ESBuild plugin will no longer allow access to Node.js builtins if the `platform` isn't set to Node.
+- SemVer ranges with build metadata can now be resolved.
 
 ### Miscellaneous Features
 
