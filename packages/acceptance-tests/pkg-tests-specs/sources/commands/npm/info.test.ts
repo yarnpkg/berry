@@ -1,4 +1,4 @@
-import {tests} from 'pkg-tests-core';
+export {};
 
 describe(`Commands`, () => {
   describe(`npm info`, () => {
