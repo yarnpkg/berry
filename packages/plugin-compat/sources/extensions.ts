@@ -541,7 +541,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/snowpackjs/rollup-plugin-polyfill-node/pull/30
-  [`rollup-plugin-polyfill-node@*`, {
+  [`rollup-plugin-polyfill-node@<=0.8.0`, {
     peerDependencies: {
       rollup: `^1.20.0 || ^2.0.0`,
     },
@@ -723,6 +723,24 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`eslint-plugin-import@*`, {
     peerDependenciesMeta: {
       '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
+  // https://github.com/GoogleChromeLabs/critters/pull/91
+  [`critters-webpack-plugin@*`, {
+    peerDependenciesMeta: {
+      'html-webpack-plugin': optionalPeerDep,
+    },
+  }],
+  // https://github.com/terser/terser/commit/05b23eeb682d732484ad51b19bf528258fd5dc2a
+  [`terser@<=5.10.0`, {
+    dependencies: {
+      acorn: `^8.5.0`,
+    },
+  }],
+  // https://github.com/facebook/create-react-app/pull/11751
+  [`babel-preset-react-app@10.0.x`, {
+    dependencies: {
+      '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
     },
   }],
 ];

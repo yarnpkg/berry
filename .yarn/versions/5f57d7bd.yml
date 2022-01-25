@@ -1,0 +1,14 @@
+releases:
+  "@yarnpkg/builder": patch
+  "@yarnpkg/pnpify": patch
+  "@yarnpkg/sdks": patch
+
+declined:
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-exec"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/plugin-workspace-tools"
+  - "@yarnpkg/cli"

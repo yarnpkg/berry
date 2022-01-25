@@ -79,6 +79,7 @@ export enum SettingsType {
 export type SupportedArchitectures = {
   os: Array<string> | null;
   cpu: Array<string> | null;
+  libc: Array<string> | null;
 };
 
 export type FormatType = formatUtils.Type;
@@ -307,6 +308,13 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
         isNullable: true,
         default: [`current`],
       },
+      libc: {
+        description: `Array of supported libc libraries, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
     },
   },
 
@@ -379,11 +387,31 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.STRING,
           default: null,
         },
+        httpsKeyFilePath: {
+          description: `Path to file containing private key in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
+        httpsCertFilePath: {
+          description: `Path to file containing certificate chain in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
       },
     },
   },
   caFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  httpsKeyFilePath: {
+    description: `Path to file containing private key in PEM format`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  httpsCertFilePath: {
+    description: `Path to file containing certificate chain in PEM format`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
@@ -558,8 +586,12 @@ export interface ConfigurationValueMap {
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
+    httpsKeyFilePath: PortablePath | null;
+    httpsCertFilePath: PortablePath | null;
   }>>;
   caFilePath: PortablePath | null;
+  httpsKeyFilePath: PortablePath | null;
+  httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
   logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
@@ -1445,18 +1477,23 @@ export class Configuration {
     return linkers;
   }
 
-  getSupportedArchitectures() {
+  getSupportedArchitectures(): nodeUtils.ArchitectureSet {
+    const architecture = nodeUtils.getArchitecture();
     const supportedArchitectures = this.get(`supportedArchitectures`);
 
     let os = supportedArchitectures.get(`os`);
     if (os !== null)
-      os = os.map(value => value === `current` ? process.platform : value);
+      os = os.map(value => value === `current` ? architecture.os : value);
 
     let cpu = supportedArchitectures.get(`cpu`);
     if (cpu !== null)
-      cpu = cpu.map(value => value === `current` ? process.arch : value);
+      cpu = cpu.map(value => value === `current` ? architecture.cpu : value);
 
-    return {os, cpu};
+    let libc = supportedArchitectures.get(`libc`);
+    if (libc !== null)
+      libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
+
+    return {os, cpu, libc};
   }
 
   async refreshPackageExtensions() {

@@ -39,6 +39,8 @@ export default class BuildBundleCommand extends Command {
     description: `build the local bundle`,
     details: `
       This command builds the local bundle - the Yarn binary file that is installed in projects.
+
+      For more details about the build process, please consult the \`@yarnpkg/builder\` README: https://github.com/yarnpkg/berry/blob/HEAD/packages/yarnpkg-builder/README.md.
     `,
     examples: [[
       `Build the local bundle`,

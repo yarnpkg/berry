@@ -1,0 +1,40 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-pnp-angular-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E PnP Angular'
+jobs:
+  chore:
+    name: 'Validating Angular'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        # TODO: Remove once https://github.com/yarnpkg/berry/blob/bd146ccddf95aae9c99c0c48d86b1d8997f1dccf/scripts/e2e-setup-ci.sh#L31-L38 is fixed
+        YARN_PNP_ENABLE_ESM_LOADER=true
+
+        # TODO: Angular should be fixed to detect the correct package manager to install with
+        # but for now we need to specify it
+        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
+
+        cd berry-angular
+
+        # TODO: Remove when https://github.com/angular/angular-cli/issues/16980#issuecomment-1006028280 is fixed
+        mkdir node_modules
+
+        yarn ng build --aot

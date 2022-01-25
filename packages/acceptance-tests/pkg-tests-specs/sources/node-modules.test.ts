@@ -1585,4 +1585,38 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
+
+  it(`should install project when portal is used from the child workspace and have conflicts with root workspace dependencies`,
+    // portal dependencies should be hoisted first and only after that portal hoisting should happen, not vice versa
+    // as a result the install in this case should finish successfully
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.mkdirpPromise(ppath.join(path, `ws` as PortablePath));
+          await xfs.writeJsonPromise(`${path}/ws/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              'no-deps': `2.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.not.toThrow();
+        });
+      }),
+  );
 });

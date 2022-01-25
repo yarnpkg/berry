@@ -9,17 +9,16 @@ A CLI tool designed for creating, building, and managing complex plugins.
 - `builder new plugin` command for scaffolding new plugins
 - `builder build bundle` command for building complex plugins
 - supports TypeScript out-of-the-box
-- supports custom Babel configurations out-of-the-box
-- uses Webpack internally, providing treeshaking, minification, and various other optimizations out-of-the-box
+- uses ESBuild internally, providing treeshaking, minification, and various other optimizations out-of-the-box
 
 ## Installation
 
-`yarn add -D @yarnpkg/builder typescript`
+`yarn add -D @yarnpkg/builder`
 
 ## Commands
 
-- [`build bundle`](https://yarnpkg.com/builder/cli/build/bundle) - Build the local bundle.
+- [`builder build bundle`](https://yarnpkg.com/builder/cli/build/bundle) - Build the local bundle.
 
-- [`build plugin`](https://yarnpkg.com/builder/cli/build/plugin) - Build a local plugin.
+- [`builder build plugin`](https://yarnpkg.com/builder/cli/build/plugin) - Build a local plugin.
 
-- [`new plugin`](https://yarnpkg.com/builder/cli/new/plugin) - Create a new plugin.
+- [`builder new plugin`](https://yarnpkg.com/builder/cli/new/plugin) - Create a new plugin.

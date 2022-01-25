@@ -41,9 +41,7 @@ export class Workspace {
 
   async setup() {
     // @ts-expect-error: It's ok to initialize it now
-    this.manifest = xfs.existsSync(ppath.join(this.cwd, Manifest.fileName))
-      ? await Manifest.find(this.cwd)
-      : new Manifest();
+    this.manifest = await Manifest.tryFind(this.cwd) ?? new Manifest();
 
     // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)

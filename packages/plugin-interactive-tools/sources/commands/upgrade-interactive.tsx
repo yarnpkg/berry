@@ -13,7 +13,13 @@ import React, {useEffect, useRef, useState}                                     
 import semver                                                                                                                           from 'semver';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
-const DEFAULT_WINDOW_SIZE = 10;
+
+// eslint-disable-next-line @typescript-eslint/comma-dangle -- the trailing comma is required because of parsing ambiguities
+const partition = <T,>(array: Array<T>, size: number): Array<Array<T>> => {
+  return array.length > 0
+    ? [array.slice(0, size)].concat(partition(array.slice(size), size))
+    : [];
+};
 
 type UpgradeSuggestion = {value: string | null, label: string};
 type UpgradeSuggestions = Array<UpgradeSuggestion>;
@@ -47,6 +53,15 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     await project.restoreInstallState({
       restoreResolutions: false,
     });
+
+    // 7 = 1-line command written by the user
+    //   + 2-line prompt
+    //   + 1 newline
+    //   + 1-line header
+    //   + 1 newline
+    //     [...package list]
+    //   + 1 empty line
+    const VIEWPORT_SIZE = process.stdout.rows - 7;
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
@@ -206,49 +221,94 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
             </Text>
             <Pad active={active} length={padLength}/>
           </Box>
-          {suggestions !== null
-            ? <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
-            : <Box marginLeft={2}><Text color={`gray`}>Fetching suggestions...</Text></Box>
-          }
+          <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
         </Box>
       </>;
     };
 
-    const UpgradeEntries = ({dependencies}: { dependencies: Array<Descriptor> }) => {
-      const [suggestions, setSuggestions] = useState<Array<readonly [Descriptor, UpgradeSuggestions]> | null>(null);
+    const UpgradeEntries = ({dependencies}: {dependencies: Array<Descriptor>}) => {
+      const [suggestions, setSuggestions] = useState<Array<{descriptor: Descriptor, suggestions: UpgradeSuggestions} | null>>(dependencies.map(() => null));
       const mountedRef = useRef<boolean>(true);
+
+      const getSuggestionsForDescriptor = async (descriptor: Descriptor) => {
+        const suggestions = await fetchSuggestions(descriptor);
+        if (suggestions.filter(suggestion => suggestion.label !== ``).length <= 1)
+          return null;
+
+        return {descriptor, suggestions};
+      };
 
       useEffect(() => {
         return () => {
           mountedRef.current = false;
         };
-      });
-
-      useEffect(() => {
-        Promise.all(dependencies.map(descriptor => fetchSuggestions(descriptor)))
-          .then(allSuggestions => {
-            const mappedToSuggestions = dependencies.map((descriptor, i) => {
-              const suggestionsForDescriptor = allSuggestions[i];
-              return [descriptor, suggestionsForDescriptor] as const;
-            }).filter(([_, suggestions]) => {
-              return suggestions.filter(suggestion => suggestion.label !== ``).length > 1;
-            });
-
-            if (mountedRef.current) {
-              setSuggestions(mappedToSuggestions);
-            }
-          });
       }, []);
 
-      // Still fetching
-      if (!suggestions)
-        return <Text>Fetching suggestions...</Text>;
+      useEffect(() => {
+        // Updating the invisible suggestions as they resolve causes continuous lag spikes while scrolling through the list of visible suggestions.
+        // Because of that, we update the invisible suggestions in batches of VIEWPORT_SIZE.
+
+        const foregroundDependencyCount = Math.trunc(VIEWPORT_SIZE * 1.75);
+
+        const foregroundDependencies = dependencies.slice(0, foregroundDependencyCount);
+        const backgroundDependencies = dependencies.slice(foregroundDependencyCount);
+
+        const backgroundDependencyGroups = partition(backgroundDependencies, VIEWPORT_SIZE);
+
+        const foregroundLock = foregroundDependencies
+          .map(getSuggestionsForDescriptor)
+          .reduce(async (lock, currentSuggestionPromise) => {
+            await lock;
+
+            const currentSuggestion = await currentSuggestionPromise;
+            if (currentSuggestion === null)
+              return;
+
+            if (!mountedRef.current)
+              return;
+
+            setSuggestions(suggestions => {
+              const firstEmptySlot = suggestions.findIndex(suggestion => suggestion === null);
+
+              const newSuggestions = [...suggestions];
+              newSuggestions[firstEmptySlot] = currentSuggestion;
+
+              return newSuggestions;
+            });
+          }, Promise.resolve());
+
+        backgroundDependencyGroups.reduce((lock, group) =>
+          Promise.all(group.map(descriptor => Promise.resolve().then(() => getSuggestionsForDescriptor(descriptor))))
+            .then(async newSuggestions => {
+              newSuggestions = newSuggestions.filter(suggestion => suggestion !== null);
+
+              await lock;
+              if (mountedRef.current) {
+                setSuggestions(suggestions => {
+                  const firstEmptySlot = suggestions.findIndex(suggestion => suggestion === null);
+                  return suggestions
+                    .slice(0, firstEmptySlot)
+                    .concat(newSuggestions)
+                    .concat(suggestions.slice(firstEmptySlot + newSuggestions.length));
+                });
+              }
+            }), foregroundLock,
+        ).then(() => {
+          // Cleanup all empty slots
+          if (mountedRef.current) {
+            setSuggestions(suggestions => suggestions.filter(suggestion => suggestion !== null));
+          }
+        });
+      }, []);
 
       if (!suggestions.length)
         return <Text>No upgrades found</Text>;
 
-      return <ScrollableItems radius={DEFAULT_WINDOW_SIZE} children={suggestions.map(([descriptor, upgrades]) => {
-        return <UpgradeEntry key={descriptor.descriptorHash} active={false} descriptor={descriptor} suggestions={upgrades} />;
+      return <ScrollableItems radius={VIEWPORT_SIZE >> 1} children={suggestions.map((suggestion, index) => {
+        // We use the same keys so that we don't lose the selection when a suggestion finishes loading
+        return suggestion !== null
+          ? <UpgradeEntry key={index} active={false} descriptor={suggestion.descriptor} suggestions={suggestion.suggestions} />
+          : <Text key={index}>Loading...</Text>;
       })} />;
     };
 

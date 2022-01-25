@@ -13,6 +13,8 @@ export default class NewPluginCommand extends Command {
     description: `generate the template for a new plugin`,
     details: `
       This command generates a new plugin based on the template.
+
+      For more details about the build process, please consult the \`@yarnpkg/builder\` README: https://github.com/yarnpkg/berry/blob/HEAD/packages/yarnpkg-builder/README.md.
     `,
     examples: [[
       `Create a new plugin`,
