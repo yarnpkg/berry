@@ -12,7 +12,6 @@ import {Locator}                                                                
 
 export type StreamReportOptions = {
   configuration: Configuration;
-  enableProgressBars?: boolean;
   forgettableBufferSize?: number;
   forgettableNames?: Set<MessageName | null>;
   includeFooter?: boolean;
@@ -171,7 +170,6 @@ export class StreamReport extends Report {
     lastTitle?: string;
   }> = new Map();
 
-  private readonly enableProgressBars: boolean;
   private progressTime: number = 0;
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -192,7 +190,6 @@ export class StreamReport extends Report {
     includeWarnings = includeLogs,
     forgettableBufferSize = BASE_FORGETTABLE_BUFFER_SIZE,
     forgettableNames = new Set(),
-    enableProgressBars = configuration.get(`enableProgressBars`) && !json && (stdout as WriteStream).isTTY && (stdout as WriteStream).columns > 22,
   }: StreamReportOptions) {
     super();
 
@@ -207,10 +204,9 @@ export class StreamReport extends Report {
     this.json = json;
     this.stdout = stdout;
 
-    this.enableProgressBars = enableProgressBars;
-
-    if (this.enableProgressBars) {
-      const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
+    // Setup progress
+    if (configuration.get(`enableProgressBars`) && !json && (stdout as WriteStream).isTTY && (stdout as WriteStream).columns > 22) {
+      const styleName = configuration.get(`progressBarStyle`) || defaultStyle;
       if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
         throw new Error(`Assertion failed: Invalid progress bar style`);
 
@@ -434,7 +430,7 @@ export class StreamReport extends Report {
   }
 
   reportProgress(progressIt: ProgressIterable) {
-    if (!this.enableProgressBars)
+    if (this.progressStyle === null)
       return {...Promise.resolve(), stop: () => {}};
 
     if (progressIt.hasProgress && progressIt.hasTitle)
@@ -582,7 +578,7 @@ export class StreamReport extends Report {
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
-    if (!this.enableProgressBars)
+    if (this.progressStyle === null)
       return;
 
     if (this.progress.size + delta > 0) {
@@ -594,7 +590,7 @@ export class StreamReport extends Report {
   }
 
   private writeProgress() {
-    if (!this.enableProgressBars)
+    if (this.progressStyle === null)
       return;
 
     if (this.progressTimeout !== null)
@@ -618,8 +614,8 @@ export class StreamReport extends Report {
       let progressBar = ``;
 
       if (typeof progress.lastScaledSize !== `undefined`) {
-        const ok = this.progressStyle!.chars[0].repeat(progress.lastScaledSize);
-        const ko = this.progressStyle!.chars[1].repeat(this.progressMaxScaledSize! - progress.lastScaledSize);
+        const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
+        const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize! - progress.lastScaledSize);
         progressBar = ` ${ok}${ko}`;
       }
 
@@ -667,7 +663,7 @@ export class StreamReport extends Report {
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {
-    if (!this.enableProgressBars)
+    if (this.progressStyle === null)
       truncate = false;
 
     if (typeof truncate === `undefined`)
