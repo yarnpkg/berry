@@ -325,7 +325,11 @@ export default class VersionCheckCommand extends BaseCommand {
       );
     };
 
-    const decisions = await renderForm<versionUtils.Releases>(App, {versionFile});
+    const decisions = await renderForm<versionUtils.Releases>(App, {versionFile}, {
+      stdin: this.context.stdin,
+      stdout: this.context.stdout,
+      stderr: this.context.stderr,
+    });
     if (typeof decisions === `undefined`)
       return 1;
 

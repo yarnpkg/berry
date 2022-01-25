@@ -248,7 +248,11 @@ export default class SearchCommand extends BaseCommand {
       );
     };
 
-    const installRequests = await renderForm(SearchApp, {});
+    const installRequests = await renderForm(SearchApp, {}, {
+      stdin: this.context.stdin,
+      stdout: this.context.stdout,
+      stderr: this.context.stderr,
+    });
     if (typeof installRequests === `undefined`)
       return 1;
 

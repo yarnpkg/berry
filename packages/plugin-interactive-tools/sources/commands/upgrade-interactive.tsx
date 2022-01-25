@@ -334,7 +334,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       </Box>;
     };
 
-    const updateRequests = await renderForm(GlobalListApp, {});
+    const updateRequests = await renderForm(GlobalListApp, {}, {
+      stdin: this.context.stdin,
+      stdout: this.context.stdout,
+      stderr: this.context.stderr,
+    });
     if (typeof updateRequests === `undefined`)
       return 1;
 
