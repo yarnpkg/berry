@@ -819,7 +819,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       const containingPackage = findPackageLocator(unqualifiedPath);
       if (containingPackage) {
         const {packageLocation} = getPackageInformationSafe(containingPackage);
-        if (!opts.fakeFs.existsSync(packageLocation)) {
+
+        let exists = true;
+        try {
+          opts.fakeFs.accessSync(packageLocation);
+        } catch (err) {
+          if (err?.code === `ENOENT`) {
+            exists = false;
+          } else {
+            const readableError: string = (err?.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0: string) => $0.toLowerCase());
+            throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
+          }
+        }
+
+        if (!exists) {
           const errorMessage = packageLocation.includes(`/unplugged/`)
             ? `Required unplugged package missing from disk. This may happen when switching branches without running installs (unplugged packages must be fully materialized on disk to work).`
             : `Required package missing from disk. If you keep your packages inside your repository then restarting the Node process may be enough. Otherwise, try to run an install first.`;
@@ -834,7 +847,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       throw makeError(
         ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
-        `Qualified path resolution failed - none of those files can be found on the disk.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Not found: ${getPathForDisplay(candidate)}\n`).join(``)}`,
+        `Qualified path resolution failed: we looked for the following paths, but none could be accessed.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Not found: ${getPathForDisplay(candidate)}\n`).join(``)}`,
         {unqualifiedPath: unqualifiedPathForDisplay, extensions},
       );
     }

@@ -44,13 +44,12 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh nm
 
-        # TODO: Angular should be fixed to detect the correct package manger to install with
-        # but for now skip the install and do it manually
-        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --skip-install
+        # TODO: Angular should be fixed to detect the correct package manager to install with
+        # but for now we need to specify it
+        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
 
         cd berry-angular
 
-        yarn
         yarn ng build --aot
       shell: bash
       env:

@@ -257,15 +257,14 @@ export const getPackageDirectoryPath = async (
 };
 
 const packageServerUrls: {
-  http: string | null;
-  https: string | null;
+  http: Promise<string> | null;
+  https: Promise<string> | null;
 } = {http: null, https: null};
 
 export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
   const serverUrl = packageServerUrls[type];
-
   if (serverUrl !== null)
-    return Promise.resolve(serverUrl);
+    return serverUrl;
 
   const applyOtpValidation = (req: IncomingMessage, res: ServerResponse, user: Login) => {
     const otp = req.headers[`npm-otp`];
@@ -556,7 +555,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     validAuthorizations.set(`Basic ${user.npmAuthIdent.encoded}`, user);
   }
 
-  return new Promise((resolve, reject) => {
+  return packageServerUrls[type] = new Promise((resolve, reject) => {
     const listener: http.RequestListener = (req, res) =>
       void (async () => {
         try {
@@ -615,7 +614,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       server.unref();
       server.listen(() => {
         const {port} = server.address() as AddressInfo;
-        resolve((packageServerUrls[type] = `${type}://localhost:${port}`));
+        resolve(`${type}://localhost:${port}`);
       });
     })();
   });

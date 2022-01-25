@@ -188,7 +188,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(
-            `none of those files can be found on the disk`,
+            `we looked for the following paths, but none could be accessed`,
           ),
         });
       },

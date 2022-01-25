@@ -25,14 +25,23 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra && cd my-cra
-        yarn add -D eslint-config-react-app
+
+        # TODO: Remove when create-react-app fixes their ESLint setup
+        yarn add -D eslint-config-react-app eslint
+
         yarn build
 
     - name: 'Running the TypeScript integration test'
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
-        yarn add -D eslint-config-react-app
+
+        # TODO: Remove when create-react-app fixes their ESLint setup
+        yarn add -D eslint-config-react-app eslint
+
+        # TODO: Remove when https://github.com/facebook/create-react-app/pull/11751 is released
+        yarn add -D @types/testing-library__jest-dom
+
         yarn build
       if: |
         always()

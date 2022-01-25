@@ -1,0 +1,5 @@
+{
+  "name": "native-libc-glibc",
+  "version": "1.0.0",
+  "libc": ["glibc"]
+}

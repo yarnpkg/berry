@@ -8,10 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@arcanis/sherlock": "^1.0.38",
+    "@arcanis/sherlock": "^2.0.3",
     "next": "canary",
     "react": "^16.7.0",
-    "react-dom": "^16.7.0",
-    "rimraf": "^3.0.2"
+    "react-dom": "^16.7.0"
   }
 }

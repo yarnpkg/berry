@@ -113,7 +113,7 @@ export class NpmSemverResolver implements Resolver {
   async resolve(locator: Locator, opts: ResolveOptions) {
     const {selector} = structUtils.parseRange(locator.reference);
 
-    const version = semver.clean(selector);
+    const version = semverUtils.clean(selector);
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
