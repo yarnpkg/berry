@@ -6328,15 +6328,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acceptance-tests-229a13@workspace:packages/acceptance-tests":
+"acceptance-tests@workspace:packages/acceptance-tests":
   version: 0.0.0-use.local
-  resolution: "acceptance-tests-229a13@workspace:packages/acceptance-tests"
+  resolution: "acceptance-tests@workspace:packages/acceptance-tests"
   dependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     is-wsl: ^2.1.1
+    jest-json: ^2.0.0
     pkg-tests-core: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -16152,6 +16153,15 @@ __metadata:
     pretty-format: ^26.0.1
     throat: ^5.0.0
   checksum: 7b93692d74380f973671d43c32849c31c2e38f75c02e8b703ecbe6e905e10145ec3717a13ec0e7e565f26b8921a0f9315e6388bae9601100f4d32d0c9f496426
+  languageName: node
+  linkType: hard
+
+"jest-json@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "jest-json@npm:2.0.0"
+  peerDependencies:
+    jest: ">=27.2.5"
+  checksum: 87dc339425451c5edea3ddbc749afb793bc568f60dbafd8c472f2e7ab45aed64ad53d5c09912b472e4f7acd688af24583ace6f5008ca0dae85ea6b3fb4fc7a41
   languageName: node
   linkType: hard
 

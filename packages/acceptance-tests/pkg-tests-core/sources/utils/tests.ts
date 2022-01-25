@@ -1,4 +1,5 @@
 import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
+import assert                            from 'assert';
 import crypto                            from 'crypto';
 import finalhandler                      from 'finalhandler';
 import https                             from 'https';
@@ -19,7 +20,7 @@ import * as fsUtils                      from './fs';
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
-export type PackageEntry = Map<string, {path: string, packageJson: Object}>;
+export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;
 
 interface RunDriverOptions extends Record<string, any> {
@@ -299,6 +300,22 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       if (whitelistedVersions)
         versions = versions.filter(version => whitelistedVersions.has(version));
 
+      const allDistTags = versions.map(version => {
+        const packageVersionEntry = packageEntry.get(version);
+        invariant(packageVersionEntry, `This can only exist`);
+
+        return packageVersionEntry!.packageJson[`dist-tags`];
+      });
+
+      const distTags = allDistTags[0];
+
+      // If a package defines dist-tags, all of its versions must define the same dist-tags
+      for (const versionDistTags of allDistTags.slice(1))
+        assert.deepStrictEqual(versionDistTags, distTags);
+
+      if (typeof distTags === `object` && distTags !== null && !Object.prototype.hasOwnProperty.call(distTags, `latest`))
+        throw new Error(`Assertion failed: The package "${name}" must define a "latest" dist-tag too if it defines any dist-tags`);
+
       const data = JSON.stringify({
         name,
         versions: Object.assign(
@@ -321,7 +338,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
             }),
           )),
         ),
-        [`dist-tags`]: {latest: semver.maxSatisfying(versions, `*`)},
+        [`dist-tags`]: {
+          latest: semver.maxSatisfying(versions, `*`),
+          ...distTags,
+        },
       });
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
@@ -606,12 +626,15 @@ export interface PackageDriver {
   withConfig: (definition: Record<string, any>) => PackageDriver;
 }
 
+export type Run = (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>;
+export type Source = (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>;
+
 export type RunFunction = (
   {path, run, source}:
   {
     path: PortablePath;
-    run: (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>;
-    source: (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>;
+    run: Run;
+    source: Source;
   }
 ) => void;
 

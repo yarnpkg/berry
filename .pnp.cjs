@@ -21,7 +21,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:."\
       },\
       {\
-        "name": "acceptance-tests-229a13",\
+        "name": "acceptance-tests",\
         "reference": "workspace:packages/acceptance-tests"\
       },\
       {\
@@ -245,7 +245,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/pnpify", ["workspace:packages/yarnpkg-pnpify"]],\
       ["@yarnpkg/sdks", ["workspace:packages/yarnpkg-sdks"]],\
       ["@yarnpkg/shell", ["workspace:packages/yarnpkg-shell"]],\
-      ["acceptance-tests-229a13", ["workspace:packages/acceptance-tests"]],\
+      ["acceptance-tests", ["workspace:packages/acceptance-tests"]],\
       ["pkg-tests-core", ["workspace:packages/acceptance-tests/pkg-tests-core"]],\
       ["pkg-tests-fixtures", ["workspace:packages/acceptance-tests/pkg-tests-fixtures"]],\
       ["pkg-tests-specs", ["workspace:packages/acceptance-tests/pkg-tests-specs"]],\
@@ -15337,16 +15337,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["acceptance-tests-229a13", [\
+      ["acceptance-tests", [\
         ["workspace:packages/acceptance-tests", {\
           "packageLocation": "./packages/acceptance-tests/",\
           "packageDependencies": [\
-            ["acceptance-tests-229a13", "workspace:packages/acceptance-tests"],\
+            ["acceptance-tests", "workspace:packages/acceptance-tests"],\
             ["@yarnpkg/cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["is-wsl", "npm:2.2.0"],\
+            ["jest-json", "virtual:1b3c4eed57dc3768970e2478b72b669f56ca58eed0026ef3dcbc3870e4448a8f632e5f71026cbb7cfad1543d163e8515b7bc053df35b420e2e5df4ea6eaac015#npm:2.0.0"],\
             ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"]\
           ],\
           "linkType": "SOFT"\
@@ -27298,6 +27299,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-util", "npm:26.0.1"],\
             ["pretty-format", "npm:26.0.1"],\
             ["throat", "npm:5.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["jest-json", [\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/jest-json-npm-2.0.0-ad987fa14c-87dc339425.zip/node_modules/jest-json/",\
+          "packageDependencies": [\
+            ["jest-json", "npm:2.0.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:1b3c4eed57dc3768970e2478b72b669f56ca58eed0026ef3dcbc3870e4448a8f632e5f71026cbb7cfad1543d163e8515b7bc053df35b420e2e5df4ea6eaac015#npm:2.0.0", {\
+          "packageLocation": "./.yarn/__virtual__/jest-json-virtual-2d84418eb9/0/cache/jest-json-npm-2.0.0-ad987fa14c-87dc339425.zip/node_modules/jest-json/",\
+          "packageDependencies": [\
+            ["jest-json", "virtual:1b3c4eed57dc3768970e2478b72b669f56ca58eed0026ef3dcbc3870e4448a8f632e5f71026cbb7cfad1543d163e8515b7bc053df35b420e2e5df4ea6eaac015#npm:2.0.0"],\
+            ["@types/jest", null],\
+            ["jest", null]\
+          ],\
+          "packagePeers": [\
+            "@types/jest",\
+            "jest"\
           ],\
           "linkType": "HARD"\
         }]\

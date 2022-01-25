@@ -1,3 +1,4 @@
+import 'jest-json';
 import {tests} from 'pkg-tests-core';
 
 const {startPackageServer, getPackageRegistry} = tests;

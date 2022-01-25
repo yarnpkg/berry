@@ -1,10 +1,9 @@
 import {PortablePath} from '@yarnpkg/fslib';
-import {exec}         from 'pkg-tests-core';
-import {fs}           from 'pkg-tests-core';
+import {fs, tests}    from 'pkg-tests-core';
 
 const {readFile, writeFile, writeJson} = fs;
 
-const getWorkspaces = async (run: (...args: Array<string>) => Promise<exec.ExecResult>) => {
+const getWorkspaces = async (run: tests.Run) => {
   const {stdout} = await run(`workspaces`, `list`, `--json`);
   const workspaces: Array<string> = stdout
     .trim()
