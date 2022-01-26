@@ -8,6 +8,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+Various improvements have been made in the core to improve performance. Additionally:
+
 ### Commands
 
 - The `yarn workspaces foreach run` command is now able to run binaries.
@@ -41,6 +43,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The PnP filesystem now handles `read` and `readSync` using options.
 - The PnP filesystem now handles UNC paths using forward slashes.
 - The PnP filesystem now sets the proper `path` property on streams created by `createReadStream()` and obtained from zip archives.
+- Updates the PnP compatibility layer for TypeScript 4.6 Beta (it's possible we'll need to publish another patch update once the 4.6 enters stable).
 
 ### Bugfixes
 
