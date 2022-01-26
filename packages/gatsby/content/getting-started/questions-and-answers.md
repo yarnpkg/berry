@@ -90,6 +90,18 @@ If you're interested to know more about each of these files:
 > /.yarn/plugins/** binary
 > ```
 
+## Does Yarn support ESM?
+
+**Yes.**
+
+First, remember that Yarn supports the [`node-modules` install strategy](https://yarnpkg.com/configuration/yarnrc#nodeLinker), which installs package exactly the same as, say, npm would. So if Yarn didn't support ESM, nothing would. Those who say we don't it actually mean "[Yarn PnP](https://yarnpkg.com/features/pnp) doesn't support ESM" - except it does, ever since the 3.1.
+
+So this should have answered your question. But if you want more details about the PnP and ESM story, let's talk about ESM itself first. ESM is two things: at its core, it's a spec that got drafted in ES2015. However, no engine implemented it straight away: at this time the spec was pretty much just a syntactic placeholder, with nothing concrete underneath. It's only starting from late 2019 that Node finally received support for native ESM, without requiring an experimental flag. But this support had one major caveat: **the ESM loaders weren't there**. Loaders are the things that allow projects to tell Node how to locate packages and modules on the disk. You probably know some of them: [`@babel/register`](https://babeljs.io/docs/en/babel-register), [`ts-node`](https://github.com/TypeStrong/ts-node), [`jest's mocks`](https://jestjs.io/), Electron, and many more.
+
+Unlike CommonJS, the ESM module resolution pipeline is intended to be completely walled from the outside, for example so that multiple threads can share the same resolver instance. Amongst other things it meant that, without official loader support, **it was impossible to support alternate resolution strategies** - monkey-patching the resolution primitives wasn't viable anymore, so all those projects lost their only way to work. It only means one thing: **ESM wasn't ready**. When pointed to this kind of problems, ESM proponents often fallback to some sort of ["I don't use these programs anyway, you shouldn't either"](https://twitter.com/izelnakri/status/1471926356602720272). It's an unfortunate and quite uninformed take, as those use case matter to many people in our ecosystem.
+
+Fortunately, Node saw the issue, started to work on loaders, and shipped a first iteration. Fast forward to today, Node Loaders are still in [heavy work](https://nodejs.org/api/esm.html#loaders) (as highlighted by this "experimental" annotation they changed shape more than once), but have allowed us to draft a first implementation of a ESM-compatible PnP loader, which we shipped in 3.1. Strong of those learnings, we started to contribute to the Node Loaders working group, to help not only Yarn's use cases but also those from other projects susceptible to follow our lead. Loaders aren't perfect yet, and until it is **ESM-only packages cannot be recommended**, but there's a way forward and as we work together we'll get there. We just have to be careful not to push people aside as we run towards our goal.
+
 ## Should lockfiles be committed to the repository?
 
 **Yes.**
