@@ -699,6 +699,12 @@ export class Project {
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
+    // Doing these calls early is important: it seems calling it after we've started the resolution incurs very high
+    // performance penalty on WSL, with the Gatsby benchmark jumping from ~28s to ~130s. It's possible this is due to
+    // the number of async tasks being listed in the report, although it's strange this doesn't occur on other systems.
+    const currentArchitecture = nodeUtils.getArchitectureSet();
+    const supportedArchitectures = this.configuration.getSupportedArchitectures();
+
     await opts.report.startProgressPromise(Report.progressViaTitle(), async progress => {
       const startPackageResolution = async (locator: Locator) => {
         const originalPkg = await miscUtils.prettifyAsyncErrors(async () => {
@@ -859,9 +865,6 @@ export class Project {
       allDescriptors.delete(descriptorHash);
       allResolutions.delete(descriptorHash);
     }
-
-    const currentArchitecture = nodeUtils.getArchitectureSet();
-    const supportedArchitectures = this.configuration.getSupportedArchitectures();
 
     const conditionalLocators = new Set<LocatorHash>();
     const disabledLocators = new Set<LocatorHash>();
