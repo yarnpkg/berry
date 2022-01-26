@@ -2,11 +2,6 @@ import Module         from 'module';
 
 import * as miscUtils from './miscUtils';
 
-// Doing the `getReport` at startup is important: it seems calling it while the program is running incurs very high
-// performance penalty on WSL, with the Gatsby benchmark jumping from ~28s to ~130s. It's possible this is due to
-// the number of async tasks being listed in the report, although it's strange this doesn't occur on other systems.
-const report: any = process.report?.getReport() ?? {};
-
 export function builtinModules(): Set<string> {
   // @ts-expect-error
   return new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
@@ -18,6 +13,7 @@ function getLibc() {
   if (process.platform === `win32`)
     return null;
 
+  const report: any = process.report?.getReport() ?? {};
   const sharedObjects: Array<string> = report.sharedObjects ?? [];
 
   // Matches the first group if libc, second group if musl
