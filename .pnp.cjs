@@ -21028,6 +21028,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/eslint-plugin-react", null],\
             ["@types/eslint-plugin-react-hooks", null],\
             ["@types/eslint-plugin-testing-library", null],\
+            ["@types/typescript", null],\
             ["@types/typescript-eslint__eslint-plugin", null],\
             ["@types/typescript-eslint__parser", null],\
             ["@typescript-eslint/eslint-plugin", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:4.31.2"],\
@@ -21041,7 +21042,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-jsx-a11y", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:6.4.1"],\
             ["eslint-plugin-react", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:7.25.1"],\
             ["eslint-plugin-react-hooks", "virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:4.2.0"],\
-            ["eslint-plugin-testing-library", null]\
+            ["eslint-plugin-testing-library", null],\
+            ["typescript", null]\
           ],\
           "packagePeers": [\
             "@types/babel-eslint",\
@@ -21055,6 +21057,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/eslint",\
             "@types/typescript-eslint__eslint-plugin",\
             "@types/typescript-eslint__parser",\
+            "@types/typescript",\
             "@typescript-eslint/eslint-plugin",\
             "@typescript-eslint/parser",\
             "babel-eslint",\
@@ -21065,7 +21068,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "eslint-plugin-react-hooks",\
             "eslint-plugin-react",\
             "eslint-plugin-testing-library",\
-            "eslint"\
+            "eslint",\
+            "typescript"\
           ],\
           "linkType": "HARD"\
         }]\

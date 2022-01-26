@@ -282,13 +282,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/gatsbyjs/gatsby/pull/28759
-  [`gatsby-plugin-sharp@*`, {
+  [`gatsby-plugin-sharp@<=4.6.0-next.3`, {
     dependencies: {
       [`debug`]: `^4.3.1`,
     },
   }],
   // https://github.com/gatsbyjs/gatsby/pull/28759
-  [`gatsby-react-router-scroll@*`, {
+  [`gatsby-react-router-scroll@<=5.6.0-next.0`, {
     dependencies: {
       [`prop-types`]: `^15.7.2`,
     },
@@ -529,13 +529,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/npm/metavuln-calculator/pull/8
-  [`@npmcli/metavuln-calculator@*`, {
+  [`@npmcli/metavuln-calculator@<2.0.0`, {
     dependencies: {
       'json-parse-even-better-errors': `^2.3.1`,
     },
   }],
   // https://github.com/npm/bin-links/pull/17
-  [`bin-links@*`, {
+  [`bin-links@<2.3.0`, {
     dependencies: {
       'mkdirp-infer-owner': `^1.0.2`,
     },
@@ -547,7 +547,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/snowpackjs/snowpack/pull/3673
-  [`snowpack@*`, {
+  [`snowpack@<3.8.6`, {
     dependencies: {
       'magic-string': `^0.25.7`,
     },
@@ -726,7 +726,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/GoogleChromeLabs/critters/pull/91
-  [`critters-webpack-plugin@*`, {
+  [`critters-webpack-plugin@<3.0.2`, {
     peerDependenciesMeta: {
       'html-webpack-plugin': optionalPeerDep,
     },
@@ -741,6 +741,25 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`babel-preset-react-app@10.0.x`, {
     dependencies: {
       '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
+    },
+  }],
+  // https://github.com/facebook/create-react-app/pull/11751
+  [`eslint-config-react-app@*`, {
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/eslint-config-typescript/pull/39
+  [`@vue/eslint-config-typescript@*`, {
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/antfu/unplugin-vue2-script-setup/pull/100
+  [`unplugin-vue2-script-setup@<0.9.1`, {
+    peerDependencies: {
+      '@vue/composition-api': `^1.4.3`,
+      '@vue/runtime-dom': `^3.2.26`,
     },
   }],
 ];
