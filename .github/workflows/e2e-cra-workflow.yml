@@ -30,6 +30,7 @@ jobs:
         yarn add -D eslint-config-react-app eslint
 
         yarn build
+        yarn test
 
     - name: 'Running the TypeScript integration test'
       run: |
@@ -43,5 +44,6 @@ jobs:
         yarn add -D @types/testing-library__jest-dom
 
         yarn build
+        yarn test
       if: |
         always()
