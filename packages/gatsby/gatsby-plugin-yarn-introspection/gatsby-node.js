@@ -19,12 +19,10 @@ exports.sourceNodes = async ({actions, createNodeId, createContentDigest}, opts)
     }
   });
 
-  const files = [
-    path.join(packageDirectory, `yarnpkg-core/sources/Plugin.ts`),
+  const data = await execute([
+    require.resolve(`@yarnpkg/monorepo/packages/yarnpkg-core/sources/Plugin.ts`),
     ...indexList,
-  ];
-
-  const data = await execute(files);
+  ]);
 
   createNode({
     id: createNodeId(`yarn-hooks`),
