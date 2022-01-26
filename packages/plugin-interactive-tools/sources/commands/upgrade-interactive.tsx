@@ -6,11 +6,12 @@ import {ScrollableItems}                                                        
 import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
 import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                                 from 'clipanion';
+import {Command, Usage, UsageError}                                                                                                     from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import {Box, Text}                                                                                                                      from 'ink';
 import React, {useEffect, useRef, useState}                                                                                             from 'react';
 import semver                                                                                                                           from 'semver';
+import {WriteStream}                                                                                                                    from 'tty';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
@@ -43,6 +44,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
   });
 
   async execute() {
+    if (!(this.context.stdout as WriteStream).isTTY)
+      throw new UsageError(`This command can only be run in a TTY environment`);
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
@@ -61,7 +65,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     //   + 1 newline
     //     [...package list]
     //   + 1 empty line
-    const VIEWPORT_SIZE = process.stdout.rows - 7;
+    const VIEWPORT_SIZE = (this.context.stdout as WriteStream).rows - 7;
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
