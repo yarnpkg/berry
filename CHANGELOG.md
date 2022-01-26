@@ -10,44 +10,62 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### Commands
 
-- A new `yarn explain` command has been added. It can be used to explain an error code or list all available error codes.
+- The `yarn workspaces foreach run` command is now able to run binaries.
+- The `yarn npm info` command now supports displaying information about a tagged version of a package (e.g. `yarn npm info vue@next`).
+- A new `yarn explain` command has been added. It can be used to explain an error code, or list all available error codes.
+  - For example, try to run `yarn explain YN0002`.
+- The `yarn npm publish` command now accepts a new `--otp` option, to set the One-Time Password from the CLI.
+  - A better error message will also be shown when a query fails due to an invalid OTP.
 - `yarn upgrade-interactive` now has improved paging:
   - Yarn will display as many suggestions as can fit in the viewport (rather than a fixed-size list).
   - The suggestions that fit in the viewport will be fetched in the foreground and will load one-by-one.
   - The suggestions that don't will be fetched in the background and will be loaded in batches to increase responsiveness and reduce input lag.
   - Most notably, you won't have to wait for all of the suggestions to be fetched (which took a very long time before on large monorepos) before you can start navigating through the list.
-- `yarn npm info` now supports displaying information about a tagged version of a package (e.g. `yarn npm info vue@next`).
 
 ### Installs
 
-- The node-modules linker now tolerates if node_modules is a symbolic link and does not recreates it
+- The node-modules linker now tolerates if `node_modules` is a symbolic link, and doesn't recreate it.
+- On top of the `cpu` and `arch` fields, Yarn now support a new `libc` field which can be used in tandem with `optionalDependencies` to avoid downloading packages that have been linked against incompatible standard libraries (we currently support two values: `glibc` and `musl`).
 - The pnpm linker has received various improvements:
   - It will now remove the `node_modules/.store` and `node_modules` folders if they are empty.
   - It now supports running binaries of soft links.
   - It will now create self-references for packages that don't depend on other versions of themselves.
   - It will now remove scope folders (e.g. `node_modules/@yarnpkg`) if they are empty or after removing a scoped dependency.
-- `.pnp.cjs` files with inlined data will now store the data in a JSON string literal instead of an object literal [to improve startup performance](https://v8.dev/blog/cost-of-javascript-2019#json).
+- All `.pnp.cjs` files with inlined data will now store the data in a JSON string literal instead of an object literal [to improve startup performance](https://v8.dev/blog/cost-of-javascript-2019#json).
+
+### Compatibility
+
+- The shell now treats backslashes same as Bash (so it mostly ignore them).
+  - Could potentially be a breaking change, but the old behavior caused portability issues with a few packages, so we had to make this change (especially since the portable shell is intended to help portability).
+- The shell now supports `${FOO:+}`.
+- The PnP filesystem now handles `read` and `readSync` using options.
+- The PnP filesystem now handles UNC paths using forward slashes.
+- The PnP filesystem now sets the proper `path` property on streams created by `createReadStream()` and obtained from zip archives.
 
 ### Bugfixes
 
-- `@yarnpkg/pnpify` now escapes paths correctly
-- The ESM loader is now enabled regardless of the entrypoint module type, this fixes support for dynamic imports in commonjs modules when the entrypoint is also commonjs
-- The ESM loader is now able to resolve relative imports with search parameters
-- `yarn workspaces foreach run` is now able to run binaries
+- `@yarnpkg/pnpify` now escapes paths correctly.
+- The ESM loader is now enabled regardless of the entrypoint module type, this fixes support for dynamic imports in commonjs modules when the entrypoint is also commonjs.
+- The ESM loader is now able to resolve relative imports with search parameters.
 - The `node` field inside the `npm_config_user_agent` Yarn sets will now include a leading `v`.
 - Yarn is now able to recover from a corrupted install state.
-- Yarn is now able to migrate classic lockfiles containing unconventional tarball URLs
-- The nm linker hoists portals after hoisting their dependencies first
-- The PnP filesystem now handles `read` and `readSync` using options
-- The PnP filesystem now handles UNC paths using forward slashes
+- Yarn is now able to migrate classic lockfiles containing unconventional tarball URLs.
+- The nm linker hoists portals after hoisting their dependencies first.
+- Fixed a crash caused by a bad interaction between aliased packages and peer dependencies.
 - The ESBuild plugin will no longer allow access to Node.js builtins if the `platform` isn't set to Node.
 - SemVer ranges with build metadata can now be resolved.
+
+### ZipFS Extension
+
+- You can now unmount zip folders by right-clicking on their workspaces.
 
 ### Miscellaneous Features
 
 - Reporting for Git errors has been improved.
 - The resolution step now has a progress indicator.
 - The experimental ESM loader warning emitted by Node.js is now suppressed.
+- Private registries can now be authenticated using private keys and certificates.
+- A new `wrapNetworkRequest` hook now lets you wrap network requests (for example to log them).
 
 ## 3.1.1
 
