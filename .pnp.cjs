@@ -48886,8 +48886,7 @@ function readPackage(requestPath) {
 }
 function ERR_REQUIRE_ESM(filename, parentPath = null) {
   const basename = parentPath && path__default.default.basename(filename) === path__default.default.basename(parentPath) ? filename : path__default.default.basename(filename);
-  let msg = `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.`;
-  msg += `
+  const msg = `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
 Instead change the require of ${basename} in ${parentPath} to a dynamic import() which is available in all CommonJS modules.`;
   const err = new Error(msg);
   err.code = `ERR_REQUIRE_ESM`;

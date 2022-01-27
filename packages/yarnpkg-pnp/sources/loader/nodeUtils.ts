@@ -42,15 +42,16 @@ export function readPackage(requestPath: NativePath) {
 // Our error isn't as detailed since we don't have access to acorn to check
 // if the file contains ESM syntax
 export function ERR_REQUIRE_ESM(filename: string, parentPath: string | null = null) {
-  const basename = parentPath && path.basename(filename) ===
-    path.basename(parentPath) ? filename : path.basename(filename);
+  const basename =
+    parentPath && path.basename(filename) === path.basename(parentPath)
+      ? filename
+      : path.basename(filename);
 
-  let msg = `require() of ES Module ${filename}${parentPath ? ` from ${
-    parentPath}` : ``} not supported.`;
-  msg += `\nInstead change the require of ${basename} in ${parentPath} to` +
-    ` a dynamic import() which is available in all CommonJS modules.`;
+  const msg =
+    `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
+Instead change the require of ${basename} in ${parentPath} to a dynamic import() which is available in all CommonJS modules.`;
 
-  const err = new Error(msg) as Error & {code: string};
+  const err = new Error(msg) as Error & { code: string };
   err.code = `ERR_REQUIRE_ESM`;
   return err;
 }
