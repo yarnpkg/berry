@@ -48860,6 +48860,38 @@ function getPathForDisplay(p) {
 
 const builtinModules = new Set(require$$0.Module.builtinModules || Object.keys(process.binding(`natives`)));
 const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
+function readPackageScope(checkPath) {
+  const rootSeparatorIndex = checkPath.indexOf(npath.sep);
+  let separatorIndex;
+  do {
+    separatorIndex = checkPath.lastIndexOf(npath.sep);
+    checkPath = checkPath.slice(0, separatorIndex);
+    if (checkPath.endsWith(`${npath.sep}node_modules`))
+      return false;
+    const pjson = readPackage(checkPath + npath.sep);
+    if (pjson) {
+      return {
+        data: pjson,
+        path: checkPath
+      };
+    }
+  } while (separatorIndex > rootSeparatorIndex);
+  return false;
+}
+function readPackage(requestPath) {
+  const jsonPath = npath.resolve(requestPath, `package.json`);
+  if (!fs__default.default.existsSync(jsonPath))
+    return null;
+  return JSON.parse(fs__default.default.readFileSync(jsonPath, `utf8`));
+}
+function ERR_REQUIRE_ESM(filename, parentPath = null) {
+  const basename = parentPath && path__default.default.basename(filename) === path__default.default.basename(parentPath) ? filename : path__default.default.basename(filename);
+  const msg = `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
+Instead change the require of ${basename} in ${parentPath} to a dynamic import() which is available in all CommonJS modules.`;
+  const err = new Error(msg);
+  err.code = `ERR_REQUIRE_ESM`;
+  return err;
+}
 
 var __getOwnPropSymbols$2 = Object.getOwnPropertySymbols;
 var __hasOwnProp$2 = Object.prototype.hasOwnProperty;
@@ -49091,6 +49123,19 @@ Require stack:
       }
     }
     return false;
+  };
+  const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
+  require$$0.Module._extensions[`.js`] = function(module, filename) {
+    var _a, _b;
+    if (filename.endsWith(`.js`)) {
+      const pkg = readPackageScope(filename);
+      if (pkg && ((_a = pkg.data) == null ? void 0 : _a.type) === `module`) {
+        const err = ERR_REQUIRE_ESM(filename, (_b = module.parent) == null ? void 0 : _b.filename);
+        Error.captureStackTrace(err);
+        throw err;
+      }
+    }
+    originalExtensionJSFunction.call(this, module, filename);
   };
   const originalEmitWarning = process.emitWarning;
   process.emitWarning = function(warning, name, ctor) {

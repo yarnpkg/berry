@@ -43,6 +43,7 @@ Various improvements have been made in the core to improve performance. Addition
 - The PnP filesystem now handles `read` and `readSync` using options.
 - The PnP filesystem now handles UNC paths using forward slashes.
 - The PnP filesystem now sets the proper `path` property on streams created by `createReadStream()` and obtained from zip archives.
+- The PnP runtime now throws an `ERR_REQUIRE_ESM` error when attempting to require an ES Module, matching the default Node.js behaviour.
 - Updates the PnP compatibility layer for TypeScript 4.6 Beta (it's possible we'll need to publish another patch update once the 4.6 enters stable).
 
 ### Bugfixes

@@ -396,6 +396,21 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
+  // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
+  const originalExtensionJSFunction = Module._extensions[`.js`] as (module: Module, filename: string) => void;
+  Module._extensions[`.js`] = function (module: Module, filename: string) {
+    if (filename.endsWith(`.js`)) {
+      const pkg = nodeUtils.readPackageScope(filename);
+      if (pkg && pkg.data?.type === `module`) {
+        const err = nodeUtils.ERR_REQUIRE_ESM(filename, module.parent?.filename);
+        Error.captureStackTrace(err);
+        throw err;
+      }
+    }
+
+    originalExtensionJSFunction.call(this, module, filename);
+  };
+
   // When using the ESM loader Node.js prints the following warning
   //
   // (node:14632) ExperimentalWarning: --experimental-loader is an experimental feature. This feature could change at any time
