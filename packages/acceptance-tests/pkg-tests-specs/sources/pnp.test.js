@@ -2087,7 +2087,7 @@ describe(`Plug'n'Play`, () => {
             return originalStatSync(__filename);
           }
 
-          console.log(require('${path}/does/not/exist.js'))
+          console.log(require('${path}/does/not/exist.cjs'))
         `);
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
