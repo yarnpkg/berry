@@ -60,6 +60,9 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     const version = process.versions.node;
     const range = `>=12 <14 || 14.2 - 14.9 || >14.10.0`;
 
+    // YARN_IGNORE_NODE is special because this code needs to execute as early as possible.
+    // It's not a regular core setting because Configuration.find may use functions not available
+    // on older Node versions.
     const ignoreNode = miscUtils.parseOptionalBoolean(process.env.YARN_IGNORE_NODE);
     if (!ignoreNode && !semverUtils.satisfiesWithPrereleases(version, range))
       throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);
