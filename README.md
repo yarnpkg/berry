@@ -46,7 +46,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
         <img src="https://user-images.githubusercontent.com/1037931/151547094-7aa4a5cb-07e4-4b8a-ab8f-0a15fd63ab7d.svg" width="140"/>
       </a>
       <a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github#gh-dark-mode-only">
-        <img src="https://user-images.githubusercontent.com/1037931/151547319-e097b4f9-760b-486b-b1ff-858f8708ce43.svg" width="140"/>
+        <img src="https://user-images.githubusercontent.com/1037931/151547899-3655e0d3-3bdb-4351-bd75-af2bebd3ce92.svg" width="140"/>
       </a>
     </td>
     <td>
