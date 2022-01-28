@@ -40,6 +40,16 @@ Yarn is a modern package manager split into various packages. Its novel architec
       <b>All your environment variables, in one place</b>. Stop struggling with scattered API keys, hacking together home-brewed tools, and avoiding access controls. Keep your team and servers in sync with <b><a href="https://www.doppler.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=yarn&utm_source=github">Doppler</a></b>.
     </td>
   </tr>
+  <tr>
+    <td>
+      <a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github">
+        <img src="https://user-images.githubusercontent.com/1037931/151546552-dd6689a3-58f1-46a2-84d8-9249776c7f2a.svg" width="140"/>
+      </a>
+    </td>
+    <td>
+      <b>Your app, enterprise-ready</b>. Start selling to enterprise customers with just a few lines of code. Add Single Sign-On (and more) in minutes instead of months with <b><a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github">WorkOS</a></b>.
+    </td>
+  </tr>
 </table>
 
 ### But also
