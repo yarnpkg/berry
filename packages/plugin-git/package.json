@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "2.6.0-rc.12",
+  "version": "2.6.0-rc.13",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {

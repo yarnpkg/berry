@@ -24,7 +24,7 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/plugin-stage": "workspace:^"
   },
-  "version": "3.1.1-rc.12",
+  "version": "3.1.1-rc.13",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"

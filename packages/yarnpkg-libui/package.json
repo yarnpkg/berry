@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/libui",
-  "version": "2.2.0",
+  "version": "2.2.1-rc.1",
   "license": "BSD-2-Clause",
   "sideEffects": false,
   "peerDependencies": {
@@ -28,5 +28,6 @@
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  }
+  },
+  "stableVersion": "2.2.0"
 }
