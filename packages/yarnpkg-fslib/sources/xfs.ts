@@ -4,10 +4,9 @@ import {NodeFS}                               from './NodeFS';
 import {Filename, PortablePath, npath, ppath} from './path';
 
 function getTempName(prefix: string) {
-  const tmpdir = npath.toPortablePath(os.tmpdir());
   const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
 
-  return ppath.join(tmpdir, `${prefix}${hash}` as Filename);
+  return `${prefix}${hash}` as Filename;
 }
 
 export type XFS = NodeFS & {
@@ -44,6 +43,9 @@ function registerCleanExit() {
   });
 }
 
+let tmpdir: PortablePath | null = null;
+let realTmpdir: PortablePath | null = null;
+
 export const xfs: XFS = Object.assign(new NodeFS(), {
   detachTemp(p: PortablePath) {
     tmpdirs.delete(p);
@@ -51,12 +53,14 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
 
   mktempSync<T>(this: XFS, cb?: (p: PortablePath) => T) {
     registerCleanExit();
+    tmpdir ??= npath.toPortablePath(os.tmpdir());
+    realTmpdir ??= this.realpathSync(tmpdir);
 
     while (true) {
-      const p = getTempName(`xfs-`);
+      const name = getTempName(`xfs-`);
 
       try {
-        this.mkdirSync(p);
+        this.mkdirSync(ppath.join(tmpdir, name));
       } catch (error) {
         if (error.code === `EEXIST`) {
           continue;
@@ -65,7 +69,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       }
 
-      const realP = this.realpathSync(p);
+      const realP = ppath.join(realTmpdir, name);
       tmpdirs.add(realP);
 
       if (typeof cb !== `undefined`) {
@@ -89,12 +93,14 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
 
   async mktempPromise<T>(this: XFS, cb?: (p: PortablePath) => Promise<T>) {
     registerCleanExit();
+    tmpdir ??= npath.toPortablePath(os.tmpdir());
+    realTmpdir ??= this.realpathSync(tmpdir);
 
     while (true) {
-      const p = getTempName(`xfs-`);
+      const name = getTempName(`xfs-`);
 
       try {
-        await this.mkdirPromise(p);
+        await this.mkdirPromise(ppath.join(tmpdir, name));
       } catch (error) {
         if (error.code === `EEXIST`) {
           continue;
@@ -103,7 +109,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
         }
       }
 
-      const realP = await this.realpathPromise(p);
+      const realP = ppath.join(realTmpdir, name);
       tmpdirs.add(realP);
 
       if (typeof cb !== `undefined`) {
