@@ -11,7 +11,11 @@ import * as ts                                                                  
 
 import * as ast                                                                                                                                                                                            from './ast';
 
-const BUILTINS = new Set([...Module.builtinModules || [], `pnpapi`]);
+const BUILTINS = new Set([
+  ...(Module.builtinModules || []),
+  ...(Module.builtinModules || []).map(mod => `node:${mod}`),
+  `pnpapi`,
+]);
 
 function probablyMinified(content: string) {
   if (content.length > 1024 * 1024)
