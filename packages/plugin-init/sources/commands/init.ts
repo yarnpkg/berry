@@ -179,7 +179,7 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/plugins`,
         `!.yarn/releases`,
         `!.yarn/sdks`,
-        `!.yarn/version`,        
+        `!.yarn/version`,
         ``,
         `# Swap the comments on the following lines if you don't wish to use zero-installs`,
         `# Documentation here: https://yarnpkg.com/features/zero-installs`,
