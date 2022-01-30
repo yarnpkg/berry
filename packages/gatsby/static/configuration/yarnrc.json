@@ -33,13 +33,6 @@
       "format": "uri-reference",
       "examples": ["./exampleCA.pem"]
     },
-    "httpsCertFilePath": {
-      "_package": "@yarnpkg/core",
-      "description": "Path to file containing certificate chain in PEM format.",
-      "type": "string",
-      "format": "uri-reference",
-      "examples": ["./exampleCert.pem"]
-    },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
       "description": "The base git refs that the current HEAD is compared against in the version plugin. This overrides the default behavior of comparing against master, origin/master, upstream/master, main, origin/main, and upstream/main. Supports git branches, tags, and commits.",
@@ -64,6 +57,13 @@
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
       "enum": ["throw", "update", "ignore"],
       "default": "throw"
+    },
+    "cloneConcurrency": {
+      "_package": "@yarnpkg/plugin-git",
+      "description": "Defines how many `git clone` operations are allowed to run at the same time. Yarn defaults to 2 concurrent clone operations.",
+      "type": "number",
+      "default": 2,
+      "examples": [8]
     },
     "compressionLevel": {
       "_package": "@yarnpkg/core",
@@ -207,12 +207,11 @@
       "format": "uri",
       "examples": ["http://proxy:4040"]
     },
-    "httpsProxy": {
+    "httpRetry": {
       "_package": "@yarnpkg/core",
-      "description": "Defines a proxy to use when making an HTTPS request. Note that Yarn only supports HTTP proxies at the moment (help welcome!).",
-      "type": "string",
-      "format": "uri",
-      "examples": ["http://proxy:4040"]
+      "description": "Retry times on http failure",
+      "type": "number",
+      "default": 3
     },
     "httpTimeout": {
       "_package": "@yarnpkg/core",
@@ -220,11 +219,26 @@
       "type": "number",
       "default": 60000
     },
-    "httpRetry": {
+    "httpsCertFilePath": {
       "_package": "@yarnpkg/core",
-      "description": "Retry times on http failure",
-      "type": "number",
-      "default": 3
+      "description": "Path to file containing certificate chain in PEM format.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./exampleCert.pem"]
+    },
+    "httpsKeyFilePath": {
+      "_package": "@yarnpkg/core",
+      "description": "Path to file containing private key in PEM format.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./exampleKey.pem"]
+    },
+    "httpsProxy": {
+      "_package": "@yarnpkg/core",
+      "description": "Defines a proxy to use when making an HTTPS request. Note that Yarn only supports HTTP proxies at the moment (help welcome!).",
+      "type": "string",
+      "format": "uri",
+      "examples": ["http://proxy:4040"]
     },
     "ignoreCwd": {
       "_package": "@yarnpkg/core",
@@ -273,13 +287,6 @@
       "type": "string",
       "format": "uri-reference",
       "default": "./.yarn/install-state.gz"
-    },
-    "httpsKeyFilePath": {
-      "_package": "@yarnpkg/core",
-      "description": "Path to file containing private key in PEM format.",
-      "type": "string",
-      "format": "uri-reference",
-      "examples": ["./exampleKey.pem"]
     },
     "logFilters": {
       "description": "Defines overrides for log levels for message names or message text. Through this setting you can hide specific messages or give them a more important visibility.",
@@ -361,23 +368,23 @@
             "caFilePath": {
               "$ref": "#/properties/caFilePath"
             },
-            "httpsCertFilePath": {
-              "$ref": "#/properties/httpsCertFilePath"
-            },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
             },
             "httpProxy": {
               "$ref": "#/properties/httpProxy"
             },
-            "httpsProxy": {
-              "$ref": "#/properties/httpsProxy"
+            "httpsCertFilePath": {
+              "$ref": "#/properties/httpsCertFilePath"
             },
             "httpsKeyFilePath": {
               "$ref": "#/properties/httpsKeyFilePath"
+            },
+            "httpsProxy": {
+              "$ref": "#/properties/httpsProxy"
             }
           },
-          "_exampleKeys": ["caFilePath", "httpsCertFilePath", "enableNetwork", "httpProxy", "httpsProxy", "httpsKeyFilePath"]
+          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
         }
       },
       "_exampleKeys": ["*.example.com"]
