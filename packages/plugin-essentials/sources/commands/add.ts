@@ -153,7 +153,7 @@ export default class AddCommand extends BaseCommand {
 
       const unsupportedPrefix = pseudoDescriptor.match(/^(https?:|git@github)/);
       if (unsupportedPrefix)
-        throw new UsageError(`It seems you try to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, FormatType.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, FormatType.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), FormatType.DESCRIPTOR)}`);
+        throw new UsageError(`It seems you are trying to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, FormatType.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, FormatType.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), FormatType.DESCRIPTOR)}`);
 
       if (!request)
         throw new UsageError(`The ${formatUtils.pretty(configuration, pseudoDescriptor, FormatType.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`);
