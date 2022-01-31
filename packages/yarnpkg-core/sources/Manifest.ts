@@ -410,7 +410,7 @@ export class Manifest {
       }
     }
 
-    if (typeof data.workspaces === `object` && data.workspaces.nohoist)
+    if (typeof data.workspaces === `object` && data.workspaces !== null && data.workspaces.nohoist)
       errors.push(new Error(`'nohoist' is deprecated, please use 'installConfig.hoistingLimits' instead`));
 
     const workspaces = Array.isArray(data.workspaces)
