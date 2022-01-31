@@ -41,7 +41,7 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
     ? destinationFs.lutimesPromise.bind(destinationFs)
     : destinationFs.utimesPromise.bind(destinationFs);
 
-  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts, true);
+  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, {...opts, didParentExist: true});
 
   for (const operation of prelayout)
     await operation();
@@ -51,8 +51,10 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   }));
 }
 
-async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions, didParentExist: boolean) {
-  const destinationStat = didParentExist ? await maybeLStat(destinationFs, destination) : null;
+type CopyImplOptions = CopyOptions & {didParentExist: boolean};
+
+async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyImplOptions) {
+  const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
 
   const referenceTime = opts.stableTime
@@ -126,15 +128,20 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
 
   const entries = await sourceFs.readdirPromise(source);
 
+  const copyImplOpts: CopyImplOptions = {
+    ...opts,
+    didParentExist: !!destinationStat,
+  };
+
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
-      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts, !!destinationStat)) {
+      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), copyImplOpts)) {
         updated = true;
       }
     }
   } else {
     const entriesUpdateStatus = await Promise.all(entries.map(async entry => {
-      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts, !!destinationStat);
+      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), copyImplOpts);
     }));
 
     if (entriesUpdateStatus.some(status => status)) {
