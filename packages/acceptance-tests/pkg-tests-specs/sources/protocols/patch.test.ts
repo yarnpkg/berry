@@ -5,18 +5,17 @@ const {
 } = require(`pkg-tests-core`);
 
 const NO_DEPS_PATCH = `diff --git a/index.js b/index.js
-index a6bf8f58..629b6aa8 100644
+index bb9c6f687..5b141d3df 100644
 --- a/index.js
 +++ b/index.js
-@@ -2,6 +2,8 @@
-
+@@ -1,5 +1,7 @@
  module.exports = require(\`./package.json\`);
 
 +module.exports.hello = \`world\`;
 +
  for (const key of [\`dependencies\`, \`devDependencies\`, \`peerDependencies\`]) {
    for (const dep of Object.keys(module.exports[key] || {})) {
-     // $FlowFixMe The whole point of this file is to be dynamic
+     module.exports[key][dep] = require(dep);
 `;
 
 const PATCH_NAME = `my-patch.patch` as Filename;

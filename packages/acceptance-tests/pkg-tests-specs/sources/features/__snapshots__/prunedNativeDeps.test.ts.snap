@@ -63,7 +63,7 @@ __metadata:
       optional: true
     native-libc-musl:
       optional: true
-  checksum: b62ce5449e2631a9bc4d264ca9cd32cdb96465d6d739cca3378a4e48cf2db199e01c83e97cccee2f657709e5b79403b0cd4dcbc3aa6a96608c11b17b72df3e2c
+  checksum: d70003d1b9641f671736ac28a17b1b4e7282eecd48937a8e01dbfe21eda97202ad9668476a5a8676393e596c652a063b1979a21eb05d8240963ce7f4a16afafc
   languageName: node
   linkType: hard
 
