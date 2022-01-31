@@ -1,6 +1,6 @@
-import {NoFS}                from './NoFS';
-import {ProxiedFS}           from './ProxiedFS';
-import {PortablePath, ppath} from './path';
+import {NoFS}                from '../sources/NoFS';
+import {ProxiedFS}           from '../sources/ProxiedFS';
+import {PortablePath, ppath} from '../sources/path';
 
 describe(`ProxiedFS`, () => {
   it(`should resolve relative symlinks after remapping`, async () => {

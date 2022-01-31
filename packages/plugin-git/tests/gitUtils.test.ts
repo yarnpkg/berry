@@ -1,4 +1,4 @@
-import * as gitUtils from './gitUtils';
+import * as gitUtils from '../sources/gitUtils';
 
 const VALID_PATTERNS = [
   `GitHubOrg/foo-bar.js`,
