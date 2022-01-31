@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                        from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, Ident, InstallMode}       from '@yarnpkg/core';
-import {structUtils}                                                from '@yarnpkg/core';
-import {PortablePath}                                               from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                         from 'clipanion';
-import {prompt}                                                     from 'enquirer';
-import * as t                                                       from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                 from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, FormatType, formatUtils, LightReport, MessageName} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident, InstallMode}                                from '@yarnpkg/core';
+import {structUtils}                                                                         from '@yarnpkg/core';
+import {PortablePath}                                                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
+import {prompt}                                                                              from 'enquirer';
+import * as t                                                                                from 'typanion';
 
-import * as suggestUtils                                            from '../suggestUtils';
-import {Hooks}                                                      from '..';
+import * as suggestUtils                                                                     from '../suggestUtils';
+import {Hooks}                                                                               from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {
@@ -149,7 +149,14 @@ export default class AddCommand extends BaseCommand {
     const allSuggestions = await Promise.all(this.packages.map(async pseudoDescriptor => {
       const request = pseudoDescriptor.match(/^\.{0,2}\//)
         ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cwd: this.context.cwd, workspace})
-        : structUtils.parseDescriptor(pseudoDescriptor);
+        : structUtils.tryParseDescriptor(pseudoDescriptor);
+
+      const unsupportedPrefix = pseudoDescriptor.match(/^(https?:|git@github)/);
+      if (unsupportedPrefix)
+        throw new UsageError(`It seems you are trying to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, FormatType.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, FormatType.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), FormatType.DESCRIPTOR)}`);
+
+      if (!request)
+        throw new UsageError(`The ${formatUtils.pretty(configuration, pseudoDescriptor, FormatType.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`);
 
       const target = suggestTarget(workspace, request, {
         dev: this.dev,
