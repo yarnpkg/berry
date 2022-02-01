@@ -4,7 +4,7 @@ import {connectHits, connectStateResults} from 'react-instantsearch-dom';
 import {Stats}                            from 'react-instantsearch-dom';
 import {Carousel}                         from 'react-responsive-carousel';
 import ReactTooltip                       from 'react-tooltip';
-import React                              from 'react';
+import React, {useRef}                    from 'react';
 
 import {Hit}                              from '../hit';
 import {isEmpty}                          from '../util';
@@ -113,47 +113,53 @@ const Sponsor = ({name, description, icon, url}) => <>
   </SponsorContainer>
 </>;
 
-const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => <>
-  <InfoBar>
-    <InfoContainer>
-      <StatsText>
-        <Stats translations={{stats: (num, time) => `found ${num.toLocaleString(`en`)} packages in ${time}ms`}}/>
-      </StatsText>
-      <SponsorCarousel
-        axis={`vertical`}
-        autoPlay={true}
-        infiniteLoop={true}
-        interval={4000}
-        showArrows={false}
-        showStatus={false}
-        showThumbs={false}
-      >
-        {SPONSORS.map(sponsor => <Sponsor key={sponsor.name} {...sponsor} />)}
-      </SponsorCarousel>
-      <ReactTooltip
-        place={`right`}
-        offset={{right: 20}}
-        effect={`solid`}
-        backgroundColor={`#ffac33`}
-        delayHide={4000}
-        html={true}
-        clickable={true}
-      />
-    </InfoContainer>
-  </InfoBar>
-  <ResultsContainer>
-    <Hits onTagClick={onTagClick} onOwnerClick={onOwnerClick} searchState={searchState} />
-    <Pagination pagination={pagination} />
-    <SearchFooter>
+const ResultsFound = ({pagination, onTagClick, onOwnerClick, searchState}) => {
+  // We use a ref to have a new selection on each component creation rather than on each rerender
+  const selectedItem = useRef(Math.trunc(Math.random() * SPONSORS.length));
+
+  return <>
+    <InfoBar>
+      <InfoContainer>
+        <StatsText>
+          <Stats translations={{stats: (num, time) => `found ${num.toLocaleString(`en`)} packages in ${time}ms`}}/>
+        </StatsText>
+        <SponsorCarousel
+          axis={`vertical`}
+          autoPlay={true}
+          infiniteLoop={true}
+          interval={4000}
+          showArrows={false}
+          showStatus={false}
+          showThumbs={false}
+          selectedItem={selectedItem.current}
+        >
+          {SPONSORS.map(sponsor => <Sponsor key={sponsor.name} {...sponsor} />)}
+        </SponsorCarousel>
+        <ReactTooltip
+          place={`right`}
+          offset={{right: 20}}
+          effect={`solid`}
+          backgroundColor={`#ffac33`}
+          delayHide={4000}
+          html={true}
+          clickable={true}
+        />
+      </InfoContainer>
+    </InfoBar>
+    <ResultsContainer>
+      <Hits onTagClick={onTagClick} onOwnerClick={onOwnerClick} searchState={searchState} />
+      <Pagination pagination={pagination} />
+      <SearchFooter>
       Search by Algolia
-      {` - `}
-      <a href={`https://discourse.algolia.com/t/2016-algolia-community-gift-yarn-package-search/319`}>
+        {` - `}
+        <a href={`https://discourse.algolia.com/t/2016-algolia-community-gift-yarn-package-search/319`}>
         read how it works
-      </a>
+        </a>
       .
-    </SearchFooter>
-  </ResultsContainer>
-</>;
+      </SearchFooter>
+    </ResultsContainer>
+  </>;
+};
 
 const NoPackagesFound = styled.div`
   padding: 0 15px;
