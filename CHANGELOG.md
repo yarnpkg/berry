@@ -58,6 +58,7 @@ Various improvements have been made in the core to improve performance. Addition
 - Fixed a crash caused by a bad interaction between aliased packages and peer dependencies.
 - The ESBuild plugin will no longer allow access to Node.js builtins if the `platform` isn't set to Node.
 - SemVer ranges with build metadata can now be resolved.
+- The `YARN_IGNORE_NODE` environment variable will now be parsed using the same mechanism as env variable configuration settings (i.e. both `1`/`0` and `true`/`false` will be accepted)
 
 ### ZipFS Extension
 

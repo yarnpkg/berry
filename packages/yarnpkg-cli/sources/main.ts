@@ -1,11 +1,11 @@
-import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                                                          from '@yarnpkg/fslib';
-import {execFileSync}                                                                      from 'child_process';
-import {isCI}                                                                              from 'ci-info';
-import {Cli, UsageError}                                                                   from 'clipanion';
-import {realpathSync}                                                                      from 'fs';
+import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils} from '@yarnpkg/core';
+import {PortablePath, npath, xfs}                                                                     from '@yarnpkg/fslib';
+import {execFileSync}                                                                                 from 'child_process';
+import {isCI}                                                                                         from 'ci-info';
+import {Cli, UsageError}                                                                              from 'clipanion';
+import {realpathSync}                                                                                 from 'fs';
 
-import {pluginCommands}                                                                    from './pluginCommands';
+import {pluginCommands}                                                                               from './pluginCommands';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -60,7 +60,11 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     const version = process.versions.node;
     const range = `>=12 <14 || 14.2 - 14.9 || >14.10.0`;
 
-    if (process.env.YARN_IGNORE_NODE !== `1` && !semverUtils.satisfiesWithPrereleases(version, range))
+    // YARN_IGNORE_NODE is special because this code needs to execute as early as possible.
+    // It's not a regular core setting because Configuration.find may use functions not available
+    // on older Node versions.
+    const ignoreNode = miscUtils.parseOptionalBoolean(process.env.YARN_IGNORE_NODE);
+    if (!ignoreNode && !semverUtils.satisfiesWithPrereleases(version, range))
       throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);
 
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.
