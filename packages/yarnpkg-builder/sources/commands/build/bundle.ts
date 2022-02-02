@@ -159,6 +159,7 @@ export default class BuildBundleCommand extends Command {
       report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
       report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
+      report.reportInfo(null, `${Mark.Question} Bundle version: ${formatUtils.pretty(configuration, version, formatUtils.Type.REFERENCE)}`);
 
       report.reportSeparator();
 
