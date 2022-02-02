@@ -135,3 +135,13 @@ Once you're happy with what the documentation looks like, just commit your local
 ![](https://user-images.githubusercontent.com/1037931/61949789-3cc09300-afac-11e9-9817-89e97771a4e1.png)
 
 Once everything is green and a maintainer has reviewed your changes, we'll merge them and a bot will automatically trigger a rebuild of the website and update the `docs` folder 🙂
+
+## Profiling
+
+Run the following command to generate the unminified bundle:
+
+```bash
+yarn build:cli --no-minify
+```
+
+You can run your profiler on generated bundle at `packages/yarnpkg-cli/bundles/yarn.js`.
