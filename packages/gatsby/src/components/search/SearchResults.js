@@ -82,6 +82,8 @@ const SponsorCarousel = styled(Carousel)`
     flex: 1;
     margin: 0;
     line-height: 1em;
+
+    z-index: auto;
   }
 `;
 
