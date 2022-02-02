@@ -51,9 +51,9 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   }));
 }
 
-type CopyImplOptions = CopyOptions & {didParentExist: boolean};
+type InternalCopyOptions = CopyOptions & {didParentExist: boolean};
 
-async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyImplOptions) {
+async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: InternalCopyOptions) {
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
 
@@ -101,7 +101,7 @@ async function maybeLStat<P extends Path>(baseFs: FakeFS<P>, p: P) {
   }
 }
 
-async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
+async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: InternalCopyOptions) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
     if (opts.overwrite) {
       prelayout.push(async () => destinationFs.removePromise(destination));
@@ -128,9 +128,7 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
 
   const entries = await sourceFs.readdirPromise(source);
 
-  const nextOpts = opts.didParentExist && !destinationStat
-    ? {...opts, didParentExist: false}
-    : opts;
+  const nextOpts: InternalCopyOptions = opts.didParentExist && !destinationStat ? {...opts, didParentExist: false} : opts;
 
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
