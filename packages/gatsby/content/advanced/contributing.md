@@ -138,7 +138,7 @@ Once everything is green and a maintainer has reviewed your changes, we'll merge
 
 ## Profiling
 
-Run the following command to generate the unminified bundle:
+Run the following command to generate an unminified bundle:
 
 ```bash
 yarn build:cli --no-minify
