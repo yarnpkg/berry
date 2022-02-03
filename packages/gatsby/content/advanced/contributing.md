@@ -144,7 +144,7 @@ Run the following command to generate the unminified bundle:
 yarn build:cli --no-minify
 ```
 
-Use Profiler on generated bundle at `packages/yarnpkg-cli/bundles/yarn.js`. Here is example which uses the Node.js built-in profiler:
+Use a profiler on the generated bundle at `packages/yarnpkg-cli/bundles/yarn.js`. Here is an example which uses the Node.js built-in profiler:
 
 ```bash
 YARN_IGNORE_PATH=1 node --prof packages/yarnpkg-cli/bundles/yarn.js
