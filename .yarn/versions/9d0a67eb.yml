@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/fslib": minor
+  "@yarnpkg/fslib": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
