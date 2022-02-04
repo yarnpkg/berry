@@ -1,7 +1,7 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
-import {isDate}                                                                                                                                      from 'util';
+import {types}                                                                                                                                       from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
 import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats}                                                                               from './FakeFS';
@@ -43,7 +43,7 @@ function toUnixTimestamp(time: Date | string | number) {
   }
 
   // convert to 123.456 UNIX timestamp
-  if (isDate(time))
+  if (types.isDate(time))
     return (time as Date).getTime() / 1000;
 
   throw new Error(`Invalid time`);
