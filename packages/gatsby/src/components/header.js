@@ -33,6 +33,9 @@ const NewsContainer = styled.div`
 
     white-space: pre-wrap;
     text-align: center;
+
+    line-height: 1.5em;
+    padding: 0.5em 1em;
   }
 
   background: #2188b6;
