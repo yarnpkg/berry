@@ -41087,6 +41087,25 @@ function convertPath(targetPathUtils, sourcePath) {
   return targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
 }
 
+var __defProp$4 = Object.defineProperty;
+var __defProps$2 = Object.defineProperties;
+var __getOwnPropDescs$2 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$5 = Object.getOwnPropertySymbols;
+var __hasOwnProp$5 = Object.prototype.hasOwnProperty;
+var __propIsEnum$5 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$4 = (obj, key, value) => key in obj ? __defProp$4(obj, key, {enumerable: true, configurable: true, writable: true, value}) : obj[key] = value;
+var __spreadValues$4 = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$5.call(b, prop))
+      __defNormalProp$4(a, prop, b[prop]);
+  if (__getOwnPropSymbols$5)
+    for (var prop of __getOwnPropSymbols$5(b)) {
+      if (__propIsEnum$5.call(b, prop))
+        __defNormalProp$4(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps$2 = (a, b) => __defProps$2(a, __getOwnPropDescs$2(b));
 const defaultTime = new Date(SAFE_TIME * 1e3);
 var LinkStrategy;
 (function(LinkStrategy2) {
@@ -41101,7 +41120,7 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   const referenceTime = opts.stableTime ? {mtime: defaultTime, atime: defaultTime} : await sourceFs.lstatPromise(normalizedSource);
   await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [referenceTime.atime, referenceTime.mtime]});
   const updateTime = typeof destinationFs.lutimesPromise === `function` ? destinationFs.lutimesPromise.bind(destinationFs) : destinationFs.utimesPromise.bind(destinationFs);
-  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
+  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, __spreadProps$2(__spreadValues$4({}, opts), {didParentExist: true}));
   for (const operation of prelayout)
     await operation();
   await Promise.all(postlayout.map((operation) => {
@@ -41110,7 +41129,7 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
 }
 async function copyImpl(prelayout, postlayout, updateTime, destinationFs, destination, sourceFs, source, opts) {
   var _a, _b;
-  const destinationStat = await maybeLStat(destinationFs, destination);
+  const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
   const referenceTime = opts.stableTime ? {mtime: defaultTime, atime: defaultTime} : sourceStat;
   let updated;
@@ -41175,15 +41194,16 @@ async function copyFolder(prelayout, postlayout, updateTime, destinationFs, dest
     updated = true;
   }
   const entries = await sourceFs.readdirPromise(source);
+  const nextOpts = opts.didParentExist && !destinationStat ? __spreadProps$2(__spreadValues$4({}, opts), {didParentExist: false}) : opts;
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
-      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts)) {
+      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts)) {
         updated = true;
       }
     }
   } else {
     const entriesUpdateStatus = await Promise.all(entries.map(async (entry) => {
-      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts);
     }));
     if (entriesUpdateStatus.some((status) => status)) {
       updated = true;
