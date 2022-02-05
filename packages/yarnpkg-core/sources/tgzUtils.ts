@@ -103,11 +103,15 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     if (ignore(entry))
       continue;
 
-    const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
+    // The tarball read entry path should not be modified/normalized when determining
+    // the parts that can be stripped off. Normalization might cause unexpected results.
+    // See more details: https://github.com/yarnpkg/berry/issues/4070
+    const parts = entry.path.replace(/\/$/, ``).split(/\//g);
     if (parts.length <= stripComponents)
       continue;
 
-    const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
+    const strippedEntryPath = parts.slice(stripComponents).join(`/`);
+    const slicePath = ppath.normalize(npath.toPortablePath(strippedEntryPath));
     const mappedPath = ppath.join(prefixPath, slicePath);
 
     let mode = 0o644;
