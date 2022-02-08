@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
   "@yarnpkg/fslib": patch
   "@yarnpkg/shell": patch
@@ -29,7 +30,6 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
