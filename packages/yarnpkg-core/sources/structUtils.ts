@@ -670,7 +670,7 @@ export function prettyIdent(configuration: Configuration, ident: Ident): string 
 function prettyRangeNoColors(range: string): string {
   if (range.startsWith(VIRTUAL_PROTOCOL)) {
     const nested = prettyRangeNoColors(range.substring(range.indexOf(`#`) + 1));
-    const abbrev = range.substring(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
+    const abbrev = range.substring(VIRTUAL_PROTOCOL.length, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
 
