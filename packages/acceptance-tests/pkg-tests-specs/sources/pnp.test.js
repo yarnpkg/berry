@@ -1937,7 +1937,7 @@ describe(`Plug'n'Play`, () => {
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: ``,
-          stderr: expect.stringContaining(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance`),
+          stderr: expect.stringContaining(`[Warning] The runtime detected new information in a PnP file; reloading the API instance`),
         });
 
         await expect(run(`node`, `./index.js`, {env: {NODE_OPTIONS: `--no-warnings`}})).resolves.toMatchObject({
