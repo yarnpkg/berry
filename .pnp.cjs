@@ -42300,7 +42300,7 @@ function toUnixTimestamp(time) {
       return time;
     }
   }
-  if (nodeUtils.isDate(time))
+  if (nodeUtils.types.isDate(time))
     return time.getTime() / 1e3;
   throw new Error(`Invalid time`);
 }
