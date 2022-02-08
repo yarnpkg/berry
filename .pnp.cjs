@@ -42300,7 +42300,7 @@ function toUnixTimestamp(time) {
       return time;
     }
   }
-  if (nodeUtils.isDate(time))
+  if (nodeUtils.types.isDate(time))
     return time.getTime() / 1e3;
   throw new Error(`Invalid time`);
 }
@@ -49987,7 +49987,7 @@ function makeManager(pnpapi, opts) {
     apiEntry.lastRefreshCheck = timeNow;
     const stats = opts.fakeFs.statSync(pnpApiPath);
     if (stats.mtime > apiEntry.stats.mtime) {
-      process.emitWarning(`[Warning] The runtime detected new informations in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
+      process.emitWarning(`[Warning] The runtime detected new information in a PnP file; reloading the API instance (${npath.fromPortablePath(pnpApiPath)})`);
       apiEntry.stats = stats;
       apiEntry.instance = loadApiInstance(pnpApiPath);
     }
