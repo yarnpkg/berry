@@ -122,6 +122,11 @@ If it fails and you have no idea why, feel free to ping a maintainer and we'll d
 
 **Note:** If you modify one of the [default plugins](https://github.com/yarnpkg/berry#default-plugins), you will also need to bump `@yarnpkg/cli`.
 
+## Reviewing other PRs
+
+You're welcome to leave comments if you spot glaring bugs, but do not approve PRs if you're not a member.
+It's generally seen as [bad form](https://twitter.com/brian_d_vaughn/status/1224051534536667137) in the open source community.
+
 ## Writing documentation
 
 Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
