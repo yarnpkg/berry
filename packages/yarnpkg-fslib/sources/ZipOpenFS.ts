@@ -903,7 +903,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     let filePath = `` as PortablePath;
 
     while (true) {
-      const pathPartWithArchive = p.substr(filePath.length);
+      const pathPartWithArchive = p.substring(filePath.length);
 
       let archivePart;
       if (!this.fileExtensions) {
@@ -940,7 +940,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
 
       return {
         archivePath: filePath,
-        subPath: this.pathUtils.join(PortablePath.root, p.substr(filePath.length) as PortablePath),
+        subPath: this.pathUtils.join(PortablePath.root, p.substring(filePath.length) as PortablePath),
       };
     }
   }

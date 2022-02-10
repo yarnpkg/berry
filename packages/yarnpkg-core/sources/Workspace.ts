@@ -47,7 +47,7 @@ export class Workspace {
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substr(0, 6)}`);
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substring(0, 6)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
