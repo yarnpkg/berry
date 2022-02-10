@@ -71,8 +71,10 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
           versionToWrite = range.selector;
 
         // Ensure optional dependencies are handled as well
-        const identDescriptor = structUtils.makeDescriptor(descriptor, `unknown`);
-        const finalDependencyType = dependencyType === `dependencies` && workspace.manifest.ensureDependencyMeta(identDescriptor).optional
+        const identDescriptor = dependencyType === `dependencies`
+          ? structUtils.makeDescriptor(descriptor, `unknown`)
+          : null;
+        const finalDependencyType = identDescriptor !== null && workspace.manifest.ensureDependencyMeta(identDescriptor).optional
           ? `optionalDependencies`
           : dependencyType;
         rawManifest[finalDependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
