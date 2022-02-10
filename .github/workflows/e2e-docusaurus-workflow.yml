@@ -24,20 +24,12 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-
-        # TODO: Remove once https://github.com/yarnpkg/berry/blob/bd146ccddf95aae9c99c0c48d86b1d8997f1dccf/scripts/e2e-setup-ci.sh#L31-L38 is fixed
-        YARN_PNP_ENABLE_ESM_LOADER=true
-
         yarn dlx create-docusaurus@latest my-website classic && cd my-website
         yarn build
 
     - name: 'Running the TypeScript integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-
-        # TODO: Remove once https://github.com/yarnpkg/berry/blob/bd146ccddf95aae9c99c0c48d86b1d8997f1dccf/scripts/e2e-setup-ci.sh#L31-L38 is fixed
-        YARN_PNP_ENABLE_ESM_LOADER=true
-
         yarn dlx create-docusaurus@latest my-website-ts classic --typescript && cd my-website-ts
         yarn build
       if: |
