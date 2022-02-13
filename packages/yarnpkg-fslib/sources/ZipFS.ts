@@ -815,21 +815,17 @@ export class ZipFS extends BasePortableFakeFS {
 
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
       if (!resolveLastComponent || this.symlinkCount === 0)
-        break;
+        return resolvedP;
 
       const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
       if (index === -1)
-        break;
+        return resolvedP;
+      if (this.isSymbolicLink(index))
+        return resolvedP;
 
-      if (this.isSymbolicLink(index)) {
-        const target = this.getFileSource(index).toString() as PortablePath;
-        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
-      } else {
-        break;
-      }
+      const target = this.getFileSource(index).toString() as PortablePath;
+      resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
     }
-
-    return resolvedP;
   }
 
   private allocateBuffer(content: string | Buffer | ArrayBuffer | DataView) {
