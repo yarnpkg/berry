@@ -38,10 +38,12 @@ export function watchFile<P extends Path>(
   }
 
   const statWatchers = statWatchersByFakeFS.get(fakeFs) ?? new Map();
-  statWatchersByFakeFS.set(fakeFs, statWatchers);
+  if (!statWatchersByFakeFS.has(fakeFs))
+    statWatchersByFakeFS.set(fakeFs, statWatchers);
 
   const statWatcher = statWatchers.get(path) ?? CustomStatWatcher.create<P>(fakeFs, path, {bigint});
-  statWatchers.set(path, statWatcher);
+  if (!statWatchers.has(path))
+    statWatchers.set(path, statWatcher);
   statWatcher.registerChangeListener(listener, {persistent, interval});
 
   return statWatcher as CustomStatWatcher<P>;
