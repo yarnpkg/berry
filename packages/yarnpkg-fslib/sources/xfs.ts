@@ -58,11 +58,9 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       try {
         this.mkdirSync(p);
       } catch (error) {
-        if (error.code === `EEXIST`) {
-          continue;
-        } else {
+        if (error.code !== `EEXIST`)
           throw error;
-        }
+        continue;
       }
 
       const realP = this.realpathSync(p);
@@ -96,11 +94,9 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       try {
         await this.mkdirPromise(p);
       } catch (error) {
-        if (error.code === `EEXIST`) {
-          continue;
-        } else {
+        if (error.code !== `EEXIST`)
           throw error;
-        }
+        continue;
       }
 
       const realP = await this.realpathPromise(p);

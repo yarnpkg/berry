@@ -350,11 +350,9 @@ export abstract class FakeFS<P extends Path> {
         try {
           await this.mkdirPromise(subPath);
         } catch (error) {
-          if (error.code === `EEXIST`) {
-            continue;
-          } else {
+          if (error.code !== `EEXIST`)
             throw error;
-          }
+          continue;
         }
 
         if (chmod != null)
@@ -384,11 +382,9 @@ export abstract class FakeFS<P extends Path> {
         try {
           this.mkdirSync(subPath);
         } catch (error) {
-          if (error.code === `EEXIST`) {
-            continue;
-          } else {
+          if (error.code !== `EEXIST`)
             throw error;
-          }
+          continue;
         }
 
         if (chmod != null)
@@ -594,23 +590,23 @@ export abstract class FakeFS<P extends Path> {
       try {
         fd = await this.openPromise(lockPath, `wx`);
       } catch (error) {
-        if (error.code === `EEXIST`) {
-          if (!await isAlive()) {
-            try {
-              await this.unlinkPromise(lockPath);
-              continue;
-            } catch (error) {
-              // No big deal if we can't remove it. Just fallback to wait for
-              // it to be eventually released by its owner.
-            }
-          }
-          if (Date.now() - startTime < 60 * 1000) {
-            await new Promise(resolve => setTimeout(resolve, interval));
-          } else {
-            throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
-          }
-        } else {
+        if (error.code !== `EEXIST`)
           throw error;
+
+        if (!await isAlive()) {
+          try {
+            await this.unlinkPromise(lockPath);
+            continue;
+          } catch (error) {
+            // No big deal if we can't remove it. Just fallback to wait for
+            // it to be eventually released by its owner.
+          }
+        }
+
+        if (Date.now() - startTime < 60 * 1000) {
+          await new Promise(resolve => setTimeout(resolve, interval));
+        } else {
+          throw new Error(`Couldn't acquire a lock in a reasonable time (via ${lockPath})`);
         }
       }
     }
