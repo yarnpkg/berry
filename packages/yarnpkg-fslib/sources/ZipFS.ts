@@ -732,16 +732,17 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private registerListing(p: PortablePath) {
-    if (this.listings.has(p))
-      return this.listings.get(p)!;
+    const listing = this.listings.get(p);
+    if (listing)
+      return listing;
 
     const parentListing = this.registerListing(ppath.dirname(p));
     parentListing.add(ppath.basename(p));
 
-    const listing = new Set<Filename>();
-    this.listings.set(p, listing);
+    const newListing = new Set<Filename>();
+    this.listings.set(p, newListing);
 
-    return listing;
+    return newListing;
   }
 
   private registerEntry(p: PortablePath, index: number) {
