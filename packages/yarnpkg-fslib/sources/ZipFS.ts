@@ -818,9 +818,7 @@ export class ZipFS extends BasePortableFakeFS {
         return resolvedP;
 
       const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
-      if (index === -1)
-        return resolvedP;
-      if (!this.isSymbolicLink(index))
+      if (index === -1 || !this.isSymbolicLink(index))
         return resolvedP;
 
       const target = this.getFileSource(index).toString() as PortablePath;
