@@ -53,6 +53,16 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
 
 type InternalCopyOptions = CopyOptions & {didParentExist: boolean};
 
+function getStatsCopyFn(stats: Stats) {
+  if (stats.isDirectory())
+    return copyFolder;
+  else if (stats.isFile())
+    return copyFile;
+  else if (stats.isSymbolicLink())
+    return copySymlink;
+  throw new Error(`Unsupported file type (${stats.mode})`);
+}
+
 async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: InternalCopyOptions) {
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
@@ -61,24 +71,8 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
     ? {mtime: defaultTime, atime: defaultTime} as const
     : sourceStat;
 
-  let updated: boolean;
-  switch (true) {
-    case sourceStat.isDirectory(): {
-      updated = await copyFolder(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
-    } break;
-
-    case sourceStat.isFile(): {
-      updated = await copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
-    } break;
-
-    case sourceStat.isSymbolicLink(): {
-      updated = await copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
-    } break;
-
-    default: {
-      throw new Error(`Unsupported file type (${sourceStat.mode})`);
-    } break;
-  }
+  const sourceStatsCopyFn = getStatsCopyFn(sourceStat);
+  let updated = await sourceStatsCopyFn(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
 
   if (updated || destinationStat?.mtime?.getTime() !== referenceTime.mtime.getTime() || destinationStat?.atime?.getTime() !== referenceTime.atime.getTime()) {
     postlayout.push(() => updateTime(destination, referenceTime.atime, referenceTime.mtime));
