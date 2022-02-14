@@ -173,20 +173,16 @@ function makeCloneLinkOperation<P extends Path>(opFs: FakeFS<P>, destination: P,
         await opFs.copyFilePromise(source, destination, fs.constants.COPYFILE_FICLONE_FORCE);
         isCloneSupportedCache.set(opFs, true);
       } catch (err) {
-        if (err.code === `ENOSYS` || err.code === `ENOTSUP`) {
-          isCloneSupportedCache.set(opFs, false);
-          await makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy)();
-        } else {
+        if (err.code !== `ENOSYS` && err.code !== `ENOTSUP`)
           throw err;
-        }
+        isCloneSupportedCache.set(opFs, false);
+        await makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy)();
       }
     };
+  } else if (isCloneSupported) {
+    return async () => opFs.copyFilePromise(source, destination, fs.constants.COPYFILE_FICLONE_FORCE);
   } else {
-    if (isCloneSupported) {
-      return async () => opFs.copyFilePromise(source, destination, fs.constants.COPYFILE_FICLONE_FORCE);
-    } else {
-      return makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy);
-    }
+    return makeLinkOperation(opFs, destination, source, sourceStat, linkStrategy);
   }
 }
 
