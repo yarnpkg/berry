@@ -297,7 +297,7 @@ export abstract class FakeFS<P extends Path> {
         } catch (error) {
           if (error.code !== `EBUSY` || error.code !== `ENOTEMPTY`) {
             throw error;
-          } else if (t !== maxRetries) {
+          } else if (t < maxRetries) {
             await new Promise(resolve => setTimeout(resolve, t * 100));
           }
         }
