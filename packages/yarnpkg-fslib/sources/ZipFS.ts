@@ -808,10 +808,11 @@ export class ZipFS extends BasePortableFakeFS {
       const isDir = this.listings.has(parentP);
       const doesExist = this.entries.has(parentP);
 
-      if (!isDir && !doesExist)
-        throw errors.ENOENT(reason);
-      if (!isDir)
+      if (!isDir) {
+        if (!doesExist)
+          throw errors.ENOENT(reason);
         throw errors.ENOTDIR(reason);
+      }
 
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
       if (!resolveLastComponent || this.symlinkCount === 0)
