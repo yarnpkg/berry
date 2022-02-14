@@ -11,31 +11,12 @@ export function watchFile<P extends Path>(
   a: WatchFileOptions | WatchFileCallback,
   b?: WatchFileCallback,
 ) {
-  let bigint: boolean;
-  let persistent: boolean;
-  let interval: number;
-
-  let listener: WatchFileCallback;
-
-  switch (typeof a) {
-    case `function`: {
-      bigint = false;
-      persistent = true;
-      interval = 5007;
-
-      listener = a;
-    } break;
-
-    default: {
-      ({
-        bigint = false,
-        persistent = true,
-        interval = 5007,
-      } = a);
-
-      listener = b!;
-    } break;
-  }
+  const {
+    bigint = false,
+    persistent = true,
+    interval = 5007,
+  } = typeof a === `function` ? {} : a;
+  const listener = typeof a === `function` ? a : b!;
 
   let statWatchers = statWatchersByFakeFS.get(fakeFs);
   if (typeof statWatchers === `undefined`)
