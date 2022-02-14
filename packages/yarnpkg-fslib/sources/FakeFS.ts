@@ -290,24 +290,20 @@ export abstract class FakeFS<P extends Path> {
       }
 
       // 5 gives 1s worth of retries at worst
-      let t = 0;
-      do {
+      for (let t = 0; t <= maxRetries; t++) {
         try {
           await this.rmdirPromise(p);
           break;
         } catch (error) {
           if (error.code === `EBUSY` || error.code === `ENOTEMPTY`) {
-            if (maxRetries === 0) {
-              break;
-            } else {
+            if (t !== maxRetries) {
               await new Promise(resolve => setTimeout(resolve, t * 100));
-              continue;
             }
           } else {
             throw error;
           }
         }
-      } while (t++ < maxRetries);
+      }
     } else {
       await this.unlinkPromise(p);
     }
