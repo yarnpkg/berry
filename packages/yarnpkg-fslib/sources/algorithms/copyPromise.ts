@@ -103,12 +103,10 @@ async function maybeLStat<P extends Path>(baseFs: FakeFS<P>, p: P) {
 
 async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: InternalCopyOptions) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
-    if (opts.overwrite) {
-      prelayout.push(async () => destinationFs.removePromise(destination));
-      destinationStat = null;
-    } else {
+    if (!opts.overwrite)
       return false;
-    }
+    prelayout.push(async () => destinationFs.removePromise(destination));
+    destinationStat = null;
   }
 
   let updated = false;
@@ -192,12 +190,10 @@ function makeCloneLinkOperation<P extends Path>(opFs: FakeFS<P>, destination: P,
 
 async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
   if (destinationStat !== null) {
-    if (opts.overwrite) {
-      prelayout.push(async () => destinationFs.removePromise(destination));
-      destinationStat = null;
-    } else {
+    if (!opts.overwrite)
       return false;
-    }
+    prelayout.push(async () => destinationFs.removePromise(destination));
+    destinationStat = null;
   }
 
   const linkStrategy = opts.linkStrategy
@@ -217,12 +213,10 @@ async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations,
 
 async function copySymlink<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
   if (destinationStat !== null) {
-    if (opts.overwrite) {
-      prelayout.push(async () => destinationFs.removePromise(destination));
-      destinationStat = null;
-    } else {
+    if (!opts.overwrite)
       return false;
-    }
+    prelayout.push(async () => destinationFs.removePromise(destination));
+    destinationStat = null;
   }
 
   prelayout.push(async () => {
