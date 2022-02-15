@@ -32,8 +32,8 @@ export type XFS = NodeFS & {
 const tmpdirs = new Set<PortablePath>();
 
 let tmpEnv: {
-  tmpdir: PortablePath,
-  realTmpdir: PortablePath,
+  tmpdir: PortablePath;
+  realTmpdir: PortablePath;
 } | null = null;
 
 function initTmpEnv() {
