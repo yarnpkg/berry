@@ -31,11 +31,11 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   const prelayout: Operations = [];
   const postlayout: Operations = [];
 
-  const referenceTime = opts.stableTime
-    ? {mtime: defaultTime, atime: defaultTime} as const
+  const {atime, mtime} = opts.stableTime
+    ? {atime: defaultTime, mtime: defaultTime}
     : await sourceFs.lstatPromise(normalizedSource);
 
-  await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [referenceTime.atime, referenceTime.mtime]});
+  await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [atime, mtime]});
 
   const updateTime = typeof destinationFs.lutimesPromise === `function`
     ? destinationFs.lutimesPromise.bind(destinationFs)
@@ -57,8 +57,8 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
 
-  const referenceTime = opts.stableTime
-    ? {mtime: defaultTime, atime: defaultTime} as const
+  const {atime, mtime} = opts.stableTime
+    ? {atime: defaultTime, mtime: defaultTime}
     : sourceStat;
 
   let updated: boolean;
@@ -80,8 +80,8 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
     } break;
   }
 
-  if (updated || destinationStat?.mtime?.getTime() !== referenceTime.mtime.getTime() || destinationStat?.atime?.getTime() !== referenceTime.atime.getTime()) {
-    postlayout.push(() => updateTime(destination, referenceTime.atime, referenceTime.mtime));
+  if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
+    postlayout.push(() => updateTime(destination, atime, mtime));
     updated = true;
   }
 
