@@ -172,7 +172,7 @@ export class ZipFS extends BasePortableFakeFS {
       this.libzip.free(errPtr);
     }
 
-    this.listings.set(PortablePath.root, new Set());
+    this.listings.set(PortablePath.root, new Set<Filename>());
 
     const entryCount = this.libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
@@ -732,17 +732,17 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private registerListing(p: PortablePath) {
-    let listing = this.listings.get(p);
-    if (listing)
-      return listing;
+    const existingListing = this.listings.get(p);
+    if (existingListing)
+      return existingListing;
 
     const parentListing = this.registerListing(ppath.dirname(p));
-    listing = new Set();
-
     parentListing.add(ppath.basename(p));
-    this.listings.set(p, listing);
 
-    return listing;
+    const newListing = new Set<Filename>();
+    this.listings.set(p, newListing);
+
+    return newListing;
   }
 
   private registerEntry(p: PortablePath, index: number) {
