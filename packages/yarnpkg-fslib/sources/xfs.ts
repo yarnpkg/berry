@@ -31,20 +31,27 @@ export type XFS = NodeFS & {
 
 const tmpdirs = new Set<PortablePath>();
 
-let cleanExitRegistered = false;
+let tmpEnv: {
+  tmpdir: PortablePath,
+  realTmpdir: PortablePath,
+} | null = null;
 
-function registerCleanExit() {
-  if (cleanExitRegistered)
-    return;
+function initTmpEnv() {
+  if (tmpEnv)
+    return tmpEnv;
 
-  cleanExitRegistered = true;
+  const tmpdir = npath.toPortablePath(os.tmpdir());
+  const realTmpdir = xfs.realpathSync(tmpdir);
+
   process.once(`exit`, () => {
     xfs.rmtempSync();
   });
-}
 
-let tmpdir: PortablePath | null = null;
-let realTmpdir: PortablePath | null = null;
+  return tmpEnv = {
+    tmpdir,
+    realTmpdir,
+  };
+}
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
   detachTemp(p: PortablePath) {
@@ -52,9 +59,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   mktempSync<T>(this: XFS, cb?: (p: PortablePath) => T) {
-    registerCleanExit();
-    tmpdir ??= npath.toPortablePath(os.tmpdir());
-    realTmpdir ??= this.realpathSync(tmpdir);
+    const {tmpdir, realTmpdir} = initTmpEnv();
 
     while (true) {
       const name = getTempName(`xfs-`);
@@ -92,9 +97,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   async mktempPromise<T>(this: XFS, cb?: (p: PortablePath) => Promise<T>) {
-    registerCleanExit();
-    tmpdir ??= npath.toPortablePath(os.tmpdir());
-    realTmpdir ??= this.realpathSync(tmpdir);
+    const {tmpdir, realTmpdir} = initTmpEnv();
 
     while (true) {
       const name = getTempName(`xfs-`);
