@@ -70,7 +70,14 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
           // for workspace:version we simply strip the protocol
           versionToWrite = range.selector;
 
-        rawManifest[dependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
+        // Ensure optional dependencies are handled as well
+        const identDescriptor = dependencyType === `dependencies`
+          ? structUtils.makeDescriptor(descriptor, `unknown`)
+          : null;
+        const finalDependencyType = identDescriptor !== null && workspace.manifest.ensureDependencyMeta(identDescriptor).optional
+          ? `optionalDependencies`
+          : dependencyType;
+        rawManifest[finalDependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
       }
     }
   }

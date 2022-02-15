@@ -60,6 +60,9 @@ export default class SetVersionCommand extends BaseCommand {
       `Use a release from the local filesystem`,
       `$0 set version ./yarn.cjs`,
     ], [
+      `Use a release from a URL`,
+      `$0 set version https://repo.yarnpkg.com/3.1.0/packages/yarnpkg-cli/bin/yarn.js`,
+    ], [
       `Download the version used to invoke the command`,
       `$0 set version self`,
     ]],
@@ -92,6 +95,8 @@ export default class SetVersionCommand extends BaseCommand {
       bundleUrl = `https://repo.yarnpkg.com/${await resolveTag(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `classic`)
       bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
+    else if (this.version.match(/^https?:/))
+      bundleUrl = this.version;
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
       bundleUrl = `file://${npath.resolve(this.version)}`;
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))

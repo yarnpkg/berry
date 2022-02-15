@@ -68,21 +68,20 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       const realP = this.realpathSync(p);
       tmpdirs.add(realP);
 
-      if (typeof cb !== `undefined`) {
-        try {
-          return cb(realP);
-        } finally {
-          if (tmpdirs.has(realP)) {
-            tmpdirs.delete(realP);
-            try {
-              this.removeSync(realP);
-            } catch {
-              // Too bad if there's an error
-            }
+      if (typeof cb === `undefined`)
+        return realP;
+
+      try {
+        return cb(realP);
+      } finally {
+        if (tmpdirs.has(realP)) {
+          tmpdirs.delete(realP);
+          try {
+            this.removeSync(realP);
+          } catch {
+            // Too bad if there's an error
           }
         }
-      } else {
-        return realP;
       }
     }
   },
@@ -106,21 +105,20 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       const realP = await this.realpathPromise(p);
       tmpdirs.add(realP);
 
-      if (typeof cb !== `undefined`) {
-        try {
-          return await cb(realP);
-        } finally {
-          if (tmpdirs.has(realP)) {
-            tmpdirs.delete(realP);
-            try {
-              await this.removePromise(realP);
-            } catch {
-              // Too bad if there's an error
-            }
+      if (typeof cb === `undefined`)
+        return realP;
+
+      try {
+        return await cb(realP);
+      } finally {
+        if (tmpdirs.has(realP)) {
+          tmpdirs.delete(realP);
+          try {
+            await this.removePromise(realP);
+          } catch {
+            // Too bad if there's an error
           }
         }
-      } else {
-        return realP;
       }
     }
   },

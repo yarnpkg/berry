@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
-  "version": "3.1.2-rc.4",
+  "version": "3.1.2-rc.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
