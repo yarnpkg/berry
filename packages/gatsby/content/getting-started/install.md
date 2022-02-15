@@ -5,7 +5,8 @@ title: Installation
 description: Yarn's in-depth installation guide.
 order: 2
 ---
-
+## npm install yarn -g  
+this is the way to install yarn or if your a non windows person sudo npm install yarn -g to install it
 ## Install Corepack
 
 The preferred way to manage Yarn is through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html), a new binary shipped with all Node.js releases starting from 16.10. It acts as an intermediary between you and Yarn, and lets you use different package manager versions across multiple projects without having to check-in the Yarn binary anymore.
