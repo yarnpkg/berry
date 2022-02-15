@@ -886,11 +886,9 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (this.level !== `mixed`) {
         // Use store for level 0, and deflate for 1..9
-        let method;
-        if (this.level === 0)
-          method = this.libzip.ZIP_CM_STORE;
-        else
-          method = this.libzip.ZIP_CM_DEFLATE;
+        const method = this.level === 0
+          ? this.libzip.ZIP_CM_STORE
+          : this.libzip.ZIP_CM_DEFLATE;
 
         const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
         if (rc === -1) {
