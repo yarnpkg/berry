@@ -1,5 +1,6 @@
 import {parseSyml}                                     from '@yarnpkg/parsers';
-import fs                                              from 'fs'
+import fs                                              from 'fs';
+import { performance }                                 from 'perf_hooks';
 import {safeLoad as parseWithJsYaml, FAILSAFE_SCHEMA}  from 'js-yaml';
 import {parse as parseWithYaml }                       from 'yaml';
 
@@ -39,7 +40,6 @@ describe('Yaml parse comparison (to be removed / reworked)', () => {
   it(`should parse identically as js-yaml@3`, () => {
 
     const lock = fs.readFileSync(`${__dirname}/../../../yarn.lock`, `utf8`);
-    const jsYamlParsed = parseWithJsYaml(lock, {schema: FAILSAFE_SCHEMA});
 
     // js-yaml@3 doesn't parse `key: true` as a boolean, but as a string.
     // as far as I tested it makes the lock file invalid after install.
@@ -52,12 +52,21 @@ describe('Yaml parse comparison (to be removed / reworked)', () => {
       return value;
     }
 
+    const startJsYaml = performance.now();
+    const jsYamlParsed = parseWithJsYaml(lock, {schema: FAILSAFE_SCHEMA});
+    const endJsYaml = performance.now();
+    const jsYamlTime = endJsYaml - startJsYaml;
+
+    const startYaml = performance.now();
     const yamlParsed = parseWithYaml(lock, reviver, {
       uniqueKeys: false,
       schema: 'failsafe',
       customTags: []
     })
+    const endYaml = performance.now();
+    const yamlTime = endYaml - startYaml;
 
     expect(yamlParsed).toStrictEqual(jsYamlParsed);
+    expect(yamlTime).toBeLessThan(jsYamlTime);
   })
 })
