@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "3.2.0-rc.13",
+  "version": "3.2.0-rc.14",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
