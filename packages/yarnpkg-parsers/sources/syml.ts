@@ -1,5 +1,4 @@
-import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
-
+import {parse as parseYaml}        from 'yaml';
 import {parse}                     from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
@@ -141,10 +140,22 @@ function parseViaJsYaml(source: string) {
   if (LEGACY_REGEXP.test(source))
     return parseViaPeg(source);
 
-  const value = safeLoad(source, {
-    schema: FAILSAFE_SCHEMA,
-    json: true,
-  });
+  // js-yaml@3 doesn't parse `key: true` as a boolean, but as a string.
+  // as far as I tested it makes the lock file invalid after install.
+  const reviver = (key: string, value: unknown) => {
+    if (value === true) {
+      return 'true';
+    } else if (value === false) {
+      return 'false';
+    }
+    return value;
+  }
+
+  const value = parseYaml(source, reviver, {
+    uniqueKeys: false,
+    schema: 'failsafe',
+    customTags: []
+  })
 
   // Empty files are parsed as `undefined` instead of an empty object
   // Empty files with 2 newlines or more are `null` instead
