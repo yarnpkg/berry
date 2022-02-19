@@ -4287,13 +4287,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/js-yaml@npm:^3.11.1":
-  version: 3.12.5
-  resolution: "@types/js-yaml@npm:3.12.5"
-  checksum: fdc09cda3cc83a0c67d69ce179af9ede6e865f2e54f15b138814c5255b3b279306de2232da7cdea138248d885c960359ebf7f0bd21010e0ecf027f64454ab217
-  languageName: node
-  linkType: hard
-
 "@types/json-patch@npm:0.0.30":
   version: 0.0.30
   resolution: "@types/json-patch@npm:0.0.30"
@@ -5773,10 +5766,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
-    "@types/js-yaml": ^3.11.1
     js-yaml: ^3.10.0
     pegjs: ^0.10.0
     tslib: ^1.13.0
+    yaml: ^2.0.0-10
   languageName: unknown
   linkType: soft
 
@@ -27465,6 +27458,13 @@ typescript@^3.8.3:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.0.0-10":
+  version: 2.0.0-10
+  resolution: "yaml@npm:2.0.0-10"
+  checksum: 7a0bac2f80225da6008fb8ab887f43166fb2485cc3e1350185c43499c76841ea0ca9d79b40c0970e08ab3943f25ffb184e709fef7fb8b26d73987ed0452a91cc
   languageName: node
   linkType: hard
 
