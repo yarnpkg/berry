@@ -142,7 +142,7 @@ function parseViaJsYaml(source: string) {
 
   // js-yaml@3 doesn't parse `key: true` as a boolean, but as a string.
   // as far as I tested it makes the lock file invalid after install.
-  const reviver = (key: string, value: unknown) => {
+  const reviver = (key: unknown, value: unknown) => {
     if (value === true) {
       return 'true';
     } else if (value === false) {
