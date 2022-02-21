@@ -387,11 +387,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof entry === `undefined`)
       throw errors.EBADF(`read`);
 
-    let realPosition;
-    if (position === -1 || position === null)
-      realPosition = entry.cursor;
-    else
-      realPosition = position;
+    const realPosition = position === -1 || position === null
+      ? entry.cursor
+      : position;
 
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
