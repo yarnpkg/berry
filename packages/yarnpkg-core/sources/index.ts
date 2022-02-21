@@ -24,6 +24,7 @@ export type {Linker, LinkOptions, MinimalLinkOptions}                           
 export {Manifest}                                                                                         from './Manifest';
 export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMeta}                       from './Manifest';
 export {MessageName, parseMessageName, stringifyMessageName}                                              from './MessageName';
+export {MultiFetcher}                                                                                     from './MultiFetcher';
 export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                       from './Plugin';
 export type {PeerRequirement}                                                                             from './Project';
 export {Project, InstallMode}                                                                             from './Project';
@@ -34,6 +35,7 @@ export {StreamReport}                                                           
 export {TelemetryManager}                                                                                 from './TelemetryManager';
 export {ThrowReport}                                                                                      from './ThrowReport';
 export {VirtualFetcher}                                                                                   from './VirtualFetcher';
+export {WorkspaceFetcher}                                                                                 from './WorkspaceFetcher';
 export {WorkspaceResolver}                                                                                from './WorkspaceResolver';
 export {Workspace}                                                                                        from './Workspace';
 export {YarnVersion}                                                                                      from './YarnVersion';

@@ -5,7 +5,7 @@ import getTemplate               from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
 
-function generateLoader(shebang: string | null | undefined, loader: string) {
+export function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
     shebang ? `${shebang}\n` : ``,
     `/* eslint-disable */\n\n`,

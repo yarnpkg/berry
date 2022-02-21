@@ -42544,11 +42544,7 @@ class ZipFS extends BasePortableFakeFS {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`)
       throw EBADF(`read`);
-    let realPosition;
-    if (position === -1 || position === null)
-      realPosition = entry.cursor;
-    else
-      realPosition = position;
+    const realPosition = position === -1 || position === null ? entry.cursor : position;
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
     const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
