@@ -463,15 +463,14 @@ function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, opti
   if (info === null)
     throw new Error(`Assertion failed: Expected the package to be registered`);
 
-  // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
-  // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
-  // To make this fs layout work with legacy tools we make
-  // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
-  // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-  const linkType = options.pnpifyFs ? LinkType.SOFT : info.linkType;
-  const target = options.pnpifyFs
-    ? npath.toPortablePath(info.packageLocation)
-    : getRealPackageLocation(info, locator, pnp);
+  const [linkType, target] = options.pnpifyFs
+    // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
+    // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
+    // To make this fs layout work with legacy tools we make
+    // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
+    // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
+    ? [LinkType.SOFT, npath.toPortablePath(info.packageLocation)]
+    : [info.linkType, getRealPackageLocation(info, locator, pnp)];
 
   return {linkType, target};
 }
