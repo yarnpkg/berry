@@ -351,12 +351,14 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
-    return await new Promise<void>((resolve, reject) => {
+    return await new Promise<string | undefined>((resolve, reject) => {
+      // @ts-expect-error - Types are outdated, the second argument in the callback is either a string or undefined
       this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
     });
   }
 
-  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
+  mkdirSync(p: PortablePath, opts?: MkdirOptions): string | undefined {
+    // @ts-expect-error - Types are outdated, returns either a string or undefined
     return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
   }
 
