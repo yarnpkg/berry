@@ -31,6 +31,17 @@ export const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
 ];
 
+function getPotentialDescriptor(descriptor: Descriptor) {
+  try {
+    const parsedRange = structUtils.parseRange(descriptor.range);
+    const potentialDescriptor = structUtils.tryParseDescriptor(parsedRange.selector, true);
+    if (potentialDescriptor) {
+      return potentialDescriptor;
+    }
+  } catch { }
+  return undefined;
+}
+
 export class LegacyMigrationResolver implements Resolver {
   private resolutions: Map<DescriptorHash, Locator> | null = null;
 
@@ -89,16 +100,9 @@ export class LegacyMigrationResolver implements Resolver {
 
       // If the range is a valid descriptor we're dealing with an alias ("foo": "npm:lodash@*")
       // and need to make the locator from that instead of the original descriptor
-      let actualDescriptor = descriptor;
-      try {
-        const parsedRange = structUtils.parseRange(descriptor.range);
-        const potentialDescriptor = structUtils.tryParseDescriptor(parsedRange.selector, true);
-        if (potentialDescriptor) {
-          actualDescriptor = potentialDescriptor;
-        }
-      } catch { }
+      const potentialDescriptor = getPotentialDescriptor(descriptor);
 
-      resolutions.set(descriptor.descriptorHash, structUtils.makeLocator(actualDescriptor, reference));
+      resolutions.set(descriptor.descriptorHash, structUtils.makeLocator(potentialDescriptor || descriptor, reference));
     }
   }
 
