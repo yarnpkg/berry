@@ -26,21 +26,21 @@ export function parseResolution(source: string): Resolution {
 }
 
 export function stringifyResolution(resolution: Resolution) {
-  let str = ``;
+  const strArr: Array<string> = [];
 
   if (resolution.from) {
-    str += resolution.from.fullName;
+    strArr.push(resolution.from.fullName);
 
     if (resolution.from.description)
-      str += `@${resolution.from.description}`;
+      strArr.push(`@${resolution.from.description}`);
 
-    str += `/`;
+    strArr.push(`/`);
   }
 
-  str += resolution.descriptor.fullName;
+  strArr.push(resolution.descriptor.fullName);
 
   if (resolution.descriptor.description)
-    str += `@${resolution.descriptor.description}`;
+    strArr.push(`@${resolution.descriptor.description}`);
 
-  return str;
+  return strArr.join(``);
 }
