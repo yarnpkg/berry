@@ -84,16 +84,9 @@ export function splitRepoUrl(url: string): RepoUrlParts {
       return Object.prototype.hasOwnProperty.call(extra, protocol);
     });
 
-    let protocol: TreeishProtocols;
-    let request: string;
-
-    if (typeof requestedProtocol !== `undefined`) {
-      protocol = requestedProtocol;
-      request = extra[requestedProtocol]! as string;
-    } else {
-      protocol = TreeishProtocols.Head;
-      request = `HEAD`;
-    }
+    const [protocol, request] = typeof requestedProtocol !== `undefined`
+      ? [requestedProtocol, extra[requestedProtocol]! as string]
+      : [TreeishProtocols.Head, `HEAD`];
 
     for (const key of Object.values(TreeishProtocols))
       delete extra[key];
@@ -109,16 +102,9 @@ export function splitRepoUrl(url: string): RepoUrlParts {
     // Old-style: "#commit:abcdef" or "#abcdef"
     const colonIndex = subsequent.indexOf(`:`);
 
-    let protocol: string | null;
-    let request: string;
-
-    if (colonIndex === -1) {
-      protocol = null;
-      request = subsequent;
-    } else {
-      protocol = subsequent.slice(0, colonIndex);
-      request = subsequent.slice(colonIndex + 1);
-    }
+    const [protocol, request] = colonIndex === -1
+      ? [null, subsequent]
+      : [subsequent.slice(0, colonIndex), subsequent.slice(colonIndex + 1)];
 
     return {
       repo,
