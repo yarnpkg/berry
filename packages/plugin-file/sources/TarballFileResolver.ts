@@ -48,10 +48,9 @@ export class TarballFileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    let path = descriptor.range;
-
-    if (path.startsWith(PROTOCOL))
-      path = path.slice(PROTOCOL.length);
+    const path = descriptor.range.startsWith(PROTOCOL)
+      ? descriptor.range.slice(PROTOCOL.length)
+      : descriptor.range;
 
     return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
   }
