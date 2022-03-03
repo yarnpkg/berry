@@ -176,6 +176,7 @@ GlobText
 
 EnvVariable
   = [a-zA-Z0-9_]+ { return text() }
+  / [A-Za-z0-9_]+ { return text() }
 
 Identifier
   = [$@*?#a-zA-Z0-9_-]+ { return text() }
