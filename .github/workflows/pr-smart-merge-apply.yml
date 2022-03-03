@@ -31,7 +31,7 @@ jobs:
                run_id: context.payload.workflow_run.id,
             });
 
-            const matchArtifact = artifacts.rest.data.artifacts.filter(artifact => {
+            const matchArtifact = artifacts.data.artifacts.filter(artifact => {
               return artifact.name == `pr`;
             })[0];
 
