@@ -55,8 +55,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const result = await github.graphql(`{
-              query associatedPRs($owner: String!, $repo: String!, $sha: String) {
+            const result = await github.graphql(`
+              query associatedPRs($owner: String!, $repo: String!, $sha: String!) {
                 repository(owner: $owner, name: $repo) {
                   commit: object(expression: $sha) {
                     ... on Commit {
@@ -70,7 +70,8 @@ jobs:
                     }
                   }
                 }
-            }`, {
+              }
+            `, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha: context.payload.workflow_run.head_sha,
