@@ -22131,14 +22131,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],\
       ["favicons-webpack-plugin", [\
         ["https://github.com/Creatiwity/favicons-webpack-plugin.git#commit=0872de414061baaad0a2853c77ae75bc38b8bbbf", {\
-          "packageLocation": "./.yarn/cache/favicons-webpack-plugin-https-8c2eb73243-df8b44ef5b.zip/node_modules/favicons-webpack-plugin/",\
+          "packageLocation": "./.yarn/cache/favicons-webpack-plugin-https-8c2eb73243-37e45c7ca5.zip/node_modules/favicons-webpack-plugin/",\
           "packageDependencies": [\
             ["favicons-webpack-plugin", "https://github.com/Creatiwity/favicons-webpack-plugin.git#commit=0872de414061baaad0a2853c77ae75bc38b8bbbf"]\
           ],\
           "linkType": "SOFT"\
         }],\
         ["virtual:856cbc387bd6a5b328b655b857152baf75a21c4d4cb561b33a64930a7961ad177fffb3c809e7488d3d722ed1be70afbfffaf1fa75358744f15f8fb208e6f28f3#https://github.com/Creatiwity/favicons-webpack-plugin.git#commit=0872de414061baaad0a2853c77ae75bc38b8bbbf", {\
-          "packageLocation": "./.yarn/__virtual__/favicons-webpack-plugin-virtual-49cbed385b/0/cache/favicons-webpack-plugin-https-8c2eb73243-df8b44ef5b.zip/node_modules/favicons-webpack-plugin/",\
+          "packageLocation": "./.yarn/__virtual__/favicons-webpack-plugin-virtual-49cbed385b/0/cache/favicons-webpack-plugin-https-8c2eb73243-37e45c7ca5.zip/node_modules/favicons-webpack-plugin/",\
           "packageDependencies": [\
             ["favicons-webpack-plugin", "virtual:856cbc387bd6a5b328b655b857152baf75a21c4d4cb561b33a64930a7961ad177fffb3c809e7488d3d722ed1be70afbfffaf1fa75358744f15f8fb208e6f28f3#https://github.com/Creatiwity/favicons-webpack-plugin.git#commit=0872de414061baaad0a2853c77ae75bc38b8bbbf"],\
             ["@types/webpack", null],\
