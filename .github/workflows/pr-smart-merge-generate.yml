@@ -1,41 +1,24 @@
 on:
-  workflow_dispatch:
-    inputs:
-      pr:
-        description: 'The pull request to update'
-        required: true
+  pull_request:
+    types: [labeled]
 
-name: 'Smart master merge'
+name: 'Smart merge: Generate'
 jobs:
-  merge:
-    name: 'Merge master into the PR'
+  generate:
+    name: 'Generate an update changeset'
     runs-on: ubuntu-latest
+    if: |
+      github.event.label.name == 'infra: pending update'
 
     steps:
-    - uses: actions/checkout@master
-      with:
-        ref: master
-        token: ${{secrets.YARNBOT_TOKEN}}
-        fetch-depth: 0
-
+    - uses: actions/checkout@v3
     - uses: ./.github/actions/prepare
 
-    - name: 'Update, commit, and upload the artifacts'
+    - name: 'Generate the changeset'
       run: |
-        PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{github.event.inputs.pr}}')
+        git fetch --depth=0 origin master
 
-        PR_REPO=$(jq -r .head.repo.full_name <<< "$PR_META")
-        PR_REF=$(jq -r .head.ref <<< "$PR_META")
-
-        git config user.name "Yarn Bot"
-        git config user.email nison.mael+yarnbot@gmail.com
-
-        git remote add pr-source https://'${{secrets.YARNBOT_TOKEN}}'@github.com/"$PR_REPO".git
-
-        git fetch pr-source "$PR_REF":local
-        git checkout local
-
-        if ! git merge origin/master; then
+        if ! git merge --no-commit origin/master; then
           export YARN_ENABLE_IMMUTABLE_INSTALLS=0
 
           if git diff --name-only --diff-filter=U | grep .pnp.cjs; then
@@ -63,9 +46,17 @@ jobs:
             git checkout --theirs packages/yarnpkg-parsers/sources/grammars/shell.js
             yarn grammar:shell
           fi
-
-          git add .pnp.cjs packages/yarnpkg-pnp/sources/hook.js packages/yarnpkg-pnp/sources/esm-loader/built-loader.js packages/yarnpkg-parsers/sources/grammars/shell.js
-          git commit -m 'Auto-merge with master'
         fi
 
-        git push pr-source local:"$PR_REF"
+        yarn test:lint --fix
+
+    - name: Generate the artifacts
+      run: |
+        mkdir -p pr
+        git diff > pr/update.patch
+
+    - name: Upload the artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: pr
+        path: pr/
