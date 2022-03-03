@@ -20,22 +20,22 @@ jobs:
           fetch-depth: 0
 
       - name: 'Download the artifacts'
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             const fs = require(`fs`);
 
-            const artifacts = await github.actions.listWorkflowRunArtifacts({
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id}},
+               run_id: context.workflow_run.id,
             });
 
-            const matchArtifact = artifacts.data.artifacts.filter(artifact => {
+            const matchArtifact = artifacts.rest.data.artifacts.filter(artifact => {
               return artifact.name == `pr`;
             })[0];
 
-            const download = await github.actions.downloadArtifact({
+            const download = await github.rest.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
                artifact_id: matchArtifact.id,
@@ -47,9 +47,42 @@ jobs:
       - name: Unpack the artifacts
         run: unzip pr.zip
 
+      - id: get-pr-id
+        name: Find the PR ID for the commit
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const result = await github.graphql(`{
+              query associatedPRs($owner: String!, $repo: String!, $sha: String) {
+                repository(owner: $owner, name: $repo) {
+                  commit: object(expression: $sha) {
+                    ... on Commit {
+                      associatedPullRequests(first: 2) {
+                        edges {
+                          node {
+                            number
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+            }`, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: github.event.workflow_run.head_sha,
+            });
+
+            if (result.associatedPRs.repository.commit.associatedPullRequests.edges.length === 1) {
+              console.log(`::set-output name=PR_ID::${result.associatedPRs.repository.commit.associatedPullRequests.edges[0].node.number}`);
+            } else {
+              console.log(`The specified head seems to belong to multiple different PRs (or none); this looks weird, refusing to satisfy the request`);
+              process.exitCode = 1;
+            }
+
       - name: Apply the changeset
         run: |
-          PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{github.event.inputs.pr}}')
+          PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{steps.get-pr-ids.outputs.PR_ID}}')
 
           PR_REPO=$(jq -r .head.repo.full_name <<< "$PR_META")
           PR_REF=$(jq -r .head.ref <<< "$PR_META")
