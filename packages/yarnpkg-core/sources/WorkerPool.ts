@@ -19,12 +19,6 @@ export class WorkerPool<TIn, TOut> {
       this.pool = [];
     }, 1000).unref();
 
-    process.on(`exit`, () => {
-      for (const worker of this.pool) {
-        worker.terminate();
-      }
-    });
-
     this.queue.on(`idle`, () => {
       timeout.refresh();
     });
@@ -36,6 +30,7 @@ export class WorkerPool<TIn, TOut> {
         eval: true,
         execArgv: [...process.execArgv, `--unhandled-rejections=strict`],
       });
+      worker.ref();
 
       return new Promise<TOut>((resolve, reject) => {
         const exitHandler = (code: number) => {
@@ -44,26 +39,15 @@ export class WorkerPool<TIn, TOut> {
           }
         };
 
-        // Used to hold the execution until the worker returns; can't
-        // use `ref`/`unref` from the worker, because StackBlitz hangs
-        // on it: https://github.com/stackblitz/webcontainer-core/issues/365
-        const timeout = setTimeout(() => {}, 0x7FFFFFFF);
-
         worker.once(`message`, (result: TOut) => {
           this.pool.push(worker);
-
+          worker.unref();
           worker.off(`error`, reject);
           worker.off(`exit`, exitHandler);
-
-          clearTimeout(timeout);
-
           resolve(result);
         });
-
         worker.once(`error`, reject);
         worker.once(`exit`, exitHandler);
-
-        worker.unref();
         worker.postMessage(data);
       });
     });
