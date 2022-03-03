@@ -12,11 +12,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
     - uses: ./.github/actions/prepare
 
     - name: 'Generate the changeset'
       run: |
-        git fetch --depth=1 origin master
+        git fetch origin master
 
         if ! git merge --no-commit origin/master; then
           export YARN_ENABLE_IMMUTABLE_INSTALLS=0
