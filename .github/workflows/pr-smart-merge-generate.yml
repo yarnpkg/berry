@@ -16,7 +16,7 @@ jobs:
 
     - name: 'Generate the changeset'
       run: |
-        git fetch --depth=0 origin master
+        git fetch --depth=1 origin master
 
         if ! git merge --no-commit origin/master; then
           export YARN_ENABLE_IMMUTABLE_INSTALLS=0
