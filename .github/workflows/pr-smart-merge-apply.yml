@@ -73,7 +73,7 @@ jobs:
             }`, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              sha: github.event.workflow_run.head_sha,
+              sha: context.payload.workflow_run.head_sha,
             });
 
             if (result.associatedPRs.repository.commit.associatedPullRequests.edges.length === 1) {
