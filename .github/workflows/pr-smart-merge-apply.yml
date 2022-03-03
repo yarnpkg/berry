@@ -77,6 +77,8 @@ jobs:
               sha: context.payload.workflow_run.head_sha,
             });
 
+            console.log(result);
+
             if (result.associatedPRs.repository.commit.associatedPullRequests.edges.length === 1) {
               console.log(`::set-output name=PR_ID::${result.associatedPRs.repository.commit.associatedPullRequests.edges[0].node.number}`);
             } else {
