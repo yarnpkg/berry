@@ -18,6 +18,6 @@ jobs:
             await github.issues.removeLabel({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               issue_number: context.pull_request.number,
+               issue_number: context.issue.number,
                name: `infra: pending update`,
             });
