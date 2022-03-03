@@ -77,10 +77,8 @@ jobs:
               sha: context.payload.workflow_run.head_sha,
             });
 
-            console.log(result);
-
-            if (result.associatedPRs.repository.commit.associatedPullRequests.edges.length === 1) {
-              console.log(`::set-output name=PR_ID::${result.associatedPRs.repository.commit.associatedPullRequests.edges[0].node.number}`);
+            if (result.repository.commit.associatedPullRequests.edges.length === 1) {
+              console.log(`::set-output name=PR_ID::${result.repository.commit.associatedPullRequests.edges[0].node.number}`);
             } else {
               console.log(`The specified head seems to belong to multiple different PRs (or none); this looks weird, refusing to satisfy the request`);
               process.exitCode = 1;
