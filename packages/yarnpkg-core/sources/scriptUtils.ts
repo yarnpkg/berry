@@ -33,6 +33,7 @@ export enum PackageManager {
 
 interface PackageManagerSelection {
   packageManager: PackageManager;
+  version: string;
   reason: string;
 }
 
@@ -64,7 +65,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
       switch (locator.name) {
         case `yarn`: {
           const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
-          return {packageManager, reason};
+          return {packageManager, version: locator.reference, reason};
         } break;
 
         case `npm`: {
@@ -99,6 +100,9 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
     return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
+
+  if (xfs.existsSync(ppath.join(location, `.yarnrc.yml` as PortablePath)))
+    return {packageManager: PackageManager.Yarn2, reason: `found ".yarnrc.yml"`};
 
   return null;
 }
@@ -218,7 +222,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         effectivePackageManager = packageManagerSelection.packageManager;
       } else {
         stdout.write(`No package manager configuration detected; defaulting to Yarn\n\n`);
-        effectivePackageManager = PackageManager.Yarn2;
+        effectivePackageManager = PackageManager.Yarn1;
       }
 
       await xfs.mktempPromise(async binFolder => {
@@ -230,10 +234,14 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               ? [`workspace`, workspace]
               : [];
 
-            // Makes sure that we'll be using Yarn 1.x
-            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
-            if (version.code !== 0)
-              return version.code;
+            // If not using corepack, we'll launch the same version of yarn as
+            // the currently running version (so berry), so we need to make
+            // sure we're using Yarn 1.x
+            if (!process.env.COREPACK_ROOT) {
+              const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+              if (version.code !== 0)
+                return version.code;
+            }
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
             await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
@@ -274,9 +282,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               await xfs.writeFilePromise(lockfilePath, ``);
 
             // Yarn 2 supports doing the install and the pack in a single command,
-            // so we leverage that. We also don't need the "set version" call since
-            // we're already operating within a Yarn 2 context (plus people should
-            // really check-in their Yarn versions anyway).
+            // so we leverage that.
             const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
             if (pack.code !== 0)
               return pack.code;
