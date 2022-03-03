@@ -103,7 +103,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, lifecycleScript, useCorepack = true}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string, useCorepack?: boolean}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -117,7 +117,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   // Otherwise we'd override the Corepack binaries, and thus break the detection
   // of the `packageManager` field when running Yarn in other directories.
-  const yarnBin = process.env.COREPACK_ROOT
+  const yarnBin = useCorepack && process.env.COREPACK_ROOT
     ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
     : process.argv[1];
 
@@ -222,7 +222,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       }
 
       await xfs.mktempPromise(async binFolder => {
-        const env = await makeScriptEnv({binFolder});
+        const env = await makeScriptEnv({binFolder, useCorepack: false});
 
         const workflows = new Map([
           [PackageManager.Yarn1, async () => {
@@ -276,7 +276,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // Yarn 2 supports doing the install and the pack in a single command,
             // so we leverage that. We also don't need the "set version" call since
             // we're already operating within a Yarn 2 context (plus people should
-            // really check-in their Yarn versions anyway).
+            // really check-in their Yarn versions anyway), assuming we are not
+            // launching via corepack (which can pick a different version of yarn
+            // than the current running version of yarn) -- see `useCorepack: false`
+            // in the `makeScriptEnv` call above.
             const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
             if (pack.code !== 0)
               return pack.code;
