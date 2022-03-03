@@ -15,7 +15,7 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            await github.rest.issues.removeLabel({
+            await github.issues.removeLabel({
                owner: context.repo.owner,
                repo: context.repo.repo,
                issue_number: context.pull_request.number,
