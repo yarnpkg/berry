@@ -28,12 +28,15 @@ jobs:
             const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               run_id: context.workflow_run.id,
+               run_id: context.payload.workflow_run.id,
             });
 
             const matchArtifact = artifacts.rest.data.artifacts.filter(artifact => {
               return artifact.name == `pr`;
             })[0];
+
+            if (!matchArtifact)
+              throw new Error(`Missing artifact`);
 
             const download = await github.rest.actions.downloadArtifact({
                owner: context.repo.owner,
