@@ -7,6 +7,6 @@ module.exports = {
     `<rootDir>/packages/plugin-compat`,
   ],
   reporters: [`default`, [require.resolve(`jest-junit`), {output: `<rootDir>/junit.xml`}]],
-  setupFiles: [`@yarnpkg/cli/sources/polyfills.ts`],
+  setupFiles: [require.resolve(`@yarnpkg/cli/sources/polyfills.ts`)],
   testTimeout: 50000,
 };
