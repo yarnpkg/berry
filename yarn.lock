@@ -6312,9 +6312,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "acceptance-tests@workspace:packages/acceptance-tests"
   dependencies:
-    "@yarnpkg/cli": "workspace:^"
-    "@yarnpkg/core": "workspace:^"
-    "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     jest-json: ^2.0.0
     pkg-tests-core: "workspace:^"
@@ -20303,7 +20300,6 @@ __metadata:
     "@types/serve-static": 1.13.3
     "@types/tar-fs": ^1.16.1
     "@types/uuid": ^8
-    "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"

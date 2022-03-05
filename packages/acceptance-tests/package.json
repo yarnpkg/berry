@@ -8,9 +8,6 @@
     "pkg-tests-specs"
   ],
   "devDependencies": {
-    "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
     "jest-json": "^2.0.0",
     "pkg-tests-core": "workspace:^"
