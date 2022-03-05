@@ -5468,7 +5468,6 @@ __metadata:
     "@yarnpkg/plugin-link": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
-    "@yarnpkg/pnp": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
     camelcase: ^5.3.1
     chalk: ^3.0.0
