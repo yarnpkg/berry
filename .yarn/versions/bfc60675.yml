@@ -1,10 +1,14 @@
 releases:
+  "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
   "@yarnpkg/libui": patch
   "@yarnpkg/plugin-constraints": patch
   "@yarnpkg/plugin-dlx": patch
   "@yarnpkg/plugin-essentials": patch
+  "@yarnpkg/plugin-http": patch
+  "@yarnpkg/plugin-nm": patch
   "@yarnpkg/pnpify": patch
+  "@yarnpkg/shell": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -12,11 +16,9 @@ declined:
   - "@yarnpkg/plugin-file"
   - "@yarnpkg/plugin-git"
   - "@yarnpkg/plugin-github"
-  - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
-  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
@@ -28,7 +30,6 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
   - "@yarnpkg/nm"
   - "@yarnpkg/sdks"

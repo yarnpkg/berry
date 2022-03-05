@@ -5432,7 +5432,6 @@ __metadata:
     "@yarnpkg/plugin-pnpm": "workspace:^"
     "@yarnpkg/pnpify": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
-    chalk: ^3.0.0
     ci-info: ^3.2.0
     clipanion: ^3.2.0-rc.4
     micromatch: ^4.0.2
@@ -5832,7 +5831,6 @@ __metadata:
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/semver": ^7.1.0
-    "@types/treeify": ^1.0.0
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5916,7 +5914,6 @@ __metadata:
   resolution: "@yarnpkg/plugin-http@workspace:packages/plugin-http"
   dependencies:
     "@yarnpkg/core": "workspace:^"
-    "@yarnpkg/fslib": "workspace:^"
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
@@ -5983,7 +5980,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-nm@workspace:packages/plugin-nm"
   dependencies:
-    "@types/micromatch": ^4.0.1
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5991,11 +5987,9 @@ __metadata:
     "@yarnpkg/nm": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
-    "@yarnpkg/plugin-stage": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
     "@zkochan/cmd-shim": ^5.1.0
     clipanion: ^3.2.0-rc.4
-    micromatch: ^4.0.2
     tslib: ^1.13.0
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -6275,7 +6269,6 @@ __metadata:
     cross-spawn: 7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
-    stream-buffers: ^3.0.2
     strip-ansi: ^6.0.0
     tslib: ^1.13.0
   bin:
@@ -23921,13 +23914,6 @@ resolve@^2.0.0-next.3:
     inherits: ~2.0.1
     readable-stream: ^2.0.2
   checksum: 18da88a9195978ca79dcb6c6bd97e0e1bf0c9ad7c6a6452f0909451108e2abba5f7016c09c2cb56b86b2657f7bd889d9086408f956618ea45ea7398cb700df26
-  languageName: node
-  linkType: hard
-
-"stream-buffers@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "stream-buffers@npm:3.0.2"
-  checksum: b09fdeea606e3113ebd0e07010ed0cf038608fa396130add9e45deaff5cc3ba845dc25c31ad24f8341f85907846344cb7c85f75ea52c6572e2ac646e9b6072d0
   languageName: node
   linkType: hard
 
