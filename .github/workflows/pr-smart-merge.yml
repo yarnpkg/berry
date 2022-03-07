@@ -115,6 +115,7 @@ jobs:
 
           git fetch origin master
           git merge --no-commit origin/master || true
+          git add -A
 
           git apply --allow-empty merge-conflict-resolution.patch
           git commit --allow-empty -m 'Auto-merge with master'
