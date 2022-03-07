@@ -50107,6 +50107,7 @@ var __objRest = (source, exclude) => {
 };
 const localFs = __spreadValues({}, fs__default.default);
 const nodeFs = new NodeFS(localFs);
+nodeFs.__test = true;
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
 const defaultFsLayer = new VirtualFS({
