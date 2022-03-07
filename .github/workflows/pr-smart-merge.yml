@@ -102,7 +102,7 @@ jobs:
       - name: Apply the changeset
         env:
           GH_BOT_TOKEN: ${{secrets.YARNBOT_TOKEN}}
-          GH_REPO_NAME: ${{github.event.pull_request.number}}
+          GH_REPO_NAME: ${{github.event.repository.full_name}}
           GH_HEAD_REF: ${{github.event.pull_request.head.ref}}
         run: |
           git config user.name "Yarn Bot"
