@@ -103,7 +103,7 @@ jobs:
           git fetch origin master
           git merge --no-commit origin/master || true
 
-          git apply pr/update.patch
+          git apply update.patch
           git commit -m 'Auto-merge with master'
 
           git push pr-source local:"$PR_REF"
