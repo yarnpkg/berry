@@ -54,6 +54,7 @@ jobs:
         name: Find the PR ID for the commit
         uses: actions/github-script@v6
         with:
+          result-encoding: string
           script: |
             const result = await github.graphql(`
               query associatedPRs($owner: String!, $repo: String!, $sha: String!) {
@@ -77,16 +78,16 @@ jobs:
               sha: context.payload.workflow_run.head_sha,
             });
 
-            if (result.repository.commit.associatedPullRequests.edges.length === 1) {
-              console.log(`::set-output name=PR_ID::${result.repository.commit.associatedPullRequests.edges[0].node.number}`);
-            } else {
+            if (result.repository.commit.associatedPullRequests.edges.length !== 1) {
               console.log(`The specified head seems to belong to multiple different PRs (or none); this looks weird, refusing to satisfy the request`);
               process.exitCode = 1;
             }
+            
+            return result.repository.commit.associatedPullRequests.edges[0].node.number;
 
       - name: Apply the changeset
         run: |
-          PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{steps.get-pr-ids.outputs.PR_ID}}')
+          PR_META=$(curl https://api.github.com/repos/yarnpkg/berry/pulls/'${{steps.get-pr-id.outputs.result}}')
 
           PR_REPO=$(jq -r .head.repo.full_name <<< "$PR_META")
           PR_REF=$(jq -r .head.ref <<< "$PR_META")
