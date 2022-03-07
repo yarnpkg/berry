@@ -390,7 +390,7 @@ export const Header = ({children}) => {
         <UkrainianFlag />
         <BannerTextContainer>
           <p>
-            Yarn team stands with the people of Ukraine during this heinous assault on their freedom, their independence and their lives.
+            The Yarn team stands with the people of Ukraine during this heinous assault on their freedom, their independence, and their lives.
           </p>
           <p>
             To support Ukraine in their time of need visit this <a href={`https://ukraine.ua/news/stand-with-ukraine/`}>page</a>.
