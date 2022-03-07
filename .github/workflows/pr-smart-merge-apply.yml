@@ -103,7 +103,7 @@ jobs:
           git fetch origin master
           git merge --no-commit origin/master || true
 
-          git apply update.patch
-          git commit -m 'Auto-merge with master'
+          git apply --allow-empty update.patch
+          git commit --allow-empty -m 'Auto-merge with master'
 
           git push pr-source local:"$PR_REF"
