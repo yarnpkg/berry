@@ -75,14 +75,13 @@ jobs:
 
     - name: Generate the artifacts
       run: |
-        mkdir -p pr
-        git diff > pr/update.patch
+        git diff > merge-conflict-resolution.patch
 
-    - name: Upload the artifacts
-      uses: actions/upload-artifact@v2
+    - name: Store the merge conflict resolution
+      uses: actions/upload-artifact@v3
       with:
-        name: pr
-        path: pr/
+        name: merge-conflict-resolution
+        path: merge-conflict-resolution.patch
 
   apply:
     name: 'Apply the update changeset'
@@ -95,37 +94,10 @@ jobs:
           ref: ${{github.event.pull_request.head.sha}}
           fetch-depth: 0
 
-      - name: 'Download the artifacts'
-        uses: actions/github-script@v6
+      - name: Retrieve the merge conflict resolution
+        uses: actions/download-artifact@v3
         with:
-          script: |
-            const fs = require(`fs`);
-            const path = require(`path`);
-
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: context.payload.workflow_run.id,
-            });
-
-            const matchArtifact = artifacts.data.artifacts.filter(artifact => {
-              return artifact.name == `pr`;
-            })[0];
-
-            if (!matchArtifact)
-              throw new Error(`Missing artifact`);
-
-            const download = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: `zip`,
-            });
-
-            fs.writeFileSync(path.join(context.payload.workspace, `pr.zip`), Buffer.from(download.data));
-
-      - name: Unpack the artifacts
-        run: unzip pr.zip
+          name: merge-conflict-resolution
 
       - name: Apply the changeset
         env:
@@ -144,7 +116,7 @@ jobs:
           git fetch origin master
           git merge --no-commit origin/master || true
 
-          git apply --allow-empty update.patch
+          git apply --allow-empty merge-conflict-resolution.patch
           git commit --allow-empty -m 'Auto-merge with master'
 
           git push pr-source local:"$GH_HEAD_REF"
