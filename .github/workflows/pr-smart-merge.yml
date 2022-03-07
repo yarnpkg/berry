@@ -75,6 +75,9 @@ jobs:
 
     - name: Generate the artifacts
       run: |
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+
         git diff > merge-conflict-resolution.patch
 
     - name: Store the merge conflict resolution
