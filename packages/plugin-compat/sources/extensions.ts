@@ -762,4 +762,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       '@vue/runtime-dom': `^3.2.26`,
     },
   }],
+  // https://github.com/mdx-js/mdx/pull/1967
+  [`@mdx-js/loader@*`, {
+    peerDependencies: {
+      'react': '>=16'
+    }
+  }]
 ];
