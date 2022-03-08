@@ -89,4 +89,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn-plugin-envinfo**](https://github.com/TheKnarf/yarn-plugin-envinfo) by [**TheKnarf**](https://github.com/TheKnarf) - yarn plugin so that you can run envinfo in your project. It'll read a project local configuration file so that different projects can ask for different info. Useful for helping new developers when onboarding them into your project.
 
+- [**publishconfig**](https://github.com/alizeait/yarn-plugin-publishconfig) by [**Ali Zeaiter**](https://github.com/alizeait) - Allows extending `publishConfig` to support any property on top of the default ones supported by yarn.
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
