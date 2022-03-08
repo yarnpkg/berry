@@ -44,9 +44,9 @@ gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
 gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause').
 
-% This rule will enforce that all packages must have an engines.node field of >=12 <14 || 14.2 - 14.9 || >14.10.0
+% This rule will enforce that all packages must have an correct engines.node field
 % Keep in sync with the range inside packages/yarnpkg-cli/sources/main.ts
-gen_enforced_field(WorkspaceCwd, 'engines.node', '>=12 <14 || 14.2 - 14.9 || >14.10.0').
+gen_enforced_field(WorkspaceCwd, 'engines.node', '>=14.15.0').
 
 % Required to make the package work with the GitHub Package Registry
 gen_enforced_field(WorkspaceCwd, 'repository.type', 'git').
