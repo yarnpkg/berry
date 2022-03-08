@@ -393,7 +393,7 @@ export const Header = ({children}) => {
             The Yarn team stands with the people of Ukraine during this heinous assault on their freedom, their independence, and their lives.
           </p>
           <p>
-            To support Ukraine in their time of need visit this <a href={`https://ukraine.ua/news/stand-with-ukraine/`}>page</a>.
+            To support Ukraine in their time of need visit this <a href={`https://war.ukraine.ua/support-ukraine/`}>page</a>.
           </p>
         </BannerTextContainer>
       </Banner>
