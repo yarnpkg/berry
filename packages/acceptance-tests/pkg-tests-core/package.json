@@ -13,7 +13,6 @@
     "@types/serve-static": "1.13.3",
     "@types/tar-fs": "^1.16.1",
     "@types/uuid": "^8",
-    "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",

@@ -19,6 +19,9 @@ declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePa
 const localFs: typeof fs = {...fs};
 const nodeFs = new NodeFS(localFs);
 
+// This is just a test, I'll remove it asap
+(nodeFs as any).__test = true;
+
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
 

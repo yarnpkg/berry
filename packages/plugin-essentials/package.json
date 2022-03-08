@@ -1,11 +1,10 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "3.2.0-rc.14",
+  "version": "3.2.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "@yarnpkg/json-proxy": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "ci-info": "^3.2.0",
     "clipanion": "^3.2.0-rc.4",
@@ -25,7 +24,6 @@
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
-    "@types/treeify": "^1.0.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/plugin-git": "workspace:^"
@@ -48,6 +46,5 @@
   ],
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
-  },
-  "stableVersion": "3.1.0"
+  }
 }

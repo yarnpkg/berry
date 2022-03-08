@@ -463,21 +463,14 @@ function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, opti
   if (info === null)
     throw new Error(`Assertion failed: Expected the package to be registered`);
 
-  let linkType;
-  let target;
-  if (options.pnpifyFs) {
+  return options.pnpifyFs
     // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
     // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
     // To make this fs layout work with legacy tools we make
     // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
     // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-    target = npath.toPortablePath(info.packageLocation);
-    linkType = LinkType.SOFT;
-  } else {
-    target = getRealPackageLocation(info, locator, pnp);
-    linkType = info.linkType;
-  }
-  return {linkType, target};
+    ? {linkType: LinkType.SOFT, target: npath.toPortablePath(info.packageLocation)}
+    : {linkType: info.linkType, target: getRealPackageLocation(info, locator, pnp)};
 }
 
 /**

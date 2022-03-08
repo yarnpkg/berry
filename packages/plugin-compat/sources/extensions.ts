@@ -762,4 +762,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       '@vue/runtime-dom': `^3.2.26`,
     },
   }],
+  // https://github.com/cypress-io/snapshot/pull/159
+  [`@cypress/snapshot@*`, {
+    dependencies: {
+      debug: `^3.2.7`,
+    },
+  }],
 ];

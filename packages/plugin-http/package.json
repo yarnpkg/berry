@@ -4,7 +4,6 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@yarnpkg/fslib": "workspace:^",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
