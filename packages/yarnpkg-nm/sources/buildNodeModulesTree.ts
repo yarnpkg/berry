@@ -569,8 +569,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         const segments = nodeModulesLocation.split(`/`);
         const nodeModulesIdx = segments.indexOf(NODE_MODULES);
 
-        let segCount = segments.length - 1;
-        while (nodeModulesIdx >= 0 && segCount > nodeModulesIdx) {
+        for (let segCount = segments.length - 1; nodeModulesIdx >= 0 && segCount > nodeModulesIdx; segCount--) {
           const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
           const targetDir = toFilename(segments[segCount]);
 
@@ -584,8 +583,6 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
               subdirs.dirList.add(targetDir);
             }
           }
-
-          segCount--;
         }
       }
 
