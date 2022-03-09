@@ -300,13 +300,13 @@ describe(`Commands`, () => {
     test(
       `it should override fields in the packed manifest`,
       makeTemporaryEnv({
-        type: 'commonjs',
+        type: `commonjs`,
         main: `./index.js`,
         module: `./index.mjs`,
         browser: `./index.umd.js`,
         exports: `./index.modern.js`,
         publishConfig: {
-          type: 'module',
+          type: `module`,
           main: `./published.js`,
           module: `./published.mjs`,
           browser: `./publish.umd.js`,
