@@ -309,8 +309,8 @@ describe(`Commands`, () => {
           type: `module`,
           main: `./published.js`,
           module: `./published.mjs`,
-          browser: `./publish.umd.js`,
-          exports: `./publish.modern.js`,
+          browser: `./published.umd.js`,
+          exports: `./published.modern.js`,
         },
       }, async ({path, run, source}) => {
         await run(`install`);
