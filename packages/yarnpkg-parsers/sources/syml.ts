@@ -55,7 +55,7 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
   }
 
   if (typeof value === `object` && value) {
-    const [data, sort] = (value instanceof PreserveOrdering)
+    const [data, sort] = value instanceof PreserveOrdering
       ? [value.data, false]
       : [value, true];
 
