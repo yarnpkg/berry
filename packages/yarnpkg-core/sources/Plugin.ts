@@ -80,7 +80,7 @@ export interface Hooks {
     project: Project,
     locator: Locator,
     scriptName: string,
-    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
+    extra: {script: string, args: Array<string>, cwd: PortablePath, env: Readonly<ProcessEnvironment>, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>;
 
   /**
@@ -174,7 +174,7 @@ export interface Hooks {
   ) => Promise<void>;
 }
 
-export type Plugin<PluginHooks = any> = {
+export type Plugin<PluginHooks = Hooks> = {
   configuration?: Partial<ConfigurationDefinitionMap>;
   commands?: Array<CommandClass<CommandContext>>;
   fetchers?: Array<FetcherPlugin>;
