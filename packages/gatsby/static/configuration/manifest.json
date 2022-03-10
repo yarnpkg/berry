@@ -288,11 +288,6 @@
           "enum": ["public", "restricted"],
           "examples": ["public"]
         },
-        "type": {
-          "description": "Same principle as the `publishConfig.type` property; this value will be used instead of the top-level `type` field when generating the workspace tarball.",
-          "type": "string",
-          "enum": ["commonjs", "module"]
-        },
         "bin": {
           "description": "If present, the top-level `bin` field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modify the real manifest, just the one stored within the tarball.",
           "type": "string",
@@ -329,6 +324,11 @@
           "type": "string",
           "format": "uri",
           "examples": ["https://npm.pkg.github.com"]
+        },
+        "type": {
+          "description": "Same principle as the `publishConfig.type` property; this value will be used instead of the top-level `type` field when generating the workspace tarball.",
+          "type": "string",
+          "enum": ["commonjs", "module"]
         }
       },
       "_exampleKeys": [
