@@ -54,11 +54,10 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
   async function exec(cli: Cli<CommandContext>): Promise<void> {
     // Non-exhaustive known requirements:
-    // - 14.0 and 14.1 empty http responses - https://github.com/sindresorhus/got/issues/1496
-    // - 14.10.0 broken streams - https://github.com/nodejs/node/pull/34035 (fix: https://github.com/nodejs/node/commit/0f94c6b4e4)
+    // - 14.15 is the first LTS release
 
     const version = process.versions.node;
-    const range = `>=12 <14 || 14.2 - 14.9 || >14.10.0`;
+    const range = `>=14.15.0`;
 
     // YARN_IGNORE_NODE is special because this code needs to execute as early as possible.
     // It's not a regular core setting because Configuration.find may use functions not available
