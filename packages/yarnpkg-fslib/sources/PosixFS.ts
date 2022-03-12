@@ -15,7 +15,10 @@ export class PosixFS extends ProxiedFS<NativePath, PortablePath> {
     return npath.fromPortablePath(path);
   }
 
-  protected mapToBase(path: NativePath) {
+  protected mapToBase(path: NativePath | Buffer) {
+    if (Buffer.isBuffer(path))
+      path = path.toString();
+
     return npath.toPortablePath(path);
   }
 }

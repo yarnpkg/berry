@@ -89,6 +89,20 @@ describe(`patchedFs`, () => {
     expect(patchedFs.existsSync(renamedUrl)).toStrictEqual(false);
   });
 
+  it(`should support Buffer instances`, () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const tmpdir = npath.fromPortablePath(xfs.mktempSync());
+
+    const file = Buffer.from(`${tmpdir}/file.txt`, `utf8`);
+    patchedFs.writeFileSync(file, `Hello World`);
+
+    expect(patchedFs.existsSync(file)).toStrictEqual(true);
+
+    patchedFs.unlinkSync(file);
+    expect(patchedFs.existsSync(file)).toStrictEqual(false);
+  });
+
   it(`should support fstat`, async () => {
     const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
 
