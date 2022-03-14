@@ -65,8 +65,8 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patc
   });
 }
 
-export function makeDescriptor(ident: Ident, {parentLocator, sourceDescriptor, patchPaths}: ReturnType<typeof parseDescriptor>) {
-  return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
+export function makeDescriptor(ident: Ident, {parentLocator, sourceDescriptor, patchPaths}: Pick<ReturnType<typeof parseDescriptor>, `parentLocator` | `sourceDescriptor` | `patchPaths`>) {
+  return structUtils.makeDescriptor(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
 }
 
 export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPaths, patchHash}: Omit<ReturnType<typeof parseLocator>, 'sourceLocator' | 'sourceVersion'> & {sourcePackage: Package, patchHash: string}) {

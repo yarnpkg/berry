@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}       from '@yarnpkg/cli';
-import {Configuration, Project, structUtils}       from '@yarnpkg/core';
-import {npath, xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}        from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                        from '@yarnpkg/cli';
+import {Configuration, Descriptor, DescriptorHash, Project, structUtils, Workspace} from '@yarnpkg/core';
+import {npath, xfs, ppath, PortablePath, Filename}                                  from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                         from 'clipanion';
 
-import * as patchUtils                             from '../patchUtils';
+import * as patchUtils                                                              from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommitCommand extends BaseCommand {
@@ -63,12 +63,71 @@ export default class PatchCommitCommand extends BaseCommand {
     await xfs.mkdirPromise(patchFolder, {recursive: true});
     await xfs.writeFilePromise(patchPath, diff);
 
-    const relPath = ppath.relative(project.cwd, patchPath);
+    const workspaceDependents: Array<Workspace> = [];
+    const transitiveDependencies = new Map<DescriptorHash, Descriptor>();
 
-    project.topLevelWorkspace.manifest.resolutions.push({
-      pattern: {descriptor: {fullName: structUtils.stringifyIdent(locator), description: meta.version}},
-      reference: `patch:${structUtils.stringifyLocator(locator)}#${relPath}`,
-    });
+    for (const pkg of project.storedPackages.values()) {
+      if (structUtils.isVirtualLocator(pkg))
+        continue;
+
+      const descriptor = pkg.dependencies.get(locator.identHash);
+      if (!descriptor)
+        continue;
+
+      const devirtualizedDescriptor = structUtils.ensureDevirtualizedDescriptor(descriptor);
+      if (!devirtualizedDescriptor)
+        continue;
+
+      const resolution = project.storedResolutions.get(devirtualizedDescriptor.descriptorHash);
+      if (!resolution)
+        throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+
+      const dependency = project.storedPackages.get(resolution);
+      if (!dependency)
+        throw new Error(`Assertion failed: Expected the package to have been registered`);
+
+      const workspace = project.tryWorkspaceByLocator(pkg);
+      if (workspace) {
+        workspaceDependents.push(workspace);
+      } else {
+        const originalPkg = project.originalPackages.get(pkg.locatorHash);
+        if (!originalPkg)
+          throw new Error(`Assertion failed: Expected the original package to have been registered`);
+
+        const originalDependency = originalPkg.dependencies.get(descriptor.identHash);
+        if (!originalDependency)
+          throw new Error(`Assertion failed: Expected the original dependency to have been registered`);
+
+        transitiveDependencies.set(originalDependency.descriptorHash, originalDependency);
+      }
+    }
+
+    for (const workspace of workspaceDependents) {
+      const originalDescriptor = workspace.manifest.dependencies.get(locator.identHash);
+      if (!originalDescriptor)
+        throw new Error(`Assertion failed: Expected the package to have been registered`);
+
+      const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
+        parentLocator: null,
+        sourceDescriptor: originalDescriptor,
+        patchPaths: [ppath.relative(workspace.cwd, patchPath)],
+      });
+
+      workspace.manifest.dependencies.set(originalDescriptor.identHash, newDescriptor);
+    }
+
+    for (const originalDescriptor of transitiveDependencies.values()) {
+      const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
+        parentLocator: null,
+        sourceDescriptor: originalDescriptor,
+        patchPaths: [ppath.relative(workspace.cwd, patchPath)],
+      });
+
+      project.topLevelWorkspace.manifest.resolutions.push({
+        pattern: {descriptor: {fullName: structUtils.stringifyIdent(newDescriptor), description: originalDescriptor.range}},
+        reference: newDescriptor.range,
+      });
+    }
 
     await project.persist();
   }
