@@ -367,7 +367,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       }
     }
 
-    if (pkg !== parentPkg || pkg.linkType !== LinkType.SOFT || !options.selfReferencesByCwd || options.selfReferencesByCwd.get(parentRelativeCwd))
+    if (pkg !== parentPkg || pkg.linkType !== LinkType.SOFT || (!isExternalSoftLinkPackage && (!options.selfReferencesByCwd || options.selfReferencesByCwd.get(parentRelativeCwd))))
       parent.dependencies.add(node);
 
     const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isExternalSoftLinkPackage;
