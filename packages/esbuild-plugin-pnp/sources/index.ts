@@ -31,8 +31,18 @@ function isExternal(path: string, externals: Array<External>): boolean {
         return true;
       }
     } else {
-      if (path === external) {
+      if (path === external)
         return true;
+
+      // If the module "foo" has been marked as external, we also want to treat
+      // paths into that module such as "foo/bar" as external too.
+      // References:
+      // - https://github.com/evanw/esbuild/blob/537195ae84bee1510fac14235906d588084c39cd/internal/resolver/resolver.go#L651-L652
+      // - https://github.com/evanw/esbuild/blob/537195ae84bee1510fac14235906d588084c39cd/internal/resolver/resolver.go#L1688-L1691
+      if (!external.startsWith(`/`) && !external.startsWith(`./`) && !external.startsWith(`../`) && external !== `.` && external !== `..`) {
+        if (path.startsWith(`${external}/`)) {
+          return true;
+        }
       }
     }
   }
