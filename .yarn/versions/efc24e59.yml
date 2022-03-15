@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/plugin-essentials": minor
+  "@yarnpkg/plugin-interactive-tools": patch
+  "@yarnpkg/plugin-typescript": patch
+  "@yarnpkg/cli": minor
