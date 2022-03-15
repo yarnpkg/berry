@@ -10,7 +10,7 @@ import {reportHunk}                                                             
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!locator.reference.startsWith(`patch:`))
+    if (!patchUtils.isPatchLocator(locator))
       return false;
 
     return true;

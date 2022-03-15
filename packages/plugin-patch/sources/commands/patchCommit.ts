@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                        from '@yarnpkg/cli';
-import {Configuration, Descriptor, DescriptorHash, Project, structUtils, Workspace} from '@yarnpkg/core';
-import {npath, xfs, ppath, PortablePath, Filename}                                  from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                         from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                  from '@yarnpkg/cli';
+import {Configuration, Descriptor, DescriptorHash, Manifest, Project, structUtils, Workspace} from '@yarnpkg/core';
+import {npath, xfs, ppath, PortablePath, Filename}                                            from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 
-import * as patchUtils                                                              from '../patchUtils';
+import * as patchUtils                                                                        from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommitCommand extends BaseCommand {
@@ -75,10 +75,9 @@ export default class PatchCommitCommand extends BaseCommand {
         continue;
 
       const devirtualizedDescriptor = structUtils.ensureDevirtualizedDescriptor(descriptor);
-      if (!devirtualizedDescriptor)
-        continue;
+      const unpatchedDescriptor = patchUtils.ensureUnpatchedDescriptor(devirtualizedDescriptor);
 
-      const resolution = project.storedResolutions.get(devirtualizedDescriptor.descriptorHash);
+      const resolution = project.storedResolutions.get(unpatchedDescriptor.descriptorHash);
       if (!resolution)
         throw new Error(`Assertion failed: Expected the resolution to have been registered`);
 
@@ -103,24 +102,26 @@ export default class PatchCommitCommand extends BaseCommand {
     }
 
     for (const workspace of workspaceDependents) {
-      const originalDescriptor = workspace.manifest.dependencies.get(locator.identHash);
-      if (!originalDescriptor)
-        throw new Error(`Assertion failed: Expected the package to have been registered`);
+      for (const dependencyType of Manifest.hardDependencies) {
+        const originalDescriptor = workspace.manifest[dependencyType].get(locator.identHash);
+        if (!originalDescriptor)
+          continue;
 
-      const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
-        parentLocator: null,
-        sourceDescriptor: originalDescriptor,
-        patchPaths: [ppath.relative(workspace.cwd, patchPath)],
-      });
+        const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
+          parentLocator: null,
+          sourceDescriptor: structUtils.convertLocatorToDescriptor(locator),
+          patchPaths: [ppath.join(Filename.home, ppath.relative(project.cwd, patchPath))],
+        });
 
-      workspace.manifest.dependencies.set(originalDescriptor.identHash, newDescriptor);
+        workspace.manifest[dependencyType].set(originalDescriptor.identHash, newDescriptor);
+      }
     }
 
     for (const originalDescriptor of transitiveDependencies.values()) {
       const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
         parentLocator: null,
-        sourceDescriptor: originalDescriptor,
-        patchPaths: [ppath.relative(workspace.cwd, patchPath)],
+        sourceDescriptor: structUtils.convertLocatorToDescriptor(locator),
+        patchPaths: [ppath.join(Filename.home, ppath.relative(project.cwd, patchPath))],
       });
 
       project.topLevelWorkspace.manifest.resolutions.push({
