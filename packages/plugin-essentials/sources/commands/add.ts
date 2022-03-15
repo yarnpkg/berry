@@ -128,19 +128,24 @@ export default class AddCommand extends BaseCommand {
     });
 
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
+    const reuse = interactive || configuration.get(`preferReuse`);
+    const cached = this.cached ?? configuration.get(`preferCached`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
-      ...interactive ? [
-        suggestUtils.Strategy.REUSE,
-      ] : [],
+      reuse ?
+        suggestUtils.Strategy.REUSE
+        : undefined,
+
       suggestUtils.Strategy.PROJECT,
-      ...this.cached ? [
-        suggestUtils.Strategy.CACHE,
-      ] : [],
+
+      cached ?
+        suggestUtils.Strategy.CACHE
+        : undefined,
+
       suggestUtils.Strategy.LATEST,
-    ];
+    ].filter(isStrategy);
 
     const maxResults = interactive
       ? Infinity
@@ -316,6 +321,10 @@ export default class AddCommand extends BaseCommand {
 
     return installReport.exitCode();
   }
+}
+
+function isStrategy(strategy?: suggestUtils.Strategy): strategy is suggestUtils.Strategy {
+  return typeof strategy !== `undefined`;
 }
 
 function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
