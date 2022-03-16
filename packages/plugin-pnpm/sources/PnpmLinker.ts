@@ -274,10 +274,11 @@ class PnpmInstaller implements Installer {
     }
 
     // Wait for the package installs to catch up
-    await this.asyncActions.wait(),
+    await this.asyncActions.wait();
 
     await removeIfEmpty(storeLocation);
-    await removeIfEmpty(getNodeModulesLocation(this.opts.project));
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
+      await removeIfEmpty(getNodeModulesLocation(this.opts.project));
 
     return {
       customData: this.customData,
