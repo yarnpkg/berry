@@ -173,7 +173,7 @@ Should you want to run a script in the base of your project:
 
 Despite the first version of Yarn having been implemented by [Sebastian McKenzie](https://twitter.com/sebmck) while working at Facebook, the initial design received feedback from various other companies (such as [Tilde](https://www.tilde.io) via [Yehuda Katz](https://yehudakatz.com/2016/10/11/im-excited-to-work-on-yarn-the-new-js-package-manager-2/)) and the project was put into its own [GitHub organization](https://github.com/yarnpkg). Facebook kept investing in it during the following years (mostly because it proved to be a critical part of the React Native ecosystem) but major contributions came from the open-source community as well.
 
-Nowadays, the active development team is composed exclusively of people employed by non-founders companies. Facebook employees are of course still welcome to offer contributions to the project, but all contributions, no matter who they're from, go through the same review process.
+Nowadays, the active development team is composed exclusively of people employed by other companies. Facebook employees are of course still welcome to offer contributions to the project, but all contributions, no matter who they're from, go through the same review process.
 
 ## Why `registry.yarnpkg.com`? Does Facebook track us?
 
