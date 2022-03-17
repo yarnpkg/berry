@@ -211,4 +211,4 @@ We *could have* potentially make it configurable through a switch, but in the en
 
 - The TypeScript patch is a no-op if PnP isn't enabled, so this shouldn't affect your workflow (if it does, please open an issue)
 - We hope to eventually land this PR in TypeScript one day, so the more eyes we can get on it the more likely it will be that it will land
-- Since Yarn 3+, failing builtin patches are simply ignored and fallback to the original sources.
+- Beginning with Yarn 3, built-in patches that fail are simply ignored and Yarn falls back to the original package code
