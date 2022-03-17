@@ -209,6 +209,6 @@ Which now begs the question: why do we still apply this patch even when Plug'n'P
 
 We *could have* potentially make it configurable through a switch, but in the end we decided it wasn't worth the extra configuration:
 
-- The TypeScript patch is a noop if PnP isn't enabled, so this shouldn't affect your work (if it does, please open an issue)
+- The TypeScript patch is a no-op if PnP isn't enabled, so this shouldn't affect your workflow (if it does, please open an issue)
 - We hope to eventually land this PR in TypeScript one day, so the more eyes we can get on it the higher our confidence will be
 - Since Yarn 3+, failing builtin patches are simply ignored and fallback to the original sources.
