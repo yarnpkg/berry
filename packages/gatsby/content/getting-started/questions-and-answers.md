@@ -21,7 +21,7 @@ While the Yarn Classic line (1.x) remains a pillar of the JavaScript ecosystem, 
 
 4. Stability: Modern builds on the years of experience spent maintaining Classic; it allowed us to finally fix longstanding design issues with how some features were implemented. Workspaces are now core components, the resolution pipeline has been streamlined, data structures are more efficient, and as a result, Modern is much less likely to suffer from incorrect assumptions and other design flaws.
 
-5. Future-proof: A big reason why we invested in Modern was that we noticed how building new features on Classic was becoming difficult - each change leading to more and more unforeseen consequences. The Modern architecture corrects our past mistakes, and was designed to allow us to build features at a much higher pace.
+5. Future-proof: A big reason why we invested in Modern was that we noticed how building new features on Classic was becoming difficult - each change lead to more and more unforeseen consequences. Modern's architecture corrects our past mistakes and was designed to allow us to build features at a much higher pace.
 
 ## How easy should you expect the migration from Classic to Modern to be?
 
