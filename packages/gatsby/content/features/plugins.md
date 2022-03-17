@@ -93,4 +93,10 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**http-proxy**](https://github.com/arontsang/yarn-plugin-http-proxy) by [**Aron Tsang**](https://github.com/arontsang) - yarn plugin that loads a default http Proxy Agent based on the HTTP_PROXY or HTTPS_PROXY environmental variable when running lifecycle script such as `postinstall`. This is useful for allowing postinstall scripts to run in corporate environments where internet access requires an explicit HTTP Connect Proxy.
 
+- [**changed**](https://github.com/Dcard/yarn-plugins/tree/master/packages/changed) by [**Dcard Holdings Ltd.**](https://github.com/Dcard) - List and run a command on changed workspaces and their dependents.
+
+- [**docker-build**](https://github.com/Dcard/yarn-plugins/tree/master/packages/docker-build) by [**Dcard Holdings Ltd.**](https://github.com/Dcard) - Build a Docker image for a workspace.
+
+- [**tsconfig-references**](https://github.com/Dcard/yarn-plugins/tree/master/packages/tsconfig-references) by [**Dcard Holdings Ltd.**](https://github.com/Dcard) - Update `references` in `tsconfig.json` when adding or removing workspaces.
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
