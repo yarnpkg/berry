@@ -181,7 +181,7 @@ Nowadays, the active development team is composed exclusively of people employed
 
 At the time Yarn was created, the npm registry had issues that negatively impacted install performance, so the initial team decided to partner with Cloudflare and set up a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) that would better cache the requests before returning them. This setup didn't even have a backend on our side.
 
-Eventually, npm resolved many of those issues, and we turned off the proxy to replace it by a [CNAME](https://en.wikipedia.org/wiki/CNAME_record) ([proof](https://toolbox.googleapps.com/apps/dig/#CNAME/registry.yarnpkg.com)). We still keep the hostname for because it gives us the ability to redirect to a read-only copy of the registry should the primary source become unavailable.
+Eventually, npm resolved many of those issues. We turned off the proxy and replaced it with a [CNAME](https://en.wikipedia.org/wiki/CNAME_record) ([proof](https://toolbox.googleapps.com/apps/dig/#CNAME/registry.yarnpkg.com)). We still keep the hostname as it gives us the ability to redirect to a read-only copy of the registry should the primary source become unavailable.
 
 While we do gather some basic [client-side telemetry](/advanced/telemetry), no http logs can ever even reach the Yarn project infrastructure - and even less Facebook, which has no control over the project (see also, [Is Yarn operated by Facebook?](/getting-started/qa#is-yarn-operated-by-facebook)).
 
