@@ -27,7 +27,7 @@ While the Yarn Classic line (1.x) remains a pillar of the JavaScript ecosystem, 
 
 Generally, a few main things will need to be taken care of:
 
-1. The settings format changed. We don't read the `.npmrc` or `.yarnrc` files anymore, instead we read settings from the [`.yarnrc.yml` file](https://yarnpkg.com/configuration/yarnrc).
+1. The settings format changed. We don't read the `.npmrc` or `.yarnrc` files anymore. Instead, we read settings from the [`.yarnrc.yml` file](https://yarnpkg.com/configuration/yarnrc).
 
 2. Some third-party packages don't list their dependencies properly and will need to be helped through the [`packageExtensions`](https://yarnpkg.com/configuration/yarnrc#packageExtensions) settings. You may not have noticed these kinds of dependency issues in the past, but Modern brings these kinds of pitfalls to your attention right away, giving you better insights into the packages you use.
 
