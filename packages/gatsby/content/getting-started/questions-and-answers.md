@@ -207,7 +207,7 @@ Given that PnP is a resolver standard different from Node, tools that reimplemen
 
 Which now begs the question: why do we still apply this patch even when Plug'n'Play is disabled? The main reason is that Yarn intends to provide consistent behaviour. Some setups involve using the `node_modules` linker during development (to avoid having to set up their editor [SDKS](/getting-started/editor-sdks)) and PnP in production (for install speed). If we were to only apply the patches when PnP is enabled, then the package cache would be different, which would break immutable installs.
 
-We *could have* potentially make it configurable through a switch, but in the end we decided it wasn't worth the extra configuration:
+We *could have* potentially made it configurable through a switch, but eventually we decided it wasn't worth the extra configuration:
 
 - The TypeScript patch is a no-op if PnP isn't enabled, so this shouldn't affect your workflow (if it does, please open an issue)
 - We hope to eventually land this PR in TypeScript one day, so the more eyes we can get on it the more likely it will be that it will land
