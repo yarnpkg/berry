@@ -28,6 +28,9 @@ function parseProxy(specifier: string) {
   if (url.port)
     proxy.port = Number(url.port);
 
+  if (url.username && url.password)
+    proxy.proxyAuth = `${url.username}:${url.password}`;
+
   return {proxy};
 }
 
