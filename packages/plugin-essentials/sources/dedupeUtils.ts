@@ -26,6 +26,11 @@ export enum Strategy {
 
 export const acceptedStrategies = new Set(Object.values(Strategy));
 
+function getResolvedIdentHash(project: Project, descriptor: Descriptor) {
+  // Descriptors of aliases contain the identHash of the alias, not the resolved package. Try to get the identHash from the package instead.
+  return (project.originalPackages.get(project.storedResolutions.get(descriptor.descriptorHash)!) || descriptor).identHash;
+}
+
 const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
   highest: async (project, patterns, {resolver, fetcher, resolveOptions, fetchOptions}) => {
     const locatorsByIdent = new Map<IdentHash, Set<LocatorHash>>();
@@ -34,10 +39,14 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
       if (typeof descriptor === `undefined`)
         throw new Error(`Assertion failed: The descriptor (${descriptorHash}) should have been registered`);
 
-      miscUtils.getSetWithDefault(locatorsByIdent, descriptor.identHash).add(locatorHash);
+      const identHash = getResolvedIdentHash(project, descriptor);
+
+      miscUtils.getSetWithDefault(locatorsByIdent, identHash).add(locatorHash);
     }
 
     return Array.from(project.storedDescriptors.values(), async descriptor => {
+      const identHash = getResolvedIdentHash(project, descriptor);
+
       if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
         return null;
 
@@ -56,9 +65,9 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
       if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
         return null;
 
-      const locators = locatorsByIdent.get(descriptor.identHash);
+      const locators = locatorsByIdent.get(identHash);
       if (typeof locators === `undefined`)
-        throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
+        throw new Error(`Assertion failed: The resolutions (${identHash}) should have been registered`);
 
       // No need to choose when there's only one possibility
       if (locators.size === 1)
