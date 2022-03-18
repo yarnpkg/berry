@@ -82,6 +82,29 @@ describe(`Commands`, () => {
             });
           }),
         );
+
+        it(
+          `should handle aliased packages`,
+          makeTemporaryEnv({
+            dependencies: {
+              [`no-deps`]: `npm:no-deps-bins@^1.0.0`,
+              [`one-range-dep`]: `1.0.0`,
+            },
+          }, async ({path, run, source}) => {
+            await run(`install`);
+
+            await run(`dedupe`);
+
+            await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
+              code: 0,
+            });
+
+            await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+              name: `no-deps-bins`,
+              version: `1.0.0`,
+            });
+          }),
+        );
       });
     });
 
