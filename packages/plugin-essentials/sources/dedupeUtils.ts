@@ -28,7 +28,11 @@ export const acceptedStrategies = new Set(Object.values(Strategy));
 
 function getResolvedIdentHash(project: Project, descriptor: Descriptor) {
   // Descriptors of aliases contain the identHash of the alias, not the resolved package. Try to get the identHash from the package instead.
-  return (project.originalPackages.get(project.storedResolutions.get(descriptor.descriptorHash)!) || descriptor).identHash;
+  const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+  if (typeof resolution === `undefined`)
+    throw new Error(`Assertion failed: The resolution (${descriptor.descriptorHash}) should have been registered`);
+
+  return (project.originalPackages.get(resolution) || descriptor).identHash;
 }
 
 const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
