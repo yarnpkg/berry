@@ -18,6 +18,7 @@ export type Filename = string & { __pathType: PathType.File };
 export type Path = PortablePath | NativePath;
 
 export const Filename = {
+  home: `~` as Filename,
   nodeModules: `node_modules` as Filename,
   manifest: `package.json` as Filename,
   lockfile: `yarn.lock` as Filename,

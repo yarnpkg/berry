@@ -288,7 +288,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-junit", "npm:10.0.0"],\
             ["micromatch", "npm:4.0.4"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -582,7 +582,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gensync", "npm:1.0.0-beta.2"],\
             ["json5", "npm:2.2.0"],\
             ["lodash", "npm:4.17.21"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:5.7.1"],\
             ["source-map", "npm:0.5.7"]\
           ],\
@@ -605,7 +605,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gensync", "npm:1.0.0-beta.2"],\
             ["json5", "npm:2.2.0"],\
             ["lodash", "npm:4.17.21"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:5.7.1"],\
             ["source-map", "npm:0.5.7"]\
           ],\
@@ -845,7 +845,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/babel__core", "npm:7.1.3"],\
             ["debug", "virtual:904b3fada4a3265c4dfeed8c42d6542b5b497582d17441c86eea102109bfc3b9e1825aad904bc43dd1b94603ff4820b8cb2ebcf24cfbaf45ecee04e5bc1076b8#npm:4.3.2"],\
             ["lodash.debounce", "npm:4.0.8"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:6.3.0"]\
           ],\
           "packagePeers": [\
@@ -866,7 +866,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/babel__core", null],\
             ["debug", "virtual:904b3fada4a3265c4dfeed8c42d6542b5b497582d17441c86eea102109bfc3b9e1825aad904bc43dd1b94603ff4820b8cb2ebcf24cfbaf45ecee04e5bc1076b8#npm:4.3.2"],\
             ["lodash.debounce", "npm:4.0.8"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:6.3.0"]\
           ],\
           "packagePeers": [\
@@ -7531,7 +7531,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["glob", "npm:7.1.7"],\
             ["is-reference", "npm:1.2.1"],\
             ["magic-string", "npm:0.25.7"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["rollup", "npm:2.59.0"]\
           ],\
           "packagePeers": [\
@@ -7559,7 +7559,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["builtin-modules", "npm:3.2.0"],\
             ["deepmerge", "npm:4.2.2"],\
             ["is-module", "npm:1.0.0"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["rollup", "npm:2.59.0"]\
           ],\
           "packagePeers": [\
@@ -8893,7 +8893,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["regexpp", "npm:3.2.0"],\
             ["semver", "npm:7.3.5"],\
             ["tsutils", "virtual:5e27cd7a319c4b7c3909eb012bf293660fa275bf4eddce08571aa0562ef7b9b8f3c02315f6dad27820a35a49c368107bf917cd6e2a8d99abe84b6a230d415fc4#npm:3.21.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@types/eslint",\
@@ -9062,7 +9062,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/typescript-estree", "virtual:fe98bd70d13aaca1010fe6d701118ea3af3e45d43c8d6c5a099bc3b50f958b72e1ed6da100c174f4c93673179c6f276656d496d7d151b1435a7d2a99739ef29a#npm:5.3.1"],\
             ["debug", "virtual:904b3fada4a3265c4dfeed8c42d6542b5b497582d17441c86eea102109bfc3b9e1825aad904bc43dd1b94603ff4820b8cb2ebcf24cfbaf45ecee04e5bc1076b8#npm:4.3.2"],\
             ["eslint", "npm:8.2.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@types/eslint",\
@@ -9218,7 +9218,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["is-glob", "npm:4.0.3"],\
             ["semver", "npm:7.3.5"],\
             ["tsutils", "virtual:5e27cd7a319c4b7c3909eb012bf293660fa275bf4eddce08571aa0562ef7b9b8f3c02315f6dad27820a35a49c368107bf917cd6e2a8d99abe84b6a230d415fc4#npm:3.21.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@types/typescript",\
@@ -9641,7 +9641,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ]],\
             ["semver", "npm:7.3.5"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10297,7 +10297,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["micromatch", "npm:4.0.4"],\
             ["p-limit", "npm:2.2.0"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10348,7 +10348,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:8.2.0"],\
             ["eslint-plugin-arca", "npm:0.12.1"],\
             ["eslint-plugin-react", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:7.25.1"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@types/eslint",\
@@ -10481,7 +10481,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.17.0-3"],\
             ["typedoc-neo-theme", "npm:1.0.7"],\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"],\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"],\
             ["unescape-html", "npm:1.1.0"],\
             ["unfetch", "npm:4.1.0"],\
             ["unified", "npm:7.1.0"],\
@@ -10580,7 +10580,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-junit", "npm:10.0.0"],\
             ["micromatch", "npm:4.0.4"],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10625,7 +10625,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10650,7 +10650,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10675,7 +10675,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10700,7 +10700,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10725,7 +10725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10750,7 +10750,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10775,7 +10775,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10800,7 +10800,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:08fe6ad7a76ed00f8dc32e3b968ce66fd4db8ac47424db78612ce3633e63ecb46d41984611094facf53bbef7eae7fbf98bbfd729fb77f5ccde564684f4e3a829#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10825,7 +10825,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10850,7 +10850,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10875,7 +10875,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10900,7 +10900,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10925,7 +10925,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "packagePeers": [\
@@ -10948,7 +10948,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
             ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:7.3.5"]\
           ],\
           "linkType": "SOFT"\
@@ -16318,7 +16318,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-plugin-macros", "npm:2.8.0"],\
             ["@babel/runtime", "npm:7.15.4"],\
             ["cosmiconfig", "npm:6.0.0"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"]\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17806,7 +17806,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["anymatch", "npm:2.0.0"],\
             ["async-each", "npm:1.0.1"],\
             ["braces", "npm:2.3.2"],\
-            ["fsevents", "patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"],\
+            ["fsevents", "patch:fsevents@npm%3A1.2.13#optional!builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"],\
             ["glob-parent", "npm:3.1.0"],\
             ["inherits", "npm:2.0.4"],\
             ["is-binary-path", "npm:1.0.1"],\
@@ -17824,7 +17824,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["chokidar", "npm:3.5.2"],\
             ["anymatch", "npm:3.1.2"],\
             ["braces", "npm:3.0.2"],\
-            ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
+            ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
             ["glob-parent", "npm:5.1.2"],\
             ["is-binary-path", "npm:2.1.0"],\
             ["is-glob", "npm:4.0.3"],\
@@ -20937,7 +20937,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["eslint-import-resolver-node", "npm:0.3.6"],\
             ["debug", "virtual:11708fcd8b5d4d05ff1d66e93d462ef2e0e1a37e2f059f1c5142e31570731629f92bd79531af0543bc9cc3e8328e18d21151650e1e20b8209c0416b889b286e6#npm:3.2.7"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"]\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -21066,7 +21066,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.values", "npm:1.1.4"],\
             ["pkg-up", "npm:2.0.0"],\
             ["read-pkg-up", "npm:3.0.0"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["tsconfig-paths", "npm:3.11.0"]\
           ],\
           "packagePeers": [\
@@ -21136,7 +21136,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.fromentries", "npm:2.0.4"],\
             ["object.values", "npm:1.1.4"],\
             ["prop-types", "npm:15.7.2"],\
-            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
             ["string.prototype.matchall", "npm:4.0.5"]\
           ],\
           "packagePeers": [\
@@ -21162,7 +21162,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.fromentries", "npm:2.0.4"],\
             ["object.values", "npm:1.1.4"],\
             ["prop-types", "npm:15.7.2"],\
-            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
             ["string.prototype.matchall", "npm:4.0.5"]\
           ],\
           "packagePeers": [\
@@ -21188,7 +21188,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["object.fromentries", "npm:2.0.4"],\
             ["object.values", "npm:1.1.4"],\
             ["prop-types", "npm:15.7.2"],\
-            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
             ["string.prototype.matchall", "npm:4.0.5"]\
           ],\
           "packagePeers": [\
@@ -22727,19 +22727,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["fsevents", [\
-        ["patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=18f3a7", {\
-          "packageLocation": "./.yarn/unplugged/fsevents-patch-fcdf30aaca/node_modules/fsevents/",\
+        ["patch:fsevents@npm%3A1.2.13#optional!builtin<compat/fsevents>::version=1.2.13&hash=18f3a7", {\
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-fb29a08206/node_modules/fsevents/",\
           "packageDependencies": [\
-            ["fsevents", "patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"],\
+            ["fsevents", "patch:fsevents@npm%3A1.2.13#optional!builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"],\
             ["bindings", "npm:1.5.0"],\
             ["nan", "npm:2.15.0"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7", {\
-          "packageLocation": "./.yarn/unplugged/fsevents-patch-3340e2eb10/node_modules/fsevents/",\
+        ["patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=18f3a7", {\
+          "packageLocation": "./.yarn/unplugged/fsevents-patch-bc14f4e1ba/node_modules/fsevents/",\
           "packageDependencies": [\
-            ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
+            ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
             ["node-gyp", "npm:6.0.1"]\
           ],\
           "linkType": "HARD"\
@@ -27106,7 +27106,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/graceful-fs", "npm:4.1.3"],\
             ["anymatch", "npm:3.1.2"],\
             ["fb-watchman", "npm:2.0.0"],\
-            ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
+            ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
             ["graceful-fs", "npm:4.2.4"],\
             ["jest-serializer", "npm:26.0.0"],\
             ["jest-util", "npm:26.0.1"],\
@@ -27307,7 +27307,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-pnp-resolver", "virtual:631d11a244cf9e8543d845f9233371049f6acc7a371f8cdc0328ac0915c7fea1f5e43b0c6464606ba013212ee8e56784c791cb67764091471a2a31ac041ce93f#npm:1.2.1"],\
             ["jest-util", "npm:26.0.1"],\
             ["read-pkg-up", "npm:7.0.1"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["slash", "npm:3.0.0"]\
           ],\
           "linkType": "HARD"\
@@ -29726,7 +29726,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:16.13.1"],\
             ["react-lifecycles-compat", "npm:3.0.4"],\
             ["shallowequal", "npm:1.1.0"],\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@types/react-dom",\
@@ -30365,7 +30365,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["normalize-package-data", "npm:2.5.0"],\
             ["hosted-git-info", "npm:2.7.1"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["semver", "npm:5.7.1"],\
             ["validate-npm-package-license", "npm:3.0.4"]\
           ],\
@@ -33308,7 +33308,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["js-reporters", "npm:1.2.1"],\
             ["minimatch", "npm:3.0.4"],\
             ["node-watch", "npm:0.6.0"],\
-            ["resolve", "patch:resolve@npm%3A1.9.0#~builtin<compat/resolve>::version=1.9.0&hash=07638b"]\
+            ["resolve", "patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=07638b"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -34340,7 +34340,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/rechoir-npm-0.6.2-0df5f171ec-fe76bf9c21.zip/node_modules/rechoir/",\
           "packageDependencies": [\
             ["rechoir", "npm:0.6.2"],\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"]\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -35065,27 +35065,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["resolve", [\
-        ["patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b", {\
-          "packageLocation": "./.yarn/cache/resolve-patch-b4a69197d3-a0dd7d16a8.zip/node_modules/resolve/",\
+        ["patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b", {\
+          "packageLocation": "./.yarn/cache/resolve-patch-92c1e516ea-a0dd7d16a8.zip/node_modules/resolve/",\
           "packageDependencies": [\
-            ["resolve", "patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"],\
             ["is-core-module", "npm:2.6.0"],\
             ["path-parse", "npm:1.0.6"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:resolve@npm%3A1.9.0#~builtin<compat/resolve>::version=1.9.0&hash=07638b", {\
-          "packageLocation": "./.yarn/cache/resolve-patch-334bc019de-8e86033057.zip/node_modules/resolve/",\
+        ["patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=07638b", {\
+          "packageLocation": "./.yarn/cache/resolve-patch-6aeae11fee-8e86033057.zip/node_modules/resolve/",\
           "packageDependencies": [\
-            ["resolve", "patch:resolve@npm%3A1.9.0#~builtin<compat/resolve>::version=1.9.0&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=07638b"],\
             ["path-parse", "npm:1.0.6"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b", {\
-          "packageLocation": "./.yarn/cache/resolve-patch-00f699a708-21684b4d99.zip/node_modules/resolve/",\
+        ["patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b", {\
+          "packageLocation": "./.yarn/cache/resolve-patch-06b7b68a5c-21684b4d99.zip/node_modules/resolve/",\
           "packageDependencies": [\
-            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
+            ["resolve", "patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"],\
             ["is-core-module", "npm:2.6.0"],\
             ["path-parse", "npm:1.0.6"]\
           ],\
@@ -35264,7 +35264,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/rollup-npm-2.59.0-72e7408354-9fbaa72b8f.zip/node_modules/rollup/",\
           "packageDependencies": [\
             ["rollup", "npm:2.59.0"],\
-            ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"]\
+            ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -37988,7 +37988,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tsutils", "virtual:5e27cd7a319c4b7c3909eb012bf293660fa275bf4eddce08571aa0562ef7b9b8f3c02315f6dad27820a35a49c368107bf917cd6e2a8d99abe84b6a230d415fc4#npm:3.21.0"],\
             ["@types/typescript", null],\
             ["tslib", "npm:1.13.0"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@types/typescript",\
@@ -38230,7 +38230,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc-default-themes", "npm:0.8.0-0"],\
             ["typedoc-neo-theme", "npm:1.0.7"],\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@strictsoftware/typedoc-plugin-monorepo",\
@@ -38265,7 +38265,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc-default-themes", "npm:0.8.0-0"],\
             ["typedoc-neo-theme", null],\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@strictsoftware/typedoc-plugin-monorepo",\
@@ -38299,7 +38299,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typedoc-default-themes", "npm:0.7.2"],\
             ["typedoc-neo-theme", "npm:1.0.7"],\
             ["typedoc-plugin-yarn", null],\
-            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=bda367"]\
           ],\
           "packagePeers": [\
             "@strictsoftware/typedoc-plugin-monorepo",\
@@ -38352,30 +38352,30 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
             ["typedoc", "virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#npm:0.17.0-3"],\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
           ],\
           "linkType": "SOFT"\
         }]\
       ]],\
       ["typescript", [\
-        ["patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=bda367", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-1d635661a9-61283b54e3.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=bda367", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-5d1bc9f9fc-61283b54e3.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A3.7.7#~builtin<compat/typescript>::version=3.7.7&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=bda367"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=bda367", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-ef99b47708-dc7141ab55.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=bda367", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-f16b0e83cb-dc7141ab55.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=bda367"]\
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-0f331817d1-1b6d012dec.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-f9ea81cdec-1b6d012dec.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A4.6.1-rc#~builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
+            ["typescript", "patch:typescript@npm%3A4.6.1-rc#optional!builtin<compat/typescript>::version=4.6.1-rc&hash=bda367"]\
           ],\
           "linkType": "HARD"\
         }]\
