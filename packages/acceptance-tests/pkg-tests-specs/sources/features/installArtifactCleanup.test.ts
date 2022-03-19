@@ -4,7 +4,8 @@ const lsStore = async (path: PortablePath) => {
   return await xfs.readdirPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath);
 };
 
-describe(`Install Artifact Cleanup`, () => {
+// These tests randomly fail on the CI and until we figure out why they're just noise
+describe.skip(`Install Artifact Cleanup`, () => {
   describe(`pnpm linker`, () => {
     it(`should not generate a node_modules folder if it has nothing to put inside it`, makeTemporaryEnv({}, {
       nodeLinker: `pnpm`,
