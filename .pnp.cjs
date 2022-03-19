@@ -40734,6 +40734,7 @@ const PortablePath = {
   dot: `.`
 };
 const Filename = {
+  home: `~`,
   nodeModules: `node_modules`,
   manifest: `package.json`,
   lockfile: `yarn.lock`,
@@ -49821,7 +49822,6 @@ var __objRest = (source, exclude) => {
 };
 const localFs = __spreadValues({}, fs__default.default);
 const nodeFs = new NodeFS(localFs);
-nodeFs.__test = true;
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;
 const defaultFsLayer = new VirtualFS({
