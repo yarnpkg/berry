@@ -122,7 +122,7 @@ class NodeModulesInstaller implements Installer {
   getCustomDataKey() {
     return JSON.stringify({
       name: `NodeModulesInstaller`,
-      version: 1,
+      version: 2,
     });
   }
 

@@ -308,9 +308,9 @@ function createStreamReporter(reportFn: (text: string) => void, prefix: string |
       lineIndex = chunkStr.indexOf(`\n`);
 
       if (lineIndex !== -1) {
-        const line = buffer + chunkStr.substr(0, lineIndex);
+        const line = buffer + chunkStr.substring(0, lineIndex);
 
-        chunkStr = chunkStr.substr(lineIndex + 1);
+        chunkStr = chunkStr.substring(lineIndex + 1);
         buffer = ``;
 
         if (prefix !== null) {

@@ -36,7 +36,7 @@ yarn packages/app tsc --noEmit
 
 ## Hybrid PnP + node_modules mono-repo:
 
-You may sometimes need to use `node_modules` on just part of your workspace (for example, if you use Angular or React-Native).
+You may sometimes need to use `node_modules` on just part of your workspace (for example, if you use React-Native).
 
 - Create a separate directory for the `node_modules` project.
 ```sh

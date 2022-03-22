@@ -39,6 +39,8 @@ export default class BuildBundleCommand extends Command {
     description: `build the local bundle`,
     details: `
       This command builds the local bundle - the Yarn binary file that is installed in projects.
+
+      For more details about the build process, please consult the \`@yarnpkg/builder\` README: https://github.com/yarnpkg/berry/blob/HEAD/packages/yarnpkg-builder/README.md.
     `,
     examples: [[
       `Build the local bundle`,
@@ -126,7 +128,7 @@ export default class BuildBundleCommand extends Command {
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node12`,
+          target: `node14`,
         });
 
         for (const warning of res.warnings) {
@@ -157,6 +159,7 @@ export default class BuildBundleCommand extends Command {
       report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
       report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
+      report.reportInfo(null, `${Mark.Question} Bundle version: ${formatUtils.pretty(configuration, version, formatUtils.Type.REFERENCE)}`);
 
       report.reportSeparator();
 

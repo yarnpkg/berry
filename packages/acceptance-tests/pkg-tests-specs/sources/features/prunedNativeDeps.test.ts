@@ -14,6 +14,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           cpu: [`foo`],
           os: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -31,6 +32,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -52,6 +54,10 @@ describe(`Features`, () => {
         version: `1.0.0`,
       }, {
         type: RequestType.PackageTarball,
+        localName: `native-libc-glibc`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
         localName: `optional-native`,
         version: `1.0.0`,
       }]);
@@ -66,6 +72,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`, `x86`],
+          libc: [`glibc`, `musl`],
         },
       });
 
@@ -91,6 +98,14 @@ describe(`Features`, () => {
         version: `1.0.0`,
       }, {
         type: RequestType.PackageTarball,
+        localName: `native-libc-glibc`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-musl`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
         localName: `optional-native`,
         version: `1.0.0`,
       }]);
@@ -105,6 +120,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -113,8 +129,9 @@ describe(`Features`, () => {
 
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
         supportedArchitectures: {
-          os: [`foo`],
+          os: [`bar`],
           cpu: [`x86`],
+          libc: [`musl`],
         },
       });
 
@@ -133,6 +150,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -141,8 +159,9 @@ describe(`Features`, () => {
 
       await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
         supportedArchitectures: {
-          os: [`foo`],
+          os: [`bar`],
           cpu: [`x86`],
+          libc: [`musl`],
         },
       });
 
@@ -161,6 +180,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -185,6 +205,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -213,6 +234,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`, `x86`],
+          libc: [`glibc`],
         },
       });
 
@@ -231,6 +253,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x86`],
+          libc: [`glibc`],
         },
       });
 
@@ -248,6 +271,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`, `x86`],
+          libc: [`glibc`],
         },
       });
 
@@ -257,6 +281,7 @@ describe(`Features`, () => {
         supportedArchitectures: {
           os: [`foo`],
           cpu: [`x64`],
+          libc: [`glibc`],
         },
       });
 
@@ -279,6 +304,10 @@ describe(`Features`, () => {
       }, {
         type: RequestType.PackageTarball,
         localName: `native-foo-x86`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-glibc`,
         version: `1.0.0`,
       }, {
         type: RequestType.PackageTarball,

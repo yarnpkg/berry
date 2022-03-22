@@ -188,7 +188,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(
-            `none of those files can be found on the disk`,
+            `we looked for the following paths, but none could be accessed`,
           ),
         });
       },
@@ -495,6 +495,66 @@ describe(`Plug'n'Play - ESM`, () => {
           code: 0,
           stdout: ``,
           stderr: ``,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should throw ERR_REQUIRE_ESM when requiring a file with type=module`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-esm': `1.0.0`,
+        },
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `
+          try {
+            require('no-deps-esm')
+          } catch (err) {
+            console.log(err.code)
+          }
+        `);
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ERR_REQUIRE_ESM\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should throw ERR_REQUIRE_ESM when requiring a .mjs file`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-mjs': `1.0.0`,
+        },
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `
+          try {
+            require('no-deps-mjs/index.mjs')
+          } catch (err) {
+            console.log(err.code)
+          }
+        `);
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ERR_REQUIRE_ESM\n`,
         });
       },
     ),

@@ -33,6 +33,9 @@ const NewsContainer = styled.div`
 
     white-space: pre-wrap;
     text-align: center;
+
+    line-height: 1.5em;
+    padding: 0.5em 1em;
   }
 
   background: #2188b6;
@@ -153,6 +156,44 @@ const MenuNavigation = styled.div`
       transform: scaleY(1);
       box-shadow: 0px 6px 6px 0px rgba(0, 0, 0, 0.1);
     }
+  }
+`;
+
+const Banner = styled.div`
+  background-color: #5474c9;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+
+  > :first-child {
+    margin-right: 1em;
+  }
+`;
+
+const UkrainianFlag = styled.div`
+  width: 4em;
+  height: 3em;
+  background-image: linear-gradient(#0066cc 50%, #ffcc00 50%);
+`;
+
+const BannerTextContainer = styled.div`
+  flex: 1;
+
+  color: white;
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
   }
 `;
 
@@ -345,6 +386,17 @@ export const Header = ({children}) => {
           </a>
         </MenuSearchBox>
       </MenuContainer>
+      <Banner>
+        <UkrainianFlag />
+        <BannerTextContainer>
+          <p>
+            The Yarn team stands with the people of Ukraine during this heinous assault on their freedom, their independence, and their lives.
+          </p>
+          <p>
+            To support Ukraine in their time of need visit this <a href={`https://war.ukraine.ua/support-ukraine/`}>page</a>.
+          </p>
+        </BannerTextContainer>
+      </Banner>
       {children}
     </HeaderContainer>
   </>;

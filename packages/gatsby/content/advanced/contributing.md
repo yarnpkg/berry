@@ -122,6 +122,11 @@ If it fails and you have no idea why, feel free to ping a maintainer and we'll d
 
 **Note:** If you modify one of the [default plugins](https://github.com/yarnpkg/berry#default-plugins), you will also need to bump `@yarnpkg/cli`.
 
+## Reviewing other PRs
+
+You're welcome to leave comments if you spot glaring bugs, but do not approve PRs if you're not a member.
+It's generally seen as [bad form](https://twitter.com/brian_d_vaughn/status/1224051534536667137) in the open source community.
+
 ## Writing documentation
 
 Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
@@ -135,3 +140,17 @@ Once you're happy with what the documentation looks like, just commit your local
 ![](https://user-images.githubusercontent.com/1037931/61949789-3cc09300-afac-11e9-9817-89e97771a4e1.png)
 
 Once everything is green and a maintainer has reviewed your changes, we'll merge them and a bot will automatically trigger a rebuild of the website and update the `docs` folder 🙂
+
+## Profiling
+
+Run the following command to generate an unminified bundle:
+
+```bash
+yarn build:cli --no-minify
+```
+
+Use a profiler on the generated bundle at `packages/yarnpkg-cli/bundles/yarn.js`. Here is an example which uses the Node.js built-in profiler:
+
+```bash
+YARN_IGNORE_PATH=1 node --prof packages/yarnpkg-cli/bundles/yarn.js
+```

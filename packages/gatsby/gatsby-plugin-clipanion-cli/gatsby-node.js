@@ -3,9 +3,13 @@ const {execFileSync}  = require(`child_process`);
 exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
   const {createNode} = actions;
 
-  for (const {binary, namespace} of opts.binaries) {
-    const namespaceLeadingSlash = namespace ? `/${namespace}` : ``;
-    const namespaceTrailingSlash = namespace ? `${namespace}/` : ``;
+  for (const {binary, package} of opts.binaries) {
+    const packageParts = package?.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
+
+    const [, scope, name] = packageParts ?? [];
+
+    const namespaceLeadingSlash = name ? `/${name}` : ``;
+    const namespaceTrailingSlash = name ? `${name}/` : ``;
 
     const output = execFileSync(`node`, [binary, `--clipanion=definitions`]);
 
@@ -39,7 +43,17 @@ exports.sourceNodes = ({actions, createNodeId, createContentDigest}, opts) => {
         sections.push([
           `> **Plugin**\n`,
           `>\n`,
-          `> To use this command, first install the \`${pluginName}\` plugin: \`yarn plugin import ${pluginName}\`\n`,
+          `> To use this command, first install the [\`${pluginName}\`](https://github.com/yarnpkg/berry/blob/HEAD/packages/plugin-${pluginName}/README.md) plugin: \`yarn plugin import ${pluginName}\`\n`,
+        ].join(``));
+      }
+
+      if (package) {
+        sections.push([
+          `> **External Package**\n`,
+          `>\n`,
+          `> To use this command, you need to use the [\`${package}\`](https://github.com/yarnpkg/berry/blob/HEAD/packages/${scope}-${name}/README.md) package either:\n`,
+          `> - By installing it locally using [\`yarn add\`](/cli/add) and running it using [\`yarn run\`](/cli/run)\n`,
+          `> - By downloading and running it in a temporary environment using [\`yarn dlx\`](/cli/dlx)\n`,
         ].join(``));
       }
 

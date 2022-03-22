@@ -15,9 +15,15 @@ export default class PatchCommand extends BaseCommand {
     description: `prepare a package for patching`,
     details: `
       This command will cause a package to be extracted in a temporary directory intended to be editable at will.
-      
+
       Once you're done with your changes, run \`yarn patch-commit -s <path>\` (with \`<path>\` being the temporary directory you received) to generate a patchfile and register it into your top-level manifest via the \`patch:\` protocol. Run \`yarn patch-commit -h\` for more details.
+
+      Calling the command when you already have a patch won't import it by default (in other words, the default behavior is to reset existing patches). However, adding the \`-u,--update\` flag will import any current patch.
     `,
+  });
+
+  update = Option.Boolean(`-u,--update`, false, {
+    description: `Reapply local patches that already apply to this packages`,
   });
 
   json = Option.Boolean(`--json`, false, {
@@ -46,6 +52,9 @@ export default class PatchCommand extends BaseCommand {
         if (structUtils.isVirtualLocator(pkg))
           return miscUtils.mapAndFilter.skip;
 
+        if (patchUtils.isPatchLocator(pkg) !== this.update)
+          return miscUtils.mapAndFilter.skip;
+
         return pkg;
       });
 
@@ -65,14 +74,19 @@ export default class PatchCommand extends BaseCommand {
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
+      const unpatchedLocator = patchUtils.ensureUnpatchedLocator(locator);
       const temp = await patchUtils.extractPackageToDisk(locator, {cache, project});
 
       report.reportJson({
-        locator: structUtils.stringifyLocator(locator),
+        locator: structUtils.stringifyLocator(unpatchedLocator),
         path: npath.fromPortablePath(temp),
       });
 
-      report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, locator)} got extracted with success!`);
+      const updateString = this.update
+        ? ` along with its current modifications`
+        : ``;
+
+      report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, unpatchedLocator)} got extracted with success${updateString}!`);
       report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);
       report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit -s ${process.platform === `win32` ? `"` : ``}${npath.fromPortablePath(temp)}${process.platform === `win32` ? `"` : ``}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
     });

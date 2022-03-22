@@ -124,8 +124,10 @@ Many common frontend tools now support Plug'n'Play natively!
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
+| Angular | Starting from 13+ |
 | Babel | Starting from `resolve` 1.9 |
 | Create-React-App | Starting from 2.0+ |
+| Docusaurus | Starting from 2.0.0-beta.14 |
 | ESLint | Some compatibility issues w/ shared configs (fixable using [@rushstack/eslint-patch](https://yarnpkg.com/package/@rushstack/eslint-patch)) |
 | Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
 | Gulp | Supported with version 4.0+ | 
@@ -160,7 +162,6 @@ The following tools cannot be used with pure Plug'n'Play install (even under loo
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
-| Angular | Follow [angular/angular-cli/#16980](https://github.com/angular/angular-cli/issues/16980) |
 | Flow | Follow [yarnpkg/berry#634](https://github.com/yarnpkg/berry/issues/634) |
 | React Native | Follow [react-native-community/cli#27](https://github.com/react-native-community/cli/issues/27) |
 | Pulumi | Follow [pulumi/pulumi#3586](https://github.com/pulumi/pulumi/issues/3586) |

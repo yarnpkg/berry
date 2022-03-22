@@ -1,4 +1,4 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                           from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
 import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
@@ -86,6 +86,8 @@ export class PnpLinker implements Linker {
 export class PnpInstaller implements Installer {
   protected mode = `strict`;
 
+  private readonly asyncActions = new miscUtils.AsyncActions(10);
+
   private readonly packageRegistry: PackageRegistry = new Map();
 
   private readonly virtualTemplates: Map<LocatorHash, {
@@ -116,7 +118,7 @@ export class PnpInstaller implements Installer {
     this.customData = customData;
   }
 
-  async installPackage(pkg: Package, fetchResult: FetchResult) {
+  async installPackage(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const key1 = structUtils.stringifyIdent(pkg);
     const key2 = pkg.reference;
 
@@ -166,7 +168,7 @@ export class PnpInstaller implements Installer {
       : [];
 
     const packageFs = mayNeedToBeUnplugged
-      ? await this.unplugPackageIfNeeded(pkg, customPackageData!, fetchResult, dependencyMeta!)
+      ? await this.unplugPackageIfNeeded(pkg, customPackageData!, fetchResult, dependencyMeta!, api)
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
@@ -294,6 +296,8 @@ export class PnpInstaller implements Installer {
       shebang,
     });
 
+    await this.asyncActions.wait();
+
     return {
       customData: this.customData,
     };
@@ -409,9 +413,9 @@ export class PnpInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
+  private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, api: InstallPackageExtraApi) {
     if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
-      return this.unplugPackage(pkg, fetchResult);
+      return this.unplugPackage(pkg, fetchResult, api);
     } else {
       return fetchResult.packageFs;
     }
@@ -436,25 +440,27 @@ export class PnpInstaller implements Installer {
     return false;
   }
 
-  private async unplugPackage(locator: Locator, fetchResult: FetchResult) {
+  private async unplugPackage(locator: Locator, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     if (this.opts.project.disabledLocators.has(locator.locatorHash))
       return new AliasFS(unplugPath, {baseFs: fetchResult.packageFs, pathUtils: ppath});
 
     this.unpluggedPaths.add(unplugPath);
 
-    const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
-    if (await xfs.existsPromise(readyFile))
-      return new CwdFS(unplugPath);
+    api.holdFetchResult(this.asyncActions.set(locator.locatorHash, async () => {
+      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
+      if (await xfs.existsPromise(readyFile))
+        return;
 
-    // Delete any build state for the locator so it can run anew, this allows users
-    // to remove `.yarn/unplugged` and have the builds run again
-    this.opts.project.storedBuildState.delete(locator.locatorHash);
+      // Delete any build state for the locator so it can run anew, this allows users
+      // to remove `.yarn/unplugged` and have the builds run again
+      this.opts.project.storedBuildState.delete(locator.locatorHash);
 
-    await xfs.mkdirPromise(unplugPath, {recursive: true});
-    await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
+      await xfs.mkdirPromise(unplugPath, {recursive: true});
+      await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
 
-    await xfs.writeFilePromise(readyFile, ``);
+      await xfs.writeFilePromise(readyFile, ``);
+    }));
 
     return new CwdFS(unplugPath);
   }

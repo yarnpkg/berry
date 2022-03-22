@@ -3,6 +3,7 @@ import {Path, npath} from '@yarnpkg/fslib';
 export enum ErrorCode {
   API_ERROR = `API_ERROR`,
   BUILTIN_NODE_RESOLUTION_FAILED = `BUILTIN_NODE_RESOLUTION_FAILED`,
+  EXPORTS_RESOLUTION_FAILED = `EXPORTS_RESOLUTION_FAILED`,
   MISSING_DEPENDENCY = `MISSING_DEPENDENCY`,
   MISSING_PEER_DEPENDENCY = `MISSING_PEER_DEPENDENCY`,
   QUALIFIED_PATH_RESOLUTION_FAILED = `QUALIFIED_PATH_RESOLUTION_FAILED`,
@@ -26,8 +27,8 @@ const MODULE_NOT_FOUND_ERRORS = new Set([
  * by third-parties.
  */
 
-export function makeError(pnpCode: ErrorCode, message: string, data: Record<string, any> = {}): Error & {code: string, pnpCode: ErrorCode, data: Record<string, any>} {
-  const code = MODULE_NOT_FOUND_ERRORS.has(pnpCode)
+export function makeError(pnpCode: ErrorCode, message: string, data: Record<string, any> = {}, code?: string): Error & {code: string, pnpCode: ErrorCode, data: Record<string, any>} {
+  code ??= MODULE_NOT_FOUND_ERRORS.has(pnpCode)
     ? `MODULE_NOT_FOUND`
     : pnpCode;
 

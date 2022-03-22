@@ -1,7 +1,7 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
-import {isDate}                                                                                                                                      from 'util';
+import {types}                                                                                                                                       from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
 import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats}                                                                               from './FakeFS';
@@ -43,7 +43,7 @@ function toUnixTimestamp(time: Date | string | number) {
   }
 
   // convert to 123.456 UNIX timestamp
-  if (isDate(time))
+  if (types.isDate(time))
     return (time as Date).getTime() / 1000;
 
   throw new Error(`Invalid time`);
@@ -172,7 +172,7 @@ export class ZipFS extends BasePortableFakeFS {
       this.libzip.free(errPtr);
     }
 
-    this.listings.set(PortablePath.root, new Set());
+    this.listings.set(PortablePath.root, new Set<Filename>());
 
     const entryCount = this.libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
@@ -387,11 +387,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof entry === `undefined`)
       throw errors.EBADF(`read`);
 
-    let realPosition;
-    if (position === -1 || position === null)
-      realPosition = entry.cursor;
-    else
-      realPosition = position;
+    const realPosition = position === -1 || position === null
+      ? entry.cursor
+      : position;
 
     const source = this.readFileSync(entry.p);
     source.copy(buffer, offset, realPosition, realPosition + length);
@@ -732,17 +730,17 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private registerListing(p: PortablePath) {
-    let listing = this.listings.get(p);
-    if (listing)
-      return listing;
+    const existingListing = this.listings.get(p);
+    if (existingListing)
+      return existingListing;
 
     const parentListing = this.registerListing(ppath.dirname(p));
-    listing = new Set();
-
     parentListing.add(ppath.basename(p));
-    this.listings.set(p, listing);
 
-    return listing;
+    const newListing = new Set<Filename>();
+    this.listings.set(p, newListing);
+
+    return newListing;
   }
 
   private registerEntry(p: PortablePath, index: number) {
@@ -886,11 +884,9 @@ export class ZipFS extends BasePortableFakeFS {
 
       if (this.level !== `mixed`) {
         // Use store for level 0, and deflate for 1..9
-        let method;
-        if (this.level === 0)
-          method = this.libzip.ZIP_CM_STORE;
-        else
-          method = this.libzip.ZIP_CM_DEFLATE;
+        const method = this.level === 0
+          ? this.libzip.ZIP_CM_STORE
+          : this.libzip.ZIP_CM_DEFLATE;
 
         const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
         if (rc === -1) {

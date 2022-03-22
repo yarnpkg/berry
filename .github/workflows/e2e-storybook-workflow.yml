@@ -26,7 +26,10 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
         yarn dlx create-react-app my-cra && cd my-cra
-        yarn add -D eslint-config-react-app
+
+        # TODO: Remove when create-react-app fixes their ESLint setup
+        yarn add -D eslint-config-react-app eslint
+
         yarn dlx -p @storybook/cli@next sb init --yes
         yarn build-storybook
 

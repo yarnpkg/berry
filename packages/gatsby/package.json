@@ -72,6 +72,7 @@
     "react-icons": "^3.10.0",
     "react-instantsearch-dom": "^6.6.0",
     "react-monaco-editor": "^0.36.0",
+    "react-responsive-carousel": "^3.2.22",
     "react-scroll-into-view-if-needed": "^2.1.7",
     "react-select": "^3.1.0",
     "react-spinners": "^0.8.3",
@@ -86,7 +87,7 @@
     "typedoc": "next",
     "typedoc-neo-theme": "^1.0.7",
     "typedoc-plugin-yarn": "portal:./typedoc-plugin-yarn",
-    "typescript": "^4.5.2",
+    "typescript": "4.6.1-rc",
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
@@ -118,6 +119,6 @@
     "@types/tinycolor2": "1.4.2"
   },
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   }
 }

@@ -201,19 +201,20 @@ function generateCollapsedObject(data: {[key: string]: any}, state: PrettyJsonSt
 
   result += `{`;
 
-  for (let t = 0, T = keys.length; t < T; ++t) {
+  for (let t = 0, T = keys.length, keysPrinted = 0; t < T; ++t) {
     const key = keys[t];
     const value = data[key];
 
     if (typeof value === `undefined`)
       continue;
 
+    if (keysPrinted !== 0)
+      result += `, `;
+
     result += JSON.stringify(key);
     result += `: `;
     result += generateNext(key, value, state, indent).replace(/^ +/g, ``);
-    if (t + 1 < T) {
-      result += `, `;
-    }
+    keysPrinted += 1;
   }
 
   result += `}`;
@@ -230,6 +231,7 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
   result += indent;
   result += `{\n`;
 
+  let keysPrinted = 0;
   for (let t = 0, T = keys.length; t < T; ++t) {
     const key = keys[t];
     const value = data[key];
@@ -237,16 +239,20 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
     if (typeof value === `undefined`)
       continue;
 
+    if (keysPrinted !== 0) {
+      result += `,`;
+      result += `\n`;
+    }
+
     result += nextIndent;
     result += JSON.stringify(key);
     result += `: `;
     result += generateNext(key, value, state, nextIndent).replace(/^ +/g, ``);
-
-    if (t + 1 < T)
-      result += `,`;
-
-    result += `\n`;
+    keysPrinted += 1;
   }
+
+  if (keysPrinted !== 0)
+    result += `\n`;
 
   result += indent;
   result += `}`;

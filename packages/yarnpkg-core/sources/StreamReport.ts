@@ -1,6 +1,7 @@
 import sliceAnsi                                                                    from '@arcanis/slice-ansi';
 import CI                                                                           from 'ci-info';
 import {Writable}                                                                   from 'stream';
+import {WriteStream}                                                                from 'tty';
 
 import {Configuration}                                                              from './Configuration';
 import {MessageName, stringifyMessageName}                                          from './MessageName';
@@ -172,8 +173,8 @@ export class StreamReport extends Report {
   private progressTime: number = 0;
   private progressFrame: number = 0;
   private progressTimeout: ReturnType<typeof setTimeout> | null = null;
-  private progressStyle: {date?: Array<number>, chars: Array<string>, size: number};
-  private progressMaxScaledSize: number;
+  private progressStyle: {date?: Array<number>, chars: Array<string>, size: number} | null = null;
+  private progressMaxScaledSize: number | null = null;
 
   private forgettableBufferSize: number;
   private forgettableNames: Set<MessageName | null>;
@@ -203,15 +204,18 @@ export class StreamReport extends Report {
     this.json = json;
     this.stdout = stdout;
 
-    const styleName = this.configuration.get(`progressBarStyle`) || defaultStyle;
-    if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
-      throw new Error(`Assertion failed: Invalid progress bar style`);
+    // Setup progress
+    if (configuration.get(`enableProgressBars`) && !json && (stdout as WriteStream).isTTY && (stdout as WriteStream).columns > 22) {
+      const styleName = configuration.get(`progressBarStyle`) || defaultStyle;
+      if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
+        throw new Error(`Assertion failed: Invalid progress bar style`);
 
-    this.progressStyle = PROGRESS_STYLES[styleName];
-    const PAD_LEFT = `➤ YN0000: ┌ `.length;
+      this.progressStyle = PROGRESS_STYLES[styleName];
+      const PAD_LEFT = `➤ YN0000: ┌ `.length;
 
-    const maxWidth = Math.max(0, Math.min(process.stdout.columns - PAD_LEFT, 80));
-    this.progressMaxScaledSize = Math.floor(this.progressStyle.size * maxWidth / 80);
+      const maxWidth = Math.max(0, Math.min((stdout as WriteStream).columns - PAD_LEFT, 80));
+      this.progressMaxScaledSize = Math.floor(this.progressStyle.size * maxWidth / 80);
+    }
   }
 
   hasErrors() {
@@ -426,6 +430,9 @@ export class StreamReport extends Report {
   }
 
   reportProgress(progressIt: ProgressIterable) {
+    if (this.progressStyle === null)
+      return {...Promise.resolve(), stop: () => {}};
+
     if (progressIt.hasProgress && progressIt.hasTitle)
       throw new Error(`Unimplemented: Progress bars can't have both progress and titles.`);
 
@@ -571,7 +578,7 @@ export class StreamReport extends Report {
   }
 
   private clearProgress({delta = 0, clear = false}: {delta?: number, clear?: boolean}) {
-    if (!this.configuration.get(`enableProgressBars`) || this.json)
+    if (this.progressStyle === null)
       return;
 
     if (this.progress.size + delta > 0) {
@@ -583,7 +590,7 @@ export class StreamReport extends Report {
   }
 
   private writeProgress() {
-    if (!this.configuration.get(`enableProgressBars`) || this.json)
+    if (this.progressStyle === null)
       return;
 
     if (this.progressTimeout !== null)
@@ -608,7 +615,7 @@ export class StreamReport extends Report {
 
       if (typeof progress.lastScaledSize !== `undefined`) {
         const ok = this.progressStyle.chars[0].repeat(progress.lastScaledSize);
-        const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize - progress.lastScaledSize);
+        const ko = this.progressStyle.chars[1].repeat(this.progressMaxScaledSize! - progress.lastScaledSize);
         progressBar = ` ${ok}${ko}`;
       }
 
@@ -633,7 +640,7 @@ export class StreamReport extends Report {
     } else {
       for (const progress of this.progress.values()) {
         const refreshedScaledSize = typeof progress.definition.progress !== `undefined`
-          ? Math.trunc(this.progressMaxScaledSize * progress.definition.progress)
+          ? Math.trunc(this.progressMaxScaledSize! * progress.definition.progress)
           : undefined;
 
         const previousScaledSize = progress.lastScaledSize;
@@ -656,7 +663,7 @@ export class StreamReport extends Report {
   }
 
   private truncate(str: string, {truncate}: {truncate?: boolean} = {}) {
-    if (!this.configuration.get(`enableProgressBars`))
+    if (this.progressStyle === null)
       truncate = false;
 
     if (typeof truncate === `undefined`)
@@ -665,7 +672,7 @@ export class StreamReport extends Report {
     // The -1 is to account for terminals that would wrap after
     // the last column rather before the first overwrite
     if (truncate)
-      str = sliceAnsi(str, 0, process.stdout.columns - 1);
+      str = sliceAnsi(str, 0, (this.stdout as WriteStream).columns - 1);
 
     return str;
   }

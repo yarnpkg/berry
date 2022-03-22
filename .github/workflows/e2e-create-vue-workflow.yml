@@ -1,0 +1,53 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-create-vue-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Create-Vue'
+jobs:
+  chore:
+    name: 'Validating Create-Vue'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test (Vue 3)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn dlx create-vue@3 vue-project --default --typescript --eslint-with-prettier
+        cd vue-project
+        yarn
+
+        # TODO: Remove when the template is updated to use vue-tsc@>=0.30.3
+        # https://github.com/johnsoncodehk/volar/pull/851
+        yarn up vue-tsc
+
+        yarn build
+        yarn lint
+
+    - name: 'Running the integration test (Vue 2)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn dlx create-vue@2 vue-project --default --typescript
+        cd vue-project
+        yarn
+
+        # TODO: Remove when the template is updated to use vue-tsc@>=0.30.3
+        # https://github.com/johnsoncodehk/volar/pull/851
+        yarn up vue-tsc
+
+        yarn build
+      if: |
+        always()

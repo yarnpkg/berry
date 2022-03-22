@@ -61,7 +61,9 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**plugin-installs**](https://gitlab.com/Larry1123/yarn-contrib/-/blob/master/packages/plugin-production-install/README.md) by [**Larry1123**](https://gitlab.com/Larry1123) - create minimal yarn installs after removing development dependencies, unrelated workspaces, `@types` packages, etc
 
-- [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - run builds and tests in parallel according to your workspace dependencies if they have changed, and bundle them up into deployable apps for Docker, AWS Lambda, or any other server.
+- [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - monorepo tooling that leverages Yarn's dependency graph to run `build` and `test` on whats changed in parallel as fast as possible. It also includes a command to `bundle` them up into deployable apps for Docker, AWS Lambda, or any other server. Each command is also available as an individual plugin.
+
+- [**package-yaml**](https://github.com/ojkelly/yarn.build#plugin-package-yaml) by [**yarn.build**](https://github.com/ojkelly/yarn.build) - per package opt-in to transparently using `package.yml` instead of `package.json`
 
 - [**licenses**](https://github.com/tophat/yarn-plugin-licenses) by [**Noah Negin-Ulster**](https://noahnu.com/) - audit direct and indirect dependency licenses to ensure compliance
 
@@ -84,5 +86,11 @@ This is just a centralized list of third-party plugins to make discovery easier.
 - [**after-install**](https://github.com/mhassan1/yarn-plugin-after-install) by [**Marc Hassan**](https://github.com/mhassan1) - adds support for an `afterInstall` hook that runs after every `yarn install`
 
 - [**yaml-manifest**](https://github.com/lyleunderwood/yarn-plugin-yaml-manifest) by [**Lyle Underwood**](https://github.com/lyleunderwood) - use a `package.yml` with comments and whitespace that is automatically synchronized with `package.json`
+
+- [**yarn-plugin-envinfo**](https://github.com/TheKnarf/yarn-plugin-envinfo) by [**TheKnarf**](https://github.com/TheKnarf) - yarn plugin so that you can run envinfo in your project. It'll read a project local configuration file so that different projects can ask for different info. Useful for helping new developers when onboarding them into your project.
+
+- [**publishconfig**](https://github.com/alizeait/yarn-plugin-publishconfig) by [**Ali Zeaiter**](https://github.com/alizeait) - Allows extending `publishConfig` to support any property on top of the default ones supported by yarn.
+
+- [**http-proxy**](https://github.com/arontsang/yarn-plugin-http-proxy) by [**Aron Tsang**](https://github.com/arontsang) - yarn plugin that loads a default http Proxy Agent based on the HTTP_PROXY or HTTPS_PROXY environmental variable when running lifecycle script such as `postinstall`. This is useful for allowing postinstall scripts to run in corporate environments where internet access requires an explicit HTTP Connect Proxy.
 
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!

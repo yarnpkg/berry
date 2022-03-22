@@ -31,6 +31,7 @@ import {isFolderInside}                                                 from './
 import * as formatUtils                                                 from './formatUtils';
 import * as hashUtils                                                   from './hashUtils';
 import * as miscUtils                                                   from './miscUtils';
+import * as nodeUtils                                                   from './nodeUtils';
 import * as scriptUtils                                                 from './scriptUtils';
 import * as semverUtils                                                 from './semverUtils';
 import * as structUtils                                                 from './structUtils';
@@ -41,7 +42,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 5;
+const LOCKFILE_VERSION = 6;
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -269,7 +270,18 @@ export class Project {
     if (locator)
       return {project, locator, workspace: null};
 
-    throw new UsageError(`The nearest package directory (${formatUtils.pretty(configuration, packageCwd, formatUtils.Type.PATH)}) doesn't seem to be part of the project declared in ${formatUtils.pretty(configuration, project.cwd, formatUtils.Type.PATH)}.\n\n- If the project directory is right, it might be that you forgot to list ${formatUtils.pretty(configuration, ppath.relative(project.cwd, packageCwd), formatUtils.Type.PATH)} as a workspace.\n- If it isn't, it's likely because you have a yarn.lock or package.json file there, confusing the project root detection.`);
+    const projectCwdLog = formatUtils.pretty(configuration, project.cwd, formatUtils.Type.PATH);
+    const packageCwdLog = formatUtils.pretty(configuration, ppath.relative(project.cwd, packageCwd), formatUtils.Type.PATH);
+
+    const unintendedProjectLog = `- If ${projectCwdLog} isn't intended to be a project, remove any yarn.lock and/or package.json file there.`;
+    const missingWorkspaceLog = `- If ${projectCwdLog} is intended to be a project, it might be that you forgot to list ${packageCwdLog} in its workspace configuration.`;
+    const decorrelatedProjectLog = `- Finally, if ${projectCwdLog} is fine and you intend ${packageCwdLog} to be treated as a completely separate project (not even a workspace), create an empty yarn.lock file in it.`;
+
+    throw new UsageError(`The nearest package directory (${formatUtils.pretty(configuration, packageCwd, formatUtils.Type.PATH)}) doesn't seem to be part of the project declared in ${formatUtils.pretty(configuration, project.cwd, formatUtils.Type.PATH)}.\n\n${[
+      unintendedProjectLog,
+      missingWorkspaceLog,
+      decorrelatedProjectLog,
+    ].join(`\n`)}`);
   }
 
   constructor(projectCwd: PortablePath, {configuration}: {configuration: Configuration}) {
@@ -698,6 +710,12 @@ export class Project {
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
+    // Doing these calls early is important: it seems calling it after we've started the resolution incurs very high
+    // performance penalty on WSL, with the Gatsby benchmark jumping from ~28s to ~130s. It's possible this is due to
+    // the number of async tasks being listed in the report, although it's strange this doesn't occur on other systems.
+    const currentArchitecture = nodeUtils.getArchitectureSet();
+    const supportedArchitectures = this.configuration.getSupportedArchitectures();
+
     await opts.report.startProgressPromise(Report.progressViaTitle(), async progress => {
       const startPackageResolution = async (locator: Locator) => {
         const originalPkg = await miscUtils.prettifyAsyncErrors(async () => {
@@ -859,8 +877,6 @@ export class Project {
       allResolutions.delete(descriptorHash);
     }
 
-    const supportedArchitectures = this.configuration.getSupportedArchitectures();
-
     const conditionalLocators = new Set<LocatorHash>();
     const disabledLocators = new Set<LocatorHash>();
 
@@ -872,7 +888,7 @@ export class Project {
         continue;
 
       if (!structUtils.isPackageCompatible(pkg, supportedArchitectures)) {
-        if (structUtils.isPackageCompatible(pkg, {os: [process.platform], cpu: [process.arch]})) {
+        if (structUtils.isPackageCompatible(pkg, currentArchitecture)) {
           opts.report.reportWarningOnce(MessageName.GHOST_ARCHITECTURE, `${
             structUtils.prettyLocator(this.configuration, pkg)
           }: Your current architecture (${

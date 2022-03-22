@@ -1,6 +1,7 @@
 import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
 import {UsageError}               from 'clipanion';
 import micromatch                 from 'micromatch';
+import pLimit, {Limit}            from 'p-limit';
 import semver                     from 'semver';
 import {Readable, Transform}      from 'stream';
 
@@ -222,6 +223,65 @@ export class BufferStream extends Transform {
 
   _flush(cb: any) {
     cb(null, Buffer.concat(this.chunks));
+  }
+}
+
+type Deferred = {
+  promise: Promise<void>;
+  resolve: () => void;
+  reject: (err: Error) => void;
+};
+
+function makeDeferred(): Deferred {
+  let resolve: () => void;
+  let reject: (err: Error) => void;
+
+  const promise = new Promise<void>((resolveFn, rejectFn) => {
+    resolve = resolveFn;
+    reject = rejectFn;
+  });
+
+  return {promise, resolve: resolve!, reject: reject!};
+}
+
+export class AsyncActions {
+  private deferred = new Map<string, Deferred>();
+  private promises = new Map<string, Promise<void>>();
+
+  private limit: Limit;
+
+  constructor(limit: number) {
+    this.limit = pLimit(limit);
+  }
+
+  set(key: string, factory: () => Promise<void>) {
+    let deferred = this.deferred.get(key);
+    if (typeof deferred === `undefined`)
+      this.deferred.set(key, deferred = makeDeferred());
+
+    const promise = this.limit(() => factory());
+    this.promises.set(key, promise);
+
+    promise.then(() => {
+      if (this.promises.get(key) === promise) {
+        deferred!.resolve();
+      }
+    }, err => {
+      if (this.promises.get(key) === promise) {
+        deferred!.reject(err);
+      }
+    });
+
+    return deferred.promise;
+  }
+
+  reduce(key: string, factory: (action: Promise<void>) => Promise<void>) {
+    const promise = this.promises.get(key) ?? Promise.resolve();
+    this.set(key, () => factory(promise));
+  }
+
+  async wait() {
+    await Promise.all(this.promises.values());
   }
 }
 

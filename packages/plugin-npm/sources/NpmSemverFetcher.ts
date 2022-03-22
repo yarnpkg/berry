@@ -1,5 +1,5 @@
 import {Configuration, Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {structUtils, tgzUtils}                                     from '@yarnpkg/core';
+import {structUtils, tgzUtils, semverUtils}                        from '@yarnpkg/core';
 import {Locator, MessageName, ReportError}                         from '@yarnpkg/core';
 import semver                                                      from 'semver';
 import {URL}                                                       from 'url';
@@ -90,7 +90,7 @@ export class NpmSemverFetcher implements Fetcher {
   }
 
   static getLocatorUrl(locator: Locator) {
-    const version = semver.clean(locator.reference.slice(PROTOCOL.length));
+    const version = semverUtils.clean(locator.reference.slice(PROTOCOL.length));
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 

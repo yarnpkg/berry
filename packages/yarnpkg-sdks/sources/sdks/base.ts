@@ -45,6 +45,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       const pnpApi = require(\`pnpapi\`);
 
       const isVirtual = str => str.match(/\\/(\\$\\$virtual|__virtual__)\\//);
+      const isPortal = str => str.startsWith("portal:/");
       const normalize = str => str.replace(/\\\\/g, \`/\`).replace(/^\\/?/, \`/\`);
 
       const dependencyTreeRoots = new Set(pnpApi.getDependencyTreeRoots().map(locator => {
@@ -71,7 +72,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
           const resolved = isVirtual(str) ? pnpApi.resolveVirtual(str) : str;
           if (resolved) {
             const locator = pnpApi.findPackageLocator(resolved);
-            if (locator && dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`)) {
+            if (locator && (dependencyTreeRoots.has(\`\${locator.name}@\${locator.reference}\`) || isPortal(locator.reference))) {
               str = resolved;
             }
           }
@@ -112,7 +113,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               // everything else is up to neovim
               case \`neovim\`: {
                 str = normalize(resolved).replace(/\\.zip\\//, \`.zip::\`);
-                str = \`zipfile:\${str}\`;
+                str = \`zipfile://\${str}\`;
               } break;
 
               default: {
@@ -127,8 +128,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       function fromEditorPath(str) {
         switch (hostInfo) {
-          case \`coc-nvim\`:
-          case \`neovim\`: {
+          case \`coc-nvim\`: {
             str = str.replace(/\\.zip::/, \`.zip/\`);
             // The path for coc-nvim is in format of /<pwd>/zipfile:/<pwd>/.yarn/...
             // So in order to convert it back, we use .* to match all the thing
@@ -136,6 +136,12 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             return process.platform === \`win32\`
               ? str.replace(/^.*zipfile:\\//, \`\`)
               : str.replace(/^.*zipfile:/, \`\`);
+          } break;
+
+          case \`neovim\`: {
+            str = str.replace(/\\.zip::/, \`.zip/\`);
+            // The path for neovim is in format of zipfile:///<pwd>/.yarn/...
+            return str.replace(/^zipfile:\\/\\//, \`\`);
           } break;
 
           case \`vscode\`:
@@ -170,8 +176,9 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       let hostInfo = \`unknown\`;
 
       Object.assign(Session.prototype, {
-        onMessage(/** @type {string} */ message) {
-          const parsedMessage = JSON.parse(message)
+        onMessage(/** @type {string | object} */ message) {
+          const isStringMessage = typeof message === 'string';
+          const parsedMessage = isStringMessage ? JSON.parse(message) : message;
 
           if (
             parsedMessage != null &&
@@ -185,9 +192,14 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             }
           }
 
-          return originalOnMessage.call(this, JSON.stringify(parsedMessage, (key, value) => {
-            return typeof value === \`string\` ? fromEditorPath(value) : value;
-          }));
+          const processedMessageJSON = JSON.stringify(parsedMessage, (key, value) => {
+            return typeof value === 'string' ? fromEditorPath(value) : value;
+          });
+
+          return originalOnMessage.call(
+            this,
+            isStringMessage ? processedMessageJSON : JSON.parse(processedMessageJSON)
+          );
         },
 
         send(/** @type {any} */ msg) {

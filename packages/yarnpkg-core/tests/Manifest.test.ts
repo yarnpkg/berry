@@ -6,6 +6,10 @@ describe(`Manifest`, () => {
     expect(manifest.name!.name).toEqual(`foo`);
   });
 
+  it(`should handle 'workspaces' set to null`, () => {
+    expect(() => Manifest.fromText(`{"workspaces":null}`)).not.toThrow();
+  });
+
   describe(`exportTo`, () => {
     it(`should add a scripts field if a script was newly added`, () => {
       const manifest = Manifest.fromText(`{}`);

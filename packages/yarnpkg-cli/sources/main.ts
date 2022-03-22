@@ -1,11 +1,11 @@
-import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                                                          from '@yarnpkg/fslib';
-import {execFileSync}                                                                      from 'child_process';
-import {isCI}                                                                              from 'ci-info';
-import {Cli, UsageError}                                                                   from 'clipanion';
-import {realpathSync}                                                                      from 'fs';
+import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils} from '@yarnpkg/core';
+import {PortablePath, npath, xfs}                                                                     from '@yarnpkg/fslib';
+import {execFileSync}                                                                                 from 'child_process';
+import {isCI}                                                                                         from 'ci-info';
+import {Cli, UsageError}                                                                              from 'clipanion';
+import {realpathSync}                                                                                 from 'fs';
 
-import {pluginCommands}                                                                    from './pluginCommands';
+import {pluginCommands}                                                                               from './pluginCommands';
 
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
@@ -54,13 +54,16 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
   async function exec(cli: Cli<CommandContext>): Promise<void> {
     // Non-exhaustive known requirements:
-    // - 14.0 and 14.1 empty http responses - https://github.com/sindresorhus/got/issues/1496
-    // - 14.10.0 broken streams - https://github.com/nodejs/node/pull/34035 (fix: https://github.com/nodejs/node/commit/0f94c6b4e4)
+    // - 14.15 is the first LTS release
 
     const version = process.versions.node;
-    const range = `>=12 <14 || 14.2 - 14.9 || >14.10.0`;
+    const range = `>=14.15.0`;
 
-    if (process.env.YARN_IGNORE_NODE !== `1` && !semverUtils.satisfiesWithPrereleases(version, range))
+    // YARN_IGNORE_NODE is special because this code needs to execute as early as possible.
+    // It's not a regular core setting because Configuration.find may use functions not available
+    // on older Node versions.
+    const ignoreNode = miscUtils.parseOptionalBoolean(process.env.YARN_IGNORE_NODE);
+    if (!ignoreNode && !semverUtils.satisfiesWithPrereleases(version, range))
       throw new UsageError(`This tool requires a Node version compatible with ${range} (got ${version}). Upgrade Node, or set \`YARN_IGNORE_NODE=1\` in your environment.`);
 
     // Since we only care about a few very specific settings (yarn-path and ignore-path) we tolerate extra configuration key.

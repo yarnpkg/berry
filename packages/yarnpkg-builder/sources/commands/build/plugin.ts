@@ -34,6 +34,8 @@ export default class BuildPluginCommand extends Command {
     description: `build a local plugin`,
     details: `
       This command builds a local plugin.
+
+      For more details about the build process, please consult the \`@yarnpkg/builder\` README: https://github.com/yarnpkg/berry/blob/HEAD/packages/yarnpkg-builder/README.md.
     `,
     examples: [[
       `Build a local plugin`,
@@ -118,7 +120,7 @@ export default class BuildPluginCommand extends Command {
           plugins: [dynamicLibResolver, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node12`,
+          target: `node14`,
         });
 
         for (const warning of res.warnings) {
