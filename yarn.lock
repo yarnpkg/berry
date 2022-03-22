@@ -5683,7 +5683,7 @@ __metadata:
     react: ^16.13.1
     tslib: ^1.13.0
   peerDependencies:
-    ink: ^2.3.0
+    ink: ^3.0.8
     react: ^16.8.4
   languageName: unknown
   linkType: soft
