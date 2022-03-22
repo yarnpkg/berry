@@ -1,14 +1,15 @@
 releases:
   "@yarnpkg/cli": major
   "@yarnpkg/libui": major
+  "@yarnpkg/plugin-constraints": major
+  "@yarnpkg/plugin-interactive-tools": major
+  "@yarnpkg/plugin-version": major
 
 declined:
   - "@yarnpkg/plugin-compat"
-  - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-init"
-  - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
@@ -17,7 +18,6 @@ declined:
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
-  - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
   - "@yarnpkg/core"

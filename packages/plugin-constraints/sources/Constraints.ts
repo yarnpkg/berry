@@ -9,6 +9,7 @@ import pl                                                    from 'tau-prolog';
 
 import {linkProjectToSession}                                from './tauModule';
 
+console.log(`constraints loaded`)
 plLists(pl);
 
 export type EnforcedDependency = {
