@@ -5415,13 +5415,16 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-compat": "workspace:^"
+    "@yarnpkg/plugin-constraints": "workspace:^"
     "@yarnpkg/plugin-dlx": "workspace:^"
     "@yarnpkg/plugin-essentials": "workspace:^"
+    "@yarnpkg/plugin-exec": "workspace:^"
     "@yarnpkg/plugin-file": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
     "@yarnpkg/plugin-github": "workspace:^"
     "@yarnpkg/plugin-http": "workspace:^"
     "@yarnpkg/plugin-init": "workspace:^"
+    "@yarnpkg/plugin-interactive-tools": "workspace:^"
     "@yarnpkg/plugin-link": "workspace:^"
     "@yarnpkg/plugin-nm": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
@@ -5430,6 +5433,10 @@ __metadata:
     "@yarnpkg/plugin-patch": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
     "@yarnpkg/plugin-pnpm": "workspace:^"
+    "@yarnpkg/plugin-stage": "workspace:^"
+    "@yarnpkg/plugin-typescript": "workspace:^"
+    "@yarnpkg/plugin-version": "workspace:^"
+    "@yarnpkg/plugin-workspace-tools": "workspace:^"
     "@yarnpkg/pnpify": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
     ci-info: ^3.2.0
@@ -5790,7 +5797,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints":
+"@yarnpkg/plugin-constraints@workspace:^, @yarnpkg/plugin-constraints@workspace:packages/plugin-constraints":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-constraints@workspace:packages/plugin-constraints"
   dependencies:
@@ -5851,7 +5858,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-exec@workspace:packages/plugin-exec":
+"@yarnpkg/plugin-exec@workspace:^, @yarnpkg/plugin-exec@workspace:packages/plugin-exec":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-exec@workspace:packages/plugin-exec"
   dependencies:
@@ -5937,7 +5944,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools":
+"@yarnpkg/plugin-interactive-tools@workspace:^, @yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
@@ -6131,7 +6138,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript":
+"@yarnpkg/plugin-typescript@workspace:^, @yarnpkg/plugin-typescript@workspace:packages/plugin-typescript":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
@@ -6152,7 +6159,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-version@workspace:packages/plugin-version":
+"@yarnpkg/plugin-version@workspace:^, @yarnpkg/plugin-version@workspace:packages/plugin-version":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
@@ -6179,7 +6186,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
+"@yarnpkg/plugin-workspace-tools@workspace:^, @yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
