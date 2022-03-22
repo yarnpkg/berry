@@ -128,7 +128,7 @@ export default class BuildBundleCommand extends Command {
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node12`,
+          target: `node14`,
         });
 
         for (const warning of res.warnings) {

@@ -1619,4 +1619,53 @@ describe(`Node_Modules`, () => {
         });
       }),
   );
+
+  it(`should support portals to external workspaces`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              ws1: `^1.0.0`,
+              ws2: `^1.0.0`,
+            },
+            resolutions: {
+              ws1: `portal:${portalTarget}/ws1`,
+              ws2: `portal:${portalTarget}/ws2`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            workspaces: [`ws1`, `ws2`],
+          });
+
+          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws1` as PortablePath));
+          await xfs.writeJsonPromise(`${portalTarget}/ws1/package.json` as PortablePath, {
+            name: `ws1`,
+            workspaces: [`ws1`],
+          });
+
+          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws2` as PortablePath));
+          await xfs.writeJsonPromise(`${portalTarget}/ws2/package.json` as PortablePath, {
+            name: `ws2`,
+            workspaces: [`ws2`],
+            dependencies: {
+              ws1: `^1.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.not.toThrow();
+        });
+      }),
+  );
 });

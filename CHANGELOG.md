@@ -6,8 +6,15 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
+### Installs
+- The pnpm linker no longer tries to remove `node_modules` directory, when `node-modules` linker is active
+- The nm linker applies hoisting algorithm on aliased dependencies
+
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
+### Installs
+
+- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 ## 3.2.0
 
 Various improvements have been made in the core to improve performance. Additionally:

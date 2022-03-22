@@ -27,6 +27,13 @@ async function processFile(file: ts.SourceFile) {
 
   const processNode = (node: ts.Node) => {
     switch (node.kind) {
+      case ts.SyntaxKind.TypeAliasDeclaration: {
+        const typeAliasNode = node as ts.TypeAliasDeclaration;
+        if (typeAliasNode.name.getText() === `Hooks`) {
+          throw new UsageError(`Hooks should only be declared using interfaces, not type aliases (in ${file.fileName})`);
+        }
+      } break;
+
       case ts.SyntaxKind.InterfaceDeclaration: {
         const interfaceNode = node as ts.InterfaceDeclaration;
         if (interfaceNode.name.getText() === `Hooks`) {

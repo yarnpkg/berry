@@ -34,7 +34,7 @@
     "directory": "packages/acceptance-tests/pkg-tests-core"
   },
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   },
   "dependencies": {
     "uuid": "^8.3.2"

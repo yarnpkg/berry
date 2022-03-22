@@ -10,14 +10,14 @@ const CACHE_VERSION = 3;
 
 export class PatchResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(`patch:`))
+    if (!patchUtils.isPatchDescriptor(descriptor))
       return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(`patch:`))
+    if (!patchUtils.isPatchLocator(locator))
       return false;
 
     return true;

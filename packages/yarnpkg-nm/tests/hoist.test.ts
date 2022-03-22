@@ -2,11 +2,11 @@ import {hoist, HoisterTree, HoisterResult, HoisterDependencyKind} from '../sourc
 
 const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => {
   let node = nodes.get(key);
-  const identName = key.match(/@?[^@]+/)![0];
+  const name = key.match(/@?[^@]+/)![0];
   if (!node) {
     node = {
-      name: identName,
-      identName,
+      name,
+      identName: (obj[key] || {}).identName || name,
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
@@ -550,5 +550,14 @@ describe(`hoist`, () => {
     };
 
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(5);
+  });
+
+  it(`should hoist aliased packages`, () => {
+    const tree = {
+      '.': {dependencies: [`Aalias`]},
+      Aalias: {identName: `A`, dependencies: [`A`]},
+      A: {dependencies: [`B`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 });
