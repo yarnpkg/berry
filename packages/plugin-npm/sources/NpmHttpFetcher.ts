@@ -1,6 +1,6 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
-import {structUtils, tgzUtils}                      from '@yarnpkg/core';
+import {formatUtils, structUtils, tgzUtils}         from '@yarnpkg/core';
 import semver                                       from 'semver';
 
 import {PROTOCOL}                                   from './constants';
@@ -50,6 +50,7 @@ export class NpmHttpFetcher implements Fetcher {
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 
     const sourceBuffer = await npmHttpUtils.get(params.__archiveUrl, {
+      customErrorMessage: npmHttpUtils.customPackageError,
       configuration: opts.project.configuration,
       ident: locator,
     });

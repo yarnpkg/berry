@@ -47,14 +47,14 @@ function prettyResponseCode({statusCode, statusMessage}: Response, configuration
   return formatUtils.applyHyperlink(configuration, `${prettyStatusCode}${statusMessage ? ` (${statusMessage})` : ``}`, href);
 }
 
-async function prettyNetworkError(response: Promise<Response<any>>, {configuration, customErrorMessage}: {configuration: Configuration, customErrorMessage?: (err: RequestError) => string | null}) {
+async function prettyNetworkError(response: Promise<Response<any>>, {configuration, customErrorMessage}: {configuration: Configuration, customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null}) {
   try {
     return await response;
   } catch (err) {
     if (err.name !== `HTTPError`)
       throw err;
 
-    let message = customErrorMessage?.(err) ?? err.response.body?.error;
+    let message = customErrorMessage?.(err, configuration) ?? err.response.body?.error;
 
     if (message == null) {
       if (err.message.startsWith(`Response code`)) {
@@ -65,7 +65,7 @@ async function prettyNetworkError(response: Promise<Response<any>>, {configurati
     }
 
     if (err instanceof TimeoutError && err.event === `socket`)
-      message += `(can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.SETTING)})`;
+      message += ` (can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.SETTING)})`;
 
     const networkError = new ReportError(MessageName.NETWORK_ERROR, message, report => {
       if (err.response) {
@@ -166,7 +166,7 @@ export enum Method {
 
 export type Options = {
   configuration: Configuration;
-  customErrorMessage?: (err: RequestError) => string | null;
+  customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null;
   headers?: {[headerName: string]: string};
   jsonRequest?: boolean;
   jsonResponse?: boolean;
@@ -183,9 +183,9 @@ export async function request(target: string | URL, body: Body, {configuration, 
   return await executor();
 }
 
-export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
+export async function get(target: string, {configuration, jsonResponse, customErrorMessage, ...rest}: Options) {
   let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
-    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration}).then(response => {
+    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration, customErrorMessage}).then(response => {
       cache.set(target, response.body);
       return response.body;
     });
@@ -202,19 +202,19 @@ export async function get(target: string, {configuration, jsonResponse, ...rest}
 }
 
 export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), options);
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), {customErrorMessage, configuration: options.configuration});
 
   return response.body;
 }
 
 export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), options);
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), {customErrorMessage, configuration: options.configuration});
 
   return response.body;
 }
 
 export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), options);
+  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), {customErrorMessage, configuration: options.configuration});
 
   return response.body;
 }
