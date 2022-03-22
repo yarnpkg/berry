@@ -5,7 +5,6 @@ import {URL}                             from 'url';
 
 import {Hooks}                           from './index';
 import * as npmConfigUtils               from './npmConfigUtils';
-import {MapLike}                         from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -198,14 +197,15 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
   if (header)
     return header;
 
-  if (effectiveConfiguration.get(`npmAuthToken`))
-    return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
+  const authToken = effectiveConfiguration.get(`npmAuthToken`);
+  if (authToken)
+    return `Bearer ${authToken}`;
 
-  if (effectiveConfiguration.get(`npmAuthIdent`)) {
-    const npmAuthIdent = effectiveConfiguration.get(`npmAuthIdent`);
-    if (npmAuthIdent.includes(`:`))
-      return `Basic ${Buffer.from(npmAuthIdent).toString(`base64`)}`;
-    return `Basic ${npmAuthIdent}`;
+  const authIdent = effectiveConfiguration.get(`npmAuthIdent`);
+  if (authIdent) {
+    if (authIdent.includes(`:`))
+      return `Basic ${Buffer.from(authIdent).toString(`base64`)}`;
+    return `Basic ${authIdent}`;
   }
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
@@ -215,7 +215,7 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
   }
 }
 
-function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
+function shouldAuthenticate(authConfiguration: npmConfigUtils.AuthConfiguration, authType: AuthType) {
   switch (authType) {
     case AuthType.CONFIGURATION:
       return authConfiguration.get(`npmAlwaysAuth`);

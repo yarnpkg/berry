@@ -5764,7 +5764,7 @@ __metadata:
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
     "@types/js-yaml": ^3.11.1
-    js-yaml: ^3.10.0
+    js-yaml: ^4.1.0
     pegjs: ^0.10.0
     tslib: ^1.13.0
   languageName: unknown
@@ -6029,6 +6029,7 @@ __metadata:
     "@types/ssri": ^6.0.1
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
     enquirer: ^2.3.6
     semver: ^7.1.2
@@ -16552,7 +16553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^3.10.0, js-yaml@npm:^3.13.1, js-yaml@npm:^3.14.1":
+"js-yaml@npm:^3.13.1, js-yaml@npm:^3.14.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:

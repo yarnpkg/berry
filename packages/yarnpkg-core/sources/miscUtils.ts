@@ -72,6 +72,9 @@ export interface ToMapValue<T extends object> {
   get<K extends keyof T>(key: K): T[K];
 }
 
+export type ToMapValueSource<T> = T extends ToMapValue<infer TObject>
+  ? TObject : never;
+
 export type MapValueToObjectValue<T> =
   T extends Map<infer K, infer V> ? (K extends string | number | symbol ? MapValueToObjectValue<Record<K, V>> : never)
     : T extends ToMapValue<infer V> ? MapValueToObjectValue<V>

@@ -6,11 +6,6 @@ export enum RegistryType {
   PUBLISH_REGISTRY = `npmPublishRegistry`,
 }
 
-
-export interface MapLike {
-  get(key: string): any;
-}
-
 export function normalizeRegistry(registry: string) {
   return registry.replace(/\/$/, ``);
 }
@@ -34,7 +29,7 @@ export function getPublishRegistry(manifest: Manifest, {configuration}: {configu
   return getDefaultRegistry({configuration, type: RegistryType.PUBLISH_REGISTRY});
 }
 
-export function getScopeRegistry(scope: string | null, {configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType}): string {
+export function getScopeRegistry(scope: string | null, {configuration, type = RegistryType.FETCH_REGISTRY}: {configuration: Configuration, type?: RegistryType.FETCH_REGISTRY | RegistryType.PUBLISH_REGISTRY}): string {
   const scopeConfiguration = getScopeConfiguration(scope, {configuration});
   if (scopeConfiguration === null)
     return getDefaultRegistry({configuration, type});
@@ -54,7 +49,7 @@ export function getDefaultRegistry({configuration, type = RegistryType.FETCH_REG
   return normalizeRegistry(configuration.get(RegistryType.FETCH_REGISTRY));
 }
 
-export function getRegistryConfiguration(registry: string, {configuration}: {configuration: Configuration}): MapLike | null {
+export function getRegistryConfiguration(registry: string, {configuration}: {configuration: Configuration}) {
   const registryConfigurations = configuration.get(`npmRegistries`);
   const normalizedRegistry = normalizeRegistry(registry);
 
@@ -69,7 +64,7 @@ export function getRegistryConfiguration(registry: string, {configuration}: {con
   return null;
 }
 
-export function getScopeConfiguration(scope: string | null, {configuration}: {configuration: Configuration}): MapLike | null {
+export function getScopeConfiguration(scope: string | null, {configuration}: {configuration: Configuration}) {
   if (scope === null)
     return null;
 
@@ -82,13 +77,22 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   return scopeConfiguration;
 }
 
-export function getAuthConfiguration(registry: string, {configuration, ident}: {configuration: Configuration, ident?: Ident}): MapLike {
-  const scopeConfiguration = ident && getScopeConfiguration(ident.scope, {configuration});
+export function getAuthConfiguration(registry: string, {configuration, ident}: {configuration: Configuration, ident?: Ident}) {
+  const registryConfiguration = getRegistryConfiguration(registry, {configuration});
+  type AuthConfiguration = typeof registryConfiguration;
+
+  const scopeConfiguration: AuthConfiguration = ident
+    ? getScopeConfiguration(ident.scope, {configuration})
+    : null;
 
   if (scopeConfiguration?.get(`npmAuthIdent`) || scopeConfiguration?.get(`npmAuthToken`))
     return scopeConfiguration;
 
-  const registryConfiguration = getRegistryConfiguration(registry, {configuration});
+  const finalConfiguration: AuthConfiguration =
+    registryConfiguration ??
+    configuration;
 
-  return registryConfiguration || configuration;
+  return finalConfiguration;
 }
+
+export type AuthConfiguration = ReturnType<typeof getAuthConfiguration>;

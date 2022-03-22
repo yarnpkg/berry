@@ -1,6 +1,6 @@
-import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
+import {FAILSAFE_SCHEMA, load} from 'js-yaml';
 
-import {parse}                     from './grammars/syml';
+import {parse}                 from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -141,7 +141,7 @@ function parseViaJsYaml(source: string) {
   if (LEGACY_REGEXP.test(source))
     return parseViaPeg(source);
 
-  const value = safeLoad(source, {
+  const value = load(source, {
     schema: FAILSAFE_SCHEMA,
     json: true,
   });
