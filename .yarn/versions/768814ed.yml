@@ -1,0 +1,11 @@
+releases:
+  "@yarnpkg/parsers": patch
+
+declined:
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"
+  - "@yarnpkg/sdks"
+  - "@yarnpkg/shell"

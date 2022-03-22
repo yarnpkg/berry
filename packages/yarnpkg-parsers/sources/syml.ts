@@ -55,16 +55,9 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
   }
 
   if (typeof value === `object` && value) {
-    let data: any;
-    let sort: boolean;
-
-    if (value instanceof PreserveOrdering) {
-      data = value.data;
-      sort = false;
-    } else {
-      data = value;
-      sort = true;
-    }
+    const [data, sort] = value instanceof PreserveOrdering
+      ? [value.data, false]
+      : [value, true];
 
     const indent = `  `.repeat(indentLevel);
 
