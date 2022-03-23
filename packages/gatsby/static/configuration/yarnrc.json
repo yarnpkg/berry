@@ -729,6 +729,12 @@
       "type": "string",
       "examples": ["yarnpkg/berry"]
     },
+    "tsEnableAutoTypes": {
+      "_package": "@yarnpkg/plugin-typescript",
+      "description": "If true, Yarn will automatically add `@types` dependencies when running `yarn add` with packages that don't provide their own typings (as reported by the Algolia npm database). This behaviour is enabled by default if you have a tsconfig file at the root of your project.",
+      "type": "boolean",
+      "examples": [true]
+    },
     "unsafeHttpWhitelist": {
       "_package": "@yarnpkg/core",
       "description": "This setting lists the hostnames for which using the HTTP protocol is allowed. Any other hostname will be required to use HTTPS instead. The reason behind this decision and more details can be found [here](https://github.com/yarnpkg/berry/pull/416).\n\nGlob patterns are supported.",

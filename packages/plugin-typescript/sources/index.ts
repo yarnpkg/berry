@@ -1,4 +1,4 @@
-import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
+import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package, SettingsType} from '@yarnpkg/core';
 import {structUtils, ThrowReport, miscUtils, semverUtils}                                                  from '@yarnpkg/core';
 import {Filename, ppath, xfs}                                                                              from '@yarnpkg/fslib';
 import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
@@ -26,7 +26,10 @@ const afterWorkspaceDependencyAddition = async (
   const {project} = workspace;
   const {configuration} = project;
 
-  if (!xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename)))
+  const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
+    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename));
+
+  if (!tsEnableAutoTypes)
     return;
 
   const resolver = configuration.makeResolver();
@@ -132,7 +135,21 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
+declare module '@yarnpkg/core' {
+  interface ConfigurationValueMap {
+    tsEnableAutoTypes: boolean | null;
+  }
+}
+
 const plugin: Plugin<EssentialsHooks & PackHooks> = {
+  configuration: {
+    tsEnableAutoTypes: {
+      description: `Whether Yarn should auto-install @types/ dependencies on 'yarn add'`,
+      type: SettingsType.BOOLEAN,
+      isNullable: true,
+      default: null,
+    },
+  },
   hooks: {
     afterWorkspaceDependencyAddition,
     afterWorkspaceDependencyRemoval,
