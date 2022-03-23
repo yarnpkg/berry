@@ -149,10 +149,6 @@ function makeVersionCheckEnv(cb) {
   return makeTemporaryEnv({
     private: true,
     workspaces: [`packages/*`],
-  }, {
-    plugins: [
-      require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-    ],
   }, async ({path, run, ...rest}) => {
     const git = (...args) => execFile(`git`, args, {cwd: path});
 

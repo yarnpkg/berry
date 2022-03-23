@@ -549,11 +549,6 @@ describe(`Commands`, () => {
             'has-bin-entries': `1.0.0`,
           },
         },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
-          ],
-        },
         async ({run}) => {
           await run(`install`);
 
@@ -606,10 +601,6 @@ function makeWorkspacesForeachSinceEnv(cb) {
   return makeTemporaryEnv({
     private: true,
     workspaces: [`packages/*`],
-  }, {
-    plugins: [
-      require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
-    ],
   }, async ({path, run, ...rest}) => {
     await setupWorkspaces(path);
 

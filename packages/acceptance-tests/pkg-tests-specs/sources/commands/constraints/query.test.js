@@ -26,11 +26,7 @@ describe(`Commands`, () => {
   describe(`constraints query`, () => {
     test(
       `test without trailing .`,
-      makeTemporaryEnv({}, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
-        ],
-      }, async({path, run, source}) => {
+      makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -49,11 +45,7 @@ describe(`Commands`, () => {
 
     test(
       `test with a syntax error`,
-      makeTemporaryEnv({}, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
-        ],
-      }, async({path, run, source}) => {
+      makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -72,11 +64,7 @@ describe(`Commands`, () => {
 
     test(
       `test with an unknown predicate`,
-      makeTemporaryEnv({}, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
-        ],
-      }, async({path, run, source}) => {
+      makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -95,11 +83,7 @@ describe(`Commands`, () => {
 
     test(
       `test with an empty predicate`,
-      makeTemporaryEnv({}, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
-        ],
-      }, async({path, run, source}) => {
+      makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -120,11 +104,7 @@ describe(`Commands`, () => {
       for (const [queryDescription, query] of Object.entries(queries)) {
         test(
           `test (${environmentDescription} / ${queryDescription})`,
-          makeTemporaryEnv({}, {
-            plugins: [
-              require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
-            ],
-          }, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({path, run, source}) => {
             await environment(path);
             await writeFile(`${path}/constraints.pro`, constraintsFile);
 
