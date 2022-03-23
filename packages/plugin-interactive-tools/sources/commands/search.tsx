@@ -1,9 +1,9 @@
-import {BaseCommand}                         from '@yarnpkg/cli';
-import {Configuration, structUtils}          from '@yarnpkg/core';
-import type {SubmitInjectedComponent}        from '@yarnpkg/libui/sources/misc/renderForm';
-import {Command, Usage}                      from 'clipanion';
+import {BaseCommand}                  from '@yarnpkg/cli';
+import {Configuration, structUtils}   from '@yarnpkg/core';
+import type {SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
+import {Command, Usage}               from 'clipanion';
 
-import {AlgoliaPackage, search}              from '../algolia';
+import {AlgoliaPackage, search}       from '../algolia';
 
 const TARGETS = [`regular`, `dev`, `peer`];
 
@@ -26,15 +26,15 @@ export default class SearchCommand extends BaseCommand {
   });
 
   async execute() {
-    const {Gem} = await import('@yarnpkg/libui/sources/components/Gem');
-    const {ScrollableItems} = await import('@yarnpkg/libui/sources/components/ScrollableItems');
-    const {useKeypress} = await import('@yarnpkg/libui/sources/hooks/useKeypress');
-    const {useMinistore} = await import('@yarnpkg/libui/sources/hooks/useMinistore');
-    const {renderForm} = await import('@yarnpkg/libui/sources/misc/renderForm');
+    const {Gem} = await import(`@yarnpkg/libui/sources/components/Gem`);
+    const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
+    const {useKeypress} = await import(`@yarnpkg/libui/sources/hooks/useKeypress`);
+    const {useMinistore} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
 
-    const {default: InkTextInput} = await import('ink-text-input');
-    const {Box, Text} = await import('ink');
-    const {default: React, useEffect, useState} = await import('react');
+    const {default: InkTextInput} = await import(`ink-text-input`);
+    const {Box, Text} = await import(`ink`);
+    const {default: React, useEffect, useState} = await import(`react`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 

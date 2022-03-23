@@ -28,7 +28,7 @@ export default class ConstraintsQueryCommand extends BaseCommand {
   query = Option.String();
 
   async execute() {
-    const {Constraints} = await import('../../Constraints');
+    const {Constraints} = await import(`../../Constraints`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);

@@ -38,13 +38,13 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
   });
 
   async execute() {
-    const {ItemOptions} = await import('@yarnpkg/libui/sources/components/ItemOptions');
-    const {Pad} = await import('@yarnpkg/libui/sources/components/Pad');
-    const {ScrollableItems} = await import('@yarnpkg/libui/sources/components/ScrollableItems');
-    const {useMinistore} = await import('@yarnpkg/libui/sources/hooks/useMinistore');
-    const {renderForm} = await import('@yarnpkg/libui/sources/misc/renderForm');
-    const {Box, Text} = await import('ink');
-    const {default: React, useEffect, useRef, useState} = await import('react');
+    const {ItemOptions} = await import(`@yarnpkg/libui/sources/components/ItemOptions`);
+    const {Pad} = await import(`@yarnpkg/libui/sources/components/Pad`);
+    const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
+    const {useMinistore} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
+    const {Box, Text} = await import(`ink`);
+    const {default: React, useEffect, useRef, useState} = await import(`react`);
 
     if (!(this.context.stdout as WriteStream).isTTY)
       throw new UsageError(`This command can only be run in a TTY environment`);
