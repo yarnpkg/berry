@@ -457,7 +457,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   if (!xfs.existsSync(installStatePath))
     return null;
 
-  const locatorState = parseSyml(await xfs.readFilePromise(installStatePath, `utf8`));
+  const locatorState = await parseSyml(await xfs.readFilePromise(installStatePath, `utf8`));
 
   // If we have a higher serialized version than we can handle, ignore the state alltogether
   if (locatorState.__metadata.version > STATE_FILE_VERSION)

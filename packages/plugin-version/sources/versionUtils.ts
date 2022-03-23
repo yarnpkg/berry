@@ -82,7 +82,7 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
 
     const versionPath = ppath.join(deferredVersionFolder, entry);
     const versionContent = await xfs.readFilePromise(versionPath, `utf8`);
-    const versionData = parseSyml(versionContent);
+    const versionData = await parseSyml(versionContent);
 
     for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
       if (decision === Decision.DECLINE)
@@ -146,7 +146,7 @@ export async function updateVersionFiles(project: Project) {
 
     const versionPath = ppath.join(deferredVersionFolder, entry);
     const versionContent = await xfs.readFilePromise(versionPath, `utf8`);
-    const versionData = parseSyml(versionContent);
+    const versionData = await parseSyml(versionContent);
 
     const releases = versionData?.releases;
     if (!releases)
@@ -211,7 +211,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
     ? await xfs.readFilePromise(versionPath, `utf8`)
     : `{}`;
 
-  const versionData = parseSyml(versionContent);
+  const versionData = await parseSyml(versionContent);
   const releaseStore: Releases = new Map();
 
   for (const identStr of versionData.declined || []) {

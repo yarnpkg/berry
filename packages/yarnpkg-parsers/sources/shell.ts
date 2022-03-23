@@ -1,6 +1,8 @@
-import {Argument, ArgumentSegment, ArithmeticExpression, Command, CommandChain, CommandChainThen, CommandLine, CommandLineThen, EnvSegment, parse, RedirectArgument, ShellLine, ValueArgument} from './grammars/shell';
+import {Argument, ArgumentSegment, ArithmeticExpression, Command, CommandChain, CommandChainThen, CommandLine, CommandLineThen, EnvSegment, RedirectArgument, ShellLine, ValueArgument} from './grammars/shell';
 
-export function parseShell(source: string, options: {isGlobPattern: (arg: string) => boolean} = {isGlobPattern: () => false}): ShellLine {
+export async function parseShell(source: string, options: {isGlobPattern: (arg: string) => boolean} = {isGlobPattern: () => false}): Promise<ShellLine> {
+  const {parse} = await import(`./grammars/shell`);
+
   try {
     return parse(source, options);
   } catch (error) {

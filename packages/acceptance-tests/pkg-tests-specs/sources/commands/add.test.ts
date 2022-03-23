@@ -281,7 +281,7 @@ describe(`Commands`, () => {
         await run(`add`, `inject-node-gyp`);
 
         const content = await xfs.readFilePromise(`${path}/yarn.lock` as PortablePath, `utf8`);
-        const lock = parseSyml(content);
+        const lock = await parseSyml(content);
 
         await expect(lock).toMatchObject({
           [`inject-node-gyp@npm:^1.0.0`]: {

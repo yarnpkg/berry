@@ -2,7 +2,7 @@ import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPac
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
 import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
+import {PackageRegistry, PnpApi, PnpSettings} from '@yarnpkg/pnp';
 import {UsageError}                                                                                             from 'clipanion';
 
 import {getPnpPath}                                                                                             from './index';
@@ -336,6 +336,12 @@ export class PnpInstaller implements Installer {
     }
 
     await this.transformPnpSettings(pnpSettings);
+
+    const {
+      generateInlinedScript,
+      generateSplitScript,
+      getESMLoaderTemplate
+    } = await import('@yarnpkg/pnp');
 
     if (this.opts.project.configuration.get(`pnpEnableInlining`)) {
       const loaderFile = generateInlinedScript(pnpSettings);

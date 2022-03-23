@@ -1,17 +1,21 @@
-import createModule            from './libzipSync';
 import {Libzip, makeInterface} from './makeInterface';
 
-let mod: Libzip | null = null;
+let syncLibzip: Libzip | null = null;
+let asyncLibzip: Promise<Libzip> | null = null;
 
 export function getLibzipSync() {
-  if (mod === null)
-    mod = makeInterface(createModule());
-
-  return mod;
+  throw new Error(`Not for now`)
 }
 
 export async function getLibzipPromise() {
-  return getLibzipSync();
+  if (asyncLibzip === null) {
+    asyncLibzip = import('./libzipAsync').then(async ({default: createModule}) => {
+      const libzip = await createModule();
+      return makeInterface(libzip);
+    });
+  }
+
+  return asyncLibzip;
 }
 
 export type {Libzip} from './makeInterface';

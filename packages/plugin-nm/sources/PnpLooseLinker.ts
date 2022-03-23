@@ -3,7 +3,7 @@ import {VirtualFS, ZipOpenFS, ppath, Filename}         from '@yarnpkg/fslib';
 import {getLibzipPromise}                              from '@yarnpkg/libzip';
 import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/nm';
 import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
-import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
+import {PnpSettings, DependencyTarget} from '@yarnpkg/pnp';
 
 export class PnpLooseLinker extends PnpLinker {
   protected mode = `loose`;
@@ -25,7 +25,9 @@ class PnpLooseInstaller extends PnpInstaller {
       }),
     });
 
+    const {makeRuntimeApi} = await import(`@yarnpkg/pnp`);
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
+
     const {tree, errors} = buildNodeModulesTree(pnp, {pnpifyFs: false, project: this.opts.project});
     if (!tree) {
       for (const {messageName, text} of errors)

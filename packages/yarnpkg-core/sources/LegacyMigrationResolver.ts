@@ -44,7 +44,7 @@ export class LegacyMigrationResolver implements Resolver {
       return;
 
     const content = await xfs.readFilePromise(lockfilePath, `utf8`);
-    const parsed = parseSyml(content);
+    const parsed = await parseSyml(content);
 
     // No need to enable it either if the lockfile is modern
     if (Object.prototype.hasOwnProperty.call(parsed, `__metadata`))

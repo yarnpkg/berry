@@ -306,7 +306,7 @@ export class Project {
       // We store the salted checksum of the lockfile in order to invalidate the install state when needed
       this.lockFileChecksum = makeLockfileChecksum(content);
 
-      const parsed: any = parseSyml(content);
+      const parsed: any = await parseSyml(content);
 
       // Protects against v1 lockfiles
       if (parsed.__metadata) {

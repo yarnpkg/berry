@@ -72,24 +72,24 @@ const ANSI_C_STRING_ESCAPE_TESTS: Array<[string, string]> = [
 describe(`Shell parser`, () => {
   describe(`Valid commands`, () => {
     for (const command of VALID_COMMANDS) {
-      it(`should parse "${command}"`, () => {
-        expect(() => parseShell(command)).not.toThrow();
+      it(`should parse "${command}"`, async () => {
+        await expect(parseShell(command)).rejects.toThrow();
       });
     }
   });
 
   describe(`Invalid commands`, () => {
     for (const command of INVALID_COMMANDS) {
-      it(`shouldn't parse "${command}"`, () => {
-        expect(() => parseShell(command)).toThrow();
+      it(`shouldn't parse "${command}"`, async () => {
+        await expect(parseShell(command)).rejects.toThrow();
       });
     }
   });
 
   describe(`Redirections`, () => {
     describe(`fd`, () => {
-      it(`shouldn't parse fds that aren't single digits as part of the redirection`, () => {
-        expect(parseShell(`echo 10> /dev/null`)).toStrictEqual([expect.objectContaining({
+      it(`shouldn't parse fds that aren't single digits as part of the redirection`, async () => {
+        await expect(parseShell(`echo 10> /dev/null`)).resolves.toStrictEqual([expect.objectContaining({
           command: expect.objectContaining({
             chain: expect.objectContaining({
               args: [
@@ -102,8 +102,8 @@ describe(`Shell parser`, () => {
         })]);
       });
 
-      it(`shouldn't parse fds that aren't directly next to the redirection as part of the redirection`, () => {
-        expect(parseShell(`echo 1 > /dev/null`)).toStrictEqual([expect.objectContaining({
+      it(`shouldn't parse fds that aren't directly next to the redirection as part of the redirection`, async () => {
+        await expect(parseShell(`echo 1 > /dev/null`)).resolves.toStrictEqual([expect.objectContaining({
           command: expect.objectContaining({
             chain: expect.objectContaining({
               args: [
@@ -119,9 +119,9 @@ describe(`Shell parser`, () => {
   });
 
   describe(`String parse`, () => {
-    it(`should parse parse double quote string currectly`, () => {
+    it(`should parse parse double quote string currectly`, async () => {
       for (const [original, raw] of DOUBLE_QUOTE_STRING_ESCAPE_TESTS) {
-        expect(parseShell(`echo "${original}"`)).toStrictEqual([expect.objectContaining({
+        await expect(parseShell(`echo "${original}"`)).resolves.toStrictEqual([expect.objectContaining({
           command: expect.objectContaining({
             chain: expect.objectContaining({
               args: [
@@ -134,9 +134,9 @@ describe(`Shell parser`, () => {
       }
     });
 
-    it(`should parse parse ANSI-C quote string currectly`, () => {
+    it(`should parse parse ANSI-C quote string currectly`, async () => {
       for (const [original, raw] of ANSI_C_STRING_ESCAPE_TESTS) {
-        expect(parseShell(`echo $'${original}'`)).toStrictEqual([expect.objectContaining({
+        await expect(parseShell(`echo $'${original}'`)).resolves.toStrictEqual([expect.objectContaining({
           command: expect.objectContaining({
             chain: expect.objectContaining({
               args: [
@@ -177,8 +177,8 @@ const STRINGIFIER_TESTS: Array<[string, string]> = [
 
 describe(`Shell stringifier`, () => {
   for (const [original, prettyPrinted] of STRINGIFIER_TESTS) {
-    it(`should pretty print '${original}' as '${prettyPrinted}'`, () => {
-      expect(stringifyShell(parseShell(original))).toStrictEqual(prettyPrinted);
+    it(`should pretty print '${original}' as '${prettyPrinted}'`, async () => {
+      expect(stringifyShell(await parseShell(original))).toStrictEqual(prettyPrinted);
     });
   }
 });

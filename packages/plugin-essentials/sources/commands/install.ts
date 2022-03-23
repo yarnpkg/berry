@@ -351,8 +351,8 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   let parsedLeft;
   let parsedRight;
   try {
-    parsedLeft = parseSyml(left);
-    parsedRight = parseSyml(right);
+    parsedLeft = await parseSyml(left);
+    parsedRight = await parseSyml(right);
   } catch (error) {
     throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }

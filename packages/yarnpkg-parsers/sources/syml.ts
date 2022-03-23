@@ -1,7 +1,3 @@
-import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
-
-import {parse}                     from './grammars/syml';
-
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
 // The following keys will always be stored at the top of the object, in the
@@ -128,18 +124,22 @@ export function stringifySyml(value: any) {
 
 stringifySyml.PreserveOrdering = PreserveOrdering;
 
-function parseViaPeg(source: string) {
+async function parseViaPeg(source: string) {
   if (!source.endsWith(`\n`))
     source += `\n`;
+
+  const {parse} = await import('./grammars/syml');
 
   return parse(source);
 }
 
 const LEGACY_REGEXP = /^(#.*(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
 
-function parseViaJsYaml(source: string) {
+async function parseViaJsYaml(source: string) {
   if (LEGACY_REGEXP.test(source))
-    return parseViaPeg(source);
+    return await parseViaPeg(source);
+
+  const {default: {safeLoad, FAILSAFE_SCHEMA}} = await import('js-yaml');
 
   const value = safeLoad(source, {
     schema: FAILSAFE_SCHEMA,
@@ -160,6 +160,6 @@ function parseViaJsYaml(source: string) {
   return value as {[key: string]: string};
 }
 
-export function parseSyml(source: string) {
-  return parseViaJsYaml(source);
+export async function parseSyml(source: string) {
+  return await parseViaJsYaml(source);
 }
