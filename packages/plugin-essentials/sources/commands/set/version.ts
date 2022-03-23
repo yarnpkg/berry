@@ -87,26 +87,26 @@ export default class SetVersionCommand extends BaseCommand {
     };
 
     let bundleRef: {
-      version: string | null;
+      version: string;
       url: string;
     };
 
-    const getRef = (url: string, version: string | null = null) => {
-      return version ? {version, url: url.replace(/\{\}/g, version)} : {version, url};
+    const getRef = (url: string, version: string) => {
+      return {version, url: url.replace(/\{\}/g, version)};
     };
 
     if (this.version === `self`)
-      bundleRef = getRef(getBundlePath());
+      bundleRef = {url: getBundlePath(), version: YarnVersion ?? `self`};
     else if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `stable`));
     else if (this.version === `canary`)
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `canary`));
     else if (this.version === `classic`)
-      bundleRef = getRef(`https://nightly.yarnpkg.com/latest.js`);
+      bundleRef = {url: `https://nightly.yarnpkg.com/latest.js`, version: `classic`};
     else if (this.version.match(/^https?:/))
-      bundleRef = getRef(this.version);
+      bundleRef = {url: this.version, version: `remote`};
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
-      bundleRef = getRef(`file://${npath.resolve(this.version)}`);
+      bundleRef = {url: `file://${npath.resolve(this.version)}`, version: `file`};
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, this.version);
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
@@ -159,18 +159,17 @@ export async function resolveTag(configuration: Configuration, request: `stable`
   return data.latest[request];
 }
 
-export async function setVersion(configuration: Configuration, bundleVersion: string | null, fetchBuffer: () => Promise<Buffer>, {report}: {report: Report}) {
+export async function setVersion(configuration: Configuration, bundleVersion: string, fetchBuffer: () => Promise<Buffer>, {report}: {report: Report}) {
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
   const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
-
   const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
-  const projectPath = ppath.relative(projectCwd, absolutePath);
+
+  const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
 
   const yarnPath = configuration.get(`yarnPath`);
-  const updateConfig = yarnPath === null || yarnPath.startsWith(`${releaseFolder}/`);
-  const updateFile = yarnPath && yarnPath.startsWith(`${releaseFolder}/`);
+  const updateFile = yarnPath || !isTaggedYarnVersion;
 
   if (updateFile) {
     const bundleBuffer = await fetchBuffer();
@@ -198,30 +197,36 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
     await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
 
     await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
-  }
 
-  if (updateConfig) {
+    if (!yarnPath || ppath.contains(releaseFolder, yarnPath)) {
+      await Configuration.updateConfiguration(projectCwd, {
+        yarnPath: ppath.relative(projectCwd, absolutePath),
+      });
+    }
+  } else {
+    await xfs.removePromise(ppath.dirname(absolutePath));
+
     await Configuration.updateConfiguration(projectCwd, {
-      yarnPath: projectPath,
-    });
-
-    const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
-
-    manifest.packageManager = `yarn@${
-      bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion)
-        ? bundleVersion
-        // If the version isn't tagged, we use the latest stable version as the wrapper
-        : await resolveTag(configuration, `stable`)
-    }`;
-
-    const data = {};
-    manifest.exportTo(data);
-
-    const path = ppath.join(projectCwd, Manifest.fileName);
-    const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
-
-    await xfs.changeFilePromise(path, content, {
-      automaticNewlines: true,
+      yarnPath: Configuration.deleteProperty,
     });
   }
+
+  const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
+
+  manifest.packageManager = `yarn@${
+    bundleVersion && isTaggedYarnVersion
+      ? bundleVersion
+      // If the version isn't tagged, we use the latest stable version as the wrapper
+      : await resolveTag(configuration, `stable`)
+  }`;
+
+  const data = {};
+  manifest.exportTo(data);
+
+  const path = ppath.join(projectCwd, Manifest.fileName);
+  const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
+
+  await xfs.changeFilePromise(path, content, {
+    automaticNewlines: true,
+  });
 }

@@ -107,7 +107,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
       const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(configuration, `sources`, bundleBuffer, {
+      await setVersion(configuration, `sources`, async () => bundleBuffer, {
         report,
       });
 
