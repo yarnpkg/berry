@@ -1,5 +1,6 @@
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package} from '@yarnpkg/core';
 import {structUtils, ThrowReport, miscUtils, semverUtils}                                                  from '@yarnpkg/core';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
 import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
 import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
@@ -24,6 +25,9 @@ const afterWorkspaceDependencyAddition = async (
 
   const {project} = workspace;
   const {configuration} = project;
+
+  if (!xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename)))
+    return;
 
   const resolver = configuration.makeResolver();
   const resolveOptions: ResolveOptions = {
