@@ -67,6 +67,17 @@ See also: the [`Linker` interface](https://github.com/yarnpkg/berry/blob/master/
 
 See also: the [`Installer` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Installer.ts#L18)
 
+### Local Cache
+
+The local cache is a way to protect against registries going down by keeping a cache of your packages within your very project (often checked-in within the repository). While not always practical (it causes the repository size to grow, although we have ways to mitigate it significantly), it presents various interesting properties:
+
+- It doesn't require additional infrastructure, such as a [Verdaccio proxy](https://verdaccio.org/)
+- It doesn't require additional configuration, such as registry authentication
+- The install fetch step is as fast as it can be, with no data transfer at all
+- It lets you reach [zero-installs](https://yarnpkg.com/features/zero-installs) if you also use the PnP linker
+
+To enable the local cache, set [`enableGlobalCache`](/configuration/yarnrc#enableGlobalCache) to `false`, run an install, and add the new artifacts to your repository (you might want to [update your gitignore](/getting-started/qa#which-files-should-be-gitignored) accordingly).
+
 ### Locator
 
 A locator is a combination of a package name (for example `lodash`) and a package <abbr>reference</abbr> (for example `1.2.3`). Locators are used to identify a single unique package (interestingly, all valid locators also are valid <abbr>descriptors</abbr>).
