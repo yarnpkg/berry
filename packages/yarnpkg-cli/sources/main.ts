@@ -145,7 +145,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      console.log(Date.now(), `before runExit`);
       await cli.runExit(command, {
         cwd: npath.toPortablePath(process.cwd()),
         plugins: pluginConfiguration,
@@ -157,7 +156,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     }
   }
 
-  console.log(Date.now(), `before run`);
   return run()
     .catch(error => {
       process.stdout.write(error.stack || error.message);
