@@ -1,7 +1,7 @@
 import {getDynamicLibs}                                                     from '@yarnpkg/cli';
-import {StreamReport, MessageName, Configuration, formatUtils, structUtils, hashUtils} from '@yarnpkg/core';
+import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
 import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
-import {Filename, npath, PortablePath, ppath, xfs}                                                         from '@yarnpkg/fslib';
+import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
 import {Command, Option, Usage}                                             from 'clipanion';
@@ -11,7 +11,6 @@ import {createRequire}                                                      from
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
 import {promisify}                                                          from 'util';
-import {webpack}                                                            from 'webpack';
 
 import {findPlugins}                                                        from '../../tools/findPlugins';
 
@@ -58,10 +57,6 @@ export default class BuildBundleCommand extends Command {
 
   plugins = Option.Array(`--plugin`, [], {
     description: `An array of plugins that should be included besides the ones specified in the profile`,
-  });
-
-  split = Option.Boolean(`--split`, false, {
-    description: `Build a bundle that splits the application then unifies it into a self-extracting packaged app`,
   });
 
   noGitHash = Option.Boolean(`--no-git-hash`, false, {
@@ -119,89 +114,38 @@ export default class BuildBundleCommand extends Command {
           },
         };
 
-        await xfs.mktempPromise(async p => {
-          let banner = `/* eslint-disable */\n//prettier-ignore\n`;
-          if (this.split)
-            banner += `import {createRequire} from 'module';\nconst require = createRequire(import.meta.url);`;
-
-          const res = await build({
-            banner: {js: banner},
-            entryPoints: [path.join(basedir, `sources/cli.ts`)],
-            bundle: true,
-            splitting: this.split,
-            define: {YARN_VERSION: JSON.stringify(version)},
-            logLevel: `silent`,
-            format: this.split ? `esm` : `iife`,
-            platform: `node`,
-            plugins: [valLoader, pnpPlugin()],
-            minify: !this.noMinify,
-            sourcemap: this.sourceMap ? `inline` : false,
-            target: `node14`,
-            outExtension: {[`.js`]: '.mjs'},
-            ...this.split ? {
-              outdir: npath.fromPortablePath(p),
-            } : {
-              outfile: output,
-            }
-          });
-
-          if (this.split) {
-            const chunks = await xfs.readdirPromise(p);
-
-            let payload = ``;
-
-            const packFiles = async () => {
-              return await Promise.all(chunks.map(async name => {
-                return [name, await xfs.readFilePromise(ppath.join(p, name), `base64`)];
-              }));
-            };
-
-            payload += `const fs = require('fs');\n`;
-            payload += `const os = require('os');\n`;
-            payload += `const path = require('path');\n`;
-            payload += `\n`;
-            payload += `const unpackDir = path.join(os.homedir(), '.yarn/berry/chunks', hash);\n`;
-            payload += `const flagFile = path.join(unpackDir, '.ready');\n`;
-            payload += `const entryFile = path.join(unpackDir, 'cli.mjs');\n`;
-            payload += `\n`;
-            payload += `if (!fs.existsSync(flagFile)) {\n`;
-            payload += `  const files = JSON.parse(${JSON.stringify(JSON.stringify(await packFiles()))});\n`;
-            payload += `\n`;
-            payload += `  fs.rmSync(unpackDir, {force: true, recursive: true});\n`;
-            payload += `  fs.mkdirSync(unpackDir, {recursive: true});\n`;
-            payload += `\n`;
-            payload += `  Promise.all(files.map(i => fs.promises.writeFile(path.join(unpackDir, i[0]), i[1], 'base64'))).then(() => {\n`;
-            payload += `    fs.writeFileSync(flagFile, '');\n`;
-            payload += `    import(entryFile);\n`;
-            payload += `  });\n`;
-            payload += `} else {\n`;
-            payload += `  import(entryFile);\n`;
-            payload += `}\n`;
-
-            const hash = hashUtils.makeHash(payload);
-            payload = `const hash = ${JSON.stringify(hash)};\n\n${payload}`;
-
-            await xfs.writeFilePromise(output as PortablePath, payload);
-
-            report.reportWarning(MessageName.UNNAMED, `Note: The split bundle hash is ${hash}`);
-          }
-
-          for (const warning of res.warnings) {
-            if (warning.location !== null)
-              continue;
-
-            report.reportWarning(MessageName.UNNAMED, warning.text);
-          }
-
-
-          for (const warning of res.warnings) {
-            if (warning.location === null)
-              continue;
-
-            report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
-            report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
-          }
+        const res = await build({
+          banner: {
+            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+          },
+          entryPoints: [path.join(basedir, `sources/cli.ts`)],
+          bundle: true,
+          define: {YARN_VERSION: JSON.stringify(version)},
+          outfile: output,
+          logLevel: `silent`,
+          format: `iife`,
+          platform: `node`,
+          plugins: [valLoader, pnpPlugin()],
+          minify: !this.noMinify,
+          sourcemap: this.sourceMap ? `inline` : false,
+          target: `node14`,
         });
+
+        for (const warning of res.warnings) {
+          if (warning.location !== null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, warning.text);
+        }
+
+
+        for (const warning of res.warnings) {
+          if (warning.location === null)
+            continue;
+
+          report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
+          report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
+        }
       });
     });
 
