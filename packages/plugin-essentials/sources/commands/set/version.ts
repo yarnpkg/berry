@@ -68,6 +68,10 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
+  useYarnPath = Option.Boolean(`--yarn-path`, false, {
+    description: `Set the yarnPath setting even if the version can be accessed by Corepack`,
+  });
+
   onlyIfNeeded = Option.Boolean(`--only-if-needed`, false, {
     description: `Only lock the Yarn version if it isn't already locked`,
   });
@@ -133,7 +137,7 @@ export default class SetVersionCommand extends BaseCommand {
         }
       };
 
-      await setVersion(configuration, bundleRef.version, fetchBuffer, {report});
+      await setVersion(configuration, bundleRef.version, fetchBuffer, {report, useYarnPath: this.useYarnPath});
     });
 
     return report.exitCode();
@@ -159,7 +163,7 @@ export async function resolveTag(configuration: Configuration, request: `stable`
   return data.latest[request];
 }
 
-export async function setVersion(configuration: Configuration, bundleVersion: string, fetchBuffer: () => Promise<Buffer>, {report}: {report: Report}) {
+export async function setVersion(configuration: Configuration, bundleVersion: string, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
@@ -169,7 +173,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
 
   const yarnPath = configuration.get(`yarnPath`);
-  const updateFile = yarnPath || !isTaggedYarnVersion;
+  const updateFile = yarnPath || !isTaggedYarnVersion || useYarnPath;
 
   if (updateFile) {
     const bundleBuffer = await fetchBuffer();
