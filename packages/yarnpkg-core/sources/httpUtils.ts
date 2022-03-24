@@ -1,5 +1,5 @@
 import {PortablePath, xfs}                                   from '@yarnpkg/fslib';
-import {ExtendOptions, RequestError, Response, TimeoutError} from 'got';
+import type {ExtendOptions, RequestError, Response}          from 'got';
 import {Agent as HttpsAgent}                                 from 'https';
 import {Agent as HttpAgent}                                  from 'http';
 import micromatch                                            from 'micromatch';
@@ -13,7 +13,7 @@ import * as formatUtils                                      from './formatUtils
 import {MapValue, MapValueToObjectValue}                     from './miscUtils';
 import * as miscUtils                                        from './miscUtils';
 
-export {RequestError} from 'got';
+export type {RequestError}                                   from 'got';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
 const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
@@ -64,7 +64,7 @@ async function prettyNetworkError(response: Promise<Response<any>>, {configurati
       }
     }
 
-    if (err instanceof TimeoutError && err.event === `socket`)
+    if (err.code === `ETIMEDOUT` && err.event === `socket`)
       message += `(can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.SETTING)})`;
 
     const networkError = new ReportError(MessageName.NETWORK_ERROR, message, report => {

@@ -10,5 +10,6 @@ export default class VersionCommand extends BaseCommand {
 
   async execute() {
     this.context.stdout.write(`${YarnVersion || `<unknown>`}\n`);
+    console.log(Date.now(), `before return`)
   }
 }

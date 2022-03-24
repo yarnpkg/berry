@@ -127,10 +127,12 @@ export default class BuildBundleCommand extends Command {
 
           console.log(p);
 
+          let banner = `/* eslint-disable */\n//prettier-ignore\n`;
+          if (this.split)
+            banner += `import {createRequire} from 'module';\nconst require = createRequire(import.meta.url);`;
+
           const res = await build({
-            banner: {
-              js: `/* eslint-disable */\n//prettier-ignore\nimport {createRequire} from 'module';\nconst require = createRequire(import.meta.url);`,
-            },
+            banner: {js: banner},
             entryPoints: [path.join(basedir, `sources/cli.ts`)],
             bundle: true,
             splitting: this.split,
