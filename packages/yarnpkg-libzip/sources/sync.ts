@@ -4,7 +4,10 @@ let syncLibzip: Libzip | null = null;
 let asyncLibzip: Promise<Libzip> | null = null;
 
 export function getLibzipSync() {
-  throw new Error(`Not for now`)
+  if (syncLibzip === null)
+    syncLibzip = makeInterface(require('./libzipSync')());
+
+  return syncLibzip;
 }
 
 export async function getLibzipPromise() {
