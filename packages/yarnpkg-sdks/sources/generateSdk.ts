@@ -65,7 +65,7 @@ export class IntegrationsFile {
 
     let data;
     try {
-      data = await parseSyml(content || `{}`);
+      data = parseSyml(content || `{}`);
     } catch (error) {
       error.message += ` (when parsing ${path})`;
       throw error;

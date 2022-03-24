@@ -1159,7 +1159,7 @@ export class Configuration {
 
         let data;
         try {
-          data = await parseSyml(content) as any;
+          data = parseSyml(content) as any;
         } catch (error) {
           let tip = ``;
 
@@ -1186,7 +1186,7 @@ export class Configuration {
 
     if (xfs.existsSync(homeRcFilePath)) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
-      const data = await parseSyml(content) as any;
+      const data = parseSyml(content) as any;
 
       return {path: homeRcFilePath, cwd: homeFolder, data};
     }
@@ -1228,7 +1228,7 @@ export class Configuration {
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
     const current = xfs.existsSync(configurationPath)
-      ? await parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
+      ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
       : {};
 
     let patched = false;

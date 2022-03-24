@@ -7,7 +7,7 @@ const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/
 
 export async function getAvailablePlugins(configuration: Configuration) {
   const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
-  const data = await parseSyml(raw.toString());
+  const data = parseSyml(raw.toString());
 
   return data;
 }

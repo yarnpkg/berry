@@ -196,7 +196,7 @@ export const readSyml = async (source: PortablePath): Promise<any> => {
   const fileContent = await exports.readFile(source, `utf8`);
 
   try {
-    return await parseSyml(fileContent);
+    return parseSyml(fileContent);
   } catch (error) {
     throw new Error(`Invalid syml file (${source})`);
   }
