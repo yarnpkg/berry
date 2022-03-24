@@ -214,7 +214,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableGlobalCache: {
     description: `If true, the system-wide cache folder will be used regardless of \`cache-folder\``,
     type: SettingsType.BOOLEAN,
-    default: false,
+    default: true,
   },
 
   // Settings related to the output style

@@ -1620,6 +1620,35 @@ describe(`Node_Modules`, () => {
       }),
   );
 
+  it(`should reinstall and rebuild dependencies deleted by the user on the next install`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+          [`one-dep-scripted`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+        await xfs.removePromise(`${path}/node_modules/one-dep-scripted` as PortablePath);
+
+        const {stdout} = await run(`install`);
+
+        // Yarn must reinstall and rebuild only the removed package
+        expect(stdout).not.toMatch(new RegExp(`no-deps-scripted@npm:1.0.0 must be built`));
+        expect(stdout).toMatch(new RegExp(`one-dep-scripted@npm:1.0.0 must be built`));
+
+        await expect(source(`require('one-dep-scripted')`)).resolves.toMatchObject({
+          name: `one-dep-scripted`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
   it(`should support portals to external workspaces`,
     makeTemporaryEnv(
       {
