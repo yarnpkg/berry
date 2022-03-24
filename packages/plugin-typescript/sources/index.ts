@@ -1,12 +1,12 @@
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, DescriptorHash, Package, SettingsType} from '@yarnpkg/core';
-import {structUtils, ThrowReport, miscUtils, semverUtils}                                                  from '@yarnpkg/core';
-import {Filename, ppath, xfs}                                                                              from '@yarnpkg/fslib';
-import {Hooks as EssentialsHooks}                                                                          from '@yarnpkg/plugin-essentials';
-import {suggestUtils}                                                                                      from '@yarnpkg/plugin-essentials';
-import {Hooks as PackHooks}                                                                                from '@yarnpkg/plugin-pack';
-import semver                                                                                              from 'semver';
+import {structUtils, ThrowReport, miscUtils, semverUtils}                                                                from '@yarnpkg/core';
+import {Filename, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
+import {Hooks as EssentialsHooks}                                                                                        from '@yarnpkg/plugin-essentials';
+import {suggestUtils}                                                                                                    from '@yarnpkg/plugin-essentials';
+import {Hooks as PackHooks}                                                                                              from '@yarnpkg/plugin-pack';
+import semver                                                                                                            from 'semver';
 
-import {hasDefinitelyTyped}                                                                                from './typescriptUtils';
+import {hasDefinitelyTyped}                                                                                              from './typescriptUtils';
 
 const getTypesName = (descriptor: Descriptor) => {
   return descriptor.scope

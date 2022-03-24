@@ -1,5 +1,4 @@
-import {xfs}           from '@yarnpkg/fslib';
-import {stringifySyml} from '@yarnpkg/parsers';
+import {xfs} from '@yarnpkg/fslib';
 
 describe(`Protocols`, () => {
   describe(`exec:`, () => {

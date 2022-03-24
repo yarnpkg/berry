@@ -4,7 +4,7 @@ import {merge}                              from 'lodash';
 import {fs, yarn}                           from 'pkg-tests-core';
 
 const {unpackToDirectory} = fs;
-const {writeConfiguration, readManifest} = yarn;
+const {readManifest} = yarn;
 
 describe(`Plugins`, () => {
   describe(`typescript`, () => {
@@ -128,8 +128,8 @@ describe(`Plugins`, () => {
       test(
         `it should add @types with the range '^<original-major>' by default`,
         makeTemporaryEnv({}, {
-  tsEnableAutoTypes: true,
-}, async ({path, run, source}) => {
+          tsEnableAutoTypes: true,
+        }, async ({path, run, source}) => {
           await run(`add`, `is-number@^1.0.0`);
 
           await expect(readManifest(path)).resolves.toMatchObject({
