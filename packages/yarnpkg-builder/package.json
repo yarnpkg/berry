@@ -12,8 +12,7 @@
     "clipanion": "^3.2.0-rc.4",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0",
-    "webpack": "^5.70.0"
+    "tslib": "^1.13.0"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",

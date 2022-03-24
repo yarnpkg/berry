@@ -120,13 +120,6 @@ export default class BuildBundleCommand extends Command {
         };
 
         await xfs.mktempPromise(async p => {
-          xfs.detachTemp(p);
-
-          const esmDir = ppath.join(p, `esm` as Filename);
-          const cjsDir = ppath.join(p, `cjs` as Filename);
-
-          console.log(p);
-
           let banner = `/* eslint-disable */\n//prettier-ignore\n`;
           if (this.split)
             banner += `import {createRequire} from 'module';\nconst require = createRequire(import.meta.url);`;
@@ -146,54 +139,20 @@ export default class BuildBundleCommand extends Command {
             target: `node14`,
             outExtension: {[`.js`]: '.mjs'},
             ...this.split ? {
-              outdir: npath.fromPortablePath(esmDir),
+              outdir: npath.fromPortablePath(p),
             } : {
               outfile: output,
             }
           });
 
           if (this.split) {
-            /*
-            await new Promise((resolve, reject) => {
-              webpack({
-                mode: 'production',
-                target: 'node',
-                bail: true,
-                cache: false,
-                entry: {
-                  cli: ppath.join(esmDir, `cli.js` as Filename),
-                },
-                output: {
-                  path: npath.fromPortablePath(cjsDir),
-                },
-                optimization: {
-                  splitChunks: {
-                    chunks: 'async',
-                    minSize: 1,
-                    minRemainingSize: 0,
-                    minChunks: 1,
-                    maxAsyncRequests: 4000,
-                    maxInitialRequests: 4000,
-                    enforceSizeThreshold: 10000
-                  },
-                },
-              }, (err, stats) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(stats);
-                }
-              });
-            });
-            */
-
-            const chunks = await xfs.readdirPromise(esmDir);
+            const chunks = await xfs.readdirPromise(p);
 
             let payload = ``;
 
             const packFiles = async () => {
               return await Promise.all(chunks.map(async name => {
-                return [name, await xfs.readFilePromise(ppath.join(esmDir, name), `base64`)];
+                return [name, await xfs.readFilePromise(ppath.join(p, name), `base64`)];
               }));
             };
 
