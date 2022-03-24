@@ -8,7 +8,7 @@ export function getLibzipSync() {
 
 export async function getLibzipPromise() {
   if (promise === null) {
-    promise = import('./libzipAsync').then(async ({default: createModule}) => {
+    promise = import(`./libzipAsync`).then(async ({default: createModule}) => {
       const libzip = await createModule();
       return makeInterface(libzip);
     });
