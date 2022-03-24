@@ -73,7 +73,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       strict: false,
     });
 
-    const yarnPath: PortablePath = configuration.get(`yarnPath`);
+    const yarnPath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);
     const ignoreCwd = configuration.get(`ignoreCwd`);
 
