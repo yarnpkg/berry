@@ -158,13 +158,6 @@ jobs:
         node ./scripts/run-yarn.js build:cli
         mv ./packages/yarnpkg-cli/bundles/yarn.js ./packages/yarnpkg-cli/bundles/yarn-min.js
         node ./scripts/run-yarn.js build:cli --no-minify
-        node ./scripts/run-yarn.js build:plugin-constraints
-        node ./scripts/run-yarn.js build:plugin-exec
-        node ./scripts/run-yarn.js build:plugin-interactive-tools
-        node ./scripts/run-yarn.js build:plugin-stage
-        node ./scripts/run-yarn.js build:plugin-typescript
-        node ./scripts/run-yarn.js build:plugin-version
-        node ./scripts/run-yarn.js build:plugin-workspace-tools
       shell: bash
 
     - uses: actions/upload-artifact@v2
