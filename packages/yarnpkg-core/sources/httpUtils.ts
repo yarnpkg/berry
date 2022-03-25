@@ -1,17 +1,17 @@
-import {PortablePath, xfs}                                   from '@yarnpkg/fslib';
-import type {ExtendOptions, RequestError, Response}          from 'got';
-import {Agent as HttpsAgent}                                 from 'https';
-import {Agent as HttpAgent}                                  from 'http';
-import micromatch                                            from 'micromatch';
-import tunnel, {ProxyOptions}                                from 'tunnel';
-import {URL}                                                 from 'url';
+import {PortablePath, xfs}                          from '@yarnpkg/fslib';
+import type {ExtendOptions, RequestError, Response} from 'got';
+import {Agent as HttpsAgent}                        from 'https';
+import {Agent as HttpAgent}                         from 'http';
+import micromatch                                   from 'micromatch';
+import tunnel, {ProxyOptions}                       from 'tunnel';
+import {URL}                                        from 'url';
 
-import {ConfigurationValueMap, Configuration}                from './Configuration';
-import {MessageName}                                         from './MessageName';
-import {ReportError}                                         from './Report';
-import * as formatUtils                                      from './formatUtils';
-import {MapValue, MapValueToObjectValue}                     from './miscUtils';
-import * as miscUtils                                        from './miscUtils';
+import {ConfigurationValueMap, Configuration}       from './Configuration';
+import {MessageName}                                from './MessageName';
+import {ReportError}                                from './Report';
+import * as formatUtils                             from './formatUtils';
+import {MapValue, MapValueToObjectValue}            from './miscUtils';
+import * as miscUtils                               from './miscUtils';
 
 export type {RequestError}                                   from 'got';
 
