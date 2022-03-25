@@ -842,12 +842,12 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
   const locatorLocations = new Map();
   let installChangedByUser = false;
 
-  const syncNodeWithDisk = (parentPath: PortablePath, entry: Filename, parentNode: LocationNode, refinedNode: LocationNode, nodeModulesDiskEntries: Set<Filename>) => {
+  const syncNodeWithDisk = (parentPath: PortablePath, entry: Filename, parentNode: LocationNode, refinedNode: LocationNode, parentDiskEntries: Set<Filename>) => {
     let doesExistOnDisk = true;
     const entryPath = ppath.join(parentPath, entry);
-    let childNodeModulesDiskEntries = new Set<Filename>();
+    let childDiskEntries = new Set<Filename>();
 
-    if (entry === NODE_MODULES) {
+    if (entry === NODE_MODULES || entry.startsWith(`@`)) {
       let stats;
       try {
         stats = xfs.statSync(entryPath);
@@ -860,9 +860,9 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
         installChangedByUser = true;
       } else if (stats.mtimeMs > stateMtimeMs) {
         installChangedByUser = true;
-        childNodeModulesDiskEntries = new Set(xfs.readdirSync(entryPath));
+        childDiskEntries = new Set(xfs.readdirSync(entryPath));
       } else {
-        childNodeModulesDiskEntries = new Set(parentNode.children.get(NODE_MODULES)!.children.keys());
+        childDiskEntries = new Set(parentNode.children.get(entry)!.children.keys());
       }
 
       const binarySymlinks = binSymlinks.get(parentPath);
@@ -893,7 +893,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
         }
       }
     } else {
-      doesExistOnDisk = nodeModulesDiskEntries.has(entry);
+      doesExistOnDisk = parentDiskEntries.has(entry);
     }
 
     const node = parentNode.children.get(entry)!;
@@ -908,7 +908,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
       }
 
       for (const childEntry of node.children.keys()) {
-        syncNodeWithDisk(entryPath, childEntry, node, childRefinedNode, childNodeModulesDiskEntries);
+        syncNodeWithDisk(entryPath, childEntry, node, childRefinedNode, childDiskEntries);
       }
     } else if (node.locator) {
       project.storedBuildState.delete(structUtils.parseLocator(node.locator).locatorHash);
