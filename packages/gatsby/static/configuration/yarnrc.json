@@ -735,7 +735,7 @@
           "_exampleItems": ["current", "glibc", "musl"]
         }
       },
-      "_exampleKeys": ["os", "cpu"]
+      "_exampleKeys": ["os", "cpu", "libc"]
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
