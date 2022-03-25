@@ -1,13 +1,10 @@
 releases:
-  "@yarnpkg/builder": minor
   "@yarnpkg/cli": major
-  "@yarnpkg/core": patch
-  "@yarnpkg/libzip": major
-  "@yarnpkg/plugin-compat": patch
-  "@yarnpkg/plugin-nm": patch
-  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/core": major
+  "@yarnpkg/libzip": patch
 
 declined:
+  - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
@@ -19,16 +16,19 @@ declined:
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
+  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - vscode-zipfs
+  - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
   - "@yarnpkg/fslib"
   - "@yarnpkg/nm"
