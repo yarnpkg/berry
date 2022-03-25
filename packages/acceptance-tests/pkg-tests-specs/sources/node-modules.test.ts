@@ -1649,6 +1649,32 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  it(`should only reinstall scoped dependencies deleted by the user on the next install`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@types/no-deps`]: `1.0.0`,
+          [`@types/is-number`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        await xfs.removePromise(`${path}/node_modules/@types/is-number` as PortablePath);
+        const inode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+
+        await run(`install`);
+        const nextInode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+
+        await expect(xfs.existsPromise(`${path}/node_modules/@types/is-number` as PortablePath));
+        expect(nextInode).toEqual(inode);
+      },
+    ),
+  );
+
   it(`should support portals to external workspaces`,
     makeTemporaryEnv(
       {
