@@ -1716,7 +1716,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
   version: 7.15.4
   resolution: "@babel/runtime@npm:7.15.4"
   dependencies:
@@ -4337,7 +4337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.136, @types/lodash@npm:^4.14.165, @types/lodash@npm:^4.14.92":
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.136, @types/lodash@npm:^4.14.92":
   version: 4.14.172
   resolution: "@types/lodash@npm:4.14.172"
   checksum: e93b14543aa7c9f14bd8f1fdd5e309927d00e13ad3a91f16be167ea0f36ad412901d648dd16dd6df68973c02b899c354a28c3b5f76ec881d6bc2e8a8ef1e3a41
@@ -4805,13 +4805,6 @@ __metadata:
   version: 1.9.2
   resolution: "@types/yoga-layout@npm:1.9.2"
   checksum: f6c8a0c3cc28b9604cc2e3a747944577f562be8dd5be46fbb522237fe52e0266c51571764322032f6d7e96d6b8f27cf51ba8e4be3024c6e68f5f173e1bd38761
-  languageName: node
-  linkType: hard
-
-"@types/yup@npm:^0":
-  version: 0.29.11
-  resolution: "@types/yup@npm:0.29.11"
-  checksum: d33af937ef241499ee22e7a819c8fe8b07403c6aaaa750567a8daf79982df58a599f5c16fe405eb139fed49553731586620e04d4d0a21b7010597d8d643946b5
   languageName: node
   linkType: hard
 
@@ -5393,7 +5386,6 @@ __metadata:
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
     "@types/semver": ^7.1.0
-    "@types/yup": ^0
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5424,7 +5416,6 @@ __metadata:
     semver: ^7.1.2
     tslib: ^1.13.0
     typanion: ^3.3.0
-    yup: ^0.32.9
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
   languageName: unknown
@@ -17077,13 +17068,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.15":
-  version: 4.17.21
-  resolution: "lodash-es@npm:4.17.21"
-  checksum: d1c3ee94118daeeee47c630ab5f91e94cc4e41ebe2452d837edbe599e853eb2d4be7edf82b4fe62f9fc74f27a8ed7f82fdbd9d301d0acef88f00941db64c4843
-  languageName: node
-  linkType: hard
-
 "lodash._reinterpolate@npm:~3.0.0":
   version: 3.0.0
   resolution: "lodash._reinterpolate@npm:3.0.0"
@@ -18667,13 +18651,6 @@ __metadata:
   dependencies:
     node-gyp: latest
   checksum: 8e0cfc248c39f5e81af8d3654b9765a2f03bd4c634bf13f9d7121a814756e51022bc52b93787176b4a6b4a9217c00ed939221e6130586b13a880e423607067ce
-  languageName: node
-  linkType: hard
-
-"nanoclone@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "nanoclone@npm:0.2.1"
-  checksum: 24a9268a93d4e40f5bda016777ebbc4bdf878ec92c062070fee95d0d77ae22869da6589eb1037116c9d59ded61fd30f8c4418bff24bec9d49f4c65ea7f0c4746
   languageName: node
   linkType: hard
 
@@ -21049,13 +21026,6 @@ __metadata:
   version: 1.5.1
   resolution: "property-expr@npm:1.5.1"
   checksum: fba8289f70831c2e25ec798f25672c28df5b32667c897db48ad537afd771687de00a4f44e1ea0bbd07cf55920b8fef982947151565fc0a53d7ba88068e22db95
-  languageName: node
-  linkType: hard
-
-"property-expr@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "property-expr@npm:2.0.4"
-  checksum: 5c68f0d092c0962469749a7913d11e43d43ae970cdd2dce80b653bdf53170625d41142d7f787d45d2d36633c82c2fee4221176aa3b87d3cdda438defb7206afa
   languageName: node
   linkType: hard
 
@@ -27393,21 +27363,6 @@ yoga-layout-prebuilt@1.10.0:
     synchronous-promise: ^2.0.6
     toposort: ^2.0.2
   checksum: 4d02e6a0af9c6b74d36149a037c39f4e698834ea2ca06cac1165a63f74f0e0472f103a8d2812c12d1b0e9f1169b71691b8f43961ed5a680d202b78f23dc8fb31
-  languageName: node
-  linkType: hard
-
-"yup@npm:^0.32.9":
-  version: 0.32.9
-  resolution: "yup@npm:0.32.9"
-  dependencies:
-    "@babel/runtime": ^7.10.5
-    "@types/lodash": ^4.14.165
-    lodash: ^4.17.20
-    lodash-es: ^4.17.15
-    nanoclone: ^0.2.1
-    property-expr: ^2.0.4
-    toposort: ^2.0.2
-  checksum: 37ba8d0c0de093b212ba0a7839dc385df914b60aff4c0e32af5173e7d54fad30d021c77ed7833c6283dbade9101c029357eb37c664e55c7216141e3c76720dd2
   languageName: node
   linkType: hard
 
