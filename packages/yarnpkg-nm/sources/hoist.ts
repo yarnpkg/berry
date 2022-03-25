@@ -443,6 +443,17 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
   return {anotherRoundNeeded, isGraphChanged};
 };
 
+const hasUnhoistedDependencies = (node: HoisterWorkTree): boolean => {
+  let result = false;
+  for (const [subName, subDependency] of node.dependencies) {
+    if (!node.peerNames.has(subName) && subDependency.ident !== node.ident) {
+      result = true;
+      break;
+    }
+  }
+  return result;
+};
+
 const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason, fastLookupPossible}: {outputReason: boolean, fastLookupPossible: boolean}): HoistInfo => {
   let reasonRoot;
   let reason: string | null = null;
@@ -465,14 +476,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
   }
 
   if (isHoistable && node.dependencyKind === HoisterDependencyKind.EXTERNAL_SOFT_LINK) {
-    let hasUnhoistedDependencies = false;
-    for (const [subName, subDependency] of node.dependencies) {
-      if (!node.peerNames.has(subName) && subDependency.ident !== node.ident) {
-        hasUnhoistedDependencies = true;
-        break;
-      }
-    }
-    isHoistable = !hasUnhoistedDependencies;
+    isHoistable = !hasUnhoistedDependencies(node);
     if (outputReason && !isHoistable) {
       reason = `- external soft link with unhoisted dependencies`;
     }
@@ -682,7 +686,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
       }
     }
 
-    if (parentNode.dependencyKind === HoisterDependencyKind.EXTERNAL_SOFT_LINK && wereNodesHoisted)
+    if (parentNode.dependencyKind === HoisterDependencyKind.EXTERNAL_SOFT_LINK && wereNodesHoisted && !hasUnhoistedDependencies(parentNode))
       anotherRoundNeeded = true;
 
     if (options.check) {
