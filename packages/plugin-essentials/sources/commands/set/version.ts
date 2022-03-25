@@ -70,7 +70,7 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
-  useYarnPath = Option.Boolean(`--yarn-path`, false, {
+  useYarnPath = Option.Boolean(`--yarn-path`, {
     description: `Set the yarnPath setting even if the version can be accessed by Corepack`,
   });
 
@@ -175,7 +175,13 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
 
   const yarnPath = configuration.get(`yarnPath`);
-  const updateFile = yarnPath || !isTaggedYarnVersion || useYarnPath;
+  let updateFile = yarnPath || !isTaggedYarnVersion || yarnPath;
+
+  if (typeof yarnPath === `undefined`) {
+    report.reportWarning(MessageName.UNNAMED, `You don't seem to have ${formatUtils.applyHyperlink(configuration, `Corepack`, `https://nodejs.org/api/corepack.html`)} enabled; we'll have to rely on ${formatUtils.applyHyperlink(configuration, `yarnPath`, `https://yarnpkg.com/configuration/yarnrc#yarnPath`)} instead`);
+    updateFile = true;
+  }
+
 
   if (updateFile) {
     const bundleBuffer = await fetchBuffer();
