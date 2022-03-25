@@ -579,7 +579,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
       if (!usedDep || origDep.ident !== usedDep.ident) {
         isHoistable = false;
         if (outputReason)
-          reason = `- previously hoisted dependency mismatch, needed: ${prettyPrintLocator(origDep.locator)}, available: ${prettyPrintLocator(usedDep?.locator)}, used: ${Array.from(usedDependencies.keys())} locs: ${Array.from(rootNodePathLocators)}`;
+          reason = `- previously hoisted dependency mismatch, needed: ${prettyPrintLocator(origDep.locator)}, available: ${prettyPrintLocator(usedDep?.locator)}`;
 
         break;
       }
