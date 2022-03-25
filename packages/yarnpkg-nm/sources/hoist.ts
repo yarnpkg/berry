@@ -396,7 +396,12 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
 
   const hoistIdentMap = getHoistIdentMap(rootNode, preferenceMap);
 
-  const usedDependencies = tree == rootNode ? new Map() : (options.fastLookupPossible ? getZeroRoundUsedDependencies(rootNodePath) :  getUsedDependencies(rootNodePath));
+  const usedDependencies = (options.fastLookupPossible ?
+    (tree == rootNode ? new Map()
+      : getZeroRoundUsedDependencies(rootNodePath)
+    )
+    :  getUsedDependencies(rootNodePath));
+
   let wasStateChanged;
 
   let anotherRoundNeeded = false;
@@ -459,8 +464,15 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     }
   }
 
-  if (isHoistable) {
-    isHoistable = node.dependencyKind !== HoisterDependencyKind.EXTERNAL_SOFT_LINK || node.dependencies.size === 0;
+  if (isHoistable && node.dependencyKind === HoisterDependencyKind.EXTERNAL_SOFT_LINK) {
+    let hasUnhoistedDependencies = false;
+    for (const [subName, subDependency] of node.dependencies) {
+      if (!node.peerNames.has(subName) && subDependency.ident !== node.ident) {
+        hasUnhoistedDependencies = true;
+        break;
+      }
+    }
+    isHoistable = !hasUnhoistedDependencies;
     if (outputReason && !isHoistable) {
       reason = `- external soft link with unhoisted dependencies`;
     }
@@ -563,7 +575,7 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
       if (!usedDep || origDep.ident !== usedDep.ident) {
         isHoistable = false;
         if (outputReason)
-          reason = `- previously hoisted dependency mismatch, needed: ${prettyPrintLocator(origDep.locator)}, available: ${prettyPrintLocator(usedDep?.locator)}`;
+          reason = `- previously hoisted dependency mismatch, needed: ${prettyPrintLocator(origDep.locator)}, available: ${prettyPrintLocator(usedDep?.locator)}, used: ${Array.from(usedDependencies.keys())} locs: ${Array.from(rootNodePathLocators)}`;
 
         break;
       }
@@ -630,6 +642,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
       if (hoistInfo.isHoistable === Hoistable.NO)
         addUnhoistableNode(node, hoistInfo, hoistInfo.reason!);
 
+    let wereNodesHoisted = false;
     for (const node of hoistInfos.keys()) {
       if (!unhoistableNodes.has(node)) {
         isGraphChanged = true;
@@ -637,6 +650,7 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
         if (shadowedNames && shadowedNames.has(node.name))
           anotherRoundNeeded = true;
 
+        wereNodesHoisted = true;
         parentNode.dependencies.delete(node.name);
         parentNode.hoistedDependencies.set(node.name, node);
         parentNode.reasons.delete(node.name);
@@ -667,6 +681,9 @@ const hoistGraph = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>,
         }
       }
     }
+
+    if (parentNode.dependencyKind === HoisterDependencyKind.EXTERNAL_SOFT_LINK && wereNodesHoisted)
+      anotherRoundNeeded = true;
 
     if (options.check) {
       const checkLog = selfCheck(tree);

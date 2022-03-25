@@ -560,4 +560,13 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
+
+  it(`should not hoist portal with unhoistable dependencies`, () => {
+    const tree = {
+      '.': {dependencies: [`P1`, `B@Y`]},
+      P1: {dependencies: [`P2`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P2: {dependencies: [`B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+    };
+    hoist(toTree(tree), {check: true, debugLevel: 2});
+  });
 });

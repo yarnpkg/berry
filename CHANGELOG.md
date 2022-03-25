@@ -11,6 +11,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The node-modules linker has received various improvements:
   - applies hoisting algorithm on aliased dependencies
   - reinstalls modules that have their directories removed from node_modules by the user
+  - improves portal hoisting
 
 **Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
 
