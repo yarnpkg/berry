@@ -1649,7 +1649,7 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should reinstall scoped dependencies deleted by the user on the next install`,
+  it(`should only reinstall scoped dependencies deleted by the user on the next install`,
     makeTemporaryEnv(
       {
         dependencies: {
