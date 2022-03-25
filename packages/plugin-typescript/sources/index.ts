@@ -112,6 +112,15 @@ const afterWorkspaceDependencyRemoval = async (
   if (descriptor.scope === `types`)
     return;
 
+  const {project} = workspace;
+  const {configuration} = project;
+
+  const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
+    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename));
+
+  if (!tsEnableAutoTypes)
+    return;
+
   const typesName = getTypesName(descriptor);
 
   const ident = structUtils.makeIdent(`types`, typesName);
