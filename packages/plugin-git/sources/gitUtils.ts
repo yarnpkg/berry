@@ -302,18 +302,16 @@ export async function fetchRoot(initialCwd: PortablePath) {
   // it may return long paths even when the cwd uses short paths, and we have no
   // way to detect it from Node (not even realpath).
 
-  let match: PortablePath | null = null;
-
   let cwd: PortablePath;
   let nextCwd = initialCwd;
   do {
     cwd = nextCwd;
     if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
-      match = cwd;
+      return cwd;
     nextCwd = ppath.dirname(cwd);
-  } while (match === null && nextCwd !== cwd);
+  } while (nextCwd !== cwd);
 
-  return match;
+  return null;
 }
 
 export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {
