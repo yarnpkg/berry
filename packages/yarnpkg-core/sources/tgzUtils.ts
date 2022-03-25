@@ -5,7 +5,7 @@ import tar                                                                      
 
 import {WorkerPool}                                                                                  from './WorkerPool';
 import * as miscUtils                                                                                from './miscUtils';
-import {ConvertToZipPayload}                                                                         from './worker-zip';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                                       from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
@@ -45,7 +45,6 @@ export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-  const {getContent: getZipWorkerSource} = await import(`./worker-zip`);
   workerPool ||= new WorkerPool(getZipWorkerSource());
 
   await workerPool.run({tmpFile, tgz, opts});

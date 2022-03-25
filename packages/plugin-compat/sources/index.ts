@@ -2,11 +2,14 @@ import {Hooks as CoreHooks, Plugin, structUtils} from '@yarnpkg/core';
 import {Hooks as PatchHooks}                     from '@yarnpkg/plugin-patch';
 
 import {packageExtensions}                       from './extensions';
+import {getPatch as getFseventsPatch}            from './patches/fsevents.patch';
+import {getPatch as getResolvePatch}             from './patches/resolve.patch';
+import {getPatch as getTypescriptPatch}          from './patches/typescript.patch';
 
 const PATCHES = new Map([
-  [structUtils.makeIdent(null, `fsevents`).identHash, () => import(`./patches/fsevents.patch`)],
-  [structUtils.makeIdent(null, `resolve`).identHash, () => import(`./patches/resolve.patch`)],
-  [structUtils.makeIdent(null, `typescript`).identHash, () => import(`./patches/typescript.patch`)],
+  [structUtils.makeIdent(null, `fsevents`).identHash, getFseventsPatch],
+  [structUtils.makeIdent(null, `resolve`).identHash, getResolvePatch],
+  [structUtils.makeIdent(null, `typescript`).identHash, getTypescriptPatch],
 ]);
 
 const plugin: Plugin<CoreHooks & PatchHooks> = {
@@ -23,7 +26,7 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
         return undefined;
 
       const ident = structUtils.parseIdent(name.slice(TAG.length));
-      const patch = (await PATCHES.get(ident.identHash)?.())?.getPatch();
+      const patch = PATCHES.get(ident.identHash)?.();
 
       return typeof patch !== `undefined` ? patch : null;
     },
