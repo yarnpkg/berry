@@ -24,8 +24,6 @@
     "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "scripts": {
-    "build:plugin-typescript": "builder build plugin",
-    "update-local": "yarn build:plugin-typescript && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },

@@ -29,8 +29,6 @@
     "@yarnpkg/plugin-git": "workspace:^"
   },
   "scripts": {
-    "build:plugin-version": "builder build plugin",
-    "update-local": "yarn build:plugin-version && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
