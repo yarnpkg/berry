@@ -579,7 +579,7 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
-  
+
   it(`should support two branch circular graph hoisting`, () => {
     // . -> B -> D@X -> F@X
     //               -> E@X -> D@X
