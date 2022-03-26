@@ -569,4 +569,14 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
+
+  it(`should not hoist nested portals with hoisted dependencies`, () => {
+    const tree = {
+      '.': {dependencies: [`P1`, `B@X`]},
+      P1: {dependencies: [`P2`, `B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P2: {dependencies: [`P3`, `B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P3: {dependencies: [`B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
 });
