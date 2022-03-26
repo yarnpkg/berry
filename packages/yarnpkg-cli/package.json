@@ -29,12 +29,10 @@
     "clipanion": "^3.2.0-rc.4",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",
-    "typanion": "^3.3.0",
-    "yup": "^0.32.9"
+    "typanion": "^3.3.0"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",
-    "@types/yup": "^0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/pnpify": "workspace:^",
