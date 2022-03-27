@@ -446,7 +446,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
 const hasUnhoistedDependencies = (node: HoisterWorkTree): boolean => {
   for (const [subName, subDependency] of node.dependencies) {
     if (!node.peerNames.has(subName) && subDependency.ident !== node.ident) {
-      return true
+      return true;
     }
   }
   return false;
