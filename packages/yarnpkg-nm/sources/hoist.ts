@@ -444,14 +444,12 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
 };
 
 const hasUnhoistedDependencies = (node: HoisterWorkTree): boolean => {
-  let result = false;
   for (const [subName, subDependency] of node.dependencies) {
     if (!node.peerNames.has(subName) && subDependency.ident !== node.ident) {
-      result = true;
-      break;
+      return true
     }
   }
-  return result;
+  return false;
 };
 
 const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<Locator>, nodePath: Array<HoisterWorkTree>, node: HoisterWorkTree, usedDependencies: Map<PackageName, HoisterWorkTree>, hoistIdents: Map<PackageName, Ident>, hoistIdentMap: Map<Ident, Array<Ident>>, shadowedNodes: ShadowedNodes, {outputReason, fastLookupPossible}: {outputReason: boolean, fastLookupPossible: boolean}): HoistInfo => {
