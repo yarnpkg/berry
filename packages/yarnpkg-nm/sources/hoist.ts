@@ -399,7 +399,7 @@ const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, ro
   const usedDependencies = tree == rootNode ? new Map() :
     (options.fastLookupPossible
       ? getZeroRoundUsedDependencies(rootNodePath)
-      :  getUsedDependencies(rootNodePath)
+      : getUsedDependencies(rootNodePath)
     );
 
   let wasStateChanged;
