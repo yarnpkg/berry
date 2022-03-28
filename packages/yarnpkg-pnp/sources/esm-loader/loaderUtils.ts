@@ -24,6 +24,10 @@ export function tryParseURL(str: string, base?: string | URL | undefined) {
   }
 }
 
+function isExec(p: string) {
+  return !!(fs.statSync(p).mode & fs.constants.S_IXUSR);
+}
+
 export function getFileFormat(filepath: string): string | null {
   const ext = path.extname(filepath);
 
@@ -59,6 +63,8 @@ export function getFileFormat(filepath: string): string | null {
     // --experimental-loader behavior but is required to work around
     // https://github.com/nodejs/node/issues/33226
     default: {
+      if (isExec(filepath))
+        return `commonjs`;
       const isMain = process.argv[1] === filepath;
       if (!isMain)
         return null;

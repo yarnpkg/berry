@@ -289,6 +289,29 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
+    `it should load commonjs with an executable file`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `./pretty` as Filename), `#!/usr/bin/env node\nconsole.log(typeof require === 'undefined');`, {
+          mode: 0o755,
+        });
+        await xfs.symlinkPromise(ppath.join(path, `./pretty` as Filename), ppath.join(path, `./pretty_slink` as Filename), `file`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`exec`, `./pretty_slink`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `false\n`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should not allow unknown extensions with {type: "module"}`,
     makeTemporaryEnv(
       {
