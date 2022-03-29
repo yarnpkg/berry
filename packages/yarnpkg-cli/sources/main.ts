@@ -83,16 +83,15 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       return Buffer.of();
     });
 
-    const isDifferentBinary = async () =>
-      yarnPath &&
-      yarnPath !== selfPath &&
+    const isSameBinary = async () =>
+      yarnPath === selfPath ||
       Buffer.compare(...await Promise.all([
         tryRead(yarnPath),
         tryRead(selfPath),
-      ])) !== 0;
+      ])) === 0;
 
     // Avoid unnecessary spawn when run directly
-    if (!ignorePath && !ignoreCwd && !await isDifferentBinary()) {
+    if (!ignorePath && !ignoreCwd && await isSameBinary()) {
       process.env.YARN_IGNORE_PATH = `1`;
       process.env.YARN_IGNORE_CWD = `1`;
 
