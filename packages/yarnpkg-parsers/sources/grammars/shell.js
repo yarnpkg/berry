@@ -319,8 +319,8 @@ function peg$parse(input, options) {
       peg$c173 = function() { return text() },
       peg$c174 = /^[$@*?#a-zA-Z0-9_\-]/,
       peg$c175 = peg$classExpectation(["$", "@", "*", "?", "#", ["a", "z"], ["A", "Z"], ["0", "9"], "_", "-"], false, false),
-      peg$c176 = /^[(){}<>$|&; \t"']/,
-      peg$c177 = peg$classExpectation(["(", ")", "{", "}", "<", ">", "$", "|", "&", ";", " ", "\t", "\"", "'"], false, false),
+      peg$c176 = /^[()}<>$|&; \t"']/,
+      peg$c177 = peg$classExpectation(["(", ")", "}", "<", ">", "$", "|", "&", ";", " ", "\t", "\"", "'"], false, false),
       peg$c178 = /^[<>&; \t"']/,
       peg$c179 = peg$classExpectation(["<", ">", "&", ";", " ", "\t", "\"", "'"], false, false),
       peg$c180 = /^[ \t]/,
@@ -3525,7 +3525,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parseSpecialShellChars() {
-    var s0;
+    var s0, s1, s2;
 
     if (peg$c176.test(input.charAt(peg$currPos))) {
       s0 = input.charAt(peg$currPos);
@@ -3533,6 +3533,29 @@ function peg$parse(input, options) {
     } else {
       s0 = peg$FAILED;
       if (peg$silentFails === 0) { peg$fail(peg$c177); }
+    }
+    if (s0 === peg$FAILED) {
+      s0 = peg$currPos;
+      if (input.charCodeAt(peg$currPos) === 123) {
+        s1 = peg$c29;
+        peg$currPos++;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c30); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parseS();
+        if (s2 !== peg$FAILED) {
+          s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
     }
 
     return s0;
