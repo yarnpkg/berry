@@ -91,11 +91,16 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
         ? indent
         : ``;
 
-      if (stringifiedValue.startsWith(`\n`)) {
-        return `${recordIndentation}${stringifiedKey}:${stringifiedValue}`;
-      } else {
-        return `${recordIndentation}${stringifiedKey}: ${stringifiedValue}`;
-      }
+      // Yaml 1.2 spec says that keys over 1024 characters need to be prefixed with ? and the : goes in a new line
+      const keyPart = stringifiedKey.length > 1024
+        ? `? ${stringifiedKey}\n:`
+        : `${stringifiedKey}:`;
+
+      const valuePart = stringifiedValue.startsWith(`\n`)
+        ? stringifiedValue
+        : ` ${stringifiedValue}`;
+
+      return `${recordIndentation}${keyPart}${valuePart}`;
     }).join(indentLevel === 0 ? `\n` : ``) || `\n`;
 
     if (!newLineIfObject) {
