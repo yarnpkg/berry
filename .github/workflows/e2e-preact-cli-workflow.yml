@@ -40,4 +40,4 @@ jobs:
         cd ts-app
         yarn build
       if: |
-        always()
+        success() || failure()
