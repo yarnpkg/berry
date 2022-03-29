@@ -50,4 +50,4 @@ jobs:
 
         yarn build
       if: |
-        always()
+        success() || failure()
