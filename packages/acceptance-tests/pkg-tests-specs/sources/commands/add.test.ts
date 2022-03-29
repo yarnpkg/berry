@@ -1,5 +1,5 @@
 import {PortablePath, xfs} from '@yarnpkg/fslib';
-import {fs, yarn}          from 'pkg-tests-core';
+import {yarn}              from 'pkg-tests-core';
 
 const {
   tests: {getPackageDirectoryPath},
