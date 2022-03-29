@@ -1,4 +1,5 @@
 import {PortablePath, xfs} from '@yarnpkg/fslib';
+import {fs, yarn}          from 'pkg-tests-core';
 
 const {
   tests: {getPackageDirectoryPath},
@@ -210,6 +211,24 @@ describe(`Commands`, () => {
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should not upgrade the existing dependency in the current project for preferReuse`,
+      makeTemporaryEnv({
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await yarn.writeConfiguration(path, {preferReuse: true});
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
           },
         });
       }),
