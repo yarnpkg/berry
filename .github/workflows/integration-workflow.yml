@@ -197,13 +197,13 @@ jobs:
       fail-fast: false
       matrix:
         node:
-        - 16
+        - 14
         platform:
         - ubuntu-latest
         - windows-latest
         - macos-latest
         include:
-          - node: 14
+          - node: 16
             platform: ubuntu-latest
           - node: 17
             platform: ubuntu-latest
