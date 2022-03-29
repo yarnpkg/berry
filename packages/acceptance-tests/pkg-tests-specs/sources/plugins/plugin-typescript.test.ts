@@ -306,9 +306,9 @@ describe(`Plugins`, () => {
             [type]: {
               [`@types/is-number`]: `1.0.0`,
             },
-          }, {
+          }), {
             tsEnableAutoTypes: true,
-          }), async ({path, run, source}) => {
+          }, async ({path, run, source}) => {
             await run(`remove`, `is-number`);
 
             await expect(readManifest(path)).resolves.not.toHaveProperty(`${type}.@types/is-number`);
