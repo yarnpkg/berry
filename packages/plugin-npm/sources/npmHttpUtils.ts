@@ -1,11 +1,11 @@
-import {Configuration, Ident, httpUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}        from '@yarnpkg/core';
-import {prompt}                          from 'enquirer';
-import {URL}                             from 'url';
+import {Configuration, Ident, formatUtils, httpUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                     from '@yarnpkg/core';
+import {prompt}                                       from 'enquirer';
+import {URL}                                          from 'url';
 
-import {Hooks}                           from './index';
-import * as npmConfigUtils               from './npmConfigUtils';
-import {MapLike}                         from './npmConfigUtils';
+import {Hooks}                                        from './index';
+import * as npmConfigUtils                            from './npmConfigUtils';
+import {MapLike}                                      from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -42,8 +42,18 @@ export async function handleInvalidAuthenticationError(error: any, {attemptedAs,
   }
 }
 
-export function customPackageError(error: httpUtils.RequestError) {
-  return error.response?.statusCode === 404 ? `Package not found` : null;
+export function customPackageError(error: httpUtils.RequestError, configuration: Configuration) {
+  const statusCode = error.response?.statusCode;
+  if (!statusCode)
+    return null;
+
+  if (statusCode === 404)
+    return `Package not found`;
+
+  if (statusCode >= 500 && statusCode < 600)
+    return `The registry appears to be down (using a ${formatUtils.applyHyperlink(configuration, `local cache`, `https://yarnpkg.com/advanced/lexicon#local-cache`)} might have protected you against such outages)`;
+
+  return null;
 }
 
 export function getIdentUrl(ident: Ident) {

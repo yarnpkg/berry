@@ -560,4 +560,43 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
+
+  it(`should not hoist portal with unhoistable dependencies`, () => {
+    const tree = {
+      '.': {dependencies: [`P1`, `B@Y`]},
+      P1: {dependencies: [`P2`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P2: {dependencies: [`B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
+  });
+
+  it(`should hoist nested portals with hoisted dependencies`, () => {
+    const tree = {
+      '.': {dependencies: [`P1`, `B@X`]},
+      P1: {dependencies: [`P2`, `B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P2: {dependencies: [`P3`, `B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P3: {dependencies: [`B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
+
+  it(`should support two branch circular graph hoisting`, () => {
+    // . -> B -> D@X -> F@X
+    //               -> E@X -> D@X
+    //                      -> F@X
+    //   -> C -> D@Y -> F@Y
+    //               -> E@Y -> D@Y
+    //                      -> F@Y
+    // This graph with two similar circular branches should be hoisted in a finite time
+    const tree = {
+      '.': {dependencies: [`B`, `C`]},
+      B: {dependencies: [`D@X`]},
+      C: {dependencies: [`D@Y`]},
+      'D@X': {dependencies: [`E@X`, `F@X`]},
+      'D@Y': {dependencies: [`E@Y`, `F@X`]},
+      'E@X': {dependencies: [`D@X`, `F@X`]},
+      'E@Y': {dependencies: [`D@Y`, `F@Y`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
+  });
 });
