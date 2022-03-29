@@ -602,7 +602,7 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`no-deps-deprecated@npm:1.0.0 is deprecated: ¯\\_(ツ)_/¯\n`);
 
         // Check if the package is installed successfully
-        await expect(readManifest(path)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(path)).resolves.toMatchObject({
           dependencies: {
             [`no-deps-deprecated`]: `1.0.0`,
           },
@@ -619,7 +619,7 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`no-deps-deprecated-whitespace@npm:1.0.0 is deprecated\n`);
 
         // Check if the package is installed successfully
-        await expect(readManifest(path)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(path)).resolves.toMatchObject({
           dependencies: {
             [`no-deps-deprecated-whitespace`]: `1.0.0`,
           },
