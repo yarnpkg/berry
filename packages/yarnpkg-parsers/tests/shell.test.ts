@@ -1,6 +1,12 @@
 import {parseShell, stringifyShell} from '../sources';
 
 const VALID_COMMANDS = [
+  `echo {`,
+  `echo {foo`,
+  `echo { foo`,
+  `echo {}`,
+  `echo foo{}bar`,
+
   // It should allow shell lines to end with semicolons
   `echo foo;`,
 
@@ -39,6 +45,9 @@ const VALID_COMMANDS = [
 ];
 
 const INVALID_COMMANDS = [
+  `echo }`,
+  `echo foo}`,
+
   // It shouldn't allow shell lines to start with semicolons.
   // Bash doesn't allow it, but ZSH and Fish do. We don't, because
   // we don't need the extra complexity. Also, it's more common to
