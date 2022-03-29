@@ -135,7 +135,7 @@ HexCodeChar
   = [0-9a-fA-f]
 
 PlainStringText
-  = chars:('\\' c:. { return c } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
+  = chars:('\\' c:. { return c } / '{}' { return '{}' } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
 
 ArithmeticPrimary
   = sign:('-' / '+')? left:[0-9]+ '.' right:[0-9]+ { return { type: `number`, value: (sign === '-' ? -1 : 1) * parseFloat(left.join(``) + `.` + right.join(``)) } }
@@ -181,7 +181,7 @@ Identifier
   = [$@*?#a-zA-Z0-9_-]+ { return text() }
 
 SpecialShellChars
-  = [(){}<>$|&; \t"']
+  = [()}<>$|&; \t"']
 
 GlobSpecialShellChars
   = [<>&; \t"']
