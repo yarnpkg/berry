@@ -112,7 +112,7 @@ export default class SetVersionCommand extends BaseCommand {
     else if (this.version.match(/^https?:/))
       bundleRef = {url: this.version, version: `remote`};
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
-      bundleRef = {url: `file://${npath.resolve(this.version)}`, version: `file`};
+      bundleRef = {url: `file://${ppath.resolve(npath.toPortablePath(this.version))}`, version: `file`};
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, this.version);
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
@@ -127,6 +127,7 @@ export default class SetVersionCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: !this.context.quiet,
     }, async (report: StreamReport) => {
+<<<<<<< Updated upstream
       const fetchBuffer = async () => {
         const filePrefix = `file://`;
 
@@ -140,6 +141,20 @@ export default class SetVersionCommand extends BaseCommand {
       };
 
       await setVersion(configuration, bundleRef.version, fetchBuffer, {report, useYarnPath: this.useYarnPath});
+=======
+      const filePrefix = `file://`;
+
+      let bundleBuffer: Buffer;
+      if (bundleUrl.startsWith(filePrefix)) {
+        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, FormatType.URL)}`);
+        bundleBuffer = await xfs.readFilePromise(bundleUrl.slice(filePrefix.length) as PortablePath);
+      } else {
+        report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, FormatType.PATH)}`);
+        bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
+      }
+
+      await setVersion(configuration, null, bundleBuffer, {report});
+>>>>>>> Stashed changes
     });
 
     return report.exitCode();
