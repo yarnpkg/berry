@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                         from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                           from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                           from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
-import semver                                                                                from 'semver';
+import {BaseCommand}                                                                                      from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion, ReportError} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                                        from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                               from 'clipanion';
+import semver                                                                                             from 'semver';
 
 export type Tags = {
   latest: Record<string, string>;
@@ -173,17 +173,22 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
 
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
-
   const yarnPath = configuration.get(`yarnPath`);
-  let updateFile = yarnPath || !isTaggedYarnVersion || yarnPath;
 
-  if (typeof yarnPath === `undefined`) {
+  const absolutelyMustUseYarnPath = !isTaggedYarnVersion;
+  let probablyShouldUseYarnPath = absolutelyMustUseYarnPath || !!yarnPath || !!useYarnPath;
+
+  if (useYarnPath === false) {
+    if (absolutelyMustUseYarnPath)
+      throw new ReportError(MessageName.UNNAMED, `You explicitly opted out of yarnPath usage in your command line, but the version you specified cannot be represented by Corepack`);
+
+    probablyShouldUseYarnPath = false;
+  } else if (!probablyShouldUseYarnPath && !process.env.COREPACK_ROOT) {
     report.reportWarning(MessageName.UNNAMED, `You don't seem to have ${formatUtils.applyHyperlink(configuration, `Corepack`, `https://nodejs.org/api/corepack.html`)} enabled; we'll have to rely on ${formatUtils.applyHyperlink(configuration, `yarnPath`, `https://yarnpkg.com/configuration/yarnrc#yarnPath`)} instead`);
-    updateFile = true;
+    probablyShouldUseYarnPath = true;
   }
 
-
-  if (updateFile) {
+  if (probablyShouldUseYarnPath) {
     const bundleBuffer = await fetchBuffer();
 
     if (bundleVersion === null) {
