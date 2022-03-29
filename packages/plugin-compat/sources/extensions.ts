@@ -146,7 +146,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/apollographql/apollo-tooling/pull/2049
-  [`@apollographql/apollo-tools@*`, {
+  [`@apollographql/apollo-tools@<=0.5.2`, {
     peerDependencies: {
       graphql: `^14.2.1 || ^15.0.0`,
     },
