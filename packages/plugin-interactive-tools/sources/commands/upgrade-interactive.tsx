@@ -1,15 +1,9 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
 import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
-import {ItemOptions}                                                                                                                    from '@yarnpkg/libui/sources/components/ItemOptions';
-import {Pad}                                                                                                                            from '@yarnpkg/libui/sources/components/Pad';
-import {ScrollableItems}                                                                                                                from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {useMinistore}                                                                                                                   from '@yarnpkg/libui/sources/hooks/useMinistore';
-import {renderForm, SubmitInjectedComponent}                                                                                            from '@yarnpkg/libui/sources/misc/renderForm';
+import type {SubmitInjectedComponent}                                                                                                   from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
 import {Command, Usage, UsageError}                                                                                                     from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
-import {Box, Text}                                                                                                                      from 'ink';
-import React, {useEffect, useRef, useState}                                                                                             from 'react';
 import semver                                                                                                                           from 'semver';
 import {WriteStream}                                                                                                                    from 'tty';
 
@@ -44,6 +38,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
   });
 
   async execute() {
+    const {ItemOptions} = await import(`@yarnpkg/libui/sources/components/ItemOptions`);
+    const {Pad} = await import(`@yarnpkg/libui/sources/components/Pad`);
+    const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
+    const {useMinistore} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
+    const {Box, Text} = await import(`ink`);
+    const {default: React, useEffect, useRef, useState} = await import(`react`);
+
     if (!(this.context.stdout as WriteStream).isTTY)
       throw new UsageError(`This command can only be run in a TTY environment`);
 

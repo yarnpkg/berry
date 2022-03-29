@@ -18,8 +18,6 @@
     "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
-    "build:plugin-stage": "builder build plugin",
-    "update-local": "yarn build:plugin-stage && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },

@@ -546,7 +546,6 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`)],
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {

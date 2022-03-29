@@ -1,0 +1,19 @@
+on:
+  pull_request:
+    types:
+    - labeled
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+name: Debuggable Container
+jobs:
+  debug:
+    if: "${{github.event.label.name == 'infra: debug container'}}"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@d23c2722bdab893785c9fbeae314cbf080645bd7

@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
+    "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-pack": "workspace:^",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",
@@ -23,8 +24,6 @@
     "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "scripts": {
-    "build:plugin-typescript": "builder build plugin",
-    "update-local": "yarn build:plugin-typescript && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },

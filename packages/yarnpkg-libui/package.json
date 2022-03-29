@@ -4,7 +4,7 @@
   "license": "BSD-2-Clause",
   "sideEffects": false,
   "peerDependencies": {
-    "ink": "^2.3.0",
+    "ink": "^3.0.8",
     "react": "^16.8.4"
   },
   "devDependencies": {

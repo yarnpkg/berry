@@ -26,8 +26,6 @@
     "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
-    "build:plugin-constraints": "builder build plugin",
-    "update-local": "yarn build:plugin-constraints && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },

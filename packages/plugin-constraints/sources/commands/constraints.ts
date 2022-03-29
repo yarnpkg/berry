@@ -7,7 +7,7 @@ import getPath                                                          from 'lo
 import setPath                                                          from 'lodash/set';
 import unsetPath                                                        from 'lodash/unset';
 
-import {Constraints, EnforcedDependency, EnforcedField}                 from '../Constraints';
+import type {EnforcedDependency, EnforcedField}                         from '../Constraints';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
@@ -39,6 +39,8 @@ export default class ConstraintsCheckCommand extends BaseCommand {
   });
 
   async execute() {
+    const {Constraints} = await import(`../Constraints`);
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
     const constraints = await Constraints.find(project);

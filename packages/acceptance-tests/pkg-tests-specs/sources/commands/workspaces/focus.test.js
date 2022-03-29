@@ -209,8 +209,6 @@ describe(`Commands`, () => {
 });
 
 async function setupProject(path) {
-  await xfs.writeFilePromise(ppath.join(path, `.yarnrc.yml`), `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
-
   const pkg = async (name, dependencies, devDependencies, scripts) => {
     await xfs.mkdirpPromise(ppath.join(path, `packages/${name}`));
     await xfs.writeJsonPromise(ppath.join(path, `packages/${name}/package.json`), {name, dependencies, devDependencies, scripts});
