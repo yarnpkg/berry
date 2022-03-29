@@ -4,20 +4,28 @@
 
 Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 
+**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
+
 ## Master
 
+### **Major Changes**
+
+- The `yarn set version` command will now skip generating the `yarnPath` configuration on new projects if it detects you're using [Corepack](https://nodejs.org/api/corepack.html)
+- All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
+  - This doesn't change anything to the plugin API we provide, which will keep being maintained (Yarn still has a modular architecture and uses the exact same APIs as contrib plugins; all that changes is how we distribute our own features).
+- Some legacy layers have been sunset:
+  - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
+  - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
+
 ### Installs
+
 - The pnpm linker no longer tries to remove `node_modules` directory, when `node-modules` linker is active
+- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 - The node-modules linker has received various improvements:
   - applies hoisting algorithm on aliased dependencies
   - reinstalls modules that have their directories removed from node_modules by the user
   - improves portal hoisting
 
-**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
-
-### Installs
-
-- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 ## 3.2.0
 
 Various improvements have been made in the core to improve performance. Additionally:
