@@ -5,6 +5,13 @@ on:
     - 'cherry-pick/**'
   pull_request:
 
+concurrency:
+  # group by workflow and ref; the last slightly strange component ensures that for pull
+  # requests, we limit to 1 concurrent job, but for the master branch we don't
+  group: ${{github.workflow}}-${{github.ref}}-${{github.ref != 'refs/heads/master' || github.run_number}}
+  # Cancel intermediate builds, but only if it is a pull request build.
+  cancel-in-progress: ${{startsWith(github.ref, 'refs/pull/')}}
+
 name: 'Integration'
 jobs:
   chore:
@@ -184,12 +191,15 @@ jobs:
       matrix:
         node:
         - 14
-        - 16
-        - 17
         platform:
         - ubuntu-latest
         - windows-latest
         - macos-latest
+        include:
+          - node: 16
+            platform: ubuntu-latest
+          - node: 17
+            platform: ubuntu-latest
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
     runs-on: ${{matrix.platform}}
