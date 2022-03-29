@@ -131,6 +131,45 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should add a new regular dependency to the current project (resolved tag)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps@latest`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (resolved tag)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps@latest`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (fixed tag)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `-F`, `no-deps@latest`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `latest`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should upgrade the existing regular dependency in the current project (--prefer-dev)`,
       makeTemporaryEnv({
         dependencies: {
