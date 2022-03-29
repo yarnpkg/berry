@@ -127,13 +127,12 @@ export default class SetVersionCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: !this.context.quiet,
     }, async (report: StreamReport) => {
-<<<<<<< Updated upstream
       const fetchBuffer = async () => {
         const filePrefix = `file://`;
 
         if (bundleRef.url.startsWith(filePrefix)) {
           report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, FormatType.PATH)}`);
-          return await xfs.readFilePromise(npath.toPortablePath(bundleRef.url.slice(filePrefix.length)));
+          return await xfs.readFilePromise(bundleRef.url.slice(filePrefix.length) as PortablePath);
         } else {
           report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, FormatType.URL)}`);
           return await httpUtils.get(bundleRef.url, {configuration});
@@ -141,20 +140,6 @@ export default class SetVersionCommand extends BaseCommand {
       };
 
       await setVersion(configuration, bundleRef.version, fetchBuffer, {report, useYarnPath: this.useYarnPath});
-=======
-      const filePrefix = `file://`;
-
-      let bundleBuffer: Buffer;
-      if (bundleUrl.startsWith(filePrefix)) {
-        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, FormatType.URL)}`);
-        bundleBuffer = await xfs.readFilePromise(bundleUrl.slice(filePrefix.length) as PortablePath);
-      } else {
-        report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, FormatType.PATH)}`);
-        bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
-      }
-
-      await setVersion(configuration, null, bundleBuffer, {report});
->>>>>>> Stashed changes
     });
 
     return report.exitCode();
