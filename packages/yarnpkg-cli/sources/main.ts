@@ -73,7 +73,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       strict: false,
     });
 
-    const yarnPath: PortablePath = configuration.get(`yarnPath`);
+    const yarnPath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);
     const ignoreCwd = configuration.get(`ignoreCwd`);
 
@@ -84,11 +84,13 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     });
 
     const isSameBinary = async () =>
-      yarnPath === selfPath ||
-      Buffer.compare(...await Promise.all([
-        tryRead(yarnPath),
-        tryRead(selfPath),
-      ])) === 0;
+      yarnPath && (
+        yarnPath === selfPath ||
+        Buffer.compare(...await Promise.all([
+          tryRead(yarnPath),
+          tryRead(selfPath),
+        ])) === 0
+      );
 
     // Avoid unnecessary spawn when run directly
     if (!ignorePath && !ignoreCwd && await isSameBinary()) {
