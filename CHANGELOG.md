@@ -26,6 +26,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - reinstalls modules that have their directories removed from node_modules by the user
   - improves portal hoisting
 
+### Bugfixes
+
+- The PnP ESM loader is now able to handle symlinked extensionless entrypoints.
+
 ## 3.2.0
 
 Various improvements have been made in the core to improve performance. Additionally:
