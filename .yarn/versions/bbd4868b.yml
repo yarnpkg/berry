@@ -9,6 +9,7 @@ declined:
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-exec"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm-cli"

@@ -1,11 +1,9 @@
 const {
-  fs: {writeFile, writeJson},
+  fs: {writeJson},
 } = require(`pkg-tests-core`);
 
 
 async function setupWorkspaces(path) {
-  await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
-
   await writeJson(`${path}/docs/package.json`, {
     name: `docs`,
     version: `1.0.0`,

@@ -306,6 +306,8 @@ describe(`Plugins`, () => {
             [type]: {
               [`@types/is-number`]: `1.0.0`,
             },
+          }, {
+            tsEnableAutoTypes: true,
           }), async ({path, run, source}) => {
             await run(`remove`, `is-number`);
 
@@ -323,6 +325,8 @@ describe(`Plugins`, () => {
           devDependencies: {
             [`@types/iarna__toml`]: `1.0.0`,
           },
+        }, {
+          tsEnableAutoTypes: true,
         }, async ({path, run, source}) => {
           await run(`remove`, `@iarna/toml`);
 
