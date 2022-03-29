@@ -129,7 +129,6 @@ export default class AddCommand extends BaseCommand {
 
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
     const reuse = interactive || configuration.get(`preferReuse`);
-    const cached = this.cached ?? configuration.get(`preferCached`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
@@ -140,7 +139,7 @@ export default class AddCommand extends BaseCommand {
 
       suggestUtils.Strategy.PROJECT,
 
-      cached ?
+      this.cached ?
         suggestUtils.Strategy.CACHE
         : undefined,
 
