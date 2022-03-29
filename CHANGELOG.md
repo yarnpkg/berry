@@ -4,6 +4,8 @@
 
 Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 
+**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
+
 ## Master
 
 ### Installs
@@ -12,12 +14,14 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - applies hoisting algorithm on aliased dependencies
   - reinstalls modules that have their directories removed from node_modules by the user
   - improves portal hoisting
+- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 
-**Note:** features in `master` can be tried out by running `yarn set version from sources` in your project (existing contrib plugins are updated automatically, while new contrib plugins can be added by running `yarn plugin import from sources <name>`).
+### Bugfixes
+
+- The PnP ESM loader is now able to handle symlinked extensionless entrypoints.
 
 ### Installs
 
-- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 ## 3.2.0
 
 Various improvements have been made in the core to improve performance. Additionally:
