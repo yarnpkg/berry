@@ -54,10 +54,14 @@ export const TocLink = styled.a`
   margin-left: ${props => `${props.depth * 0.75}em`};
   margin-top: 0.8em;
   padding-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   :hover {
     color: #007aa2;
   }
+
   &::before {
     content: " ";
     border-radius: 100%;

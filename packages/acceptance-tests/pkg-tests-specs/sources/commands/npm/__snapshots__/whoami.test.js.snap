@@ -4,7 +4,7 @@ exports[`Commands npm whoami it should print the npm registry username for a giv
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: anotherTestUser
+  "stdout": "➤ YN0000: bar-user
 ➤ YN0000: Done
 ",
 }
@@ -14,7 +14,7 @@ exports[`Commands npm whoami it should print the npm registry username when conf
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: username
+  "stdout": "➤ YN0000: foo-user
 ➤ YN0000: Done
 ",
 }
@@ -24,7 +24,7 @@ exports[`Commands npm whoami it should print the npm registry username when conf
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: testUser
+  "stdout": "➤ YN0000: foo-user
 ➤ YN0000: Done
 ",
 }

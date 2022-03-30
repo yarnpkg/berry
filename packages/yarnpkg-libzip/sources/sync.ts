@@ -1,10 +1,11 @@
+import createModule            from './libzipSync';
 import {Libzip, makeInterface} from './makeInterface';
 
 let mod: Libzip | null = null;
 
 export function getLibzipSync() {
   if (mod === null)
-    mod = makeInterface(require(`./libzipSync`));
+    mod = makeInterface(createModule());
 
   return mod;
 }

@@ -82,8 +82,20 @@ describe(`Portable paths`, () => {
             expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
           });
 
+          it(`should support forward slash UNC Windows paths (//[server]/[sharename]/)`, () => {
+            const inputPath = `//Server01/user/docs/Letter.txt`;
+            const outputPath = `/unc/Server01/user/docs/Letter.txt`;
+            expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
+          });
+
           it(`should support Long UNC Windows paths (\\\\?\\[server]\\[sharename]\\)`, () => {
             const inputPath = `\\\\?\\Server01\\user\\docs\\Letter.txt`;
+            const outputPath = `/unc/?/Server01/user/docs/Letter.txt`;
+            expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
+          });
+
+          it(`should support forward slash Long UNC Windows paths (//?/[server]/[sharename]/) `, () => {
+            const inputPath = `//?/Server01/user/docs/Letter.txt`;
             const outputPath = `/unc/?/Server01/user/docs/Letter.txt`;
             expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
           });
@@ -102,6 +114,12 @@ describe(`Portable paths`, () => {
 
           it(`should support Long UNC Windows paths with dot (\\\\.\\[physical_device]\\)`, () => {
             const inputPath = `\\\\.\\PhysicalDevice\\user\\docs\\Letter.txt`;
+            const outputPath = `/unc/.dot/PhysicalDevice/user/docs/Letter.txt`;
+            expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
+          });
+
+          it(`should support forward slash Long UNC Windows paths with dot (//./[physical_device]/)`, () => {
+            const inputPath = `//./PhysicalDevice/user/docs/Letter.txt`;
             const outputPath = `/unc/.dot/PhysicalDevice/user/docs/Letter.txt`;
             expect(npath.toPortablePath(inputPath)).toEqual(outputPath);
           });

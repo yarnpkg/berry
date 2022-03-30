@@ -164,7 +164,8 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
     ? `yarn/${YarnVersion}`
     : `yarn/${miscUtils.dynamicRequire(`@yarnpkg/core`).version}-core`;
 
-  scriptEnv.npm_config_user_agent = `${version} npm/? node/${process.versions.node} ${process.platform} ${process.arch}`;
+  // We use process.version because it includes the "v" prefix and the other package managers include it too
+  scriptEnv.npm_config_user_agent = `${version} npm/? node/${process.version} ${process.platform} ${process.arch}`;
 
   if (lifecycleScript)
     scriptEnv.npm_lifecycle_event = lifecycleScript;

@@ -1,4 +1,5 @@
-const {readdir} = require(`fs-extra`);
+import {xfs} from '@yarnpkg/fslib';
+
 describe(`autoClean`, () => {
   test(`it should remove inactive entries from the cache`, makeTemporaryEnv({
     dependencies: {
@@ -6,10 +7,10 @@ describe(`autoClean`, () => {
     },
   }, async ({path, run, source}) => {
     await run(`install`);
-    const fileCount1 = (await readdir(`${path}/.yarn/cache`)).length;
+    const fileCount1 = (await xfs.readdirPromise(`${path}/.yarn/cache`)).length;
 
     await run(`remove`, `one-fixed-dep`);
-    const fileCount2 = (await readdir(`${path}/.yarn/cache`)).length;
+    const fileCount2 = (await xfs.readdirPromise(`${path}/.yarn/cache`)).length;
 
     expect(fileCount2).toEqual(fileCount1 - 2);
   }));
@@ -21,10 +22,10 @@ describe(`autoClean`, () => {
     },
   }, async ({path, run, source}) => {
     await run(`install`);
-    const fileCount1 = (await readdir(`${path}/.yarn/cache`)).length;
+    const fileCount1 = (await xfs.readdirPromise(`${path}/.yarn/cache`)).length;
 
     await run(`remove`, `one-fixed-dep`);
-    const fileCount2 = (await readdir(`${path}/.yarn/cache`)).length;
+    const fileCount2 = (await xfs.readdirPromise(`${path}/.yarn/cache`)).length;
 
     expect(fileCount2).toEqual(fileCount1 - 1);
   }));

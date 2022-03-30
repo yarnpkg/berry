@@ -84,16 +84,9 @@ export function splitRepoUrl(url: string): RepoUrlParts {
       return Object.prototype.hasOwnProperty.call(extra, protocol);
     });
 
-    let protocol: TreeishProtocols;
-    let request: string;
-
-    if (typeof requestedProtocol !== `undefined`) {
-      protocol = requestedProtocol;
-      request = extra[requestedProtocol]! as string;
-    } else {
-      protocol = TreeishProtocols.Head;
-      request = `HEAD`;
-    }
+    const [protocol, request] = typeof requestedProtocol !== `undefined`
+      ? [requestedProtocol, extra[requestedProtocol]! as string]
+      : [TreeishProtocols.Head, `HEAD`];
 
     for (const key of Object.values(TreeishProtocols))
       delete extra[key];
@@ -109,16 +102,9 @@ export function splitRepoUrl(url: string): RepoUrlParts {
     // Old-style: "#commit:abcdef" or "#abcdef"
     const colonIndex = subsequent.indexOf(`:`);
 
-    let protocol: string | null;
-    let request: string;
-
-    if (colonIndex === -1) {
-      protocol = null;
-      request = subsequent;
-    } else {
-      protocol = subsequent.slice(0, colonIndex);
-      request = subsequent.slice(colonIndex + 1);
-    }
+    const [protocol, request] = colonIndex === -1
+      ? [null, subsequent]
+      : [subsequent.slice(0, colonIndex), subsequent.slice(colonIndex + 1)];
 
     return {
       repo,
@@ -316,18 +302,16 @@ export async function fetchRoot(initialCwd: PortablePath) {
   // it may return long paths even when the cwd uses short paths, and we have no
   // way to detect it from Node (not even realpath).
 
-  let match: PortablePath | null = null;
-
   let cwd: PortablePath;
   let nextCwd = initialCwd;
   do {
     cwd = nextCwd;
     if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
-      match = cwd;
+      return cwd;
     nextCwd = ppath.dirname(cwd);
-  } while (match === null && nextCwd !== cwd);
+  } while (nextCwd !== cwd);
 
-  return match;
+  return null;
 }
 
 export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array<string>}) {

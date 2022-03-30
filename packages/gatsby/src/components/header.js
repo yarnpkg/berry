@@ -33,6 +33,9 @@ const NewsContainer = styled.div`
 
     white-space: pre-wrap;
     text-align: center;
+
+    line-height: 1.5em;
+    padding: 0.5em 1em;
   }
 
   background: #2188b6;
@@ -308,7 +311,7 @@ export const Header = ({children}) => {
       <NewsContainer>
         <NewsOverlay href={`https://classic.yarnpkg.com`}/>
         <NewsInner>
-          <NewsLine><Highlight>Important:</Highlight> This documentation covers Yarn 2 and onwards.</NewsLine> <NewsLine>For 1.x docs, see classic.yarnpkg.com.</NewsLine>
+          <NewsLine><Highlight>Important:</Highlight> This documentation covers modern versions of Yarn.</NewsLine> <NewsLine>For 1.x docs, see classic.yarnpkg.com.</NewsLine>
         </NewsInner>
       </NewsContainer>
 

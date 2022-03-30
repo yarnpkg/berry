@@ -1,42 +1,12 @@
 import {NativePath, npath} from '@yarnpkg/fslib';
 import fs                  from 'fs';
 import {Module}            from 'module';
+import path                from 'path';
 
 // @ts-expect-error
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 
 export const isBuiltinModule = (request: string) => request.startsWith(`node:`) || builtinModules.has(request);
-
-// https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L11-L24
-export function resolveMainPath(main: NativePath) {
-  let mainPath = Module._findPath(npath.resolve(main), null, true);
-  if (!mainPath)
-    return false;
-
-  // const preserveSymlinksMain = getOptionValue(`--preserve-symlinks-main`);
-  // if (!preserveSymlinksMain)
-  mainPath = fs.realpathSync(mainPath);
-
-  return mainPath;
-}
-
-// https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L26-L41
-export function shouldUseESMLoader(mainPath: NativePath) {
-  // const userLoader = getOptionValue(`--experimental-loader`);
-  // if (userLoader)
-  //   return true;
-  // const esModuleSpecifierResolution =
-  //   getOptionValue(`--experimental-specifier-resolution`);
-  // if (esModuleSpecifierResolution === `node`)
-  //   return true;
-  // Determine the module format of the main
-  if (mainPath && mainPath.endsWith(`.mjs`))
-    return true;
-  if (!mainPath || mainPath.endsWith(`.cjs`))
-    return false;
-  const pkg = readPackageScope(mainPath);
-  return pkg && pkg.data.type === `module`;
-}
 
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
 export function readPackageScope(checkPath: NativePath) {
@@ -66,4 +36,22 @@ export function readPackage(requestPath: NativePath) {
     return null;
 
   return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
+}
+
+// https://github.com/nodejs/node/blob/972d9218559877f7fff4bb6086afacac8933f8d1/lib/internal/errors.js#L1450-L1478
+// Our error isn't as detailed since we don't have access to acorn to check
+// if the file contains ESM syntax
+export function ERR_REQUIRE_ESM(filename: string, parentPath: string | null = null) {
+  const basename =
+    parentPath && path.basename(filename) === path.basename(parentPath)
+      ? filename
+      : path.basename(filename);
+
+  const msg =
+    `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
+Instead change the require of ${basename} in ${parentPath} to a dynamic import() which is available in all CommonJS modules.`;
+
+  const err = new Error(msg) as Error & { code: string };
+  err.code = `ERR_REQUIRE_ESM`;
+  return err;
 }

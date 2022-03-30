@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/esbuild-plugin-pnp": patch
+
+declined:
+  - "@yarnpkg/builder"

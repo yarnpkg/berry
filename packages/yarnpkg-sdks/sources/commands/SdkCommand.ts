@@ -32,6 +32,8 @@ export default class SdkCommand extends Command {
       The supported integrations at this time are: ${[...SUPPORTED_INTEGRATIONS.keys()].map(integration => `\`${integration}\``).join(`, `)}.
 
       **Note:** This command always updates the already-installed SDKs and editor settings, no matter which arguments are passed.
+
+      For more details on Editor SDKs, please consult the dedicated page from our website: https://yarnpkg.com/getting-started/editor-sdks.
     `,
     examples: [[
       `Generate the base SDKs`,

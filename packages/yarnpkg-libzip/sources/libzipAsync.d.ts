@@ -1,3 +1,4 @@
 /// <reference types="emscripten" />
 
-export = Module;
+// eslint-disable-next-line arca/no-default-export
+export default function createModule(): Promise<EmscriptenModule>;

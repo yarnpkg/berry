@@ -10,7 +10,7 @@ export type ArgumentSegment =
   | {type: `text`, text: string}
   | {type: `glob`, pattern: string}
   | {type: `shell`, shell: ShellLine, quoted: boolean}
-  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, quoted: boolean}
+  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, alternativeValue?: Array<ValueArgument>, quoted: boolean}
   | {type: `arithmetic`, arithmetic: ArithmeticExpression};
 
 export type Argument =

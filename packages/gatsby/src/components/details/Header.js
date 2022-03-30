@@ -25,11 +25,14 @@ const Description = ({description, deprecated}) => (
   </div>
 );
 
+const Version = styled.span`
+  margin-right: 8px;
+`;
+
 const VulnLink = styled.a`
   font-size: 0.825rem;
   color: rgba(0,0,0,0.5);
   letter-spacing: 0.3px;
-  margin-left: 8px;
 `;
 
 const VulnIcon = styled.img`
@@ -93,7 +96,7 @@ export const Header = ({
       />
       <License type={license} />
       <Deprecated deprecated={deprecated} />
-      <span>{version}</span>
+      <Version>{version}</Version>
       <TypeScript name={name} ts={types.ts} />
       <Vulnerabilities vulns={vulns} url={vulnsUrl} />
     </PackageInfo>

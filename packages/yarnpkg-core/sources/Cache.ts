@@ -12,7 +12,7 @@ import * as miscUtils                                                   from './
 import * as structUtils                                                 from './structUtils';
 import {LocatorHash, Locator}                                           from './types';
 
-const CACHE_VERSION = 8;
+const CACHE_VERSION = 9;
 
 export type CacheOptions = {
   mockedPackages?: Set<LocatorHash>;
@@ -185,6 +185,11 @@ export class Cache {
     };
 
     const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
+      // We hide the checksum if the package presence is conditional, because it becomes unreliable
+      // so there is no point in computing it unless we're checking the cache
+      if (refetchPath === null && opts.unstablePackages?.has(locator.locatorHash))
+        return null;
+
       const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
         ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}`
         : expectedChecksum;

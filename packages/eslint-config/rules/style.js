@@ -21,7 +21,7 @@ module.exports = {
       selector: `default`,
       format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
       filter: {
-        regex: `^(__.*|__non_webpack_module__|__non_webpack_require__|npm(_[a-z]+)+)$`,
+        regex: `^(__.*|__non_webpack_require__|npm(_[a-z]+)+)$`,
         match: false,
       },
       leadingUnderscore: `allow`,

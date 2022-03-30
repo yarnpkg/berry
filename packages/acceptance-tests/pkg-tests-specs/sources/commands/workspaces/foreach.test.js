@@ -7,8 +7,6 @@ async function setupWorkspaces(path) {
   await writeFile(`${path}/mutexes/workspace-a`, ``);
   await writeFile(`${path}/mutexes/workspace-b`, ``);
 
-  await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
-
   await writeFile(`${path}/packages/workspace-a/server.js`, getClientContent(`${path}/mutexes/workspace-a`, `PING`));
   await writeJson(`${path}/packages/workspace-a/package.json`, {
     name: `workspace-a`,
@@ -324,8 +322,6 @@ describe(`Commands`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
-
         await writeJson(`${path}/packages/package-a/package.json`, {
           name: `workspace-a`,
           version: `1.0.0`,
@@ -408,7 +404,7 @@ describe(`Commands`, () => {
           workspaces: [`packages/*`],
           scripts: {
             [`test:foo`]: `yarn workspaces foreach run test:bar`,
-            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1]).replace(/\\\\\\\\/g, "/")' "$INIT_CWD"`,
+            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1]).replace(/\\\\/g, "/")' "$INIT_CWD"`,
           },
         },
         async ({path, run}) => {
@@ -540,6 +536,25 @@ describe(`Commands`, () => {
         await expect(run(`workspaces`, `foreach`, `--since`, `--recursive`, `run`, `print`)).resolves.toMatchSnapshot();
       }),
     );
+
+    test(
+      `it should run on workspaces with matching binaries`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            'has-bin-entries': `1.0.0`,
+          },
+        },
+        async ({run}) => {
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `run`, `has-bin-entries`, `binary-executed`)).resolves.toMatchObject({
+            code: 0,
+            stdout: expect.stringContaining(`binary-executed`),
+          });
+        },
+      ),
+    );
   });
 });
 
@@ -582,10 +597,6 @@ function makeWorkspacesForeachSinceEnv(cb) {
   return makeTemporaryEnv({
     private: true,
     workspaces: [`packages/*`],
-  }, {
-    plugins: [
-      require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
-    ],
   }, async ({path, run, ...rest}) => {
     await setupWorkspaces(path);
 

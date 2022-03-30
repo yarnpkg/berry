@@ -1,9 +1,7 @@
 const {
   fs: {writeFile, realpath},
-  tests: {setPackageWhitelist, startPackageServer},
+  tests: {setPackageWhitelist, startPackageServer, validLogins},
 } = require(`pkg-tests-core`);
-
-const AUTH_TOKEN = `686159dc-64b3-413e-a244-2de2b8d1c36f`;
 
 describe(`Commands`, () => {
   describe(`dlx`, () => {
@@ -78,7 +76,7 @@ describe(`Commands`, () => {
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
-          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `    npmAuthToken: ${validLogins.fooUser.npmAuthToken}`,
         ].join(`\n`));
 
         await expect(run(`dlx`, `-q`, `@private/has-bin-entry`)).resolves.toMatchObject({
@@ -94,11 +92,11 @@ describe(`Commands`, () => {
 
         await writeFile(`${path}/.yarnrc.yml`, [
           `plugins:`,
-          `  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`))}`,
+          `  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-world.js`))}`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
-          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `    npmAuthToken: ${validLogins.fooUser.npmAuthToken}`,
           `preferDeferredVersions: true`,
         ].join(`\n`));
 
@@ -113,7 +111,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const url = await startPackageServer();
 
-        const relativePluginPath = require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`);
+        const relativePluginPath = require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-world.js`);
 
         await writeFile(`${path}/.yarnrc.yml`, [
           `plugins:`,
@@ -121,7 +119,7 @@ describe(`Commands`, () => {
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
-          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `    npmAuthToken: ${validLogins.fooUser.npmAuthToken}`,
           `preferDeferredVersions: true`,
         ].join(`\n`));
 
@@ -138,12 +136,12 @@ describe(`Commands`, () => {
 
         await writeFile(`${path}/.yarnrc.yml`, [
           `plugins:`,
-          `  - path: ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`))}`,
-          `    spec: "@yarnpkg/plugin-version"`,
+          `  - path: ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-world.js`))}`,
+          `    spec: "@yarnpkg/plugin-hello-world"`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
-          `    npmAuthToken: ${AUTH_TOKEN}`,
+          `    npmAuthToken: ${validLogins.fooUser.npmAuthToken}`,
           `preferDeferredVersions: true`,
         ].join(`\n`));
 

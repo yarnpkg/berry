@@ -3,7 +3,7 @@ import {toFilename, npath, ppath}                                             fr
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
-import {hoist, HoisterTree, HoisterResult}                                    from './hoist';
+import {hoist, HoisterTree, HoisterResult, HoisterDependencyKind}             from './hoist';
 
 // Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
@@ -133,7 +133,13 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
     val.locations = val.locations.sort((loc1: PortablePath, loc2: PortablePath) => {
       const len1 = loc1.split(ppath.delimiter).length;
       const len2 = loc2.split(ppath.delimiter).length;
-      return len1 !== len2 ? len2 - len1 : loc2.localeCompare(loc1);
+      if (loc2 === loc1) {
+        return 0;
+      } else if (len1 !== len2) {
+        return len2 - len1;
+      } else {
+        return loc2 > loc1 ? 1 : -1;
+      }
     });
   }
 
@@ -278,7 +284,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     reference: topLocator.reference,
     peerNames: topPkg.packagePeers,
     dependencies: new Set<HoisterTree>(),
-    isWorkspace: true,
+    dependencyKind: HoisterDependencyKind.WORKSPACE,
   };
 
   const nodes = new Map<string, HoisterTree>();
@@ -296,7 +302,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation);
 
     if (!node) {
-      const isWorkspace = pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX);
+      let dependencyKind = HoisterDependencyKind.REGULAR;
+      if (isExternalSoftLinkPackage)
+        dependencyKind = HoisterDependencyKind.EXTERNAL_SOFT_LINK;
+      else if (pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX))
+        dependencyKind = HoisterDependencyKind.WORKSPACE;
+
+
       node = {
         name,
         identName: locator.name,
@@ -304,8 +316,8 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
         dependencies: new Set(),
         // View peer dependencies as regular dependencies for workspaces
         // (meeting workspace peer dependency constraints is sometimes hard, sometimes impossible for the nm linker)
-        peerNames: isWorkspace ? new Set() : pkg.packagePeers,
-        isWorkspace,
+        peerNames: dependencyKind === HoisterDependencyKind.WORKSPACE ? new Set() : pkg.packagePeers,
+        dependencyKind,
       };
 
       nodes.set(nodeKey, node);
@@ -355,7 +367,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
       }
     }
 
-    if (pkg !== parentPkg || pkg.linkType !== LinkType.SOFT || !options.selfReferencesByCwd || options.selfReferencesByCwd.get(parentRelativeCwd))
+    if (pkg !== parentPkg || pkg.linkType !== LinkType.SOFT || (!isExternalSoftLinkPackage && (!options.selfReferencesByCwd || options.selfReferencesByCwd.get(parentRelativeCwd))))
       parent.dependencies.add(node);
 
     const isWorkspaceDependency = locator !== topLocator && pkg.linkType === LinkType.SOFT && !locator.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isExternalSoftLinkPackage;
@@ -451,21 +463,14 @@ function getTargetLocatorPath(locator: PhysicalPackageLocator, pnp: PnpApi, opti
   if (info === null)
     throw new Error(`Assertion failed: Expected the package to be registered`);
 
-  let linkType;
-  let target;
-  if (options.pnpifyFs) {
+  return options.pnpifyFs
     // In case of pnpifyFs we represent modules as symlinks to archives in NodeModulesFS
     // `/home/user/project/foo` is a symlink to `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo`
     // To make this fs layout work with legacy tools we make
     // `/home/user/project/.yarn/.cache/foo.zip/node_modules/foo/node_modules` (which normally does not exist inside archive) a symlink to:
     // `/home/user/project/node_modules/foo/node_modules`, so that the tools were able to access it
-    target = npath.toPortablePath(info.packageLocation);
-    linkType = LinkType.SOFT;
-  } else {
-    target = getRealPackageLocation(info, locator, pnp);
-    linkType = info.linkType;
-  }
-  return {linkType, target};
+    ? {linkType: LinkType.SOFT, target: npath.toPortablePath(info.packageLocation)}
+    : {linkType: info.linkType, target: getRealPackageLocation(info, locator, pnp)};
 }
 
 /**
@@ -560,8 +565,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         const segments = nodeModulesLocation.split(`/`);
         const nodeModulesIdx = segments.indexOf(NODE_MODULES);
 
-        let segCount = segments.length - 1;
-        while (nodeModulesIdx >= 0 && segCount > nodeModulesIdx) {
+        for (let segCount = segments.length - 1; nodeModulesIdx >= 0 && segCount > nodeModulesIdx; segCount--) {
           const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
           const targetDir = toFilename(segments[segCount]);
 
@@ -575,8 +579,6 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
               subdirs.dirList.add(targetDir);
             }
           }
-
-          segCount--;
         }
       }
 

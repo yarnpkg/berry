@@ -137,5 +137,23 @@ describe(`Commands`, () => {
         },
       ),
     );
+
+    test(`it should normalize scoped bin entries`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            "@scoped/has-bin-entry": `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(run(`run`, `has-bin-entry`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `1.0.0\n`,
+          });
+        },
+      ),
+    );
   });
 });

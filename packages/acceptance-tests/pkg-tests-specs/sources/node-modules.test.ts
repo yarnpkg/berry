@@ -285,7 +285,9 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, link skipped.`));
+
+        // We shouldn't show logs when a package is skipped because they get really spammy when a package has a lot of conditional deps
+        expect(stdout).not.toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, link skipped.`));
 
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
@@ -544,7 +546,6 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`)],
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1386,7 +1387,6 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-
   test(
     `should fallback to dependencies if the parent doesn't provide the peer dependency`,
     makeTemporaryEnv(
@@ -1503,6 +1503,55 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  it(`should handle the edge case when node_modules is a file`, () => {
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.resolve(path, `node_modules` as Filename), ``);
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps')`)).resolves.toEqual({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    );
+  });
+
+  it(`should tolerate if node_modules is a symlink to other directory`, () => {
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        const nmDir = ppath.resolve(path, `node_modules` as Filename);
+        const trueInstallDir = ppath.resolve(path, `target` as Filename);
+        await xfs.mkdirPromise(trueInstallDir);
+        await xfs.symlinkPromise(trueInstallDir, nmDir);
+
+        await run(`install`);
+
+        expect((await xfs.lstatPromise(nmDir)).isSymbolicLink()).toBeTruthy();
+        expect(await xfs.existsSync(ppath.join(trueInstallDir, `no-deps` as Filename))).toBeTruthy();
+      },
+    );
+  });
+
   it(`should install project when portal is pointing to a workspace`,
     makeTemporaryEnv(
       {
@@ -1534,5 +1583,143 @@ describe(`Node_Modules`, () => {
         });
       },
     ),
+  );
+
+  it(`should install project when portal is used from the child workspace and have conflicts with root workspace dependencies`,
+    // portal dependencies should be hoisted first and only after that portal hoisting should happen, not vice versa
+    // as a result the install in this case should finish successfully
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.mkdirpPromise(ppath.join(path, `ws` as PortablePath));
+          await xfs.writeJsonPromise(`${path}/ws/package.json` as PortablePath, {
+            dependencies: {
+              portal: `portal:${portalTarget}`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            dependencies: {
+              'no-deps': `2.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.not.toThrow();
+        });
+      }),
+  );
+
+  it(`should reinstall and rebuild dependencies deleted by the user on the next install`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+          [`one-dep-scripted`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+        await xfs.removePromise(`${path}/node_modules/one-dep-scripted` as PortablePath);
+
+        const {stdout} = await run(`install`);
+
+        // Yarn must reinstall and rebuild only the removed package
+        expect(stdout).not.toMatch(new RegExp(`no-deps-scripted@npm:1.0.0 must be built`));
+        expect(stdout).toMatch(new RegExp(`one-dep-scripted@npm:1.0.0 must be built`));
+
+        await expect(source(`require('one-dep-scripted')`)).resolves.toMatchObject({
+          name: `one-dep-scripted`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  it(`should only reinstall scoped dependencies deleted by the user on the next install`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@types/no-deps`]: `1.0.0`,
+          [`@types/is-number`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        await xfs.removePromise(`${path}/node_modules/@types/is-number` as PortablePath);
+        const inode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+
+        await run(`install`);
+        const nextInode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+
+        await expect(xfs.existsPromise(`${path}/node_modules/@types/is-number` as PortablePath));
+        expect(nextInode).toEqual(inode);
+      },
+    ),
+  );
+
+  it(`should support portals to external workspaces`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+        dependencies: {
+          'no-deps': `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async portalTarget => {
+          await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+            dependencies: {
+              ws1: `^1.0.0`,
+              ws2: `^1.0.0`,
+            },
+            resolutions: {
+              ws1: `portal:${portalTarget}/ws1`,
+              ws2: `portal:${portalTarget}/ws2`,
+            },
+          });
+
+          await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
+            name: `portal`,
+            workspaces: [`ws1`, `ws2`],
+          });
+
+          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws1` as PortablePath));
+          await xfs.writeJsonPromise(`${portalTarget}/ws1/package.json` as PortablePath, {
+            name: `ws1`,
+            workspaces: [`ws1`],
+          });
+
+          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws2` as PortablePath));
+          await xfs.writeJsonPromise(`${portalTarget}/ws2/package.json` as PortablePath, {
+            name: `ws2`,
+            workspaces: [`ws2`],
+            dependencies: {
+              ws1: `^1.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).resolves.not.toThrow();
+        });
+      }),
   );
 });

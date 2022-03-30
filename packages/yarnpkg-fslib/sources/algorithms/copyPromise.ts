@@ -31,17 +31,17 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   const prelayout: Operations = [];
   const postlayout: Operations = [];
 
-  const referenceTime = opts.stableTime
-    ? {mtime: defaultTime, atime: defaultTime} as const
+  const {atime, mtime} = opts.stableTime
+    ? {atime: defaultTime, mtime: defaultTime}
     : await sourceFs.lstatPromise(normalizedSource);
 
-  await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [referenceTime.atime, referenceTime.mtime]});
+  await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [atime, mtime]});
 
   const updateTime = typeof destinationFs.lutimesPromise === `function`
     ? destinationFs.lutimesPromise.bind(destinationFs)
     : destinationFs.utimesPromise.bind(destinationFs);
 
-  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, opts);
+  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, {...opts, didParentExist: true});
 
   for (const operation of prelayout)
     await operation();
@@ -51,12 +51,14 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
   }));
 }
 
-async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions) {
-  const destinationStat = await maybeLStat(destinationFs, destination);
+type InternalCopyOptions = CopyOptions & {didParentExist: boolean};
+
+async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: InternalCopyOptions) {
+  const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
 
-  const referenceTime = opts.stableTime
-    ? {mtime: defaultTime, atime: defaultTime} as const
+  const {atime, mtime} = opts.stableTime
+    ? {atime: defaultTime, mtime: defaultTime}
     : sourceStat;
 
   let updated: boolean;
@@ -78,8 +80,8 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
     } break;
   }
 
-  if (updated || destinationStat?.mtime?.getTime() !== referenceTime.mtime.getTime() || destinationStat?.atime?.getTime() !== referenceTime.atime.getTime()) {
-    postlayout.push(() => updateTime(destination, referenceTime.atime, referenceTime.mtime));
+  if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
+    postlayout.push(() => updateTime(destination, atime, mtime));
     updated = true;
   }
 
@@ -99,7 +101,7 @@ async function maybeLStat<P extends Path>(baseFs: FakeFS<P>, p: P) {
   }
 }
 
-async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions) {
+async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: InternalCopyOptions) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
     if (opts.overwrite) {
       prelayout.push(async () => destinationFs.removePromise(destination));
@@ -126,15 +128,17 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
 
   const entries = await sourceFs.readdirPromise(source);
 
+  const nextOpts: InternalCopyOptions = opts.didParentExist && !destinationStat ? {...opts, didParentExist: false} : opts;
+
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
-      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts)) {
+      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts)) {
         updated = true;
       }
     }
   } else {
     const entriesUpdateStatus = await Promise.all(entries.map(async entry => {
-      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), opts);
+      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts);
     }));
 
     if (entriesUpdateStatus.some(status => status)) {

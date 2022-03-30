@@ -18,6 +18,7 @@ export type Filename = string & { __pathType: PathType.File };
 export type Path = PortablePath | NativePath;
 
 export const Filename = {
+  home: `~` as Filename,
   nodeModules: `node_modules` as Filename,
   manifest: `package.json` as Filename,
   lockfile: `yarn.lock` as Filename,
@@ -113,7 +114,7 @@ export interface ConvertUtils {
 }
 
 const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
-const UNC_WINDOWS_PATH_REGEXP = /^\\\\(\.\\)?(.*)$/;
+const UNC_WINDOWS_PATH_REGEXP = /^\/\/(\.\/)?(.*)$/;
 
 const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
 const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
@@ -141,13 +142,15 @@ function toPortablePath(p: Path): PortablePath {
   if (process.platform !== `win32`)
     return p as PortablePath;
 
+  p = p.replace(/\\/g, `/`);
+
   let windowsPathMatch, uncWindowsPathMatch;
   if ((windowsPathMatch = p.match(WINDOWS_PATH_REGEXP)))
     p = `/${windowsPathMatch[1]}`;
   else if ((uncWindowsPathMatch = p.match(UNC_WINDOWS_PATH_REGEXP)))
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
 
-  return p.replace(/\\/g, `/`) as PortablePath;
+  return p as PortablePath;
 }
 
 export function convertPath<P extends Path>(targetPathUtils: PathUtils<P>, sourcePath: Path): P {

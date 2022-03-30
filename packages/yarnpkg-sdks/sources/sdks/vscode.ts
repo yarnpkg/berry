@@ -76,22 +76,6 @@ export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpA
   });
 };
 
-export const generateStylelintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
-  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
-    [`stylelint.stylelintPath`]: npath.fromPortablePath(
-      wrapper.getProjectPathTo(
-        `lib/index.js` as PortablePath,
-      ),
-    ),
-  });
-
-  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
-    [`recommendations`]: [
-      `stylelint.vscode-stylelint`,
-    ],
-  });
-};
-
 export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`svelte.language-server.ls-path`]: npath.fromPortablePath(
@@ -130,7 +114,6 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, null],
   [`typescript`, generateTypescriptWrapper],
-  [`stylelint`, generateStylelintWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerWrapper],
   [`flow-bin`, generateFlowBinWrapper],
 ];

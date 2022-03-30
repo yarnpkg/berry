@@ -3,7 +3,7 @@
 exports[`Commands npm login it should login a user with OTP setup 1`] = `
 "npmRegistries:
   \\"http://yarn.test.registry\\":
-    npmAuthToken: 686159dc-64b3-413e-a244-2de2b8d1c36f
+    npmAuthToken: 0d5165d0-aa93-599d-8ab8-326d64964a82
 "
 `;
 
@@ -20,7 +20,7 @@ Object {
 exports[`Commands npm login it should login a user with OTP to a specific scope 1`] = `
 "npmScopes:
   testScope:
-    npmAuthToken: 686159dc-64b3-413e-a244-2de2b8d1c36f
+    npmAuthToken: 0d5165d0-aa93-599d-8ab8-326d64964a82
     npmRegistryServer: \\"http://yarn.test.registry\\"
 "
 `;
@@ -38,7 +38,7 @@ Object {
 exports[`Commands npm login it should login a user with no OTP setup 1`] = `
 "npmRegistries:
   \\"http://yarn.test.registry\\":
-    npmAuthToken: 316158de-64b3-413e-a244-2de2b8d1c80f
+    npmAuthToken: 9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5
 "
 `;
 
@@ -55,7 +55,7 @@ Object {
 exports[`Commands npm login it should login a user with no OTP setup to a specific scope 1`] = `
 "npmScopes:
   testScope:
-    npmAuthToken: 316158de-64b3-413e-a244-2de2b8d1c80f
+    npmAuthToken: 9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5
     npmRegistryServer: \\"http://yarn.test.registry\\"
 "
 `;

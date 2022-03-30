@@ -1,3 +1,4 @@
+import 'jest-json';
 import os      from 'os';
 import {tests} from 'pkg-tests-core';
 

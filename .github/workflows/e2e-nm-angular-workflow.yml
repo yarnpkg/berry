@@ -5,14 +5,16 @@ on:
     branches:
     - master
     paths:
-    - .github/workflows/e2e-angular-workflow.yml
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-nm-angular-workflow.yml
     - scripts/e2e-setup-ci.sh
     - packages/yarnpkg-nm/sources/hoist.ts
     - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
     - packages/plugin-nm/sources/NodeModulesLinker.ts
   pull_request:
     paths:
-    - .github/workflows/e2e-angular-workflow.yml
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-nm-angular-workflow.yml
     - scripts/e2e-setup-ci.sh
     - packages/yarnpkg-nm/sources/hoist.ts
     - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
@@ -36,25 +38,17 @@ jobs:
 
     - uses: actions/checkout@master
 
-    - name: 'Install Node'
-      uses: actions/setup-node@master
-      with:
-        node-version: 14.x
-
-    - name: 'Build the standard bundle'
-      run: |
-        node ./scripts/run-yarn.js build:cli
-      shell: bash
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh nm
 
-        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false
+        # TODO: Angular should be fixed to detect the correct package manager to install with
+        # but for now we need to specify it
+        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
 
         cd berry-angular
-
-        yarn add @angular-devkit/core@next @babel/preset-env @babel/core -D
 
         yarn ng build --aot
       shell: bash

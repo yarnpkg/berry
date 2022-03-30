@@ -16,12 +16,18 @@ export async function tryReadFile(path: NativePath): Promise<string | null> {
   }
 }
 
-export function tryParseURL(str: string) {
+export function tryParseURL(str: string, base?: string | URL | undefined) {
   try {
-    return new URL(str);
+    return new URL(str, base);
   } catch {
     return null;
   }
+}
+
+let entrypointPath: NativePath | null = null;
+
+export function setEntrypointPath(file: NativePath) {
+  entrypointPath = file;
 }
 
 export function getFileFormat(filepath: string): string | null {
@@ -50,11 +56,24 @@ export function getFileFormat(filepath: string): string | null {
     }
     case `.js`: {
       const pkg = nodeUtils.readPackageScope(filepath);
-      if (pkg) {
-        return pkg.data.type ?? `commonjs`;
-      }
+      // assume CJS for files outside of a package boundary
+      if (!pkg)
+        return `commonjs`;
+      return pkg.data.type ?? `commonjs`;
+    }
+    // Matching files beyond those handled above deviates from Node's default
+    // --experimental-loader behavior but is required to work around
+    // https://github.com/nodejs/node/issues/33226
+    default: {
+      if (entrypointPath !== filepath)
+        return null;
+      const pkg = nodeUtils.readPackageScope(filepath);
+      if (!pkg)
+        return `commonjs`;
+      // prevent extensions beyond .mjs or .js from loading as ESM
+      if (pkg.data.type === `module`)
+        return null;
+      return pkg.data.type ?? `commonjs`;
     }
   }
-
-  return null;
 }

@@ -10,9 +10,8 @@
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.0.1",
+    "clipanion": "^3.2.0-rc.4",
     "lodash": "^4.17.15",
-    "node-emoji": "^1.8.1",
     "tau-prolog": "^0.2.66",
     "tslib": "^1.13.0"
   },
@@ -24,12 +23,9 @@
     "@types/lodash": "^4.14.136",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^",
-    "typescript": "^4.4.2"
+    "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
-    "build:plugin-constraints": "builder build plugin",
-    "update-local": "yarn build:plugin-constraints && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -41,6 +37,6 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   }
 }

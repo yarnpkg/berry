@@ -64,6 +64,10 @@ export default class UpCommand extends BaseCommand {
     description: `Offer various choices, depending on the detected upgrade paths`,
   });
 
+  fixed = Option.Boolean(`-F,--fixed`, false, {
+    description: `Store dependency tags as-is instead of resolving them`,
+  });
+
   exact = Option.Boolean(`-E,--exact`, false, {
     description: `Don't use any semver modifier on the resolved range`,
   });
@@ -159,6 +163,7 @@ export default class UpCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
+    const fixed = this.fixed;
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
@@ -203,7 +208,7 @@ export default class UpCommand extends BaseCommand {
                 workspace,
                 target,
                 existingDescriptor,
-                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies}),
+                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, fixed, modifier, strategies}),
               ] as const;
             }));
 

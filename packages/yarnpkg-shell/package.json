@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -8,11 +8,10 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "chalk": "^3.0.0",
-    "clipanion": "^3.0.1",
+    "clipanion": "^3.2.0-rc.4",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
     "micromatch": "^4.0.2",
-    "stream-buffers": "^3.0.2",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
@@ -41,6 +40,6 @@
     "directory": "packages/yarnpkg-shell"
   },
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   }
 }

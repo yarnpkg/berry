@@ -1,7 +1,7 @@
-import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils} from '@yarnpkg/core';
-import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                      from '@yarnpkg/fslib';
+import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils, FetchResult} from '@yarnpkg/core';
+import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                                   from '@yarnpkg/fslib';
 
-import {Hooks as PatchHooks}                                                                                               from './index';
+import {Hooks as PatchHooks}                                                                                                            from './index';
 
 export {applyPatchFile} from './tools/apply';
 export {parsePatchFile} from './tools/parse';
@@ -9,7 +9,9 @@ export {parsePatchFile} from './tools/parse';
 const BUILTIN_REGEXP = /^builtin<([^>]+)>$/;
 
 function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
-  const {source, selector, params} = structUtils.parseRange(spec);
+  const {protocol, source, selector, params} = structUtils.parseRange(spec);
+  if (protocol !== `patch:`)
+    throw new Error(`Invalid patch range`);
   if (source === null)
     throw new Error(`Patch locators must explicitly define their source`);
 
@@ -30,6 +32,14 @@ function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
   return {parentLocator, sourceItem, patchPaths, sourceVersion};
 }
 
+export function isPatchDescriptor(descriptor: Descriptor) {
+  return descriptor.range.startsWith(`patch:`);
+}
+
+export function isPatchLocator(locator: Locator) {
+  return locator.reference.startsWith(`patch:`);
+}
+
 export function parseDescriptor(descriptor: Descriptor) {
   const {sourceItem, ...rest} = parseSpec(descriptor.range, structUtils.parseDescriptor);
   return {...rest, sourceDescriptor: sourceItem};
@@ -38,6 +48,32 @@ export function parseDescriptor(descriptor: Descriptor) {
 export function parseLocator(locator: Locator) {
   const {sourceItem, ...rest} = parseSpec(locator.reference, structUtils.parseLocator);
   return {...rest, sourceLocator: sourceItem};
+}
+
+export function unpatchDescriptor(descriptor: Descriptor) {
+  const {sourceItem} = parseSpec(descriptor.range, structUtils.parseDescriptor);
+  return sourceItem;
+}
+
+export function unpatchLocator(locator: Locator) {
+  const {sourceItem} = parseSpec(locator.reference, structUtils.parseLocator);
+  return sourceItem;
+}
+
+export function ensureUnpatchedDescriptor(descriptor: Descriptor) {
+  if (!isPatchDescriptor(descriptor))
+    return descriptor;
+
+  const {sourceItem} = parseSpec(descriptor.range, structUtils.parseDescriptor);
+  return sourceItem;
+}
+
+export function ensureUnpatchedLocator(locator: Locator) {
+  if (!isPatchLocator(locator))
+    return locator;
+
+  const {sourceItem} = parseSpec(locator.reference, structUtils.parseLocator);
+  return sourceItem;
 }
 
 function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patchHash}: {parentLocator: Locator | null, sourceItem: T, patchPaths: Array<PortablePath>, sourceVersion?: string | null, patchHash?: string}, sourceStringifier: (source: T) => string) {
@@ -65,8 +101,8 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patc
   });
 }
 
-export function makeDescriptor(ident: Ident, {parentLocator, sourceDescriptor, patchPaths}: ReturnType<typeof parseDescriptor>) {
-  return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
+export function makeDescriptor(ident: Ident, {parentLocator, sourceDescriptor, patchPaths}: Pick<ReturnType<typeof parseDescriptor>, `parentLocator` | `sourceDescriptor` | `patchPaths`>) {
+  return structUtils.makeDescriptor(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
 }
 
 export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPaths, patchHash}: Omit<ReturnType<typeof parseLocator>, 'sourceLocator' | 'sourceVersion'> & {sourcePackage: Package, patchHash: string}) {
@@ -76,17 +112,21 @@ export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPa
 type VisitPatchPathOptions<T> = {
   onAbsolute: (p: PortablePath) => T;
   onRelative: (p: PortablePath) => T;
+  onProject: (p: PortablePath) => T;
   onBuiltin: (name: string) => T;
 };
 
-function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOptions<T>, patchPath: PortablePath) {
-  const optional = patchPath.startsWith(`~`);
-  if (optional)
-    patchPath = patchPath.slice(1) as PortablePath;
+function visitPatchPath<T>({onAbsolute, onRelative, onProject, onBuiltin}: VisitPatchPathOptions<T>, patchPath: PortablePath) {
+  const flagIndex = patchPath.lastIndexOf(`!`);
+  if (flagIndex !== -1)
+    patchPath = patchPath.slice(flagIndex + 1) as PortablePath;
 
   const builtinMatch = patchPath.match(BUILTIN_REGEXP);
   if (builtinMatch !== null)
     return onBuiltin(builtinMatch[1]);
+
+  if (patchPath.startsWith(`~/`))
+    return onProject(patchPath.slice(2) as PortablePath);
 
   if (ppath.isAbsolute(patchPath)) {
     return onAbsolute(patchPath);
@@ -96,9 +136,13 @@ function visitPatchPath<T>({onAbsolute, onRelative, onBuiltin}: VisitPatchPathOp
 }
 
 export function extractPatchFlags(patchPath: PortablePath) {
-  const optional = patchPath.startsWith(`~`);
-  if (optional)
-    patchPath = patchPath.slice(1) as PortablePath;
+  const flagIndex = patchPath.lastIndexOf(`!`);
+
+  const flags = flagIndex !== -1
+    ? new Set(patchPath.slice(0, flagIndex).split(/!/))
+    : new Set();
+
+  const optional = flags.has(`optional`);
 
   return {optional};
 }
@@ -107,6 +151,7 @@ export function isParentRequired(patchPath: PortablePath) {
   return visitPatchPath({
     onAbsolute: () => false,
     onRelative: () => true,
+    onProject: () => false,
     onBuiltin: () => false,
   }, patchPath);
 }
@@ -135,15 +180,19 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
       const flags = extractPatchFlags(patchPath);
 
       const source = await visitPatchPath({
-        onAbsolute: async () => {
+        onAbsolute: async patchPath => {
           return await xfs.readFilePromise(patchPath, `utf8`);
         },
 
-        onRelative: async () => {
+        onRelative: async patchPath => {
           if (effectiveParentFetch === null)
             throw new Error(`Assertion failed: The parent locator should have been fetched`);
 
           return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
+        },
+
+        onProject: async patchPath => {
+          return await xfs.readFilePromise(ppath.join(opts.project.cwd, patchPath), `utf8`);
         },
 
         onBuiltin: async name => {
@@ -172,11 +221,10 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
   if (typeof pkg === `undefined`)
     throw new Error(`Assertion failed: Expected the package to be registered`);
 
+  const unpatchedLocator = ensureUnpatchedLocator(locator);
+
   const checksums = project.storedChecksums;
   const report = new ThrowReport();
-
-  const fetcher = project.configuration.makeFetcher();
-  const fetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
 
   const temp = await xfs.mktempPromise();
 
@@ -184,18 +232,45 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
   const userPath = ppath.join(temp, `user` as Filename);
   const metaPath = ppath.join(temp, `.yarn-patch.json` as Filename);
 
-  await Promise.all([
-    xfs.copyPromise(sourcePath, fetchResult.prefixPath, {
-      baseFs: fetchResult.packageFs,
-    }),
-    xfs.copyPromise(userPath, fetchResult.prefixPath, {
-      baseFs: fetchResult.packageFs,
-    }),
-    xfs.writeJsonPromise(metaPath, {
-      locator: structUtils.stringifyLocator(locator),
-      version: pkg.version,
-    }),
-  ]);
+  const fetcher = project.configuration.makeFetcher();
+
+  const cleanup: Array<() => void> = [];
+
+  try {
+    let sourceFetchResult: FetchResult;
+    let userFetchResult: FetchResult;
+
+    if (locator.locatorHash === unpatchedLocator.locatorHash) {
+      const fetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
+      cleanup.push(() => fetchResult.releaseFs?.());
+
+      sourceFetchResult = fetchResult;
+      userFetchResult = fetchResult;
+    } else {
+      sourceFetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
+      cleanup.push(() => sourceFetchResult.releaseFs?.());
+
+      userFetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
+      cleanup.push(() => userFetchResult.releaseFs?.());
+    }
+
+    await Promise.all([
+      xfs.copyPromise(sourcePath, sourceFetchResult.prefixPath, {
+        baseFs: sourceFetchResult.packageFs,
+      }),
+      xfs.copyPromise(userPath, userFetchResult.prefixPath, {
+        baseFs: userFetchResult.packageFs,
+      }),
+      xfs.writeJsonPromise(metaPath, {
+        locator: structUtils.stringifyLocator(locator),
+        version: pkg.version,
+      }),
+    ]);
+  } finally {
+    for (const cleanupFn of cleanup) {
+      cleanupFn();
+    }
+  }
 
   xfs.detachTemp(temp);
   return userPath;

@@ -48,6 +48,7 @@ const mte = generatePkgDriver({
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_TIMERS`]: `false`,
         [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
+        [`FORCE_COLOR`]: `0`,
         // Otherwise the output wouldn't be the same on CI vs non-CI
         [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
         [`YARN_PREFER_AGGREGATE_CACHE_INFO`]: `false`,

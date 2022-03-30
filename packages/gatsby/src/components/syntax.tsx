@@ -3,6 +3,8 @@ import styled, {StyledComponent}              from '@emotion/styled';
 import {FaLink}                               from 'react-icons/fa';
 import React, {PropsWithChildren, useContext} from 'react';
 
+import {ifMobile}                             from './responsive';
+
 export type Theme = {
   name: string;
 
@@ -82,6 +84,7 @@ export const Main = styled.div`
 
   font-family: "Open Sans", sans-serif;
   white-space: normal;
+  overflow-wrap: break-word;
 
   & + * {
     margin-top: 0 !important;
@@ -131,6 +134,10 @@ const DescriptionAnchor = styled.div<ThemeProps>`
 const DescriptionContainer = styled.div`
   padding: 1em;
 
+  ${ifMobile} {
+    padding: 1em 0;
+  }
+
   &:first-of-type {
     margin-top: 0;
   }
@@ -138,12 +145,16 @@ const DescriptionContainer = styled.div`
   & + div {
     margin-top: -0.5em;
   }
+
+  span {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
 `;
 
 const AnchorContainer = styled.a`
-  margin-left: -15px;
-
-  padding: 15px;
+  margin-left: -0.5em;
+  padding: 0.5em;
 
   color: inherit;
   text-decoration: none;
@@ -154,6 +165,7 @@ const Description = styled.div`
 
   font-family: "Open Sans", sans-serif;
   white-space: normal;
+  overflow-wrap: break-word;
 `;
 
 const NestedSectionHeaderContext = React.createContext(1);
@@ -182,9 +194,9 @@ const Describe = ({theme, name, description, anchor, children}: PropsWithChildre
   <DescriptionAnchor id={`${anchor}`} theme={theme}>
     <NestedSectionHeader name={name}>
       <DescriptionContainer theme={theme}>
-        {<Description theme={theme}>
+        <Description theme={theme}>
           {description}
-        </Description>}
+        </Description>
         {children}
       </DescriptionContainer>
     </NestedSectionHeader>
@@ -192,7 +204,7 @@ const Describe = ({theme, name, description, anchor, children}: PropsWithChildre
 </> : children as JSX.Element;
 
 const Anchor = () => <>
-  <span style={{fontSize: `0.7em`}}>
+  <span style={{fontSize: `0.7em`, whiteSpace: `nowrap`}}>
     <FaLink/>
   </span>
 </>;
@@ -283,7 +295,7 @@ export type ScalarPropertyProps = DescribeProps & ScalarProps;
 
 export const ScalarProperty = ({theme, name, anchor = name, placeholder, description}: ScalarPropertyProps) => <>
   <Describe theme={theme} name={name} description={description} anchor={description ? anchor : null}>
-    <div>
+    <div style={{marginRight: `-2vw`}}>
       <Key theme={theme} name={name} anchorTarget={description ? anchor : null} /><span style={{color: getColorForScalar(theme, placeholder) ?? undefined}}>{theme.formatValue(placeholder)}</span>{theme.dictionaries.suffix}
     </div>
   </Describe>

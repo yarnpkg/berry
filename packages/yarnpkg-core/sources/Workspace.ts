@@ -41,15 +41,13 @@ export class Workspace {
 
   async setup() {
     // @ts-expect-error: It's ok to initialize it now
-    this.manifest = xfs.existsSync(ppath.join(this.cwd, Manifest.fileName))
-      ? await Manifest.find(this.cwd)
-      : new Manifest();
+    this.manifest = await Manifest.tryFind(this.cwd) ?? new Manifest();
 
     // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substr(0, 6)}`);
+    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substring(0, 6)}`);
     const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)

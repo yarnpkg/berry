@@ -1,6 +1,12 @@
 import {parseShell, stringifyShell} from '../sources';
 
 const VALID_COMMANDS = [
+  `echo {`,
+  `echo {foo`,
+  `echo { foo`,
+  `echo {}`,
+  `echo foo{}bar`,
+
   // It should allow shell lines to end with semicolons
   `echo foo;`,
 
@@ -39,6 +45,9 @@ const VALID_COMMANDS = [
 ];
 
 const INVALID_COMMANDS = [
+  `echo }`,
+  `echo foo}`,
+
   // It shouldn't allow shell lines to start with semicolons.
   // Bash doesn't allow it, but ZSH and Fish do. We don't, because
   // we don't need the extra complexity. Also, it's more common to
@@ -48,6 +57,25 @@ const INVALID_COMMANDS = [
   `; echo foo`,
 
   `& echo foo`,
+];
+
+
+const DOUBLE_QUOTE_STRING_ESCAPE_TESTS: Array<[string, string]> = [
+  [`\\\n`, ``],
+  [`\\\\`, `\\`],
+  [`\\"`, `"`],
+  [`\\$`, `$`],
+];
+
+const ANSI_C_STRING_ESCAPE_TESTS: Array<[string, string]> = [
+  [`\\\\`, `\\`],
+  [`\\"`, `"`],
+  [`\\'`, `'`],
+  [`\\e`, `\x1b`],
+  [`\\0`, `\x00`],
+  [`\\x7`, `\x07`],
+  [`\\u0027`, `'`],
+  [`\\U0001F601`, `😁`],
 ];
 
 describe(`Shell parser`, () => {
@@ -98,6 +126,38 @@ describe(`Shell parser`, () => {
       });
     });
   });
+
+  describe(`String parse`, () => {
+    it(`should parse parse double quote string currectly`, () => {
+      for (const [original, raw] of DOUBLE_QUOTE_STRING_ESCAPE_TESTS) {
+        expect(parseShell(`echo "${original}"`)).toStrictEqual([expect.objectContaining({
+          command: expect.objectContaining({
+            chain: expect.objectContaining({
+              args: [
+                expect.anything(),
+                {type: `argument`, segments: [{type: `text`, text: raw}]},
+              ],
+            }),
+          }),
+        })]);
+      }
+    });
+
+    it(`should parse parse ANSI-C quote string currectly`, () => {
+      for (const [original, raw] of ANSI_C_STRING_ESCAPE_TESTS) {
+        expect(parseShell(`echo $'${original}'`)).toStrictEqual([expect.objectContaining({
+          command: expect.objectContaining({
+            chain: expect.objectContaining({
+              args: [
+                expect.anything(),
+                {type: `argument`, segments: [{type: `text`, text: raw}]},
+              ],
+            }),
+          }),
+        })]);
+      }
+    });
+  });
 });
 
 const STRINGIFIER_TESTS: Array<[string, string]> = [
@@ -119,9 +179,9 @@ const STRINGIFIER_TESTS: Array<[string, string]> = [
   [`{echo foo && echo bar}`, `{ echo foo && echo bar; }`],
   [`FOO=bar echo foo`, `FOO=bar echo foo`],
   [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
-  [`FOO="\\x09"`, `FOO=$'\\t'`],
-  [`FOO="\\u0027"`, `FOO=$'\\''`],
-  [`FOO="\\U0001F601"`, `FOO=😁`],
+  [`FOO=$'\\x09'`, `FOO=$'\\t'`],
+  [`FOO=$'\\u0027'`, `FOO=$'\\''`],
+  [`FOO=$'\\U0001F601'`, `FOO=😁`],
 ];
 
 describe(`Shell stringifier`, () => {

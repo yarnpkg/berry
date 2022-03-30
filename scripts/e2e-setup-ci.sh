@@ -8,7 +8,12 @@ TEMP_DIR="$(mktemp -d)"
 cd "${TEMP_DIR}"
 
 # We want to ensure we're using the latest release
-export PATH="${HERE_DIR}/bin:${PATH}"
+ROOT_DIR="$(dirname ${HERE_DIR})"
+export PATH="${ROOT_DIR}/packages/yarnpkg-cli/bundles:${PATH}"
+cp "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn.js" "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn"
+cp "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn.js" "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarnpkg"
+chmod +x "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarn"
+chmod +x "$ROOT_DIR/packages/yarnpkg-cli/bundles/yarnpkg"
 
 echo PATH: $PATH
 echo Yarn Path: $(which yarn)

@@ -67,15 +67,19 @@ StrictValueArgument
   = segments:ArgumentSegment+ { return { type: `argument`, segments: [].concat(... segments) } }
 
 ArgumentSegment
-  = string:SglQuoteString { return string }
+  = string:CQuoteString { return string }
+  / string:SglQuoteString { return string }
   / string:DblQuoteString { return string }
   / string:PlainString { return string }
+
+CQuoteString
+  = "$'" text:CQuoteStringText "'" { return [ { type: `text`, text } ] }
 
 SglQuoteString
   = "'" text:SglQuoteStringText "'" { return [ { type: `text`, text } ] }
 
 DblQuoteString
-  = '"' segments:DblQuoteStringSegment* '"' { return segments }
+  = '""' { return { type: `text`, text: `` } } / '"' segments:DblQuoteStringSegment* '"' { return segments }
 
 PlainString
   = segments:PlainStringSegment+ { return segments }
@@ -94,32 +98,44 @@ PlainStringSegment
   / text:PlainStringText { return { type: `text`, text } }
 
 SglQuoteStringText
-  = chars:(EscapedChar / HexCodeString / '\\' c:[\\'] { return c } / [^'])* { return chars.join(``) }
+  = chars:[^']* { return chars.join(``) }
 
 DblQuoteStringText
-  = chars:(EscapedChar / HexCodeString / '\\' c:[\\$"] { return c } / [^$"])+ { return chars.join(``) }
+  = chars:( DblQuoteEscapedChar / [^$"])+ { return chars.join(``) }
 
-EscapedChar
-  = '\\0' { return '\0' }
-  / '\\a' { return '\a' }
+DblQuoteEscapedChar
+  = '\\\n' { return `` }
+  / '\\' c:[\\$"`] { return c }
+
+CQuoteStringText
+  = chars:(CQuoteEscapedChar / [^'])* { return chars.join(``) }
+
+CQuoteEscapedChar
+  = '\\a' { return '\a' }
   / '\\b' { return '\b' }
-  / '\\e' { return '\x1b' }
+  / '\\' [Ee] { return '\x1b' }
   / '\\f' { return '\f' }
   / '\\n' { return '\n' }
   / '\\r' { return '\r' }
   / '\\t' { return '\t' }
   / '\\v' { return '\v' }
+  / '\\' c:[\\'"?] { return c }
+  / HexCodeString
 
 HexCodeString
-  = char:('\\x' c:$(HexCodeChar HexCodeChar) { return String.fromCharCode(parseInt(c, 16)) })
+  = '\\' c:HexCodeChar0 { return String.fromCharCode(parseInt(c, 16)) }
+  / char:('\\x' c:$(HexCodeChar0 HexCodeChar / HexCodeChar0) { return String.fromCharCode(parseInt(c, 16)) })
   / utf8:('\\u' c:$(HexCodeChar HexCodeChar HexCodeChar HexCodeChar) { return String.fromCharCode(parseInt(c, 16)) })
   / utf16:('\\U' c:$(HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar HexCodeChar) { return String.fromCodePoint(parseInt(c, 16)) })
+
+HexCodeChar0
+  = [0-7]
 
 HexCodeChar
   = [0-9a-fA-f]
 
 PlainStringText
-  = chars:('\\' c:. { return c } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
+  = chars:('\\' c:. { return c } / '{}' { return '{}' } / !SpecialShellChars c:. { return c })+ { return chars.join(``) }
 
 ArithmeticPrimary
   = sign:('-' / '+')? left:[0-9]+ '.' right:[0-9]+ { return { type: `number`, value: (sign === '-' ? -1 : 1) * parseFloat(left.join(``) + `.` + right.join(``)) } }
@@ -147,6 +163,8 @@ Subshell
 Variable
   = '${' name:Identifier ':-' arg:CommandString '}' { return { name, defaultValue: arg } }
   / '${' name:Identifier ':-}' { return { name, defaultValue: [] } }
+  / '${' name:Identifier ':+' arg:CommandString '}' { return { name, alternativeValue: arg } }
+  / '${' name:Identifier ':+}' { return { name, alternativeValue: [] } }
   / '${' name:Identifier '}' { return { name } }
   / '$' name:Identifier { return { name } }
 
@@ -163,7 +181,7 @@ Identifier
   = [$@*?#a-zA-Z0-9_-]+ { return text() }
 
 SpecialShellChars
-  = [(){}<>$|&; \t"']
+  = [()}<>$|&; \t"']
 
 GlobSpecialShellChars
   = [<>&; \t"']

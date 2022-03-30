@@ -1,16 +1,16 @@
-import {hoist, HoisterTree, HoisterResult} from '../sources/hoist';
+import {hoist, HoisterTree, HoisterResult, HoisterDependencyKind} from '../sources/hoist';
 
 const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => {
   let node = nodes.get(key);
-  const identName = key.match(/@?[^@]+/)![0];
+  const name = key.match(/@?[^@]+/)![0];
   if (!node) {
     node = {
-      name: identName,
-      identName,
+      name,
+      identName: (obj[key] || {}).identName || name,
       reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
       dependencies: new Set<HoisterTree>(),
       peerNames: new Set<string>((obj[key] || {}).peerNames || []),
-      isWorkspace: (obj[key] || {}).isWorkspace,
+      dependencyKind: (obj[key] || {}).dependencyKind,
     };
     nodes.set(key, node);
 
@@ -543,12 +543,60 @@ describe(`hoist`, () => {
     // otherwise accessing A via . -> W3 with --preserve-symlinks will result in A@Z,
     // but accessing it via W3(w) will result in A@Y
     const tree = {
-      '.': {dependencies: [`W1(w)`, `W3`, `A@Z`], isWorkspace: true},
-      'W1(w)': {dependencies: [`W2(w)`, `A@Y`], isWorkspace: true},
-      'W2(w)': {dependencies: [`W3(w)`], isWorkspace: true},
-      'W3(w)': {dependencies: [`A@X`], isWorkspace: true},
+      '.': {dependencies: [`W1(w)`, `W3`, `A@Z`], dependencyKind: HoisterDependencyKind.WORKSPACE},
+      'W1(w)': {dependencies: [`W2(w)`, `A@Y`], dependencyKind: HoisterDependencyKind.WORKSPACE},
+      'W2(w)': {dependencies: [`W3(w)`], dependencyKind: HoisterDependencyKind.WORKSPACE},
+      'W3(w)': {dependencies: [`A@X`], dependencyKind: HoisterDependencyKind.WORKSPACE},
     };
 
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(5);
+  });
+
+  it(`should hoist aliased packages`, () => {
+    const tree = {
+      '.': {dependencies: [`Aalias`]},
+      Aalias: {identName: `A`, dependencies: [`A`]},
+      A: {dependencies: [`B`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
+  });
+
+  it(`should not hoist portal with unhoistable dependencies`, () => {
+    const tree = {
+      '.': {dependencies: [`P1`, `B@Y`]},
+      P1: {dependencies: [`P2`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P2: {dependencies: [`B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
+  });
+
+  it(`should hoist nested portals with hoisted dependencies`, () => {
+    const tree = {
+      '.': {dependencies: [`P1`, `B@X`]},
+      P1: {dependencies: [`P2`, `B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P2: {dependencies: [`P3`, `B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+      P3: {dependencies: [`B@X`], dependencyKind: HoisterDependencyKind.EXTERNAL_SOFT_LINK},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
+  });
+
+  it(`should support two branch circular graph hoisting`, () => {
+    // . -> B -> D@X -> F@X
+    //               -> E@X -> D@X
+    //                      -> F@X
+    //   -> C -> D@Y -> F@Y
+    //               -> E@Y -> D@Y
+    //                      -> F@Y
+    // This graph with two similar circular branches should be hoisted in a finite time
+    const tree = {
+      '.': {dependencies: [`B`, `C`]},
+      B: {dependencies: [`D@X`]},
+      C: {dependencies: [`D@Y`]},
+      'D@X': {dependencies: [`E@X`, `F@X`]},
+      'D@Y': {dependencies: [`E@Y`, `F@X`]},
+      'E@X': {dependencies: [`D@X`, `F@X`]},
+      'E@Y': {dependencies: [`D@Y`, `F@Y`]},
+    };
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 });

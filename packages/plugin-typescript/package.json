@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
+    "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-pack": "workspace:^",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",
@@ -20,12 +21,9 @@
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/plugin-essentials": "workspace:^",
-    "typescript": "^4.4.2"
+    "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "scripts": {
-    "build:plugin-typescript": "builder build plugin",
-    "update-local": "yarn build:plugin-typescript && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -42,6 +40,6 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   }
 }

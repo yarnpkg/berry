@@ -1,3 +1,5 @@
+require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
+
 module.exports = {
   pathPrefix: process.env.NETLIFY ? `/` : `/berry`,
   siteMetadata: {
@@ -76,6 +78,26 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        extensions: [`.md`, `.mdx`],
+        gatsbyRemarkPlugins: [
+          {
+            resolve: require.resolve(`gatsby-remark-table-of-contents`),
+          },
+          {
+            resolve: require.resolve(`gatsby-remark-autolink-headers`),
+            options: {
+              offsetY: `100`,
+            },
+          },
+          {
+            resolve: require.resolve(`gatsby-remark-prismjs`),
+          },
+        ],
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content`,
@@ -83,42 +105,28 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-yarn-introspection`,
+    },
+    {
       resolve: `gatsby-plugin-clipanion-cli`,
       options: {
         binaries: [
           {
-            namespace: null,
+            package: null,
             binary: `${__dirname}/../../scripts/run-yarn.js`,
           },
           {
-            namespace: `pnpify`,
+            package: `@yarnpkg/pnpify`,
             binary: `${__dirname}/../../scripts/run-pnpify.js`,
           },
           {
-            namespace: `sdks`,
+            package: `@yarnpkg/sdks`,
             binary: `${__dirname}/../../scripts/run-sdks.js`,
           },
           {
-            namespace: `builder`,
+            package: `@yarnpkg/builder`,
             binary: `${__dirname}/../../scripts/run-builder.js`,
           },
-        ],
-      },
-    },
-    {
-      resolve: `gatsby-transformer-remark`,
-      options: {
-        plugins: [
-          {
-            resolve: `gatsby-remark-table-of-contents`,
-          },
-          {
-            resolve: `gatsby-remark-autolink-headers`,
-            options: {
-              offsetY: `100`,
-            },
-          },
-          `gatsby-remark-prismjs`,
         ],
       },
     },

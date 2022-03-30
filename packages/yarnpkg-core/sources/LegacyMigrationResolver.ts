@@ -7,7 +7,7 @@ import {Report}                                          from './Report';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as semverUtils                                  from './semverUtils';
 import * as structUtils                                  from './structUtils';
-import {DescriptorHash, Descriptor, Locator}             from './types';
+import {DescriptorHash, Descriptor, Locator, Package}    from './types';
 
 export const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<string>) => string]> = [
   // These ones come from Git urls
@@ -33,6 +33,8 @@ export const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<
 
 export class LegacyMigrationResolver implements Resolver {
   private resolutions: Map<DescriptorHash, Locator> | null = null;
+
+  constructor(private readonly resolver: Resolver) { }
 
   async setup(project: Project, {report}: {report: Report}) {
     const lockfilePath = ppath.join(project.cwd, project.configuration.get(`lockfileFilename`));
@@ -124,7 +126,7 @@ export class LegacyMigrationResolver implements Resolver {
     return [];
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
     if (!this.resolutions)
       throw new Error(`Assertion failed: The resolution store should have been setup`);
 
@@ -132,7 +134,7 @@ export class LegacyMigrationResolver implements Resolver {
     if (!resolution)
       throw new Error(`Assertion failed: The resolution should have been registered`);
 
-    return [resolution];
+    return await this.resolver.getCandidates(structUtils.convertLocatorToDescriptor(resolution), dependencies, opts);
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {

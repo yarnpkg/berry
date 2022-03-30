@@ -124,9 +124,11 @@ Many common frontend tools now support Plug'n'Play natively!
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
+| Angular | Starting from 13+ |
 | Babel | Starting from `resolve` 1.9 |
 | Create-React-App | Starting from 2.0+ |
-| ESLint | Some compatibility issues w/ shared configs |
+| Docusaurus | Starting from 2.0.0-beta.14 |
+| ESLint | Some compatibility issues w/ shared configs (fixable using [@rushstack/eslint-patch](https://yarnpkg.com/package/@rushstack/eslint-patch)) |
 | Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
 | Gulp | Supported with version 4.0+ | 
 | Husky | Starting from 4.0.0-1+ |
@@ -139,6 +141,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | Storybook | Starting from 6.0+ |
 | TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
 | TypeScript-ESLint | Starting from 2.12+ |
+| VSCode-Stylelint | Starting from 1.1+ |
 | WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
 
@@ -159,7 +162,6 @@ The following tools cannot be used with pure Plug'n'Play install (even under loo
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
-| Angular | Follow [angular/angular-cli/#16980](https://github.com/angular/angular-cli/issues/16980) |
 | Flow | Follow [yarnpkg/berry#634](https://github.com/yarnpkg/berry/issues/634) |
 | React Native | Follow [react-native-community/cli#27](https://github.com/react-native-community/cli/issues/27) |
 | Pulumi | Follow [pulumi/pulumi#3586](https://github.com/pulumi/pulumi/issues/3586) |

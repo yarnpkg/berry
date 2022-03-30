@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -28,6 +28,6 @@
     "directory": "packages/yarnpkg-fslib"
   },
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   }
 }

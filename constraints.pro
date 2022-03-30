@@ -44,9 +44,9 @@ gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
 gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause').
 
-% This rule will enforce that all packages must have an engines.node field of >=12 <14 || 14.2 - 14.9 || >14.10.0
+% This rule will enforce that all packages must have an correct engines.node field
 % Keep in sync with the range inside packages/yarnpkg-cli/sources/main.ts
-gen_enforced_field(WorkspaceCwd, 'engines.node', '>=12 <14 || 14.2 - 14.9 || >14.10.0').
+gen_enforced_field(WorkspaceCwd, 'engines.node', '>=14.15.0').
 
 % Required to make the package work with the GitHub Package Registry
 gen_enforced_field(WorkspaceCwd, 'repository.type', 'git').
@@ -71,7 +71,7 @@ inline_compile('@yarnpkg/libui').
 
 gen_enforced_field(WorkspaceCwd, 'scripts.prepack', 'run build:compile "$(pwd)"') :-
   workspace(WorkspaceCwd),
-  % This package is built using Webpack, so we allow it to configure its build scripts itself
+  % This package is built using Rollup, so we allow it to configure its build scripts itself
     \+ workspace_ident(WorkspaceCwd, '@yarnpkg/pnp'),
   % Those packages use a different build
     \+ (workspace_ident(WorkspaceCwd, WorkspaceIdent), inline_compile(WorkspaceIdent)),
@@ -80,7 +80,7 @@ gen_enforced_field(WorkspaceCwd, 'scripts.prepack', 'run build:compile "$(pwd)"'
 
 gen_enforced_field(WorkspaceCwd, 'scripts.postpack', 'rm -rf lib') :-
   workspace(WorkspaceCwd),
-  % This package is built using Webpack, so we allow it to configure its build scripts itself
+  % This package is built using Rollup, so we allow it to configure its build scripts itself
     \+ workspace_ident(WorkspaceCwd, '@yarnpkg/pnp'),
   % Those packages use a different build
     \+ (workspace_ident(WorkspaceCwd, WorkspaceIdent), inline_compile(WorkspaceIdent)),

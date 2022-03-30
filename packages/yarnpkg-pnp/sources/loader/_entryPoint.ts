@@ -11,7 +11,6 @@ import {hydrateRuntimeState}                                                    
 import {MakeApiOptions, makeApi}                                                          from './makeApi';
 import {Manager, makeManager}                                                             from './makeManager';
 
-declare var __non_webpack_module__: NodeModule;
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
 
 // We must copy the fs into a local, because otherwise
@@ -106,18 +105,18 @@ manager = makeManager(defaultApi, {
 // eslint-disable-next-line arca/no-default-export
 export default defaultApi;
 
-if (__non_webpack_module__.parent && __non_webpack_module__.parent.id === `internal/preload`) {
+if (module.parent && module.parent.id === `internal/preload`) {
   defaultApi.setup();
 
-  if (__non_webpack_module__.filename) {
+  if (module.filename) {
     // We delete it from the cache in order to support the case where the CLI resolver is invoked from "yarn run"
     // It's annoying because it might cause some issues when the file is multiple times in NODE_OPTIONS, but it shouldn't happen anyway.
 
-    delete Module._cache[__non_webpack_module__.filename];
+    delete Module._cache[module.filename];
   }
 }
 
-if (process.mainModule === __non_webpack_module__) {
+if (process.mainModule === module) {
   const reportError = (code: string, message: string, data: Object) => {
     process.stdout.write(`${JSON.stringify([{code, message, data}, null])}\n`);
   };

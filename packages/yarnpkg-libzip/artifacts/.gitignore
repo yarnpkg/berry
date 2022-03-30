@@ -1,5 +1,5 @@
-*
+/*
+!/lib/
 !/exported.json
-!/zipstruct.c
 !/build.sh
 !/.gitignore

@@ -5,7 +5,7 @@ import getTemplate               from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
 
-function generateLoader(shebang: string | null | undefined, loader: string) {
+export function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
     shebang ? `${shebang}\n` : ``,
     `/* eslint-disable */\n\n`,
@@ -14,8 +14,6 @@ function generateLoader(shebang: string | null | undefined, loader: string) {
     `} catch (error) {\n`,
     `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
     `}\n`,
-    `\n`,
-    `var __non_webpack_module__ = module;\n`,
     `\n`,
     `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
     loader.replace(/^/gm, `  `),
@@ -29,9 +27,18 @@ function generateJsonString(data: SerializedState) {
   return JSON.stringify(data, null, 2);
 }
 
+function generateStringLiteral(value: string) {
+  return `'${
+    value
+      .replace(/\\/g, `\\\\`)
+      .replace(/'/g, `\\'`)
+      .replace(/\n/g, `\\\n`)
+  }'`;
+}
+
 function generateInlinedSetup(data: SerializedState) {
   return [
-    `return hydrateRuntimeState(${generatePrettyJson(data)}, {basePath: basePath || __dirname});\n`,
+    `return hydrateRuntimeState(JSON.parse(${generateStringLiteral(generatePrettyJson(data))}), {basePath: basePath || __dirname});\n`,
   ].join(``);
 }
 

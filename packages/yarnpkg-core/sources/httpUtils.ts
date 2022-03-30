@@ -1,22 +1,22 @@
-import {PortablePath, xfs}                                   from '@yarnpkg/fslib';
-import {ExtendOptions, RequestError, Response, TimeoutError} from 'got';
-import {Agent as HttpsAgent}                                 from 'https';
-import {Agent as HttpAgent}                                  from 'http';
-import micromatch                                            from 'micromatch';
-import tunnel, {ProxyOptions}                                from 'tunnel';
-import {URL}                                                 from 'url';
+import {PortablePath, xfs}                          from '@yarnpkg/fslib';
+import type {ExtendOptions, RequestError, Response} from 'got';
+import {Agent as HttpsAgent}                        from 'https';
+import {Agent as HttpAgent}                         from 'http';
+import micromatch                                   from 'micromatch';
+import tunnel, {ProxyOptions}                       from 'tunnel';
+import {URL}                                        from 'url';
 
-import {ConfigurationValueMap, Configuration}                from './Configuration';
-import {MessageName}                                         from './MessageName';
-import {ReportError}                                         from './Report';
-import * as formatUtils                                      from './formatUtils';
-import {MapValue, MapValueToObjectValue}                     from './miscUtils';
-import * as miscUtils                                        from './miscUtils';
+import {ConfigurationValueMap, Configuration}       from './Configuration';
+import {MessageName}                                from './MessageName';
+import {ReportError}                                from './Report';
+import * as formatUtils                             from './formatUtils';
+import {MapValue, MapValueToObjectValue}            from './miscUtils';
+import * as miscUtils                               from './miscUtils';
 
-export {RequestError} from 'got';
+export type {RequestError}                                   from 'got';
 
 const cache = new Map<string, Promise<Buffer> | Buffer>();
-const certCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
+const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
@@ -28,14 +28,17 @@ function parseProxy(specifier: string) {
   if (url.port)
     proxy.port = Number(url.port);
 
+  if (url.username && url.password)
+    proxy.proxyAuth = `${url.username}:${url.password}`;
+
   return {proxy};
 }
 
-async function getCachedCertificate(caFilePath: PortablePath) {
-  return miscUtils.getFactoryWithDefault(certCache, caFilePath, () => {
-    return xfs.readFilePromise(caFilePath).then(cert => {
-      certCache.set(caFilePath, cert);
-      return cert;
+async function getCachedFile(filePath: PortablePath) {
+  return miscUtils.getFactoryWithDefault(fileCache, filePath, () => {
+    return xfs.readFilePromise(filePath).then(file => {
+      fileCache.set(filePath, file);
+      return file;
     });
   });
 }
@@ -47,14 +50,14 @@ function prettyResponseCode({statusCode, statusMessage}: Response, configuration
   return formatUtils.applyHyperlink(configuration, `${prettyStatusCode}${statusMessage ? ` (${statusMessage})` : ``}`, href);
 }
 
-async function prettyNetworkError(response: Promise<Response<any>>, {configuration, customErrorMessage}: {configuration: Configuration, customErrorMessage?: (err: RequestError) => string | null}) {
+async function prettyNetworkError(response: Promise<Response<any>>, {configuration, customErrorMessage}: {configuration: Configuration, customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null}) {
   try {
     return await response;
   } catch (err) {
     if (err.name !== `HTTPError`)
       throw err;
 
-    let message = customErrorMessage?.(err) ?? err.response.body?.error;
+    let message = customErrorMessage?.(err, configuration) ?? err.response.body?.error;
 
     if (message == null) {
       if (err.message.startsWith(`Response code`)) {
@@ -64,7 +67,7 @@ async function prettyNetworkError(response: Promise<Response<any>>, {configurati
       }
     }
 
-    if (err instanceof TimeoutError && err.event === `socket`)
+    if (err.code === `ETIMEDOUT` && err.event === `socket`)
       message += `(can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.SETTING)})`;
 
     const networkError = new ReportError(MessageName.NETWORK_ERROR, message, report => {
@@ -124,6 +127,8 @@ export function getNetworkSettings(target: string | URL, opts: { configuration: 
     caFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
+    httpsKeyFilePath: undefined,
+    httpsCertFilePath: undefined,
   };
 
   const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
@@ -164,7 +169,7 @@ export enum Method {
 
 export type Options = {
   configuration: Configuration;
-  customErrorMessage?: (err: RequestError) => string | null;
+  customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null;
   headers?: {[headerName: string]: string};
   jsonRequest?: boolean;
   jsonResponse?: boolean;
@@ -172,6 +177,52 @@ export type Options = {
 };
 
 export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
+  const realRequest = async () => await requestImpl(target, body, {configuration, headers, jsonRequest, jsonResponse, method});
+
+  const executor = await configuration.reduceHook(hooks => {
+    return hooks.wrapNetworkRequest;
+  }, realRequest, {target, body, configuration, headers, jsonRequest, jsonResponse, method});
+
+  return await executor();
+}
+
+export async function get(target: string, {configuration, jsonResponse, customErrorMessage, ...rest}: Options) {
+  let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
+    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration, customErrorMessage}).then(response => {
+      cache.set(target, response.body);
+      return response.body;
+    });
+  });
+
+  if (Buffer.isBuffer(entry) === false)
+    entry = await entry;
+
+  if (jsonResponse) {
+    return JSON.parse(entry.toString());
+  } else {
+    return entry;
+  }
+}
+
+export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), {customErrorMessage, configuration: options.configuration});
+
+  return response.body;
+}
+
+export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), {customErrorMessage, configuration: options.configuration});
+
+  return response.body;
+}
+
+export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), {customErrorMessage, configuration: options.configuration});
+
+  return response.body;
+}
+
+async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
   const url = typeof target === `string` ? new URL(target) : target;
 
   const networkConfig = getNetworkSettings(url, {configuration});
@@ -208,11 +259,19 @@ export async function request(target: string | URL, body: Body, {configuration, 
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
   const caFilePath = networkConfig.caFilePath;
+  const httpsCertFilePath = networkConfig.httpsCertFilePath;
+  const httpsKeyFilePath = networkConfig.httpsKeyFilePath;
 
   const {default: got} = await import(`got`);
 
   const certificateAuthority = caFilePath
-    ? await getCachedCertificate(caFilePath)
+    ? await getCachedFile(caFilePath)
+    : undefined;
+  const certificate = httpsCertFilePath
+    ? await getCachedFile(httpsCertFilePath)
+    : undefined;
+  const key = httpsKeyFilePath
+    ? await getCachedFile(httpsKeyFilePath)
     : undefined;
 
   const gotClient = got.extend({
@@ -223,6 +282,8 @@ export async function request(target: string | URL, body: Body, {configuration, 
     https: {
       rejectUnauthorized,
       certificateAuthority,
+      certificate,
+      key,
     },
     ...gotOptions,
   });
@@ -230,40 +291,4 @@ export async function request(target: string | URL, body: Body, {configuration, 
   return configuration.getLimit(`networkConcurrency`)(() => {
     return gotClient(url) as unknown as Response<any>;
   });
-}
-
-export async function get(target: string, {configuration, jsonResponse, ...rest}: Options) {
-  let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
-    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration}).then(response => {
-      cache.set(target, response.body);
-      return response.body;
-    });
-  });
-
-  if (Buffer.isBuffer(entry) === false)
-    entry = await entry;
-
-  if (jsonResponse) {
-    return JSON.parse(entry.toString());
-  } else {
-    return entry;
-  }
-}
-
-export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), options);
-
-  return response.body;
-}
-
-export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), options);
-
-  return response.body;
-}
-
-export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<Buffer> {
-  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), options);
-
-  return response.body;
 }

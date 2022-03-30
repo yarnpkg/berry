@@ -126,10 +126,10 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     // Check if the module has already been created for the given file
 
-    const cacheEntry = entry.cache[modulePath] as PatchedModule;
+    const cacheEntry = entry.cache[modulePath] as PatchedModule | undefined;
     if (cacheEntry) {
-      // When a dynamic import is used in CJS files Node adds the module
-      // to the cache but doesn't load it so we do it here.
+      // When the Node ESM loader encounters CJS modules it adds them
+      // to the cache but doesn't load them so we do that here.
       //
       // Keep track of and check if the module is already loading to
       // handle circular requires.
@@ -139,6 +139,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
         try {
           cacheEntry.isLoading = true;
+
+          // The main module is exposed as a global variable
+          if (isMain) {
+            process.mainModule = cacheEntry;
+            cacheEntry.id = `.`;
+          }
+
           cacheEntry.load(modulePath);
         } finally {
           cacheEntry.isLoading = false;
@@ -155,8 +162,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     entry.cache[modulePath] = module;
 
-    // The main module is exposed as global variable
-
+    // The main module is exposed as a global variable
     if (isMain) {
       process.mainModule = module;
       module.id = `.`;
@@ -390,20 +396,35 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
-  // Specifying the `--experimental-loader` flag makes Node enter ESM mode so we change it to not do that
-  // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/run_main.js#L72-L81
-  // Tested by https://github.com/yarnpkg/berry/blob/d80ee2dc5298d31eb864288d77671a2264713371/packages/acceptance-tests/pkg-tests-specs/sources/pnp-esm.test.ts#L226-L244
-  // Upstream issue https://github.com/nodejs/node/issues/33226
-  const originalRunMain = moduleExports.runMain;
-  moduleExports.runMain = function (main = process.argv[1]) {
-    const resolvedMain = nodeUtils.resolveMainPath(main);
-
-    const useESMLoader = resolvedMain ? nodeUtils.shouldUseESMLoader(resolvedMain) : false;
-    if (useESMLoader) {
-      originalRunMain(main);
-    } else {
-      Module._load(main, null, true);
+  // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
+  const originalExtensionJSFunction = Module._extensions[`.js`] as (module: Module, filename: string) => void;
+  Module._extensions[`.js`] = function (module: Module, filename: string) {
+    if (filename.endsWith(`.js`)) {
+      const pkg = nodeUtils.readPackageScope(filename);
+      if (pkg && pkg.data?.type === `module`) {
+        const err = nodeUtils.ERR_REQUIRE_ESM(filename, module.parent?.filename);
+        Error.captureStackTrace(err);
+        throw err;
+      }
     }
+
+    originalExtensionJSFunction.call(this, module, filename);
+  };
+
+  // When using the ESM loader Node.js prints the following warning
+  //
+  // (node:14632) ExperimentalWarning: --experimental-loader is an experimental feature. This feature could change at any time
+  // (Use `node --trace-warnings ...` to show where the warning was created)
+  //
+  // Having this warning show up once is "fine" but it's also printed
+  // for each Worker that is created so it ends up spamming stderr.
+  // Since that doesn't provide any value we suppress the warning.
+  const originalEmitWarning = process.emitWarning;
+  process.emitWarning = function (warning: string | Error, name?: string | undefined, ctor?: Function | undefined) {
+    if (name === `ExperimentalWarning` && typeof warning === `string` && warning.includes(`--experimental-loader`))
+      return;
+
+    originalEmitWarning.apply(process, arguments as any);
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));

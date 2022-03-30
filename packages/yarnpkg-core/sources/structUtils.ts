@@ -8,6 +8,7 @@ import {Workspace}                              from './Workspace';
 import * as formatUtils                         from './formatUtils';
 import * as hashUtils                           from './hashUtils';
 import * as miscUtils                           from './miscUtils';
+import * as nodeUtils                           from './nodeUtils';
 import * as structUtils                         from './structUtils';
 import {IdentHash, DescriptorHash, LocatorHash} from './types';
 import {Ident, Descriptor, Locator, Package}    from './types';
@@ -15,7 +16,7 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
-const conditionRegex = /(os|cpu)=([a-z0-9_-]+)/;
+const conditionRegex = /(os|cpu|libc)=([a-z0-9_-]+)/;
 const conditionParser = makeParser(conditionRegex);
 
 /**
@@ -202,6 +203,27 @@ export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
 export function devirtualizeLocator(locator: Locator): Locator {
   if (!isVirtualLocator(locator))
     throw new Error(`Not a virtual descriptor`);
+
+  return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
+}
+
+/**
+ * Returns a descriptor guaranteed to be devirtualized
+ */
+export function ensureDevirtualizedDescriptor(descriptor: Descriptor): Descriptor {
+  if (!isVirtualDescriptor(descriptor))
+    return descriptor;
+
+  return makeDescriptor(descriptor, descriptor.range.replace(/^[^#]*#/, ``));
+}
+
+/**
+ * Returns a locator guaranteed to be devirtualized
+ * @param locator the locator
+ */
+export function ensureDevirtualizedLocator(locator: Locator): Locator {
+  if (!isVirtualLocator(locator))
+    return locator;
 
   return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
 }
@@ -668,8 +690,8 @@ export function prettyIdent(configuration: Configuration, ident: Ident): string 
 
 function prettyRangeNoColors(range: string): string {
   if (range.startsWith(VIRTUAL_PROTOCOL)) {
-    const nested = prettyRangeNoColors(range.substr(range.indexOf(`#`) + 1));
-    const abbrev = range.substr(VIRTUAL_PROTOCOL.length, VIRTUAL_ABBREVIATE);
+    const nested = prettyRangeNoColors(range.substring(range.indexOf(`#`) + 1));
+    const abbrev = range.substring(VIRTUAL_PROTOCOL.length, VIRTUAL_PROTOCOL.length + VIRTUAL_ABBREVIATE);
 
     // I'm not satisfied of how the virtual packages appear in the output
 
@@ -811,7 +833,7 @@ export function getIdentVendorPath(ident: Ident) {
 /**
  * Returns whether the given package is compatible with the specified environment.
  */
-export function isPackageCompatible(pkg: Package, architectures: {os: Array<string> | null, cpu: Array<string> | null}) {
+export function isPackageCompatible(pkg: Package, architectures: nodeUtils.ArchitectureSet) {
   if (!pkg.conditions)
     return true;
 

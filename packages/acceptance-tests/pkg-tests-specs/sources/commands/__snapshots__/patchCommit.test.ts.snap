@@ -5,13 +5,13 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "diff --git a/index.js b/index.js
-index a6bf8f586524db0daca72361135fe3fe0e64483b..aca59d18bee6854e40fd262a68733999e8fd44f5 100644
+index bb9c6f6876154493527577cd78279aa6bb686ebb..fa87b36f4ac82fadaebf78bd20958ed44bfdc3c6 100644
 --- a/index.js
 +++ b/index.js
-@@ -5,6 +5,6 @@ module.exports = require(\`./package.json\`);
+@@ -2,6 +2,6 @@ module.exports = require(\`./package.json\`);
+ 
  for (const key of [\`dependencies\`, \`devDependencies\`, \`peerDependencies\`]) {
    for (const dep of Object.keys(module.exports[key] || {})) {
-     // $FlowFixMe The whole point of this file is to be dynamic
 -    module.exports[key][dep] = require(dep);
 +    module.exports[key][dep] = 42;
    }

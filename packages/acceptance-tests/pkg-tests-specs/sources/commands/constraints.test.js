@@ -31,11 +31,7 @@ describe(`Commands`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, script] of Object.entries(constraints)) {
         test(`test (${environmentDescription} / ${scriptDescription})`,
-          makeTemporaryEnv({}, {
-            plugins: [
-              require.resolve(`@yarnpkg/monorepo/scripts/plugin-constraints.js`),
-            ],
-          }, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({path, run, source}) => {
             await environment(path);
             await writeFile(`${path}/constraints.pro`, script);
 

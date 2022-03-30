@@ -7,6 +7,11 @@ import * as packUtils                                       from './packUtils';
 export {packUtils};
 
 export interface Hooks {
+  /**
+   * Called before a workspace is packed. The `rawManifest` value passed in
+   * parameter is allowed to be mutated at will, with the changes being only
+   * applied to the packed manifest (the original one won't be mutated).
+   */
   beforeWorkspacePacking?: (
     workspace: Workspace,
     rawManifest: object,
@@ -18,6 +23,9 @@ const WORKSPACE_PROTOCOL = `workspace:`;
 
 const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   if (rawManifest.publishConfig) {
+    if (rawManifest.publishConfig.type)
+      rawManifest.type = rawManifest.publishConfig.type;
+
     if (rawManifest.publishConfig.main)
       rawManifest.main = rawManifest.publishConfig.main;
 
@@ -65,7 +73,14 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
           // for workspace:version we simply strip the protocol
           versionToWrite = range.selector;
 
-        rawManifest[dependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
+        // Ensure optional dependencies are handled as well
+        const identDescriptor = dependencyType === `dependencies`
+          ? structUtils.makeDescriptor(descriptor, `unknown`)
+          : null;
+        const finalDependencyType = identDescriptor !== null && workspace.manifest.ensureDependencyMeta(identDescriptor).optional
+          ? `optionalDependencies`
+          : dependencyType;
+        rawManifest[finalDependencyType][structUtils.stringifyIdent(descriptor)] = versionToWrite;
       }
     }
   }

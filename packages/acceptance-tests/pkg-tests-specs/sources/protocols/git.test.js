@@ -15,13 +15,13 @@ const TESTED_URLS = {
   // through our test server (cf following tests); still, these tests are
   // useful since they test various different protocols such as ssh.
 
-  [`git://github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
-  [`git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
-  [`https://github.com/TooTallNate/util-deprecate.git#semver:^1.0.0`]: {version: `1.0.2`, ci: false},
-  [`https://github.com/TooTallNate/util-deprecate.git#semver:>=1.0.0 <1.0.2`]: {version: `1.0.1`, ci: false},
-  [`https://github.com/TooTallNate/util-deprecate.git#v1.0.0`]: {version: `1.0.0`},
-  [`https://github.com/TooTallNate/util-deprecate.git#master`]: {version: `1.0.2`},
-  [`https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`},
+  [`git://github.com/yarnpkg/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
+  [`git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
+  [`https://github.com/yarnpkg/util-deprecate.git#semver:^1.0.0`]: {version: `1.0.2`, ci: false},
+  [`https://github.com/yarnpkg/util-deprecate.git#semver:>=1.0.0 <1.0.2`]: {version: `1.0.1`, ci: false},
+  [`https://github.com/yarnpkg/util-deprecate.git#v1.0.0`]: {version: `1.0.0`},
+  [`https://github.com/yarnpkg/util-deprecate.git#master`]: {version: `1.0.2`},
+  [`https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`},
 };
 
 describe(`Protocols`, () => {

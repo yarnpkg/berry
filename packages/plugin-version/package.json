@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/plugin-version",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libui": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
-    "clipanion": "^3.0.1",
+    "clipanion": "^3.2.0-rc.4",
     "ink": "^3.0.8",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
@@ -26,12 +26,9 @@
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/plugin-git": "workspace:^",
-    "typescript": "^4.4.2"
+    "@yarnpkg/plugin-git": "workspace:^"
   },
   "scripts": {
-    "build:plugin-version": "builder build plugin",
-    "update-local": "yarn build:plugin-version && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -48,6 +45,6 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   }
 }

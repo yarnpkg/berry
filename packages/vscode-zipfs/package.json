@@ -7,10 +7,10 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "homepage": "https://github.com/yarnpkg/berry/blob/master/packages/vscode-zipfs",
   "icon": "icon.png",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "engines": {
     "vscode": "^1.54.0",
-    "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"
+    "node": ">=14.15.0"
   },
   "categories": [
     "Other"
@@ -41,7 +41,12 @@
     "commands": [
       {
         "command": "zipfs.mountZipFile",
-        "title": "Mount as Zip",
+        "title": "Mount Zip",
+        "category": "Zip"
+      },
+      {
+        "command": "zipfs.unmountZipFile",
+        "title": "Unmount Zip",
         "category": "Zip"
       },
       {
@@ -53,8 +58,13 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "resourceLangId == zip",
+          "when": "resourceLangId == zip && !explorerResourceIsRoot",
           "command": "zipfs.mountZipFile",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceLangId == zip && explorerResourceIsRoot",
+          "command": "zipfs.unmountZipFile",
           "group": "navigation"
         }
       ],
@@ -64,6 +74,10 @@
           "command": "zipfs.mountZipFile"
         },
         {
+          "when": "false",
+          "command": "zipfs.unmountZipFile"
+        },
+        {
           "when": "editorLangId == zip",
           "command": "zipfs.mountZipEditor"
         }
@@ -71,23 +85,24 @@
     }
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "@yarnpkg/pnpify": "workspace:^",
-    "ts-loader": "^7.0.5",
-    "typescript": "^4.4.2",
-    "vsce": "^1.85.1",
-    "webpack": "^5.1.1",
-    "webpack-cli": "^4.0.0-beta.8"
+    "esbuild": "npm:esbuild-wasm@^0.11.20",
+    "rollup": "^2.59.0",
+    "rollup-plugin-esbuild": "^3.0.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "vsce": "^1.85.1"
   },
   "scripts": {
     "vscode:prepublish": "run build",
     "package:vscode-zipfs": "run package",
     "package": "run vsce package --yarn",
     "build:vscode-zipfs": "run build",
-    "build": "webpack-cli",
-    "watch": "NODE_ENV=development webpack-cli --watch",
+    "build": "rollup -c",
+    "watch": "NODE_ENV=development rollup -cw",
     "code": "code --extensionDevelopmentPath=\"$(pwd)\" \"$(pwd)\""
   },
   "repository": {

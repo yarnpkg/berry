@@ -113,7 +113,11 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
     case `variable`:
       return doubleQuoteIfRequested(
         typeof argumentSegment.defaultValue === `undefined`
-          ? `\${${argumentSegment.name}}`
+          ? typeof argumentSegment.alternativeValue === `undefined`
+            ? `\${${argumentSegment.name}}`
+            : argumentSegment.alternativeValue.length === 0
+              ? `\${${argumentSegment.name}:+}`
+              : `\${${argumentSegment.name}:+${argumentSegment.alternativeValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`
           : argumentSegment.defaultValue.length === 0
             ? `\${${argumentSegment.name}:-}`
             : `\${${argumentSegment.name}:-${argumentSegment.defaultValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`,

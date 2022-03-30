@@ -146,7 +146,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/apollographql/apollo-tooling/pull/2049
-  [`@apollographql/apollo-tools@*`, {
+  [`@apollographql/apollo-tools@<=0.5.2`, {
     peerDependencies: {
       graphql: `^14.2.1 || ^15.0.0`,
     },
@@ -282,13 +282,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/gatsbyjs/gatsby/pull/28759
-  [`gatsby-plugin-sharp@*`, {
+  [`gatsby-plugin-sharp@<=4.6.0-next.3`, {
     dependencies: {
       [`debug`]: `^4.3.1`,
     },
   }],
   // https://github.com/gatsbyjs/gatsby/pull/28759
-  [`gatsby-react-router-scroll@*`, {
+  [`gatsby-react-router-scroll@<=5.6.0-next.0`, {
     dependencies: {
       [`prop-types`]: `^15.7.2`,
     },
@@ -529,25 +529,25 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/npm/metavuln-calculator/pull/8
-  [`@npmcli/metavuln-calculator@*`, {
+  [`@npmcli/metavuln-calculator@<2.0.0`, {
     dependencies: {
       'json-parse-even-better-errors': `^2.3.1`,
     },
   }],
   // https://github.com/npm/bin-links/pull/17
-  [`bin-links@*`, {
+  [`bin-links@<2.3.0`, {
     dependencies: {
       'mkdirp-infer-owner': `^1.0.2`,
     },
   }],
   // https://github.com/snowpackjs/rollup-plugin-polyfill-node/pull/30
-  [`rollup-plugin-polyfill-node@*`, {
+  [`rollup-plugin-polyfill-node@<=0.8.0`, {
     peerDependencies: {
       rollup: `^1.20.0 || ^2.0.0`,
     },
   }],
   // https://github.com/snowpackjs/snowpack/pull/3673
-  [`snowpack@*`, {
+  [`snowpack@<3.8.6`, {
     dependencies: {
       'magic-string': `^0.25.7`,
     },
@@ -701,6 +701,71 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`webpack-dev-server@<3.10.2`, {
     peerDependenciesMeta: {
       'webpack-cli': optionalPeerDep,
+    },
+  }],
+  // https://github.com/slorber/responsive-loader/pull/1/files
+  [`@docusaurus/responsive-loader@<1.5.0`, {
+    peerDependenciesMeta: {
+      sharp: optionalPeerDep,
+      jimp: optionalPeerDep,
+    },
+  }],
+  // https://github.com/import-js/eslint-plugin-import/pull/2283
+  [`eslint-module-utils@*`, {
+    peerDependenciesMeta: {
+      'eslint-import-resolver-node': optionalPeerDep,
+      'eslint-import-resolver-typescript': optionalPeerDep,
+      'eslint-import-resolver-webpack': optionalPeerDep,
+      '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
+  // https://github.com/import-js/eslint-plugin-import/pull/2283
+  [`eslint-plugin-import@*`, {
+    peerDependenciesMeta: {
+      '@typescript-eslint/parser': optionalPeerDep,
+    },
+  }],
+  // https://github.com/GoogleChromeLabs/critters/pull/91
+  [`critters-webpack-plugin@<3.0.2`, {
+    peerDependenciesMeta: {
+      'html-webpack-plugin': optionalPeerDep,
+    },
+  }],
+  // https://github.com/terser/terser/commit/05b23eeb682d732484ad51b19bf528258fd5dc2a
+  [`terser@<=5.10.0`, {
+    dependencies: {
+      acorn: `^8.5.0`,
+    },
+  }],
+  // https://github.com/facebook/create-react-app/pull/11751
+  [`babel-preset-react-app@10.0.x`, {
+    dependencies: {
+      '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
+    },
+  }],
+  // https://github.com/facebook/create-react-app/pull/11751
+  [`eslint-config-react-app@*`, {
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/eslint-config-typescript/pull/39
+  [`@vue/eslint-config-typescript@*`, {
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/antfu/unplugin-vue2-script-setup/pull/100
+  [`unplugin-vue2-script-setup@<0.9.1`, {
+    peerDependencies: {
+      '@vue/composition-api': `^1.4.3`,
+      '@vue/runtime-dom': `^3.2.26`,
+    },
+  }],
+  // https://github.com/cypress-io/snapshot/pull/159
+  [`@cypress/snapshot@*`, {
+    dependencies: {
+      debug: `^3.2.7`,
     },
   }],
 ];

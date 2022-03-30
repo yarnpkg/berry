@@ -298,13 +298,19 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should override main and module in the packed manifest`,
+      `it should override fields in the packed manifest`,
       makeTemporaryEnv({
+        type: `commonjs`,
         main: `./index.js`,
         module: `./index.mjs`,
+        browser: `./index.umd.js`,
+        exports: `./index.modern.js`,
         publishConfig: {
+          type: `module`,
           main: `./published.js`,
           module: `./published.mjs`,
+          browser: `./published.umd.js`,
+          exports: `./published.modern.js`,
         },
       }, async ({path, run, source}) => {
         await run(`install`);
@@ -314,23 +320,30 @@ describe(`Commands`, () => {
 
         const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
 
+        expect(packedManifest.type).toBe(`module`);
         expect(packedManifest.main).toBe(`./published.js`);
         expect(packedManifest.module).toBe(`./published.mjs`);
+        expect(packedManifest.browser).toBe(`./published.umd.js`);
+        expect(packedManifest.exports).toBe(`./published.modern.js`);
 
         const originalManifest = await fsUtils.readJson(`${path}/package.json`);
 
+        expect(originalManifest.type).toBe(`commonjs`);
         expect(originalManifest.main).toBe(`./index.js`);
         expect(originalManifest.module).toBe(`./index.mjs`);
+        expect(originalManifest.browser).toBe(`./index.umd.js`);
+        expect(originalManifest.exports).toBe(`./index.modern.js`);
       }),
     );
 
     test(
       `it should replace the workspace: protocol correctly`,
       makeTemporaryEnv({
-        workspaces: [`./dependency`, `./dependant`, `./foo`, `./bar`],
+        workspaces: [`./dependency`, `./dependant`, `./optional`, `./foo`, `./bar`],
       }, async({path, run, source}) => {
         const dependency = `@test/dependency`;
         const dependant = `@test/dependant`;
+        const optional = `@test/optional`;
         const foo = `@test/foo`;
         const bar = `@test/bar`;
 
@@ -349,6 +362,11 @@ describe(`Commands`, () => {
           version: `3.0.0`,
         });
 
+        await fsUtils.writeJson(`${path}/optional/package.json`, {
+          name: optional,
+          version: `4.0.0`,
+        });
+
         await fsUtils.writeJson(`${path}/dependant/package.json`, {
           name: dependant,
           version: `1.0.0`,
@@ -364,6 +382,9 @@ describe(`Commands`, () => {
             [dependency]: `workspace:*`,
             [foo]: `workspace:^`,
             [bar]: `workspace:~`,
+          },
+          optionalDependencies: {
+            [optional]: `workspace:*`,
           },
         });
 
@@ -383,6 +404,7 @@ describe(`Commands`, () => {
         expect(packedManifest.peerDependencies[dependency]).toBe(`1.0.0`);
         expect(packedManifest.peerDependencies[foo]).toBe(`^2.0.0`);
         expect(packedManifest.peerDependencies[bar]).toBe(`~3.0.0`);
+        expect(packedManifest.optionalDependencies[optional]).toBe(`4.0.0`);
 
         const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
 
@@ -393,6 +415,7 @@ describe(`Commands`, () => {
         expect(originalManifest.peerDependencies[dependency]).toBe(`workspace:*`);
         expect(originalManifest.peerDependencies[foo]).toBe(`workspace:^`);
         expect(originalManifest.peerDependencies[bar]).toBe(`workspace:~`);
+        expect(originalManifest.optionalDependencies[optional]).toBe(`workspace:*`);
       }),
     );
 

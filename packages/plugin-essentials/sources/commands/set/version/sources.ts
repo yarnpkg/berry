@@ -21,12 +21,12 @@ function getBranchRef(branch: string) {
 const cloneWorkflow = ({repository, branch}: {repository: string, branch: string}, target: PortablePath) => [
   [`git`, `init`, npath.fromPortablePath(target)],
   [`git`, `remote`, `add`, `origin`, repository],
-  [`git`, `fetch`, `origin`, getBranchRef(branch)],
+  [`git`, `fetch`, `origin`, `--depth=1`, getBranchRef(branch)],
   [`git`, `reset`, `--hard`, `FETCH_HEAD`],
 ];
 
 const updateWorkflow = ({branch}: {branch: string}) => [
-  [`git`, `fetch`, `origin`, getBranchRef(branch), `--force`],
+  [`git`, `fetch`, `origin`, `--depth=1`, getBranchRef(branch), `--force`],
   [`git`, `reset`, `--hard`, `FETCH_HEAD`],
   [`git`, `clean`, `-dfx`],
 ];
@@ -107,7 +107,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
       const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(configuration, `sources`, bundleBuffer, {
+      await setVersion(configuration, `sources`, async () => bundleBuffer, {
         report,
       });
 

@@ -1,12 +1,12 @@
 import {spawnSync}                           from 'child_process';
-import rimraf                                from 'rimraf';
+import fs                                    from 'fs';
 
 import {PLAYGROUND_DIR, BERRY_DIR, REPO_URL} from '../../constants';
 
 // eslint-disable-next-line arca/no-default-export
 export default async (req, res) => {
   try {
-    rimraf.sync(BERRY_DIR);
+    fs.rmSync(BERRY_DIR, {recursive: true, force: true});
 
     const gitArgs = [
       `clone`,

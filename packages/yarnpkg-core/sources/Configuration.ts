@@ -79,6 +79,7 @@ export enum SettingsType {
 export type SupportedArchitectures = {
   os: Array<string> | null;
   cpu: Array<string> | null;
+  libc: Array<string> | null;
 };
 
 export type FormatType = formatUtils.Type;
@@ -169,7 +170,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: null,
   },
   globalFolder: {
-    description: `Folder where are stored the system-wide settings`,
+    description: `Folder where all system-global files are stored`,
     type: SettingsType.ABSOLUTE_PATH,
     default: folderUtils.getDefaultGlobalFolder(),
   },
@@ -213,7 +214,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableGlobalCache: {
     description: `If true, the system-wide cache folder will be used regardless of \`cache-folder\``,
     type: SettingsType.BOOLEAN,
-    default: false,
+    default: true,
   },
 
   // Settings related to the output style
@@ -243,7 +244,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
-    default: !isCI && process.stdout.isTTY && process.stdout.columns > 22,
+    default: !isCI,
     defaultText: `<dynamic>`,
   },
   enableTimers: {
@@ -302,6 +303,13 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       },
       cpu: {
         description: `Array of supported process.arch strings, or null to target them all`,
+        type: SettingsType.STRING,
+        isArray: true,
+        isNullable: true,
+        default: [`current`],
+      },
+      libc: {
+        description: `Array of supported libc libraries, or null to target them all`,
         type: SettingsType.STRING,
         isArray: true,
         isNullable: true,
@@ -379,11 +387,31 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
           type: SettingsType.STRING,
           default: null,
         },
+        httpsKeyFilePath: {
+          description: `Path to file containing private key in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
+        httpsCertFilePath: {
+          description: `Path to file containing certificate chain in PEM format`,
+          type: SettingsType.ABSOLUTE_PATH,
+          default: null,
+        },
       },
     },
   },
   caFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  httpsKeyFilePath: {
+    description: `Path to file containing private key in PEM format`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: null,
+  },
+  httpsCertFilePath: {
+    description: `Path to file containing certificate chain in PEM format`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
   },
@@ -515,7 +543,7 @@ export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;
 
-  yarnPath: PortablePath;
+  yarnPath: PortablePath | null;
   ignorePath: boolean;
   ignoreCwd: boolean;
 
@@ -558,8 +586,12 @@ export interface ConfigurationValueMap {
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
+    httpsKeyFilePath: PortablePath | null;
+    httpsCertFilePath: PortablePath | null;
   }>>;
   caFilePath: PortablePath | null;
+  httpsKeyFilePath: PortablePath | null;
+  httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;
 
   logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
@@ -865,6 +897,8 @@ export type FindProjectOptions = {
 };
 
 export class Configuration {
+  public static deleteProperty = Symbol();
+
   public static telemetry: TelemetryManager | null = null;
 
   public startingCwd: PortablePath;
@@ -1233,7 +1267,11 @@ export class Configuration {
         if (currentValue === nextValue)
           continue;
 
-        replacement[key] = nextValue;
+        if (nextValue === Configuration.deleteProperty)
+          delete replacement[key];
+        else
+          replacement[key] = nextValue;
+
         patched = true;
       }
 
@@ -1445,18 +1483,23 @@ export class Configuration {
     return linkers;
   }
 
-  getSupportedArchitectures() {
+  getSupportedArchitectures(): nodeUtils.ArchitectureSet {
+    const architecture = nodeUtils.getArchitecture();
     const supportedArchitectures = this.get(`supportedArchitectures`);
 
     let os = supportedArchitectures.get(`os`);
     if (os !== null)
-      os = os.map(value => value === `current` ? process.platform : value);
+      os = os.map(value => value === `current` ? architecture.os : value);
 
     let cpu = supportedArchitectures.get(`cpu`);
     if (cpu !== null)
-      cpu = cpu.map(value => value === `current` ? process.arch : value);
+      cpu = cpu.map(value => value === `current` ? architecture.cpu : value);
 
-    return {os, cpu};
+    let libc = supportedArchitectures.get(`libc`);
+    if (libc !== null)
+      libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
+
+    return {os, cpu, libc};
   }
 
   async refreshPackageExtensions() {

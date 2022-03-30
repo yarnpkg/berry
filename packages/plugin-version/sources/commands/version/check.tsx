@@ -1,14 +1,8 @@
 import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils} from '@yarnpkg/core';
 import {npath}                                                                                  from '@yarnpkg/fslib';
-import {Gem}                                                                                    from '@yarnpkg/libui/sources/components/Gem';
-import {ScrollableItems}                                                                        from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {FocusRequest}                                                                           from '@yarnpkg/libui/sources/hooks/useFocusRequest';
-import {useListInput}                                                                           from '@yarnpkg/libui/sources/hooks/useListInput';
-import {initInk}                                                                                from '@yarnpkg/libui/sources/ink';
-import {renderForm}                                                                             from '@yarnpkg/libui/sources/misc/renderForm';
+import type {FocusRequest}                                                                      from '@yarnpkg/libui/sources/hooks/useFocusRequest';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
-import React, {useCallback, useState}                                                           from 'react';
 import semver                                                                                   from 'semver';
 
 import * as versionUtils                                                                        from '../../versionUtils';
@@ -50,7 +44,13 @@ export default class VersionCheckCommand extends BaseCommand {
   }
 
   async executeInteractive() {
-    const {Box, Text} = await initInk();
+    const {Gem} = await import(`@yarnpkg/libui/sources/components/Gem`);
+    const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
+    const {FocusRequest} = await import(`@yarnpkg/libui/sources/hooks/useFocusRequest`);
+    const {useListInput} = await import(`@yarnpkg/libui/sources/hooks/useListInput`);
+    const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
+    const {Box, Text} = await import(`ink`);
+    const {default: React, useCallback, useState} = await import(`react`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -327,7 +327,11 @@ export default class VersionCheckCommand extends BaseCommand {
       );
     };
 
-    const decisions = await renderForm<versionUtils.Releases>(App, {versionFile});
+    const decisions = await renderForm<versionUtils.Releases>(App, {versionFile}, {
+      stdin: this.context.stdin,
+      stdout: this.context.stdout,
+      stderr: this.context.stderr,
+    });
     if (typeof decisions === `undefined`)
       return 1;
 

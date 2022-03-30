@@ -10,6 +10,11 @@ import * as patchUtils                 from './patchUtils';
 export {patchUtils};
 
 export interface Hooks {
+  /**
+   * Registers a builtin patch that can be referenced using the dedicated
+   * syntax: `patch:builtin<name>`. This is for instance how the TypeScript
+   * patch is automatically registered.
+   */
   getBuiltinPatch?: (
     project: Project,
     name: string,

@@ -71,4 +71,21 @@ describe(`semverUtils`, () => {
       expect(differentResults).toBeGreaterThan(0);
     });
   });
+
+  describe(`clean`, () => {
+    const TEST_CASES = [
+      [`1.0.0`, `1.0.0`],
+      [`1.0.0+123`, `1.0.0+123`],
+      [` \t\r\nv=1.0.0+123 \t\r\n`, `1.0.0+123`],
+      [`1.0.0!`, null],
+    ] as const;
+
+    for (const [input, output] of TEST_CASES) {
+      it(`${output ? `should` : `shouldn't`} clean ${JSON.stringify(input)}${
+        output ? ` to ${JSON.stringify(output)}` : ``
+      }`, () => {
+        expect(semverUtils.clean(input)).toEqual(output);
+      });
+    }
+  });
 });
