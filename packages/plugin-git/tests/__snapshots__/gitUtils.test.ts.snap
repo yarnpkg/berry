@@ -32,25 +32,25 @@ exports[`gitUtils should properly normalize GitHubOrg/foo2bar.js ({ git: false }
 
 exports[`gitUtils should properly normalize GitHubOrg/foo2bar.js ({ git: true }) 1`] = `"https://github.com/GitHubOrg/foo2bar.js.git"`;
 
-exports[`gitUtils should properly normalize git+https://github.com/TooTallNate/util-deprecate#v1.0.1 ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git+https://github.com/yarnpkg/util-deprecate#v1.0.1 ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git+https://github.com/TooTallNate/util-deprecate#v1.0.1 ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git+https://github.com/yarnpkg/util-deprecate#v1.0.1 ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git+https://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git+https://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
 exports[`gitUtils should properly normalize git+ssh://git@github.com:yarnpkg/berry.git#v2.1.1 ({ git: false }) 1`] = `"git+ssh://git@github.com:yarnpkg/berry.git#v2.1.1"`;
 
 exports[`gitUtils should properly normalize git+ssh://git@github.com:yarnpkg/berry.git#v2.1.1 ({ git: true }) 1`] = `"git@github.com:yarnpkg/berry.git#v2.1.1"`;
 
-exports[`gitUtils should properly normalize git://github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"git://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"git://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git://github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"git://github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"git://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
 exports[`gitUtils should properly normalize github:GitHubOrg/foo-bar.js ({ git: false }) 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git"`;
 
@@ -60,29 +60,29 @@ exports[`gitUtils should properly normalize github:GitHubOrg/foo-bar.js#hash ({ 
 
 exports[`gitUtils should properly normalize github:GitHubOrg/foo-bar.js#hash ({ git: true }) 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git#hash"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#master ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#master"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#master ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#master"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#master ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#master"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#master ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#master"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0 ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#semver:v1.0.0 ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#semver:v1.0.0"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0 ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#semver:v1.0.0 ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#semver:v1.0.0"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#v1.0.0 ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.0"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#v1.0.0 ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.0"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate.git#v1.0.0 ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#v1.0.0"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate.git#v1.0.0 ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.0"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d ({ git: false }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
 
-exports[`gitUtils should properly normalize https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d ({ git: true }) 1`] = `"https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
+exports[`gitUtils should properly normalize https://github.com/yarnpkg/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d"`;
 
-exports[`gitUtils should properly normalize ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
 exports[`gitUtils should properly normalize ssh://git@github.com:yarnpkg/berry.git#v2.1.1 ({ git: false }) 1`] = `"ssh://git@github.com:yarnpkg/berry.git#v2.1.1"`;
 
@@ -180,10 +180,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split git+https://github.com/TooTallNate/util-deprecate#v1.0.1 1`] = `
+exports[`gitUtils should properly split git+https://github.com/yarnpkg/util-deprecate#v1.0.1 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.1",
@@ -191,10 +191,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split git+https://github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+exports[`gitUtils should properly split git+https://github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.1",
@@ -202,10 +202,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split git+ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+exports[`gitUtils should properly split git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
 Object {
   "extra": Object {},
-  "repo": "git+ssh://git@github.com/TooTallNate/util-deprecate.git",
+  "repo": "git+ssh://git@github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.1",
@@ -224,10 +224,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split git://github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+exports[`gitUtils should properly split git://github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
 Object {
   "extra": Object {},
-  "repo": "git://github.com/TooTallNate/util-deprecate.git",
+  "repo": "git://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.1",
@@ -257,10 +257,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d 1`] = `
+exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "b3562c2798507869edb767da869cd7b85487726d",
@@ -268,10 +268,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#master 1`] = `
+exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#master 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "master",
@@ -279,10 +279,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#semver:v1.0.0 1`] = `
+exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#semver:v1.0.0 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": "semver",
     "request": "v1.0.0",
@@ -290,10 +290,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate.git#v1.0.0 1`] = `
+exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#v1.0.0 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.0",
@@ -301,10 +301,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split https://github.com/TooTallNate/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `
+exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `
 Object {
   "extra": Object {},
-  "repo": "https://github.com/TooTallNate/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "b3562c2798507869edb767da869cd7b85487726d",
@@ -312,10 +312,10 @@ Object {
 }
 `;
 
-exports[`gitUtils should properly split ssh://git@github.com/TooTallNate/util-deprecate.git#v1.0.1 1`] = `
+exports[`gitUtils should properly split ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
 Object {
   "extra": Object {},
-  "repo": "ssh://git@github.com/TooTallNate/util-deprecate.git",
+  "repo": "ssh://git@github.com/yarnpkg/util-deprecate.git",
   "treeish": Object {
     "protocol": null,
     "request": "v1.0.1",

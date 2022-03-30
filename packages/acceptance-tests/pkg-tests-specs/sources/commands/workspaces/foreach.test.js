@@ -7,8 +7,6 @@ async function setupWorkspaces(path) {
   await writeFile(`${path}/mutexes/workspace-a`, ``);
   await writeFile(`${path}/mutexes/workspace-b`, ``);
 
-  await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
-
   await writeFile(`${path}/packages/workspace-a/server.js`, getClientContent(`${path}/mutexes/workspace-a`, `PING`));
   await writeJson(`${path}/packages/workspace-a/package.json`, {
     name: `workspace-a`,
@@ -324,8 +322,6 @@ describe(`Commands`, () => {
         workspaces: [`packages/*`],
       },
       async ({path, run}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `plugins:\n  - ${JSON.stringify(require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`))}\n`);
-
         await writeJson(`${path}/packages/package-a/package.json`, {
           name: `workspace-a`,
           version: `1.0.0`,
@@ -549,11 +545,6 @@ describe(`Commands`, () => {
             'has-bin-entries': `1.0.0`,
           },
         },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
-          ],
-        },
         async ({run}) => {
           await run(`install`);
 
@@ -606,10 +597,6 @@ function makeWorkspacesForeachSinceEnv(cb) {
   return makeTemporaryEnv({
     private: true,
     workspaces: [`packages/*`],
-  }, {
-    plugins: [
-      require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`),
-    ],
   }, async ({path, run, ...rest}) => {
     await setupWorkspaces(path);
 

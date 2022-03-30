@@ -286,6 +286,8 @@ export class PnpInstaller implements Installer {
         if (this.opts.project.tryWorkspaceByLocator(pkg))
           fallbackExclusionList.push({name: structUtils.stringifyIdent(pkg), reference: pkg.reference});
 
+    await this.asyncActions.wait();
+
     await this.finalizeInstallWithPnp({
       dependencyTreeRoots,
       enableTopLevelFallback,
@@ -295,8 +297,6 @@ export class PnpInstaller implements Installer {
       packageRegistry,
       shebang,
     });
-
-    await this.asyncActions.wait();
 
     return {
       customData: this.customData,

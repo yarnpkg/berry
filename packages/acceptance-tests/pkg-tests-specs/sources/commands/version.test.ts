@@ -8,11 +8,7 @@ describe(`Commands`, () => {
   describe(`version check`, () => {
     test(
       `it shouldn't work if the strategy isn't semver and there is no prior version`,
-      makeTemporaryEnv({}, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
-      }, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({path, run, source}) => {
         await expect(run(`version`, `patch`)).rejects.toThrow();
       }),
     );
@@ -21,10 +17,6 @@ describe(`Commands`, () => {
       `it shouldn't work if the immediate bump would be lower than the planned version (semver strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await expect(run(`version`, `1.0.1`)).rejects.toThrow();
@@ -35,10 +27,6 @@ describe(`Commands`, () => {
       `it shouldn't work if the immediate bump would be lower than the planned version (incremental strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await expect(run(`version`, `patch`)).rejects.toThrow();
@@ -49,10 +37,6 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is greater than the planned version (semver strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `2.0.0`);
@@ -67,10 +51,6 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is greater than the planned version (incremental strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `major`);
@@ -85,10 +65,6 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is equal to the planned version (semver strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `1.1.0`);
@@ -103,10 +79,6 @@ describe(`Commands`, () => {
       `it should work if the immediate bump is equal to the planned version (incremental strategy)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `minor`);
@@ -121,10 +93,6 @@ describe(`Commands`, () => {
       `it should increase the version number for a workspace`,
       makeTemporaryEnv({
         version: `0.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`);
 
@@ -138,10 +106,6 @@ describe(`Commands`, () => {
       `it shouldn't immediatly increase the version number for a workspace when using --deferred`,
       makeTemporaryEnv({
         version: `0.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`, `--deferred`);
 
@@ -163,9 +127,6 @@ describe(`Commands`, () => {
         version: `0.0.0`,
       }, {
         preferDeferredVersions: true,
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`);
 
@@ -187,9 +148,6 @@ describe(`Commands`, () => {
         version: `0.0.0`,
       }, {
         preferDeferredVersions: true,
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `patch`, `--immediate`);
 
@@ -206,11 +164,6 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [
             `packages/*`,
-          ],
-        },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
           ],
         },
         async ({path, run, source}) => {
@@ -246,10 +199,6 @@ describe(`Commands`, () => {
       `it should throw when applying an invalid strategy`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
       }),
@@ -259,10 +208,6 @@ describe(`Commands`, () => {
       `it should throw when applying an invalid strategy on top of the stored version`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `major`, `--deferred`);
 
@@ -274,10 +219,6 @@ describe(`Commands`, () => {
       `it should throw when applying an invalid strategy (deferred)`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await expect(run(`version`, `invalid`, `--deferred`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
       }),
@@ -287,10 +228,6 @@ describe(`Commands`, () => {
       `it should successfully apply "decline" on top of the stored version`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `major`, `--deferred`);
 
@@ -308,10 +245,6 @@ describe(`Commands`, () => {
       `it should successfully apply a version bump that can't be described by a strategy`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await expect(run(`version`, `3.4.5`)).resolves.toMatchObject({
           code: 0,
@@ -327,10 +260,6 @@ describe(`Commands`, () => {
       `it should successfully apply a version bump that can't be described by a strategy on top of the stored version`,
       makeTemporaryEnv({
         version: `1.0.0`,
-      }, {
-        plugins: [
-          require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-        ],
       }, async ({path, run, source}) => {
         await run(`version`, `major`, `--deferred`);
 

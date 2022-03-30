@@ -214,7 +214,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableGlobalCache: {
     description: `If true, the system-wide cache folder will be used regardless of \`cache-folder\``,
     type: SettingsType.BOOLEAN,
-    default: false,
+    default: true,
   },
 
   // Settings related to the output style
@@ -548,7 +548,7 @@ export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;
 
-  yarnPath: PortablePath;
+  yarnPath: PortablePath | null;
   ignorePath: boolean;
   ignoreCwd: boolean;
 
@@ -902,6 +902,8 @@ export type FindProjectOptions = {
 };
 
 export class Configuration {
+  public static deleteProperty = Symbol();
+
   public static telemetry: TelemetryManager | null = null;
 
   public startingCwd: PortablePath;
@@ -1270,7 +1272,11 @@ export class Configuration {
         if (currentValue === nextValue)
           continue;
 
-        replacement[key] = nextValue;
+        if (nextValue === Configuration.deleteProperty)
+          delete replacement[key];
+        else
+          replacement[key] = nextValue;
+
         patched = true;
       }
 

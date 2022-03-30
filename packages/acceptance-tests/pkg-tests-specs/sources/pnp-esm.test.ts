@@ -329,6 +329,28 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
+    `it should load symlinked extensionless commonjs files as an entrypoint`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(ppath.join(path, `lib` as Filename));
+        await xfs.writeFilePromise(ppath.join(path, `lib/index` as Filename), `console.log(typeof require === 'undefined')`);
+        await xfs.symlinkPromise(ppath.join(path, `lib` as Filename), ppath.join(path, `symlink` as Filename), `junction`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./symlink/index`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `false\n`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },

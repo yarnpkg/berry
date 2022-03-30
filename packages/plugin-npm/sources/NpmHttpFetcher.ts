@@ -50,6 +50,7 @@ export class NpmHttpFetcher implements Fetcher {
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 
     const sourceBuffer = await npmHttpUtils.get(params.__archiveUrl, {
+      customErrorMessage: npmHttpUtils.customPackageError,
       configuration: opts.project.configuration,
       ident: locator,
     });

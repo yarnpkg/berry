@@ -1,12 +1,11 @@
 module.exports = {
-  testEnvironment: require.resolve(`jest-environment-node`),
+  testEnvironment: `node`,
   transformIgnorePatterns: [`${__dirname}/packages/yarnpkg-libzip/sources/libzip(Async|Sync).js$`, `/.pnp.cjs$`],
   modulePathIgnorePatterns: [
     `<rootDir>/packages/acceptance-tests`,
     `<rootDir>/packages/gatsby/.cache`,
     `<rootDir>/packages/plugin-compat`,
   ],
-  reporters: [`default`, [require.resolve(`jest-junit`), {output: `<rootDir>/junit.xml`}]],
   setupFiles: [require.resolve(`@yarnpkg/cli/sources/polyfills.ts`)],
   testTimeout: 50000,
 };

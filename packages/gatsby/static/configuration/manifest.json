@@ -324,6 +324,11 @@
           "type": "string",
           "format": "uri",
           "examples": ["https://npm.pkg.github.com"]
+        },
+        "type": {
+          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `type` field when generating the workspace tarball.",
+          "type": "string",
+          "enum": ["commonjs", "module"]
         }
       },
       "_exampleKeys": [

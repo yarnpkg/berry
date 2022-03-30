@@ -298,13 +298,19 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should override main and module in the packed manifest`,
+      `it should override fields in the packed manifest`,
       makeTemporaryEnv({
+        type: `commonjs`,
         main: `./index.js`,
         module: `./index.mjs`,
+        browser: `./index.umd.js`,
+        exports: `./index.modern.js`,
         publishConfig: {
+          type: `module`,
           main: `./published.js`,
           module: `./published.mjs`,
+          browser: `./published.umd.js`,
+          exports: `./published.modern.js`,
         },
       }, async ({path, run, source}) => {
         await run(`install`);
@@ -314,13 +320,19 @@ describe(`Commands`, () => {
 
         const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
 
+        expect(packedManifest.type).toBe(`module`);
         expect(packedManifest.main).toBe(`./published.js`);
         expect(packedManifest.module).toBe(`./published.mjs`);
+        expect(packedManifest.browser).toBe(`./published.umd.js`);
+        expect(packedManifest.exports).toBe(`./published.modern.js`);
 
         const originalManifest = await fsUtils.readJson(`${path}/package.json`);
 
+        expect(originalManifest.type).toBe(`commonjs`);
         expect(originalManifest.main).toBe(`./index.js`);
         expect(originalManifest.module).toBe(`./index.mjs`);
+        expect(originalManifest.browser).toBe(`./index.umd.js`);
+        expect(originalManifest.exports).toBe(`./index.modern.js`);
       }),
     );
 

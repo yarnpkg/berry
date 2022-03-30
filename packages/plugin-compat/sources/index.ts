@@ -39,7 +39,7 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
       return structUtils.makeDescriptor(dependency, structUtils.makeRange({
         protocol: `patch:`,
         source: structUtils.stringifyDescriptor(dependency),
-        selector: `~builtin<compat/${structUtils.stringifyIdent(dependency)}>`,
+        selector: `optional!builtin<compat/${structUtils.stringifyIdent(dependency)}>`,
         params: null,
       }));
     },

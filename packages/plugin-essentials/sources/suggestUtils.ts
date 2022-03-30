@@ -204,11 +204,17 @@ export async function extractDescriptorFromPath(path: PortablePath, {cwd, worksp
   });
 }
 
-export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}): Promise<Results> {
+export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, fixed, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, fixed: boolean, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}): Promise<Results> {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
-  if (request.range !== `unknown`) {
+  const [requestRange, requestTag] = request.range !== `unknown`
+    ? fixed || semver.validRange(request.range) || !request.range.match(/^[a-z0-9._-]+$/i)
+      ? [request.range, `latest`]
+      : [`unknown`, request.range]
+    : [`unknown`, `latest`];
+
+  if (requestRange !== `unknown`) {
     return {
       suggestions: [{
         descriptor: request,
@@ -310,13 +316,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
 
       case Strategy.LATEST: {
         await trySuggest(async () => {
-          if (request.range !== `unknown`) {
-            suggested.push({
-              descriptor: request,
-              name: `Use ${structUtils.prettyRange(project.configuration, request.range)}`,
-              reason: `(explicit range requested)`,
-            });
-          } else if (target === Target.PEER) {
+          if (target === Target.PEER) {
             suggested.push({
               descriptor: structUtils.makeDescriptor(request, `*`),
               name: `Use *`,
@@ -329,7 +329,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
             });
           } else {
-            let latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});
+            let latest = await fetchDescriptorFrom(request, requestTag, {project, cache, workspace, preserveModifier: false});
 
             if (latest) {
               latest = applyModifier(latest, modifier);

@@ -70,6 +70,10 @@ export default class AddCommand extends BaseCommand {
     description: `Format the output as an NDJSON stream`,
   });
 
+  fixed = Option.Boolean(`-F,--fixed`, false, {
+    description: `Store dependency tags as-is instead of resolving them`,
+  });
+
   exact = Option.Boolean(`-E,--exact`, false, {
     description: `Don't use any semver modifier on the resolved range`,
   });
@@ -127,6 +131,7 @@ export default class AddCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
+    const fixed = this.fixed;
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
     const reuse = interactive || configuration.get(`preferReuse`);
 
@@ -169,7 +174,7 @@ export default class AddCommand extends BaseCommand {
         optional: this.optional,
       });
 
-      const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies, maxResults});
+      const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
 
       return [request, suggestions, target] as const;
     }));

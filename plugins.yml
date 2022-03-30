@@ -1,41 +1,41 @@
 # This file contains the list of officially endorsed plugins.
 
-"@yarnpkg/plugin-constraints":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-constraints/bin/%40yarnpkg/plugin-constraints.js"
-  experimental: true
-  description: "Adds a new command to Yarn (`yarn constraints`) to enforce lint rules across workspaces."
-
 "@yarnpkg/plugin-hello-world":
   url: "https://github.com/yarnpkg/berry/raw/master/scripts/plugin-hello-world.js"
   experimental: true
   description: "Adds a `yarn hello` command that says 'hello'."
 
-"@yarnpkg/plugin-exec":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-exec/bin/%40yarnpkg/plugin-exec.js"
+"@yarnpkg/plugin-constraints":
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-constraints/bin/%40yarnpkg/plugin-constraints.js"
   experimental: true
-  description: "Adds a new protocol to Yarn (`exec:`) that dynamically generate packages instead of downloading them."
+  description: "[Yarn <4 only] Adds a new command to Yarn (`yarn constraints`) to enforce lint rules across workspaces."
+
+"@yarnpkg/plugin-exec":
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-exec/bin/%40yarnpkg/plugin-exec.js"
+  experimental: true
+  description: "[Yarn <4 only] Adds a new protocol to Yarn (`exec:`) that dynamically generate packages instead of downloading them."
 
 "@yarnpkg/plugin-interactive-tools":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-interactive-tools/bin/%40yarnpkg/plugin-interactive-tools.js"
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-interactive-tools/bin/%40yarnpkg/plugin-interactive-tools.js"
   experimental: true
-  description: "Adds various commands providing a more high-level control on your project through terminal interfaces."
+  description: "[Yarn <4 only] Adds various commands providing a more high-level control on your project through terminal interfaces."
 
 "@yarnpkg/plugin-stage":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-stage/bin/%40yarnpkg/plugin-stage.js"
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-stage/bin/%40yarnpkg/plugin-stage.js"
   experimental: true
-  description: "Adds a new command to Yarn (`yarn stage`) to automatically stage & commit all Yarn-related files."
+  description: "[Yarn <4 only] Adds a new command to Yarn (`yarn stage`) to automatically stage & commit all Yarn-related files."
 
 "@yarnpkg/plugin-typescript":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js"
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js"
   experimental: true
-  description: "Adds various utilities for a seamless TypeScript experience. Consult the plugin page for more details."
+  description: "[Yarn <4 only] Adds various utilities for a seamless TypeScript experience. Consult the plugin page for more details."
 
 "@yarnpkg/plugin-version":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-version/bin/%40yarnpkg/plugin-version.js"
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-version/bin/%40yarnpkg/plugin-version.js"
   experimental: true
-  description: "Adds a new workflow to Yarn (`yarn version`) to efficiently manage releases in a monorepository."
+  description: "[Yarn <4 only] Adds a new workflow to Yarn (`yarn version`) to efficiently manage releases in a monorepository."
 
 "@yarnpkg/plugin-workspace-tools":
-  url: "https://github.com/yarnpkg/berry/raw/master/packages/plugin-workspace-tools/bin/%40yarnpkg/plugin-workspace-tools.js"
+  url: "https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.2.0/packages/plugin-workspace-tools/bin/%40yarnpkg/plugin-workspace-tools.js"
   experimental: true
-  description: "Adds various commands that make working with workspaces a more pleasing experience."
+  description: "[Yarn <4 only] Adds various commands that make working with workspaces a more pleasing experience."

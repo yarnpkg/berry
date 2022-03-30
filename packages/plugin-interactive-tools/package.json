@@ -34,8 +34,6 @@
     "directory": "packages/plugin-interactive-tools"
   },
   "scripts": {
-    "build:plugin-interactive-tools": "builder build plugin",
-    "update-local": "yarn build:plugin-interactive-tools && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },

@@ -114,11 +114,29 @@ export function pnpPlugin({
 
       const externals = parseExternals(build.initialOptions.external ?? []);
 
-      const isPlatformNode = (build.initialOptions.platform ?? `browser`) === `node`;
+      const platform = build.initialOptions.platform ?? `browser`;
+      const isPlatformNode = platform === `node`;
+
+      // Reference: https://github.com/evanw/esbuild/blob/537195ae84bee1510fac14235906d588084c39cd/internal/resolver/resolver.go#L238-L253
+      const conditionsDefault = new Set(build.initialOptions.conditions);
+      conditionsDefault.add(`default`);
+      if (platform === `browser` || platform === `node`)
+        conditionsDefault.add(platform);
+      const conditionsImport = new Set(conditionsDefault);
+      conditionsImport.add(`import`);
+      const conditionsRequire = new Set(conditionsDefault);
+      conditionsRequire.add(`require`);
 
       build.onResolve({filter}, args => {
         if (isExternal(args.path, externals))
           return {external: true};
+
+        // Reference: https://github.com/evanw/esbuild/blob/537195ae84bee1510fac14235906d588084c39cd/internal/resolver/resolver.go#L1495-L1502
+        let conditions = conditionsDefault;
+        if (args.kind === `dynamic-import` || args.kind === `import-statement`)
+          conditions = conditionsImport;
+        else if (args.kind === `require-call` || args.kind === `require-resolve`)
+          conditions = conditionsRequire;
 
         // The entry point resolution uses an empty string
         const effectiveImporter = args.importer
@@ -134,6 +152,7 @@ export function pnpPlugin({
         let error;
         try {
           path = pnpApi.resolveRequest(args.path, effectiveImporter, {
+            conditions,
             considerBuiltins: isPlatformNode,
             extensions,
           });

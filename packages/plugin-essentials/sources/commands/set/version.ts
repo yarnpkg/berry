@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                         from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                           from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                           from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
-import semver                                                                                from 'semver';
+import {BaseCommand}                                                                                      from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion, ReportError} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                                        from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                               from 'clipanion';
+import semver                                                                                             from 'semver';
 
 export type Tags = {
   latest: Record<string, string>;
@@ -19,7 +19,9 @@ export default class SetVersionCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `lock the Yarn version used by the project`,
     details: `
-      This command will download a specific release of Yarn directly from the Yarn GitHub repository, will store it inside your project, and will change the \`yarnPath\` settings from your project \`.yarnrc.yml\` file to point to the new file.
+      This command will set a specific release of Yarn to be used by Corepack: https://nodejs.org/api/corepack.html.
+
+      By default it only will set the \`packageManager\` field at the root of your project, but if the referenced release cannot be represented this way, if you already have \`yarnPath\` configured, or if you set the \`--yarn-path\` command line flag, then the release will also be downloaded from the Yarn GitHub repository, stored inside your project, and referenced via the \`yarnPath\` settings from your project \`.yarnrc.yml\` file.
 
       A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
 
@@ -68,6 +70,10 @@ export default class SetVersionCommand extends BaseCommand {
     ]],
   });
 
+  useYarnPath = Option.Boolean(`--yarn-path`, {
+    description: `Set the yarnPath setting even if the version can be accessed by Corepack`,
+  });
+
   onlyIfNeeded = Option.Boolean(`--only-if-needed`, false, {
     description: `Only lock the Yarn version if it isn't already locked`,
   });
@@ -86,25 +92,33 @@ export default class SetVersionCommand extends BaseCommand {
       return `file://${process.argv[1]}`;
     };
 
-    let bundleUrl: string;
+    let bundleRef: {
+      version: string;
+      url: string;
+    };
+
+    const getRef = (url: string, version: string) => {
+      return {version, url: url.replace(/\{\}/g, version)};
+    };
+
     if (this.version === `self`)
-      bundleUrl = getBundlePath();
+      bundleRef = {url: getBundlePath(), version: YarnVersion ?? `self`};
     else if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
-      bundleUrl = `https://repo.yarnpkg.com/${await resolveTag(configuration, `stable`)}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `stable`));
     else if (this.version === `canary`)
-      bundleUrl = `https://repo.yarnpkg.com/${await resolveTag(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `canary`));
     else if (this.version === `classic`)
-      bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
+      bundleRef = {url: `https://nightly.yarnpkg.com/latest.js`, version: `classic`};
     else if (this.version.match(/^https?:/))
-      bundleUrl = this.version;
+      bundleRef = {url: this.version, version: `remote`};
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
-      bundleUrl = `file://${npath.resolve(this.version)}`;
+      bundleRef = {url: `file://${ppath.resolve(npath.toPortablePath(this.version))}`, version: `file`};
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
-      bundleUrl = `https://repo.yarnpkg.com/${this.version}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, this.version);
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
-      bundleUrl = `https://github.com/yarnpkg/yarn/releases/download/v${this.version}/yarn-${this.version}.js`;
+      bundleRef = getRef(`https://github.com/yarnpkg/yarn/releases/download/v{}/yarn-{}.js`, this.version);
     else if (semverUtils.validRange(this.version))
-      bundleUrl = `https://repo.yarnpkg.com/${await resolveRange(configuration, this.version)}/packages/yarnpkg-cli/bin/yarn.js`;
+      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveRange(configuration, this.version));
     else
       throw new UsageError(`Invalid version descriptor "${this.version}"`);
 
@@ -113,18 +127,19 @@ export default class SetVersionCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeLogs: !this.context.quiet,
     }, async (report: StreamReport) => {
-      const filePrefix = `file://`;
+      const fetchBuffer = async () => {
+        const filePrefix = `file://`;
 
-      let bundleBuffer: Buffer;
-      if (bundleUrl.startsWith(filePrefix)) {
-        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, FormatType.URL)}`);
-        bundleBuffer = await xfs.readFilePromise(npath.toPortablePath(bundleUrl.slice(filePrefix.length)));
-      } else {
-        report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, FormatType.PATH)}`);
-        bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
-      }
+        if (bundleRef.url.startsWith(filePrefix)) {
+          report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, FormatType.PATH)}`);
+          return await xfs.readFilePromise(bundleRef.url.slice(filePrefix.length) as PortablePath);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, FormatType.URL)}`);
+          return await httpUtils.get(bundleRef.url, {configuration});
+        }
+      };
 
-      await setVersion(configuration, null, bundleBuffer, {report});
+      await setVersion(configuration, bundleRef.version, fetchBuffer, {report, useYarnPath: this.useYarnPath});
     });
 
     return report.exitCode();
@@ -150,64 +165,85 @@ export async function resolveTag(configuration: Configuration, request: `stable`
   return data.latest[request];
 }
 
-export async function setVersion(configuration: Configuration, bundleVersion: string | null, bundleBuffer: Buffer, {report}: {report: Report}) {
-  if (bundleVersion === null) {
-    await xfs.mktempPromise(async tmpDir => {
-      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
-      await xfs.writeFilePromise(temporaryPath, bundleBuffer);
-
-      const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
-        cwd: tmpDir,
-        env: {...process.env, YARN_IGNORE_PATH: `1`},
-      });
-
-      bundleVersion = stdout.trim();
-      if (!semver.valid(bundleVersion)) {
-        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
-      }
-    });
-  }
-
+export async function setVersion(configuration: Configuration, bundleVersion: string, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
   const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
-
   const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
-  const projectPath = ppath.relative(projectCwd, absolutePath);
 
+  const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
   const yarnPath = configuration.get(`yarnPath`);
-  const updateConfig = yarnPath === null || yarnPath.startsWith(`${releaseFolder}/`);
 
-  report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`);
+  const absolutelyMustUseYarnPath = !isTaggedYarnVersion;
+  let probablyShouldUseYarnPath = absolutelyMustUseYarnPath || !!yarnPath || !!useYarnPath;
 
-  await xfs.removePromise(ppath.dirname(absolutePath));
-  await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
+  if (useYarnPath === false) {
+    if (absolutelyMustUseYarnPath)
+      throw new ReportError(MessageName.UNNAMED, `You explicitly opted out of yarnPath usage in your command line, but the version you specified cannot be represented by Corepack`);
 
-  await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
+    probablyShouldUseYarnPath = false;
+  } else if (!probablyShouldUseYarnPath && !process.env.COREPACK_ROOT) {
+    report.reportWarning(MessageName.UNNAMED, `You don't seem to have ${formatUtils.applyHyperlink(configuration, `Corepack`, `https://nodejs.org/api/corepack.html`)} enabled; we'll have to rely on ${formatUtils.applyHyperlink(configuration, `yarnPath`, `https://yarnpkg.com/configuration/yarnrc#yarnPath`)} instead`);
+    probablyShouldUseYarnPath = true;
+  }
 
-  if (updateConfig) {
+  if (probablyShouldUseYarnPath) {
+    const bundleBuffer = await fetchBuffer();
+
+    if (bundleVersion === null) {
+      await xfs.mktempPromise(async tmpDir => {
+        const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
+        await xfs.writeFilePromise(temporaryPath, bundleBuffer);
+
+        const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
+          cwd: tmpDir,
+          env: {...process.env, YARN_IGNORE_PATH: `1`},
+        });
+
+        bundleVersion = stdout.trim();
+        if (!semver.valid(bundleVersion)) {
+          throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
+        }
+      });
+    }
+
+    report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`);
+
+    await xfs.removePromise(ppath.dirname(absolutePath));
+    await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
+
+    await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
+
+    if (!yarnPath || ppath.contains(releaseFolder, yarnPath)) {
+      await Configuration.updateConfiguration(projectCwd, {
+        yarnPath: ppath.relative(projectCwd, absolutePath),
+      });
+    }
+  } else {
+    await xfs.removePromise(ppath.dirname(absolutePath));
+
     await Configuration.updateConfiguration(projectCwd, {
-      yarnPath: projectPath,
-    });
-
-    const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
-
-    manifest.packageManager = `yarn@${
-      bundleVersion && miscUtils.isTaggedYarnVersion(bundleVersion)
-        ? bundleVersion
-        // If the version isn't tagged, we use the latest stable version as the wrapper
-        : await resolveTag(configuration, `stable`)
-    }`;
-
-    const data = {};
-    manifest.exportTo(data);
-
-    const path = ppath.join(projectCwd, Manifest.fileName);
-    const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
-
-    await xfs.changeFilePromise(path, content, {
-      automaticNewlines: true,
+      yarnPath: Configuration.deleteProperty,
     });
   }
+
+  const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
+
+  manifest.packageManager = `yarn@${
+    bundleVersion && isTaggedYarnVersion
+      ? bundleVersion
+      // If the version isn't tagged, we use the latest stable version as the wrapper
+      : await resolveTag(configuration, `stable`)
+  }`;
+
+  const data = {};
+  manifest.exportTo(data);
+
+  const path = ppath.join(projectCwd, Manifest.fileName);
+  const content = `${JSON.stringify(data, null, manifest.indent)}\n`;
+
+  await xfs.changeFilePromise(path, content, {
+    automaticNewlines: true,
+  });
 }

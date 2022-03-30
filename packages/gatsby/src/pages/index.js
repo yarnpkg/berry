@@ -155,6 +155,58 @@ const SellingPoint = ({imgUrl, children, href}) => <>
   </SellingPointContainer>
 </>;
 
+const Banner = styled.div`
+  background-color: #5474c9;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+
+  > :first-child {
+    margin-right: 1em;
+  }
+`;
+
+const UkrainianFlag = styled.div`
+  width: 4em;
+  height: 3em;
+  background-image: linear-gradient(#0066cc 50%, #ffcc00 50%);
+`;
+
+const BannerTextContainer = styled.div`
+  flex: 1;
+
+  color: white;
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const UkrainianBanner = () =>
+  <Banner>
+    <UkrainianFlag />
+    <BannerTextContainer>
+      <p>
+The Yarn team stands with the people of Ukraine during this heinous assault on their freedom, their independence, and their lives.
+      </p>
+      <p>
+To support Ukraine in their time of need visit this <a href={`https://war.ukraine.ua/support-ukraine/`}>page</a>.
+      </p>
+    </BannerTextContainer>
+  </Banner>;
+
+
 const IndexPage = ({data, searchState, onSearchStateChange}) => {
   const [tags, setTags] = useState([]);
   const [owners, setOwners] = useState([]);
@@ -182,6 +234,8 @@ const IndexPage = ({data, searchState, onSearchStateChange}) => {
         />
 
         {!searchState.query && <>
+          <UkrainianBanner />
+
           <Hero>
             <SectionContent>
               <HeroTitle>

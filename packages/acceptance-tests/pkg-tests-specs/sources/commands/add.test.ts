@@ -1,9 +1,8 @@
-import {PortablePath, xfs} from '@yarnpkg/fslib';
-import {yarn}              from 'pkg-tests-core';
+import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {yarn}                               from 'pkg-tests-core';
 
 const {
   tests: {getPackageDirectoryPath},
-  yarn: {readManifest},
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
 
@@ -14,7 +13,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps@1.0.0`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -27,7 +26,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -40,7 +39,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-T`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `~2.0.0`,
           },
@@ -53,7 +52,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-E`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `2.0.0`,
           },
@@ -67,7 +66,7 @@ describe(`Commands`, () => {
         await run(`config`, `set`, `defaultSemverRangePrefix`, `~`);
         await run(`add`, `no-deps`, `-C`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -81,7 +80,7 @@ describe(`Commands`, () => {
         await run(`config`, `set`, `defaultSemverRangePrefix`, `~`);
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `~2.0.0`,
           },
@@ -95,7 +94,7 @@ describe(`Commands`, () => {
         await run(`config`, `set`, `defaultSemverRangePrefix`, ``);
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `2.0.0`,
           },
@@ -110,7 +109,7 @@ describe(`Commands`, () => {
 
         await run(`add`, packagePath);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: packagePath,
           },
@@ -123,9 +122,48 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-D`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (resolved tag)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps@latest`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (resolved tag)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps@latest`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new regular dependency to the current project (fixed tag)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `-F`, `no-deps@latest`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+          dependencies: {
+            [`no-deps`]: `latest`,
           },
         });
       }),
@@ -140,7 +178,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -157,7 +195,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -174,7 +212,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-D`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -191,7 +229,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -208,7 +246,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -239,7 +277,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-P`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           peerDependencies: {
             [`no-deps`]: `*`,
           },
@@ -283,7 +321,7 @@ describe(`Commands`, () => {
         await run(`add`, `no-deps`, `-D`);
         await run(`add`, `no-deps`, `-P`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -302,7 +340,7 @@ describe(`Commands`, () => {
         const content = await xfs.readFilePromise(`${path}/yarn.lock` as PortablePath, `utf8`);
         const lock = parseSyml(content);
 
-        await expect(lock).toMatchObject({
+        expect(lock).toMatchObject({
           [`inject-node-gyp@npm:^1.0.0`]: {
             dependencies: {
               [`node-gyp`]: `latest`,
@@ -326,7 +364,7 @@ describe(`Commands`, () => {
 
         await run(`add`, `no-deps@workspace:packages/no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:packages/no-deps`,
           },
@@ -349,7 +387,7 @@ describe(`Commands`, () => {
 
         await run(`add`, `no-deps@workspace:1.0.0`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:1.0.0`,
           },
@@ -371,7 +409,7 @@ describe(`Commands`, () => {
 
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:^`,
           },
@@ -393,7 +431,7 @@ describe(`Commands`, () => {
 
         await run(`add`, `no-deps`, `-T`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:~`,
           },
@@ -415,7 +453,7 @@ describe(`Commands`, () => {
 
         await run(`add`, `no-deps`, `-E`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:*`,
           },
@@ -438,7 +476,7 @@ describe(`Commands`, () => {
         await run(`config`, `set`, `defaultSemverRangePrefix`, `~`);
         await run(`add`, `no-deps`, `-C`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:^`,
           },
@@ -461,7 +499,7 @@ describe(`Commands`, () => {
         await run(`config`, `set`, `defaultSemverRangePrefix`, `~`);
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:~`,
           },
@@ -484,7 +522,7 @@ describe(`Commands`, () => {
         await run(`config`, `set`, `defaultSemverRangePrefix`, ``);
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `workspace:*`,
           },
@@ -499,7 +537,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `^2.0.0`,
           },
@@ -583,7 +621,7 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`no-deps-deprecated@npm:1.0.0 is deprecated: ¯\\_(ツ)_/¯\n`);
 
         // Check if the package is installed successfully
-        await expect(readManifest(path)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps-deprecated`]: `1.0.0`,
           },
@@ -600,7 +638,7 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`no-deps-deprecated-whitespace@npm:1.0.0 is deprecated\n`);
 
         // Check if the package is installed successfully
-        await expect(readManifest(path)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps-deprecated-whitespace`]: `1.0.0`,
           },
