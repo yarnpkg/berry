@@ -176,7 +176,16 @@ const BUILTINS = new Map<string, ShellBuiltin>([
 
     return exitCode;
   }],
-
+  [`__ysh_passthrough`, async(args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    const [cmd, ...rest] = args;
+    const ps = makeProcess(cmd, rest, opts, state);
+    const exitCode = await start(ps, {
+      stdin: new ProtectedStream<Readable>(state.stdin),
+      stdout: new ProtectedStream<Writable>(state.stdout),
+      stderr: new ProtectedStream<Writable>(state.stderr),
+    }).run();
+    return exitCode;
+  }],
   [`__ysh_set_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     let stdin = state.stdin;
     let stdout = state.stdout;
@@ -614,7 +623,13 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     for (const [key, targets] of redirections.entries())
       redirectionArgs.splice(redirectionArgs.length, 0, key, String(targets.length), ...targets);
 
-    interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
+    const firstArg = JSON.parse(redirectionArgs[0]);
+    // In case first character is ">", simply print on stdout
+    if (firstArg.type === `>`) {
+      interpolated.splice(0, 0, `__ysh_passthrough`, ...redirectionArgs, `--`);
+    } else {
+      interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
+    }
   }
 
   return interpolated;
