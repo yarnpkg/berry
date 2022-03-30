@@ -93,7 +93,7 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
 
       // Yaml 1.2 spec says that keys over 1024 characters need to be prefixed with ? and the : goes in a new line
       const keyPart = stringifiedKey.length > 1024
-        ? `? ${stringifiedKey}\n:`
+        ? `? ${stringifiedKey}\n${recordIndentation}:`
         : `${stringifiedKey}:`;
 
       const valuePart = stringifiedValue.startsWith(`\n`)
