@@ -41,7 +41,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should add a new regular dependency to the current project (resolved tag)`,
+      `it should upgrade regular dependencies to the current project (resolved tag)`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
@@ -58,7 +58,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should add a new regular dependency to the current project (fixed tag)`,
+      `it should upgrade regular dependencies to the current project (fixed tag)`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
