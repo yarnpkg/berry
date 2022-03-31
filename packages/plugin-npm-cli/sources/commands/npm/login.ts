@@ -1,10 +1,10 @@
-import {BaseCommand, openWorkspace}                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Report, miscUtils} from '@yarnpkg/core';
-import {StreamReport}                                  from '@yarnpkg/core';
-import {PortablePath}                                  from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils}                  from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage}                        from 'clipanion';
-import {prompt}                                        from 'enquirer';
+import {BaseCommand, openWorkspace}                                 from '@yarnpkg/cli';
+import {Configuration, MessageName, Report, miscUtils, formatUtils} from '@yarnpkg/core';
+import {StreamReport}                                               from '@yarnpkg/core';
+import {PortablePath}                                               from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils}                               from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                     from 'clipanion';
+import {prompt}                                                     from 'enquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
@@ -55,8 +55,10 @@ export default class NpmLoginCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      includeFooter: false,
     }, async report => {
       const credentials = await getCredentials({
+        configuration,
         registry,
         report,
         stdin: this.context.stdin as NodeJS.ReadStream,
@@ -121,7 +123,7 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
   return await Configuration.updateHomeConfiguration(update);
 }
 
-async function getCredentials({registry, report, stdin, stdout}: {registry: string, report: Report, stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream}) {
+async function getCredentials({configuration, registry, report, stdin, stdout}: {configuration: Configuration, registry: string, report: Report, stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream}) {
   if (process.env.TEST_ENV) {
     return {
       name: process.env.TEST_NPM_USER || ``,
@@ -129,7 +131,7 @@ async function getCredentials({registry, report, stdin, stdout}: {registry: stri
     };
   }
 
-  report.reportInfo(MessageName.UNNAMED, `Logging in to ${registry}`);
+  report.reportInfo(MessageName.UNNAMED, `Logging in to ${formatUtils.pretty(configuration, registry, formatUtils.Type.URL)}`);
 
   let isToken = false;
 
