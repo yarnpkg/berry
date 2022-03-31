@@ -48,8 +48,6 @@ describe(`Features`, () => {
 
         await xfs.writeJsonPromise(manifestPath, manifestData);
 
-        throw new Error(42);
-
         const check = run(`install`, `--check-resolutions`);
         if (valid) {
           await check;
