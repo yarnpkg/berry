@@ -1,11 +1,12 @@
-import {Configuration, Ident, formatUtils, httpUtils, StreamReport} from '@yarnpkg/core';
-import {MessageName, ReportError}                                   from '@yarnpkg/core';
-import {prompt}                                                     from 'enquirer';
-import {URL}                                                        from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, StreamReport, execUtils, miscUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                         from '@yarnpkg/core';
+import {ppath}                                                                            from '@yarnpkg/fslib';
+import {prompt}                                                                           from 'enquirer';
+import {URL}                                                                              from 'url';
 
-import {Hooks}                                                      from './index';
-import * as npmConfigUtils                                          from './npmConfigUtils';
-import {MapLike}                                                    from './npmConfigUtils';
+import {Hooks}                                                                            from './index';
+import * as npmConfigUtils                                                                from './npmConfigUtils';
+import {MapLike}                                                                          from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -273,6 +274,15 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
     }, async report => {
       report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
     });
+
+    const autoOpen = notice.match(/Enter OTP from your authenticator app or open (https?:\/\/\S+)/);
+    if (autoOpen) {
+      await miscUtils.tryPromise(async () => {
+        await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
+      }, async () => {
+        await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
+      });
+    }
 
     process.stdout.write(`\n`);
   }

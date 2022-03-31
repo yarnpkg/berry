@@ -23,6 +23,24 @@ export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }
 
+export function trySync(...cbs: Array<() => void>) {
+  for (let t = 0; t < cbs.length; ++t) {
+    try {
+      cbs[t]();
+      break;
+    } catch {}
+  }
+}
+
+export async function tryPromise(...cbs: Array<() => Promise<void>>) {
+  for (let t = 0; t < cbs.length; ++t) {
+    try {
+      await cbs[t]();
+      break;
+    } catch {}
+  }
+}
+
 export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
   const values = Object.values(def);
 
