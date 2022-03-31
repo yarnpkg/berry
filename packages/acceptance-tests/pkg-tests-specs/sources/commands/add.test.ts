@@ -260,8 +260,7 @@ describe(`Commands`, () => {
         devDependencies: {
           [`no-deps`]: `1.0.0`,
         },
-      }, async ({path, run, source}) => {
-        await yarn.writeConfiguration(path, {preferReuse: true});
+      }, {preferReuse: true}, async ({path, run, source}) => {
         await run(`add`, `no-deps`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
