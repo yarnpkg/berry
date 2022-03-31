@@ -128,7 +128,7 @@ const plugin: Plugin = {
     },
 
     preferReuse: {
-      description: `If true, the CLI will use the hightest version of existing, latest for new dependencies`,
+      description: `If true, `yarn add` will attempt to reuse the most common dependency range in other workspaces.`,
       type: SettingsType.BOOLEAN,
       default: false,
     },
