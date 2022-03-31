@@ -149,7 +149,7 @@ export default class AddCommand extends BaseCommand {
         : undefined,
 
       suggestUtils.Strategy.LATEST,
-    ].filter(isStrategy);
+    ].filter((strategy): strategy is suggestUtils.Strategy => typeof strategy !== `undefined`);
 
     const maxResults = interactive
       ? Infinity
