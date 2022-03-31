@@ -90,25 +90,34 @@ export class NpmSemverResolver implements Resolver {
     });
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
     const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    return miscUtils.mapAndFilter(references, reference => {
-      try {
-        const {selector} = structUtils.parseRange(reference, {requireProtocol: PROTOCOL});
-        const version = new semverUtils.SemVer(selector);
+    const results = miscUtils.mapAndFilter(locators, locator => {
+      if (locator.identHash !== descriptor.identHash)
+        return miscUtils.mapAndFilter.skip;
 
-        if (range.test(version)) {
-          return {reference, version};
-        }
-      } catch { }
+      const parsedRange = structUtils.tryParseRange(locator.reference, {requireProtocol: PROTOCOL});
+      if (!parsedRange)
+        return miscUtils.mapAndFilter.skip;
 
-      return miscUtils.mapAndFilter.skip;
-    })
+      const version = new semverUtils.SemVer(parsedRange.selector);
+      if (!range.test(version))
+        return miscUtils.mapAndFilter.skip;
+
+      return {locator, version};
+    });
+
+    const sortedResults = results
       .sort((a, b) => -a.version.compare(b.version))
-      .map(({reference}) => structUtils.makeLocator(descriptor, reference));
+      .map(({locator}) => locator);
+
+    return {
+      locators: sortedResults,
+      sorted: true,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

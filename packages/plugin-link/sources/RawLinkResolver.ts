@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator}                             from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {structUtils}                                     from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
+import {Descriptor, Locator}                                      from '@yarnpkg/core';
+import {LinkType}                                                 from '@yarnpkg/core';
+import {structUtils}                                              from '@yarnpkg/core';
+import {npath}                                                    from '@yarnpkg/fslib';
 
-import {RAW_LINK_PROTOCOL}                               from './constants';
+import {RAW_LINK_PROTOCOL}                                        from './constants';
 
 export class RawLinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -41,8 +41,13 @@ export class RawLinkResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${RAW_LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

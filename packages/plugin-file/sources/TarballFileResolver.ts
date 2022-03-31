@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                            from '@yarnpkg/core';
+import {LinkType}                                                 from '@yarnpkg/core';
+import {miscUtils, structUtils}                                   from '@yarnpkg/core';
+import {npath}                                                    from '@yarnpkg/fslib';
 
-import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
+import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}                    from './constants';
 
 export class TarballFileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -55,8 +55,13 @@ export class TarballFileResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

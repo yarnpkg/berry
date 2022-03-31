@@ -1,7 +1,7 @@
 import {PortablePath}                                    from '@yarnpkg/fslib';
 
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator, Package}                    from './types';
 import {LinkType}                                        from './types';
 
 export class WorkspaceResolver implements Resolver {
@@ -43,8 +43,13 @@ export class WorkspaceResolver implements Resolver {
     return [workspace.anchoredLocator];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

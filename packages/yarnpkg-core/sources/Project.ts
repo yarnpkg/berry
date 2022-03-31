@@ -114,6 +114,12 @@ export type InstallOptions = {
   lockfileOnly?: boolean;
 
   /**
+   * If true, Yarn will check that the pre-existing resolutions found in the
+   * lockfile are coherent with the ranges that depend on them.
+   */
+  checkResolutions?: boolean;
+
+  /**
    * Changes which artifacts are generated during the install. Check the
    * enumeration documentation for details.
    */
@@ -660,7 +666,28 @@ export class Project {
     return null;
   }
 
-  async resolveEverything(opts: Pick<InstallOptions, `report` | `resolver` | `mode`> & ({report: Report, lockfileOnly: true} | {lockfileOnly?: boolean, cache: Cache})) {
+  async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
+    const pkg = this.configuration.normalizePackage(originalPkg);
+
+    for (const [identHash, descriptor] of pkg.dependencies) {
+      const dependency = await this.configuration.reduceHook(hooks => {
+        return hooks.reduceDependency;
+      }, descriptor, this, pkg, descriptor, {
+        resolver,
+        resolveOptions,
+      });
+
+      if (!structUtils.areIdentsEqual(descriptor, dependency))
+        throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+      const bound = resolver.bindDescriptor(dependency, pkg, resolveOptions);
+      pkg.dependencies.set(identHash, bound);
+    }
+
+    return pkg;
+  }
+
+  async resolveEverything(opts: Pick<InstallOptions, `report` | `resolver` | `checkResolutions` | `mode`> & ({report: Report, lockfileOnly: true} | {lockfileOnly?: boolean, cache: Cache})) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -694,6 +721,10 @@ export class Project {
 
     const resolver: Resolver = new MultiResolver([
       new LockfileResolver(realResolver),
+      ...resolverChain,
+    ]);
+
+    const noLockfileResolver: Resolver = new MultiResolver([
       ...resolverChain,
     ]);
 
@@ -735,23 +766,7 @@ export class Project {
           throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, originalPkg)})`);
 
         originalPackages.set(originalPkg.locatorHash, originalPkg);
-
-        const pkg = this.configuration.normalizePackage(originalPkg);
-
-        for (const [identHash, descriptor] of pkg.dependencies) {
-          const dependency = await this.configuration.reduceHook(hooks => {
-            return hooks.reduceDependency;
-          }, descriptor, this, pkg, descriptor, {
-            resolver,
-            resolveOptions,
-          });
-
-          if (!structUtils.areIdentsEqual(descriptor, dependency))
-            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
-
-          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
-          pkg.dependencies.set(identHash, bound);
-        }
+        const pkg = await this.preparePackage(originalPkg, {resolver, resolveOptions});
 
         const dependencyResolutions = miscUtils.allSettledSafe([...pkg.dependencies.values()].map(descriptor => {
           return scheduleDescriptorResolution(descriptor);
@@ -822,6 +837,13 @@ export class Project {
         const finalResolution = candidateResolutions[0];
         if (typeof finalResolution === `undefined`)
           throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+
+        if (opts.checkResolutions) {
+          const {locators} = await noLockfileResolver.getSatisfying(descriptor, resolvedDependencies, [finalResolution], {...resolveOptions, resolver: noLockfileResolver});
+          if (!locators.find(locator => locator.locatorHash === finalResolution.locatorHash)) {
+            throw new ReportError(MessageName.RESOLUTION_MISMATCH, `Invalid resolution ${structUtils.prettyResolution(this.configuration, descriptor, finalResolution)}`);
+          }
+        }
 
         allDescriptors.set(descriptor.descriptorHash, descriptor);
         allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);

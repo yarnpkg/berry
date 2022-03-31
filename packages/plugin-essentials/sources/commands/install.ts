@@ -70,6 +70,10 @@ export default class YarnCommand extends BaseCommand {
     description: `Always refetch the packages and ensure that their checksums are consistent`,
   });
 
+  checkResolutions = Option.Boolean(`--check-resolutions`, {
+    description: `Validates that the package resolutions are coherent`,
+  });
+
   inlineBuilds = Option.Boolean(`--inline-builds`, {
     description: `Verbosely print the output of the build steps of dependencies`,
   });
@@ -313,13 +317,15 @@ export default class YarnCommand extends BaseCommand {
     // the Configuration and Install classes). Feel free to open an issue
     // in order to ask for design feedback before writing features.
 
+    const checkResolutions = this.checkResolutions ?? CI.isPR ?? false;
+
     const report = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,
       includeLogs: true,
     }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable, mode: this.mode});
+      await project.install({cache, report, immutable, checkResolutions, mode: this.mode});
     });
 
     return report.exitCode();

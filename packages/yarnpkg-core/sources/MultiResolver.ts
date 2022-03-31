@@ -45,10 +45,10 @@ export class MultiResolver implements Resolver {
     return await resolver.getCandidates(descriptor, dependencies, opts);
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
     const resolver = this.getResolverByDescriptor(descriptor, opts);
 
-    return resolver.getSatisfying(descriptor, references, opts);
+    return resolver.getSatisfying(descriptor, dependencies, locators, opts);
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
