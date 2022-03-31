@@ -2,7 +2,7 @@ import {Filename, PortablePath, npath, ppath, xfs}                              
 import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
 import camelcase                                                                                        from 'camelcase';
-import {isCI}                                                                                           from 'ci-info';
+import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
 import pLimit, {Limit}                                                                                  from 'p-limit';
 import {PassThrough, Writable}                                                                          from 'stream';
@@ -25,6 +25,10 @@ import * as nodeUtils                                                           
 import * as semverUtils                                                                                 from './semverUtils';
 import * as structUtils                                                                                 from './structUtils';
 import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus} from './types';
+
+const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
+  ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
+  : false;
 
 const IGNORED_ENV_VARIABLES = new Set([
   // "binFolder" is the magic location where the parent process stored the
@@ -471,6 +475,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to security
+  enableHardenedMode: {
+    description: `If true, automatically enable --check-resolutions --refresh-lockfile on installs`,
+    type: SettingsType.BOOLEAN,
+    default: isPR && isPublicRepository,
+    defaultText: `<true on public PRs>`,
+  },
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
     type: SettingsType.BOOLEAN,
@@ -603,6 +613,7 @@ export interface ConfigurationValueMap {
   telemetryUserId: string | null;
 
   // Settings related to security
+  enableHardenedMode: boolean;
   enableScripts: boolean;
   enableStrictSettings: boolean;
   enableImmutableCache: boolean;
