@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils} from '@yarnpkg/core';
 import {npath}                                                                                  from '@yarnpkg/fslib';
 import type {FocusRequest}                                                                      from '@yarnpkg/libui/sources/hooks/useFocusRequest';
+import * as libuiUtils                                                                          from '@yarnpkg/libui/sources/libuiUtils';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
 import semver                                                                                   from 'semver';
 
@@ -44,6 +45,8 @@ export default class VersionCheckCommand extends BaseCommand {
   }
 
   async executeInteractive() {
+    libuiUtils.checkRequirements(this.context);
+
     const {Gem} = await import(`@yarnpkg/libui/sources/components/Gem`);
     const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
     const {FocusRequest} = await import(`@yarnpkg/libui/sources/hooks/useFocusRequest`);
