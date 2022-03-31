@@ -1,7 +1,7 @@
+import {Box, Text}    from 'ink';
 import React          from 'react';
 
 import {useListInput} from '../hooks/useListInput';
-import {getInk}       from '../ink';
 
 import {Gem}          from './Gem';
 import {Pad}          from './Pad';
@@ -21,8 +21,6 @@ export const ItemOptions = function <T>({
   onChange: (value: T) => void;
   sizes?: Array<number>;
 }) {
-  const {Box, Text} = getInk();
-
   // Our possible values are those that have been provided with a label so that
   // the user can see what they're selecting.
   const values = options.filter(({label}) => !!label).map(({value}) => value);

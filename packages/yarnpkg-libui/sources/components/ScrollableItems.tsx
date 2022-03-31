@@ -1,14 +1,12 @@
+import {Box, Text}                            from 'ink';
 import React, {useEffect, useState}           from 'react';
 
 import {FocusRequestHandler, useFocusRequest} from '../hooks/useFocusRequest';
 import {useListInput}                         from '../hooks/useListInput';
-import {getInk}                               from '../ink';
 
 type WillReachEnd = () => void;
 
 export const ScrollableItems = ({active = true, children = [], radius = 10, size = 1, loop = true, onFocusRequest, willReachEnd}: {active?: boolean, children: Array<React.ReactElement>, radius?: number, size?: number, loop?: boolean, onFocusRequest?: FocusRequestHandler, willReachEnd?: WillReachEnd}) => {
-  const {Box, Text} = getInk();
-
   const getKey = (child: React.ReactElement) => {
     if (child.key === null) {
       throw new Error(`Expected all children to have a key`);

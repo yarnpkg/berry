@@ -1,6 +1,5 @@
-import React    from 'react';
-
-import {getInk} from '../ink';
+import {Text} from 'ink';
+import React  from 'react';
 
 export interface PadProps {
   length: number;
@@ -8,8 +7,6 @@ export interface PadProps {
 }
 
 export const Pad = ({length, active}: PadProps) => {
-  const {Text} = getInk();
-
   if (length === 0)
     return null;
 
