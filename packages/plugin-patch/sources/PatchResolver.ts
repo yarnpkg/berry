@@ -1,8 +1,8 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, hashUtils} from '@yarnpkg/core';
-import {Descriptor, Locator, Package}                                               from '@yarnpkg/core';
-import {structUtils}                                                                from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions, hashUtils} from '@yarnpkg/core';
+import {Descriptor, Locator, Package}                               from '@yarnpkg/core';
+import {structUtils}                                                from '@yarnpkg/core';
 
-import * as patchUtils                                                              from './patchUtils';
+import * as patchUtils                                              from './patchUtils';
 
 // We use this to for the patches to be regenerated without bumping the whole
 // cache, like when the libzip had incorrect mtime in some cases
@@ -42,17 +42,19 @@ export class PatchResolver implements Resolver {
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
     const {sourceDescriptor} = patchUtils.parseDescriptor(descriptor);
 
-    return [sourceDescriptor];
+    return {
+      sourceDescriptor: opts.project.configuration.normalizeDependency(sourceDescriptor),
+    };
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
-    const {parentLocator, sourceDescriptor, patchPaths} = patchUtils.parseDescriptor(descriptor);
+    const {parentLocator, patchPaths} = patchUtils.parseDescriptor(descriptor);
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts.fetchOptions);
 
-    const sourcePackage = dependencies.get(sourceDescriptor.descriptorHash);
+    const sourcePackage = dependencies.sourceDescriptor;
     if (typeof sourcePackage === `undefined`)
       throw new Error(`Assertion failed: The dependency should have been resolved`);
 

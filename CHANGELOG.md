@@ -17,6 +17,18 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
 
+### **API Changes**
+
+The following changes only affect people writing Yarn plugins:
+
+- The `dependencies` field sent returned by `Resolver#resolve` must now be the result of a `Configuration#normalizeDependencyMap` call. This change is prompted by a refactoring of how default protocols (ie `npm:`) are injected into descriptors. The previous implementation caused various descriptors to never be normalized, which made it difficult to know what were the descriptors each function should expect.
+
+  - Similarly, the descriptors returned by `Resolve#getResolutionDependencies` are now expected to be the result of `Configuration#normalizeDependency` calls.
+
+  - Note that this only applies to the `dependencies` field; the `peerDependencies` field is unchanged, as it must only contains semver ranges without any protocol (with an exception for `workspace:`, but that's not relevant here).
+
+- The `Resolve#getResolutionDependencies` function must now return an object of arbitrary string keys and descriptor values (instead of a map with `DescriptorHash` keys). Those descriptors will be resolved and assigned to the same keys as the initial object. This change allows resolvers to wrap resolution dependencies from other resolvers, which wasn't possible before since it'd have caused the key to change.
+
 ### Installs
 
 - The pnpm linker no longer tries to remove `node_modules` directory, when `node-modules` linker is active

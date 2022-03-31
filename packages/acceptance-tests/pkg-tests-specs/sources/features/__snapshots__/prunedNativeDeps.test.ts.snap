@@ -5,7 +5,7 @@ exports[`Features Pruned native deps should resolve all dependencies, regardless
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 6
+  version: 7
   cacheKey: 0
 
 \\"native-bar-x64@npm:1.0.0\\":
@@ -47,11 +47,11 @@ __metadata:
   version: 1.0.0
   resolution: \\"optional-native@npm:1.0.0\\"
   dependencies:
-    native-bar-x64: 1.0.0
-    native-foo-x64: 1.0.0
-    native-foo-x86: 1.0.0
-    native-libc-glibc: 1.0.0
-    native-libc-musl: 1.0.0
+    native-bar-x64: \\"npm:1.0.0\\"
+    native-foo-x64: \\"npm:1.0.0\\"
+    native-foo-x86: \\"npm:1.0.0\\"
+    native-libc-glibc: \\"npm:1.0.0\\"
+    native-libc-musl: \\"npm:1.0.0\\"
   dependenciesMeta:
     native-bar-x64:
       optional: true
@@ -71,7 +71,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
-    optional-native: 1.0.0
+    optional-native: \\"npm:1.0.0\\"
   languageName: unknown
   linkType: soft
 "

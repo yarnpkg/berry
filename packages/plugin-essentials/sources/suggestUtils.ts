@@ -329,7 +329,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
             });
           } else {
-            let latest = await fetchDescriptorFrom(request, requestTag, {project, cache, workspace, preserveModifier: false});
+            let latest = await fetchDescriptorFrom(request, `${project.configuration.get(`defaultProtocol`)}${requestTag}`, {project, cache, workspace, preserveModifier: false});
 
             if (latest) {
               latest = applyModifier(latest, modifier);
@@ -367,7 +367,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   // If we didn't bind it, `yarn add ./folder` wouldn't work.
   const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
 
-  const candidateLocators = await resolver.getCandidates(boundDescriptor, new Map(), resolveOptions);
+  const candidateLocators = await resolver.getCandidates(boundDescriptor, {}, resolveOptions);
 
   if (candidateLocators.length === 0)
     return null;

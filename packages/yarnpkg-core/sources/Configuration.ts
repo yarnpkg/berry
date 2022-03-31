@@ -12,7 +12,6 @@ import {Manifest, PeerDependencyMeta}                                           
 import {MultiFetcher}                                                                                   from './MultiFetcher';
 import {MultiResolver}                                                                                  from './MultiResolver';
 import {Plugin, Hooks}                                                                                  from './Plugin';
-import {ProtocolResolver}                                                                               from './ProtocolResolver';
 import {Report}                                                                                         from './Report';
 import {TelemetryManager}                                                                               from './TelemetryManager';
 import {VirtualFetcher}                                                                                 from './VirtualFetcher';
@@ -57,6 +56,8 @@ const IGNORED_ENV_VARIABLES = new Set([
   `home`,
   `confDir`,
 ]);
+
+export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
@@ -1449,13 +1450,14 @@ export class Configuration {
       for (const resolver of plugin.resolvers || [])
         pluginResolvers.push(new resolver());
 
-    return new MultiResolver([
-      new VirtualResolver(),
-      new WorkspaceResolver(),
-      new ProtocolResolver(),
+    return (
+      new MultiResolver([
+        new VirtualResolver(),
+        new WorkspaceResolver(),
 
-      ...pluginResolvers,
-    ]);
+        ...pluginResolvers,
+      ])
+    );
   }
 
   makeFetcher() {
@@ -1545,6 +1547,22 @@ export class Configuration {
     }
   }
 
+  normalizeDependency(dependency: Descriptor) {
+    if (semverUtils.validRange(dependency.range))
+      return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);
+
+    if (TAG_REGEXP.test(dependency.range))
+      return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);
+
+    return dependency;
+  }
+
+  normalizeDependencyMap<TKey>(dependencyMap: Map<TKey, Descriptor>) {
+    return new Map([...dependencyMap].map(([key, dependency]) => {
+      return [key, this.normalizeDependency(dependency)];
+    }));
+  }
+
   normalizePackage(original: Package) {
     const pkg = structUtils.copyPackage(original);
 
@@ -1574,7 +1592,7 @@ export class Configuration {
                 const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
                 if (typeof currentDependency === `undefined`) {
                   extension.status = PackageExtensionStatus.Active;
-                  pkg.dependencies.set(extension.descriptor.identHash, extension.descriptor);
+                  pkg.dependencies.set(extension.descriptor.identHash, this.normalizeDependency(extension.descriptor));
                 }
               } break;
 
@@ -1582,7 +1600,7 @@ export class Configuration {
                 const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
                 if (typeof currentPeerDependency === `undefined`) {
                   extension.status = PackageExtensionStatus.Active;
-                  pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
+                  pkg.peerDependencies.set(extension.descriptor.identHash, this.normalizeDependency(extension.descriptor));
                 }
               } break;
 

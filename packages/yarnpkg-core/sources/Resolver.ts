@@ -1,7 +1,7 @@
-import {FetchOptions}                                 from './Fetcher';
-import {Project}                                      from './Project';
-import {Report}                                       from './Report';
-import {Descriptor, Locator, Package, DescriptorHash} from './types';
+import {FetchOptions}                 from './Fetcher';
+import {Project}                      from './Project';
+import {Report}                       from './Report';
+import {Descriptor, Locator, Package} from './types';
 
 export type MinimalResolveOptions = {
   project: Project;
@@ -106,7 +106,7 @@ export interface Resolver {
    * into a locator. This is typically only needed for transform packages, as
    * you need to know the original resolution in order to copy it.
    */
-  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Array<Descriptor>;
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Record<string, Descriptor>;
 
   /**
    * This function will, given a descriptor, return the list of locators that
@@ -120,7 +120,7 @@ export interface Resolver {
    * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
+  getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
 
   /**
    * This function will, given a descriptor and a list of locator references,

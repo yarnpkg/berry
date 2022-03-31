@@ -34,7 +34,7 @@ export class WorkspaceResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
@@ -60,7 +60,7 @@ export class WorkspaceResolver implements Resolver {
 
       conditions: null,
 
-      dependencies: new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]),
+      dependencies: opts.project.configuration.normalizeDependencyMap(new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])),
       peerDependencies: new Map([...workspace.manifest.peerDependencies]),
 
       dependenciesMeta: workspace.manifest.dependenciesMeta,

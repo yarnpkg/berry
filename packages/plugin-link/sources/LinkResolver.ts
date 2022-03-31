@@ -32,7 +32,7 @@ export class LinkResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
@@ -65,7 +65,7 @@ export class LinkResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: new Map([...manifest.dependencies]),
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,

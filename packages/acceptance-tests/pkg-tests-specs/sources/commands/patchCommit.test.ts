@@ -114,7 +114,7 @@ describe(`Commands`, () => {
         });
 
         expect(manifest.resolutions).toEqual({
-          [`no-deps@1.0.0`]: `patch:no-deps@npm%3A1.0.0#~/.yarn/patches/no-deps-npm-1.0.0-cf533b267a.patch`,
+          [`no-deps@npm:1.0.0`]: `patch:no-deps@npm%3A1.0.0#~/.yarn/patches/no-deps-npm-1.0.0-cf533b267a.patch`,
         });
       }),
     );
@@ -196,7 +196,7 @@ describe(`Commands`, () => {
         });
 
         expect(manifest.resolutions).toEqual({
-          [`peer-deps-lvl1@1.0.0`]: `patch:peer-deps-lvl1@npm%3A1.0.0#~/.yarn/patches/peer-deps-lvl1-npm-1.0.0-894d37389e.patch`,
+          [`peer-deps-lvl1@npm:1.0.0`]: `patch:peer-deps-lvl1@npm%3A1.0.0#~/.yarn/patches/peer-deps-lvl1-npm-1.0.0-894d37389e.patch`,
         });
       }),
     );
