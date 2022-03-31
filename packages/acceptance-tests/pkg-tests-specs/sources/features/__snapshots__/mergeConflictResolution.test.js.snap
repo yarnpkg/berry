@@ -5,7 +5,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 6
+  version: 7
   cacheKey: 0
 
 \\"no-deps@npm:*\\":
@@ -25,7 +25,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
-    no-deps: \\"*\\"
+    no-deps: \\"npm:*\\"
   languageName: unknown
   linkType: soft
 "
@@ -54,7 +54,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 6
+  version: 7
   cacheKey: 0
 
 <<<<<<< HEAD
@@ -74,7 +74,7 @@ no-deps@*:
   version: 0.0.0-use.local
   resolution: \\"root-workspace-0b6124@workspace:.\\"
   dependencies:
-    no-deps: \\"*\\"
+    no-deps: \\"npm:*\\"
   languageName: unknown
   linkType: soft
 >>>>>>> yarn2
