@@ -329,7 +329,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
             });
           } else {
-            let latest = await fetchDescriptorFrom(request, `latest`, {project, cache, workspace, preserveModifier: false});
+            let latest = await fetchDescriptorFrom(request, `${project.configuration.get(`defaultProtocol`)}latest`, {project, cache, workspace, preserveModifier: false});
 
             if (latest) {
               latest = applyModifier(latest, modifier);

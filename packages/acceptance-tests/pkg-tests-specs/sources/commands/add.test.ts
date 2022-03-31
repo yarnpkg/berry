@@ -286,7 +286,7 @@ describe(`Commands`, () => {
         expect(lock).toMatchObject({
           [`inject-node-gyp@npm:^1.0.0`]: {
             dependencies: {
-              [`node-gyp`]: `latest`,
+              [`node-gyp`]: `npm:latest`,
             },
           },
         });
