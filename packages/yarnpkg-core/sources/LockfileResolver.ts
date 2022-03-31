@@ -19,8 +19,6 @@ export class LockfileResolver implements Resolver {
     if (opts.project.originalPackages.has(structUtils.convertDescriptorToLocator(descriptor).locatorHash))
       return true;
 
-    console.log(`Not in the lockfile: ${structUtils.stringifyDescriptor(descriptor)}`);
-
     return false;
   }
 

@@ -1,12 +1,12 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash, Package, miscUtils} from '@yarnpkg/core';
-import {Descriptor, Locator, semverUtils}                                                                                        from '@yarnpkg/core';
-import {LinkType}                                                                                                                from '@yarnpkg/core';
-import {structUtils}                                                                                                             from '@yarnpkg/core';
-import semver                                                                                                                    from 'semver';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, Package, miscUtils} from '@yarnpkg/core';
+import {Descriptor, Locator, semverUtils}                                                                        from '@yarnpkg/core';
+import {LinkType}                                                                                                from '@yarnpkg/core';
+import {structUtils}                                                                                             from '@yarnpkg/core';
+import semver                                                                                                    from 'semver';
 
-import {NpmSemverFetcher}                                                                                                        from './NpmSemverFetcher';
-import {PROTOCOL}                                                                                                                from './constants';
-import * as npmHttpUtils                                                                                                         from './npmHttpUtils';
+import {NpmSemverFetcher}                                                                                        from './NpmSemverFetcher';
+import {PROTOCOL}                                                                                                from './constants';
+import * as npmHttpUtils                                                                                         from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;

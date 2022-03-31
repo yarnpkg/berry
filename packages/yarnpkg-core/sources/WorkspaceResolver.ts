@@ -60,7 +60,7 @@ export class WorkspaceResolver implements Resolver {
 
       conditions: null,
 
-      dependencies: new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies]),
+      dependencies: opts.project.configuration.normalizeDependencyMap(new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])),
       peerDependencies: new Map([...workspace.manifest.peerDependencies]),
 
       dependenciesMeta: workspace.manifest.dependenciesMeta,

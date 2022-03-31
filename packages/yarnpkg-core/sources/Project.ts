@@ -21,7 +21,6 @@ import {LockfileResolver}                                               from './
 import {DependencyMeta, Manifest}                                       from './Manifest';
 import {MessageName}                                                    from './MessageName';
 import {MultiResolver}                                                  from './MultiResolver';
-import {ProtocolResolver}                                               from './ProtocolResolver';
 import {Report, ReportError}                                            from './Report';
 import {ResolveOptions, Resolver}                                       from './Resolver';
 import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';

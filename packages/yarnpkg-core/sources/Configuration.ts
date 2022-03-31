@@ -5,7 +5,6 @@ import camelcase                                                                
 import {isCI}                                                                                           from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
 import pLimit, {Limit}                                                                                  from 'p-limit';
-import semver                                                                                           from 'semver';
 import {PassThrough, Writable}                                                                          from 'stream';
 
 import {CorePlugin}                                                                                     from './CorePlugin';
@@ -1549,7 +1548,7 @@ export class Configuration {
   }
 
   normalizeDependency(dependency: Descriptor) {
-    if (semver.validRange(dependency.range))
+    if (semverUtils.validRange(dependency.range))
       return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);
 
     if (TAG_REGEXP.test(dependency.range))

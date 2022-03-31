@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions}        from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
-import {LinkType}                                               from '@yarnpkg/core';
-import {miscUtils, structUtils, hashUtils}                      from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
 
-import {PROTOCOL}                                               from './constants';
-import * as execUtils                                           from './execUtils';
+import {PROTOCOL}                                        from './constants';
+import * as execUtils                                    from './execUtils';
 
 // We use this for the generators to be regenerated without bumping the whole cache
 const CACHE_VERSION = 2;

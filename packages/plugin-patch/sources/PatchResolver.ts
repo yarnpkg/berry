@@ -1,8 +1,8 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, DescriptorHash, hashUtils} from '@yarnpkg/core';
-import {Descriptor, Locator, Package}                                               from '@yarnpkg/core';
-import {structUtils}                                                                from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions, hashUtils} from '@yarnpkg/core';
+import {Descriptor, Locator, Package}                               from '@yarnpkg/core';
+import {structUtils}                                                from '@yarnpkg/core';
 
-import * as patchUtils                                                              from './patchUtils';
+import * as patchUtils                                              from './patchUtils';
 
 // We use this to for the patches to be regenerated without bumping the whole
 // cache, like when the libzip had incorrect mtime in some cases
