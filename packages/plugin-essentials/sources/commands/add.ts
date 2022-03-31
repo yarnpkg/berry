@@ -327,10 +327,6 @@ export default class AddCommand extends BaseCommand {
   }
 }
 
-function isStrategy(strategy?: suggestUtils.Strategy): strategy is suggestUtils.Strategy {
-  return typeof strategy !== `undefined`;
-}
-
 function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
   const hasRegular = workspace.manifest[suggestUtils.Target.REGULAR].has(ident.identHash);
   const hasDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].has(ident.identHash);
