@@ -1,6 +1,6 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
 import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator}                             from './types';
+import {Descriptor, Locator, Package}                    from './types';
 
 export class LockfileResolver implements Resolver {
   private readonly resolver: Resolver;
@@ -42,23 +42,28 @@ export class LockfileResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
+    const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
+    if (resolution) {
+      const resolvedPkg = opts.project.originalPackages.get(resolution);
+      if (resolvedPkg) {
+        return [resolvedPkg];
+      }
+    }
+
     const originalPkg = opts.project.originalPackages.get(structUtils.convertDescriptorToLocator(descriptor).locatorHash);
     if (originalPkg)
       return [originalPkg];
 
-    const resolution = opts.project.storedResolutions.get(descriptor.descriptorHash);
-    if (!resolution)
-      throw new Error(`Expected the resolution to have been successful - resolution not found`);
-
-    const resolvedPkg = opts.project.originalPackages.get(resolution);
-    if (!resolvedPkg)
-      throw new Error(`Expected the resolution to have been successful - package not found`);
-
-    return [resolvedPkg];
+    throw new Error(`Resolution expected from the lockfile data`);
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {

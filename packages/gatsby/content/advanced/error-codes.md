@@ -368,3 +368,19 @@ A package is specified in its manifest (through the [`os`](/configuration/manife
 Some native packages may be excluded from the install if they signal they don't support the systems the project is intended for. This detection is typically based on your current system parameters, but it can be configured using the [`supportedArchitectures` config option](/configuration/yarnrc#supportedArchitectures). If your os or cpu are missing from this list, Yarn will skip the packages and raise a warning.
 
 Note that all fields from `supportedArchitectures` default to `current`, which is a dynamic value depending on your local parameters. For instance, if you wish to support "my current os, whatever it is, plus linux", you can set `supportedArchitectures.os` to `["current", "linux"]`.
+
+## YN0078 - `RESOLUTION_MISMATCH`
+
+Starting from Yarn 4, Yarn will automatically enable the `--check-resolutions` flag on CI when it detects the current environment is a pull request. Under this mode, Yarn will check that the lockfile resolutions are consistent with what the initial range is. For example, given an initial dependency of `foo@npm:^1.0.0`:
+
+- `foo@npm:1.2.0` is a valid resolution
+- `foo@npm:2.0.0` isn't a valid resolution, because it doesn't match the expected semver range
+- `bar@npm:1.2.0` isn't a valid resolution either, because the name doesn't match
+
+This error should never trigger under normal circumstances, as Yarn should always generate satisfying resolutions given a dependency. If you hit it nonetheless, it may be either of two things:
+
+- Yarn has a bug. It may happen! Review the mismatch to be sure and, in case you have a doubt, ping us on Discord and we'll tell you whether it's something to worry about (before doing that, take a quick look at our [repository issues](https://github.com/yarnpkg/berry/issues?q=is%3Aissue+is%3Aopen+YN0078) in case someone reported the same behaviour).
+
+- Or you might have someone doing strange things on your lockfile. It might be a mistake (for example someone manually modifying a lockfile for debug but forgetting to revert the changes), or a problem (for example a malicious users trying to perform some sort of [supply chain attack](https://en.wikipedia.org/wiki/Supply_chain_attack)).
+
+If the use case appears legit (for example if the bug comes from Yarn), you can bypass the check on PRs by adding a `--no-check-resolutions` flag to your `yarn install` command. But be careful: this is a security feature; disabling it may have consequences.

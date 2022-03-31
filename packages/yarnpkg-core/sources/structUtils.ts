@@ -473,8 +473,8 @@ type ParseRangeReturnType<Opts extends ParseRangeOptions> =
  * Parses a range into its constituents. Ranges typically follow these forms,
  * with both `protocol` and `bindings` being optionals:
  *
- * <protocol>:<selector>::<bindings>
- * <protocol>:<source>#<selector>::<bindings>
+ *     <protocol>:<selector>::<bindings>
+ *     <protocol>:<source>#<selector>::<bindings>
  *
  * The selector is intended to "refine" the source, and is required. The source
  * itself is optional (for instance we don't need it for npm packages, but we
@@ -523,6 +523,25 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
     // @ts-expect-error
     params,
   };
+}
+
+/**
+ * Parses a range into its constituents. Ranges typically follow these forms,
+ * with both `protocol` and `bindings` being optionals:
+ *
+ *     <protocol>:<selector>::<bindings>
+ *     <protocol>:<source>#<selector>::<bindings>
+ *
+ * The selector is intended to "refine" the source, and is required. The source
+ * itself is optional (for instance we don't need it for npm packages, but we
+ * do for git dependencies).
+ */
+export function tryParseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> | null {
+  try {
+    return parseRange(range, opts);
+  } catch {
+    return null;
+  }
 }
 
 /**

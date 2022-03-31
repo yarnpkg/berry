@@ -226,17 +226,17 @@ export class BufferStream extends Transform {
   }
 }
 
-type Deferred = {
-  promise: Promise<void>;
-  resolve: () => void;
+export type Deferred<T = void> = {
+  promise: Promise<T>;
+  resolve: (val: T) => void;
   reject: (err: Error) => void;
 };
 
-function makeDeferred(): Deferred {
-  let resolve: () => void;
+export function makeDeferred<T = void>(): Deferred<T> {
+  let resolve: (val: T) => void;
   let reject: (err: Error) => void;
 
-  const promise = new Promise<void>((resolveFn, rejectFn) => {
+  const promise = new Promise<T>((resolveFn, rejectFn) => {
     resolve = resolveFn;
     reject = rejectFn;
   });

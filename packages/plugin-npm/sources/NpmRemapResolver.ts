@@ -44,12 +44,12 @@ export class NpmRemapResolver implements Resolver {
     return await opts.resolver.getCandidates(nextDescriptor, dependencies, opts);
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
     const nextDescriptor = opts.project.configuration.normalizeDependency(
       structUtils.parseDescriptor(descriptor.range.slice(PROTOCOL.length), true),
     );
 
-    return opts.resolver.getSatisfying(nextDescriptor, references, opts);
+    return opts.resolver.getSatisfying(nextDescriptor, dependencies, locators, opts);
   }
 
   resolve(locator: Locator, opts: ResolveOptions): never {

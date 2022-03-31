@@ -1,6 +1,7 @@
 import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, TAG_REGEXP} from '@yarnpkg/core';
 import {structUtils}                                                                           from '@yarnpkg/core';
 import {Descriptor, Locator, Package}                                                          from '@yarnpkg/core';
+import semver                                                                                  from 'semver';
 
 import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
 import {PROTOCOL}                                                                              from './constants';
@@ -64,9 +65,32 @@ export class NpmTagResolver implements Resolver {
     }
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    // We can't statically know if a tag resolves to a specific version without using the network
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const filtered: Array<Locator> = [];
+
+    for (const locator of locators) {
+      if (locator.identHash !== descriptor.identHash)
+        continue;
+
+      const parsedRange = structUtils.tryParseRange(locator.reference, {requireProtocol: PROTOCOL});
+      if (!parsedRange || !semver.valid(parsedRange.selector))
+        continue;
+
+      if (parsedRange.params?.__archiveUrl) {
+        const newRange = structUtils.makeRange({protocol: PROTOCOL, selector: parsedRange.selector, source: null, params: null});
+        const [resolvedLocator] = await this.getCandidates(structUtils.makeDescriptor(descriptor, newRange), dependencies, opts);
+        if (locator.reference !== resolvedLocator.reference) {
+          continue;
+        }
+      }
+
+      filtered.push(locator);
+    }
+
+    return {
+      locators: filtered,
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
