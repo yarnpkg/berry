@@ -663,8 +663,8 @@
       "default": false
     },
     "preferReuse": {
-      "_package": "@yarnpkg/core",
-      "description": "If true, `yarn add` command will reuse the most common dependency range in other workspaces (if pertinent).",
+      "_package": "@yarnpkg/plugin-essentials",
+      "description": "If true, `yarn add` will attempt to reuse the most common dependency range in other workspaces.",
       "type": "boolean",
       "default": false
     },
