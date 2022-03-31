@@ -49,7 +49,7 @@ const afterWorkspaceDependencyAddition = async (
   let range = structUtils.parseRange(descriptor.range).selector;
   // If the range is a tag, we have to resolve it into a semver version
   if (!semverUtils.validRange(range)) {
-    const originalCandidates = await resolver.getCandidates(descriptor, new Map<DescriptorHash, Package>(), resolveOptions);
+    const originalCandidates = await resolver.getCandidates(descriptor, {}, resolveOptions);
     range = structUtils.parseRange(originalCandidates[0].reference).selector;
   }
 
@@ -92,7 +92,7 @@ const afterWorkspaceDependencyAddition = async (
   } else {
     // Return if the atTypes descriptor can't be resolved
     try {
-      const atTypesCandidates = await resolver.getCandidates(atTypesDescriptor, new Map<DescriptorHash, Package>(), resolveOptions);
+      const atTypesCandidates = await resolver.getCandidates(atTypesDescriptor, {}, resolveOptions);
       if (atTypesCandidates.length === 0) {
         return;
       }

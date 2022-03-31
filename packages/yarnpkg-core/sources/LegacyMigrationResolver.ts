@@ -123,10 +123,10 @@ export class LegacyMigrationResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     if (!this.resolutions)
       throw new Error(`Assertion failed: The resolution store should have been setup`);
 

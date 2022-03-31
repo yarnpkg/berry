@@ -35,10 +35,10 @@ export class ExecResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
@@ -84,7 +84,7 @@ export class ExecResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: manifest.dependencies,
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,

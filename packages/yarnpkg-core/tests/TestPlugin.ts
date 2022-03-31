@@ -26,10 +26,10 @@ export class UnboundDescriptorResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
@@ -87,10 +87,12 @@ export class ResolutionDependencyResolver implements Resolver {
     if (selector === null)
       throw new Error(`Assertion failed: The selector should not be null`);
 
-    return [structUtils.parseDescriptor(selector)];
+    return {
+      dependency: structUtils.parseDescriptor(selector),
+    };
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 

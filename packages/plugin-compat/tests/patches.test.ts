@@ -27,7 +27,7 @@ async function getDescriptorCandidates(descriptor: Descriptor) {
     const resolver = configuration.makeResolver();
     const resolveOptions: ResolveOptions = {project, resolver, report: new ThrowReport()};
 
-    const candidates = await resolver.getCandidates(descriptor, new Map(), resolveOptions);
+    const candidates = await resolver.getCandidates(descriptor, {}, resolveOptions);
 
     return candidates;
   });

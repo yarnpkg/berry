@@ -8,57 +8,64 @@ import {Descriptor, Locator, DescriptorHash, Package}    from './types';
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 
 export class ProtocolResolver implements Resolver {
+  private resolver: Resolver;
+
+  constructor(resolver: Resolver) {
+    this.resolver = resolver;
+  }
+
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (semverUtils.validRange(descriptor.range))
-      return true;
-
-    if (TAG_REGEXP.test(descriptor.range))
-      return true;
-
-    return false;
+    return this.resolver.supportsDescriptor(descriptor, opts);
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (semver.valid(locator.reference))
-      return true;
-
-    if (TAG_REGEXP.test(locator.reference))
-      return true;
-
-    return false;
+    return this.resolver.supportsLocator(locator, opts);
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {
-    return opts.resolver.shouldPersistResolution(this.forwardLocator(locator, opts), opts);
+    return this.resolver.shouldPersistResolution(locator, opts);
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
-    return opts.resolver.bindDescriptor(this.forwardDescriptor(descriptor, opts), fromLocator, opts);
+    return this.resolver.bindDescriptor(descriptor, fromLocator, opts);
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return opts.resolver.getResolutionDependencies(this.forwardDescriptor(descriptor, opts), opts);
+    const dependencies = this.resolver.getResolutionDependencies(descriptor, opts);
+
+    return Object.fromEntries(
+      Object.entries(dependencies).map(([dependencyName, descriptor]) => {
+        return [dependencyName, this.applyProtocol(descriptor, opts)];
+      }),
+    );
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
-    return await opts.resolver.getCandidates(this.forwardDescriptor(descriptor, opts), dependencies, opts);
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
+    return await this.resolver.getCandidates(descriptor, dependencies, opts);
   }
 
   async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return await opts.resolver.getSatisfying(this.forwardDescriptor(descriptor, opts), references, opts);
+    return await this.resolver.getSatisfying(descriptor, references, opts);
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
-    const pkg = await opts.resolver.resolve(this.forwardLocator(locator, opts), opts);
+    const pkg = await this.resolver.resolve(locator, opts);
 
-    return structUtils.renamePackage(pkg, locator);
+    return {
+      ...pkg,
+      dependencies: new Map([...pkg.dependencies].map(([identHash, dependency]) => {
+        return [identHash, this.applyProtocol(dependency, opts)];
+      })),
+    };
   }
 
-  private forwardDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`);
-  }
+  private applyProtocol(descriptor: Descriptor, opts: MinimalResolveOptions) {
+    if (semver.validRange(descriptor.range))
+      return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`);
 
-  private forwardLocator(locator: Locator, opts: MinimalResolveOptions) {
-    return structUtils.makeLocator(locator, `${opts.project.configuration.get(`defaultProtocol`)}${locator.reference}`);
+    if (TAG_REGEXP.test(descriptor.range))
+      return structUtils.makeDescriptor(descriptor, `${opts.project.configuration.get(`defaultProtocol`)}${descriptor.range}`);
+
+    return descriptor;
   }
 }

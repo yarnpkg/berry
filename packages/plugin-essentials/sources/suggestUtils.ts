@@ -367,7 +367,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   // If we didn't bind it, `yarn add ./folder` wouldn't work.
   const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
 
-  const candidateLocators = await resolver.getCandidates(boundDescriptor, new Map(), resolveOptions);
+  const candidateLocators = await resolver.getCandidates(boundDescriptor, {}, resolveOptions);
 
   if (candidateLocators.length === 0)
     return null;

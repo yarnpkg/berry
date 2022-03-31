@@ -39,10 +39,10 @@ export class NpmSemverResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
@@ -174,7 +174,7 @@ export class NpmSemverResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: manifest.dependencies,
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,
