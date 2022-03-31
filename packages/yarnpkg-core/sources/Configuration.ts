@@ -13,7 +13,6 @@ import {Manifest, PeerDependencyMeta}                                           
 import {MultiFetcher}                                                                                   from './MultiFetcher';
 import {MultiResolver}                                                                                  from './MultiResolver';
 import {Plugin, Hooks}                                                                                  from './Plugin';
-import {ProtocolResolver, TAG_REGEXP}                                                                   from './ProtocolResolver';
 import {Report}                                                                                         from './Report';
 import {TelemetryManager}                                                                               from './TelemetryManager';
 import {VirtualFetcher}                                                                                 from './VirtualFetcher';
@@ -58,6 +57,8 @@ const IGNORED_ENV_VARIABLES = new Set([
   `home`,
   `confDir`,
 ]);
+
+export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
@@ -1451,14 +1452,12 @@ export class Configuration {
         pluginResolvers.push(new resolver());
 
     return (
-      new ProtocolResolver(
-        new MultiResolver([
-          new VirtualResolver(),
-          new WorkspaceResolver(),
+      new MultiResolver([
+        new VirtualResolver(),
+        new WorkspaceResolver(),
 
-          ...pluginResolvers,
-        ]),
-      )
+        ...pluginResolvers,
+      ])
     );
   }
 
