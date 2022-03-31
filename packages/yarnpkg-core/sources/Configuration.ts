@@ -262,11 +262,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
-  preferReuse: {
-    description: `If true, the CLI will use the hightest version of existing, latest for new dependencies`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
   preferTruncatedLines: {
     description: `If true, the CLI will truncate lines that would go beyond the size of the terminal`,
     type: SettingsType.BOOLEAN,
