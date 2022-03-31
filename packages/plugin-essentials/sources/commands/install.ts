@@ -32,6 +32,8 @@ export default class YarnCommand extends BaseCommand {
 
       If the \`--immutable-cache\` option is set, Yarn will abort with an error exit code if the cache folder was to be modified (either because files would be added, or because they'd be removed).
 
+      If the \`--refresh-lockfile\` option is set, Yarn will keep the same resolution for the packages currently in the lockfile but will refresh their metadata. If used together with \`--immutable\`, it can validate that the lockfile information are consistent. This flag is enabled by default when Yarn detects it runs within a pull request context.
+
       If the \`--check-cache\` option is set, Yarn will always refetch the packages and will ensure that their checksum matches what's 1/ described in the lockfile 2/ inside the existing cache files (if present). This is recommended as part of your CI workflow if you're both following the Zero-Installs model and accepting PRs from third-parties, as they'd otherwise have the ability to alter the checked-in packages before submitting them.
 
       If the \`--inline-builds\` option is set, Yarn will verbosely print the output of the build steps of your dependencies (instead of writing them into individual files). This is likely useful mostly for debug purposes only when using Docker-like environments.
@@ -66,7 +68,11 @@ export default class YarnCommand extends BaseCommand {
     description: `Abort with an error exit code if the cache folder was to be modified`,
   });
 
-  checkCache = Option.Boolean(`--check-cache`, false, {
+  refreshLockfile = Option.Boolean(`--refresh-lockfile`, {
+    description: `Refresh the package metadata stored in the lockfile`,
+  });
+
+  checkCache = Option.Boolean(`--check-cache`, {
     description: `Always refetch the packages and ensure that their checksums are consistent`,
   });
 
@@ -308,6 +314,9 @@ export default class YarnCommand extends BaseCommand {
     await project.restoreInstallState({
       restoreResolutions: false,
     });
+
+    if (this.refreshLockfile ?? CI.isPR)
+      project.lockfileNeedsRefresh = true;
 
     // Important: Because other commands also need to run installs, if you
     // get in a situation where you need to change this file in order to

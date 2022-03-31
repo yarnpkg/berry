@@ -80,6 +80,107 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should update the lockfile when using --refresh-lockfile`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        // Sanity check
+        await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+          name: `one-fixed-dep`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.0.0`,
+            },
+          },
+        });
+
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+        const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+        const modifiedLockfile = lockfileContent.replace(/no-deps: 1.0.0/, `no-deps: 2.0.0`);
+        await xfs.writeFilePromise(lockfilePath, modifiedLockfile);
+
+        await run(`install`);
+
+        // Sanity check
+        await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+          name: `one-fixed-dep`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `2.0.0`,
+            },
+          },
+        });
+
+        await run(`install`, `--refresh-lockfile`);
+
+        // Actual test
+        await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+          name: `one-fixed-dep`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.0.0`,
+            },
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should block invalid lockfiles when using --refresh-lockfile with --immutable`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+        const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+        const modifiedLockfile = lockfileContent.replace(/no-deps: 1.0.0/, `no-deps: 2.0.0`);
+        await xfs.writeFilePromise(lockfilePath, modifiedLockfile);
+
+        await run(`install`);
+
+        await expect(run(`install`, `--immutable`, `--refresh-lockfile`)).rejects.toThrow(/YN0028/);
+      }),
+    );
+
+    test(
+      `it should enable --refresh-lockfile --immutable by default in PR CIs`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+        const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+        const modifiedLockfile = lockfileContent.replace(/no-deps: 1.0.0/, `no-deps: 2.0.0`);
+        await xfs.writeFilePromise(lockfilePath, modifiedLockfile);
+
+        await run(`install`);
+
+        await expect(run(`install`, {
+          env: {
+            GITHUB_ACTIONS: `true`,
+            GITHUB_EVENT_NAME: `pull_request`,
+          },
+        })).rejects.toThrow(/YN0028/);
+      }),
+    );
+
+    test(
       `it should accept to add files to the cache when using --immutable without --immutable-cache`,
       makeTemporaryEnv({
         dependencies: {
