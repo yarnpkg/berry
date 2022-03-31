@@ -1,17 +1,20 @@
-import {Project, ResolveOptions, ThrowReport, Resolver, miscUtils, Descriptor, Package, Report, Cache} from '@yarnpkg/core';
-import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions}          from '@yarnpkg/core';
-import micromatch                                                                                      from 'micromatch';
+import {Project, ResolveOptions, ThrowReport, Resolver, miscUtils, Descriptor, Package, Report, Cache, DescriptorHash} from '@yarnpkg/core';
+import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions}                          from '@yarnpkg/core';
+import micromatch                                                                                                      from 'micromatch';
+
+export type PackageUpdate = {
+  descriptor: Descriptor;
+  currentPackage: Package;
+  updatedPackage: Package;
+  resolvedPackage: Package;
+};
 
 export type Algorithm = (project: Project, patterns: Array<string>, opts: {
   resolver: Resolver;
   resolveOptions: ResolveOptions;
   fetcher: Fetcher;
   fetchOptions: FetchOptions;
-}) => Promise<Array<Promise<{
-  descriptor: Descriptor;
-  currentPackage: Package;
-  updatedPackage: Package;
-} | null>>>;
+}) => Promise<Array<Promise<PackageUpdate>>>;
 
 export enum Strategy {
   /**
@@ -37,57 +40,100 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
       miscUtils.getSetWithDefault(locatorsByIdent, descriptor.identHash).add(locatorHash);
     }
 
-    return Array.from(project.storedDescriptors.values(), async descriptor => {
-      if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
-        return null;
+    const deferredMap = new Map<DescriptorHash, miscUtils.Deferred<PackageUpdate>>(
+      miscUtils.mapAndFilter(project.storedDescriptors.values(), descriptor => {
+        // We only care about resolutions that are stored in the lockfile
+        // (we shouldn't accidentally try deduping virtual packages)
+        if (structUtils.isVirtualDescriptor(descriptor))
+          return miscUtils.mapAndFilter.skip;
+
+        return [descriptor.descriptorHash, miscUtils.makeDeferred()];
+      }),
+    );
+
+    for (const descriptor of project.storedDescriptors.values()) {
+      const deferred = deferredMap.get(descriptor.descriptorHash);
+      if (typeof deferred === `undefined`)
+        throw new Error(`Assertion failed: The descriptor (${descriptor.descriptorHash}) should have been registered`);
 
       const currentResolution = project.storedResolutions.get(descriptor.descriptorHash);
       if (typeof currentResolution === `undefined`)
         throw new Error(`Assertion failed: The resolution (${descriptor.descriptorHash}) should have been registered`);
 
-      // We only care about resolutions that are stored in the lockfile
-      // (we shouldn't accidentally try deduping virtual packages)
       const currentPackage = project.originalPackages.get(currentResolution);
       if (typeof currentPackage === `undefined`)
-        return null;
+        throw new Error(`Assertion failed: The package (${currentResolution}) should have been registered`);
 
-      // No need to try deduping packages that are not persisted,
-      // they will be resolved again anyways
-      if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
-        return null;
+      Promise.resolve().then(async () => {
+        const dependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
 
-      const locators = locatorsByIdent.get(descriptor.identHash);
-      if (typeof locators === `undefined`)
-        throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
+        const resolvedDependencies = Object.fromEntries(
+          await miscUtils.allSettledSafe(
+            Object.entries(dependencies).map(async ([dependencyName, dependency]) => {
+              const dependencyDeferred = deferredMap.get(dependency.descriptorHash);
+              if (typeof dependencyDeferred === `undefined`)
+                throw new Error(`Assertion failed: The descriptor (${dependency.descriptorHash}) should have been registered`);
 
-      // No need to choose when there's only one possibility
-      if (locators.size === 1)
-        return null;
+              const dedupeResult = await dependencyDeferred.promise;
+              if (!dedupeResult)
+                throw new Error(`Assertion failed: Expected the dependency to have been through the dedupe process itself`);
 
-      const references = [...locators].map(locatorHash => {
-        const pkg = project.originalPackages.get(locatorHash);
-        if (typeof pkg === `undefined`)
-          throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
+              return [dependencyName, dedupeResult.updatedPackage];
+            }),
+          ),
+        );
 
-        return pkg.reference;
+        if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
+          return currentPackage;
+
+        // No need to try deduping packages that are not persisted,
+        // they will be resolved again anyways
+        if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
+          return currentPackage;
+
+        const candidateHashes = locatorsByIdent.get(descriptor.identHash);
+        if (typeof candidateHashes === `undefined`)
+          throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
+
+        // No need to choose when there's only one possibility
+        if (candidateHashes.size === 1)
+          return currentPackage;
+
+        const candidates = [...candidateHashes].map(locatorHash => {
+          const pkg = project.originalPackages.get(locatorHash);
+          if (typeof pkg === `undefined`)
+            throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
+
+          return pkg;
+        });
+
+        const satisfying = await resolver.getSatisfying(descriptor, resolvedDependencies, candidates, resolveOptions);
+
+        const bestLocator = satisfying.locators?.[0];
+        if (typeof bestLocator === `undefined` || !satisfying.sorted)
+          return currentPackage;
+
+        const updatedPackage = project.originalPackages.get(bestLocator.locatorHash);
+        if (typeof updatedPackage === `undefined`)
+          throw new Error(`Assertion failed: The package (${bestLocator.locatorHash}) should have been registered`);
+
+        return updatedPackage;
+      }).then(async updatedPackage => {
+        const resolvedPackage = await project.preparePackage(updatedPackage, {resolver, resolveOptions});
+
+        deferred.resolve({
+          descriptor,
+          currentPackage,
+          updatedPackage,
+          resolvedPackage,
+        });
+      }).catch(error => {
+        deferred.reject(error);
       });
+    }
 
-      const candidates = await resolver.getSatisfying(descriptor, references, resolveOptions);
-
-      const bestCandidate = candidates?.[0];
-      if (typeof bestCandidate === `undefined`)
-        return null;
-
-      const updatedResolution = bestCandidate.locatorHash;
-
-      const updatedPackage = project.originalPackages.get(updatedResolution);
-      if (typeof updatedPackage === `undefined`)
-        throw new Error(`Assertion failed: The package (${updatedResolution}) should have been registered`);
-
-      if (updatedResolution === currentResolution)
-        return null;
-
-      return {descriptor, currentPackage, updatedPackage};
+    return [...deferredMap.values()].map(deferred => {
+      return deferred.promise;
     });
   },
 };
@@ -137,7 +183,7 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
       dedupePromises.map(dedupePromise =>
         dedupePromise
           .then(dedupe => {
-            if (dedupe === null)
+            if (dedupe === null || dedupe.currentPackage.locatorHash === dedupe.updatedPackage.locatorHash)
               return;
 
             dedupedPackageCount++;

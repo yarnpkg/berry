@@ -42,7 +42,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 6;
+const LOCKFILE_VERSION = 7;
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -112,6 +112,12 @@ export type InstallOptions = {
    * if any dependency isn't present in the lockfile.
    */
   lockfileOnly?: boolean;
+
+  /**
+   * If true, Yarn will check that the pre-existing resolutions found in the
+   * lockfile are coherent with the ranges that depend on them.
+   */
+  checkResolutions?: boolean;
 
   /**
    * Changes which artifacts are generated during the install. Check the
@@ -355,7 +361,14 @@ export class Project {
           this.originalPackages.set(pkg.locatorHash, pkg);
 
           for (const entry of key.split(MULTIPLE_KEYS_REGEXP)) {
-            const descriptor = structUtils.parseDescriptor(entry);
+            let descriptor = structUtils.parseDescriptor(entry);
+
+            // Yarn pre-v4 used to generate descriptors that were sometimes
+            // missing the `npm:` protocol
+            if (lockfileVersion <= 6) {
+              descriptor = this.configuration.normalizeDependency(descriptor);
+              descriptor = structUtils.makeDescriptor(descriptor, descriptor.range.replace(/^patch:[^@]+@(?!npm(:|%3A))/, `$1npm%3A`));
+            }
 
             this.storedDescriptors.set(descriptor.descriptorHash, descriptor);
             this.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
@@ -653,7 +666,28 @@ export class Project {
     return null;
   }
 
-  async resolveEverything(opts: Pick<InstallOptions, `report` | `resolver` | `mode`> & ({report: Report, lockfileOnly: true} | {lockfileOnly?: boolean, cache: Cache})) {
+  async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
+    const pkg = this.configuration.normalizePackage(originalPkg);
+
+    for (const [identHash, descriptor] of pkg.dependencies) {
+      const dependency = await this.configuration.reduceHook(hooks => {
+        return hooks.reduceDependency;
+      }, descriptor, this, pkg, descriptor, {
+        resolver,
+        resolveOptions,
+      });
+
+      if (!structUtils.areIdentsEqual(descriptor, dependency))
+        throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+      const bound = resolver.bindDescriptor(dependency, pkg, resolveOptions);
+      pkg.dependencies.set(identHash, bound);
+    }
+
+    return pkg;
+  }
+
+  async resolveEverything(opts: Pick<InstallOptions, `report` | `resolver` | `checkResolutions` | `mode`> & ({report: Report, lockfileOnly: true} | {lockfileOnly?: boolean, cache: Cache})) {
     if (!this.workspacesByCwd || !this.workspacesByIdent)
       throw new Error(`Workspaces must have been setup before calling this function`);
 
@@ -687,6 +721,10 @@ export class Project {
 
     const resolver: Resolver = new MultiResolver([
       new LockfileResolver(realResolver),
+      ...resolverChain,
+    ]);
+
+    const noLockfileResolver: Resolver = new MultiResolver([
       ...resolverChain,
     ]);
 
@@ -728,23 +766,7 @@ export class Project {
           throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, originalPkg)})`);
 
         originalPackages.set(originalPkg.locatorHash, originalPkg);
-
-        const pkg = this.configuration.normalizePackage(originalPkg);
-
-        for (const [identHash, descriptor] of pkg.dependencies) {
-          const dependency = await this.configuration.reduceHook(hooks => {
-            return hooks.reduceDependency;
-          }, descriptor, this, pkg, descriptor, {
-            resolver,
-            resolveOptions,
-          });
-
-          if (!structUtils.areIdentsEqual(descriptor, dependency))
-            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
-
-          const bound = resolver.bindDescriptor(dependency, locator, resolveOptions);
-          pkg.dependencies.set(identHash, bound);
-        }
+        const pkg = await this.preparePackage(originalPkg, {resolver, resolveOptions});
 
         const dependencyResolutions = miscUtils.allSettledSafe([...pkg.dependencies.values()].map(descriptor => {
           return scheduleDescriptorResolution(descriptor);
@@ -793,14 +815,18 @@ export class Project {
           return startDescriptorAliasing(descriptor, this.storedDescriptors.get(alias)!);
 
         const resolutionDependenciesList = resolver.getResolutionDependencies(descriptor, resolveOptions);
-        const resolvedDependencies = new Map(await miscUtils.allSettledSafe(resolutionDependenciesList.map(async dependency => {
-          const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
+        const resolvedDependencies = Object.fromEntries(
+          await miscUtils.allSettledSafe(
+            Object.entries(resolutionDependenciesList).map(async ([dependencyName, dependency]) => {
+              const bound = resolver.bindDescriptor(dependency, dependencyResolutionLocator, resolveOptions);
 
-          const resolvedPackage = await scheduleDescriptorResolution(bound);
-          resolutionDependencies.add(resolvedPackage.locatorHash);
+              const resolvedPackage = await scheduleDescriptorResolution(bound);
+              resolutionDependencies.add(resolvedPackage.locatorHash);
 
-          return [dependency.descriptorHash, resolvedPackage] as const;
-        })));
+              return [dependencyName, resolvedPackage] as const;
+            }),
+          ),
+        );
 
         const candidateResolutions = await miscUtils.prettifyAsyncErrors(async () => {
           return await resolver.getCandidates(descriptor, resolvedDependencies, resolveOptions);
@@ -811,6 +837,13 @@ export class Project {
         const finalResolution = candidateResolutions[0];
         if (typeof finalResolution === `undefined`)
           throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+
+        if (opts.checkResolutions) {
+          const {locators} = await noLockfileResolver.getSatisfying(descriptor, resolvedDependencies, [finalResolution], {...resolveOptions, resolver: noLockfileResolver});
+          if (!locators.find(locator => locator.locatorHash === finalResolution.locatorHash)) {
+            throw new ReportError(MessageName.RESOLUTION_MISMATCH, `Invalid resolution ${structUtils.prettyResolution(this.configuration, descriptor, finalResolution)}`);
+          }
+        }
 
         allDescriptors.set(descriptor.descriptorHash, descriptor);
         allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);

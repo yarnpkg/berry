@@ -1,12 +1,12 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, DescriptorHash, Package, miscUtils} from '@yarnpkg/core';
-import {Descriptor, Locator, semverUtils}                                                                                        from '@yarnpkg/core';
-import {LinkType}                                                                                                                from '@yarnpkg/core';
-import {structUtils}                                                                                                             from '@yarnpkg/core';
-import semver                                                                                                                    from 'semver';
+import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, Manifest, Package, miscUtils} from '@yarnpkg/core';
+import {Descriptor, Locator, semverUtils}                                                                        from '@yarnpkg/core';
+import {LinkType}                                                                                                from '@yarnpkg/core';
+import {structUtils}                                                                                             from '@yarnpkg/core';
+import semver                                                                                                    from 'semver';
 
-import {NpmSemverFetcher}                                                                                                        from './NpmSemverFetcher';
-import {PROTOCOL}                                                                                                                from './constants';
-import * as npmHttpUtils                                                                                                         from './npmHttpUtils';
+import {NpmSemverFetcher}                                                                                        from './NpmSemverFetcher';
+import {PROTOCOL}                                                                                                from './constants';
+import * as npmHttpUtils                                                                                         from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
@@ -39,10 +39,10 @@ export class NpmSemverResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
@@ -90,25 +90,34 @@ export class NpmSemverResolver implements Resolver {
     });
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
     const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    return miscUtils.mapAndFilter(references, reference => {
-      try {
-        const {selector} = structUtils.parseRange(reference, {requireProtocol: PROTOCOL});
-        const version = new semverUtils.SemVer(selector);
+    const results = miscUtils.mapAndFilter(locators, locator => {
+      if (locator.identHash !== descriptor.identHash)
+        return miscUtils.mapAndFilter.skip;
 
-        if (range.test(version)) {
-          return {reference, version};
-        }
-      } catch { }
+      const parsedRange = structUtils.tryParseRange(locator.reference, {requireProtocol: PROTOCOL});
+      if (!parsedRange)
+        return miscUtils.mapAndFilter.skip;
 
-      return miscUtils.mapAndFilter.skip;
-    })
+      const version = new semverUtils.SemVer(parsedRange.selector);
+      if (!range.test(version))
+        return miscUtils.mapAndFilter.skip;
+
+      return {locator, version};
+    });
+
+    const sortedResults = results
       .sort((a, b) => -a.version.compare(b.version))
-      .map(({reference}) => structUtils.makeLocator(descriptor, reference));
+      .map(({locator}) => locator);
+
+    return {
+      locators: sortedResults,
+      sorted: true,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -174,7 +183,7 @@ export class NpmSemverResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: manifest.dependencies,
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,

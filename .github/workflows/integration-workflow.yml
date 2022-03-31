@@ -32,8 +32,6 @@ jobs:
       run: |
         node ./scripts/run-yarn.js --immutable --immutable-cache
       shell: bash
-      env:
-        YARN_ENABLE_NETWORK: 0
 
     - name: 'Check that the cache files are consistent with their remote sources'
       run: |

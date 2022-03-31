@@ -12,7 +12,7 @@ import * as tgzUtils    from './tgzUtils';
 import * as treeUtils   from './treeUtils';
 
 export {Cache}                                                                                            from './Cache';
-export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME}                                                       from './Configuration';
+export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME, TAG_REGEXP}                                           from './Configuration';
 export {Configuration, FormatType, ProjectLookup, SettingsType}                                           from './Configuration';
 export type {PluginConfiguration, SettingsDefinition, MapConfigurationValue, PackageExtensionData}        from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                           from './Configuration';
@@ -28,7 +28,6 @@ export {MultiFetcher}                                                           
 export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                       from './Plugin';
 export type {PeerRequirement}                                                                             from './Project';
 export {Project, InstallMode}                                                                             from './Project';
-export {TAG_REGEXP}                                                                                       from './ProtocolResolver';
 export {ReportError, Report}                                                                              from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                             from './Resolver';
 export {StreamReport}                                                                                     from './StreamReport';

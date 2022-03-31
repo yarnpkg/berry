@@ -1,4 +1,4 @@
-import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils, Package}      from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
@@ -41,7 +41,7 @@ export class FileResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
@@ -72,8 +72,13 @@ export class FileResolver implements Resolver {
     return [fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL})];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -96,7 +101,7 @@ export class FileResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: manifest.dependencies,
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,
