@@ -1,12 +1,12 @@
-import {Configuration, Ident, formatUtils, httpUtils, StreamReport, execUtils, miscUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                         from '@yarnpkg/core';
-import {ppath}                                                                            from '@yarnpkg/fslib';
-import {prompt}                                                                           from 'enquirer';
-import {URL}                                                                              from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, StreamReport, execUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                              from '@yarnpkg/core';
+import {ppath}                                                                 from '@yarnpkg/fslib';
+import {prompt}                                                                from 'enquirer';
+import {URL}                                                                   from 'url';
 
-import {Hooks}                                                                            from './index';
-import * as npmConfigUtils                                                                from './npmConfigUtils';
-import {MapLike}                                                                          from './npmConfigUtils';
+import {Hooks}                                                                 from './index';
+import * as npmConfigUtils                                                     from './npmConfigUtils';
+import {MapLike}                                                               from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
