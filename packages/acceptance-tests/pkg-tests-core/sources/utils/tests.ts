@@ -671,7 +671,7 @@ export const generatePkgDriver = ({
         const registryUrl = await startPackageServer();
 
         function cleanup(content: string) {
-          return content.replaceAll(/(https?):\/\/localhost:\d+/g, `$1://registry.example.org`);
+          return content.replace(/(https?):\/\/localhost:\d+/g, `$1://registry.example.org`);
         }
 
         // Writes a new package.json file into our temporary directory
