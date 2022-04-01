@@ -623,13 +623,11 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     for (const [key, targets] of redirections.entries())
       redirectionArgs.splice(redirectionArgs.length, 0, key, String(targets.length), ...targets);
 
-    const firstArg = JSON.parse(redirectionArgs[0]);
-    // In case first character is ">", simply print on stdout
-    if (firstArg.type === `>`) {
-      interpolated.splice(0, 0, `__ysh_passthrough`, ...redirectionArgs, `--`);
-    } else {
-      interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
-    }
+    // In case first character is ">", simply print on stdout what it receives in stderr
+    if (interpolated.length === 0)
+      interpolated.splice(0, 0, `__ysh_passthrough`, ...redirectionArgs, `__`);
+
+    interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
   }
 
   return interpolated;
