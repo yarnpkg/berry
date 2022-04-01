@@ -12,7 +12,6 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
-➤ YN0000: Done
 ",
 }
 `;
@@ -30,7 +29,6 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
-➤ YN0000: Done
 ",
 }
 `;
@@ -47,7 +45,6 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
-➤ YN0000: Done
 ",
 }
 `;
@@ -65,7 +62,6 @@ Object {
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
-➤ YN0000: Done
 ",
 }
 `;
