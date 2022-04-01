@@ -315,8 +315,12 @@ export default class YarnCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
-    if (this.refreshLockfile ?? CI.isPR)
+    const enableHardenedMode = configuration.get(`enableHardenedMode`);
+
+    if (this.refreshLockfile ?? enableHardenedMode)
       project.lockfileNeedsRefresh = true;
+
+    const checkResolutions = this.checkResolutions ?? enableHardenedMode;
 
     // Important: Because other commands also need to run installs, if you
     // get in a situation where you need to change this file in order to
@@ -325,8 +329,6 @@ export default class YarnCommand extends BaseCommand {
     // install logic should be implemented elsewhere (probably in either of
     // the Configuration and Install classes). Feel free to open an issue
     // in order to ask for design feedback before writing features.
-
-    const checkResolutions = this.checkResolutions ?? CI.isPR ?? false;
 
     const report = await StreamReport.start({
       configuration,
