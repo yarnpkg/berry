@@ -277,11 +277,13 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
 
     const autoOpen = notice.match(/Enter OTP from your authenticator app or open (https?:\/\/\S+)/);
     if (autoOpen) {
-      await miscUtils.tryPromise(async () => {
+      try {
         await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
-      }, async () => {
-        await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
-      });
+      } catch {
+        try {
+          await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
+        } catch {}
+      }
     }
 
     process.stdout.write(`\n`);
