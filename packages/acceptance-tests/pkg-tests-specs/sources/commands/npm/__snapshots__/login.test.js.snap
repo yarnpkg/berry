@@ -11,7 +11,9 @@ exports[`Commands npm login it should login a user with OTP setup 2`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged in
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
 ",
 }
 `;
@@ -28,7 +30,9 @@ exports[`Commands npm login it should login a user with OTP to a specific scope 
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged in
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
 ",
 }
 `;
@@ -44,7 +48,9 @@ exports[`Commands npm login it should login a user with no OTP setup 2`] = `
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged in
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
 ",
 }
 `;
@@ -61,7 +67,29 @@ exports[`Commands npm login it should login a user with no OTP setup to a specif
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Successfully logged in
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
+",
+}
+`;
+
+exports[`Commands npm login it should print the npm-notice when an OTP is requested 1`] = `
+"npmRegistries:
+  \\"http://yarn.test.registry\\":
+    npmAuthToken: 094e0159-1848-5629-90ec-879b4d1ce4d2
+"
+`;
+
+exports[`Commands npm login it should print the npm-notice when an OTP is requested 2`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: You're looking handsome today
+
+➤ YN0000: Successfully logged in
 ",
 }
 `;

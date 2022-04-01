@@ -79,6 +79,40 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should print the npm-notice when an OTP is requested`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const homePath = await createTemporaryFolder();
+
+        await writeFile(`${homePath}/${SPEC_RC_FILENAME}`, ``);
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `login`, {
+            env: {
+              HOME: homePath,
+              USERPROFILE: homePath,
+              TEST_NPM_USER: validLogins.otpUserWithNotice.username,
+              TEST_NPM_PASSWORD: validLogins.otpUserWithNotice.password,
+              TEST_NPM_2FA_TOKEN: validLogins.otpUserWithNotice.npmOtpToken,
+              YARN_RC_FILENAME: SPEC_RC_FILENAME,
+            },
+          }));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        const finalRcFileContent = await readFile(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
+        const cleanFileContent = cleanupFileContent(finalRcFileContent);
+
+        expect(cleanFileContent).toMatchSnapshot();
+        expect({code, stdout, stderr}).toMatchSnapshot();
+      }),
+    );
+
+    test(
       `it should throw an error when credentials are incorrect`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await expect(

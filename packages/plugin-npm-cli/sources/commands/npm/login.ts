@@ -124,13 +124,6 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
 }
 
 async function getCredentials({configuration, registry, report, stdin, stdout}: {configuration: Configuration, registry: string, report: Report, stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream}) {
-  if (process.env.TEST_ENV) {
-    return {
-      name: process.env.TEST_NPM_USER || ``,
-      password: process.env.TEST_NPM_PASSWORD || ``,
-    };
-  }
-
   report.reportInfo(MessageName.UNNAMED, `Logging in to ${formatUtils.pretty(configuration, registry, formatUtils.Type.URL)}`);
 
   let isToken = false;
@@ -141,6 +134,13 @@ async function getCredentials({configuration, registry, report, stdin, stdout}: 
   }
 
   report.reportSeparator();
+
+  if (process.env.TEST_ENV) {
+    return {
+      name: process.env.TEST_NPM_USER || ``,
+      password: process.env.TEST_NPM_PASSWORD || ``,
+    };
+  }
 
   const {username, password} = await prompt<{
     username: string;

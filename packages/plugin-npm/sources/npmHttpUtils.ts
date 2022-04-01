@@ -261,9 +261,6 @@ async function whoami(registry: string, headers: {[key: string]: string} | undef
 }
 
 async function askForOtp(error: any, {configuration}: {configuration: Configuration}) {
-  if (process.env.TEST_ENV)
-    return process.env.TEST_NPM_2FA_TOKEN || ``;
-
   const notice = error.originalError?.response.headers[`npm-notice`];
 
   if (notice) {
@@ -288,6 +285,9 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
 
     process.stdout.write(`\n`);
   }
+
+  if (process.env.TEST_ENV)
+    return process.env.TEST_NPM_2FA_TOKEN || ``;
 
   const {otp} = await prompt<{otp: string}>({
     type: `password`,
