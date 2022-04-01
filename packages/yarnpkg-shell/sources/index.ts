@@ -624,10 +624,11 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
       redirectionArgs.splice(redirectionArgs.length, 0, key, String(targets.length), ...targets);
 
     // In case first character is ">", simply print on stdout what it receives in stderr
-    if (interpolated.length === 0)
+    if (interpolated.length === 0) {
       interpolated.splice(0, 0, `__ysh_passthrough`, ...redirectionArgs, `__`);
-
-    interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
+    } else {
+      interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
+    }
   }
 
   return interpolated;
