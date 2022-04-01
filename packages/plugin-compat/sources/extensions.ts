@@ -768,4 +768,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       debug: `^3.2.7`,
     },
   }],
+  // https://github.com/wemaintain/auto-relay/pull/95
+  [`auto-relay@*`, {
+    peerDependencies: {
+      'reflect-metadata': `^0.1.13`,
+    },
+  }],
 ];
