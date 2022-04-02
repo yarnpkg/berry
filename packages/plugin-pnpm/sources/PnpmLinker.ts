@@ -384,6 +384,11 @@ async function cleanNodeModules(nmPath: PortablePath, extraneous: Map<PortablePa
 
 async function removeIfEmpty(dir: PortablePath) {
   try {
+    const stat = await xfs.lstatPromise(dir);
+
+    if (stat.isSymbolicLink())
+      return;
+
     await xfs.rmdirPromise(dir);
   } catch (error) {
     if (error.code !== `ENOENT` && error.code !== `ENOTEMPTY`) {
