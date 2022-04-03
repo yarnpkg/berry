@@ -4160,6 +4160,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/emscripten@npm:^1.39.6":
+  version: 1.39.6
+  resolution: "@types/emscripten@npm:1.39.6"
+  checksum: 0b2219f4c4a5126433135c331047be50bdfabac1cc39b37a8a2d8aec9cdfa62148bc80a485956924751d5007254f82ad8fc56f001999d79bdeea298a4ec4c712
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.0":
   version: 3.7.0
   resolution: "@types/eslint-scope@npm:3.7.0"
@@ -5764,7 +5771,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
-    "@types/emscripten": ^1.38.0
+    "@types/emscripten": ^1.39.6
     "@types/prettier": 1.19.0
     prettier: ^1.19.1
     tslib: ^1.13.0

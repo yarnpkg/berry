@@ -27,7 +27,7 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "@types/emscripten": "^1.38.0",
+    "@types/emscripten": "^1.39.6",
     "tslib": "^1.13.0"
   },
   "engines": {

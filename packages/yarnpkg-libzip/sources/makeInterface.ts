@@ -1,7 +1,9 @@
+import type {LibzipEmscriptenModule} from './emscripten';
+
 const number64 = [
   `number`, // low
   `number`, // high
-] as Array<'number'>;
+] as const;
 
 export type Libzip = ReturnType<typeof makeInterface>;
 
@@ -40,7 +42,7 @@ export enum Errors {
   ZIP_ER_COMPRESSED_DATA = 31,
 }
 
-export const makeInterface = (libzip: EmscriptenModule) => ({
+export const makeInterface = (libzip: LibzipEmscriptenModule) => ({
   // Those are getters because they can change after memory growth
   get HEAP8() {
     return libzip.HEAP8;
@@ -146,7 +148,7 @@ export const makeInterface = (libzip: EmscriptenModule) => ({
   },
 
   source: {
-    fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, `number`, `number`, `number`]),
+    fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, ...number64, `number`, `number`]),
     fromBuffer: libzip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
     free: libzip.cwrap(`zip_source_free`, null, [`number`]),
     keep: libzip.cwrap(`zip_source_keep`, null, [`number`]),
