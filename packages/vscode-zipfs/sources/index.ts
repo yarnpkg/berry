@@ -2,7 +2,6 @@ import {npath, NativePath}            from '@yarnpkg/fslib';
 import path                           from 'path';
 import * as vscode                    from 'vscode';
 
-
 import {registerTerminalLinkProvider} from './TerminalLinkProvider';
 import {ZipFSProvider}                from './ZipFSProvider';
 
