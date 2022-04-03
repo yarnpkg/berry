@@ -41,6 +41,8 @@ export class Cache {
   // place).
   public readonly check: boolean;
 
+  public readonly removeMockedPackagesFromCache: boolean;
+
   public readonly cacheKey: string;
 
   private mutexes: Map<LocatorHash, Promise<readonly [
@@ -68,6 +70,7 @@ export class Cache {
 
     this.immutable = immutable;
     this.check = check;
+    this.removeMockedPackagesFromCache = configuration.shouldRemoveMockedPackagesFromCache();
 
     const cacheKeyOverride = configuration.get(`cacheKeyOverride`);
     if (cacheKeyOverride !== null) {
@@ -358,7 +361,8 @@ export class Cache {
 
     const [shouldMock, cachePath, checksum] = await loadPackageThroughMutex();
 
-    this.markedFiles.add(cachePath);
+    if (!shouldMock || !this.removeMockedPackagesFromCache)
+      this.markedFiles.add(cachePath);
 
     let zipFs: ZipFS | undefined;
 

@@ -315,5 +315,369 @@ describe(`Features`, () => {
         version: `1.0.0`,
       }]);
     }));
+
+    it(`should remove unused entries after removing an os from supportedArchitectures (supportedArchitectures does not include current)`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`],
+          cpu: [`x64`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`],
+          cpu: [`x64`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-foo-x64/),
+        ]);
+      }
+    }));
+
+    it(`should remove unused entries after removing a cpu from supportedArchitectures (supportedArchitectures does not include current)`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`],
+          cpu: [`x64`, `x86`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`],
+          cpu: [`x64`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-foo-x64/),
+        ]);
+      }
+    }));
+
+    it(`should not remove unused entries after removing an architecture from supportedArchitectures (supportedArchitectures.{os,cpu} include current)`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`, `current`],
+          cpu: [`x64`, `x86`, `current`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`current`],
+          cpu: [`current`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+    }));
+
+    it(`should not remove unused entries after removing an architecture from supportedArchitectures (supportedArchitectures.os includes current, supportedArchitectures.cpu does not)`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`, `current`],
+          cpu: [`x64`, `x86`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`, `current`],
+          cpu: [`x64`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+    }));
+
+    it(`should not remove unused entries after removing an architecture from supportedArchitectures (supportedArchitectures.cpu includes current, supportedArchitectures.os does not)`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`],
+          cpu: [`x64`, `x86`, `current`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`],
+          cpu: [`x64`, `x86`, `current`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+    }));
+
+    it(`should not remove unused entries after removing the supportedArchitectures property`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`],
+          cpu: [`x64`, `x86`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+    }));
+
+    it(`should not remove unused entries after removing the supportedArchitectures.cpu property`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`],
+          cpu: [`x64`, `x86`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+    }));
+
+    it(`should not remove unused entries after removing the supportedArchitectures.os property`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          os: [`foo`, `bar`],
+          cpu: [`x64`, `x86`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        // Sanity check
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: {
+          cpu: [`x64`, `x86`],
+        },
+      });
+
+      await run(`install`);
+
+      {
+        const cacheListing = await xfs.readdirPromise(cacheFolder);
+        const nativeFiles = cacheListing.filter(entry => entry.startsWith(`native-`));
+        expect(nativeFiles).toEqual([
+          expect.stringMatching(/^native-bar-x64/),
+          expect.stringMatching(/^native-foo-x64/),
+          expect.stringMatching(/^native-foo-x86/),
+        ]);
+      }
+    }));
   });
 });

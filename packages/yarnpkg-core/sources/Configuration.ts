@@ -1515,6 +1515,29 @@ export class Configuration {
     return {os, cpu, libc};
   }
 
+  /**
+   * @internal This function is subject to change without a major bump depending on how we'll cover the remaining cases.
+   */
+  shouldRemoveMockedPackagesFromCache() {
+    const supportedArchitectures = this.get(`supportedArchitectures`);
+
+    const osIncludesCurrent = !!supportedArchitectures.get(`os`)?.includes(`current`);
+    const cpuIncludesCurrent = !!supportedArchitectures.get(`cpu`)?.includes(`current`);
+
+    if (!osIncludesCurrent && !cpuIncludesCurrent)
+      return true;
+
+    // TODO: There are 2 more cases that should be handled (technically 4 because the same can happen with the os field).
+    // - If cpu includes `current` *and* the package doesn't support any of the supported operating systems
+    //   (e.g. `supportedArchitectures.os: [darwin]`; pkg only supports linux), pkg can be safely removed from the cache.
+    // - If cpu includes `current` *and* the package does support any of the supported operating systems
+    //   (e.g. `supportedArchitectures.os: [darwin, linux]`; pkg only supports linux), pkg should not be removed from the cache.
+    //
+    // The problem is that the cache doesn't get access to the `Package` structures.
+
+    return false;
+  }
+
   async refreshPackageExtensions() {
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
