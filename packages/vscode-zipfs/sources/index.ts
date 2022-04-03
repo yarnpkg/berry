@@ -1,11 +1,20 @@
-import {npath}                        from '@yarnpkg/fslib';
+import {npath, NativePath}            from '@yarnpkg/fslib';
+import path                           from 'path';
 import * as vscode                    from 'vscode';
+
 
 import {registerTerminalLinkProvider} from './TerminalLinkProvider';
 import {ZipFSProvider}                from './ZipFSProvider';
 
+
+export function parseUri(uri: vscode.Uri): NativePath {
+  const p = `${path.sep}${uri.authority}${path.sep}${uri.fsPath}` as NativePath;
+
+  return p;
+}
+
 function mount(uri: vscode.Uri) {
-  const zipUri = vscode.Uri.parse(`zip:${uri.fsPath}`);
+  const zipUri = vscode.Uri.parse(`zip:${parseUri(uri)}`);
 
   if (vscode.workspace.getWorkspaceFolder(zipUri) === undefined) {
     vscode.workspace.updateWorkspaceFolders(vscode.workspace.workspaceFolders!.length, 0, {
