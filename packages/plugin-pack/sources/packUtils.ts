@@ -278,12 +278,11 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
           ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as Filename)
           : null;
 
-      let nextIgnoreLists = localIgnoreList !== null
-        ? [localIgnoreList].concat(ignoreLists)
-        : ignoreLists;
-
-      if (isIgnored(cwd, {globalList, ignoreLists}))
-        nextIgnoreLists = [...ignoreLists, {accept: [], reject: [`**/*`]}];
+      const nextIgnoreLists = isIgnored(cwd, {globalList, ignoreLists})
+        ? [...ignoreLists, {accept: [], reject: [`**/*`]}]
+        : localIgnoreList !== null
+          ? [localIgnoreList].concat(ignoreLists)
+          : ignoreLists;
 
       for (const entry of entries) {
         cwdList.push([ppath.resolve(cwd, entry), nextIgnoreLists]);
