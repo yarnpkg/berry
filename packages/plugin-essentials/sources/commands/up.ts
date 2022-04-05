@@ -286,7 +286,7 @@ export default class UpCommand extends BaseCommand {
         ({answer: selected} = await prompt({
           type: `select`,
           name: `answer`,
-          message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
+          message: `Which range do you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
           choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
             name,
             hint: reason,
