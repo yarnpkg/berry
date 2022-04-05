@@ -949,6 +949,14 @@ describe(`Shell`, () => {
           )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
         });
       });
+
+      it(`should throw no input for redirection`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expect(bufferResult(
+            `> /dev/null`,
+          )).rejects.toThrowError(`Unsupported command syntax. No input for redirection`);
+        });
+      });
     });
 
     describe(`>>`, () => {

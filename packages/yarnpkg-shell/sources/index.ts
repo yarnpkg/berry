@@ -317,6 +317,9 @@ const BUILTINS = new Map<string, ShellBuiltin>([
         pipe.pipe(error);
       }
     }
+    if (args.length <= t + 1)
+      throw new Error(`Unsupported command syntax. No input for redirection`);
+
 
     const exitCode = await start(makeCommandAction(args.slice(t + 1), opts, state), {
       stdin: new ProtectedStream<Readable>(stdin),
@@ -623,12 +626,7 @@ async function interpolateArguments(commandArgs: Array<Argument>, opts: ShellOpt
     for (const [key, targets] of redirections.entries())
       redirectionArgs.splice(redirectionArgs.length, 0, key, String(targets.length), ...targets);
 
-    // In case first character is ">", simply print on stdout what it receives in stderr
-    if (interpolated.length === 0) {
-      interpolated.splice(0, 0, `__ysh_passthrough`, ...redirectionArgs, `__`);
-    } else {
-      interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
-    }
+    interpolated.splice(0, 0, `__ysh_set_redirects`, ...redirectionArgs, `--`);
   }
 
   return interpolated;
