@@ -30,11 +30,11 @@ export type ZipPathOptions = ZipBufferOptions & {
   create?: boolean;
 };
 
-function toUnixTimestamp(time: Date | string | number) {
+function toUnixTimestamp(time: Date | string | number): number {
   if (typeof time === `string` && String(+time) === time)
     return +time;
 
-  if (Number.isFinite(time)) {
+  if (typeof time === `number` && Number.isFinite(time)) {
     if (time < 0) {
       return Date.now() / 1000;
     } else {
@@ -176,7 +176,7 @@ export class ZipFS extends BasePortableFakeFS {
 
     const entryCount = this.libzip.getNumEntries(this.zip, 0);
     for (let t = 0; t < entryCount; ++t) {
-      const raw = this.libzip.getName(this.zip, t, 0);
+      const raw = this.libzip.getName(this.zip, t, 0) as PortablePath;
       if (ppath.isAbsolute(raw))
         continue;
 
@@ -198,8 +198,8 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   makeLibzipError(error: number) {
-    const errorCode: number = this.libzip.struct.errorCodeZip(error);
-    const strerror: string = this.libzip.error.strerror(error);
+    const errorCode = this.libzip.struct.errorCodeZip(error);
+    const strerror = this.libzip.error.strerror(error);
 
     const libzipError = new errors.LibzipError(strerror, this.libzip.errors[errorCode]);
 
@@ -255,7 +255,7 @@ export class ZipFS extends BasePortableFakeFS {
         throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
 
       // Get the size of source
-      const size: number = this.libzip.source.tell(this.lzSource);
+      const size = this.libzip.source.tell(this.lzSource);
       if (size === -1)
         throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
 
@@ -815,7 +815,7 @@ export class ZipFS extends BasePortableFakeFS {
       if (!resolveLastComponent || this.symlinkCount === 0)
         break;
 
-      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1));
+      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
       if (index === -1)
         break;
 
@@ -849,7 +849,7 @@ export class ZipFS extends BasePortableFakeFS {
     const error = this.libzip.struct.errorS();
 
     const {buffer, byteLength} = this.allocateBuffer(content);
-    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, true, error);
+    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, 1, error);
 
     if (source === 0) {
       this.libzip.free(error);
@@ -861,7 +861,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private allocateSource(content: string | Buffer | ArrayBuffer | DataView) {
     const {buffer, byteLength} = this.allocateBuffer(content);
-    const source: number = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, true);
+    const source = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, 1);
 
     if (source === 0) {
       this.libzip.free(buffer);

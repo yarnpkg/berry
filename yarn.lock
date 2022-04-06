@@ -4120,10 +4120,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/emscripten@npm:^1.38.0":
-  version: 1.38.0
-  resolution: "@types/emscripten@npm:1.38.0"
-  checksum: 6d219304d25a765865a8d8226fd8f7c9f72c1825843aea93bdc5d40daf59e7a7c0b1b066a02e772093f5fdf32f1ff96d757081a11fe4dbdd1707cf53c4310a53
+"@types/emscripten@npm:^1.39.6":
+  version: 1.39.6
+  resolution: "@types/emscripten@npm:1.39.6"
+  checksum: 0b2219f4c4a5126433135c331047be50bdfabac1cc39b37a8a2d8aec9cdfa62148bc80a485956924751d5007254f82ad8fc56f001999d79bdeea298a4ec4c712
   languageName: node
   linkType: hard
 
@@ -5714,7 +5714,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libzip@workspace:packages/yarnpkg-libzip"
   dependencies:
-    "@types/emscripten": "npm:^1.38.0"
+    "@types/emscripten": "npm:^1.39.6"
     "@types/prettier": "npm:1.19.0"
     prettier: "npm:^1.19.1"
     tslib: "npm:^1.13.0"
