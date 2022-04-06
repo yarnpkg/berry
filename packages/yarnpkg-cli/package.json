@@ -33,7 +33,7 @@
     "@yarnpkg/plugin-workspace-tools": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "ci-info": "^3.2.0",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",
     "typanion": "^3.3.0"
