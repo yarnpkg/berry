@@ -107,12 +107,12 @@ export default class SetVersionSourcesCommand extends BaseCommand {
       const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      await setVersion(configuration, `sources`, async () => bundleBuffer, {
+      const {bundleVersion} = await setVersion(configuration, null, async () => bundleBuffer, {
         report,
       });
 
       if (!this.skipPlugins) {
-        await updatePlugins(this, {project, report, target});
+        await updatePlugins(this, bundleVersion, {project, report, target});
       }
     });
 
@@ -184,8 +184,8 @@ export async function prepareRepo(spec: PrepareSpec, {configuration, report, tar
   }
 }
 
-async function updatePlugins(context: BuildAndSavePluginsSpec, {project, report, target}: {project: Project, report: Report, target: PortablePath}) {
-  const data = await getAvailablePlugins(project.configuration);
+async function updatePlugins(context: BuildAndSavePluginsSpec, version: string, {project, report, target}: {project: Project, report: Report, target: PortablePath}) {
+  const data = await getAvailablePlugins(project.configuration, version);
   const contribPlugins = new Set(Object.keys(data));
 
   for (const name of project.configuration.plugins.keys()) {

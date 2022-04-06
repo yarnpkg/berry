@@ -1,5 +1,5 @@
 import {BaseCommand}                                                    from '@yarnpkg/cli';
-import {structUtils, hashUtils, Report, CommandContext}                 from '@yarnpkg/core';
+import {structUtils, hashUtils, Report, CommandContext, YarnVersion}    from '@yarnpkg/core';
 import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs, Filename}                      from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                         from 'clipanion';
@@ -73,7 +73,7 @@ export default class PluginDlSourcesCommand extends BaseCommand {
 
       const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
       const identStr = structUtils.stringifyIdent(ident);
-      const data = await getAvailablePlugins(configuration);
+      const data = await getAvailablePlugins(configuration, YarnVersion);
 
       if (!Object.prototype.hasOwnProperty.call(data, identStr))
         throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be built and imported from sources.`);
