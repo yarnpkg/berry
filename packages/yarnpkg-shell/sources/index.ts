@@ -176,16 +176,6 @@ const BUILTINS = new Map<string, ShellBuiltin>([
 
     return exitCode;
   }],
-  [`__ysh_passthrough`, async(args: Array<string>, opts: ShellOptions, state: ShellState) => {
-    const [cmd, ...rest] = args;
-    const ps = makeProcess(cmd, rest, opts, state);
-    const exitCode = await start(ps, {
-      stdin: new ProtectedStream<Readable>(state.stdin),
-      stdout: new ProtectedStream<Writable>(state.stdout),
-      stderr: new ProtectedStream<Writable>(state.stderr),
-    }).run();
-    return exitCode;
-  }],
   [`__ysh_set_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     let stdin = state.stdin;
     let stdout = state.stdout;
