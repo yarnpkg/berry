@@ -272,7 +272,7 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
       report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
     });
 
-    const autoOpen = notice.match(/Enter OTP from your authenticator app or open (https?:\/\/\S+)/);
+    const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
     if (autoOpen) {
       try {
         await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
