@@ -88,6 +88,22 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
               //
               // Ref: https://github.com/microsoft/vscode/issues/105014#issuecomment-686760910
               //
+              // Update 2021-10-08: VSCode changed their format in 1.61.
+              // Before | ^zip:/c:/foo/bar.zip/package.json
+              // After  | ^/zip//c:/foo/bar.zip/package.json
+              //
+              // Update 2022-04-06: VSCode changed the format in 1.66.
+              // Before | ^/zip//c:/foo/bar.zip/package.json
+              // After  | ^/zip/c:/foo/bar.zip/package.json
+              //
+              case \`vscode <1.61\`: {
+                str = \`^zip:\${str}\`;
+              } break;
+
+              case \`vscode <1.66\`: {
+                str = \`^/zip/\${str}\`;
+              } break;
+
               case \`vscode\`: {
                 str = \`^/zip\${str}\`;
               } break;
@@ -179,6 +195,13 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
             typeof parsedMessage.arguments.hostInfo === \`string\`
           ) {
             hostInfo = parsedMessage.arguments.hostInfo;
+            if (hostInfo === \`vscode\` && process.env.VSCODE_IPC_HOOK) {
+              if (/(\\/|-)1\\.([1-5][0-9]|60)\\./.test(process.env.VSCODE_IPC_HOOK)) {
+                hostInfo += \` <1.61\`;
+              } else if (/(\\/|-)1\\.(6[1-5])\\./.test(process.env.VSCODE_IPC_HOOK)) {
+                hostInfo += \` <1.66\`;
+              }
+            }
           }
 
           const processedMessageJSON = JSON.stringify(parsedMessage, (key, value) => {
