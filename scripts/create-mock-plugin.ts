@@ -15,8 +15,9 @@ runExit(class extends Command {
     const bundleLocation = ppath.join(root, `packages/${identifier}/bundles/@yarnpkg/${identifier}.js` as PortablePath);
 
     await xfs.mkdirPromise(ppath.dirname(bundleLocation), {recursive: true});
-    await xfs.writeFilePromise(bundleLocation, `module.exports = {name:${JSON.stringify(`@yarnpkg/${identifier}`)}, factory: () => ({})};`);
+    await xfs.writeFilePromise(bundleLocation, `module.exports = {name: ${JSON.stringify(`@yarnpkg/${identifier}`)}};`);
 
-    this.context.stdout.write(`This plugin is now a builtin and can be safely removed from your configuration\n`);
+    this.context.stdout.write(`This plugin is now a builtin and can be safely removed from your configuration.\n`);
+    this.context.stdout.write(`In the meantime, we'll replace it by an empty plugin; you'll need to re-import those if you decide later to go back to an older release.\n`);
   }
 });
