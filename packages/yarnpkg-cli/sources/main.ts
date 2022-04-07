@@ -129,7 +129,16 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      const command = cli.process(process.argv.slice(2));
+      const context = {
+        cwd: npath.toPortablePath(process.cwd()),
+        plugins: pluginConfiguration,
+        quiet: false,
+        stdin: process.stdin,
+        stdout: process.stdout,
+        stderr: process.stderr,
+      };
+
+      const command = cli.process(process.argv.slice(2), context);
       if (!command.help)
         Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
@@ -147,14 +156,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      await cli.runExit(command, {
-        cwd: npath.toPortablePath(process.cwd()),
-        plugins: pluginConfiguration,
-        quiet: false,
-        stdin: process.stdin,
-        stdout: process.stdout,
-        stderr: process.stderr,
-      });
+      await cli.runExit(command, context);
     }
   }
 
