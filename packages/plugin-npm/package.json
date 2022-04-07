@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-npm",
-  "version": "2.7.0",
+  "version": "3.0.0-rc.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -38,5 +38,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "2.7.0"
 }
