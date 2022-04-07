@@ -38,4 +38,3 @@ releases:
   "@yarnpkg/pnpify": major
   "@yarnpkg/sdks": major
   "@yarnpkg/shell": major
-  vscode-zipfs: major
