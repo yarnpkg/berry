@@ -1083,6 +1083,8 @@ export class Configuration {
 
       const importPlugin = async (pluginPath: PortablePath, source: string) => {
         const {factory, name} = miscUtils.dynamicRequire(pluginPath);
+        if (!factory)
+          return;
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
