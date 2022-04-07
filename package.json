@@ -26,6 +26,7 @@
     "typescript": "4.6.1-rc"
   },
   "resolutions": {
+    "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
     "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
   },
   "dependenciesMeta": {
