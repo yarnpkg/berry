@@ -111,7 +111,7 @@ export default class VersionApplyCommand extends BaseCommand {
           if (this.all) {
             await versionUtils.clearVersionFiles(project);
           } else {
-            await versionUtils.updateVersionFiles(project);
+            await versionUtils.updateVersionFiles(project, [...filteredReleases.keys()]);
           }
         }
 
