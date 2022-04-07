@@ -72,7 +72,7 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
 
   const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
-    return new Map();
+    return candidateReleases;
 
   const deferredVersionFiles = await xfs.readdirPromise(deferredVersionFolder);
 
@@ -133,7 +133,9 @@ export async function clearVersionFiles(project: Project) {
   await xfs.removePromise(deferredVersionFolder);
 }
 
-export async function updateVersionFiles(project: Project) {
+export async function updateVersionFiles(project: Project, workspaces: Array<Workspace>) {
+  const workspaceSet = new Set(workspaces);
+
   const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
     return;
@@ -153,19 +155,23 @@ export async function updateVersionFiles(project: Project) {
       continue;
 
     for (const locatorStr of Object.keys(releases)) {
-      const locator = structUtils.parseLocator(locatorStr);
-      const workspace = project.tryWorkspaceByLocator(locator);
+      const ident = structUtils.parseIdent(locatorStr);
+      const workspace = project.tryWorkspaceByIdent(ident);
 
-      if (workspace === null) {
+      if (workspace === null || workspaceSet.has(workspace)) {
         delete versionData.releases[locatorStr];
       }
     }
 
-    await xfs.changeFilePromise(versionPath, stringifySyml(
-      new stringifySyml.PreserveOrdering(
-        versionData,
-      ),
-    ));
+    if (Object.keys(versionData.releases).length > 0) {
+      await xfs.changeFilePromise(versionPath, stringifySyml(
+        new stringifySyml.PreserveOrdering(
+          versionData,
+        ),
+      ));
+    } else {
+      await xfs.unlinkPromise(versionPath);
+    }
   }
 }
 
