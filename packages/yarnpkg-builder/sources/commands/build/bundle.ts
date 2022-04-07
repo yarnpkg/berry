@@ -119,7 +119,21 @@ export default class BuildBundleCommand extends Command {
           },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
-          define: {YARN_VERSION: JSON.stringify(version)},
+          define: {
+            YARN_VERSION: JSON.stringify(version),
+            ...(this.noMinify ? {} : {
+              // For React
+              'process.env.NODE_ENV': JSON.stringify(`production`),
+              // For ink
+              'process.env.DEV': JSON.stringify(`false`),
+              // For ourselves
+              'process.env.TEST_ENV': `false`,
+              // mkdirp
+              'process.env.__TESTING_MKDIRP_PLATFORM__': `false`,
+              'process.env.__TESTING_MKDIRP_NODE_VERSION__': `false`,
+              'process.env.__FAKE_PLATFORM__': `false`,
+            }),
+          },
           outfile: output,
           // Default extensions + .mjs
           resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],

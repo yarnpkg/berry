@@ -1,0 +1,31 @@
+diff --git a/build/ink.js b/build/ink.js
+index f292bccdd049835ded848da83a6daac1e4f70416..54c4ebf36dc0c8f7f2580a5e69869848c83dc46f 100644
+--- a/build/ink.js
++++ b/build/ink.js
+@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const react_1 = __importDefault(require("react"));
+-const lodash_1 = require("lodash");
++const lodash_1_throttle = require("lodash/throttle");
+ const log_update_1 = __importDefault(require("./log-update"));
+ const ansi_escapes_1 = __importDefault(require("ansi-escapes"));
+ const is_ci_1 = __importDefault(require("is-ci"));
+@@ -90,7 +90,7 @@ class Ink {
+         this.rootNode = dom.createNode('ink-root');
+         this.rootNode.onRender = options.debug
+             ? this.onRender
+-            : lodash_1.throttle(this.onRender, 32, {
++            : lodash_1_throttle(this.onRender, 32, {
+                 leading: true,
+                 trailing: true
+             });
+@@ -98,7 +98,7 @@ class Ink {
+         this.log = log_update_1.default.create(options.stdout);
+         this.throttledLog = options.debug
+             ? this.log
+-            : lodash_1.throttle(this.log, undefined, {
++            : lodash_1_throttle(this.log, undefined, {
+                 leading: true,
+                 trailing: true
+             });

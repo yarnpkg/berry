@@ -10631,7 +10631,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/libui", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui"],\
             ["@types/ink", null],\
             ["@types/react", "npm:16.9.2"],\
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["react", "npm:16.13.1"],\
             ["tslib", "npm:1.13.0"]\
           ],\
@@ -10648,7 +10648,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@yarnpkg/libui", "workspace:packages/yarnpkg-libui"],\
             ["@types/react", "npm:16.9.2"],\
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["react", "npm:16.13.1"],\
             ["tslib", "npm:1.13.0"]\
           ],\
@@ -12326,7 +12326,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["algoliasearch", "npm:4.2.0"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
             ["diff", "npm:5.1.0"],\
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["ink-text-input", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:4.0.1"],\
             ["react", "npm:16.13.1"],\
             ["semver", "npm:7.3.5"],\
@@ -15227,7 +15227,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
             ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["lodash", "npm:4.17.21"],\
             ["react", "npm:16.13.1"],\
             ["semver", "npm:7.3.5"],\
@@ -26055,17 +26055,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["ink", [\
-        ["npm:3.0.8", {\
-          "packageLocation": "./.yarn/cache/ink-npm-3.0.8-3a8005f59f-8ec8fac189.zip/node_modules/ink/",\
+        ["patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/ink-patch-a1ac5ddcf7-2c6d54e455.zip/node_modules/ink/",\
           "packageDependencies": [\
-            ["ink", "npm:3.0.8"]\
+            ["ink", "patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8", {\
-          "packageLocation": "./.yarn/__virtual__/ink-virtual-dceb36bd5f/0/cache/ink-npm-3.0.8-3a8005f59f-8ec8fac189.zip/node_modules/ink/",\
+        ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/ink-virtual-c3760226ab/0/cache/ink-patch-a1ac5ddcf7-2c6d54e455.zip/node_modules/ink/",\
           "packageDependencies": [\
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["@types/react", "npm:16.9.2"],\
             ["ansi-escapes", "npm:4.3.1"],\
             ["auto-bind", "npm:4.0.0"],\
@@ -26080,7 +26080,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["patch-console", "npm:1.0.0"],\
             ["react", "npm:16.13.1"],\
             ["react-devtools-core", "npm:4.9.0"],\
-            ["react-reconciler", "virtual:dceb36bd5f9ff5f8a30776dd2a03eca27a9c39f1c56657cc3b0b17772e1494aed9fa59c34ee90eb8ace9061e447f10e8724a3a754a638f5b41667dcca1858207#npm:0.24.0"],\
+            ["react-reconciler", "virtual:c3760226ab08da748f88ea6626e22eb70ec1aaa235560158d73b099efd5a2f7365c3756dc11902ccb902396c164ec959defd0ce729fee78b9510926527136744#npm:0.24.0"],\
             ["scheduler", "npm:0.18.0"],\
             ["signal-exit", "npm:3.0.7"],\
             ["slice-ansi", "npm:3.0.0"],\
@@ -26114,7 +26114,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/ink", null],\
             ["@types/react", "npm:16.9.2"],\
             ["chalk", "npm:4.1.2"],\
-            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
+            ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#patch:ink@npm%3A3.0.8#./.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["react", "npm:16.13.1"],\
             ["type-fest", "npm:0.15.1"]\
           ],\
@@ -34397,10 +34397,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:dceb36bd5f9ff5f8a30776dd2a03eca27a9c39f1c56657cc3b0b17772e1494aed9fa59c34ee90eb8ace9061e447f10e8724a3a754a638f5b41667dcca1858207#npm:0.24.0", {\
-          "packageLocation": "./.yarn/__virtual__/react-reconciler-virtual-8af4018701/0/cache/react-reconciler-npm-0.24.0-eaeed763d0-c9c7420832.zip/node_modules/react-reconciler/",\
+        ["virtual:c3760226ab08da748f88ea6626e22eb70ec1aaa235560158d73b099efd5a2f7365c3756dc11902ccb902396c164ec959defd0ce729fee78b9510926527136744#npm:0.24.0", {\
+          "packageLocation": "./.yarn/__virtual__/react-reconciler-virtual-4f253ba40a/0/cache/react-reconciler-npm-0.24.0-eaeed763d0-c9c7420832.zip/node_modules/react-reconciler/",\
           "packageDependencies": [\
-            ["react-reconciler", "virtual:dceb36bd5f9ff5f8a30776dd2a03eca27a9c39f1c56657cc3b0b17772e1494aed9fa59c34ee90eb8ace9061e447f10e8724a3a754a638f5b41667dcca1858207#npm:0.24.0"],\
+            ["react-reconciler", "virtual:c3760226ab08da748f88ea6626e22eb70ec1aaa235560158d73b099efd5a2f7365c3756dc11902ccb902396c164ec959defd0ce729fee78b9510926527136744#npm:0.24.0"],\
             ["@types/react", "npm:16.9.2"],\
             ["loose-envify", "npm:1.4.0"],\
             ["object-assign", "npm:4.1.1"],\
