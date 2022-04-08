@@ -128,19 +128,23 @@ export default class AddCommand extends BaseCommand {
     });
 
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
+    const reuse = interactive || configuration.get(`preferReuse`);
 
     const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
-      ...interactive ? [
-        suggestUtils.Strategy.REUSE,
-      ] : [],
+      reuse ?
+        suggestUtils.Strategy.REUSE
+        : undefined,
+
       suggestUtils.Strategy.PROJECT,
-      ...this.cached ? [
-        suggestUtils.Strategy.CACHE,
-      ] : [],
+
+      this.cached ?
+        suggestUtils.Strategy.CACHE
+        : undefined,
+
       suggestUtils.Strategy.LATEST,
-    ];
+    ].filter((strategy): strategy is suggestUtils.Strategy => typeof strategy !== `undefined`);
 
     const maxResults = interactive
       ? Infinity

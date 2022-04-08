@@ -108,6 +108,7 @@ declare module '@yarnpkg/core' {
     // One in packages/plugin-essentials and one virtual package.
     // Defining this property with two different enum instances leads to a compiler error.
     defaultSemverRangePrefix: `^` | `~` | ``;
+    preferReuse: boolean;
   }
 }
 
@@ -124,6 +125,12 @@ const plugin: Plugin = {
       type: SettingsType.STRING,
       values: [`^`, `~`, ``],
       default: suggestUtils.Modifier.CARET,
+    },
+
+    preferReuse: {
+      description: `If true, \`yarn add\` will attempt to reuse the most common dependency range in other workspaces.`,
+      type: SettingsType.BOOLEAN,
+      default: false,
     },
   },
   commands: [
