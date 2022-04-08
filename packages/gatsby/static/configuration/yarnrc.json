@@ -662,6 +662,12 @@
       "type": "boolean",
       "default": false
     },
+    "preferReuse": {
+      "_package": "@yarnpkg/plugin-essentials",
+      "description": "If true, `yarn add` will attempt to reuse the most common dependency range in other workspaces.",
+      "type": "boolean",
+      "default": false
+    },
     "preferTruncatedLines": {
       "_package": "@yarnpkg/core",
       "description": "If true, Yarn will truncate lines that would go beyond the size of the terminal. If progress bars are disabled, lines will never be truncated. Forgettable lines (e.g. the fetch step logs) are always truncated.",
