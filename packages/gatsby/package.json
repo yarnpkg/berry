@@ -87,7 +87,7 @@
     "typedoc": "next",
     "typedoc-neo-theme": "^1.0.7",
     "typedoc-plugin-yarn": "portal:./typedoc-plugin-yarn",
-    "typescript": "4.6.1-rc",
+    "typescript": "4.7.0-beta",
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
