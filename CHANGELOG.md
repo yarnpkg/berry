@@ -39,6 +39,7 @@ The following changes only affect people writing Yarn plugins:
   - applies hoisting algorithm on aliased dependencies
   - reinstalls modules that have their directories removed from node_modules by the user
   - improves portal hoisting
+  - supports `supportedArchitectures`
 
 ### Bugfixes
 

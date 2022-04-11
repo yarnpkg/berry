@@ -148,7 +148,7 @@ class NodeModulesInstaller implements Installer {
     }
 
     // We don't link the package at all if it's for an unsupported platform
-    if (!jsInstallUtils.checkManifestCompatibility(pkg))
+    if (!structUtils.isPackageCompatible(pkg, this.opts.project.configuration.getSupportedArchitectures()))
       return {packageLocation: null, buildDirective: null};
 
     const packageDependencies = new Map<string, string | [string, string] | null>();
