@@ -358,7 +358,8 @@ export class Cache {
 
     const [shouldMock, cachePath, checksum] = await loadPackageThroughMutex();
 
-    this.markedFiles.add(cachePath);
+    if (!shouldMock)
+      this.markedFiles.add(cachePath);
 
     let zipFs: ZipFS | undefined;
 
