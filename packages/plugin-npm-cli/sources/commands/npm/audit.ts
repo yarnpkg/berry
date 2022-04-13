@@ -24,6 +24,8 @@ export default class AuditCommand extends BaseCommand {
 
       If the \`--json\` flag is set, Yarn will print the output exactly as received from the registry. Regardless of this flag, the process will exit with a non-zero exit code if a report is found for the selected packages.
 
+      If certain packages produce false positives for a particular environment, the \`--exclude\` flag can be used to exclude any number of packages from the audit.
+
       To understand the dependency tree requiring vulnerable packages, check the raw report with the \`--json\` flag or use \`yarn why <package>\` to get more information as to who depends on them.
     `,
     examples: [[
@@ -44,6 +46,9 @@ export default class AuditCommand extends BaseCommand {
     ], [
       `Output moderate (or more severe) vulnerabilities`,
       `yarn npm audit --severity moderate`,
+    ], [
+      `Exclude certain packages`,
+      `yarn npm audit --exclude package1 --exclude package2`,
     ]],
   });
 
@@ -69,6 +74,10 @@ export default class AuditCommand extends BaseCommand {
     validator: t.isEnum(npmAuditTypes.Severity),
   });
 
+  excludes = Option.Array(`--exclude`, [], {
+    description: `Packages to exclude from audit`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -87,6 +96,16 @@ export default class AuditCommand extends BaseCommand {
           delete dependencies[key];
         } else {
           dependencies[key].requires = {};
+        }
+      }
+    }
+
+    if (this.excludes) {
+      for (const pkg of this.excludes) {
+        delete requires[pkg];
+        delete dependencies[pkg];
+        for (const key of Object.keys(dependencies)) {
+          delete dependencies[key].requires[pkg];
         }
       }
     }
