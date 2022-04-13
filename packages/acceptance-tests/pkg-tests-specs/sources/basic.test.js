@@ -124,7 +124,6 @@ describe(`Basic tests`, () => {
               dependencies: {
                 [`no-deps`]: {
                   name: `no-deps`,
-                  version: `1.1.0`,
                 },
               },
             });

@@ -1759,7 +1759,7 @@ describe(`Plug'n'Play`, () => {
         await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
           name: `portal`,
           dependencies: {
-            [`no-deps`]: `*`,
+            [`no-deps`]: `2.0.0`,
           },
           peerDependencies: {
             [`left-pad`]: `*`,

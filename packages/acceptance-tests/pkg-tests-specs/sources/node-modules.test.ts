@@ -56,7 +56,7 @@ describe(`Node_Modules`, () => {
         private: true,
         workspaces: [`packages/*`],
         dependencies: {
-          [`no-deps`]: `*`,
+          [`no-deps`]: `2.0.0`,
         },
       },
       {
