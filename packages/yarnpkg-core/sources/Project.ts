@@ -748,6 +748,10 @@ export class Project {
 
     const resolutionQueue: Array<Promise<unknown>> = [];
 
+    const alternativeResolutions = new Map<DescriptorHash, Array<Locator>>();
+
+    const resolutionMode = this.configuration.get(`resolutionMode`);
+
     // Doing these calls early is important: it seems calling it after we've started the resolution incurs very high
     // performance penalty on WSL, with the Gatsby benchmark jumping from ~28s to ~130s. It's possible this is due to
     // the number of async tasks being listed in the report, although it's strange this doesn't occur on other systems.
@@ -834,9 +838,15 @@ export class Project {
           return `${structUtils.prettyDescriptor(this.configuration, descriptor)}: ${message}`;
         });
 
-        const finalResolution = candidateResolutions[0];
+        const finalResolution = resolutionMode === `highest`
+          ? candidateResolutions[0]
+          : candidateResolutions[candidateResolutions.length - 1];
+
         if (typeof finalResolution === `undefined`)
           throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+
+        if (candidateResolutions.length > 1 && resolutionMode !== `highest`)
+          alternativeResolutions.set(descriptor.descriptorHash, candidateResolutions);
 
         if (opts.checkResolutions) {
           const {locators} = await noLockfileResolver.getSatisfying(descriptor, resolvedDependencies, [finalResolution], {...resolveOptions, resolver: noLockfileResolver});
@@ -874,6 +884,14 @@ export class Project {
         await miscUtils.allSettledSafe(copy);
       }
     });
+
+    for (const [descriptorHash, candidateLocators] of alternativeResolutions) {
+      const finalLocator = candidateLocators.find(locator => allPackages.has(locator.locatorHash));
+      if (typeof finalLocator === `undefined`)
+        throw new Error(`Assertion failed: Expected a final locator to be found`);
+
+      allResolutions.set(descriptorHash, finalLocator.locatorHash);
+    }
 
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias

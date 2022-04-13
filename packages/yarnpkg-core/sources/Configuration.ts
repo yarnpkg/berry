@@ -501,6 +501,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: `throw`,
   },
+  resolutionMode: {
+    description: `Enumeration defining which packages to prefer when there are multiple candidates`,
+    type: SettingsType.STRING,
+    default: `stable`,
+  },
 
   // Package patching - to fix incorrect definitions
   packageExtensions: {
@@ -618,6 +623,7 @@ export interface ConfigurationValueMap {
   enableStrictSettings: boolean;
   enableImmutableCache: boolean;
   checksumBehavior: string;
+  resolutionMode: string;
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
