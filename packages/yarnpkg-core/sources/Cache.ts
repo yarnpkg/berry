@@ -315,7 +315,7 @@ export class Cache {
         const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum, opts);
 
         const cacheFileExists = tentativeCachePath !== null
-          ? await baseFs.existsPromise(tentativeCachePath)
+          ? this.markedFiles.has(tentativeCachePath) || await baseFs.existsPromise(tentativeCachePath)
           : false;
 
         const shouldMock = !!opts.mockedPackages?.has(locator.locatorHash) && (!this.check || !cacheFileExists);
