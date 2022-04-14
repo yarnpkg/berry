@@ -57,7 +57,7 @@ export interface AuditAdvisory {
   recommendation: string;
   references: string;
   access: string;
-  severity: string;
+  severity: Severity;
   cwe: string;
   metadata: {
     module_type: string;
