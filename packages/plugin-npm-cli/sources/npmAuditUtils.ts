@@ -157,6 +157,10 @@ export function getReportTree(result: npmAuditTypes.AuditResponse, severity?: np
       label: advisory.module_name,
       value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.findings.map(finding => finding.version).join(`, `)),
       children: {
+        ID: {
+          label: `ID`,
+          value: formatUtils.tuple(formatUtils.Type.NUMBER, advisory.id),
+        },
         Issue: {
           label: `Issue`,
           value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.title),

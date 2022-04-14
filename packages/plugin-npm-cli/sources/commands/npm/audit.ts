@@ -26,6 +26,8 @@ export default class AuditCommand extends BaseCommand {
 
       If certain packages produce false positives for a particular environment, the \`--exclude\` flag can be used to exclude any number of packages from the audit.
 
+      If particular advisories are needed to be ignored, the \`--ignore\` flag can be used with Advisory ID's to ignore any number of advisories in the audit report.
+
       To understand the dependency tree requiring vulnerable packages, check the raw report with the \`--json\` flag or use \`yarn why <package>\` to get more information as to who depends on them.
     `,
     examples: [[
@@ -49,6 +51,9 @@ export default class AuditCommand extends BaseCommand {
     ], [
       `Exclude certain packages`,
       `yarn npm audit --exclude package1 --exclude package2`,
+    ], [
+      `Ignore specific advisories`,
+      `yarn npm audit --ignore GHSA-xxxx-xxxx-xxxx --exclude GHSA-xxxx-xxxx-xxxx`,
     ]],
   });
 
@@ -76,6 +81,10 @@ export default class AuditCommand extends BaseCommand {
 
   excludes = Option.Array(`--exclude`, [], {
     description: `Packages to exclude from audit`,
+  });
+
+  ignores = Option.Array(`--ignore`, [], {
+    description: `Advisories to ignore in the audit report`,
   });
 
   async execute() {
@@ -134,6 +143,16 @@ export default class AuditCommand extends BaseCommand {
 
     if (httpReport.hasErrors())
       return httpReport.exitCode();
+
+    const ignored_severities = Object.entries(result.advisories)
+      .filter(([key, value]) => this.ignores.includes(key))
+      .map(([key, value]) => value.severity);
+
+    result.advisories = Object.fromEntries(Object.entries(result.advisories).filter(([key, value]) => !this.ignores.includes(key)));
+
+    for (const severity of ignored_severities)
+      result.metadata.vulnerabilities[severity]--;
+
 
     const hasError = npmAuditUtils.isError(result.metadata.vulnerabilities, this.severity);
     if (!this.json && hasError) {
