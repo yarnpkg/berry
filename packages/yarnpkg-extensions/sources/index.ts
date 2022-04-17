@@ -841,4 +841,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       tabbable: `^5.3.2`,
     },
   }],
+  // https://github.com/bokuweb/react-rnd/pull/864
+  [`react-rnd@<10.3.7`, {
+    peerDependencies: {
+      react: `>=16.3.0`,
+      'react-dom': `>=16.3.0`,
+    },
+  }],
 ];
