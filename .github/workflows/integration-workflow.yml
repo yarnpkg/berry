@@ -256,5 +256,5 @@ jobs:
 
     - name: 'Run the basic integration test suite'
       run: |
-        docker run --rm --volume "$HOME:/root" --volume "$PWD:/berry" --workdir /berry s390x/node /bin/bash -c 'node -p "os.endianness()" && node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100%'
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --workdir /berry s390x/node /bin/bash -c 'node -e "assert.equal(os.endianness(), `BE`)" && node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100% git.test.js'
       shell: bash
