@@ -231,6 +231,8 @@ jobs:
   big-endian:
     name: 'Big-endian debian w/ Node.js latest'
     runs-on: ubuntu-latest
+    if: |
+      github.ref == 'refs/heads/master' || github.event.label.name == 'infra: big-endian'
     needs: build
 
     steps:
@@ -241,13 +243,6 @@ jobs:
         name: yarn-artifacts
         path: packages
 
-    # Apparently @babel/register is insanely slow inside the big-endian
-    # docker container, so we don't want to run yarn from sources at all.
-    - name: 'Set ignorePath to true'
-      run: |
-        node ./scripts/run-yarn.js config set ignorePath true
-      shell: bash
-
     # https://github.com/multiarch/qemu-user-static
     - name: 'Enable execution of multi-arch containers'
       run: |
@@ -256,5 +251,7 @@ jobs:
 
     - name: 'Run the basic integration test suite'
       run: |
-        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --workdir /berry s390x/node /bin/bash -c 'node -e "assert.equal(os.endianness(), \"BE\")" && node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100%'
+        # Apparently @babel/register is insanely slow inside the big-endian
+        # docker container, so we don't want to run yarn from sources at all.
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node -e "assert.equal(os.endianness(), \"BE\")" && node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100%'
       shell: bash
