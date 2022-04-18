@@ -54,7 +54,7 @@ export class VirtualResolver implements Resolver {
     throw new Error(`Assertion failed: calling "getCandidates" on a virtual descriptor is unsupported`);
   }
 
-  async getSatisfying(descriptor: Descriptor, candidates: Array<string>, opts: ResolveOptions): Promise<never> {
+  async getSatisfying(descriptor: Descriptor, dependencies: unknown, candidates: Array<Locator>, opts: ResolveOptions): Promise<never> {
     // It's unsupported because packages inside the dependency tree should
     // only become virtual AFTER they have all been resolved, by which point
     // you shouldn't need to call `getSatisfying` anymore.

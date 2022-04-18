@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest}                            from '@yarnpkg/core';
+import {LinkType}                                                 from '@yarnpkg/core';
+import {miscUtils, structUtils}                                   from '@yarnpkg/core';
+import {npath}                                                    from '@yarnpkg/fslib';
 
-import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}           from './constants';
+import {FILE_REGEXP, TARBALL_REGEXP, PROTOCOL}                    from './constants';
 
 export class TarballFileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -44,20 +44,24 @@ export class TarballFileResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
-    let path = descriptor.range;
-
-    if (path.startsWith(PROTOCOL))
-      path = path.slice(PROTOCOL.length);
+    const path = descriptor.range.startsWith(PROTOCOL)
+      ? descriptor.range.slice(PROTOCOL.length)
+      : descriptor.range;
 
     return [structUtils.makeLocator(descriptor, `${PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -80,7 +84,7 @@ export class TarballFileResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: manifest.dependencies,
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,

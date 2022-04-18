@@ -68,7 +68,7 @@ Let's focus on the part where changes have to be converted into versions. How do
 
 One critical problem remains, though: even if you use the independent mode, how will you know which packages are meant to be upgraded? And, just as critical, should they be patch releases? Minor releases? Hard to know - large projects can receive dozens of PRs a week, and keeping track of which units need to be released and to which version is a pretty difficult task.
 
-With Yarn's workflow, however, this all becomes very easy! Since the upgrades are kept in a file, and since this file is magically bound to a Git branch, it simply becomes a matter of committing the release folder - all expected releases will then become part of the project history until comes the time of `yarn version apply` - then Yarn will consume all the individual records, merge then (so that a PR requiring a minor will have higher precedence than the PR requiring a patch), and apply them simultaneously.
+With Yarn's workflow, however, this all becomes very easy! Since the upgrades are kept in a file, and since this file is magically bound to a Git branch, it simply becomes a matter of committing the release folder - all expected releases will then become part of the project history until comes the time of `yarn version apply` - then Yarn will consume all the individual records, merge them (so that a PR requiring a minor will have higher precedence than the PR requiring a patch), and apply them simultaneously.
 
 As an added bonus, you'll even be able to review the package upgrades as part of the typical PR review! This will have the effect of delegating more power to your community while being able to ensure that everyone follows rules.
 

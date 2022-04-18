@@ -1,15 +1,17 @@
-import {BaseCommand}                            from '@yarnpkg/cli';
-import {Configuration, StreamReport, httpUtils} from '@yarnpkg/core';
-import {parseSyml}                              from '@yarnpkg/parsers';
-import {Command, Option, Usage}                 from 'clipanion';
+import {BaseCommand}                                                      from '@yarnpkg/cli';
+import {Configuration, StreamReport, httpUtils, semverUtils, YarnVersion} from '@yarnpkg/core';
+import {parseSyml}                                                        from '@yarnpkg/parsers';
+import {Command, Option, Usage}                                           from 'clipanion';
 
 const REMOTE_REGISTRY = `https://raw.githubusercontent.com/yarnpkg/berry/master/plugins.yml`;
 
-export async function getAvailablePlugins(configuration: Configuration) {
+export async function getAvailablePlugins(configuration: Configuration, version: string | null) {
   const raw = await httpUtils.get(REMOTE_REGISTRY, {configuration});
   const data = parseSyml(raw.toString());
 
-  return data;
+  return Object.fromEntries(Object.entries(data).filter(([pluginName, pluginData]) => {
+    return !version || semverUtils.satisfiesWithPrereleases(version, pluginData.range ?? `<4.0.0`);
+  }));
 }
 
 // eslint-disable-next-line arca/no-default-export
@@ -42,7 +44,7 @@ export default class PluginDlCommand extends BaseCommand {
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      const data = await getAvailablePlugins(configuration);
+      const data = await getAvailablePlugins(configuration, YarnVersion);
 
       for (const [name, {experimental, ...rest}] of Object.entries(data)) {
         let label = name;

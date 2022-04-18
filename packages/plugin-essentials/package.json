@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "3.2.0",
+  "version": "4.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "ci-info": "^3.2.0",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "enquirer": "^2.3.6",
     "lodash": "^4.17.15",
     "micromatch": "^4.0.2",
@@ -46,5 +46,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.2.0"
 }

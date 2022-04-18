@@ -46,4 +46,4 @@ jobs:
         yarn build
         yarn test
       if: |
-        always()
+        success() || failure()

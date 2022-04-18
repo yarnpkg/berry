@@ -38,4 +38,4 @@ jobs:
         cat package.json | jq '.scripts.pnpify="tsc"' | tee package.json
         yarn build
       if: |
-        always()
+        success() || failure()

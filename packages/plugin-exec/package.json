@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-exec",
-  "version": "2.3.0",
+  "version": "3.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -15,8 +15,6 @@
     "@yarnpkg/core": "workspace:^"
   },
   "scripts": {
-    "build:plugin-exec": "builder build plugin",
-    "update-local": "yarn build:plugin-exec && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -34,5 +32,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "2.3.0"
 }

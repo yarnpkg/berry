@@ -143,6 +143,25 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should support excluding patterns in included parent directory from the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib`,
+          `!/lib/b.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toContain(`lib/a.js`);
+        expect(stdout).not.toContain(`lib/b.js`);
+      }),
+    );
+
+    test(
       `it should support excluding patterns from the "files" field`,
       makeTemporaryEnv({
         files: [
@@ -298,13 +317,19 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should override main and module in the packed manifest`,
+      `it should override fields in the packed manifest`,
       makeTemporaryEnv({
+        type: `commonjs`,
         main: `./index.js`,
         module: `./index.mjs`,
+        browser: `./index.umd.js`,
+        exports: `./index.modern.js`,
         publishConfig: {
+          type: `module`,
           main: `./published.js`,
           module: `./published.mjs`,
+          browser: `./published.umd.js`,
+          exports: `./published.modern.js`,
         },
       }, async ({path, run, source}) => {
         await run(`install`);
@@ -314,13 +339,19 @@ describe(`Commands`, () => {
 
         const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
 
+        expect(packedManifest.type).toBe(`module`);
         expect(packedManifest.main).toBe(`./published.js`);
         expect(packedManifest.module).toBe(`./published.mjs`);
+        expect(packedManifest.browser).toBe(`./published.umd.js`);
+        expect(packedManifest.exports).toBe(`./published.modern.js`);
 
         const originalManifest = await fsUtils.readJson(`${path}/package.json`);
 
+        expect(originalManifest.type).toBe(`commonjs`);
         expect(originalManifest.main).toBe(`./index.js`);
         expect(originalManifest.module).toBe(`./index.mjs`);
+        expect(originalManifest.browser).toBe(`./index.umd.js`);
+        expect(originalManifest.exports).toBe(`./index.modern.js`);
       }),
     );
 

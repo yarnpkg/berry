@@ -1,6 +1,6 @@
-import {Descriptor, DescriptorHash, Fetcher, FetchOptions, LinkType, Locator, MinimalResolveOptions, Package, Plugin, ResolveOptions, Resolver, structUtils} from '@yarnpkg/core';
-import {PortablePath, xfs, ZipFS}                                                                                                                            from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                                                                                    from '@yarnpkg/libzip';
+import {Descriptor, Fetcher, FetchOptions, LinkType, Locator, MinimalResolveOptions, Package, Plugin, ResolveOptions, Resolver, structUtils} from '@yarnpkg/core';
+import {PortablePath, xfs, ZipFS}                                                                                                            from '@yarnpkg/fslib';
+import {getLibzipPromise}                                                                                                                    from '@yarnpkg/libzip';
 
 export class UnboundDescriptorResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -26,15 +26,20 @@ export class UnboundDescriptorResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -87,15 +92,22 @@ export class ResolutionDependencyResolver implements Resolver {
     if (selector === null)
       throw new Error(`Assertion failed: The selector should not be null`);
 
-    return [structUtils.parseDescriptor(selector)];
+    return {
+      dependency: structUtils.parseDescriptor(selector),
+    };
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {

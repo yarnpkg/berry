@@ -146,7 +146,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/apollographql/apollo-tooling/pull/2049
-  [`@apollographql/apollo-tools@*`, {
+  [`@apollographql/apollo-tools@<=0.5.2`, {
     peerDependencies: {
       graphql: `^14.2.1 || ^15.0.0`,
     },
@@ -766,6 +766,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`@cypress/snapshot@*`, {
     dependencies: {
       debug: `^3.2.7`,
+    },
+  }],
+  // https://github.com/wemaintain/auto-relay/pull/95
+  [`auto-relay@*`, {
+    peerDependencies: {
+      'reflect-metadata': `^0.1.13`,
     },
   }],
 ];

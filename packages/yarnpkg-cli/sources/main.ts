@@ -73,7 +73,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       strict: false,
     });
 
-    const yarnPath: PortablePath = configuration.get(`yarnPath`);
+    const yarnPath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);
     const ignoreCwd = configuration.get(`ignoreCwd`);
 
@@ -84,11 +84,13 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
     });
 
     const isSameBinary = async () =>
-      yarnPath === selfPath ||
-      Buffer.compare(...await Promise.all([
-        tryRead(yarnPath),
-        tryRead(selfPath),
-      ])) === 0;
+      yarnPath && (
+        yarnPath === selfPath ||
+        Buffer.compare(...await Promise.all([
+          tryRead(yarnPath),
+          tryRead(selfPath),
+        ])) === 0
+      );
 
     // Avoid unnecessary spawn when run directly
     if (!ignorePath && !ignoreCwd && await isSameBinary()) {
@@ -127,7 +129,16 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      const command = cli.process(process.argv.slice(2));
+      const context = {
+        cwd: npath.toPortablePath(process.cwd()),
+        plugins: pluginConfiguration,
+        quiet: false,
+        stdin: process.stdin,
+        stdout: process.stdout,
+        stderr: process.stderr,
+      };
+
+      const command = cli.process(process.argv.slice(2), context);
       if (!command.help)
         Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
@@ -145,14 +156,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
         }
       }
 
-      await cli.runExit(command, {
-        cwd: npath.toPortablePath(process.cwd()),
-        plugins: pluginConfiguration,
-        quiet: false,
-        stdin: process.stdin,
-        stdout: process.stdout,
-        stderr: process.stderr,
-      });
+      await cli.runExit(command, context);
     }
   }
 

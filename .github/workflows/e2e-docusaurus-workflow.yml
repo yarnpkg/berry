@@ -33,4 +33,4 @@ jobs:
         yarn dlx create-docusaurus@latest my-website-ts classic --typescript && cd my-website-ts
         yarn build
       if: |
-        always()
+        success() || failure()

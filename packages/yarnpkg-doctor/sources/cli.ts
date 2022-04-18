@@ -253,7 +253,7 @@ async function makeResolveFn(project: Project) {
   const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
   return async (descriptor: Descriptor) => {
-    const candidates = await resolver.getCandidates(descriptor, new Map(), resolveOptions);
+    const candidates = await resolver.getCandidates(descriptor, {}, resolveOptions);
     if (candidates.length === 0)
       return null;
 

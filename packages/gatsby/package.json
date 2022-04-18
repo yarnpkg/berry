@@ -3,7 +3,7 @@
   "private": true,
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@babel/core": "^7.10.2",
+    "@babel/core": "^7.17.8",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@emotion/styled-base": "^11.0.0",
@@ -87,7 +87,7 @@
     "typedoc": "next",
     "typedoc-neo-theme": "^1.0.7",
     "typedoc-plugin-yarn": "portal:./typedoc-plugin-yarn",
-    "typescript": "4.6.1-rc",
+    "typescript": "4.7.0-beta",
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "3.1.1",
+  "version": "4.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -10,7 +10,7 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/nm": "workspace:^",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "tslib": "^1.13.0"
   },
   "devDependencies": {
@@ -39,5 +39,6 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.1"
 }

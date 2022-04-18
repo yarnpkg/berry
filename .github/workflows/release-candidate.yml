@@ -31,14 +31,7 @@ jobs:
 
     - name: 'Build a binary for convenience'
       run: |
-        yarn build:cli $(
-          yarn constraints query "
-            workspace(Cwd),
-            workspace_field(Cwd, 'scripts["update-local"]', _),
-            workspace_ident(Cwd, Ident),
-            sub_atom(Ident, 0, _, _, '@yarnpkg/plugin-')
-          " --json | jq -r '"--plugin='$(pwd)'/" + .Cwd' | xargs
-        )
+        yarn build:cli
 
         TMPBIN=$(mktemp -d)
         cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js

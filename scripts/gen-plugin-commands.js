@@ -12,7 +12,7 @@ let output = ``;
 output += `// Don't modify this script directly! Instead, run:\n`;
 output += `// yarn build:plugin-commands\n`;
 output += `\n`;
-output += `export const pluginCommands = new Map([\n`;
+output += `export const pluginCommands = new Map<string, Array<string>>([\n`;
 
 for (const name of folders) {
   if (!name.startsWith(`plugin-`))

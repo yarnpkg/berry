@@ -23,6 +23,9 @@ const WORKSPACE_PROTOCOL = `workspace:`;
 
 const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   if (rawManifest.publishConfig) {
+    if (rawManifest.publishConfig.type)
+      rawManifest.type = rawManifest.publishConfig.type;
+
     if (rawManifest.publishConfig.main)
       rawManifest.main = rawManifest.publishConfig.main;
 

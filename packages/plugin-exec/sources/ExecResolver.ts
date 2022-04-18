@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions}        from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest, DescriptorHash, Package} from '@yarnpkg/core';
-import {LinkType}                                               from '@yarnpkg/core';
-import {miscUtils, structUtils, hashUtils}                      from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
+import {LinkType}                                        from '@yarnpkg/core';
+import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
 
-import {PROTOCOL}                                               from './constants';
-import * as execUtils                                           from './execUtils';
+import {PROTOCOL}                                        from './constants';
+import * as execUtils                                    from './execUtils';
 
 // We use this for the generators to be regenerated without bumping the whole cache
 const CACHE_VERSION = 2;
@@ -35,10 +35,10 @@ export class ExecResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    return [];
+    return {};
   }
 
-  async getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions) {
+  async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
@@ -60,8 +60,13 @@ export class ExecResolver implements Resolver {
     return [execUtils.makeLocator(descriptor, {parentLocator, path, generatorHash, protocol: PROTOCOL})];
   }
 
-  async getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions) {
-    return null;
+  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+    const [locator] = await this.getCandidates(descriptor, dependencies, opts);
+
+    return {
+      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      sorted: false,
+    };
   }
 
   async resolve(locator: Locator, opts: ResolveOptions) {
@@ -84,7 +89,7 @@ export class ExecResolver implements Resolver {
 
       conditions: manifest.getConditions(),
 
-      dependencies: manifest.dependencies,
+      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
       peerDependencies: manifest.peerDependencies,
 
       dependenciesMeta: manifest.dependenciesMeta,

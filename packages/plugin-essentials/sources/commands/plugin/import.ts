@@ -81,7 +81,7 @@ export default class PluginDlCommand extends BaseCommand {
             throw new ReportError(MessageName.UNNAMED, `Official plugins only accept strict version references. Use an explicit URL if you wish to download them from another location.`);
 
           const identStr = structUtils.stringifyIdent(locator);
-          const data = await getAvailablePlugins(configuration);
+          const data = await getAvailablePlugins(configuration, YarnVersion);
 
           if (!Object.prototype.hasOwnProperty.call(data, identStr))
             throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js).`);

@@ -124,7 +124,7 @@ describe(`Project`, () => {
       const zzz = project.storedPackages.get(zzzResolution)!;
 
       const ident = structUtils.makeIdent(null, `yyy`);
-      const expectedDescriptor = structUtils.makeDescriptor(ident, `^1.0.0`);
+      const expectedDescriptor = structUtils.makeDescriptor(ident, `npm:^1.0.0`);
 
       // This one is a sanity check
       expect(xxx.dependencies.get(ident.identHash)).toEqual(expectedDescriptor);

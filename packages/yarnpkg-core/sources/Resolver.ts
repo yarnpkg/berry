@@ -1,7 +1,7 @@
-import {FetchOptions}                                 from './Fetcher';
-import {Project}                                      from './Project';
-import {Report}                                       from './Report';
-import {Descriptor, Locator, Package, DescriptorHash} from './types';
+import {FetchOptions}                 from './Fetcher';
+import {Project}                      from './Project';
+import {Report}                       from './Report';
+import {Descriptor, Locator, Package} from './types';
 
 export type MinimalResolveOptions = {
   project: Project;
@@ -106,7 +106,7 @@ export interface Resolver {
    * into a locator. This is typically only needed for transform packages, as
    * you need to know the original resolution in order to copy it.
    */
-  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Array<Descriptor>;
+  getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions): Record<string, Descriptor>;
 
   /**
    * This function will, given a descriptor, return the list of locators that
@@ -120,7 +120,7 @@ export interface Resolver {
    * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getCandidates(descriptor: Descriptor, dependencies: Map<DescriptorHash, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
+  getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
 
   /**
    * This function will, given a descriptor and a list of locator references,
@@ -134,18 +134,22 @@ export interface Resolver {
    * Note that the parameter references aren't guaranteed to be supported by
    * the resolver, so they'll probably need to be filtered beforehand.
    *
-   * The returned array must be sorted in such a way that the preferred
+   * The returned array should be sorted in such a way that the preferred
    * locators are first. This will cause the resolution algorithm to prioritize
-   * them if possible (it doesn't guarantee that they'll end up being used).
-   *
-   * If the operation is unsupported by the resolver (i.e. if it can't be statically
-   * determined which references satisfy the target descriptor), `null` should be returned.
+   * them if possible (it doesn't guarantee that they'll end up being used). If
+   * the resolver is unable to provide a definite order (for example like the
+   * `file:` protocol resolver, where ordering references would make no sense),
+   * the `sorted` field should be set to `false`.
    *
    * @param descriptor The target descriptor.
+   * @param dependencies The resolution dependencies and their resolutions.
    * @param references The candidate references.
    * @param opts The resolution options.
    */
-  getSatisfying(descriptor: Descriptor, references: Array<string>, opts: ResolveOptions): Promise<Array<Locator> | null>;
+  getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions): Promise<{
+    locators: Array<Locator>;
+    sorted: boolean;
+  }>;
 
   /**
    * This function will, given a locator, return the full package definition
