@@ -1,18 +1,18 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "3.1.1",
+  "version": "4.0.0-rc.2",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "globby": "^11.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^1.13.0",
-    "typescript": "4.6.1-rc"
+    "typescript": "4.7.0-beta"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
@@ -35,5 +35,6 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.1"
 }

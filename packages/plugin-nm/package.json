@@ -10,7 +10,7 @@
     "@yarnpkg/plugin-pnp": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
     "@zkochan/cmd-shim": "^5.1.0",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
@@ -21,7 +21,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^"
   },
-  "version": "3.1.1",
+  "version": "4.0.0-rc.2",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"
@@ -44,5 +44,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.1"
 }

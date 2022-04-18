@@ -254,6 +254,23 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should not upgrade the existing dependency in the current project for preferReuse`,
+      makeTemporaryEnv({
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, {preferReuse: true}, async ({path, run, source}) => {
+        await run(`add`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should add a new peer dependency to the current project`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `no-deps`, `-P`);

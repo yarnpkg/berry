@@ -143,6 +143,25 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should support excluding patterns in included parent directory from the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib`,
+          `!/lib/b.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toContain(`lib/a.js`);
+        expect(stdout).not.toContain(`lib/b.js`);
+      }),
+    );
+
+    test(
       `it should support excluding patterns from the "files" field`,
       makeTemporaryEnv({
         files: [

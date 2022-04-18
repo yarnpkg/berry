@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/plugin-pnpm",
-  "version": "1.1.0",
+  "version": "2.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
     "@yarnpkg/plugin-stage": "workspace:^",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "p-limit": "^2.2.0",
     "tslib": "^1.13.0"
   },
@@ -37,5 +37,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "1.1.0"
 }

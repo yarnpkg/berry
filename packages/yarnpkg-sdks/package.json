@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/sdks",
-  "version": "2.6.0",
+  "version": "3.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -11,7 +11,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "chalk": "^3.0.0",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "comment-json": "^2.2.0",
     "lodash": "^4.17.15",
     "tslib": "^1.13.0"
@@ -42,5 +42,6 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "2.6.0"
 }

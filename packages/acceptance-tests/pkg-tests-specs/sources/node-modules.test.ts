@@ -1722,4 +1722,31 @@ describe(`Node_Modules`, () => {
         });
       }),
   );
+
+  it(`should support supportedArchitectures`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          native: `1.0.0`,
+        },
+      },
+      async ({path, run}) => {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          nodeLinker: `node-modules`,
+          supportedArchitectures: {
+            os: [`foo`],
+            cpu: [`x64`, `x86`],
+          },
+        });
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
+          `.yarn-state.yml`,
+          `native`,
+          `native-foo-x64`,
+          `native-foo-x86`,
+        ]);
+      }),
+  );
 });

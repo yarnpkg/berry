@@ -165,7 +165,35 @@ export async function resolveTag(configuration: Configuration, request: `stable`
   return data.latest[request];
 }
 
-export async function setVersion(configuration: Configuration, bundleVersion: string, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
+export async function setVersion(configuration: Configuration, bundleVersion: string | null, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
+  let bundleBuffer: Buffer;
+
+  const ensureBuffer = async () => {
+    if (typeof bundleBuffer === `undefined`)
+      bundleBuffer = await fetchBuffer();
+
+    return bundleBuffer;
+  };
+
+  if (bundleVersion === null) {
+    const bundleBuffer = await ensureBuffer();
+
+    await xfs.mktempPromise(async tmpDir => {
+      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
+      await xfs.writeFilePromise(temporaryPath, bundleBuffer!);
+
+      const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
+        cwd: tmpDir,
+        env: {...process.env, YARN_IGNORE_PATH: `1`},
+      });
+
+      bundleVersion = stdout.trim();
+      if (!semver.valid(bundleVersion)) {
+        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
+      }
+    });
+  }
+
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
@@ -189,24 +217,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   }
 
   if (probablyShouldUseYarnPath) {
-    const bundleBuffer = await fetchBuffer();
-
-    if (bundleVersion === null) {
-      await xfs.mktempPromise(async tmpDir => {
-        const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
-        await xfs.writeFilePromise(temporaryPath, bundleBuffer);
-
-        const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
-          cwd: tmpDir,
-          env: {...process.env, YARN_IGNORE_PATH: `1`},
-        });
-
-        bundleVersion = stdout.trim();
-        if (!semver.valid(bundleVersion)) {
-          throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
-        }
-      });
-    }
+    const bundleBuffer = await ensureBuffer();
 
     report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`);
 
@@ -231,8 +242,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
 
   manifest.packageManager = `yarn@${
-    bundleVersion && isTaggedYarnVersion
-      ? bundleVersion
+    isTaggedYarnVersion
+      ? bundleVersion!
       // If the version isn't tagged, we use the latest stable version as the wrapper
       : await resolveTag(configuration, `stable`)
   }`;
@@ -246,4 +257,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   await xfs.changeFilePromise(path, content, {
     automaticNewlines: true,
   });
+
+  return {
+    bundleVersion: bundleVersion!,
+  };
 }

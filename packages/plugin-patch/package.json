@@ -1,12 +1,12 @@
 {
   "name": "@yarnpkg/plugin-patch",
-  "version": "3.2.0",
+  "version": "4.0.0-rc.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
@@ -35,5 +35,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.2.0"
 }
