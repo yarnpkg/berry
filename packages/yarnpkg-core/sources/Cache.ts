@@ -322,7 +322,7 @@ export class Cache {
         const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum, opts);
 
         const cacheFileExists = tentativeCachePath !== null
-          ? await baseFs.existsPromise(tentativeCachePath)
+          ? this.markedFiles.has(tentativeCachePath) || await baseFs.existsPromise(tentativeCachePath)
           : false;
 
         const shouldMock = !!opts.mockedPackages?.has(locator.locatorHash) && (!this.check || !cacheFileExists);
@@ -372,7 +372,8 @@ export class Cache {
 
     const [shouldMock, cachePath, checksum] = await loadPackageThroughMutex();
 
-    this.markedFiles.add(cachePath);
+    if (!shouldMock)
+      this.markedFiles.add(cachePath);
 
     let zipFs: ZipFS | undefined;
 

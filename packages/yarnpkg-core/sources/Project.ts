@@ -1907,8 +1907,6 @@ export class Project {
           : `${lastEntryRemoved} appeared to be unused and was removed`,
       );
     }
-
-    cache.markedFiles.clear();
   }
 }
 
