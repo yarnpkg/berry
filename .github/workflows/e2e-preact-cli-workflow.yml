@@ -36,6 +36,10 @@ jobs:
         source scripts/e2e-setup-ci.sh
         git clone https://github.com/preactjs-templates/typescript.git default
         cd default/template
+
+        # TODO: Remove once https://github.com/preactjs-templates/typescript/issues/71 is fixed
+        rm -rf tests
+
         touch yarn.lock
         echo $(cat package.json | jq '.name = "pnp-test"') > package.json
         yarn
