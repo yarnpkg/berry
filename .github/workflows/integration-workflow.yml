@@ -231,8 +231,8 @@ jobs:
   big-endian:
     name: 'Big-endian debian w/ Node.js latest'
     runs-on: ubuntu-latest
-    # if: |
-    #   github.ref == 'refs/heads/master' || github.event.label.name == 'infra: big-endian'
+    if: |
+      github.ref == 'refs/heads/master'
     needs: build
 
     steps:
