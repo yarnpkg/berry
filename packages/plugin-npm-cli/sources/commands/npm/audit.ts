@@ -127,7 +127,7 @@ export default class AuditCommand extends BaseCommand {
       return 1;
     }
 
-    const outReport = await StreamReport.start({
+    await StreamReport.start({
       configuration,
       includeFooter: false,
       json: this.json,
@@ -140,6 +140,6 @@ export default class AuditCommand extends BaseCommand {
       }
     });
 
-    return outReport.exitCode();
+    return hasError ? 1 : 0;
   }
 }
