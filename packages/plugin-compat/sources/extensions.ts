@@ -780,12 +780,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`vue-template-compiler`]: `^2.6.0`,
     },
   }],
-  [`@parcel/transformer-image`, {
+  [`@parcel/transformer-image@*`, {
     peerDependencies: {
       [`@parcel/core`]: `*`,
     },
   }],
-  [`@parcel/transformer-js`, {
+  [`@parcel/transformer-js@*`, {
     peerDependencies: {
       [`@parcel/core`]: `*`,
     },
