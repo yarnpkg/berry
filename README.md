@@ -137,33 +137,33 @@ On top of our classic integration tests, we also run Yarn every day against the 
 <tr><th>Toolchains</th><th>Tooling</th></tr>
 <tr><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nm-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20PnP%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-pnp-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Create-Vue/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-create-vue-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gulp-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-preact-cli-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-svelte-kit-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-vue-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20PnP%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-cra-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Create-Vue/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-create-vue-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gatsby-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gulp-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-next-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-preact-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vue-cli-workflow.yml)<br/>
 </td><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-esbuild-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Docusaurus/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-docusaurus-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-eslint-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20FSEvents/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-fsevents-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-husky-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nyc-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-parcel-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-rollup-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Snowpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-snowpack-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-storybook-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Docusaurus/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-docusaurus-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-eslint-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20FSEvents/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-fsevents-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-husky-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-jest-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-mocha-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nyc-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-parcel-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-prettier-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Snowpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-snowpack-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>
 </td></tr>
 
 </table>
