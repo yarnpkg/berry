@@ -110,7 +110,6 @@ export default class RunCommand extends BaseCommand {
       if (this.require)
         nodeArgs.push(`--require=${this.require}`);
 
-
       return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {
         cwd: this.context.cwd,
         project,
