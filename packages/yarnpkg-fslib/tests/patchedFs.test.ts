@@ -465,4 +465,19 @@ describe(`patchedFs`, () => {
       });
     });
   });
+
+  it(`should support passing a FileHandle to fs.promises functions`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+
+      await expect(patchedFs.promises.readFile(fd, `utf8`)).resolves.toEqual(`foo`);
+
+      await fd.close();
+    });
+  });
 });

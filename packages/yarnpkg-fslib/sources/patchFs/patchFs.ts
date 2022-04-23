@@ -323,7 +323,13 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (fnName === `open`)
           continue;
 
-        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
+        setupFn(patchedFsPromises, origName, (pathLike: string | FileHandle<any>, ...args: Array<any>) => {
+          if (pathLike instanceof FileHandle) {
+            return ((pathLike as any)[origName] as Function).apply(pathLike, args);
+          } else {
+            return fakeImpl.call(fakeFs, pathLike, ...args);
+          }
+        });
       }
 
       setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
