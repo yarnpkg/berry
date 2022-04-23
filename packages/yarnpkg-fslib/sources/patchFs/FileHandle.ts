@@ -58,10 +58,22 @@ type WriteArgsString = [
 ];
 
 // TODO: Implement the Ref counter
+
+const kBaseFs = Symbol(`kBaseFs`);
+const kFd = Symbol(`kFd`);
+const kClosePromise = Symbol(`kClosePromise`);
+
 export class FileHandle<P extends Path> {
-  _baseFs: FakeFS<P>;
-  constructor(public fd: number, baseFs: FakeFS<P>) {
-    this._baseFs = baseFs;
+  [kBaseFs]: FakeFS<P>;
+  [kFd]: number;
+
+  constructor(fd: number, baseFs: FakeFS<P>) {
+    this[kBaseFs] = baseFs;
+    this[kFd] = fd;
+  }
+
+  get fd() {
+    return this[kFd];
   }
 
   appendFile(
@@ -69,7 +81,7 @@ export class FileHandle<P extends Path> {
     options?: (ObjectEncodingOptions & FlagAndOpenMode) | BufferEncoding | null,
   ): Promise<void> {
     const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
-    return this._baseFs.appendFilePromise(this.fd, data, encoding ? {encoding} : undefined);
+    return this[kBaseFs].appendFilePromise(this.fd, data, encoding ? {encoding} : undefined);
   }
 
   // FIXME: Missing FakeFS version
@@ -84,12 +96,12 @@ export class FileHandle<P extends Path> {
 
   createReadStream(options?: CreateReadStreamOptions): ReadStream {
     // TODO: Implement ref counter
-    return this._baseFs.createReadStream(null, {...options, fd: this.fd});
+    return this[kBaseFs].createReadStream(null, {...options, fd: this.fd});
   }
 
   createWriteStream(options?: CreateWriteStreamOptions): WriteStream {
     // TODO: Implement ref counter
-    return this._baseFs.createWriteStream(null, {...options, fd: this.fd});
+    return this[kBaseFs].createWriteStream(null, {...options, fd: this.fd});
   }
 
   // FIXME: Missing FakeFS version
@@ -137,7 +149,7 @@ export class FileHandle<P extends Path> {
       };
     }
 
-    const bytesRead = await this._baseFs.readPromise(this.fd, buffer, offset, length, position);
+    const bytesRead = await this[kBaseFs].readPromise(this.fd, buffer, offset, length, position);
 
     return {
       bytesRead,
@@ -168,7 +180,7 @@ export class FileHandle<P extends Path> {
     | null,
   ): Promise<string | Buffer> {
     const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
-    return this._baseFs.readFilePromise(this.fd, encoding);
+    return this[kBaseFs].readFilePromise(this.fd, encoding);
   }
 
   stat(
@@ -182,7 +194,7 @@ export class FileHandle<P extends Path> {
     }
   ): Promise<BigIntStats>;
   stat(opts?: StatOptions): Promise<Stats | BigIntStats> {
-    return this._baseFs.fstatPromise(this.fd, opts);
+    return this[kBaseFs].fstatPromise(this.fd, opts);
   }
 
   // FIXME: Missing FakeFS version
@@ -200,7 +212,7 @@ export class FileHandle<P extends Path> {
     options?: (ObjectEncodingOptions & FlagAndOpenMode & Abortable) | BufferEncoding | null,
   ): Promise<void> {
     const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
-    return this._baseFs.writeFilePromise(this.fd, data, encoding);
+    return this[kBaseFs].writeFilePromise(this.fd, data, encoding);
   }
 
   async write(...args: WriteArgsString): Promise<{ bytesWritten: number, buffer: string }>
@@ -208,12 +220,12 @@ export class FileHandle<P extends Path> {
   async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer> | WriteArgsString): Promise<{ bytesWritten: number, buffer: string | TBuffer }> {
     if (ArrayBuffer.isView(args[0])) {
       const [buffer, offset, length, position] = args as WriteArgsBuffer<TBuffer>;
-      const bytesWritten = await this._baseFs.writePromise(this.fd, buffer as unknown as Buffer, offset ?? undefined, length ?? undefined, position ?? undefined);
+      const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer as unknown as Buffer, offset ?? undefined, length ?? undefined, position ?? undefined);
       return {bytesWritten, buffer};
     } else {
       const [data, position, encoding] = args as WriteArgsString;
       // @ts-expect-error - FIXME: Types/implementation need to be updated in FakeFS
-      const bytesWritten = await this._baseFs.writePromise(this.fd, data, position, encoding);
+      const bytesWritten = await this[kBaseFs].writePromise(this.fd, data, position, encoding);
       return {bytesWritten, buffer: data};
     }
   }
@@ -228,12 +240,12 @@ export class FileHandle<P extends Path> {
     throw new Error(`Method not implemented.`);
   }
 
-  _closePromise: Promise<void> | null = null;
+  [kClosePromise]: Promise<void> | null = null;
   close(): Promise<void> {
-    if (this._closePromise) return this._closePromise;
+    if (this[kClosePromise]) return this[kClosePromise];
 
-    this._closePromise = this._baseFs.closePromise(this.fd);
-    this.fd = -1;
-    return this._closePromise;
+    this[kClosePromise] = this[kBaseFs].closePromise(this.fd);
+    this[kFd] = -1;
+    return this[kClosePromise];
   }
 }
