@@ -88,7 +88,7 @@ export class FileHandle<P extends Path> {
     options?: (ObjectEncodingOptions & FlagAndOpenMode) | BufferEncoding | null,
   ): Promise<void> {
     try {
-      this[kRef]();
+      this[kRef](this.appendFile);
       const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
       return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? {encoding} : undefined);
     } finally {
@@ -138,7 +138,7 @@ export class FileHandle<P extends Path> {
     position?: number | null,
   ): Promise<FileReadResult<Buffer>> {
     try {
-      this[kRef]();
+      this[kRef](this.read);
 
       let buffer: Buffer;
 
@@ -196,7 +196,7 @@ export class FileHandle<P extends Path> {
     | null,
   ): Promise<string | Buffer> {
     try {
-      this[kRef]();
+      this[kRef](this.readFile);
       const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
       return await this[kBaseFs].readFilePromise(this.fd, encoding);
     } finally {
@@ -216,7 +216,7 @@ export class FileHandle<P extends Path> {
   ): Promise<BigIntStats>;
   async stat(opts?: StatOptions): Promise<Stats | BigIntStats> {
     try {
-      this[kRef]();
+      this[kRef](this.stat);
       return await this[kBaseFs].fstatPromise(this.fd, opts);
     } finally {
       this[kUnref]();
@@ -238,7 +238,7 @@ export class FileHandle<P extends Path> {
     options?: (ObjectEncodingOptions & FlagAndOpenMode & Abortable) | BufferEncoding | null,
   ): Promise<void> {
     try {
-      this[kRef]();
+      this[kRef](this.writeFile);
       const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
       await this[kBaseFs].writeFilePromise(this.fd, data, encoding);
     } finally {
@@ -250,7 +250,7 @@ export class FileHandle<P extends Path> {
   async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer>): Promise<{ bytesWritten: number, buffer: TBuffer }>;
   async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer> | WriteArgsString): Promise<{ bytesWritten: number, buffer: string | TBuffer }> {
     try {
-      this[kRef]();
+      this[kRef](this.write);
       if (ArrayBuffer.isView(args[0])) {
         const [buffer, offset, length, position] = args as WriteArgsBuffer<TBuffer>;
         const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer as unknown as Buffer, offset ?? undefined, length ?? undefined, position ?? undefined);
@@ -303,7 +303,14 @@ export class FileHandle<P extends Path> {
     return this[kClosePromise];
   }
 
-  [kRef]() {
+  [kRef](caller: Function) {
+    if (this[kFd] === -1) {
+      const err = new Error(`file closed`);
+      (err as any).code = `EBADF`;
+      (err as any).syscall = caller.name;
+      throw err;
+    }
+
     this[kRefs]++;
   }
 

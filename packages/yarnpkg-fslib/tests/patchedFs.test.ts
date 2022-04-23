@@ -447,4 +447,22 @@ describe(`patchedFs`, () => {
       expect(fd.fd).toEqual(-1);
     });
   });
+
+  it(`should throw when when using a closed FileHandle`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+      await fd.close();
+
+      await expect(fd.stat()).rejects.toMatchObject({
+        message: `file closed`,
+        code: `EBADF`,
+        syscall: `stat`,
+      });
+    });
+  });
 });
