@@ -266,9 +266,33 @@ export class FileHandle<P extends Path> {
     }
   }
 
-  // FIXME: Missing FakeFS version
-  writev(buffers: ReadonlyArray<NodeJS.ArrayBufferView>, position?: number): Promise<WriteVResult> {
-    throw new Error(`Method not implemented.`);
+  // TODO: Use writev from FakeFS when that is implemented
+  async writev(buffers: Array<NodeJS.ArrayBufferView>, position?: number): Promise<WriteVResult> {
+    try {
+      this[kRef](this.writev);
+
+      let bytesWritten = 0;
+
+      if (typeof position !== `undefined`) {
+        for (const buffer of buffers) {
+          const writeResult = await this.write(buffer as unknown as Buffer, undefined, undefined, position);
+          bytesWritten += writeResult.bytesWritten;
+          position += writeResult.bytesWritten;
+        }
+      } else {
+        for (const buffer of buffers) {
+          const writeResult = await this.write(buffer as unknown as Buffer);
+          bytesWritten += writeResult.bytesWritten;
+        }
+      }
+
+      return {
+        buffers,
+        bytesWritten,
+      };
+    } finally {
+      this[kUnref]();
+    }
   }
 
   // FIXME: Missing FakeFS version
