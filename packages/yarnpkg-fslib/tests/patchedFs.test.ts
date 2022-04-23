@@ -428,4 +428,23 @@ describe(`patchedFs`, () => {
       await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
     });
   });
+
+  it(`should support ref counting in FileHandle`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+
+      await expect(Promise.all([
+        fd.stat(),
+        fd.close(),
+        fd.stat(),
+      ])).resolves.toBeTruthy();
+
+      expect(fd.fd).toEqual(-1);
+    });
+  });
 });
