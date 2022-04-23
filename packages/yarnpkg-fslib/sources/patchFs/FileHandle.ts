@@ -199,7 +199,8 @@ export class FileHandle<P extends Path> {
     data: string | Uint8Array,
     options?: (ObjectEncodingOptions & FlagAndOpenMode & Abortable) | BufferEncoding | null,
   ): Promise<void> {
-    throw new Error(`Method not implemented.`);
+    const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
+    return this._baseFs.writeFilePromise(this.fd, data, encoding);
   }
 
   async write(...args: WriteArgsString): Promise<{ bytesWritten: number, buffer: string }>
