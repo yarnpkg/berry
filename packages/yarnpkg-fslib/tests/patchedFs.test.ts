@@ -305,6 +305,38 @@ describe(`patchedFs`, () => {
     expect(statUtils.areStatsEqual(fdStats, syncStats)).toEqual(true);
   });
 
+  it(`should support FileHandle.read`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+
+        const data = Buffer.allocUnsafe(3);
+        await expect(fd.read(data, 0, 3)).resolves.toMatchObject({
+          buffer: data,
+          bytesRead: 3,
+        });
+
+        await fd.close();
+      }
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+
+        // @ts-expect-error - The implementation allows no arguments
+        const {buffer, bytesRead} = await fd.read();
+        expect(bytesRead).toEqual(3);
+        expect(buffer.subarray(0, 3)).toEqual(Buffer.from(`foo`));
+
+        await fd.close();
+      }
+    });
+  });
+
   it(`should support FileHandle.write`, async () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
