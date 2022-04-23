@@ -393,4 +393,24 @@ describe(`patchedFs`, () => {
       await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
     });
   });
+
+  it(`should support FileHandle.appendFile`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+
+      // Move to the end of the file
+      await fd.readFile();
+
+      await expect(fd.appendFile(`bar`)).resolves.toBeUndefined();
+
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
+    });
+  });
 });
