@@ -498,10 +498,25 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vuejs/vue-loader/pull/1853
-  [`vue-loader@<=16.3.1`, {
+  // https://github.com/vuejs/vue-loader/commit/089473af97077b8e14b3feff48d32d2733ad792c
+  [`vue-loader@<=16.3.3`, {
     peerDependencies: {
       '@vue/compiler-sfc': `^3.0.8`,
       webpack: `^4.1.0 || ^5.0.0-0`,
+    },
+    peerDependenciesMeta: {
+      '@vue/compiler-sfc': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/vue-loader/pull/1944
+  [`vue-loader@^16.7.0`, {
+    peerDependencies: {
+      '@vue/compiler-sfc': `^3.0.8`,
+      vue: `^3.2.13`,
+    },
+    peerDependenciesMeta: {
+      '@vue/compiler-sfc': optionalPeerDep,
+      vue: optionalPeerDep,
     },
   }],
   // https://github.com/salesforce-ux/scss-parser/pull/43
