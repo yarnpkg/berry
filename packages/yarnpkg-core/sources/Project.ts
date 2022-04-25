@@ -337,6 +337,10 @@ export class Project {
           const version = manifest.version;
 
           const languageName = manifest.languageName || defaultLanguageName;
+
+          if (typeof data.linkType === `undefined`)
+            throw new Error(`Assertion failed: Expected the lockfile entry to have a linkType field (${key})`);
+
           const linkType = data.linkType.toUpperCase() as LinkType;
 
           const conditions = data.conditions ?? null;
