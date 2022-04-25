@@ -326,7 +326,9 @@ export default class UpCommand extends BaseCommand {
       } else {
         const resolver = configuration.makeResolver();
         const resolveOptions: MinimalResolveOptions = {project, resolver};
-        const bound = resolver.bindDescriptor(current, workspace.anchoredLocator, resolveOptions);
+
+        const normalizedDependency = configuration.normalizeDependency(current);
+        const bound = resolver.bindDescriptor(normalizedDependency, workspace.anchoredLocator, resolveOptions);
 
         project.forgetResolution(bound);
       }
