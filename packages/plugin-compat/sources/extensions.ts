@@ -790,19 +790,33 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/JuniorTour/vue-template-babel-compiler/pull/40
-  [`vue-template-babel-compiler@*`, {
+  [`vue-template-babel-compiler@<1.2.0`, {
     peerDependencies: {
       [`vue-template-compiler`]: `^2.6.0`,
     },
   }],
-  [`@parcel/transformer-image@*`, {
+  // https://github.com/parcel-bundler/parcel/pull/7977
+  [`@parcel/transformer-image@<2.5.0`, {
     peerDependencies: {
       [`@parcel/core`]: `*`,
     },
   }],
-  [`@parcel/transformer-js@*`, {
+  // https://github.com/parcel-bundler/parcel/pull/7977
+  [`@parcel/transformer-js@<2.5.0`, {
     peerDependencies: {
       [`@parcel/core`]: `*`,
+    },
+  }],
+  // This doesn't have an upstream PR.
+  // The auto types causes two instances of eslint-config-react-app,
+  // one that has access to @types/eslint and one that doesn't.
+  // ESLint doesn't allow the same plugin to show up multiple times so it throws.
+  // As a temporary workaround until create-react-app fixes their ESLint
+  // setup we make eslint a peer dependency /w fallback.
+  // TODO: Lock the range when create-react-app fixes their ESLint setup
+  [`react-scripts@*`, {
+    peerDependencies: {
+      [`eslint`]: `*`,
     },
   }],
 ];
