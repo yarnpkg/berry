@@ -789,4 +789,20 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'reflect-metadata': `^0.1.13`,
     },
   }],
+  // https://github.com/JuniorTour/vue-template-babel-compiler/pull/40
+  [`vue-template-babel-compiler@*`, {
+    peerDependencies: {
+      [`vue-template-compiler`]: `^2.6.0`,
+    },
+  }],
+  [`@parcel/transformer-image@*`, {
+    peerDependencies: {
+      [`@parcel/core`]: `*`,
+    },
+  }],
+  [`@parcel/transformer-js@*`, {
+    peerDependencies: {
+      [`@parcel/core`]: `*`,
+    },
+  }],
 ];
