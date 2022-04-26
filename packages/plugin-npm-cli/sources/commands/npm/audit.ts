@@ -53,7 +53,7 @@ export default class AuditCommand extends BaseCommand {
       `yarn npm audit --exclude package1 --exclude package2`,
     ], [
       `Ignore specific advisories`,
-      `yarn npm audit --ignore GHSA-xxxx-xxxx-xxxx --exclude GHSA-xxxx-xxxx-xxxx`,
+      `yarn npm audit --ignore 1234567 --ignore 7654321`,
     ]],
   });
 
