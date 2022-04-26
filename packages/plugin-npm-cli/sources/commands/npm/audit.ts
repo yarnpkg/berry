@@ -24,9 +24,9 @@ export default class AuditCommand extends BaseCommand {
 
       If the \`--json\` flag is set, Yarn will print the output exactly as received from the registry. Regardless of this flag, the process will exit with a non-zero exit code if a report is found for the selected packages.
 
-      If certain packages produce false positives for a particular environment, the \`--exclude\` flag can be used to exclude any number of packages from the audit.
+      If certain packages produce false positives for a particular environment, the \`--exclude\` flag can be used to exclude any number of packages from the audit. This can also be set in the configuration file with the \`npmAuditExcludePackages\` option.
 
-      If particular advisories are needed to be ignored, the \`--ignore\` flag can be used with Advisory ID's to ignore any number of advisories in the audit report.
+      If particular advisories are needed to be ignored, the \`--ignore\` flag can be used with Advisory ID's to ignore any number of advisories in the audit report. This can also be set in the configuration file with the \`npmAuditIgnoreAdvisories\` option.
 
       To understand the dependency tree requiring vulnerable packages, check the raw report with the \`--json\` flag or use \`yarn why <package>\` to get more information as to who depends on them.
     `,
@@ -109,8 +109,9 @@ export default class AuditCommand extends BaseCommand {
       }
     }
 
-    if (this.excludes) {
-      for (const pkg of this.excludes) {
+    const exclude_packages = [...this.excludes, ...configuration.get(`npmAuditExcludePackages`)];
+    if (exclude_packages) {
+      for (const pkg of exclude_packages) {
         delete requires[pkg];
         delete dependencies[pkg];
         for (const key of Object.keys(dependencies)) {
@@ -144,11 +145,12 @@ export default class AuditCommand extends BaseCommand {
     if (httpReport.hasErrors())
       return httpReport.exitCode();
 
+    const ignore_advisories = [...this.ignores, ...configuration.get(`npmAuditIgnoreAdvisories`)];
     const ignored_severities = Object.entries(result.advisories)
-      .filter(([key, value]) => this.ignores.includes(key))
+      .filter(([key, value]) => ignore_advisories.includes(key))
       .map(([key, value]) => value.severity);
 
-    result.advisories = Object.fromEntries(Object.entries(result.advisories).filter(([key, value]) => !this.ignores.includes(key)));
+    result.advisories = Object.fromEntries(Object.entries(result.advisories).filter(([key, value]) => !ignore_advisories.includes(key)));
 
     for (const severity of ignored_severities)
       result.metadata.vulnerabilities[severity]--;
