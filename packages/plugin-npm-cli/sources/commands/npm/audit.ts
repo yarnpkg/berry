@@ -109,14 +109,17 @@ export default class AuditCommand extends BaseCommand {
       }
     }
 
-    const exclude_packages = [...this.excludes, ...configuration.get(`npmAuditExcludePackages`)];
-    if (exclude_packages) {
-      for (const pkg of exclude_packages) {
-        delete requires[pkg];
-        delete dependencies[pkg];
-        for (const key of Object.keys(dependencies)) {
-          delete dependencies[key].requires[pkg];
-        }
+    const excludedPackages = [
+      ...configuration.get(`npmAuditExcludePackages`),
+      ...this.excludes,
+    ];
+
+    for (const pkg of excludedPackages) {
+      delete requires[pkg];
+      delete dependencies[pkg];
+
+      for (const key of Object.keys(dependencies)) {
+        delete dependencies[key].requires[pkg];
       }
     }
 
@@ -145,16 +148,19 @@ export default class AuditCommand extends BaseCommand {
     if (httpReport.hasErrors())
       return httpReport.exitCode();
 
-    const ignore_advisories = [...this.ignores, ...configuration.get(`npmAuditIgnoreAdvisories`)];
-    const ignored_severities = Object.entries(result.advisories)
-      .filter(([key, value]) => ignore_advisories.includes(key))
-      .map(([key, value]) => value.severity);
+    const ignoredAdvisories = new Set([
+      ...configuration.get(`npmAuditIgnoreAdvisories`),
+      ...this.ignores,
+    ]);
 
-    result.advisories = Object.fromEntries(Object.entries(result.advisories).filter(([key, value]) => !ignore_advisories.includes(key)));
-
-    for (const severity of ignored_severities)
-      result.metadata.vulnerabilities[severity]--;
-
+    for (const key of ignoredAdvisories) {
+      const entry = result.advisories[key];
+      delete result.advisories[key];
+      
+      if (typeof entry !== `undefined`) {
+        result.metadata.vulnerabilities[value.severity] -= 1;
+      }
+    }
 
     const hasError = npmAuditUtils.isError(result.metadata.vulnerabilities, this.severity);
     if (!this.json && hasError) {
