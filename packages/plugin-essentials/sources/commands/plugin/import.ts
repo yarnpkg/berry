@@ -83,8 +83,15 @@ export default class PluginDlCommand extends BaseCommand {
           const identStr = structUtils.stringifyIdent(locator);
           const data = await getAvailablePlugins(configuration, YarnVersion);
 
-          if (!Object.prototype.hasOwnProperty.call(data, identStr))
-            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js).`);
+          if (!Object.prototype.hasOwnProperty.call(data, identStr)) {
+            let message = `Couldn't find a plugin named ${structUtils.prettyIdent(configuration, locator)} on the remote registry.\n`;
+            if (configuration.plugins.has(identStr))
+              message += `A plugin named ${structUtils.prettyIdent(configuration, locator)} is already installed; possibly attempting to import a built-in plugin.`;
+            else
+              message += `Note that only the plugins referenced on our website (${formatUtils.pretty(configuration, `https://github.com/yarnpkg/berry/blob/master/plugins.yml`, formatUtils.Type.URL)}) can be referenced by their name; any other plugin will have to be referenced through its public url (for example ${formatUtils.pretty(configuration, `https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js`, formatUtils.Type.URL)}).`;
+
+            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, message);
+          }
 
           pluginSpec = identStr;
           pluginUrl = data[identStr].url;
