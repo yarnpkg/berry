@@ -3,6 +3,40 @@ import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 describe(`Commands`, () => {
   describe(`up`, () => {
     test(
+      `it should bump dependency ranges to their latest`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `^1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`up`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toStrictEqual({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it shouldn't do anything when the dependency is already the latest`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `^2.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`up`, `no-deps`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toStrictEqual({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should upgrade all dependencies matching a glob pattern (scope & star)`,
       makeTemporaryEnv({
         dependencies: {

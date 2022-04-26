@@ -11,7 +11,7 @@ function makeGitEnvironment() {
   return {
     ...process.env,
     // An option passed to SSH by Git to prevent SSH from asking for data (which would cause installs to hang when the SSH keys are missing)
-    GIT_SSH_COMMAND: `ssh -o BatchMode=yes`,
+    GIT_SSH_COMMAND: process.env.GIT_SSH_COMMAND || `${process.env.GIT_SSH || `ssh`} -o BatchMode=yes`,
   };
 }
 

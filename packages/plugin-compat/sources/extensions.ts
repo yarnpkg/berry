@@ -498,10 +498,25 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vuejs/vue-loader/pull/1853
-  [`vue-loader@<=16.3.1`, {
+  // https://github.com/vuejs/vue-loader/commit/089473af97077b8e14b3feff48d32d2733ad792c
+  [`vue-loader@<=16.3.3`, {
     peerDependencies: {
       '@vue/compiler-sfc': `^3.0.8`,
       webpack: `^4.1.0 || ^5.0.0-0`,
+    },
+    peerDependenciesMeta: {
+      '@vue/compiler-sfc': optionalPeerDep,
+    },
+  }],
+  // https://github.com/vuejs/vue-loader/pull/1944
+  [`vue-loader@^16.7.0`, {
+    peerDependencies: {
+      '@vue/compiler-sfc': `^3.0.8`,
+      vue: `^3.2.13`,
+    },
+    peerDependenciesMeta: {
+      '@vue/compiler-sfc': optionalPeerDep,
+      vue: optionalPeerDep,
     },
   }],
   // https://github.com/salesforce-ux/scss-parser/pull/43
@@ -772,6 +787,42 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`auto-relay@*`, {
     peerDependencies: {
       'reflect-metadata': `^0.1.13`,
+    },
+  }],
+  // https://github.com/JuniorTour/vue-template-babel-compiler/pull/40
+  [`vue-template-babel-compiler@<1.2.0`, {
+    peerDependencies: {
+      [`vue-template-compiler`]: `^2.6.0`,
+    },
+  }],
+  // https://github.com/parcel-bundler/parcel/pull/7977
+  [`@parcel/transformer-image@<2.5.0`, {
+    peerDependencies: {
+      [`@parcel/core`]: `*`,
+    },
+  }],
+  // https://github.com/parcel-bundler/parcel/pull/7977
+  [`@parcel/transformer-js@<2.5.0`, {
+    peerDependencies: {
+      [`@parcel/core`]: `*`,
+    },
+  }],
+  // Experiment to unblock the usage of Parcel in E2E tests
+  [`parcel@*`, {
+    peerDependenciesMeta: {
+      [`@parcel/core`]: optionalPeerDep,
+    },
+  }],
+  // This doesn't have an upstream PR.
+  // The auto types causes two instances of eslint-config-react-app,
+  // one that has access to @types/eslint and one that doesn't.
+  // ESLint doesn't allow the same plugin to show up multiple times so it throws.
+  // As a temporary workaround until create-react-app fixes their ESLint
+  // setup we make eslint a peer dependency /w fallback.
+  // TODO: Lock the range when create-react-app fixes their ESLint setup
+  [`react-scripts@*`, {
+    peerDependencies: {
+      [`eslint`]: `*`,
     },
   }],
 ];

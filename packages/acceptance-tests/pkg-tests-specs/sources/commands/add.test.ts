@@ -143,13 +143,13 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should add a new regular dependency to the current project (resolved tag)`,
+      `it should add a new regular dependency to the current project (resolved backward tag)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await run(`add`, `no-deps@latest`);
+        await run(`add`, `no-deps-backward-tags@rc`);
 
         await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
-            [`no-deps`]: `^2.0.0`,
+            [`no-deps-backward-tags`]: `1.0.0-rc.1`,
           },
         });
       }),
