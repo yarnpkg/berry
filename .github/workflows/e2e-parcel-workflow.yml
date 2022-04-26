@@ -49,7 +49,7 @@ jobs:
 
         # TypeScript (tsc)
 
-        yarn add -D @parcel/config-default@nightly @parcel/validator-typescript@nightly @types/lodash typescript
+        yarn add -D @parcel/core@nightly @parcel/config-default@nightly @parcel/validator-typescript@nightly @types/lodash typescript
 
         echo "{\"extends\": \"@parcel/config-default\", \"validators\": {\"*.{ts,tsx}\": [\"@parcel/validator-typescript\"]}}" | tee .parcelrc
 
@@ -82,7 +82,7 @@ jobs:
         yarn add @parcel/transformer-yaml@nightly
 
         echo "import data from './data.yaml';console.log(data.berry.works.with[0]);" | tee index.js
-        echo "berry: {works: {with:  [Parcel]}}" | tee data.yaml
+        echo "berry: {works: {with: [Parcel]}}" | tee data.yaml
 
         yarn parcel build index.js
         [[ "$(node dist/index.js)" = "Parcel" ]]
@@ -91,7 +91,7 @@ jobs:
 
         # MDX
 
-        yarn add react react-dom react-select @mdx-js/mdx @mdx-js/react @parcel/transformer-mdx@nightly
+        yarn add react react-dom react-select @mdx-js/mdx @mdx-js/react@^1 @parcel/transformer-mdx@nightly
 
         echo "import page from './page.mdx'; console.log('MDX Built');" | tee index.js
         cat > page.mdx <<EOT

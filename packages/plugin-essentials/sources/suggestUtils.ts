@@ -329,11 +329,8 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
             });
           } else {
-            let latest = await fetchDescriptorFrom(request, `${project.configuration.get(`defaultProtocol`)}${requestTag}`, {project, cache, workspace, preserveModifier: false});
-
+            const latest = await fetchDescriptorFrom(request, requestTag, {project, cache, workspace, modifier});
             if (latest) {
-              latest = applyModifier(latest, modifier);
-
               suggested.push({
                 descriptor: latest,
                 name: `Use ${structUtils.prettyDescriptor(project.configuration, latest)}`,
@@ -352,8 +349,20 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   };
 }
 
-export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, workspace, preserveModifier = true}: {project: Project, cache: Cache, workspace: Workspace, preserveModifier?: boolean | string}) {
-  const latestDescriptor = structUtils.makeDescriptor(ident, range);
+export type FetchDescriptorFromOptions = {
+  project: Project;
+  cache: Cache;
+  workspace: Workspace;
+} & ({
+  preserveModifier?: boolean | string;
+  modifier?: undefined;
+} | {
+  preserveModifier?: undefined;
+  modifier: Modifier;
+});
+
+export async function fetchDescriptorFrom(ident: Ident, range: string, {project, cache, workspace, preserveModifier = true, modifier}: FetchDescriptorFromOptions) {
+  const latestDescriptor = project.configuration.normalizeDependency(structUtils.makeDescriptor(ident, range));
 
   const report = new ThrowReport();
 
@@ -368,7 +377,6 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const boundDescriptor = resolver.bindDescriptor(latestDescriptor, workspace.anchoredLocator, resolveOptions);
 
   const candidateLocators = await resolver.getCandidates(boundDescriptor, {}, resolveOptions);
-
   if (candidateLocators.length === 0)
     return null;
 
@@ -379,13 +387,35 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   if (protocol === project.configuration.get(`defaultProtocol`))
     protocol = null;
 
-  if (semver.valid(selector) && preserveModifier !== false) {
-    const referenceRange = typeof preserveModifier === `string`
-      ? preserveModifier
-      : latestDescriptor.range;
+  if (semver.valid(selector)) {
+    const rawSelector = selector;
 
-    const modifier = extractRangeModifier(referenceRange, {project});
-    selector = modifier + selector;
+    if (typeof modifier !== `undefined`) {
+      selector = modifier + selector;
+    } else if (preserveModifier !== false) {
+      const referenceRange = typeof preserveModifier === `string`
+        ? preserveModifier
+        : latestDescriptor.range;
+
+      const modifier = extractRangeModifier(referenceRange, {project});
+      selector = modifier + selector;
+    }
+
+    const screeningDescriptor = structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
+    const screeningLocators = await resolver.getCandidates(project.configuration.normalizeDependency(screeningDescriptor), {}, resolveOptions);
+
+    // If turning 1.0.0 into ^1.0.0 would cause it to resolve to something else
+    // (for example 1.1.0), then we don't add the modifier.
+    //
+    // This is to account for "weird" release strategies where things like
+    // prereleases are released as older versions than the latest available
+    // ones.
+    //
+    // Ex 1: https://github.com/parcel-bundler/parcel/issues/8010
+    // Ex 2: https://github.com/sveltejs/kit/discussions/4645
+    if (screeningLocators.length !== 1) {
+      selector = rawSelector;
+    }
   }
 
   return structUtils.makeDescriptor(bestLocator, structUtils.makeRange({protocol, source, params, selector}));
