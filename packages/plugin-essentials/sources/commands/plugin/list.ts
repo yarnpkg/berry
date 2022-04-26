@@ -10,7 +10,7 @@ export async function getAvailablePlugins(configuration: Configuration, version:
   const data = parseSyml(raw.toString());
 
   return Object.fromEntries(Object.entries(data).filter(([pluginName, pluginData]) => {
-    return !version || semverUtils.satisfiesWithPrereleases(version, pluginData.range ?? `<4.0.0`);
+    return !version || semverUtils.satisfiesWithPrereleases(version, pluginData.range ?? `<4.0.0-rc.1`);
   }));
 }
 
