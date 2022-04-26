@@ -49,7 +49,7 @@ jobs:
 
         # TypeScript (tsc)
 
-        yarn add -D @parcel/config-default@nightly @parcel/validator-typescript@nightly @types/lodash typescript
+        yarn add -D @parcel/core@nightly @parcel/config-default@nightly @parcel/validator-typescript@nightly @types/lodash typescript
 
         echo "{\"extends\": \"@parcel/config-default\", \"validators\": {\"*.{ts,tsx}\": [\"@parcel/validator-typescript\"]}}" | tee .parcelrc
 

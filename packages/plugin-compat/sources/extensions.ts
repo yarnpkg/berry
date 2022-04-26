@@ -807,6 +807,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`@parcel/core`]: `*`,
     },
   }],
+  // Experiment to unblock the usage of Parcel in E2E tests
+  [`parcel@*`, {
+    peerDependenciesMeta: {
+      [`@parcel/core`]: optionalPeerDep,
+    },
+  }],
   // This doesn't have an upstream PR.
   // The auto types causes two instances of eslint-config-react-app,
   // one that has access to @types/eslint and one that doesn't.
