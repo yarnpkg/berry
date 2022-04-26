@@ -156,9 +156,9 @@ export default class AuditCommand extends BaseCommand {
     for (const key of ignoredAdvisories) {
       const entry = result.advisories[key];
       delete result.advisories[key];
-      
+
       if (typeof entry !== `undefined`) {
-        result.metadata.vulnerabilities[value.severity] -= 1;
+        result.metadata.vulnerabilities[entry.severity] -= 1;
       }
     }
 
