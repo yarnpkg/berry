@@ -1600,7 +1600,10 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
-      await this.cacheCleanup(opts);
+
+      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile) {
+        await this.cacheCleanup(opts);
+      }
     });
 
     const immutablePatterns = opts.immutable
@@ -1836,9 +1839,6 @@ export class Project {
   }
 
   async cacheCleanup({cache, mode, persistProject, report}: InstallOptions)  {
-    if (mode === InstallMode.UpdateLockfile)
-      if (typeof persistProject !== `undefined` && !persistProject)
-        return;
     if (this.configuration.get(`enableGlobalCache`)) return;
 
     const PRESERVED_FILES = new Set([
