@@ -24,4 +24,18 @@ module.exports = {
       },
     },
   ],
+  rules: {
+    'no-restricted-properties': [2,
+      {
+        object: `semver`,
+        property: `validRange`,
+        message: `Use 'semverUtils.validRange' instead`,
+      },
+      {
+        object: `semver`,
+        property: `Range`,
+        message: `Use 'semverUtils.validRange' instead`,
+      },
+    ],
+  },
 };

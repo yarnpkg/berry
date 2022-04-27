@@ -1,0 +1,3 @@
+declined:
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/core"

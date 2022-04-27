@@ -1,5 +1,5 @@
 import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration} from '@yarnpkg/core';
-import {formatUtils, structUtils}                                                                                                                  from '@yarnpkg/core';
+import {formatUtils, structUtils, semverUtils}                                                                                                     from '@yarnpkg/core';
 import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
 import semver                                                                                                                                      from 'semver';
 
@@ -209,7 +209,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
     throw new Error(`Invalid maxResults (${maxResults})`);
 
   const [requestRange, requestTag] = request.range !== `unknown`
-    ? fixed || semver.validRange(request.range) || !request.range.match(/^[a-z0-9._-]+$/i)
+    ? fixed || semverUtils.validRange(request.range) || !request.range.match(/^[a-z0-9._-]+$/i)
       ? [request.range, `latest`]
       : [`unknown`, request.range]
     : [`unknown`, `latest`];
