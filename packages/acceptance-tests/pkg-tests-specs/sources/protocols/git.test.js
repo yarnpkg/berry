@@ -24,8 +24,6 @@ const TESTED_URLS = {
   [`https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`},
 };
 
-let npmRegistryUrl;
-
 describe(`Protocols`, () => {
   describe(`git:`, () => {
     for (const [url, {ci = true, version}] of Object.entries(TESTED_URLS)) {
@@ -156,10 +154,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`has-prepack-npm`]: startPackageServer().then(url => {
-              npmRegistryUrl = url;
-              return `${url}/repositories/has-prepack-npm.git`;
-            }),
+            [`has-prepack-npm`]: startPackageServer().then(url => `${url}/repositories/has-prepack-npm.git`),
           },
         },
         async ({path, run, source}) => {
@@ -173,7 +168,7 @@ describe(`Protocols`, () => {
 
               // also force npm to use the package server as the registry so that the `has-bin-entry`
               // dependency can be resolved
-              NPM_CONFIG_REGISTRY: `${npmRegistryUrl}`,
+              NPM_CONFIG_REGISTRY: await startPackageServer(),
             },
           });
           await expect(source(`require('has-prepack-npm')`)).resolves.toEqual(42);
