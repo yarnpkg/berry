@@ -2,6 +2,7 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage}                                                    from 'clipanion';
+import micromatch                                                                  from 'micromatch';
 import * as t                                                                      from 'typanion';
 
 import * as npmAuditTypes                                                          from '../../npmAuditTypes';
@@ -80,11 +81,11 @@ export default class AuditCommand extends BaseCommand {
   });
 
   excludes = Option.Array(`--exclude`, [], {
-    description: `Packages to exclude from audit`,
+    description: `Array of glob patterns of packages to exclude from audit`,
   });
 
   ignores = Option.Array(`--ignore`, [], {
-    description: `Advisories to ignore in the audit report`,
+    description: `Array of glob patterns of advisory ID's to ignore in the audit report`,
   });
 
   async execute() {
@@ -109,17 +110,30 @@ export default class AuditCommand extends BaseCommand {
       }
     }
 
-    const excludedPackages = [
+    const excludedPackages = Array.from(new Set([
       ...configuration.get(`npmAuditExcludePackages`),
       ...this.excludes,
-    ];
+    ]));
 
-    for (const pkg of excludedPackages) {
-      delete requires[pkg];
-      delete dependencies[pkg];
+    if (excludedPackages) {
+      for (const pkg of Object.keys(requires)) {
+        if (micromatch.isMatch(pkg, excludedPackages)) {
+          delete requires[pkg];
+        }
+      }
+
+      for (const pkg of Object.keys(dependencies)) {
+        if (micromatch.isMatch(pkg, excludedPackages)) {
+          delete dependencies[pkg];
+        }
+      }
 
       for (const key of Object.keys(dependencies)) {
-        delete dependencies[key].requires[pkg];
+        for (const pkg of Object.keys(dependencies[key].requires)) {
+          if (micromatch.isMatch(pkg, excludedPackages)) {
+            delete dependencies[key].requires[pkg];
+          }
+        }
       }
     }
 
@@ -148,17 +162,18 @@ export default class AuditCommand extends BaseCommand {
     if (httpReport.hasErrors())
       return httpReport.exitCode();
 
-    const ignoredAdvisories = new Set([
+    const ignoredAdvisories = Array.from(new Set([
       ...configuration.get(`npmAuditIgnoreAdvisories`),
       ...this.ignores,
-    ]);
+    ]));
 
-    for (const key of ignoredAdvisories) {
-      const entry = result.advisories[key];
-      delete result.advisories[key];
-
-      if (typeof entry !== `undefined`) {
-        result.metadata.vulnerabilities[entry.severity] -= 1;
+    if (ignoredAdvisories) {
+      for (const advisory of Object.keys(result.advisories)) {
+        if (micromatch.isMatch(advisory, ignoredAdvisories)) {
+          const entry = result.advisories[advisory];
+          result.metadata.vulnerabilities[entry.severity] -= 1;
+          delete result.advisories[advisory];
+        }
       }
     }
 

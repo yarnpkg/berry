@@ -26,13 +26,13 @@ const plugin: Plugin = {
       default: null,
     },
     npmAuditExcludePackages: {
-      description: `List of packages to exclude from npm audit`,
+      description: `Array of glob patterns of packages to exclude from npm audit`,
       type: SettingsType.STRING,
       default: [],
       isArray: true,
     },
     npmAuditIgnoreAdvisories: {
-      description: `List of advisory IDs to exclude from npm audit`,
+      description: `Array of glob patterns of advisory IDs to exclude from npm audit`,
       type: SettingsType.STRING,
       default: [],
       isArray: true,
