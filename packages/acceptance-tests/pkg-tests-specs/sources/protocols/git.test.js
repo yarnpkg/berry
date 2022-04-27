@@ -24,6 +24,8 @@ const TESTED_URLS = {
   [`https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`},
 };
 
+let npmRegistryUrl;
+
 describe(`Protocols`, () => {
   describe(`git:`, () => {
     for (const [url, {ci = true, version}] of Object.entries(TESTED_URLS)) {
@@ -144,6 +146,37 @@ describe(`Protocols`, () => {
           await run(`install`);
 
           await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
+        },
+      ),
+      45000,
+    );
+
+    test(
+      `it should guarantee that all dependencies will be installed when using npm to setup npm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`has-prepack-npm`]: startPackageServer().then(url => {
+              npmRegistryUrl = url;
+              return `${url}/repositories/has-prepack-npm.git`;
+            }),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`, {
+            env: {
+              // if this is set then npm will be executed as if `--omit=dev` was passed during the install
+              // but `has-prepack-npm` requires dev dependencies to be present so this is a good way to
+              // verify that yarn isn't throw off by this when handling the clone, install, and pack process
+              // for git dependencies (see: https://docs.npmjs.com/cli/v8/using-npm/config#omit)
+              NODE_ENV: `production`,
+
+              // also force npm to use the package server as the registry so that the `has-bin-entry`
+              // dependency can be resolved
+              NPM_CONFIG_REGISTRY: `${npmRegistryUrl}`,
+            },
+          });
+          await expect(source(`require('has-prepack-npm')`)).resolves.toEqual(42);
         },
       ),
       45000,
