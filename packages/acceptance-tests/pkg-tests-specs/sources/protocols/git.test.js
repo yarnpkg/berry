@@ -158,7 +158,7 @@ describe(`Protocols`, () => {
           },
         },
         async ({path, run, source}) => {
-          await run(`install`, {
+          await expect(run(`install`, {
             env: {
               // if this is set then npm will be executed as if `--omit=dev` was passed during the install
               // but `has-prepack-npm` requires dev dependencies to be present so this is a good way to
@@ -170,7 +170,8 @@ describe(`Protocols`, () => {
               // dependency can be resolved
               NPM_CONFIG_REGISTRY: await startPackageServer(),
             },
-          });
+          })).resolves.toBeTruthy();
+
           await expect(source(`require('has-prepack-npm')`)).resolves.toEqual(42);
         },
       ),
