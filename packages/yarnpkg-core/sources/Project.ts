@@ -1601,7 +1601,7 @@ export class Project {
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
 
-      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile) {
+      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile && !this.configuration.get(`enableGlobalCache`)) {
         await this.cacheCleanup(opts);
       }
     });
