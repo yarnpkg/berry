@@ -1,7 +1,12 @@
 releases:
-  "@yarnpkg/fslib": minor
+  "@yarnpkg/cli": patch
+  "@yarnpkg/fslib": patch
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/pnp": patch
+  "@yarnpkg/pnpify": patch
 
 declined:
+  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
@@ -11,13 +16,13 @@ declined:
   - "@yarnpkg/plugin-git"
   - "@yarnpkg/plugin-github"
   - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
-  - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
@@ -25,12 +30,9 @@ declined:
   - "@yarnpkg/plugin-workspace-tools"
   - vscode-zipfs
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
-  - "@yarnpkg/pnp"
-  - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
   - "@yarnpkg/shell"
