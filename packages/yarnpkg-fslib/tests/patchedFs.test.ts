@@ -63,6 +63,24 @@ describe(`patchedFs`, () => {
     expect(Buffer.isBuffer(result.buffer)).toBeTruthy();
   });
 
+  it(`matches the util.promisify return shape of node: fs.write`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+    const patchedFsWriteAsync = promisify(patchedFs.write);
+
+    const tmpdir = npath.fromPortablePath(xfs.mktempSync());
+
+    const file = npath.join(tmpdir, `file.txt`);
+
+    const fd = fs.openSync(file, `w`);
+
+    const bufferFs = Buffer.alloc(16);
+
+    const result = await patchedFsWriteAsync(fd, bufferFs, 0, 16, 0);
+
+    expect(typeof result.bytesWritten).toBe(`number`);
+    expect(Buffer.isBuffer(result.buffer)).toBeTruthy();
+  });
+
   it(`should support URL instances`, () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
@@ -237,6 +255,68 @@ describe(`patchedFs`, () => {
       expect(bytesRead).toEqual(buffer.byteLength);
     } finally {
       patchedFs.closeSync(fd);
+    }
+  });
+
+  it(`should support FileHandle implementation: read`, async() => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const handle = await patchedFs.promises.open(__filename, `r`);
+
+    const buffer = Buffer.alloc(42);
+    try {
+      const {bytesRead} = await handle.read(buffer, 0, buffer.byteLength);
+
+      expect(bytesRead).toEqual(buffer.byteLength);
+    } finally {
+      await handle.close();
+    }
+  });
+
+  it(`should support FileHandle implementation: write`, async() => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const tmpdir = npath.fromPortablePath(xfs.mktempSync());
+
+    const file = npath.join(tmpdir, `file.txt`);
+
+    const handle = await patchedFs.promises.open(file, `w`);
+
+    const buffer = Buffer.from(`hello`);
+    try {
+      const {bytesWritten} = await handle.write(buffer);
+
+      expect(bytesWritten).toEqual(buffer.byteLength);
+    } finally {
+      await handle.close();
+    }
+  });
+
+  it(`should support FileHandle implementations for methods that accept a file descriptor`, async() => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const handle = await patchedFs.promises.open(__filename, `r`);
+
+    try {
+      const contents = await handle.readFile();
+
+      expect(contents.byteLength).toBeGreaterThan(0);
+    } finally {
+      await handle.close();
+    }
+  });
+
+  it(`should support FileHandle implementations for methods that accept a path`, async() => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const handle = await patchedFs.promises.open(__filename, `r`);
+
+    try {
+      const stat = await handle.stat();
+
+      expect(stat.size).toBeGreaterThan(0);
+    } finally {
+      await handle.close();
     }
   });
 });

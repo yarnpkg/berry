@@ -70,18 +70,20 @@ const ASYNC_IMPLEMENTATIONS = new Set([
   `writeSync`,
 ]);
 
-const FILEHANDLE_IMPLEMENTATIONS = new Set([
-  `appendFilePromise`,
-  `chmodPromise`,
-  `chownPromise`,
-  `closePromise`,
-  `readPromise`,
-  `readFilePromise`,
-  `statPromise`,
-  `truncatePromise`,
-  `utimesPromise`,
-  `writePromise`,
-  `writeFilePromise`,
+/**
+ * List of `FileHandle` methods
+ * Set `shouldProvidePath` for methods that expect `path` as the first argument, otherwise `fd` will be passed
+ */
+const FILEHANDLE_IMPLEMENTATIONS = new Set<[string, {shouldProvidePath: boolean}]>([
+  [`appendFilePromise`, {shouldProvidePath: false}],
+  [`chmodPromise`, {shouldProvidePath: true}],
+  [`chownPromise`, {shouldProvidePath: true}],
+  [`closePromise`, {shouldProvidePath: false}],
+  [`readFilePromise`, {shouldProvidePath: false}],
+  [`statPromise`, {shouldProvidePath: true}],
+  [`truncatePromise`, {shouldProvidePath: true}],
+  [`utimesPromise`, {shouldProvidePath: true}],
+  [`writeFilePromise`, {shouldProvidePath: false}],
 ]);
 
 //#region readSync types
@@ -335,11 +337,18 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       }
 
       class FileHandle {
-        constructor(public fd: number) {
+        public _path: unknown;
+        constructor(public fd: number, _path: unknown) {
+          Object.defineProperty(this, `_path`, {
+            value: _path,
+            enumerable: false,
+            writable: false,
+            configurable: false,
+          });
         }
       }
 
-      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
+      for (const [fnName, {shouldProvidePath}] of FILEHANDLE_IMPLEMENTATIONS) {
         const origName = fnName.replace(/Promise$/, ``);
 
         const fakeImpl: Function = (fakeFs as any)[fnName];
@@ -347,14 +356,24 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
           continue;
 
         setupFn(FileHandle.prototype, origName, function (this: FileHandle, ...args: Array<any>) {
-          return fakeImpl.call(fakeFs, this.fd, ...args);
+          return fakeImpl.call(fakeFs, !shouldProvidePath ? this.fd : this._path, ...args);
         });
       }
 
-      setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
+      setupFn(FileHandle.prototype, `read`, function (this: FileHandle, ...args: Array<any>) {
         // @ts-expect-error
-        const fd = await fakeFs.openPromise(...args);
-        return new FileHandle(fd);
+        return patchedFs.read[promisify.custom](this.fd, ...args);
+      });
+
+      setupFn(FileHandle.prototype, `write`, function (this: FileHandle, ...args: Array<any>) {
+        // @ts-expect-error
+        return patchedFs.write[promisify.custom](this.fd, ...args);
+      });
+
+      setupFn(patchedFsPromises, `open`, async (path: unknown, ...args: Array<any>) => {
+        // @ts-expect-error
+        const fd = await fakeFs.openPromise(path, ...args);
+        return new FileHandle(fd, path);
       });
 
       // `fs.promises.realpath` doesn't have a `native` property
@@ -363,14 +382,21 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
   /** util.promisify implementations */
   {
-    // Override the promisified version of `fs.read` to return an object as per
+    // Override the promisified versions of `fs.read` and `fs.write` to return an object as per
     // https://github.com/nodejs/node/blob/dc79f3f37caf6f25b8efee4623bec31e2c20f595/lib/fs.js#L559-L560
+    // and
+    // https://github.com/nodejs/node/blob/dc79f3f37caf6f25b8efee4623bec31e2c20f595/lib/fs.js#L690-L691
     // and
     // https://github.com/nodejs/node/blob/ba684805b6c0eded76e5cd89ee00328ac7a59365/lib/internal/util.js#L293
     // @ts-expect-error
-    patchedFs.read[promisify.custom] = async (p: number, buffer: Buffer, ...args: Array<any>) => {
-      const res = fakeFs.readPromise(p, buffer, ...args);
+    patchedFs.read[promisify.custom] = async (fd: number, buffer: Buffer, ...args: Array<any>) => {
+      const res = fakeFs.readPromise(fd, buffer, ...args);
       return {bytesRead: await res, buffer};
+    };
+    // @ts-expect-error
+    patchedFs.write[promisify.custom] = async (fd: number, buffer: Buffer, ...args: Array<any>) => {
+      const res = fakeFs.writePromise(fd, buffer, ...args);
+      return {bytesWritten: await res, buffer};
     };
   }
 }
