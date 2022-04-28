@@ -7,6 +7,7 @@ case "$(uname -s)" in
   Linux) basedir=$(dirname "$(readlink -f "$0" || echo "$argv0")");;
   *CYGWIN*) basedir=`cygpath -w "$basedir"`;;
   *MSYS*) basedir=`cygpath -w "$basedir"`;;
+  *MINGW*) basedir=`cygpath -w "$basedir"`;;
 esac
 
 command_exists() {
