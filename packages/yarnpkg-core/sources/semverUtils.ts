@@ -25,6 +25,7 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
   let semverRange = satisfiesWithPrereleasesCache.get(key);
   if (typeof semverRange === `undefined`) {
     try {
+      // eslint-disable-next-line no-restricted-properties
       semverRange = new semver.Range(range, {includePrerelease: true, loose});
     } catch {
       return false;
@@ -74,6 +75,7 @@ export function validRange(potentialRange: string): semver.Range | null {
     return range;
 
   try {
+    // eslint-disable-next-line no-restricted-properties
     range = new semver.Range(potentialRange);
   } catch {
     range = null;

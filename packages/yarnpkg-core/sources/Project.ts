@@ -1839,6 +1839,9 @@ export class Project {
   }
 
   async cacheCleanup({cache, report}: InstallOptions)  {
+    if (this.configuration.get(`enableGlobalCache`))
+      return;
+
     const PRESERVED_FILES = new Set([
       `.gitignore`,
     ]);

@@ -564,6 +564,31 @@ describe(`Commands`, () => {
       expect(postUpgradeCache.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
     }));
 
+    test(`it should not clean the cache when cache lives inside the project but global cache is set`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      const env = {
+        YARN_ENABLE_GLOBAL_CACHE: `true`,
+        YARN_GLOBAL_FOLDER: `${path}/global`,
+      };
+      await run(`install`, {env});
+
+      const preUpgradeCache = await xfs.readdirPromise(`${path}/global/cache` as PortablePath);
+
+      expect(preUpgradeCache.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
+
+      const {code, stdout, stderr} = await run(`add`, `no-deps@2.0.0`, {env});
+
+      await expect({code, stdout, stderr}).toMatchSnapshot();
+
+      const postUpgradeCache = await xfs.readdirPromise(`${path}/global/cache` as PortablePath);
+
+      expect(postUpgradeCache.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
+      expect(postUpgradeCache.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
+    }));
+
     test(`it should not clean the cache when cache lives outside the project`, makeTemporaryEnv({
       dependencies: {
         [`no-deps`]: `1.0.0`,
