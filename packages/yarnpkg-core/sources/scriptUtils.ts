@@ -221,7 +221,6 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         effectivePackageManager = PackageManager.Yarn2;
       }
 
-      let indexJS: Buffer = Buffer.from(``);
       await xfs.mktempPromise(async binFolder => {
         const env = await makeScriptEnv({binFolder});
 
@@ -358,12 +357,6 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // Only then can we move the pack to its rightful location
             await xfs.renamePromise(packTarget, outputPath);
 
-            const manifest = await Manifest.tryFind(cwd);
-            if (manifest?.name?.name === `npm-has-prepack`) {
-              indexJS = await xfs.readFilePromise(ppath.resolve(cwd, `index.js` as Filename));
-              return -1;
-            }
-
             return 0;
           }],
         ]);
@@ -377,8 +370,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           return;
 
         xfs.detachTemp(logDir);
-        const log = await xfs.readFilePromise(logFile);
-        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)})\n${log}\n\n${indexJS}`);
+        throw new ReportError(MessageName.PACKAGE_PREPARATION_FAILED, `Packing the package failed (exit code ${code}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)})`);
       });
     });
   });
