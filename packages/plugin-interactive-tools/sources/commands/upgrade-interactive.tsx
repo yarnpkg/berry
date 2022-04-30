@@ -108,7 +108,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       let color: string | null = null;
       let res = ``;
 
-      for (let t = 1; t < SEMVER_COLORS.length; ++t) {
+      for (let t = 1; t <= SEMVER_COLORS.length; ++t) {
         if (color !== null || matchedFrom[t] !== matchedTo[t]) {
           if (color === null)
             color = SEMVER_COLORS[t - 1];
