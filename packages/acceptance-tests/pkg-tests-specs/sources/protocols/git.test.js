@@ -183,7 +183,6 @@ describe(`Protocols`, () => {
               NPM_CONFIG_REGISTRY: await startPackageServer(),
             },
           })).resolves.toBeTruthy();
-
           await expect(source(`require('npm-has-prepack')`)).resolves.toEqual(42);
         },
       ),
