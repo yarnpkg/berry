@@ -102,7 +102,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         `red`, // major
         `yellow`, // minor
         `green`, // patch
-        `magenta`, // rc
+        `magenta`, // prerelease
       ];
 
       let color: string | null = null;
