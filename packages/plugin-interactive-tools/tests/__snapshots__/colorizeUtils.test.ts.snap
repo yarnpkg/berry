@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`colorizeUtils colorizeVersionDiff should include prerelease part in colorized result 1`] = `"^2.0.0[35m-beta.18[39m"`;

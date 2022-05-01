@@ -26,6 +26,7 @@
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "repository": {
