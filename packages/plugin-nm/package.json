@@ -21,7 +21,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^"
   },
-  "version": "4.0.0-rc.3",
+  "version": "4.0.0-rc.4",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"
