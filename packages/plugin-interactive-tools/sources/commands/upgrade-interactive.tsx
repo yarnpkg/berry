@@ -1,13 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
-import type {SubmitInjectedComponent}                                                                                                   from '@yarnpkg/libui/sources/misc/renderForm';
-import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
-import {Command, Usage, UsageError}                                                                                                     from 'clipanion';
-import {diffWords}                                                                                                                      from 'diff';
-import semver                                                                                                                           from 'semver';
-import {WriteStream}                                                                                                                    from 'tty';
+import {BaseCommand, WorkspaceRequiredError}                                                                               from '@yarnpkg/cli';
+import {Cache, Configuration, Project, HardDependencies, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
+import type {SubmitInjectedComponent}                                                                                      from '@yarnpkg/libui/sources/misc/renderForm';
+import {suggestUtils}                                                                                                      from '@yarnpkg/plugin-essentials';
+import {Command, Usage, UsageError}                                                                                        from 'clipanion';
+import semver                                                                                                              from 'semver';
+import {WriteStream}                                                                                                       from 'tty';
 
-const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
+import {colorizeVersionDiff}                                                                                               from '../colorizeUtils';
 
 // eslint-disable-next-line @typescript-eslint/comma-dangle -- the trailing comma is required because of parsing ambiguities
 const partition = <T,>(array: Array<T>, size: number): Array<Array<T>> => {
@@ -69,59 +68,6 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     //   + 1 empty line
     const VIEWPORT_SIZE = (this.context.stdout as WriteStream).rows - 7;
 
-    const colorizeRawDiff = (from: string, to: string) => {
-      const diff = diffWords(from, to);
-      let str = ``;
-
-      for (const part of diff) {
-        if (part.added) {
-          str += formatUtils.pretty(configuration, part.value, `green`);
-        } else if (!part.removed) {
-          str += part.value;
-        }
-      }
-
-      return str;
-    };
-
-    const colorizeVersionDiff = (from: string, to: string) => {
-      if (from === to)
-        return to;
-
-      const parsedFrom = structUtils.parseRange(from);
-      const parsedTo = structUtils.parseRange(to);
-
-      const matchedFrom = parsedFrom.selector.match(SIMPLE_SEMVER);
-      const matchedTo = parsedTo.selector.match(SIMPLE_SEMVER);
-
-      if (!matchedFrom || !matchedTo)
-        return colorizeRawDiff(from, to);
-
-      const SEMVER_COLORS = [
-        `gray`, // modifier
-        `red`, // major
-        `yellow`, // minor
-        `green`, // patch
-        `magenta`, // prerelease
-      ];
-
-      let color: string | null = null;
-      let res = ``;
-
-      for (let t = 1; t <= SEMVER_COLORS.length; ++t) {
-        if (color !== null || matchedFrom[t] !== matchedTo[t]) {
-          if (color === null)
-            color = SEMVER_COLORS[t - 1];
-
-          res += formatUtils.pretty(configuration, matchedTo[t], color);
-        } else {
-          res += matchedTo[t];
-        }
-      }
-
-      return res;
-    };
-
     const fetchUpdatedDescriptor = async (descriptor: Descriptor, copyStyle: string, range: string) => {
       const candidate = await suggestUtils.fetchDescriptorFrom(descriptor, range, {project, cache, preserveModifier: copyStyle, workspace});
 
@@ -150,7 +96,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       if (resolution && resolution !== descriptor.range) {
         suggestions.push({
           value: resolution,
-          label: colorizeVersionDiff(descriptor.range, resolution),
+          label: colorizeVersionDiff(configuration, descriptor.range, resolution),
         });
       } else {
         suggestions.push({value: null, label: ``});
@@ -159,7 +105,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       if (latest && latest !== resolution && latest !== descriptor.range) {
         suggestions.push({
           value: latest,
-          label: colorizeVersionDiff(descriptor.range, latest),
+          label: colorizeVersionDiff(configuration, descriptor.range, latest),
         });
       } else {
         suggestions.push({value: null, label: ``});
