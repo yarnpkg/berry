@@ -13,7 +13,7 @@
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
     "@babel/register": "^7.17.7",
-    "@types/jest": "^24.0.25",
+    "@types/jest": "^27.4.0",
     "@types/node": "^13.7.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -22,7 +22,7 @@
     "@yarnpkg/sdks": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
     "eslint": "^8.2.0",
-    "jest": "^26.0.1",
+    "jest": "^28.0.3",
     "tslib": "^1.13.0",
     "typescript": "4.7.0-beta"
   },
