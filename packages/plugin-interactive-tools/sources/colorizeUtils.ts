@@ -17,10 +17,10 @@ export function colorizeVersionDiff(configuration: Configuration, from: string, 
     return colorizeRawDiff(configuration, from, to);
 
   const SEMVER_COLORS = [
-    `gray`,
-    `red`,
-    `yellow`,
-    `green`,
+    `gray`, // modifier
+    `red`, // major
+    `yellow`, // minor
+    `green`, // patch
     `magenta`, // prerelease
   ];
 
