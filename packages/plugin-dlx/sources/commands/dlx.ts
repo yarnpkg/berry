@@ -101,7 +101,7 @@ export default class DlxCommand extends BaseCommand {
 
       let command = structUtils.parseDescriptor(this.command).name;
 
-      const addExitCode = await this.cli.run([`add`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
+      const addExitCode = await this.cli.run([`add`, `--fixed`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
       if (addExitCode !== 0)
         return addExitCode;
 

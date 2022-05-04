@@ -150,5 +150,14 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `it should use the exact tag specified`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await expect(run(`dlx`, `-p`, `has-bin-entries`, `-p`, `no-deps-tags@rc`, `has-bin-entries`)).resolves.toMatchObject({
+          stdout: expect.stringContaining(`no-deps-tags@npm:1.0.0-rc.1`),
+        });
+      }),
+    );
   });
 });

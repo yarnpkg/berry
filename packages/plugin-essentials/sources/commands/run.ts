@@ -52,6 +52,10 @@ export default class RunCommand extends BaseCommand {
     description: `Ignore any user defined scripts and only check for binaries`,
   });
 
+  require = Option.String(`--require`, {
+    description: `Forwarded to the underlying Node process when executing a binary`,
+  });
+
   // The v1 used to print the Yarn version header when using "yarn run", which
   // was messing with the output of things like `--version` & co. We don't do
   // this anymore, but many workflows use `yarn run --silent` to make sure that
@@ -102,6 +106,9 @@ export default class RunCommand extends BaseCommand {
           nodeArgs.push(`--inspect-brk`);
         }
       }
+
+      if (this.require)
+        nodeArgs.push(`--require=${this.require}`);
 
       return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {
         cwd: this.context.cwd,
