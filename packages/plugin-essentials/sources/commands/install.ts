@@ -26,6 +26,10 @@ export default class YarnCommand extends BaseCommand {
 
       - **Build:** Once the dependency tree has been written on the disk, the package manager will now be free to run the build scripts for all packages that might need it, in a topological order compatible with the way they depend on one another. See https://yarnpkg.com/advanced/lifecycle-scripts for detail.
 
+      Packages present in the `node_modules` folder but not in the `package.json` will be automatically pruned.
+      
+      If you are using workspaces, the installation process will respect their topology and create appropriate symlinks.
+      
       Note that running this command is not part of the recommended workflow. Yarn supports zero-installs, which means that as long as you store your cache and your .pnp.cjs file inside your repository, everything will work without requiring any install right after cloning your repository or switching branches.
 
       If the \`--immutable\` option is set (defaults to true on CI), Yarn will abort with an error exit code if the lockfile was to be modified (other paths can be added using the \`immutablePatterns\` configuration setting). For backward compatibility we offer an alias under the name of \`--frozen-lockfile\`, but it will be removed in a later release.
