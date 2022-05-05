@@ -1,0 +1,34 @@
+{
+  "name": "@yarnpkg/extensions",
+  "version": "0.0.0",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "peerDependencies": {
+    "@yarnpkg/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/monorepo": "workspace:^"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/extensions"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\"",
+    "test:extensions": "run test:unit --config \"$(pwd)/jest.config.js\"",
+    "debug:patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "engines": {
+    "node": ">=14.15.0"
+  }
+}
