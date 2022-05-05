@@ -125,7 +125,6 @@ case $PACKAGE_MANAGER in
       'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   npm)
-    setup-pnpm
     bench install-full-cold \
       --prepare 'rm -rf node_modules package-lock.json && npm cache clean --force' \
       'npm install'
@@ -140,6 +139,7 @@ case $PACKAGE_MANAGER in
       'npm add dummy-pkg@file:./dummy-pkg'
     ;;
   pnpm)
+    setup-pnpm
     bench install-full-cold \
       --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.pnpm-store' \
       'pnpm install'
