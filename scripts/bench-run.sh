@@ -57,6 +57,11 @@ setup-yarn2-pnpm() {
     "compressionLevel: 0"
 }
 
+setup-pnpm() {
+  >> "$BENCH_DIR/.npmrc" echo \
+    "strict-peer-dependencies=false"
+}
+
 case $PACKAGE_MANAGER in
   classic)
     bench install-full-cold \
@@ -120,6 +125,7 @@ case $PACKAGE_MANAGER in
       'yarn add dummy-pkg@link:./dummy-pkg'
     ;;
   npm)
+    setup-pnpm
     bench install-full-cold \
       --prepare 'rm -rf node_modules package-lock.json && npm cache clean --force' \
       'npm install'
