@@ -124,7 +124,15 @@ describe(`Protocols`, () => {
           },
         },
         async ({path, run, source}) => {
-          await run(`install`);
+          await expect(run(`install`, {
+            env: {
+              // if this is set then yarn 1 will be executed as if `--production` was passed during the install
+              // but `yarn-1-project` requires dev dependencies to be present so this is a good way to
+              // verify that yarn isn't throw off by this when handling the clone, install, and pack process
+              // for git dependencies (see: https://classic.yarnpkg.com/lang/en/docs/cli/install/#toc-yarn-install-production-true-false)
+              NODE_ENV: `production`,
+            },
+          })).resolves.toBeTruthy();
 
           await expect(source(`require('yarn-1-project')`)).resolves.toMatch(/\byarn\/1\.[0-9]+/);
         },
@@ -144,6 +152,38 @@ describe(`Protocols`, () => {
           await run(`install`);
 
           await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
+        },
+      ),
+      45000,
+    );
+
+    test(
+      `it should guarantee that all dependencies will be installed when using npm to setup npm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`npm-has-prepack`]: startPackageServer().then(url => `${url}/repositories/npm-has-prepack.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, {
+            env: {
+              // if this is set then npm will be executed as if `--omit=dev` was passed during the install
+              // but `has-prepack-npm` requires dev dependencies to be present so this is a good way to
+              // verify that yarn isn't throw off by this when handling the clone, install, and pack process
+              // for git dependencies (see: https://docs.npmjs.com/cli/v8/using-npm/config#omit)
+              NODE_ENV: `production`,
+
+              // same for NPM_CONFIG_PRODUCTION which acts just like the `--production` flat during install step
+              // (see: https://docs.npmjs.com/cli/v8/using-npm/config#environment-variables, https://docs.npmjs.com/cli/v8/using-npm/config#production)
+              NPM_CONFIG_PRODUCTION: `true`,
+              npm_config_production: `true`,
+
+              // also force npm to use the package server as the registry so that the `has-bin-entry` dependency can be resolved
+              NPM_CONFIG_REGISTRY: await startPackageServer(),
+            },
+          })).resolves.toBeTruthy();
+          await expect(source(`require('npm-has-prepack')`)).resolves.toEqual(42);
         },
       ),
       45000,
