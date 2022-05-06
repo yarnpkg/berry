@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git",
-    "directory": "packages/extensions"
+    "directory": "packages/yarnpkg-extensions"
   },
   "scripts": {
     "postpack": "rm -rf lib",
