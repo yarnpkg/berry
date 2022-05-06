@@ -386,14 +386,9 @@ const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTre
  * @param rootNodePathLocators a set of locators for nodes that lead from the top of the tree up to root node
  * @param options hoisting options
  */
-const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, rootNodePathLocators: Set<Locator>, parentShadowedNodes: ShadowedNodes, options: InternalHoistOptions, seenNodes: Set<HoisterWorkTree> = new Set()): {anotherRoundNeeded: boolean, isGraphChanged: boolean} => {
+const hoistTo = (tree: HoisterWorkTree, rootNodePath: Array<HoisterWorkTree>, rootNodePathLocators: Set<Locator>, parentShadowedNodes: ShadowedNodes, options: InternalHoistOptions): {anotherRoundNeeded: boolean, isGraphChanged: boolean} => {
   const rootNode = rootNodePath[rootNodePath.length - 1];
-  if (seenNodes.has(rootNode))
-    return {anotherRoundNeeded: false, isGraphChanged: false};
-  seenNodes.add(rootNode);
-
   const preferenceMap = buildPreferenceMap(rootNode);
-
   const hoistIdentMap = getHoistIdentMap(rootNode, preferenceMap);
 
   const usedDependencies = tree == rootNode ? new Map() :
@@ -543,10 +538,9 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
 
   if (isHoistable) {
     let arePeerDepsSatisfied = true;
-    const checkList = new Set(node.peerNames);
     for (let idx = nodePath.length - 1; idx >= 1; idx--) {
       const parent = nodePath[idx];
-      for (const name of checkList) {
+      for (const name of node.peerNames) {
         if (parent.peerNames.has(name) && parent.originalDependencies.has(name))
           continue;
 
@@ -562,7 +556,6 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
             }
           }
         }
-        checkList.delete(name);
       }
       if (!arePeerDepsSatisfied) {
         break;
