@@ -240,6 +240,9 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 
             stdout.write(`\n`);
 
+            // Remove environment variables that limit the install to just production dependencies
+            delete env.NODE_ENV;
+
             // Run an install; we can't avoid it unless we inspect the
             // package.json, which I don't want to do to keep the codebase
             // clean (even if it has a slight perf cost when cloning v1 repos)
@@ -322,6 +325,11 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // Otherwise npm won't properly set the user agent, using the Yarn
             // one instead
             delete env.npm_config_user_agent;
+
+            // Remove environment variables that limit the install to just production dependencies
+            delete env.npm_config_production;
+            delete env.NPM_CONFIG_PRODUCTION;
+            delete env.NODE_ENV;
 
             // We can't use `npm ci` because some projects don't have npm
             // lockfiles that are up-to-date. Hopefully npm won't decide
