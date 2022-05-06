@@ -7,8 +7,7 @@
     "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/monorepo": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
   },
   "repository": {
     "type": "git",
@@ -17,9 +16,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\"",
-    "test:extensions": "run test:unit --config \"$(pwd)/jest.config.js\"",
-    "debug:patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
+    "prepack": "run build:compile \"$(pwd)\""
   },
   "publishConfig": {
     "main": "./lib/index.js",

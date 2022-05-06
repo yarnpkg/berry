@@ -5577,7 +5577,6 @@ __metadata:
   resolution: "@yarnpkg/extensions@workspace:packages/yarnpkg-extensions"
   dependencies:
     "@yarnpkg/core": "workspace:^"
-    "@yarnpkg/monorepo": "workspace:^"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
   languageName: unknown
