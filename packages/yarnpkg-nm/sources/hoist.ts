@@ -555,6 +555,12 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
               reason = `- peer dependency ${prettyPrintLocator(parentDepNode.locator)} from parent ${prettyPrintLocator(parent.locator)} was not hoisted to ${reasonRoot}`;
             }
           }
+        } else if (
+          !parentDepNode
+          && parent.peerNames.has(name) &&
+          [...node.references].every(a => !parent.references.has(a))
+        ) {
+          arePeerDepsSatisfied = false;
         }
       }
       if (!arePeerDepsSatisfied) {
