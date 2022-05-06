@@ -141,7 +141,7 @@ case $PACKAGE_MANAGER in
   pnpm)
     setup-pnpm
     bench install-full-cold \
-      --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.pnpm-store' \
+      --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.local/share/pnpm/store' \
       'pnpm install'
     bench install-cache-only \
       --prepare 'rm -rf node_modules pnpm-lock.yaml' \
