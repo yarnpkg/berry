@@ -149,6 +149,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/yarnpkg-doctor"\
       },\
       {\
+        "name": "@yarnpkg/extensions",\
+        "reference": "workspace:packages/yarnpkg-extensions"\
+      },\
+      {\
         "name": "@yarnpkg/fslib",\
         "reference": "workspace:packages/yarnpkg-fslib"\
       },\
@@ -210,6 +214,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/doctor", ["workspace:packages/yarnpkg-doctor"]],\
       ["@yarnpkg/esbuild-plugin-pnp", ["virtual:5d170a96e3bd35439131aba7820e7b850e9381656d638624d34e228d96fc2f134ebf73b7eb6235db8cb822a7bcd252e04750d4dfcaeb49408c4e561390950138#workspace:packages/esbuild-plugin-pnp", "workspace:packages/esbuild-plugin-pnp"]],\
       ["@yarnpkg/eslint-config", ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config", "workspace:packages/eslint-config"]],\
+      ["@yarnpkg/extensions", ["virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions", "workspace:packages/yarnpkg-extensions"]],\
       ["@yarnpkg/fslib", ["workspace:packages/yarnpkg-fslib"]],\
       ["@yarnpkg/gatsby", ["workspace:packages/gatsby"]],\
       ["@yarnpkg/json-proxy", ["workspace:packages/yarnpkg-json-proxy"]],\
@@ -10391,6 +10396,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "SOFT"\
         }]\
       ]],\
+      ["@yarnpkg/extensions", [\
+        ["virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions", {\
+          "packageLocation": "./.yarn/__virtual__/@yarnpkg-extensions-virtual-a079f34157/1/packages/yarnpkg-extensions/",\
+          "packageDependencies": [\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
+            ["@types/yarnpkg__core", null],\
+            ["@yarnpkg/core", "workspace:packages/yarnpkg-core"]\
+          ],\
+          "packagePeers": [\
+            "@types/yarnpkg__core",\
+            "@yarnpkg/core"\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["workspace:packages/yarnpkg-extensions", {\
+          "packageLocation": "./packages/yarnpkg-extensions/",\
+          "packageDependencies": [\
+            ["@yarnpkg/extensions", "workspace:packages/yarnpkg-extensions"],\
+            ["@yarnpkg/core", "workspace:packages/yarnpkg-core"]\
+          ],\
+          "linkType": "SOFT"\
+        }]\
+      ]],\
       ["@yarnpkg/fslib", [\
         ["workspace:packages/yarnpkg-fslib", {\
           "packageLocation": "./packages/yarnpkg-fslib/",\
@@ -10645,6 +10673,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10670,6 +10699,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:14a22fb3831dfc762a1bb8a042d17886271c56698e1a83233f09eaacff5a5b83fe6f87adb9255774eab3586392c18ff98cf87aa6b374d572d9b72f88829f6d9e#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10695,6 +10725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10720,6 +10751,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10745,6 +10777,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10770,6 +10803,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10795,6 +10829,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:a027ddc7edcbf74025e90effce333897039d2c6f8e1ebe319fb72c52c5be1b885da91acc56476d19bb6ce2e31cbc2d5b11241940b82f833a2cac262496c0088f#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:08fe6ad7a76ed00f8dc32e3b968ce66fd4db8ac47424db78612ce3633e63ecb46d41984611094facf53bbef7eae7fbf98bbfd729fb77f5ccde564684f4e3a829#workspace:packages/plugin-npm"],\
@@ -10820,6 +10855,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10845,6 +10881,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10870,6 +10907,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10895,6 +10933,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10920,6 +10959,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:743b60015fc887fe314a7ee01ea4843b516ac512d77939f47dc39d50bc7db742dc8994fe9bb2245ada0b3ce6f8aa58329d603fbc24093050cd499cb16a1a995f#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10945,6 +10985,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/yarnpkg__plugin-patch", null],\
             ["@yarnpkg/cli", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
@@ -10968,6 +11009,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/resolve", "npm:1.17.1"],\
             ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],\
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+            ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["@yarnpkg/monorepo", "workspace:."],\
             ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\

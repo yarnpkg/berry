@@ -7,6 +7,9 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/plugin-patch": "workspace:^"
   },
+  "dependencies": {
+    "@yarnpkg/extensions": "workspace:^"
+  },
   "devDependencies": {
     "@types/lodash-es": "4.17.4",
     "@types/resolve": "^1.17.1",

@@ -5551,6 +5551,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/extensions@workspace:^, @yarnpkg/extensions@workspace:packages/yarnpkg-extensions":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/extensions@workspace:packages/yarnpkg-extensions"
+  dependencies:
+    "@yarnpkg/core": "workspace:^"
+  peerDependencies:
+    "@yarnpkg/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/fslib@workspace:^, @yarnpkg/fslib@workspace:packages/yarnpkg-fslib":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
@@ -5788,6 +5798,7 @@ __metadata:
     "@types/resolve": ^1.17.1
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/extensions": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
