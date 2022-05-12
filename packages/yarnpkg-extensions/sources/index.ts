@@ -336,6 +336,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'null-loader': `^3.0.0`,
     },
   }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/324
+  [`vue-cli-plugin-vuetify@>=2.4.3`, {
+    peerDependencies: {
+      vue: `*`,
+    },
+  }],
   // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
   [`@vuetify/cli-plugin-utils@<=0.0.4`, {
     dependencies: {
