@@ -8,14 +8,16 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
+## 3.2.1
+
 ### Installs
 - The pnpm linker no longer tries to remove `node_modules` directory, when `node-modules` linker is active
+- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 - The node-modules linker has received various improvements:
   - applies hoisting algorithm on aliased dependencies
   - reinstalls modules that have their directories removed from node_modules by the user
   - improves portal hoisting
   - supports `supportedArchitectures`
-- The node-modules linker does not fail anymore if portal dependency points to an external project with multiple interdependent workspaces
 
 ### Bugfixes
 
