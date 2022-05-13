@@ -31,6 +31,8 @@ The following changes only affect people writing Yarn plugins:
 
 - The `generateLoader` function in `@yarnpkg/pnp` no longer generates the `$$SETUP_STATE` function, it now needs to be present in the `loader` passed to the function.
 
+## 3.2.1
+
 ### Installs
 
 - The pnpm linker no longer tries to remove `node_modules` directory, when `node-modules` linker is active
