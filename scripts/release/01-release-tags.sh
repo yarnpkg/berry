@@ -5,13 +5,13 @@ set -ex
 THIS_DIR=$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_DIR="$THIS_DIR/../.."
 
-export BABEL_CACHE_PATH=$(mktemp -d)/cache.json
-mkdir -p "$(dirname "$BABEL_CACHE_PATH")"
-
 if ! [[ -z $(git status --porcelain) ]]; then
   echo 'This command must be executed on a clean repository'
   exit 1
 fi
+
+export BABEL_CACHE_PATH=$(mktemp -d)/cache.json
+mkdir -p "$(dirname "$BABEL_CACHE_PATH")"
 
 CURRENT_COMMIT=$(git rev-parse HEAD)
 

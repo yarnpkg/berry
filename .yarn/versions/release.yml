@@ -1,9 +1,0 @@
-releases:
-  "@yarnpkg/shell": patch
-  "@yarnpkg/core": patch
-  "@yarnpkg/nm": patch
-  "@yarnpkg/plugin-nm": patch
-  "@yarnpkg/builder": patch
-  "@yarnpkg/doctor": patch
-  "@yarnpkg/pnpify": patch
-  "@yarnpkg/sdks": patch
