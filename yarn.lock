@@ -4113,10 +4113,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/diff@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "@types/diff@npm:4.0.2"
-  checksum: 6f1b4bd81801b138a6fcba89779a37ea26fea700c53a469a31baf49f390fada3155fba9277f1c22a52ea4ae92cb0b5ff7bb56e98ee9828dc3bf2aaa2dc96fdbf
+"@types/diff@npm:^5.0.0":
+  version: 5.0.2
+  resolution: "@types/diff@npm:5.0.2"
+  checksum: 641974ed83c32aa6d8f4b23d3f272fc8349ac77c073d45b32c7eec11c9081f05350f6de764d15fc6c2c90f20a05943a1e553fa506decf3d13bac748ef460f24f
   languageName: node
   linkType: hard
 
@@ -5481,7 +5481,7 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
     "@types/cross-spawn": "npm:6.0.0"
-    "@types/diff": "npm:^4.0.2"
+    "@types/diff": "npm:^5.0.0"
     "@types/lodash": "npm:^4.14.136"
     "@types/micromatch": "npm:^4.0.1"
     "@types/node": "npm:^13.7.0"
@@ -5502,7 +5502,7 @@ __metadata:
     ci-info: "npm:^3.2.0"
     clipanion: "npm:^3.2.0-rc.10"
     cross-spawn: "npm:7.0.3"
-    diff: "npm:^4.0.1"
+    diff: "npm:^5.0.0"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     globby: "npm:^11.0.1"
     got: "npm:^11.7.0"
@@ -5969,7 +5969,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
-    "@types/diff": "npm:^4.0.2"
+    "@types/diff": "npm:^5.0.0"
     "@types/react": "npm:^16.8.0"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/builder": "workspace:^"
@@ -5979,7 +5979,7 @@ __metadata:
     "@yarnpkg/plugin-essentials": "workspace:^"
     algoliasearch: "npm:^4.2.0"
     clipanion: "npm:^3.2.0-rc.10"
-    diff: "npm:^4.0.1"
+    diff: "npm:^5.0.0"
     ink: "npm:^3.0.8"
     ink-text-input: "npm:^4.0.1"
     react: "npm:^16.13.1"
@@ -10255,6 +10255,13 @@ __metadata:
   version: 4.0.1
   resolution: "diff@npm:4.0.1"
   checksum: 66b308ceabb368ae5c41737c43e92bb1a398d4acfa3467c9bd97562068d637c3123f08b8001dfe62497d79b3aebbdd99c5dd7f6188a1b81b887eee40979228d1
+  languageName: node
+  linkType: hard
+
+"diff@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "diff@npm:5.0.0"
+  checksum: 19f4cad11d6e9d702c34810934074bd2bed661a49200c41d4f2dc3b70c29e92ca2fa18ce1606c8e71db59a86d357ede3234c94e8e3a39b605bcd0df0b4209da9
   languageName: node
   linkType: hard
 
