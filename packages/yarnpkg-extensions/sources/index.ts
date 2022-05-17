@@ -384,6 +384,15 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'js-git': optionalPeerDep,
     },
   }],
+  // https://github.com/tj/consolidate.js/commit/6068c17fd443897e540d69b1786db07a0d64b53b
+  [`consolidate@<0.16.0`, {
+    peerDependencies: {
+      mustache: `^3.0.0`,
+    },
+    peerDependenciesMeta: {
+      mustache: optionalPeerDep,
+    },
+  }],
   // https://github.com/tj/consolidate.js/pull/339
   [`consolidate@*`, {
     peerDependencies: {
