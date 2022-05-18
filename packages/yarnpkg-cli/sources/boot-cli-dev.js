@@ -9,7 +9,7 @@ if (fs.existsSync(pnpFile))
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
 // Exposes the CLI version as like for the bundle
-global.YARN_VERSION = `${require(`@yarnpkg/cli/package.json`).version}.dev`;
+global.YARN_VERSION = `${require(`@yarnpkg/cli/package.json`).version}-dev`;
 
 // Inject the plugins in the runtime. With Webpack that would be through
 // val-loader which would execute pluginConfiguration.raw.js, so in Node
