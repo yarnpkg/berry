@@ -854,4 +854,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'react-dom': `>=16.3.0`,
     },
   }],
+  // https://github.com/jdesboeufs/connect-mongo/pull/458
+  [`connect-mongo@*`, {
+    peerDependencies: {
+      'express-session': `^1.17.1`,
+    },
+  }],
 ];
