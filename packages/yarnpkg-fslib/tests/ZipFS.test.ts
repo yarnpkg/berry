@@ -847,4 +847,40 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should throw ENOTDIR when trying to stat a file as a directory`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    expect(() => zipFs.statSync(`/foo.txt/` as PortablePath)).toThrowError(`ENOTDIR`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/bar.txt` as PortablePath);
+    expect(() => zipFs.lstatSync(`/bar.txt/` as PortablePath)).toThrowError(`ENOTDIR`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOTDIR when trying to create a file when the dirname is a file`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    expect(() => zipFs.writeFileSync(`/foo.txt/bar.txt` as PortablePath, ``)).toThrowError(`ENOTDIR`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/bar.txt` as PortablePath);
+    expect(() => zipFs.writeFileSync(`/bar.txt/baz.txt` as PortablePath, ``)).toThrowError(`ENOTDIR`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOENT when reading a file that doesn't exist`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    // File doesn't exist
+    expect(() => zipFs.readFileSync(`/foo` as PortablePath, ``)).toThrowError(`ENOENT`);
+
+    // Parent entry doesn't exist
+    expect(() => zipFs.readFileSync(`/foo/bar` as PortablePath, ``)).toThrowError(`ENOENT`);
+
+    zipFs.discardAndClose();
+  });
 });
