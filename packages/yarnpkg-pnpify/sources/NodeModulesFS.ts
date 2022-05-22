@@ -565,6 +565,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.truncateSync(this.resolveDirOrFilePath(p), len);
   }
 
+  async ftruncatePromise(fd: number, len?: number): Promise<void> {
+    return await this.baseFs.ftruncatePromise(fd, len);
+  }
+
+  ftruncateSync(fd: number, len?: number): void {
+    return this.baseFs.ftruncateSync(fd, len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback): Watcher {

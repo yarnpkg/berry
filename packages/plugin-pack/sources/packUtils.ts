@@ -334,19 +334,30 @@ function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: P
   target.push(normalizePattern(trimed, {cwd}));
 }
 
+enum MatchType {
+  None,
+  Match,
+  NegatedMatch,
+}
+
 function isIgnored(cwd: string, {globalList, ignoreLists}: {globalList: IgnoreList, ignoreLists: Array<IgnoreList> | null}) {
-  if (isMatch(cwd, globalList.accept))
-    return false;
-  if (isMatch(cwd, globalList.reject))
-    return true;
+  const globalAcceptMatchType = matchPatternType(cwd, globalList.accept);
+  if (globalAcceptMatchType !== MatchType.None)
+    return globalAcceptMatchType === MatchType.NegatedMatch;
+
+  const globalRejectMatchType = matchPatternType(cwd, globalList.reject);
+  if (globalRejectMatchType !== MatchType.None)
+    return globalRejectMatchType === MatchType.Match;
 
   if (ignoreLists !== null) {
     for (const ignoreList of ignoreLists) {
-      if (isMatch(cwd, ignoreList.accept))
-        return false;
+      const acceptMatchType = matchPatternType(cwd, ignoreList.accept);
+      if (acceptMatchType !== MatchType.None)
+        return acceptMatchType === MatchType.NegatedMatch;
 
-      if (isMatch(cwd, ignoreList.reject)) {
-        return true;
+      const rejectMatchType = matchPatternType(cwd, ignoreList.reject);
+      if (rejectMatchType !== MatchType.None) {
+        return rejectMatchType === MatchType.Match;
       }
     }
   }
@@ -354,7 +365,7 @@ function isIgnored(cwd: string, {globalList, ignoreLists}: {globalList: IgnoreLi
   return false;
 }
 
-function isMatch(path: string, patterns: Array<string>) {
+function matchPatternType(path: string, patterns: Array<string>) {
   let inclusives = patterns;
   const exclusives = [];
 
@@ -372,11 +383,11 @@ function isMatch(path: string, patterns: Array<string>) {
   }
 
   if (isMatchBasename(path, exclusives))
-    return false;
+    return MatchType.NegatedMatch;
   if (isMatchBasename(path, inclusives))
-    return true;
+    return MatchType.Match;
 
-  return false;
+  return MatchType.None;
 }
 
 function isMatchBasename(path: string, patterns: Array<string>) {

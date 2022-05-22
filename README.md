@@ -21,7 +21,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
-- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to execute package scripts, guaranteeing they work the same way on Windows, Linux, and macOS
+- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to make package scripts portable across of Windows, Linux, and macOS
 - Yarn is first and foremost a [Node API](https://yarnpkg.com/api/) that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
@@ -98,7 +98,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
       </a>
     </td>
     <td>
-      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been an historical partner. While we don't directly mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
+      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been a historical partner. While we don't directly mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
     </td>
   </tr>
   <tr>
@@ -137,33 +137,33 @@ On top of our classic integration tests, we also run Yarn every day against the 
 <tr><th>Toolchains</th><th>Tooling</th></tr>
 <tr><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nm-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20PnP%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-pnp-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Create-Vue/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-create-vue-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gulp-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-preact-cli-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-svelte-kit-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-vue-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20PnP%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-cra-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Create-Vue/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-create-vue-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gatsby-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gulp-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-next-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-preact-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vue-cli-workflow.yml)<br/>
 </td><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-esbuild-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Docusaurus/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-docusaurus-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-eslint-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20FSEvents/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-fsevents-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-husky-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nyc-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-parcel-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-rollup-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Snowpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-snowpack-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-storybook-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Docusaurus/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-docusaurus-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-eslint-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20FSEvents/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-fsevents-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-husky-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-jest-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-mocha-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nyc-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-parcel-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-prettier-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Snowpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-snowpack-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>
 </td></tr>
 
 </table>
@@ -194,33 +194,28 @@ Note that no other command is needed! Given that our dependencies are checked-in
 
 Those plugins typically come bundled with Yarn. You don't need to do anything special to use them.
 
-- [★ plugin-compat](packages/plugin-compat) contains various built-in patches that will be applied to packages that aren't compatible with the Plug'n'Play resolution out-of-the-box.
-- [★ plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.com/cli/dlx) command.
-- [★ plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
-- [★ plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
-- [★ plugin-git](packages/plugin-git) adds support for cloning packages from Git repositories.
-- [★ plugin-github](packages/plugin-github) adds support for using GitHub references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
-- [★ plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
-- [★ plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
-- [★ plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/features/protocols#whats-the-difference-between-link-and-portal) references as dependencies.
-- [★ plugin-nm](packages/plugin-nm) adds support for installing packages through a `node_modules` folder.
-- [★ plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) as dependencies, resolving them to an NPM-like registry.
-- [★ plugin-npm-cli](packages/plugin-npm-cli) adds support for the NPM-specific commands ([`yarn npm info`](https://yarnpkg.com/cli/npm/info), [`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
-- [★ plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
-- [★ plugin-patch](packages/plugin-patch) adds support for the `patch:` protocol.
-- [★ plugin-pnp](packages/plugin-pnp) adds support for installing JavaScript dependencies through the [Plug'n'Play](https://yarnpkg.com/features/pnp) specification.
-
-### Contrib plugins
-
-Although developed on the same repository as Yarn itself, those plugins are optional and need to be explicitly installed through `yarn plugin import @yarnpkg/<plugin-name>`.
-
-- [☆ plugin-constraints](packages/plugin-constraints) adds support for [constraints](https://yarnpkg.com/features/constraints) to Yarn.
-- [☆ plugin-exec](packages/plugin-exec) adds support for using the [`exec:`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec#documentation) protocol within your dependencies.
-- [☆ plugin-interactive-tools](packages/plugin-interactive-tools) adds support for various interactive commands ([`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)).
-- [☆ plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) command.
-- [☆ plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
-- [☆ plugin-version](packages/plugin-version) adds support for the new [release workflow](https://yarnpkg.com/features/release-workflow).
-- [☆ plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) command.
+- [plugin-compat](packages/plugin-compat) contains a few built-in patches applied to improve PnP support.
+- [plugin-constraints](packages/plugin-constraints) adds support for [constraints](https://yarnpkg.com/features/constraints) to Yarn.
+- [plugin-dlx](packages/plugin-dlx) adds support for the [`yarn dlx`](https://yarnpkg.com/cli/dlx) command.
+- [plugin-essentials](packages/plugin-essentials) adds various commands deemed necessary for a package manager (add, remove, ...).
+- [plugin-exec](packages/plugin-exec) adds support for using the [`exec:`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-exec#documentation) protocol within your dependencies.
+- [plugin-file](packages/plugin-file) adds support for using the `file:` protocol within your dependencies.
+- [plugin-git](packages/plugin-git) adds support for cloning packages from Git repositories.
+- [plugin-github](packages/plugin-github) adds support for using GitHub references as dependencies. [This plugin doesn't use git.](https://stackoverflow.com/a/13636954/880703)
+- [plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
+- [plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
+- [plugin-interactive-tools](packages/plugin-interactive-tools) adds support for various interactive commands ([`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)).
+- [plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/features/protocols#whats-the-difference-between-link-and-portal) references as dependencies.
+- [plugin-nm](packages/plugin-nm) adds support for installing packages through a `node_modules` folder.
+- [plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) dependencies, resolving them from an npm-like registry.
+- [plugin-npm-cli](packages/plugin-npm-cli) adds support for npm-specific commands ([`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
+- [plugin-pack](packages/plugin-pack) adds support for the [`yarn pack`](https://yarnpkg.com/cli/pack) command.
+- [plugin-patch](packages/plugin-patch) adds support for the `patch:` protocol.
+- [plugin-pnp](packages/plugin-pnp) adds support for installing JavaScript dependencies through the [Plug'n'Play](https://yarnpkg.com/features/pnp) specification.
+- [plugin-stage](packages/plugin-stage) adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) command.
+- [plugin-typescript](packages/plugin-typescript) improves the user experience when working with TypeScript.
+- [plugin-version](packages/plugin-version) adds support for the new [release workflow](https://yarnpkg.com/features/release-workflow).
+- [plugin-workspace-tools](packages/plugin-workspace-tools) adds support for the [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) command.
 
 ### Third-party plugins
 

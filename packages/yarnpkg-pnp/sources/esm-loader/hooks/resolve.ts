@@ -77,6 +77,9 @@ export async function resolve(
     resultURL.hash = url.hash;
   }
 
+  if (!parentURL)
+    loaderUtils.setEntrypointPath(fileURLToPath(resultURL));
+
   return {
     url: resultURL.href,
   };

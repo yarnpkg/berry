@@ -7,7 +7,7 @@ module.exports = ({modules, plugins}) => {
   }).join(``);
 
   const moduleSegment = `  modules: new Map([\n${modules.map((request, index) => {
-    return `    [${JSON.stringify(require(`${request}/package.json`).name)}, ${request === `clipanion` ? `backportClipanionCompatibility` : ``}(_${index})],\n`;
+    return `    [${JSON.stringify(require(`${request}/package.json`).name)}, _${index}],\n`;
   }).join(``)}  ]),\n`;
 
   const pluginSegment = `  plugins: new Set([\n${plugins.map(request => {
@@ -16,8 +16,6 @@ module.exports = ({modules, plugins}) => {
 
   return {
     code: [
-      `import {backportClipanionCompatibility} from './backportClipanionCompatibility';\n`,
-      `\n`,
       importSegment,
       `export const getPluginConfiguration = () => ({\n`,
       moduleSegment,

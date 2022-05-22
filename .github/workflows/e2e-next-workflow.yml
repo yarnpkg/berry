@@ -55,4 +55,4 @@ jobs:
 
         yarn next build
       if: |
-        always()
+        success() || failure()

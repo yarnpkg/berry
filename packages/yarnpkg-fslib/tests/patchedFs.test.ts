@@ -63,6 +63,24 @@ describe(`patchedFs`, () => {
     expect(Buffer.isBuffer(result.buffer)).toBeTruthy();
   });
 
+  it(`matches the util.promisify return shape of node: fs.write`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+    const patchedFsWriteAsync = promisify(patchedFs.write);
+
+    const tmpdir = npath.fromPortablePath(xfs.mktempSync());
+
+    const file = npath.join(tmpdir, `file.txt`);
+
+    const fd = fs.openSync(file, `w`);
+
+    const bufferFs = Buffer.alloc(16);
+
+    const result = await patchedFsWriteAsync(fd, bufferFs, 0, 16, 0);
+
+    expect(typeof result.bytesWritten).toBe(`number`);
+    expect(Buffer.isBuffer(result.buffer)).toBeTruthy();
+  });
+
   it(`should support URL instances`, () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 

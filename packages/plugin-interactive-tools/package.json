@@ -1,12 +1,12 @@
 {
   "name": "@yarnpkg/plugin-interactive-tools",
-  "version": "3.1.2",
+  "version": "4.0.0-rc.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/libui": "workspace:^",
     "algoliasearch": "^4.2.0",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "diff": "^4.0.1",
     "ink": "^3.0.8",
     "ink-text-input": "^4.0.1",
@@ -34,8 +34,6 @@
     "directory": "packages/plugin-interactive-tools"
   },
   "scripts": {
-    "build:plugin-interactive-tools": "builder build plugin",
-    "update-local": "yarn build:plugin-interactive-tools && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -48,5 +46,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.2"
 }

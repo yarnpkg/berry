@@ -21,7 +21,7 @@ export const CorePlugin: Plugin = {
           continue;
 
         const alias = resolver.bindDescriptor(
-          structUtils.makeDescriptor(dependency, reference),
+          project.configuration.normalizeDependency(structUtils.makeDescriptor(dependency, reference)),
           project.topLevelWorkspace.anchoredLocator,
           resolveOptions,
         );

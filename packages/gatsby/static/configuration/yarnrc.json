@@ -529,7 +529,7 @@
     },
     "packageExtensions": {
       "_package": "@yarnpkg/core",
-      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
+      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/extensions/sources/index.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)(?:@(.+))$": {
@@ -662,6 +662,12 @@
       "type": "boolean",
       "default": false
     },
+    "preferReuse": {
+      "_package": "@yarnpkg/plugin-essentials",
+      "description": "If true, `yarn add` will attempt to reuse the most common dependency range in other workspaces.",
+      "type": "boolean",
+      "default": false
+    },
     "preferTruncatedLines": {
       "_package": "@yarnpkg/core",
       "description": "If true, Yarn will truncate lines that would go beyond the size of the terminal. If progress bars are disabled, lines will never be truncated. Forgettable lines (e.g. the fetch step logs) are always truncated.",
@@ -715,7 +721,7 @@
           "_exampleItems": ["current", "glibc", "musl"]
         }
       },
-      "_exampleKeys": ["os", "cpu"]
+      "_exampleKeys": ["os", "cpu", "libc"]
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
@@ -728,6 +734,12 @@
       "description": "By default, we don't assign unique IDs in the telemetry we send, so we have no way to know which data originates from which project. This setting can be used to force a user ID to be sent to our telemetry server. Frankly, it's only useful in some very specific use cases. For example, we use it on the Yarn repository in order to exclude our own usage from the public dashboards (since we necessarily run Yarn more often here than anywhere else, the resulting data would be biased).",
       "type": "string",
       "examples": ["yarnpkg/berry"]
+    },
+    "tsEnableAutoTypes": {
+      "_package": "@yarnpkg/plugin-typescript",
+      "description": "If true, Yarn will automatically add `@types` dependencies when running `yarn add` with packages that don't provide their own typings (as reported by the Algolia npm database). This behaviour is enabled by default if you have a tsconfig file at the root of your project.",
+      "type": "boolean",
+      "examples": [true]
     },
     "unsafeHttpWhitelist": {
       "_package": "@yarnpkg/core",

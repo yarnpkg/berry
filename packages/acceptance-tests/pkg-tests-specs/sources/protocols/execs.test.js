@@ -1,5 +1,4 @@
-import {xfs}           from '@yarnpkg/fslib';
-import {stringifySyml} from '@yarnpkg/parsers';
+import {xfs} from '@yarnpkg/fslib';
 
 describe(`Protocols`, () => {
   describe(`exec:`, () => {
@@ -10,10 +9,6 @@ describe(`Protocols`, () => {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
       }, async ({path, run, source}) => {
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
-          plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-exec.js`)],
-        }));
-
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
           fs.writeFileSync(path.join(buildDir, 'index.js'), 'module.exports = 42;');
@@ -33,10 +28,6 @@ describe(`Protocols`, () => {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
       }, async ({path, run, source}) => {
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
-          plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-exec.js`)],
-        }));
-
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
           fs.writeFileSync(path.join(buildDir, 'index.js'), \`module.exports = \${JSON.stringify(Object.getOwnPropertyNames(global))};\`);
@@ -60,10 +51,6 @@ describe(`Protocols`, () => {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
       }, async ({path, run, source}) => {
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
-          plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-exec.js`)],
-        }));
-
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
           fs.writeFileSync(path.join(buildDir, 'index.js'), \`module.exports = \${JSON.stringify(execEnv)};\`);
@@ -87,10 +74,6 @@ describe(`Protocols`, () => {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
       }, async ({path, run, source}) => {
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
-          plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-exec.js`)],
-        }));
-
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
           fs.writeFileSync(path.join(buildDir, 'index.js'), 'module.exports = 42;');

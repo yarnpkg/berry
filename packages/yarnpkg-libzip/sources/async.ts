@@ -1,4 +1,3 @@
-import createModule            from './libzipAsync';
 import {Libzip, makeInterface} from './makeInterface';
 
 let promise: Promise<Libzip> | null = null;
@@ -8,8 +7,12 @@ export function getLibzipSync() {
 }
 
 export async function getLibzipPromise() {
-  if (promise === null)
-    promise = createModule().then(libzip => makeInterface(libzip));
+  if (promise === null) {
+    promise = import(`./libzipAsync`).then(async ({default: createModule}) => {
+      const libzip = await createModule();
+      return makeInterface(libzip);
+    });
+  }
 
   return promise;
 }

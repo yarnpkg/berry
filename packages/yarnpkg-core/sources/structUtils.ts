@@ -208,6 +208,27 @@ export function devirtualizeLocator(locator: Locator): Locator {
 }
 
 /**
+ * Returns a descriptor guaranteed to be devirtualized
+ */
+export function ensureDevirtualizedDescriptor(descriptor: Descriptor): Descriptor {
+  if (!isVirtualDescriptor(descriptor))
+    return descriptor;
+
+  return makeDescriptor(descriptor, descriptor.range.replace(/^[^#]*#/, ``));
+}
+
+/**
+ * Returns a locator guaranteed to be devirtualized
+ * @param locator the locator
+ */
+export function ensureDevirtualizedLocator(locator: Locator): Locator {
+  if (!isVirtualLocator(locator))
+    return locator;
+
+  return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
+}
+
+/**
  * Some descriptors only make sense when bound with some internal state. For
  * instance that would be the case for the `file:` ranges, which require to
  * be bound to their parent packages in order to resolve relative paths from
@@ -452,8 +473,8 @@ type ParseRangeReturnType<Opts extends ParseRangeOptions> =
  * Parses a range into its constituents. Ranges typically follow these forms,
  * with both `protocol` and `bindings` being optionals:
  *
- * <protocol>:<selector>::<bindings>
- * <protocol>:<source>#<selector>::<bindings>
+ *     <protocol>:<selector>::<bindings>
+ *     <protocol>:<source>#<selector>::<bindings>
  *
  * The selector is intended to "refine" the source, and is required. The source
  * itself is optional (for instance we don't need it for npm packages, but we
@@ -502,6 +523,25 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
     // @ts-expect-error
     params,
   };
+}
+
+/**
+ * Parses a range into its constituents. Ranges typically follow these forms,
+ * with both `protocol` and `bindings` being optionals:
+ *
+ *     <protocol>:<selector>::<bindings>
+ *     <protocol>:<source>#<selector>::<bindings>
+ *
+ * The selector is intended to "refine" the source, and is required. The source
+ * itself is optional (for instance we don't need it for npm packages, but we
+ * do for git dependencies).
+ */
+export function tryParseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> | null {
+  try {
+    return parseRange(range, opts);
+  } catch {
+    return null;
+  }
 }
 
 /**

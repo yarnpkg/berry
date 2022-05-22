@@ -1,11 +1,14 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "3.1.2",
+  "version": "4.0.0-rc.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/plugin-patch": "workspace:^"
+  },
+  "dependencies": {
+    "@yarnpkg/extensions": "workspace:^"
   },
   "devDependencies": {
     "@types/lodash-es": "4.17.4",
@@ -39,5 +42,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.2"
 }

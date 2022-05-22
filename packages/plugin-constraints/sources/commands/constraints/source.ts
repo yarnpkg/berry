@@ -2,8 +2,6 @@ import {BaseCommand}            from '@yarnpkg/cli';
 import {Configuration, Project} from '@yarnpkg/core';
 import {Command, Option, Usage} from 'clipanion';
 
-import {Constraints}            from '../../Constraints';
-
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsSourceCommand extends BaseCommand {
   static paths = [
@@ -30,6 +28,8 @@ export default class ConstraintsSourceCommand extends BaseCommand {
   });
 
   async execute() {
+    const {Constraints} = await import(`../../Constraints`);
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
     const constraints = await Constraints.find(project);

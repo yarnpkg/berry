@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
-  "version": "3.1.1",
+  "version": "4.0.0-rc.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^1.13.0",
@@ -24,8 +24,6 @@
     "@yarnpkg/plugin-git": "workspace:^"
   },
   "scripts": {
-    "build:plugin-workspace-tools": "builder build plugin",
-    "update-local": "yarn build:plugin-workspace-tools && rsync -a --delete bundles/ bin/",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\""
   },
@@ -43,5 +41,6 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.1"
 }

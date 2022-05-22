@@ -546,7 +546,6 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-workspace-tools.js`)],
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1620,6 +1619,61 @@ describe(`Node_Modules`, () => {
       }),
   );
 
+  it(`should reinstall and rebuild dependencies deleted by the user on the next install`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+          [`one-dep-scripted`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+        await xfs.removePromise(`${path}/node_modules/one-dep-scripted` as PortablePath);
+
+        const {stdout} = await run(`install`);
+
+        // Yarn must reinstall and rebuild only the removed package
+        expect(stdout).not.toMatch(new RegExp(`no-deps-scripted@npm:1.0.0 must be built`));
+        expect(stdout).toMatch(new RegExp(`one-dep-scripted@npm:1.0.0 must be built`));
+
+        await expect(source(`require('one-dep-scripted')`)).resolves.toMatchObject({
+          name: `one-dep-scripted`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  it(`should only reinstall scoped dependencies deleted by the user on the next install`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@types/no-deps`]: `1.0.0`,
+          [`@types/is-number`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        await xfs.removePromise(`${path}/node_modules/@types/is-number` as PortablePath);
+        const inode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+
+        await run(`install`);
+        const nextInode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+
+        await expect(xfs.existsPromise(`${path}/node_modules/@types/is-number` as PortablePath));
+        expect(nextInode).toEqual(inode);
+      },
+    ),
+  );
+
   it(`should support portals to external workspaces`,
     makeTemporaryEnv(
       {
@@ -1666,6 +1720,33 @@ describe(`Node_Modules`, () => {
 
           await expect(run(`install`)).resolves.not.toThrow();
         });
+      }),
+  );
+
+  it(`should support supportedArchitectures`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          native: `1.0.0`,
+        },
+      },
+      async ({path, run}) => {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          nodeLinker: `node-modules`,
+          supportedArchitectures: {
+            os: [`foo`],
+            cpu: [`x64`, `x86`],
+          },
+        });
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
+          `.yarn-state.yml`,
+          `native`,
+          `native-foo-x64`,
+          `native-foo-x86`,
+        ]);
       }),
   );
 });

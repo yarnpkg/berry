@@ -1,16 +1,9 @@
-import {BaseCommand}                         from '@yarnpkg/cli';
-import {Configuration, structUtils}          from '@yarnpkg/core';
-import {Gem}                                 from '@yarnpkg/libui/sources/components/Gem';
-import {ScrollableItems}                     from '@yarnpkg/libui/sources/components/ScrollableItems';
-import {useKeypress}                         from '@yarnpkg/libui/sources/hooks/useKeypress';
-import {useMinistore}                        from '@yarnpkg/libui/sources/hooks/useMinistore';
-import {renderForm, SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
-import {Command, Usage}                      from 'clipanion';
-import InkTextInput                          from 'ink-text-input';
-import {Box, Text}                           from 'ink';
-import React, {useEffect, useState}          from 'react';
+import {BaseCommand}                  from '@yarnpkg/cli';
+import {Configuration, structUtils}   from '@yarnpkg/core';
+import type {SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
+import {Command, Usage}               from 'clipanion';
 
-import {AlgoliaPackage, search}              from '../algolia';
+import {AlgoliaPackage, search}       from '../algolia';
 
 const TARGETS = [`regular`, `dev`, `peer`];
 
@@ -33,6 +26,16 @@ export default class SearchCommand extends BaseCommand {
   });
 
   async execute() {
+    const {Gem} = await import(`@yarnpkg/libui/sources/components/Gem`);
+    const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
+    const {useKeypress} = await import(`@yarnpkg/libui/sources/hooks/useKeypress`);
+    const {useMinistore} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
+
+    const {default: InkTextInput} = await import(`ink-text-input`);
+    const {Box, Text} = await import(`ink`);
+    const {default: React, useEffect, useState} = await import(`react`);
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     const Prompt = () => {

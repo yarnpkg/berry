@@ -64,6 +64,10 @@ export default class UpCommand extends BaseCommand {
     description: `Offer various choices, depending on the detected upgrade paths`,
   });
 
+  fixed = Option.Boolean(`-F,--fixed`, false, {
+    description: `Store dependency tags as-is instead of resolving them`,
+  });
+
   exact = Option.Boolean(`-E,--exact`, false, {
     description: `Don't use any semver modifier on the resolved range`,
   });
@@ -159,6 +163,7 @@ export default class UpCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
+    const fixed = this.fixed;
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);
 
     const modifier = suggestUtils.getModifier(this, project);
@@ -203,7 +208,7 @@ export default class UpCommand extends BaseCommand {
                 workspace,
                 target,
                 existingDescriptor,
-                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, modifier, strategies}),
+                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, fixed, modifier, strategies}),
               ] as const;
             }));
 
@@ -281,7 +286,7 @@ export default class UpCommand extends BaseCommand {
         ({answer: selected} = await prompt({
           type: `select`,
           name: `answer`,
-          message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
+          message: `Which range do you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
           choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
             name,
             hint: reason,
@@ -321,7 +326,9 @@ export default class UpCommand extends BaseCommand {
       } else {
         const resolver = configuration.makeResolver();
         const resolveOptions: MinimalResolveOptions = {project, resolver};
-        const bound = resolver.bindDescriptor(current, workspace.anchoredLocator, resolveOptions);
+
+        const normalizedDependency = configuration.normalizeDependency(current);
+        const bound = resolver.bindDescriptor(normalizedDependency, workspace.anchoredLocator, resolveOptions);
 
         project.forgetResolution(bound);
       }

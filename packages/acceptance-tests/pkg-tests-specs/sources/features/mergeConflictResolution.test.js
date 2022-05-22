@@ -43,13 +43,13 @@ describe(`Features`, () => {
 
           await execFile(`git`, [`checkout`, `master`], {cwd: path});
           await execFile(`git`, [`checkout`, `-b`, `1.0.0`], {cwd: path});
-          await run(`set`, `resolution`, `no-deps@npm:*`, `1.0.0`);
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:1.0.0`);
           await execFile(`git`, [`add`, `-A`], {cwd: path});
           await execFile(`git`, [`commit`, `-a`, `-m`, `commit-1.0.0`], {cwd: path});
 
           await execFile(`git`, [`checkout`, `master`], {cwd: path});
           await execFile(`git`, [`checkout`, `-b`, `2.0.0`], {cwd: path});
-          await run(`set`, `resolution`, `no-deps@npm:*`, `2.0.0`);
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:2.0.0`);
           await execFile(`git`, [`add`, `-A`], {cwd: path});
           await execFile(`git`, [`commit`, `-a`, `-m`, `commit-2.0.0`], {cwd: path});
 

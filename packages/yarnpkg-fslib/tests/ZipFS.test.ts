@@ -361,6 +361,24 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should support ftruncate`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const fd = zipFs.openSync(`/foo.txt` as PortablePath, `r+`);
+
+    zipFs.writeFileSync(fd, `1234567890`);
+
+    zipFs.ftruncateSync(fd, 5);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`12345`);
+
+    await zipFs.ftruncatePromise(fd, 4);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`1234`);
+
+    zipFs.closeSync(fd);
+    zipFs.discardAndClose();
+  });
+
   it(`should support watchFile and unwatchFile`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
@@ -844,6 +862,42 @@ describe(`ZipFS`, () => {
     await zipFs.writeFilePromise(fd, `new new content`);
 
     expect(zipFs.readFileSync(fd, `utf8`)).toEqual(`new new content`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOTDIR when trying to stat a file as a directory`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    expect(() => zipFs.statSync(`/foo.txt/` as PortablePath)).toThrowError(`ENOTDIR`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/bar.txt` as PortablePath);
+    expect(() => zipFs.lstatSync(`/bar.txt/` as PortablePath)).toThrowError(`ENOTDIR`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOTDIR when trying to create a file when the dirname is a file`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    expect(() => zipFs.writeFileSync(`/foo.txt/bar.txt` as PortablePath, ``)).toThrowError(`ENOTDIR`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/bar.txt` as PortablePath);
+    expect(() => zipFs.writeFileSync(`/bar.txt/baz.txt` as PortablePath, ``)).toThrowError(`ENOTDIR`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOENT when reading a file that doesn't exist`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    // File doesn't exist
+    expect(() => zipFs.readFileSync(`/foo` as PortablePath, ``)).toThrowError(`ENOENT`);
+
+    // Parent entry doesn't exist
+    expect(() => zipFs.readFileSync(`/foo/bar` as PortablePath, ``)).toThrowError(`ENOENT`);
 
     zipFs.discardAndClose();
   });

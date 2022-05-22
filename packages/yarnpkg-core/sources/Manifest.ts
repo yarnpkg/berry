@@ -30,6 +30,7 @@ export interface PublishConfig {
   access?: string;
   main?: PortablePath;
   module?: PortablePath;
+  type?: string;
   browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
   bin?: Map<string, PortablePath>;
   registry?: string;

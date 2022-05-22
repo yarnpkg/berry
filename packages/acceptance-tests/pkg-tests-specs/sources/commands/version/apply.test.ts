@@ -8,11 +8,6 @@ describe(`Commands`, () => {
         {
           version: `0.0.0`,
         },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-          ],
-        },
         async ({path, run}) => {
           await run(`version`, `patch`, `--deferred`);
 
@@ -36,11 +31,6 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [
             `packages/*`,
-          ],
-        },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
           ],
         },
         async ({path, run}) => {
@@ -84,11 +74,6 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [
             `packages/*`,
-          ],
-        },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
           ],
         },
         async ({path, run}) => {
@@ -135,11 +120,6 @@ describe(`Commands`, () => {
         {
           version: `0.0.0`,
         },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-          ],
-        },
         async ({path, run}) => {
           await run(`version`, `decline`, `--deferred`);
 
@@ -161,11 +141,6 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           version: `1.0.0`,
-        },
-        {
-          plugins: [
-            require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
-          ],
         },
         async ({path, run}) => {
           await run(`version`, `3.4.5`, `--deferred`);
@@ -198,11 +173,6 @@ describe(`Commands`, () => {
             private: true,
             workspaces: [
               `packages/*`,
-            ],
-          },
-          {
-            plugins: [
-              require.resolve(`@yarnpkg/monorepo/scripts/plugin-version.js`),
             ],
           },
           async ({path, run}) => {
