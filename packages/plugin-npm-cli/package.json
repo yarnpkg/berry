@@ -7,6 +7,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "3.2.0-rc.4",
     "enquirer": "^2.3.6",
+    "micromatch": "^4.0.2",
     "semver": "^7.1.2",
     "tslib": "^1.13.0",
     "typanion": "^3.3.0"
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@npm/types": "^1.0.1",
+    "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
