@@ -8,6 +8,12 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
+## 3.2.2
+
+### Compatibility
+
+- The patched filesystem now supports `ftruncate`.
+
 ## 3.2.1
 
 ### Installs

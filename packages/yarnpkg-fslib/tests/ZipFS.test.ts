@@ -361,6 +361,24 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should support ftruncate`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const fd = zipFs.openSync(`/foo.txt` as PortablePath, `r+`);
+
+    zipFs.writeFileSync(fd, `1234567890`);
+
+    zipFs.ftruncateSync(fd, 5);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`12345`);
+
+    await zipFs.ftruncatePromise(fd, 4);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`1234`);
+
+    zipFs.closeSync(fd);
+    zipFs.discardAndClose();
+  });
+
   it(`should support watchFile and unwatchFile`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});

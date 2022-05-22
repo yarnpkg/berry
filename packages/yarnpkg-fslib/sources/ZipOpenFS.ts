@@ -821,6 +821,30 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
+  async ftruncatePromise(fd: number, len?: number): Promise<void> {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.ftruncatePromise(fd, len);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`ftruncate`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.ftruncatePromise(realFd, len);
+  }
+
+  ftruncateSync(fd: number, len?: number): void {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.ftruncateSync(fd, len);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`ftruncateSync`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.ftruncateSync(realFd, len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
