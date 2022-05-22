@@ -459,6 +459,16 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.truncateSync(npath.fromPortablePath(p), len);
   }
 
+  async ftruncatePromise(fd: number, len?: number): Promise<void> {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.ftruncate(fd, len, this.makeCallback(resolve, reject));
+    });
+  }
+
+  ftruncateSync(fd: number, len?: number): void {
+    return this.realFs.ftruncateSync(fd, len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {

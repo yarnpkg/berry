@@ -1476,6 +1476,14 @@ export class ZipFS extends BasePortableFakeFS {
     return this.writeFileSync(p, truncated);
   }
 
+  async ftruncatePromise(fd: number, len?: number): Promise<void> {
+    return this.truncatePromise(this.fdToPath(fd, `ftruncate`), len);
+  }
+
+  ftruncateSync(fd: number, len?: number): void {
+    return this.truncateSync(this.fdToPath(fd, `ftruncateSync`), len);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
