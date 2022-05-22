@@ -322,6 +322,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.truncateSync(this.mapToBase(p), len);
   }
 
+  async ftruncatePromise(fd: number, len?: number): Promise<void> {
+    return this.baseFs.ftruncatePromise(fd, len);
+  }
+
+  ftruncateSync(fd: number, len?: number): void {
+    return this.baseFs.ftruncateSync(fd, len);
+  }
+
   watch(p: P, cb?: WatchCallback): Watcher;
   watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
