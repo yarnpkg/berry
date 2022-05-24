@@ -866,4 +866,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       vue: `^2`,
     },
   }],
+  // https://github.com/vuejs/router/commit/c2305083a8fcb42d1bb1f3f0d92f09930124b530
+  [`vue-router@<4`, {
+    peerDependencies: {
+      vue: `^2`,
+    },
+  }],
 ];
