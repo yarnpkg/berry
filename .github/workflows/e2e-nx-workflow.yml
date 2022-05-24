@@ -24,8 +24,9 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx create-nx-workspace --name=my-nx --appName=frontend --preset=react --interactive=false --style=css --nxCloud=false
-        cd my-nx
+
+        yarn dlx create-nx-workspace --name=my-nx --appName=frontend --preset=react --interactive=false --style=css --nxCloud=false && cd my-nx
+
         yarn nx lint frontend
         yarn nx test frontend
         yarn nx build frontend
