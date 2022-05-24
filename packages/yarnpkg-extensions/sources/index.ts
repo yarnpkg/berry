@@ -860,4 +860,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'express-session': `^1.17.1`,
     },
   }],
+  // https://github.com/intlify/vue-i18n-next/commit/ed932b9e575807dc27c30573b280ad8ae48e98c9
+  [`vue-i18n@<9`, {
+    peerDependencies: {
+      vue: `^2`,
+    },
+  }],
 ];
