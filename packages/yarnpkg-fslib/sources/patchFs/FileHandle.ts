@@ -223,9 +223,13 @@ export class FileHandle<P extends Path> {
     }
   }
 
-  // FIXME: Missing FakeFS version
-  truncate(len?: number): Promise<void> {
-    throw new Error(`Method not implemented.`);
+  async truncate(len?: number): Promise<void> {
+    try {
+      this[kRef](this.truncate);
+      return await this[kBaseFs].ftruncatePromise(this.fd, len);
+    } finally {
+      this[kUnref]();
+    }
   }
 
   // FIXME: Missing FakeFS version

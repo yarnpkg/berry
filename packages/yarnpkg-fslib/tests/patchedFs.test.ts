@@ -503,4 +503,19 @@ describe(`patchedFs`, () => {
       await fd.close();
     });
   });
+
+  it(`should support FileHandle.truncate`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+      await fd.truncate(1);
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`f`);
+    });
+  });
 });
