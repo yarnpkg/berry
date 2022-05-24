@@ -26,7 +26,7 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=12.22.0"
   },
   "stableVersion": "1.0.0"
 }
