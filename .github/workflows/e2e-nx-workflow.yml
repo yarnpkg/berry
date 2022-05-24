@@ -1,0 +1,32 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-next-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E NX'
+jobs:
+  chore:
+    name: 'Validating NX'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+        yarn dlx create-nx-workspace --name=my-nx --appName=frontend --preset=react --interactive=false --style=css --nxCloud=false
+        cd my-nx
+        yarn nx lint frontend
+        yarn nx test frontend
+        yarn nx build frontend
+
