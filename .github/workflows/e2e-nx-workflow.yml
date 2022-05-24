@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
     - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-next-workflow.yml
+    - .github/workflows/e2e-nx-workflow.yml
     - scripts/e2e-setup-ci.sh
 
 name: 'E2E NX'
@@ -29,4 +29,3 @@ jobs:
         yarn nx lint frontend
         yarn nx test frontend
         yarn nx build frontend
-
