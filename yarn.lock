@@ -5502,7 +5502,7 @@ __metadata:
     ci-info: "npm:^3.2.0"
     clipanion: "npm:^3.2.0-rc.10"
     cross-spawn: "npm:7.0.3"
-    diff: "npm:^5.0.0"
+    diff: "npm:^5.1.0"
     esbuild: "npm:esbuild-wasm@^0.11.20"
     globby: "npm:^11.0.1"
     got: "npm:^11.7.0"
@@ -5979,7 +5979,7 @@ __metadata:
     "@yarnpkg/plugin-essentials": "workspace:^"
     algoliasearch: "npm:^4.2.0"
     clipanion: "npm:^3.2.0-rc.10"
-    diff: "npm:^5.0.0"
+    diff: "npm:^5.1.0"
     ink: "npm:^3.0.8"
     ink-text-input: "npm:^4.0.1"
     react: "npm:^16.13.1"
@@ -10258,10 +10258,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"diff@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "diff@npm:5.0.0"
-  checksum: 19f4cad11d6e9d702c34810934074bd2bed661a49200c41d4f2dc3b70c29e92ca2fa18ce1606c8e71db59a86d357ede3234c94e8e3a39b605bcd0df0b4209da9
+"diff@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "diff@npm:5.1.0"
+  checksum: c241ce992c1b59de63637d5ea2c4ac36e5686a0c660830a2dea1c9963abbb83907bef6aebe2898a3e581483bf8b1073e806ad884bf8cafe2af4023fb8ecf0f58
   languageName: node
   linkType: hard
 
