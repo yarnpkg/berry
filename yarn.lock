@@ -4082,10 +4082,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/diff@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "@types/diff@npm:4.0.2"
-  checksum: 80986254f881e29a146c7258654b0c1ddecbb487dc2eca9ad424dab7a17f54d57f91271526661f4c3bf0bb77903d90bc627b63e389a30711adc622865bc30d94
+"@types/diff@npm:^5.0.0":
+  version: 5.0.2
+  resolution: "@types/diff@npm:5.0.2"
+  checksum: 8fbc419b5aca33f494026bf5f70e026f76367689677ef114f9c078ac738d7dbe96e6dda3fd8290e4a7c35281e2b60b034e3d7e3c968b850cf06a21279e7ddcbe
   languageName: node
   linkType: hard
 
@@ -5453,7 +5453,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
     "@types/cross-spawn": 6.0.0
-    "@types/diff": ^4.0.2
+    "@types/diff": ^5.0.0
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
     "@types/node": ^13.7.0
@@ -5476,7 +5476,7 @@ __metadata:
     ci-info: ^3.2.0
     clipanion: ^3.2.0-rc.4
     cross-spawn: 7.0.3
-    diff: ^4.0.1
+    diff: ^5.1.0
     esbuild: "npm:esbuild-wasm@^0.11.20"
     globby: ^11.0.1
     got: ^11.7.0
@@ -5967,7 +5967,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-interactive-tools@workspace:packages/plugin-interactive-tools"
   dependencies:
-    "@types/diff": ^4.0.2
+    "@types/diff": ^5.0.0
     "@types/react": ^16.8.0
     "@types/semver": ^7.1.0
     "@yarnpkg/builder": "workspace:^"
@@ -5977,7 +5977,7 @@ __metadata:
     "@yarnpkg/plugin-essentials": "workspace:^"
     algoliasearch: ^4.2.0
     clipanion: ^3.2.0-rc.4
-    diff: ^4.0.1
+    diff: ^5.1.0
     ink: ^3.0.8
     ink-text-input: ^4.0.1
     react: ^16.13.1
@@ -10305,6 +10305,13 @@ __metadata:
   version: 4.0.1
   resolution: "diff@npm:4.0.1"
   checksum: d426381c0847ce1038771007622998ce31962e00d5d1a1f02d17e53b9af3bec9dfa24b967c9208e34f35bd13f9bd807392fbc399fe8898df96175dae09fa2afc
+  languageName: node
+  linkType: hard
+
+"diff@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "diff@npm:5.1.0"
+  checksum: c7bf0df7c9bfbe1cf8a678fd1b2137c4fb11be117a67bc18a0e03ae75105e8533dbfb1cda6b46beb3586ef5aed22143ef9d70713977d5fb1f9114e21455fba90
   languageName: node
   linkType: hard
 

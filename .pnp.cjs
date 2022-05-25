@@ -8000,10 +8000,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@types/diff", [\
-        ["npm:4.0.2", {\
-          "packageLocation": "./.yarn/cache/@types-diff-npm-4.0.2-e0c9c256aa-80986254f8.zip/node_modules/@types/diff/",\
+        ["npm:5.0.2", {\
+          "packageLocation": "./.yarn/cache/@types-diff-npm-5.0.2-cc002907d4-8fbc419b5a.zip/node_modules/@types/diff/",\
           "packageDependencies": [\
-            ["@types/diff", "npm:4.0.2"]\
+            ["@types/diff", "npm:5.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -10255,7 +10255,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rollup/plugin-commonjs", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:21.0.1"],\
             ["@rollup/plugin-node-resolve", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:11.2.1"],\
             ["@types/cross-spawn", "npm:6.0.0"],\
-            ["@types/diff", "npm:4.0.2"],\
+            ["@types/diff", "npm:5.0.2"],\
             ["@types/lodash", "npm:4.14.172"],\
             ["@types/micromatch", "npm:4.0.1"],\
             ["@types/node", "npm:13.7.0"],\
@@ -10278,7 +10278,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ci-info", "npm:3.2.0"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
             ["cross-spawn", "npm:7.0.3"],\
-            ["diff", "npm:4.0.1"],\
+            ["diff", "npm:5.1.0"],\
             ["esbuild", [\
               "esbuild-wasm",\
               "npm:0.11.20"\
@@ -12304,7 +12304,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/plugin-interactive-tools/",\
           "packageDependencies": [\
             ["@yarnpkg/plugin-interactive-tools", "workspace:packages/plugin-interactive-tools"],\
-            ["@types/diff", "npm:4.0.2"],\
+            ["@types/diff", "npm:5.0.2"],\
             ["@types/react", "npm:16.9.2"],\
             ["@types/semver", "npm:7.1.0"],\
             ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
@@ -12314,7 +12314,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/plugin-essentials", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/plugin-essentials"],\
             ["algoliasearch", "npm:4.2.0"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
-            ["diff", "npm:4.0.1"],\
+            ["diff", "npm:5.1.0"],\
             ["ink", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:3.0.8"],\
             ["ink-text-input", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#npm:4.0.1"],\
             ["react", "npm:16.13.1"],\
@@ -20154,6 +20154,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/diff-npm-4.0.1-4d86a500e8-d426381c08.zip/node_modules/diff/",\
           "packageDependencies": [\
             ["diff", "npm:4.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/cache/diff-npm-5.1.0-d24d222280-c7bf0df7c9.zip/node_modules/diff/",\
+          "packageDependencies": [\
+            ["diff", "npm:5.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\
