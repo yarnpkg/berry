@@ -1568,24 +1568,27 @@ export class Project {
         const newLockfile = normalizeLineEndings(initialLockfile, this.generateLockfile());
 
         if (newLockfile !== initialLockfile) {
-          const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile);
+          // @ts-expect-error 2345 need to upgrade to diff 5.0.1 or apply patch in yarn's monorepo
+          const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile, undefined, undefined, {maxEditLength: 100});
 
-          opts.report.reportSeparator();
+          if (diff) {
+            opts.report.reportSeparator();
 
-          for (const hunk of diff.hunks) {
-            opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
-            for (const line of hunk.lines) {
-              if (line.startsWith(`+`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.ADDED));
-              } else if (line.startsWith(`-`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.REMOVED));
-              } else {
-                opts.report.reportInfo(null, formatUtils.pretty(this.configuration, line, `grey`));
+            for (const hunk of diff.hunks) {
+              opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
+              for (const line of hunk.lines) {
+                if (line.startsWith(`+`)) {
+                  opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.ADDED));
+                } else if (line.startsWith(`-`)) {
+                  opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.REMOVED));
+                } else {
+                  opts.report.reportInfo(null, formatUtils.pretty(this.configuration, line, `grey`));
+                }
               }
             }
-          }
 
-          opts.report.reportSeparator();
+            opts.report.reportSeparator();
+          }
 
           throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden.`);
         }
