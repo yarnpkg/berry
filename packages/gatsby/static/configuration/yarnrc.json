@@ -450,6 +450,26 @@
       "enum": ["public", "restricted"],
       "examples": ["public"]
     },
+    "npmAuditExcludePackages": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "description": "Array of glob patterns of packages to exclude from `yarn npm audit`. Doesn't need to be defined, in which case no packages will be excluded. Can also be augmented by the `--exclude` flag.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["known_insecure_package"]
+    },
+    "npmAuditIgnoreAdvisories": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "description": "Array of glob patterns of advisory ID's to ignore from `yarn npm audit` results. Doesn't need to be defined, in which case no advisories will be ignored. Can also be augmented by the `--ignore` flag.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["1234567"]
+    },
     "npmPublishRegistry": {
       "_package": "@yarnpkg/plugin-npm",
       "description": "Defines the registry that must be used when pushing packages. Doesn't need to be defined, in which case the value of `npmRegistryServer` will be used. Overridden by `publishConfig.registry`.",

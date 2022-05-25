@@ -31,6 +31,10 @@ The following changes only affect people writing Yarn plugins:
 
 - The `generateLoader` function in `@yarnpkg/pnp` no longer generates the `$$SETUP_STATE` function, it now needs to be present in the `loader` passed to the function.
 
+### Compatibility
+
+- The patched filesystem now supports `ftruncate`.
+
 ## 3.2.1
 
 ### Installs
