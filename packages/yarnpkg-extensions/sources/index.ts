@@ -835,4 +835,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       [`eslint`]: `*`,
     },
   }],
+  // https://github.com/focus-trap/focus-trap-react/pull/691
+  [`focus-trap-react@^8.0.0`, {
+    dependencies: {
+      tabbable: `^5.3.2`,
+    },
+  }],
 ];
