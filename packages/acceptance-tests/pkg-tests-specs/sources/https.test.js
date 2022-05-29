@@ -26,7 +26,7 @@ describe(`Https tests`, () => {
   );
 
   test(
-    `it should install when providing valid CA certificate via root caFilePath`,
+    `it should install when providing valid CA certificate via root httpsCaFilePath`,
     makeTemporaryEnv(
       {
         dependencies: {[`@private/package`]: `1.0.0`},
@@ -37,7 +37,7 @@ describe(`Https tests`, () => {
 
         await writeFile(`${path}/rootCA.crt`, certs.ca.certificate);
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath: ${path}/rootCA.crt`,
+          `httpsCaFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -68,7 +68,7 @@ describe(`Https tests`, () => {
         await writeFile(`${path}/.yarnrc.yml`, [
           `networkSettings:`,
           `  "*":`,
-          `    caFilePath: ${path}/rootCA.crt`,
+          `    httpsCaFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -99,7 +99,7 @@ describe(`Https tests`, () => {
         await writeFile(`${path}/.yarnrc.yml`, [
           `networkSettings:`,
           `  "localhost":`,
-          `    caFilePath: ${path}/rootCA.crt`,
+          `    httpsCaFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -130,7 +130,7 @@ describe(`Https tests`, () => {
         await writeFile(`${path}/.yarnrc.yml`, [
           `networkSettings:`,
           `  "foo":`,
-          `    caFilePath: ${path}/rootCA.crt`,
+          `    httpsCaFilePath: ${path}/rootCA.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
@@ -152,7 +152,7 @@ describe(`Https tests`, () => {
         const url = await startPackageServer({type: `https`});
 
         await writeFile(`${path}/.yarnrc.yml`, [
-          `caFilePath: ${path}/missing.crt`,
+          `httpsCaFilePath: ${path}/missing.crt`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,
