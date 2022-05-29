@@ -9,7 +9,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\"",
+    "prepack": "run --global build:compile \"$(pwd)\"",
     "release": "yarn npm publish"
   },
   "publishConfig": {

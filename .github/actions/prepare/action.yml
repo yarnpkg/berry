@@ -16,7 +16,7 @@ runs:
     - name: 'Build the standard bundle'
       if: steps.cache-build.outputs.cache-hit != 'true'
       run: |
-        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js run --global build:cli
       shell: bash
     #endregion
 

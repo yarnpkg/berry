@@ -56,6 +56,10 @@ export default class RunCommand extends BaseCommand {
     description: `Forwarded to the underlying Node process when executing a binary`,
   });
 
+  global = Option.Boolean(`--global`, false, {
+    description: `Check all workspaces for ones that declare the script uniquely`,
+  });
+
   // The v1 used to print the Yarn version header when using "yarn run", which
   // was messing with the output of things like `--version` & co. We don't do
   // this anymore, but many workflows use `yarn run --silent` to make sure that
@@ -123,13 +127,13 @@ export default class RunCommand extends BaseCommand {
 
     // When it fails, we try to check whether it's a global script (ie we look
     // into all the workspaces to find one that exports this script). We only do
-    // this if the script name contains a colon character (":"), and we skip
+    // this if the `--global` option is passed, and we skip
     // this logic if multiple workspaces share the same script name.
     //
     // We also disable this logic for packages coming from third-parties (ie
     // not workspaces). No particular reason except maybe security concerns.
 
-    if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
+    if (!this.topLevel && !this.binariesOnly && workspace && this.global) {
       const candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
         return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
       }));

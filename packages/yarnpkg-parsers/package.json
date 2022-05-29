@@ -17,9 +17,9 @@
     "grammar:syml": "run pegjs -o sources/grammars/syml.js sources/grammars/syml.pegjs",
     "grammar:all": "run grammar:shell & run grammar:resolution & run grammar:syml &",
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\"",
+    "prepack": "run --global build:compile \"$(pwd)\"",
     "release": "yarn npm publish",
-    "test:parsers": "run test:unit packages/yarnpkg-parsers"
+    "test:parsers": "run --global test:unit packages/yarnpkg-parsers"
   },
   "publishConfig": {
     "main": "./lib/index.js",

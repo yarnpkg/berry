@@ -391,7 +391,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--topological`, `run`, `test:colon`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--topological`, `run`, `--global`, `test:colon`)).resolves.toMatchSnapshot();
         },
       ),
     );
@@ -411,7 +411,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`test:foo`)).resolves.toMatchSnapshot();
+          await expect(run(`run`, `--global`, `test:foo`)).resolves.toMatchSnapshot();
         },
       ),
     );

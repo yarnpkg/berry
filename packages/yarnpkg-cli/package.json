@@ -50,7 +50,7 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\"",
+    "prepack": "run --global build:compile \"$(pwd)\"",
     "build:cli+hook": "run build:pnp:hook && builder build bundle",
     "build:cli": "builder build bundle",
     "run:cli": "builder run",

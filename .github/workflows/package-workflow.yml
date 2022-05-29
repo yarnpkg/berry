@@ -27,7 +27,7 @@ jobs:
     - name: 'Build the standard bundle'
       run: |
         set -ex
-        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js run --global build:cli
 
     - name: 'Build the dist directory'
       run: |

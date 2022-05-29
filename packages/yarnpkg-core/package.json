@@ -54,7 +54,7 @@
     "build:zip:worker": "rollup -c",
     "update:zip:worker": "run build:zip:worker",
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\""
+    "prepack": "run --global build:compile \"$(pwd)\""
   },
   "publishConfig": {
     "main": "./lib/index.js",

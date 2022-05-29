@@ -13,7 +13,7 @@
     "pkg-tests-core": "workspace:^"
   },
   "scripts": {
-    "test:integration": "run test:unit --config \"$(pwd)/jest.config.js\""
+    "test:integration": "run --global test:unit --config \"$(pwd)/jest.config.js\""
   },
   "repository": {
     "type": "git",

@@ -112,6 +112,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     tolerateBoolean: true,
   });
 
+  global = Option.Boolean(`--global`, false, {
+    description: `Check all workspaces for ones that declare the script uniquely`,
+  });
+
   commandName = Option.String();
   args = Option.Proxy();
 
@@ -155,9 +159,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
     const workspaces: Array<Workspace> = [];
 
-    // A script containing `:` becomes global if it exists in only one workspace.
+    // A script becomes global if run with `--global` and it exists in only one workspace.
     let isGlobalScript = false;
-    if (scriptName?.includes(`:`)) {
+    if (this.global && scriptName) {
       for (const workspace of project.workspaces) {
         if (workspace.manifest.scripts.has(scriptName)) {
           isGlobalScript = !isGlobalScript;

@@ -224,7 +224,7 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        expect((await run(`run`, `ws:cwd`)).stdout.trim()).toEqual(npath.fromPortablePath(`${path}/packages/workspace`));
+        expect((await run(`run`, `--global`, `ws:cwd`)).stdout.trim()).toEqual(npath.fromPortablePath(`${path}/packages/workspace`));
       },
     ),
   );

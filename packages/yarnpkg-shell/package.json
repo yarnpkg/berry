@@ -22,9 +22,9 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\"",
+    "prepack": "run --global build:compile \"$(pwd)\"",
     "release": "yarn npm publish",
-    "test:shell": "run test:unit packages/yarnpkg-shell"
+    "test:shell": "run --global test:unit packages/yarnpkg-shell"
   },
   "publishConfig": {
     "main": "./lib/index.js",
