@@ -34,6 +34,13 @@ export enum NodeModulesMode {
 export class NodeModulesLinker implements Linker {
   private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
 
+  getCustomDataKey() {
+    return JSON.stringify({
+      name: `NodeModulesLinker`,
+      version: 2,
+    });
+  }
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return this.isEnabled(opts);
   }
@@ -117,13 +124,6 @@ class NodeModulesInstaller implements Installer {
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
-  }
-
-  getCustomDataKey() {
-    return JSON.stringify({
-      name: `NodeModulesInstaller`,
-      version: 2,
-    });
   }
 
   private customData: {
