@@ -29,8 +29,8 @@
   },
   "scripts": {
     "postpack": "rm -rf lib",
-    "prepack": "run build:compile \"$(pwd)\"",
-    "test:plugin-compat": "run test:unit --config \"$(pwd)/jest.config.js\"",
+    "prepack": "run --global build:compile \"$(pwd)\"",
+    "test:plugin-compat": "run --global test:unit --config \"$(pwd)/jest.config.js\"",
     "debug:patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
   },
   "publishConfig": {

@@ -79,11 +79,11 @@ describe(`Scripts tests`, () => {
 
       await run(`install`);
 
-      await expect(run(`run`, `test:script`)).resolves.toMatchObject({
+      await expect(run(`run`, `--global`, `test:script`)).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(path)}\n`,
       });
 
-      await expect(run(`run`, `test:script`, {
+      await expect(run(`run`, `--global`, `test:script`, {
         cwd: `${path}/packages`,
       })).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
@@ -107,11 +107,11 @@ describe(`Scripts tests`, () => {
 
       await run(`install`);
 
-      await expect(run(`run`, `test:script`)).resolves.toMatchObject({
+      await expect(run(`run`, `--global`, `test:script`)).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(path)}\n`,
       });
 
-      await expect(run(`run`, `test:script`, {
+      await expect(run(`run`, `--global`, `test:script`, {
         cwd: `${path}/packages`,
       })).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(path)}\n`,
@@ -134,7 +134,7 @@ describe(`Scripts tests`, () => {
 
       await run(`install`);
 
-      await expect(run(`run`, `ws:foo2`)).resolves.toMatchObject({
+      await expect(run(`run`, `--global`, `ws:foo2`)).resolves.toMatchObject({
         stdout: `1\n`,
       });
     }),

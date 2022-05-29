@@ -69,7 +69,7 @@ gen_enforced_field(WorkspaceCwd, 'scripts.update-local', '<any value>') :-
 inline_compile('@yarnpkg/eslint-config').
 inline_compile('@yarnpkg/libui').
 
-gen_enforced_field(WorkspaceCwd, 'scripts.prepack', 'run build:compile "$(pwd)"') :-
+gen_enforced_field(WorkspaceCwd, 'scripts.prepack', 'run --global build:compile "$(pwd)"') :-
   workspace(WorkspaceCwd),
   % This package is built using Rollup, so we allow it to configure its build scripts itself
     \+ workspace_ident(WorkspaceCwd, '@yarnpkg/pnp'),

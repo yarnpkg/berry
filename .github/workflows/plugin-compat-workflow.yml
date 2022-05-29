@@ -23,4 +23,4 @@ jobs:
 
     - name: 'Run the plugin-compat tests'
       run: |
-        node ./scripts/run-yarn.js test:plugin-compat
+        node ./scripts/run-yarn.js run --global test:plugin-compat
