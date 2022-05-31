@@ -872,4 +872,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       vue: `^2`,
     },
   }],
+  // https://github.com/unifiedjs/unified/pull/146
+  [`unified@<10`, {
+    dependencies: {
+      '@types/unist': `^2.0.0`,
+    },
+  }],
 ];
