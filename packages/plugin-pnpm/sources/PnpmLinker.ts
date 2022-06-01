@@ -34,7 +34,16 @@ export class PnpmLinker implements Linker {
       return null;
 
     const customDataKey = getCustomDataKey();
-    const customData = opts.project.installersCustomData.get(customDataKey) as any;
+    let customData = opts.project.installersCustomData.get(customDataKey) as any;
+    if (!customData) {
+      await opts.project.restoreInstallState({
+        restoreInstallersCustomData: true,
+        restoreResolutions: false,
+        restoreBuildState: false,
+      });
+      customData = opts.project.installersCustomData.get(customDataKey) as any;
+    }
+
     if (!customData)
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
@@ -42,7 +51,8 @@ export class PnpmLinker implements Linker {
     if (nmRootLocation) {
       const nmLocator = customData.locatorByPath.get(nmRootLocation[1]);
       if (nmLocator) {
-        return nmLocator;
+        const locator = structUtils.parseLocator(nmLocator);
+        return locator;
       }
     }
 
