@@ -87,7 +87,7 @@ const MenuEntry = styled(Link)`
 const Tag = styled.code`
   color: #007aa2;
 
-  font-family: "PT Mono";
+  font-family: "PT Mono", monospace;
 
   ${ifDesktop} {
     margin-left: auto;
