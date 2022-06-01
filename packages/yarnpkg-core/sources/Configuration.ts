@@ -372,7 +372,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       description: ``,
       type: SettingsType.SHAPE,
       properties: {
-        caFilePath: {
+        httpsCaFilePath: {
           description: `Path to file containing one or multiple Certificate Authority signing certificates`,
           type: SettingsType.ABSOLUTE_PATH,
           default: null,
@@ -405,7 +405,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       },
     },
   },
-  caFilePath: {
+  httpsCaFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
@@ -593,14 +593,14 @@ export interface ConfigurationValueMap {
   httpRetry: number;
   networkConcurrency: number;
   networkSettings: Map<string, miscUtils.ToMapValue<{
-    caFilePath: PortablePath | null;
+    httpsCaFilePath: PortablePath | null;
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
     httpsKeyFilePath: PortablePath | null;
     httpsCertFilePath: PortablePath | null;
   }>>;
-  caFilePath: PortablePath | null;
+  httpsCaFilePath: PortablePath | null;
   httpsKeyFilePath: PortablePath | null;
   httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;

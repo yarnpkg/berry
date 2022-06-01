@@ -124,7 +124,7 @@ export function getNetworkSettings(target: string | URL, opts: { configuration: 
 
   const mergedNetworkSettings: UndefinableSettings = {
     enableNetwork: undefined,
-    caFilePath: undefined,
+    httpsCaFilePath: undefined,
     httpProxy: undefined,
     httpsProxy: undefined,
     httpsKeyFilePath: undefined,
@@ -258,14 +258,14 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   const socketTimeout = configuration.get(`httpTimeout`);
   const retry = configuration.get(`httpRetry`);
   const rejectUnauthorized = configuration.get(`enableStrictSsl`);
-  const caFilePath = networkConfig.caFilePath;
+  const httpsCaFilePath = networkConfig.httpsCaFilePath;
   const httpsCertFilePath = networkConfig.httpsCertFilePath;
   const httpsKeyFilePath = networkConfig.httpsKeyFilePath;
 
   const {default: got} = await import(`got`);
 
-  const certificateAuthority = caFilePath
-    ? await getCachedFile(caFilePath)
+  const certificateAuthority = httpsCaFilePath
+    ? await getCachedFile(httpsCaFilePath)
     : undefined;
   const certificate = httpsCertFilePath
     ? await getCachedFile(httpsCertFilePath)

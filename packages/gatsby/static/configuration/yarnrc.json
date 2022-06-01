@@ -26,7 +26,7 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
-    "caFilePath": {
+    "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
       "description": "Path to file containing one or multiple Certificate Authority signing certificates",
       "type": "string",
@@ -365,8 +365,8 @@
           "description": "The hostname to override settings for (glob patterns are supported)",
           "type": "object",
           "properties": {
-            "caFilePath": {
-              "$ref": "#/properties/caFilePath"
+            "httpsCaFilePath": {
+              "$ref": "#/properties/httpsCaFilePath"
             },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
@@ -384,7 +384,7 @@
               "$ref": "#/properties/httpsProxy"
             }
           },
-          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
+          "_exampleKeys": ["httpsCaFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
         }
       },
       "_exampleKeys": ["*.example.com"]
