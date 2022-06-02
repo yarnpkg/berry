@@ -24,6 +24,13 @@ export class PnpLinker implements Linker {
 
   private pnpCache: Map<string, PnpApi> = new Map();
 
+  getCustomDataKey() {
+    return JSON.stringify({
+      name: `PnpLinker`,
+      version: 2,
+    });
+  }
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return this.isEnabled(opts);
   }
@@ -99,13 +106,6 @@ export class PnpInstaller implements Installer {
 
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
-  }
-
-  getCustomDataKey() {
-    return JSON.stringify({
-      name: `PnpInstaller`,
-      version: 2,
-    });
   }
 
   private customData: {

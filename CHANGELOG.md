@@ -32,6 +32,8 @@ The following changes only affect people writing Yarn plugins:
 
 - The `generateLoader` function in `@yarnpkg/pnp` no longer generates the `$$SETUP_STATE` function, it now needs to be present in the `loader` passed to the function.
 
+- The `getCustomDataKey` function in `Installer` from `@yarnpkg/core` has been moved to `Linker`.
+
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.

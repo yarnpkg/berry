@@ -47,7 +47,7 @@ const LOCKFILE_VERSION = 7;
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
 // between patch or minor releases).
-const INSTALL_STATE_VERSION = 1;
+const INSTALL_STATE_VERSION = 2;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
@@ -138,8 +138,8 @@ export type InstallOptions = {
 };
 
 const INSTALL_STATE_FIELDS = {
-  restoreInstallersCustomData: [
-    `installersCustomData`,
+  restoreLinkersCustomData: [
+    `linkersCustomData`,
   ] as const,
 
   restoreResolutions: [
@@ -223,10 +223,10 @@ export class Project {
   public peerRequirements: Map<string, PeerRequirement> = new Map();
 
   /**
-   * Contains whatever data the installers (cf `Linker.ts`) want to persist
+   * Contains whatever data the linkers (cf `Linker.ts`) want to persist
    * from an install to another.
    */
-  public installersCustomData: Map<string, unknown> = new Map();
+  public linkersCustomData: Map<string, unknown> = new Map();
 
   /**
    * Those checksums are used to detect whether the relevant files actually
@@ -1048,8 +1048,8 @@ export class Project {
     const installers = new Map(linkers.map(linker => {
       const installer = linker.makeInstaller(linkerOptions);
 
-      const customDataKey = installer.getCustomDataKey();
-      const customData = this.installersCustomData.get(customDataKey);
+      const customDataKey = linker.getCustomDataKey();
+      const customData = this.linkersCustomData.get(customDataKey);
       if (typeof customData !== `undefined`)
         installer.attachCustomData(customData);
 
@@ -1246,9 +1246,9 @@ export class Project {
 
     // Step 3: Inform our linkers that they should have all the info needed
 
-    const installersCustomData = new Map();
+    const linkersCustomData = new Map();
 
-    for (const installer of installers.values()) {
+    for (const [linker, installer] of installers) {
       const finalizeInstallData = await installer.finalizeInstall();
 
       for (const installStatus of finalizeInstallData?.records ?? []) {
@@ -1259,11 +1259,11 @@ export class Project {
       }
 
       if (typeof finalizeInstallData?.customData !== `undefined`) {
-        installersCustomData.set(installer.getCustomDataKey(), finalizeInstallData.customData);
+        linkersCustomData.set(linker.getCustomDataKey(), finalizeInstallData.customData);
       }
     }
 
-    this.installersCustomData = installersCustomData;
+    this.linkersCustomData = linkersCustomData;
 
     await miscUtils.allSettledSafe(pendingPromises);
 
@@ -1789,7 +1789,7 @@ export class Project {
     this.installStateChecksum = newInstallStateChecksum;
   }
 
-  async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
+  async restoreInstallState({restoreLinkersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
 
     let installState: InstallState;
@@ -1805,9 +1805,9 @@ export class Project {
       return;
     }
 
-    if (restoreInstallersCustomData)
-      if (typeof installState.installersCustomData !== `undefined`)
-        this.installersCustomData = installState.installersCustomData;
+    if (restoreLinkersCustomData)
+      if (typeof installState.linkersCustomData !== `undefined`)
+        this.linkersCustomData = installState.linkersCustomData;
 
     if (restoreBuildState)
       Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
