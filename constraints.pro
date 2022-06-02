@@ -46,7 +46,8 @@ gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause').
 
 % This rule will enforce that all packages must have an correct engines.node field
 % Keep in sync with the range inside packages/yarnpkg-cli/sources/main.ts
-gen_enforced_field(WorkspaceCwd, 'engines.node', '>=14.15.0').
+gen_enforced_field(WorkspaceCwd, 'engines.node', '>=14.15.0') :-
+  WorkspaceCwd \= 'packages/yarnpkg-extensions'.
 
 % Required to make the package work with the GitHub Package Registry
 gen_enforced_field(WorkspaceCwd, 'repository.type', 'git').
