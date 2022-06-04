@@ -270,7 +270,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.16.7"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.16.7"],\
           ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.17.7"],\
-          ["@types/jest", "npm:24.0.25"],\
+          ["@types/jest", "npm:26.0.24"],\
           ["@types/node", "npm:13.7.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -5750,6 +5750,18 @@ const RAW_RUNTIME_STATE =
           ["chalk", "npm:4.1.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:26.6.2", {\
+        "packageLocation": "./.yarn/cache/@jest-types-npm-26.6.2-fca9877d98-de84543973.zip/node_modules/@jest/types/",\
+        "packageDependencies": [\
+          ["@jest/types", "npm:26.6.2"],\
+          ["@types/istanbul-lib-coverage", "npm:2.0.1"],\
+          ["@types/istanbul-reports", "npm:3.0.1"],\
+          ["@types/node", "npm:14.17.3"],\
+          ["@types/yargs", "npm:15.0.4"],\
+          ["chalk", "npm:4.1.2"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@jimp/bmp", [\
@@ -8250,14 +8262,23 @@ const RAW_RUNTIME_STATE =
           ["@types/istanbul-lib-report", "npm:1.1.1"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:3.0.1", {\
+        "packageLocation": "./.yarn/cache/@types-istanbul-reports-npm-3.0.1-770e825002-6ebbdef0b1.zip/node_modules/@types/istanbul-reports/",\
+        "packageDependencies": [\
+          ["@types/istanbul-reports", "npm:3.0.1"],\
+          ["@types/istanbul-lib-report", "npm:1.1.1"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@types/jest", [\
-      ["npm:24.0.25", {\
-        "packageLocation": "./.yarn/cache/@types-jest-npm-24.0.25-4f86b66de3-885e360325.zip/node_modules/@types/jest/",\
+      ["npm:26.0.24", {\
+        "packageLocation": "./.yarn/cache/@types-jest-npm-26.0.24-47c570294f-b93255900b.zip/node_modules/@types/jest/",\
         "packageDependencies": [\
-          ["@types/jest", "npm:24.0.25"],\
-          ["jest-diff", "npm:24.9.0"]\
+          ["@types/jest", "npm:26.0.24"],\
+          ["jest-diff", "npm:26.6.2"],\
+          ["pretty-format", "npm:26.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10969,7 +10990,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.16.7"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.16.7"],\
           ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.17.7"],\
-          ["@types/jest", "npm:24.0.25"],\
+          ["@types/jest", "npm:26.0.24"],\
           ["@types/node", "npm:13.7.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -25127,6 +25148,13 @@ const RAW_RUNTIME_STATE =
           ["diff-sequences", "npm:26.0.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:26.6.2", {\
+        "packageLocation": "./.yarn/cache/diff-sequences-npm-26.6.2-fbf1967570-4068d7e23a.zip/node_modules/diff-sequences/",\
+        "packageDependencies": [\
+          ["diff-sequences", "npm:26.6.2"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["diffie-hellman", [\
@@ -32124,6 +32152,17 @@ const RAW_RUNTIME_STATE =
           ["pretty-format", "npm:26.0.1"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:26.6.2", {\
+        "packageLocation": "./.yarn/cache/jest-diff-npm-26.6.2-06ca2a96ca-837faa5008.zip/node_modules/jest-diff/",\
+        "packageDependencies": [\
+          ["jest-diff", "npm:26.6.2"],\
+          ["chalk", "npm:4.1.2"],\
+          ["diff-sequences", "npm:26.6.2"],\
+          ["jest-get-type", "npm:26.3.0"],\
+          ["pretty-format", "npm:26.6.2"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["jest-docblock", [\
@@ -32198,6 +32237,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-get-type-npm-26.0.0-32f433dd67-e918068469.zip/node_modules/jest-get-type/",\
         "packageDependencies": [\
           ["jest-get-type", "npm:26.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:26.3.0", {\
+        "packageLocation": "./.yarn/cache/jest-get-type-npm-26.3.0-a481f14d96-78a4efc343.zip/node_modules/jest-get-type/",\
+        "packageDependencies": [\
+          ["jest-get-type", "npm:26.3.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -37961,6 +38007,17 @@ const RAW_RUNTIME_STATE =
           ["react-is", "npm:16.13.1"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:26.6.2", {\
+        "packageLocation": "./.yarn/cache/pretty-format-npm-26.6.2-6edfcf7149-2363cfda63.zip/node_modules/pretty-format/",\
+        "packageDependencies": [\
+          ["pretty-format", "npm:26.6.2"],\
+          ["@jest/types", "npm:26.6.2"],\
+          ["ansi-regex", "npm:5.0.1"],\
+          ["ansi-styles", "npm:4.2.0"],\
+          ["react-is", "npm:17.0.2"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["prismjs", [\
@@ -38924,6 +38981,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/react-is-npm-16.13.1-a9b9382b4f-0c9adc5d98.zip/node_modules/react-is/",\
         "packageDependencies": [\
           ["react-is", "npm:16.13.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:17.0.2", {\
+        "packageLocation": "./.yarn/cache/react-is-npm-17.0.2-091bbb8db6-24af7af3ab.zip/node_modules/react-is/",\
+        "packageDependencies": [\
+          ["react-is", "npm:17.0.2"]\
         ],\
         "linkType": "HARD"\
       }]\
