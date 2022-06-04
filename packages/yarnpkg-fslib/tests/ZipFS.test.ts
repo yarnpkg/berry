@@ -12,6 +12,10 @@ const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
 
+afterEach(() => {
+  jest.useRealTimers();
+});
+
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
     const expectSameStats = (a: fs.Stats, b: fs.Stats) => {
