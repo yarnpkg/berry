@@ -69,8 +69,11 @@ export default class StageCommand extends BaseCommand {
 
     await configuration.triggerHook((hooks: Hooks) => {
       return hooks.populateYarnPaths;
-    }, project, (path: PortablePath | null) => {
-      basePaths.push(path);
+    }, {
+      project,
+      definePath: (path: PortablePath | null) => {
+        basePaths.push(path);
+      },
     });
 
     const yarnPaths = new Set<PortablePath>();

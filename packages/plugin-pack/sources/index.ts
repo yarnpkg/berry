@@ -12,16 +12,16 @@ export interface Hooks {
    * parameter is allowed to be mutated at will, with the changes being only
    * applied to the packed manifest (the original one won't be mutated).
    */
-  beforeWorkspacePacking?: (
+  beforeWorkspacePacking?: ({ workspace, rawManifest }: {
     workspace: Workspace,
     rawManifest: object,
-  ) => Promise<void> | void;
+  }) => Promise<void> | void;
 }
 
 const DEPENDENCY_TYPES = [`dependencies`, `devDependencies`, `peerDependencies`];
 const WORKSPACE_PROTOCOL = `workspace:`;
 
-const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
+const beforeWorkspacePacking = ({ workspace, rawManifest }: { workspace: Workspace, rawManifest: any }) => {
   if (rawManifest.publishConfig) {
     if (rawManifest.publishConfig.type)
       rawManifest.type = rawManifest.publishConfig.type;

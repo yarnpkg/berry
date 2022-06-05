@@ -133,7 +133,7 @@ module.exports = {
   name: `plugin-hello-world`,
   factory: require => ({
     hooks: {
-      setupScriptEnvironment(project, scriptEnv) {
+      setupScriptEnvironment({project, env: scriptEnv}) {
         scriptEnv.HELLO_WORLD = `my first plugin!`;
       },
     },

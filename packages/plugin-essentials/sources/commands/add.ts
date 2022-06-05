@@ -210,19 +210,19 @@ export default class AddCommand extends BaseCommand {
 
     let askedQuestions = false;
 
-    const afterWorkspaceDependencyAdditionList: Array<[
-      Workspace,
-      suggestUtils.Target,
-      Descriptor,
-      Array<suggestUtils.Strategy>,
-    ]> = [];
+    const afterWorkspaceDependencyAdditionList: Array<{
+      workspace: Workspace,
+      target: suggestUtils.Target,
+      descriptor: Descriptor,
+      strategies: Array<suggestUtils.Strategy>,
+    }> = [];
 
-    const afterWorkspaceDependencyReplacementList: Array<[
-      Workspace,
-      suggestUtils.Target,
-      Descriptor,
-      Descriptor,
-    ]> = [];
+    const afterWorkspaceDependencyReplacementList: Array<{
+      workspace: Workspace,
+      target: suggestUtils.Target,
+      fromDescriptor: Descriptor,
+      toDescriptor: Descriptor,
+    }> = [];
 
     for (const [/*request*/, {suggestions}, target] of allSuggestions) {
       let selected: Descriptor;
@@ -284,19 +284,19 @@ export default class AddCommand extends BaseCommand {
         }
 
         if (typeof current === `undefined`) {
-          afterWorkspaceDependencyAdditionList.push([
+          afterWorkspaceDependencyAdditionList.push({
             workspace,
             target,
-            selected,
+            descriptor: selected,
             strategies,
-          ]);
+          });
         } else {
-          afterWorkspaceDependencyReplacementList.push([
+          afterWorkspaceDependencyReplacementList.push({
             workspace,
             target,
-            current,
-            selected,
-          ]);
+            fromDescriptor: current,
+            toDescriptor: selected,
+          });
         }
       }
     }

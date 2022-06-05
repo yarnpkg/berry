@@ -172,11 +172,12 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   if (project) {
     await project.configuration.triggerHook(
-      hook => hook.setupScriptEnvironment,
-      project,
-      scriptEnv,
-      async (name: string, argv0: string, args: Array<string>) => {
-        return await makePathWrapper(binFolder, toFilename(name), argv0, args);
+      hook => hook.setupScriptEnvironment, {
+        project,
+        env: scriptEnv,
+        makePathWrapper: async (name: string, argv0: string, args: Array<string>) => {
+          return await makePathWrapper(binFolder, toFilename(name), argv0, args);
+        },
       },
     );
   }

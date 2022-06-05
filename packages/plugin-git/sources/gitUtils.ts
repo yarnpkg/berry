@@ -371,10 +371,13 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
   ];
   await project.configuration.triggerHook((hooks: Hooks) => {
     return hooks.populateYarnPaths;
-  }, project, (path: PortablePath | null) => {
-    if (path != null) {
-      ignoredPaths.push(path);
-    }
+  }, {
+    project,
+    definePath: (path: PortablePath | null) => {
+      if (path != null) {
+        ignoredPaths.push(path);
+      }
+    },
   });
 
   const root = await fetchRoot(project.configuration.projectCwd);

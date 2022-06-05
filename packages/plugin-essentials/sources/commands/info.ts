@@ -341,7 +341,7 @@ export default class InfoCommand extends BaseCommand {
 
         await configuration.triggerHook((hooks: Hooks) => {
           return hooks.fetchPackageInfo;
-        }, pkg, extraSet, registerData);
+        }, {pkg, extra: extraSet, registerData});
       }
 
       if (pkg.bin.size > 0 && !isVirtual) {

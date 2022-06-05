@@ -15,10 +15,10 @@ export interface Hooks {
    * syntax: `patch:builtin<name>`. This is for instance how the TypeScript
    * patch is automatically registered.
    */
-  getBuiltinPatch?: (
+  getBuiltinPatch?: ({ project, name }: {
     project: Project,
     name: string,
-  ) => Promise<string | null | void>;
+  }) => Promise<string | null | void>;
 }
 
 declare module '@yarnpkg/core' {

@@ -14,12 +14,12 @@ const getTypesName = (descriptor: Descriptor) => {
     : `${descriptor.name}`;
 };
 
-const afterWorkspaceDependencyAddition = async (
+const afterWorkspaceDependencyAddition = async ({ workspace, dependencyTarget, descriptor, strategies }: {
   workspace: Workspace,
   dependencyTarget: suggestUtils.Target,
   descriptor: Descriptor,
   strategies: Array<suggestUtils.Strategy>,
-) => {
+}) => {
   if (descriptor.scope === `types`)
     return;
 
@@ -107,11 +107,11 @@ const afterWorkspaceDependencyAddition = async (
   }
 };
 
-const afterWorkspaceDependencyRemoval = async (
+const afterWorkspaceDependencyRemoval = async ({ workspace, dependencyTarget, descriptor }: {
   workspace: Workspace,
   dependencyTarget: suggestUtils.Target,
   descriptor: Descriptor,
-) => {
+}) => {
   if (descriptor.scope === `types`)
     return;
 
@@ -138,7 +138,7 @@ const afterWorkspaceDependencyRemoval = async (
   }
 };
 
-const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
+const beforeWorkspacePacking = ({ workspace, rawManifest }: { workspace: Workspace, rawManifest: any }) => {
   if (rawManifest.publishConfig && rawManifest.publishConfig.typings)
     rawManifest.typings = rawManifest.publishConfig.typings;
 

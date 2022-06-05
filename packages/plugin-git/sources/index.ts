@@ -15,11 +15,11 @@ export interface Hooks {
    * supports downloading repository tarballs, which are more efficient than
    * cloning the repository (even without its history).
    */
-  fetchHostedRepository?: (
+  fetchHostedRepository?: ({ current, locator, options }: {
     current: FetchResult | null,
     locator: Locator,
-    opts: FetchOptions,
-  ) => Promise<FetchResult | null>;
+    options: FetchOptions,
+  }) => Promise<FetchResult | null>;
 }
 
 declare module '@yarnpkg/core' {

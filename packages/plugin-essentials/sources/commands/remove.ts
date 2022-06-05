@@ -82,11 +82,11 @@ export default class RemoveCommand extends BaseCommand {
     const unreferencedPatterns = [];
     let hasChanged = false;
 
-    const afterWorkspaceDependencyRemovalList: Array<[
-      Workspace,
-      suggestUtils.Target,
-      Descriptor,
-    ]> = [];
+    const afterWorkspaceDependencyRemovalList: Array<{
+      workspace: Workspace,
+      target: suggestUtils.Target,
+      descriptor: Descriptor,
+    }> = [];
 
     for (const pattern of this.patterns) {
       let isReferenced = false;
@@ -119,11 +119,11 @@ export default class RemoveCommand extends BaseCommand {
 
             workspace.manifest[target].delete(identHash);
 
-            afterWorkspaceDependencyRemovalList.push([
+            afterWorkspaceDependencyRemovalList.push({
               workspace,
               target,
-              removedDescriptor,
-            ]);
+              descriptor: removedDescriptor,
+            });
 
             hasChanged = true;
             isReferenced = true;

@@ -1553,7 +1553,7 @@ export class Configuration {
 
     await this.triggerHook(hooks => {
       return hooks.registerPackageExtensions;
-    }, this, registerPackageExtension);
+    }, {configuration: this, registerPackageExtension});
 
     for (const [descriptorString, extensionData] of this.get(`packageExtensions`)) {
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
