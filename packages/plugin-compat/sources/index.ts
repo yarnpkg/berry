@@ -14,13 +14,13 @@ const PATCHES = new Map([
 
 const plugin: Plugin<CoreHooks & PatchHooks> = {
   hooks: {
-    registerPackageExtensions: async ({ configuration, registerPackageExtension }) => {
+    registerPackageExtensions: async ({ registerPackageExtension }) => {
       for (const [descriptorStr, extensionData] of packageExtensions) {
         registerPackageExtension(structUtils.parseDescriptor(descriptorStr, true), extensionData);
       }
     },
 
-    getBuiltinPatch: async ({ project, name }) => {
+    getBuiltinPatch: async ({ name }) => {
       const TAG = `compat/`;
       if (!name.startsWith(TAG))
         return undefined;
@@ -31,7 +31,7 @@ const plugin: Plugin<CoreHooks & PatchHooks> = {
       return typeof patch !== `undefined` ? patch : null;
     },
 
-    reduceDependency: async ({ dependency, project, locator, initialDescriptor }) => {
+    reduceDependency: async ({ dependency }) => {
       const patch = PATCHES.get(dependency.identHash);
       if (typeof patch === `undefined`)
         return dependency;

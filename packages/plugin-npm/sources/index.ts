@@ -20,7 +20,7 @@ export interface Hooks {
    * specific registry.
    */
   getNpmAuthenticationHeader?: ({ currentHeader, registry, configuration, ident }: {
-    currentHeader: string | undefined,
+    currentHeader?: string,
     registry: string,
     configuration: Configuration,
     ident?: Ident,
