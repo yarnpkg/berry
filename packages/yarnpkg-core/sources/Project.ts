@@ -672,7 +672,11 @@ export class Project {
     for (const [identHash, descriptor] of pkg.dependencies) {
       const dependency = await this.configuration.reduceHook(hooks => {
         return hooks.reduceDependency;
-      }, descriptor, this, pkg, descriptor, {
+      }, {
+        dependency: descriptor,
+        project: this,
+        locator: pkg,
+        initialDependency: descriptor,
         resolver,
         resolveOptions,
       });
@@ -1510,9 +1514,12 @@ export class Project {
     }, async () => {
       await this.configuration.triggerHook(hooks => {
         return hooks.validateProject;
-      }, this, {
-        reportWarning: opts.report.reportWarning.bind(opts.report),
-        reportError: opts.report.reportError.bind(opts.report),
+      }, {
+        project: this,
+        report: {
+          reportWarning: opts.report.reportWarning.bind(opts.report),
+          reportError: opts.report.reportError.bind(opts.report),
+        },
       });
     });
 

@@ -431,8 +431,14 @@ export async function executePackageScript(locator: Locator, scriptName: string,
 
     const executor = await project.configuration.reduceHook(hooks => {
       return hooks.wrapScriptExecution;
-    }, realExecutor, project, locator, scriptName, {
-      script, args, cwd: realCwd, env, stdin, stdout, stderr,
+    }, {
+      executor: realExecutor,
+      project,
+      locator,
+      scriptName,
+      extra: {
+        script, args, cwd: realCwd, env, stdin, stdout, stderr,
+      }
     });
 
     return await executor();
