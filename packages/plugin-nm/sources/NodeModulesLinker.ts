@@ -705,7 +705,7 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
       try {
         const stats = await xfs.statPromise(contentFilePath);
 
-        if (stats && (!entry.mtimeMs || Math.abs(entry.mtimeMs - stats.mtimeMs) > MTIME_ACCURANCY)) {
+        if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
           const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
           if (contentDigest !== entry.digest) {
             // If file content was modified by the user, or corrupted, we first move it out of the way
@@ -726,7 +726,7 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
             } catch (e) {
             }
           } else if (!entry.mtimeMs) {
-            entry.mtimeMs = stats.mtimeMs;
+            entry.mtimeMs = Math.ceil(stats.mtimeMs);
           }
         }
 

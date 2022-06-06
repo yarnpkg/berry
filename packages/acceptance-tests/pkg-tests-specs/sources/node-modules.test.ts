@@ -1317,7 +1317,7 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should recover from changes to the store on next install in nmMode: cas`,
+  test(`should recover from changes to the store on next install in nmMode: hardlinks-global`,
     makeTemporaryEnv(
       {
         dependencies: {
