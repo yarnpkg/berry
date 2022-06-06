@@ -83,9 +83,9 @@ export default class RemoveCommand extends BaseCommand {
     let hasChanged = false;
 
     const afterWorkspaceDependencyRemovalList: Array<{
-      workspace: Workspace,
-      target: suggestUtils.Target,
-      descriptor: Descriptor,
+      workspace: Workspace;
+      target: suggestUtils.Target;
+      descriptor: Descriptor;
     }> = [];
 
     for (const pattern of this.patterns) {

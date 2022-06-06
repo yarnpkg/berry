@@ -211,17 +211,17 @@ export default class AddCommand extends BaseCommand {
     let askedQuestions = false;
 
     const afterWorkspaceDependencyAdditionList: Array<{
-      workspace: Workspace,
-      target: suggestUtils.Target,
-      descriptor: Descriptor,
-      strategies: Array<suggestUtils.Strategy>,
+      workspace: Workspace;
+      target: suggestUtils.Target;
+      descriptor: Descriptor;
+      strategies: Array<suggestUtils.Strategy>;
     }> = [];
 
     const afterWorkspaceDependencyReplacementList: Array<{
-      workspace: Workspace,
-      target: suggestUtils.Target,
-      fromDescriptor: Descriptor,
-      toDescriptor: Descriptor,
+      workspace: Workspace;
+      target: suggestUtils.Target;
+      fromDescriptor: Descriptor;
+      toDescriptor: Descriptor;
     }> = [];
 
     for (const [/*request*/, {suggestions}, target] of allSuggestions) {

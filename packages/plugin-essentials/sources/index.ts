@@ -53,11 +53,11 @@ export interface Hooks {
    * dependencies into the manifest and running `yarn install` won't trigger
    * it.
    */
-  afterWorkspaceDependencyAddition?: ({ workspace, target, descriptor, strategies }: {
-    workspace: Workspace,
-    target: suggestUtils.Target,
-    descriptor: Descriptor,
-    strategies: Array<suggestUtils.Strategy>
+  afterWorkspaceDependencyAddition?: ({workspace, target, descriptor, strategies}: {
+    workspace: Workspace;
+    target: suggestUtils.Target;
+    descriptor: Descriptor;
+    strategies: Array<suggestUtils.Strategy>;
   }) => Promise<void>;
 
   /**
@@ -66,11 +66,11 @@ export interface Hooks {
    * updating the dependencies from the manifest and running `yarn install`
    * won't trigger it.
    */
-  afterWorkspaceDependencyReplacement?: ({ workspace, target, fromDescriptor, toDescriptor }: {
-    workspace: Workspace,
-    target: suggestUtils.Target,
-    fromDescriptor: Descriptor,
-    toDescriptor: Descriptor,
+  afterWorkspaceDependencyReplacement?: ({workspace, target, fromDescriptor, toDescriptor}: {
+    workspace: Workspace;
+    target: suggestUtils.Target;
+    fromDescriptor: Descriptor;
+    toDescriptor: Descriptor;
   }) => Promise<void>;
 
   /**
@@ -79,10 +79,10 @@ export interface Hooks {
    * removing the dependencies from the manifest and running `yarn install`
    * won't trigger it.
    */
-  afterWorkspaceDependencyRemoval?: ({ workspace, target, descriptor }: {
-    workspace: Workspace,
-    target: suggestUtils.Target,
-    descriptor: Descriptor,
+  afterWorkspaceDependencyRemoval?: ({workspace, target, descriptor}: {
+    workspace: Workspace;
+    target: suggestUtils.Target;
+    descriptor: Descriptor;
   }) => Promise<void>;
 
   /**
@@ -94,10 +94,10 @@ export interface Hooks {
    * requested audit information (via `-X audit`), and call `registerData`
    * with those information (retrieved dynamically) if they did.
    */
-  fetchPackageInfo?: ({ pkg, extra, registerData }: {
-    pkg: Package,
-    extra: Set<string>,
-    registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
+  fetchPackageInfo?: ({pkg, extra, registerData}: {
+    pkg: Package;
+    extra: Set<string>;
+    registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void;
   }) => Promise<void>;
 }
 

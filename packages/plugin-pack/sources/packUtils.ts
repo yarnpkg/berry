@@ -193,7 +193,7 @@ export async function genPackList(workspace: Workspace) {
     project,
     definePath: (path: PortablePath | null) => {
       maybeRejectPath(path);
-    }
+    },
   });
 
   // All child workspaces are ignored

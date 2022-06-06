@@ -19,11 +19,11 @@ export interface Hooks {
    * You can use this mechanism to dynamically query a CLI for the credentials for a
    * specific registry.
    */
-  getNpmAuthenticationHeader?: ({ currentHeader, registry, configuration, ident }: {
-    currentHeader?: string,
-    registry: string,
-    configuration: Configuration,
-    ident?: Ident,
+  getNpmAuthenticationHeader?: ({currentHeader, registry, configuration, ident}: {
+    currentHeader?: string;
+    registry: string;
+    configuration: Configuration;
+    ident?: Ident;
   }) => Promise<string | undefined>;
 }
 

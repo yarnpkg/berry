@@ -5,7 +5,7 @@ import {GithubFetcher}     from './GithubFetcher';
 
 const plugin: Plugin<GitHooks> = {
   hooks: {
-    async fetchHostedRepository({ previous, locator, options }) {
+    async fetchHostedRepository({previous, locator, options}) {
       if (previous !== null)
         return previous;
 

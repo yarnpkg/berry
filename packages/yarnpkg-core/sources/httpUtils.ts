@@ -184,7 +184,7 @@ export async function request(target: string | URL, body: Body, {configuration, 
   }, {
     executor: realRequest,
     extra: {target, body, configuration, headers, jsonRequest, jsonResponse, method},
-  }, "executor");
+  }, `executor`);
 
   return await executor();
 }

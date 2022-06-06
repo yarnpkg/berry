@@ -1722,7 +1722,7 @@ export class Configuration {
       if (!hook)
         continue;
 
-        accumulator = await hook({ ...value, [attribute]: accumulator }, ...args);
+      accumulator = await hook({...value, [attribute]: accumulator}, ...args);
     }
 
     return accumulator;

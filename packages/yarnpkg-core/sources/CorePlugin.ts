@@ -8,7 +8,7 @@ import {Descriptor, Locator}      from './types';
 
 export const CorePlugin: Plugin = {
   hooks: {
-    reduceDependency: ({ dependency, project, locator, initialDependency, resolver, resolveOptions }: { dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, resolver: Resolver, resolveOptions: ResolveOptions }) => {
+    reduceDependency: ({dependency, project, locator, initialDependency, resolver, resolveOptions}: { dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, resolver: Resolver, resolveOptions: ResolveOptions }) => {
       for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
         if (pattern.from && pattern.from.fullName !== structUtils.stringifyIdent(locator))
           continue;
@@ -32,10 +32,10 @@ export const CorePlugin: Plugin = {
       return dependency;
     },
 
-    validateProject: async ({ project, report}: { project: Project, report: {
+    validateProject: async ({project, report}: { project: Project; report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }}) => {
+    };}) => {
       for (const workspace of project.workspaces) {
         const workspaceName = structUtils.prettyWorkspace(project.configuration, workspace);
 
@@ -51,10 +51,10 @@ export const CorePlugin: Plugin = {
       }
     },
 
-    validateWorkspace: async ({ workspace, report }: { workspace: Workspace, report: {
+    validateWorkspace: async ({workspace, report}: { workspace: Workspace; report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }}) => {
+    };}) => {
       // Validate manifest
       const {manifest} = workspace;
 

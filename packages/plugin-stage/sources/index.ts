@@ -4,9 +4,9 @@ import {PortablePath}    from '@yarnpkg/fslib';
 import stage             from './commands/stage';
 
 export interface Hooks {
-  populateYarnPaths?: ({ project, definePath }: {
-    project: Project,
-    definePath: (path: PortablePath | null) => void,
+  populateYarnPaths?: ({project, definePath}: {
+    project: Project;
+    definePath: (path: PortablePath | null) => void;
   }) => Promise<void>;
 }
 

@@ -438,8 +438,8 @@ export async function executePackageScript(locator: Locator, scriptName: string,
       scriptName,
       extra: {
         script, args, cwd: realCwd, env, stdin, stdout, stderr,
-      }
-    }, "executor");
+      },
+    }, `executor`);
 
     return await executor();
   });

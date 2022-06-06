@@ -15,10 +15,10 @@ export interface Hooks {
    * supports downloading repository tarballs, which are more efficient than
    * cloning the repository (even without its history).
    */
-  fetchHostedRepository?: ({ current, locator, options }: {
-    current: FetchResult | null,
-    locator: Locator,
-    options: FetchOptions,
+  fetchHostedRepository?: ({current, locator, options}: {
+    current: FetchResult | null;
+    locator: Locator;
+    options: FetchOptions;
   }) => Promise<FetchResult | null>;
 }
 

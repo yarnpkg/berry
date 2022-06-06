@@ -24,7 +24,7 @@ export const quotePathIfNeeded = (path: string) => {
   return /\s/.test(path) ? JSON.stringify(path) : path;
 };
 
-async function setupScriptEnvironment({ project, env }: { project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void> }) {
+async function setupScriptEnvironment({project, env}: { project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void> }) {
   const pnpPath = getPnpPath(project);
   let pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath.cjs))}`;
 
@@ -49,7 +49,7 @@ async function setupScriptEnvironment({ project, env }: { project: Project, env:
   }
 }
 
-async function populateYarnPaths({ project, definePath }: { project: Project, definePath: (path: PortablePath | null) => void }) {
+async function populateYarnPaths({project, definePath}: { project: Project, definePath: (path: PortablePath | null) => void }) {
   const pnpPath = getPnpPath(project);
   definePath(pnpPath.cjs);
   definePath(pnpPath.esmLoader);

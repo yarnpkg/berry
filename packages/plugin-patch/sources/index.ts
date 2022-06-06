@@ -15,9 +15,9 @@ export interface Hooks {
    * syntax: `patch:builtin<name>`. This is for instance how the TypeScript
    * patch is automatically registered.
    */
-  getBuiltinPatch?: ({ project, name }: {
-    project: Project,
-    name: string,
+  getBuiltinPatch?: ({project, name}: {
+    project: Project;
+    name: string;
   }) => Promise<string | null | void>;
 }
 

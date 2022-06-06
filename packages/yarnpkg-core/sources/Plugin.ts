@@ -49,9 +49,9 @@ export interface Hooks {
    * ones. That's for example what the compat plugin uses to automatically fix
    * packages with known flaws.
    */
-  registerPackageExtensions?: ({ configuration, registerPackageExtension }: {
-    configuration: Configuration,
-    registerPackageExtension: (descriptor: Descriptor, extensionData: PackageExtensionData) => void,
+  registerPackageExtensions?: ({configuration, registerPackageExtension}: {
+    configuration: Configuration;
+    registerPackageExtension: (descriptor: Descriptor, extensionData: PackageExtensionData) => void;
   }) => Promise<void>;
 
   /**
@@ -64,9 +64,9 @@ export interface Hooks {
    * suggest you adopt this convention for any new key added to the env (we
    * might enforce it later on).
    */
-  setupScriptEnvironment?: ({ project, env }: {
-    project: Project,
-    env: ProcessEnvironment,
+  setupScriptEnvironment?: ({project, env}: {
+    project: Project;
+    env: ProcessEnvironment;
   }) => Promise<void>;
 
   /**
@@ -75,12 +75,12 @@ export interface Hooks {
    * script executions, for example to run some validation or add some
    * performance monitoring.
    */
-  wrapScriptExecution?: ({ project, locator, scriptName, extra }: {
-    executor: () => Promise<number>,
-    project: Project,
-    locator: Locator,
-    scriptName: string,
-    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
+  wrapScriptExecution?: ({project, locator, scriptName, extra}: {
+    executor: () => Promise<number>;
+    project: Project;
+    locator: Locator;
+    scriptName: string;
+    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable};
   }) => Promise<() => Promise<number>>;
 
   /**
@@ -89,9 +89,9 @@ export interface Hooks {
    * mechanism to wrap network requests, for example to run some validation or
    * add some logging.
    */
-  wrapNetworkRequest?: ({ executor, extra }: {
-    executor: () => Promise<any>,
-    extra: WrapNetworkRequestInfo
+  wrapNetworkRequest?: ({executor, extra}: {
+    executor: () => Promise<any>;
+    extra: WrapNetworkRequestInfo;
   }) => Promise<() => Promise<any>>;
 
   /**
@@ -99,9 +99,9 @@ export interface Hooks {
    * to detect whether packages must be rebuilt (typically when the Node
    * version changes).
    */
-  globalHashGeneration?: ({ project, contributeHash }: {
-    project: Project,
-    contributeHash: (data: string | Buffer) => void,
+  globalHashGeneration?: ({project, contributeHash}: {
+    project: Project;
+    contributeHash: (data: string | Buffer) => void;
   }) => Promise<void>;
 
   /**
@@ -115,62 +115,62 @@ export interface Hooks {
    * `initialDependency` will be the descriptor before any plugin attempted to
    * change it.
    */
-  reduceDependency?: ({ dependency, project, locator, initialDependency, extra }: {
-    dependency: Descriptor,
-    project: Project,
-    locator: Locator,
-    initialDependency: Descriptor,
-    extra: {resolver: Resolver, resolveOptions: ResolveOptions},
+  reduceDependency?: ({dependency, project, locator, initialDependency, extra}: {
+    dependency: Descriptor;
+    project: Project;
+    locator: Locator;
+    initialDependency: Descriptor;
+    extra: {resolver: Resolver, resolveOptions: ResolveOptions};
   }) => Promise<Descriptor>;
 
   /**
    * Called after the `install` method from the `Project` class successfully
    * completed.
    */
-  afterAllInstalled?: ({ project, options }: {
-    project: Project,
-    options: InstallOptions
+  afterAllInstalled?: ({project, options}: {
+    project: Project;
+    options: InstallOptions;
   }) => void;
 
   /**
    * Called during the `Validation step` of the `install` method from the
    * `Project` class.
    */
-  validateProject?: ({ project, report }: {
-    project: Project,
+  validateProject?: ({project, report}: {
+    project: Project;
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
+    };
   }) => void;
 
   /**
    * Called during the `Validation step` of the `install` method from the
    * `Project` class by the `validateProject` hook.
    */
-  validateWorkspace?: ({ workspace, report }: {
-    workspace: Workspace,
+  validateWorkspace?: ({workspace, report}: {
+    workspace: Workspace;
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
+    };
   }) => void;
 
   /**
    * Used to notify the core of all the potential artifacts of the available
    * linkers.
    */
-  populateYarnPaths?: ({ project, definePath }: {
-    project: Project,
-    definePath: (path: PortablePath | null) => void,
+  populateYarnPaths?: ({project, definePath}: {
+    project: Project;
+    definePath: (path: PortablePath | null) => void;
   }) => Promise<void>;
 
   /**
    * Called when the user requests to clean the global cache. Plugins should
    * use this hook to remove their own global artifacts.
    */
-  cleanGlobalArtifacts?: ({ configuration }: {
-    configuration: Configuration,
+  cleanGlobalArtifacts?: ({configuration}: {
+    configuration: Configuration;
   }) => Promise<void>;
 }
 
