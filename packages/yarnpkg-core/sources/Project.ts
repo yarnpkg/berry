@@ -679,7 +679,7 @@ export class Project {
         initialDependency: descriptor,
         resolver,
         resolveOptions,
-      });
+      }, "dependency");
 
       if (!structUtils.areIdentsEqual(descriptor, dependency))
         throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);

@@ -203,7 +203,7 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
 
   const header = await configuration.reduceHook((hooks: Hooks) => {
     return hooks.getNpmAuthenticationHeader;
-  }, {registry, configuration, ident});
+  }, {registry, configuration, ident}, "currentHeader");
 
   if (header)
     return header;

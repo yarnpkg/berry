@@ -46,7 +46,7 @@ export class GitFetcher implements Fetcher {
   async downloadHosted(locator: Locator, options: FetchOptions) {
     return options.project.configuration.reduceHook((hooks: Hooks) => {
       return hooks.fetchHostedRepository;
-    }, {current: null as FetchResult | null, locator, options});
+    }, {current: null as FetchResult | null, locator, options}, "current");
   }
 
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {

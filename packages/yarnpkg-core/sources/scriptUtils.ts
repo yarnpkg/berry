@@ -439,7 +439,7 @@ export async function executePackageScript(locator: Locator, scriptName: string,
       extra: {
         script, args, cwd: realCwd, env, stdin, stdout, stderr,
       }
-    });
+    }, "executor");
 
     return await executor();
   });

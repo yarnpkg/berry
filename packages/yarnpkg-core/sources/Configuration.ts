@@ -1710,8 +1710,8 @@ export class Configuration {
     }
   }
 
-  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
-    let value = initialValue;
+  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, value: V, attribute: string, ...args: U): Promise<V> {
+    let accumulator = value?.[attribute];
 
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
@@ -1722,10 +1722,10 @@ export class Configuration {
       if (!hook)
         continue;
 
-      value = await hook(value, ...args);
+        accumulator = await hook({ ...value, [attribute]: accumulator }, ...args);
     }
 
-    return value;
+    return accumulator;
   }
 
   async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
