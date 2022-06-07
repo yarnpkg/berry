@@ -16,10 +16,13 @@ import {UsageError}                                                        from 
 import crypto                                                              from 'crypto';
 import fs                                                                  from 'fs';
 
+export const HARDLINKS_STORE_VERSION = 1;
 const STATE_FILE_VERSION = 1;
+
 const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
+const MTIME_ACCURANCY = 1000;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
@@ -695,56 +698,67 @@ async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, cont
   }
 }
 
-async function copyFilePromise({srcPath, dstPath, srcMode, globalHardlinksStore, baseFs, nmMode, digest}: {srcPath: PortablePath, dstPath: PortablePath, srcMode: number, globalHardlinksStore: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: {value: NodeModulesMode}, digest?: string}) {
-  if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && digest) {
-    const contentFilePath = ppath.join(globalHardlinksStore, digest.substring(0, 2) as Filename, `${digest.substring(2)}.dat` as Filename);
+async function copyFilePromise({srcPath, dstPath, entry, hardlinksStorePath, baseFs, nmMode}: {srcPath: PortablePath, dstPath: PortablePath, entry: DirEntry, hardlinksStorePath: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: {value: NodeModulesMode}}) {
+  if (entry.kind === DirEntryKind.FILE) {
+    if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && hardlinksStorePath && entry.digest) {
+      const contentFilePath = ppath.join(hardlinksStorePath, entry.digest.substring(0, 2) as Filename, `${entry.digest.substring(2)}.dat` as Filename);
 
-    let doesContentFileExist;
-    try {
-      const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
-      if (contentDigest !== digest) {
-        // If file content was modified by the user, or corrupted, we first move it out of the way
-        const tmpPath = ppath.join(globalHardlinksStore, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
-        await xfs.renamePromise(contentFilePath, tmpPath);
-
-        // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
-        const content = await baseFs.readFilePromise(srcPath);
-        await xfs.writeFilePromise(tmpPath, content);
-
-        try {
-          // Then we try to move content file back on its place, if its still free
-          // If we fail here, it means that some other process or thread has created content file
-          // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
-          await xfs.linkPromise(tmpPath, contentFilePath);
-          await xfs.unlinkPromise(tmpPath);
-        } catch (e) {
-        }
-      }
-      await xfs.linkPromise(contentFilePath, dstPath);
-      doesContentFileExist = true;
-    } catch (e) {
-      doesContentFileExist = false;
-    }
-
-    if (!doesContentFileExist) {
-      const content = await baseFs.readFilePromise(srcPath);
-      await atomicFileWrite(globalHardlinksStore, contentFilePath, content);
+      let doesContentFileExist;
       try {
+        const stats = await xfs.statPromise(contentFilePath);
+
+        if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
+          const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
+          if (contentDigest !== entry.digest) {
+          // If file content was modified by the user, or corrupted, we first move it out of the way
+            const tmpPath = ppath.join(hardlinksStorePath, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+            await xfs.renamePromise(contentFilePath, tmpPath);
+
+            // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
+            const content = await baseFs.readFilePromise(srcPath);
+            await xfs.writeFilePromise(tmpPath, content);
+
+            try {
+            // Then we try to move content file back on its place, if its still free
+            // If we fail here, it means that some other process or thread has created content file
+            // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
+              await xfs.linkPromise(tmpPath, contentFilePath);
+              entry.mtimeMs = new Date().getTime();
+              await xfs.unlinkPromise(tmpPath);
+            } catch (e) {
+            }
+          } else if (!entry.mtimeMs) {
+            entry.mtimeMs = Math.ceil(stats.mtimeMs);
+          }
+        }
+
         await xfs.linkPromise(contentFilePath, dstPath);
+        doesContentFileExist = true;
       } catch (e) {
-        if (e && e.code && e.code == `EXDEV`) {
-          nmMode.value = NodeModulesMode.HARDLINKS_LOCAL;
-          await baseFs.copyFilePromise(srcPath, dstPath);
+        doesContentFileExist = false;
+      }
+
+      if (!doesContentFileExist) {
+        const content = await baseFs.readFilePromise(srcPath);
+        await atomicFileWrite(hardlinksStorePath, contentFilePath, content);
+        entry.mtimeMs = new Date().getTime();
+        try {
+          await xfs.linkPromise(contentFilePath, dstPath);
+        } catch (e) {
+          if (e && e.code && e.code == `EXDEV`) {
+            nmMode.value = NodeModulesMode.HARDLINKS_LOCAL;
+            await xfs.writeFilePromise(dstPath, await baseFs.readFilePromise(srcPath));
+          }
         }
       }
+    } else {
+      await xfs.writeFilePromise(dstPath, await baseFs.readFilePromise(srcPath));
     }
-  } else {
-    await baseFs.copyFilePromise(srcPath, dstPath);
-  }
-  const mode = srcMode & 0o777;
-  // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
-  if (mode !== 0o644) {
-    await xfs.chmodPromise(dstPath, mode);
+    const mode = entry.mode & 0o777;
+    // An optimization - files will have rw-r-r permissions (0o644) by default, we can skip chmod for them
+    if (mode !== 0o644) {
+      await xfs.chmodPromise(dstPath, mode);
+    }
   }
 }
 
@@ -756,6 +770,7 @@ type DirEntry = {
   kind: DirEntryKind.FILE;
   mode: number;
   digest?: string;
+  mtimeMs?: number;
 } | {
   kind: DirEntryKind. DIRECTORY;
 } | {
@@ -763,7 +778,7 @@ type DirEntry = {
   symlinkTo: PortablePath;
 };
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {
+export const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, hardlinksStorePath, nmMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, hardlinksStorePath: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {
   await xfs.mkdirPromise(dstDir, {recursive: true});
 
   const getEntriesRecursive = async (relativePath: PortablePath = PortablePath.dot): Promise<Map<PortablePath, DirEntry>> => {
@@ -802,28 +817,38 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
   };
 
   let allEntries: Map<PortablePath, DirEntry>;
-  if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && packageChecksum) {
-    const entriesJsonPath = ppath.join(globalHardlinksStore, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
+  if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && hardlinksStorePath && packageChecksum) {
+    const entriesJsonPath = ppath.join(hardlinksStorePath, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
     try {
       allEntries = new Map(Object.entries(JSON.parse(await xfs.readFilePromise(entriesJsonPath, `utf8`)))) as Map<PortablePath, DirEntry>;
     } catch (e) {
       allEntries = await getEntriesRecursive();
-      await atomicFileWrite(globalHardlinksStore, entriesJsonPath, Buffer.from(JSON.stringify(Object.fromEntries(allEntries))));
     }
   } else {
     allEntries = await getEntriesRecursive();
   }
 
+  let mtimesChanged = false;
   for (const [relativePath, entry] of allEntries) {
     const srcPath = ppath.join(srcDir, relativePath);
     const dstPath = ppath.join(dstDir, relativePath);
     if (entry.kind === DirEntryKind.DIRECTORY) {
       await xfs.mkdirPromise(dstPath, {recursive: true});
     } else if (entry.kind === DirEntryKind.FILE) {
-      await copyFilePromise({srcPath, dstPath, srcMode: entry.mode, digest: entry.digest, nmMode, baseFs, globalHardlinksStore});
+      const originalMtime = entry.mtimeMs;
+      await copyFilePromise({srcPath, dstPath, entry, nmMode, baseFs, hardlinksStorePath});
+      if (entry.mtimeMs !== originalMtime) {
+        mtimesChanged = true;
+      }
     } else if (entry.kind === DirEntryKind.SYMLINK) {
       await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath);
     }
+  }
+
+  if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && hardlinksStorePath && mtimesChanged && packageChecksum) {
+    const entriesJsonPath = ppath.join(hardlinksStorePath, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
+    await xfs.removePromise(entriesJsonPath);
+    await atomicFileWrite(hardlinksStorePath, entriesJsonPath, Buffer.from(JSON.stringify(Object.fromEntries(allEntries))));
   }
 };
 
@@ -1014,8 +1039,21 @@ const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
 
-export function getGlobalHardlinksStore(configuration: Configuration): PortablePath {
+export function getHardlinksStoreRootPath(configuration: Configuration): PortablePath {
   return ppath.join(configuration.get(`globalFolder`), `store` as Filename);
+}
+
+export function getHardlinksStorePath(configuration: Configuration): PortablePath {
+  return ppath.join(getHardlinksStoreRootPath(configuration), `v${HARDLINKS_STORE_VERSION}` as Filename);
+}
+
+export async function ensureHardlinksStoreExists(hardlinksStorePath: PortablePath) {
+  if (!await xfs.existsPromise(hardlinksStorePath)) {
+    await xfs.mkdirpPromise(hardlinksStorePath);
+    for (let idx = 0; idx < 256; idx++) {
+      await xfs.mkdirPromise(ppath.join(hardlinksStorePath, idx.toString(16).padStart(2, `0`) as Filename));
+    }
+  }
 }
 
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
@@ -1031,14 +1069,14 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Array<Promise<void>> = [];
-  const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {
+  const addModule = async ({srcDir, dstDir, linkType, hardlinksStorePath, nmMode, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, hardlinksStorePath: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir);
         } else {
-          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, packageChecksum});
+          await copyPromise(dstDir, srcDir, {baseFs, hardlinksStorePath, nmMode, packageChecksum});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
@@ -1255,19 +1293,14 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // source directory. We'll later use the resulting install directories for
     // the other instances of the same package (this will avoid us having to
     // crawl the zip archives for each package).
-    const globalHardlinksStore = nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL ? `${getGlobalHardlinksStore(project.configuration)}/v1` as PortablePath : null;
-    if (globalHardlinksStore) {
-      if (!await xfs.existsPromise(globalHardlinksStore)) {
-        await xfs.mkdirpPromise(globalHardlinksStore);
-        for (let idx = 0; idx < 256; idx++) {
-          await xfs.mkdirPromise(ppath.join(globalHardlinksStore, idx.toString(16).padStart(2, `0`) as Filename));
-        }
-      }
-    }
+    const hardlinksStorePath = nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL ? getHardlinksStorePath(project.configuration) : null;
+    if (hardlinksStorePath)
+      await ensureHardlinksStoreExists(hardlinksStorePath);
+
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
         persistedLocations.set(entry.srcDir, entry.dstDir);
-        await addModule({...entry, globalHardlinksStore, nmMode, packageChecksum: realLocatorChecksums.get(entry.realLocatorHash) || null});
+        await addModule({...entry, hardlinksStorePath, nmMode, packageChecksum: realLocatorChecksums.get(entry.realLocatorHash) || null});
       }
     }
 

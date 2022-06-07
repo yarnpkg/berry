@@ -35,6 +35,10 @@ The following changes only affect people writing Yarn plugins:
 
 - The `getCustomDataKey` function in `Installer` from `@yarnpkg/core` has been moved to `Linker`.
 
+### Installs
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
+- Added content addressable storage support to `pnpm` linker, can be enabled via `nmMode: hardlinks-global` config setting
+
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.

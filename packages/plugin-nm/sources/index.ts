@@ -3,7 +3,9 @@ import {xfs}                                from '@yarnpkg/fslib';
 import {NodeModulesHoistingLimits}          from '@yarnpkg/nm';
 
 import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
-import {getGlobalHardlinksStore}            from './NodeModulesLinker';
+import {getHardlinksStorePath, copyPromise} from './NodeModulesLinker';
+import {getHardlinksStoreRootPath}          from './NodeModulesLinker';
+import {ensureHardlinksStoreExists}         from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
 declare module '@yarnpkg/core' {
@@ -17,7 +19,7 @@ declare module '@yarnpkg/core' {
 const plugin: Plugin<Hooks> = {
   hooks: {
     cleanGlobalArtifacts: async configuration => {
-      const globalHardlinksDirectory = getGlobalHardlinksStore(configuration);
+      const globalHardlinksDirectory = getHardlinksStoreRootPath(configuration);
       await xfs.removePromise(globalHardlinksDirectory);
     },
   },
@@ -53,6 +55,8 @@ const plugin: Plugin<Hooks> = {
     PnpLooseLinker,
   ],
 };
+
+export {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise, NodeModulesMode};
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

@@ -1280,44 +1280,46 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should wire via hardlinks files having the same content when in nmMode: hardlinks-global`,
-    makeTemporaryEnv(
-      {
-        dependencies: {
-          dep1: `file:./dep1`,
-          dep2: `file:./dep2`,
+  for (const nodeLinker of [`node-modules`, `pnpm`]) {
+    test(`should wire via hardlinks files having the same content when in nmMode: hardlinks-global for ${nodeLinker} linker`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            dep1: `file:./dep1`,
+            dep2: `file:./dep2`,
+          },
         },
-      },
-      {
-        nodeLinker: `node-modules`,
-        nmMode: `hardlinks-global`,
-      },
-      async ({path, run}) => {
-        await writeJson(ppath.resolve(path, `dep1/package.json` as Filename), {
-          name: `dep1`,
-          version: `1.0.0`,
-        });
+        {
+          nodeLinker,
+          nmMode: `hardlinks-global`,
+        },
+        async ({path, run}) => {
+          await writeJson(ppath.resolve(path, `dep1/package.json` as Filename), {
+            name: `dep1`,
+            version: `1.0.0`,
+          });
 
-        const content = `The same content`;
-        await xfs.writeFilePromise(ppath.resolve(path, `dep1/index.js` as Filename), content);
+          const content = `The same content`;
+          await xfs.writeFilePromise(ppath.resolve(path, `dep1/index.js` as Filename), content);
 
-        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
-          name: `dep2`,
-          version: `1.0.0`,
-        });
-        await xfs.writeFilePromise(ppath.resolve(path, `dep2/index.js` as Filename), content);
+          await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+            name: `dep2`,
+            version: `1.0.0`,
+          });
+          await xfs.writeFilePromise(ppath.resolve(path, `dep2/index.js` as Filename), content);
 
-        await run(`install`);
+          await run(`install`);
 
-        const stats1 = await xfs.statPromise(`${path}/node_modules/dep1/index.js` as PortablePath);
-        const stats2 = await xfs.statPromise(`${path}/node_modules/dep2/index.js` as PortablePath);
+          const stats1 = await xfs.statPromise(`${path}/node_modules/dep1/index.js` as PortablePath);
+          const stats2 = await xfs.statPromise(`${path}/node_modules/dep2/index.js` as PortablePath);
 
-        expect(stats1.ino).toEqual(stats2.ino);
-      },
-    ),
-  );
+          expect(stats1.ino).toEqual(stats2.ino);
+        },
+      ),
+    );
+  }
 
-  test(`should recover from changes to the store on next install in nmMode: cas`,
+  test(`should recover from changes to the store on next install in nmMode: hardlinks-global`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1342,6 +1344,44 @@ describe(`Node_Modules`, () => {
         const modifiedContent = `The modified content`;
         const depNmPath = ppath.resolve(path, `node_modules/dep/index.js` as Filename);
         await xfs.writeFilePromise(depNmPath, modifiedContent);
+
+        await xfs.removePromise(ppath.resolve(path, `node_modules` as Filename));
+
+        await run(`install`);
+
+        const depContent = await xfs.readFilePromise(depNmPath, `utf8`);
+        expect(depContent).toEqual(originalContent);
+      },
+    ),
+  );
+
+  test(`should recover from changes to the store on next install in nmMode: hardlinks-global, when system clock is changed by the user`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        const originalContent = `The same content`;
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js` as Filename), originalContent);
+
+        await run(`install`);
+
+        const modifiedContent = `The modified content`;
+        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js` as Filename);
+        await xfs.writeFilePromise(depNmPath, modifiedContent);
+        const timeInThePast = new Date(new Date().getTime() - 10000);
+        await xfs.utimesPromise(depNmPath, timeInThePast, timeInThePast);
 
         await xfs.removePromise(ppath.resolve(path, `node_modules` as Filename));
 

@@ -1,5 +1,6 @@
 import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils} from '@yarnpkg/core';
 import {Dirent, Filename, PortablePath, ppath, xfs}                                                                                                                                                                        from '@yarnpkg/fslib';
+import {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise, NodeModulesMode}                                                                                                                                   from '@yarnpkg/plugin-nm';
 import {jsInstallUtils}                                                                                                                                                                                                    from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                                                        from 'clipanion';
 
@@ -81,13 +82,21 @@ class PnpmInstaller implements Installer {
   private readonly asyncActions = new miscUtils.AsyncActions(10);
 
   constructor(private opts: LinkOptions) {
-    // Nothing to do
+    const nmModeSetting = this.opts.project.configuration.get(`nmMode`);
+    this.nmMode = {value: nmModeSetting};
+
+    this.hardlinksStorePath = this.nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL ? getHardlinksStorePath(this.opts.project.configuration) : null;
   }
 
   private customData: PnpmCustomData = {
     pathByLocator: new Map(),
     locatorByPath: new Map(),
   };
+
+  private readonly realLocatorChecksums: Map<LocatorHash, string | null> = new Map();
+  private readonly nmMode: {value: NodeModulesMode};
+  private readonly hardlinksStorePath: PortablePath | null;
+  private isHardlinksStoreExistenceEnsured: boolean = false;
 
   attachCustomData(customData: any) {
     // We don't want to attach the data because it's only used in the Linker and we'll recompute it anyways in the Installer,
@@ -114,21 +123,22 @@ class PnpmInstaller implements Installer {
   }
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+    if (this.hardlinksStorePath && !this.isHardlinksStoreExistenceEnsured)
+      await ensureHardlinksStoreExists(this.hardlinksStorePath);
+
     const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
     this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
 
-    api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () => {
-      await xfs.mkdirPromise(pkgPath, {recursive: true});
-
-      // Copy the package source into the <root>/n_m/.store/<hash> directory, so
-      // that we can then create symbolic links to it later.
-      await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
+    api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () =>
+      await copyPromise(pkgPath, ppath.join(PortablePath.root, fetchResult.prefixPath), {
         baseFs: fetchResult.packageFs,
-        overwrite: false,
-      });
-    }));
+        hardlinksStorePath: this.hardlinksStorePath,
+        nmMode: this.nmMode,
+        packageChecksum: this.realLocatorChecksums.get(pkg.locatorHash) || null},
+      ),
+    ));
 
     const isVirtual = structUtils.isVirtualLocator(pkg);
     const devirtualizedLocator: Locator = isVirtual ? structUtils.devirtualizeLocator(pkg) : pkg;
@@ -142,6 +152,18 @@ class PnpmInstaller implements Installer {
 
     const dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
     const buildScripts = jsInstallUtils.extractBuildScripts(pkg, buildConfig, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
+
+    let realLocator: Locator = pkg;
+    // Only virtual packages should have effective peer dependencies, but the
+    // workspaces are a special case because the original packages are kept in
+    // the dependency tree even after being virtualized; so in their case we
+    // just ignore their declared peer dependencies.
+    if (structUtils.isVirtualLocator(pkg))
+      realLocator = structUtils.devirtualizeLocator(pkg);
+
+    // We need ZIP contents checksum for CAS addressing purposes, so we need to strip cache key from checksum here
+    const checksum = fetchResult.checksum ? fetchResult.checksum.substring(fetchResult.checksum.indexOf(`/`) + 1) : null;
+    this.realLocatorChecksums.set(realLocator.locatorHash, checksum);
 
     return {
       packageLocation: pkgPath,
