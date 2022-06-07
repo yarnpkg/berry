@@ -16,7 +16,7 @@ import {UsageError}                                                        from 
 import crypto                                                              from 'crypto';
 import fs                                                                  from 'fs';
 
-export const HARDLINKS_STORE_VERSION = 1;
+const HARDLINKS_STORE_VERSION = 1;
 const STATE_FILE_VERSION = 1;
 
 const NODE_MODULES = `node_modules` as Filename;
