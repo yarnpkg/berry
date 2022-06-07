@@ -99,7 +99,6 @@ class PnpmInstaller implements Installer {
     locatorByPath: new Map(),
   };
 
-  private readonly realLocatorChecksums: Map<LocatorHash, string | null> = new Map();
   private readonly nmMode: {value: NodeModulesMode};
   private readonly hardlinksStorePath: PortablePath | null;
   private isHardlinksStoreExistenceEnsured: boolean = false;
@@ -137,14 +136,17 @@ class PnpmInstaller implements Installer {
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
     this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
 
-    api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () =>
+    // We need ZIP contents checksum for CAS addressing purposes, so we need to strip cache key from checksum here
+    const packageChecksum = fetchResult.checksum ? fetchResult.checksum.substring(fetchResult.checksum.indexOf(`/`) + 1) : null;
+
+    api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () => {
       await copyPromise(pkgPath, ppath.join(PortablePath.root, fetchResult.prefixPath), {
         baseFs: fetchResult.packageFs,
         hardlinksStorePath: this.hardlinksStorePath,
         nmMode: this.nmMode,
-        packageChecksum: this.realLocatorChecksums.get(pkg.locatorHash) || null},
-      ),
-    ));
+        packageChecksum,
+      });
+    }));
 
     const isVirtual = structUtils.isVirtualLocator(pkg);
     const devirtualizedLocator: Locator = isVirtual ? structUtils.devirtualizeLocator(pkg) : pkg;
@@ -158,18 +160,6 @@ class PnpmInstaller implements Installer {
 
     const dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
     const buildScripts = jsInstallUtils.extractBuildScripts(pkg, buildConfig, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
-
-    let realLocator: Locator = pkg;
-    // Only virtual packages should have effective peer dependencies, but the
-    // workspaces are a special case because the original packages are kept in
-    // the dependency tree even after being virtualized; so in their case we
-    // just ignore their declared peer dependencies.
-    if (structUtils.isVirtualLocator(pkg))
-      realLocator = structUtils.devirtualizeLocator(pkg);
-
-    // We need ZIP contents checksum for CAS addressing purposes, so we need to strip cache key from checksum here
-    const checksum = fetchResult.checksum ? fetchResult.checksum.substring(fetchResult.checksum.indexOf(`/`) + 1) : null;
-    this.realLocatorChecksums.set(realLocator.locatorHash, checksum);
 
     return {
       packageLocation: pkgPath,
