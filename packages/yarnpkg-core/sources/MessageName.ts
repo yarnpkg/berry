@@ -81,6 +81,7 @@ export enum MessageName {
   INCOMPATIBLE_ARCHITECTURE = 76,
   GHOST_ARCHITECTURE = 77,
   RESOLUTION_MISMATCH = 78,
+  PROLOG_LIMIT_EXCEEDED = 79,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {
