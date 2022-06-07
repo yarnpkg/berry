@@ -1353,6 +1353,44 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should recover from changes to the store on next install in nmMode: hardlinks-global, when system clock is changed by the user`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        const originalContent = `The same content`;
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js` as Filename), originalContent);
+
+        await run(`install`);
+
+        const modifiedContent = `The modified content`;
+        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js` as Filename);
+        await xfs.writeFilePromise(depNmPath, modifiedContent);
+        const timeInThePast = new Date(new Date().getTime() - 10000);
+        await xfs.utimesPromise(depNmPath, timeInThePast, timeInThePast);
+
+        await xfs.removePromise(ppath.resolve(path, `node_modules` as Filename));
+
+        await run(`install`);
+
+        const depContent = await xfs.readFilePromise(depNmPath, `utf8`);
+        expect(depContent).toEqual(originalContent);
+      },
+    ),
+  );
+
   test(`should give priority to direct workspace dependencies over indirect regular dependencies`,
     // Despite 'one-fixed-dep' and 'has-bin-entries' depend on 'no-deps:1.0.0',
     // the 'no-deps:2.0.0' should be hoisted to the top-level
