@@ -56,7 +56,7 @@ const plugin: Plugin<Hooks> = {
   ],
 };
 
-export {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise, NodeModulesMode};
+export {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise};
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;
