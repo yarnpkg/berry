@@ -8,14 +8,6 @@ import {getHardlinksStoreRootPath}          from './NodeModulesLinker';
 import {ensureHardlinksStoreExists}         from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
-declare module '@yarnpkg/core' {
-  interface ConfigurationValueMap {
-    nmHoistingLimits: NodeModulesHoistingLimits;
-    nmMode: NodeModulesMode;
-    nmSelfReferences: boolean;
-  }
-}
-
 const plugin: Plugin<Hooks> = {
   hooks: {
     cleanGlobalArtifacts: async configuration => {
@@ -56,7 +48,7 @@ const plugin: Plugin<Hooks> = {
   ],
 };
 
-export {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise};
+export {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise, NodeModulesMode};
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

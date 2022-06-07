@@ -710,7 +710,7 @@ async function copyFilePromise({srcPath, dstPath, entry, hardlinksStorePath, bas
         if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
           const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
           if (contentDigest !== entry.digest) {
-          // If file content was modified by the user, or corrupted, we first move it out of the way
+            // If file content was modified by the user, or corrupted, we first move it out of the way
             const tmpPath = ppath.join(hardlinksStorePath, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
             await xfs.renamePromise(contentFilePath, tmpPath);
 

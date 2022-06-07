@@ -1,14 +1,8 @@
 import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils} from '@yarnpkg/core';
 import {Dirent, Filename, PortablePath, ppath, xfs}                                                                                                                                                                        from '@yarnpkg/fslib';
-import {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise}                                                                                                                                                    from '@yarnpkg/plugin-nm';
+import {getHardlinksStorePath, ensureHardlinksStoreExists, copyPromise, NodeModulesMode}                                                                                                                                   from '@yarnpkg/plugin-nm';
 import {jsInstallUtils}                                                                                                                                                                                                    from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                                                        from 'clipanion';
-
-enum NodeModulesMode {
-  CLASSIC = `classic`,
-  HARDLINKS_LOCAL = `hardlinks-local`,
-  HARDLINKS_GLOBAL = `hardlinks-global`,
-}
 
 export type PnpmCustomData = {
   pathByLocator: Map<LocatorHash, PortablePath>;
