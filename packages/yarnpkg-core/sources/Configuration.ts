@@ -541,6 +541,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
             },
           },
         },
+        bin: {
+          description: `Package binaries`,
+          type: SettingsType.MAP,
+          valueDefinition: {
+            description: `The location that the specified binary resides at`,
+            type: SettingsType.STRING,
+          },
+        },
       },
     },
   },
@@ -1540,9 +1548,8 @@ export class Configuration {
       for (const peerDependency of extension.peerDependencies.values())
         extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency});
 
-      // disableBin is not a standard property on manifests, so we just add it here
-      if ((extension as { disableBin?: boolean }).disableBin)
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.DisableBin, value: true});
+      for (const [key, value] of extension.bin.entries())
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Bin, key, entry: value});
 
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
@@ -1625,9 +1632,18 @@ export class Configuration {
                 }
               } break;
 
-              case PackageExtensionType.DisableBin: {
-                extension.status = PackageExtensionStatus.Active;
-                pkg.bin.clear();
+              case PackageExtensionType.Bin: {
+                const currentBinEntry = pkg.bin.get(extension.key);
+                if (typeof currentBinEntry === `undefined` || currentBinEntry !== extension.entry) {
+                  extension.status = PackageExtensionStatus.Active;
+
+                  if (extension.entry === `null`) {
+                    pkg.bin.delete(extension.key);
+                    break;
+                  }
+
+                  pkg.bin.set(extension.key, ppath.resolve(extension.entry as Filename));
+                }
               } break;
 
               default: {
