@@ -122,7 +122,7 @@ Responses will be determined by the reviewers on the basis of the information ga
 - Permanent ban from the GitHub org and Discord server,
 - Revoked contributor status.
 
-## Fund Allocation
+## Fund Allocation 
 
 Funds will be allocated for project-specific services such as domain registration and website hosting. Other usage of funds has yet to be decided.
 
