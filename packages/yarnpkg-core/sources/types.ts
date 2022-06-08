@@ -164,7 +164,7 @@ export interface Package extends Locator {
   peerDependenciesMeta: Map<string, PeerDependencyMeta>;
 
   /**
-   * All `bin` entries  defined by the package
+   * All `bin` entries defined by the package
    *
    * While we don't need the binaries during the resolution, keeping them
    * within the lockfile is critical to make `yarn run` fast (otherwise we
@@ -179,6 +179,7 @@ export enum PackageExtensionType {
   Dependency = `Dependency`,
   PeerDependency = `PeerDependency`,
   PeerDependencyMeta = `PeerDependencyMeta`,
+  DisableBin = `DisableBin`,
 }
 
 export enum PackageExtensionStatus {
@@ -191,6 +192,7 @@ export type PackageExtension = (
   | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
   | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
   | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
+  | {type: PackageExtensionType.DisableBin, value: boolean}
 ) & {
   status: PackageExtensionStatus;
   userProvided: boolean;
