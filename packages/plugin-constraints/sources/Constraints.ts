@@ -100,7 +100,11 @@ class Session {
   private readonly session: pl.type.Session;
 
   public constructor(project: Project, source: string) {
-    this.session = pl.create();
+    // The default Tau Prolog resolution steps limit is quite small
+    // By using a proportional limit (instead of no limit), we avoid triggering pathological cases "easily"
+    // See https://github.com/yarnpkg/berry/issues/1260
+    const limit = 1000 * project.workspaces.length;
+    this.session = pl.create(limit);
     linkProjectToSession(this.session, project);
 
     this.session.consult(`:- use_module(library(lists)).`);
@@ -123,6 +127,9 @@ class Session {
 
     while (true) {
       const answer = await this.fetchNextAnswer();
+
+      if (answer === null)
+        throw new ReportError(MessageName.PROLOG_LIMIT_EXCEEDED, `Resolution limit exceeded`);
 
       if (!answer)
         break;
