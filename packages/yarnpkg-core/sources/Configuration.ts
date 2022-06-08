@@ -619,6 +619,7 @@ export interface ConfigurationValueMap {
     dependencies?: Map<string, string>;
     peerDependencies?: Map<string, string>;
     peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>;
+    disableBin?: boolean;
   }>>;
 }
 
@@ -1539,6 +1540,10 @@ export class Configuration {
       for (const peerDependency of extension.peerDependencies.values())
         extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency});
 
+      // disableBin is not a standard property on manifests, so we just add it here
+      if ((extension as { disableBin?: boolean }).disableBin)
+        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.DisableBin, value: true});
+
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
           extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value});
@@ -1618,6 +1623,11 @@ export class Configuration {
                   extension.status = PackageExtensionStatus.Active;
                   miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
                 }
+              } break;
+
+              case PackageExtensionType.DisableBin: {
+                extension.status = PackageExtensionStatus.Active;
+                pkg.bin.clear();
               } break;
 
               default: {
