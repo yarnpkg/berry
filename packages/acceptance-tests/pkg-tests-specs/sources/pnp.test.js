@@ -1457,7 +1457,7 @@ describe(`Plug'n'Play`, () => {
       await writeFile(`${path}/foo.js`, `console.log(42);`);
 
       await expect(
-        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${npath.fromPortablePath(path)}/foo`}}),
+        run(`node`, `-e`, `console.log(21);`, {env: {NODE_OPTIONS: `--require ${JSON.stringify(npath.join(npath.fromPortablePath(path), `foo`))}`}}),
       ).resolves.toMatchObject({
         // Note that '42' is present twice: the first one because Node executes Yarn, and the second one because Yarn spawns Node
         stdout: `42\n42\n21\n`,
