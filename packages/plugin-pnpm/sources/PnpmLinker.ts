@@ -5,6 +5,7 @@ import {UsageError}                                                             
 
 export type PnpmCustomData = {
   pathByLocator: Map<LocatorHash, PortablePath>;
+  linkTypeByLocator: Map<LocatorHash, LinkType>;
   locatorByPath: Map<PortablePath, string>;
 };
 
@@ -12,7 +13,7 @@ export class PnpmLinker implements Linker {
   getCustomDataKey() {
     return JSON.stringify({
       name: `PnpmLinker`,
-      version: 2,
+      version: 3,
     });
   }
 
@@ -86,6 +87,7 @@ class PnpmInstaller implements Installer {
 
   private customData: PnpmCustomData = {
     pathByLocator: new Map(),
+    linkTypeByLocator: new Map(),
     locatorByPath: new Map(),
   };
 
@@ -95,6 +97,7 @@ class PnpmInstaller implements Installer {
   }
 
   async installPackage(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+    this.customData.linkTypeByLocator.set(pkg.locatorHash, pkg.linkType);
     switch (pkg.linkType) {
       case LinkType.SOFT: return this.installPackageSoft(pkg, fetchResult, api);
       case LinkType.HARD: return this.installPackageHard(pkg, fetchResult, api);
@@ -186,8 +189,17 @@ class PnpmInstaller implements Installer {
         if (typeof depSrcPath === `undefined`)
           throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
+        let symlinkDst: PortablePath;
+        if (this.customData.linkTypeByLocator.get(locator.locatorHash) === LinkType.HARD) {
+          const segments = pkgPath.split(ppath.sep);
+          const pkgNameSegmentCount = locator.scope ? 2 : 1;
+          symlinkDst = segments.slice(0, segments.length - pkgNameSegmentCount).join(ppath.sep) as PortablePath;
+        } else {
+          symlinkDst = nmPath;
+        }
+
         const name = structUtils.stringifyIdent(descriptor) as PortablePath;
-        const depDstPath = ppath.join(nmPath, name);
+        const depDstPath = ppath.join(symlinkDst, name);
 
         const depLinkPath = ppath.relative(ppath.dirname(depDstPath), depSrcPath);
 
