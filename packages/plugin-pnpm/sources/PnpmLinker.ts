@@ -189,17 +189,17 @@ class PnpmInstaller implements Installer {
         if (typeof depSrcPath === `undefined`)
           throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
-        let symlinkDst: PortablePath;
+        let symlinkDstPath: PortablePath;
         if (this.customData.linkTypeByLocator.get(locator.locatorHash) === LinkType.HARD) {
           const segments = pkgPath.split(ppath.sep);
           const pkgNameSegmentCount = locator.scope ? 2 : 1;
-          symlinkDst = segments.slice(0, segments.length - pkgNameSegmentCount).join(ppath.sep) as PortablePath;
+          symlinkDstPath = segments.slice(0, segments.length - pkgNameSegmentCount).join(ppath.sep) as PortablePath;
         } else {
-          symlinkDst = nmPath;
+          symlinkDstPath = nmPath;
         }
 
         const name = structUtils.stringifyIdent(descriptor) as PortablePath;
-        const depDstPath = ppath.join(symlinkDst, name);
+        const depDstPath = ppath.join(symlinkDstPath, name);
 
         const depLinkPath = ppath.relative(ppath.dirname(depDstPath), depSrcPath);
 
