@@ -160,6 +160,8 @@ class PnpmInstaller implements Installer {
     if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
+    const packageIdent = structUtils.stringifyIdent(locator) as PortablePath;
+
     this.asyncActions.reduce(locator.locatorHash, async action => {
       // Wait that the package is properly installed before starting to copy things into it
       await action;
@@ -189,8 +191,10 @@ class PnpmInstaller implements Installer {
         if (typeof depSrcPath === `undefined`)
           throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
+        const name = structUtils.stringifyIdent(descriptor) as PortablePath;
+
         let symlinkDstPath: PortablePath;
-        if (this.customData.linkTypeByLocator.get(locator.locatorHash) === LinkType.HARD) {
+        if (this.customData.linkTypeByLocator.get(locator.locatorHash) === LinkType.HARD && packageIdent !== name) {
           const segments = pkgPath.split(ppath.sep);
           const pkgNameSegmentCount = locator.scope ? 2 : 1;
           symlinkDstPath = segments.slice(0, segments.length - pkgNameSegmentCount).join(ppath.sep) as PortablePath;
@@ -198,7 +202,6 @@ class PnpmInstaller implements Installer {
           symlinkDstPath = nmPath;
         }
 
-        const name = structUtils.stringifyIdent(descriptor) as PortablePath;
         const depDstPath = ppath.join(symlinkDstPath, name);
 
         const depLinkPath = ppath.relative(ppath.dirname(depDstPath), depSrcPath);
