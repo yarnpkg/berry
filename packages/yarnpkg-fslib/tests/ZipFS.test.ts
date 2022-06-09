@@ -7,13 +7,15 @@ import {SAFE_TIME}                     from '../sources/constants';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
-import {useFakeTime}                   from './utils';
-
 const isNotWin32 = process.platform !== `win32`;
 
 const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
+
+afterEach(() => {
+  jest.useRealTimers();
+});
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -391,7 +393,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers();
+    jest.useFakeTimers(`modern`);
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -474,7 +476,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers();
+    jest.useFakeTimers(`modern`);
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -541,18 +543,17 @@ describe(`ZipFS`, () => {
   });
 
   it(`should stop the watcher on closing the archive`, async () => {
-    await useFakeTime(advanceTimeBy => {
-      const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    jest.useFakeTimers(`modern`);
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 
-      zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
 
-      zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
+    zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
 
-      zipFs.discardAndClose();
+    zipFs.discardAndClose();
 
-      // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
-      advanceTimeBy(100);
-    });
+    // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
+    jest.advanceTimersByTime(100);
   });
 
   it(`should support opendir`, async () => {
