@@ -103,7 +103,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, packageLocation, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, packageLocation?: PortablePath, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -158,6 +158,10 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
     scriptEnv.npm_package_name = structUtils.stringifyIdent(locator);
     scriptEnv.npm_package_version = version;
+
+    if (packageLocation) {
+      scriptEnv.npm_package_json = npath.fromPortablePath(ppath.join(packageLocation, `package.json` as Filename));
+    }
   }
 
   const version = YarnVersion !== null
@@ -447,7 +451,7 @@ export async function executePackageShellcode(locator: Locator, command: string,
 }
 
 async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, cwd, lifecycleScript}: {binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
-  const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript});
+  const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript, packageLocation: cwd});
 
   await Promise.all(
     Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
@@ -500,8 +504,6 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript});
-
     await Promise.all(
       Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
         makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
@@ -509,6 +511,7 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     );
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript, packageLocation});
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
