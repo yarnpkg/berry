@@ -30,10 +30,6 @@ jobs:
         cd vue-project
         yarn
 
-        # TODO: Remove when the template is updated to use vue-tsc@>=0.30.3
-        # https://github.com/johnsoncodehk/volar/pull/851
-        yarn up vue-tsc
-
         yarn build
         yarn lint
 
@@ -44,10 +40,6 @@ jobs:
         yarn dlx create-vue@2 vue-project --default --typescript
         cd vue-project
         yarn
-
-        # TODO: Remove when the template is updated to use vue-tsc@>=0.30.3
-        # https://github.com/johnsoncodehk/volar/pull/851
-        yarn up vue-tsc
 
         yarn build
       if: |
