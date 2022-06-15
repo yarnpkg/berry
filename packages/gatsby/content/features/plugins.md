@@ -101,4 +101,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn-plugin-version-tools**](https://github.com/indooorsman/yarn-plugins#yarn-plugin-version-tools) by [**indooorsman**](https://github.com/indooorsman) - yarn plugin that is almost same with `@yarnpkg/plugin-version` but add a **`--preid`** option for bumping **prerelease** version.
 
+- [**yarn-plugin-pin-deps**](https://github.com/splitgraph/yarn-plugin-pin-deps) by [**Splitgraph**](https://github.com/splitgraph) - Pin dependencies to their currently resolved exact version. This plugin will find any dependencies referenced with a semver identifier, and will update `package.json` to replace that identifier with the exact version of the package currently resolved in the lockfile for that reference.
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
