@@ -89,20 +89,80 @@ Array [
 `;
 
 exports[`diffFolders Makes and parses diff for 'rename' 1`] = `
-"diff --git a/foo.txt b/foo-new.txt
-similarity index 100%
-rename from foo.txt
-rename to foo-new.txt
+"diff --git a/foo-new.txt b/foo-new.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..257cc5642cb1a054f08cc83f2d943e56fd3ebe99
+--- /dev/null
++++ b/foo-new.txt
+@@ -0,0 +1 @@
++foo
+diff --git a/foo.txt b/foo.txt
+deleted file mode 100644
+index 257cc5642cb1a054f08cc83f2d943e56fd3ebe99..0000000000000000000000000000000000000000
+--- a/foo.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-foo
 "
 `;
 
 exports[`diffFolders Makes and parses diff for 'rename' 2`] = `
 Array [
   Object {
-    "fromPath": "foo.txt",
+    "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
+    "hunk": Object {
+      "header": Object {
+        "original": Object {
+          "length": 0,
+          "start": 1,
+        },
+        "patched": Object {
+          "length": 1,
+          "start": 1,
+        },
+      },
+      "parts": Array [
+        Object {
+          "lines": Array [
+            "foo",
+          ],
+          "noNewlineAtEndOfFile": false,
+          "type": "insertion",
+        },
+      ],
+    },
+    "mode": 420,
+    "path": "foo-new.txt",
     "semverExclusivity": null,
-    "toPath": "foo-new.txt",
-    "type": "rename",
+    "type": "file creation",
+  },
+  Object {
+    "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
+    "hunk": Object {
+      "header": Object {
+        "original": Object {
+          "length": 1,
+          "start": 1,
+        },
+        "patched": Object {
+          "length": 0,
+          "start": 1,
+        },
+      },
+      "parts": Array [
+        Object {
+          "lines": Array [
+            "foo",
+          ],
+          "noNewlineAtEndOfFile": false,
+          "type": "deletion",
+        },
+      ],
+    },
+    "mode": 420,
+    "path": "foo.txt",
+    "semverExclusivity": null,
+    "type": "file deletion",
   },
 ]
 `;
