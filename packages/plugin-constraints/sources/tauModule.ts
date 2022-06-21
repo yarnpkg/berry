@@ -1,10 +1,11 @@
 /// <reference path="./tauProlog.d.ts"/>
 
-import {Project, structUtils} from '@yarnpkg/core';
-import {PortablePath}         from '@yarnpkg/fslib';
-import getPath                from 'lodash/get';
-import pl                     from 'tau-prolog';
-import vm                     from 'vm';
+import {Cache, Descriptor, miscUtils, Project, structUtils} from '@yarnpkg/core';
+import {PortablePath}                                       from '@yarnpkg/fslib';
+import {suggestUtils}                                       from '@yarnpkg/plugin-essentials';
+import getPath                                              from 'lodash/get';
+import pl                                                   from 'tau-prolog';
+import vm                                                   from 'vm';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const {is_atom: isAtom, is_variable: isVariable, is_instantiated_list: isInstantiatedList} = pl.type;
@@ -30,7 +31,57 @@ function getProject(thread: pl.type.Thread): Project {
   return project;
 }
 
+const caches = new WeakMap<pl.type.Session, Cache>();
+
+async function getCache(thread: pl.type.Thread): Promise<Cache> {
+  const project = getProject(thread);
+
+  let cache = caches.get(thread.session);
+  if (cache == null)
+    caches.set(thread.session, cache = await Cache.find(project.configuration));
+
+  return cache;
+}
+
 const tauModule = new pl.type.Module(`constraints`, {
+  [`suggested_package_range/4`]: (thread, point, atom) => {
+    const [workspaceCwdAtom, packageIdentAtom, packageRangeAtom, suggestedRangeVar] = atom.args;
+
+    if (!isAtom(workspaceCwdAtom) || !isAtom(packageIdentAtom) || !isAtom(packageRangeAtom) || !isVariable(suggestedRangeVar)) {
+      thread.throw_error(pl.error.instantiation(atom.indicator));
+      return undefined;
+    }
+
+    const promise = Promise.resolve().then(async () => {
+      const project = getProject(thread);
+      const workspace = project.getWorkspaceByCwd(workspaceCwdAtom.id as any);
+      const cache = await getCache(thread);
+
+      const ident = structUtils.parseIdent(packageIdentAtom.id);
+      const range = packageRangeAtom.id;
+
+      let updated: Descriptor | null;
+      try {
+        updated = await suggestUtils.fetchDescriptorFrom(ident, range, {project, cache, workspace});
+      } catch {
+        updated = null;
+      }
+
+      return updated?.range;
+    });
+
+    promise.then(result => {
+      prependGoals(thread, point, [new pl.type.Term(`=`, [
+        suggestedRangeVar,
+        new pl.type.Term(String(result)),
+      ])]);
+
+      thread.again();
+    });
+
+    return true;
+  },
+
   [`project_workspaces_by_descriptor/3`]: (thread, point, atom) => {
     const [descriptorIdent, descriptorRange, workspaceCwd] = atom.args;
 
@@ -143,7 +194,9 @@ const tauModule = new pl.type.Module(`constraints`, {
     }
   },
 }, [
+  `await/2`,
   `project_workspaces_by_descriptor/3`,
+  `suggested_package_range/4`,
   `workspace_field/3`,
   `workspace_field_test/3`,
   `workspace_field_test/4`,
@@ -151,6 +204,5 @@ const tauModule = new pl.type.Module(`constraints`, {
 
 export function linkProjectToSession(session: pl.type.Session, project: Project) {
   projects.set(session, project);
-
-  session.consult(`:- use_module(library(${tauModule.id})).`);
+  return `:- use_module(library(${tauModule.id})).`;
 }

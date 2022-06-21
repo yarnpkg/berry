@@ -153,15 +153,15 @@ declare module 'tau-prolog' {
 
         public readonly modules: string[];
 
-        public readonly threads: Thread[];
+        public readonly thread: Thread;
 
         public readonly total_threads: number;
 
         public constructor(limit?: number);
 
-        public consult(program: string): void;
+        public consult(program: string, opts: {success: () => void, error: (err: Term<1, 'throw'>) => void}): void;
 
-        public query(query: string): true | Term<1, 'throw'>;
+        public query(query: string, opts: {success: () => void, error: (err: Term<1, 'throw'>) => void}): void;
 
         public answer(callback: (answer: Answer) => void): void;
 
@@ -192,9 +192,11 @@ declare module 'tau-prolog' {
         public readonly level: string;
         public readonly current_limit: number;
 
-        public consult(program: string): void;
+        public constructor(session: Session);
 
-        public query(query: string): void;
+        public consult(program: string, opts: {success: () => void, error: (err: Term<1, 'throw'>) => void}): void;
+
+        public query(query: string, opts: {success: () => void, error: (err: Term<1, 'throw'>) => void}): void;
 
         public answer(callback: (answer: Answer) => void): void;
 
@@ -208,13 +210,15 @@ declare module 'tau-prolog' {
         public throw_error(error: Term<1, 'error'>): void;
 
         public success(state: State, parent?: State): void;
+
+        public again(): void;
       }
 
       interface PredicateFn {
-        (thread: Thread, point: State, atom: Term<number, string>): void|true;
+        (thread: Thread, point: State, atom: Term<number, string>): void | true;
       }
 
-      type Predicate = Rule[]|PredicateFn;
+      type Predicate = Rule[] | PredicateFn;
 
       class Module {
         public readonly id: string;
