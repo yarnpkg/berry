@@ -19,6 +19,24 @@ Constraints are a solution to a very basic need: I have a lot of [workspaces](/f
 # This code block gets replaced with the Table of Contents
 ```
 
+## Using constraints
+
+### Validating the project
+
+Running [`yarn constraints`](/cli/constraints) with no parameters will run the constraint engine in validation mode. It'll compute the various `gen_*` expectations, and report any mismatch with the actual state. If the `--fix` flag is set, it'll also try to fix the errors as much as possible, unless they're too ambiguous.
+
+You can find various recipes at the bottom of this guide to give you a quick start.
+
+### Querying the project
+
+Constraints can validate a project, but have a secondary purpose: accessing information about the project. By using the [`yarn constraints query`](/cli/constraints/query) command, you can tell Yarn to give you all the values that would match a given predicate. For example, the following would tell you all the dependencies in your project:
+
+```bash
+yarn constraints query "workspace_has_dependency(Cwd, Ident, Range, Type)"
+```
+
+If you need to use those information from within script, just add the `--json` flag to generate a NDJSON stream that you can then pass to `jq` or any other tool.
+
 ## Creating a constraint
 
 Constraints are created by adding a `constraints.pro` file at the root of your project (repository). The `.pro` extension might leave you perplexed: this is because constraints aren't written in JavaScript (!) but rather in Prolog, a fact-based rule engine. The goal of this section isn't to teach you Prolog (good tutorials already exist, such as [Learn Prolog in Y Minutes](https://learnxinyminutes.com/docs/prolog/)),
@@ -47,6 +65,28 @@ dependency_type(
 ```
 
 True for only three values: `dependencies`, `devDependencies` and `peerDependencies`.
+
+#### `suggested_package_range/4`
+
+```prolog
+suggested_package_range(
+  +WorkspaceCwd,
+  +PackageIdent,
+  +InitialRange,
+  -SuggestedRange
+).
+```
+
+Populates `SuggestedRange` with the range that Yarn would add when running `cd WorkspaceCwd && yarn 
+add PackageName@InitialRange`. You can use this to easily query the latest package versions available on the registry:
+
+```bash
+yarn constraints query \
+" workspace_has_dependency(Cwd, Ident, Range, Type)
+| suggested_package_range(Cwd, Ident, 'latest', Latest)"
+```
+
+> **Warning:** This predicate requires to query the remote registry. It doesn't work if the network is unavailable, and **is slow if performed synchronously**. In the query above, notice the `|` character in place of a typical comma: this is what enables the parallel execution; without it, the query would easily take 10-20x as much time.
 
 #### `workspace/1`
 
@@ -214,3 +254,11 @@ gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:*', Dependency
 ```
 
 We define a `gen_enforced_dependency` rule that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The final `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).
+
+## Troubleshooting
+
+### `an argument is variable when an instantiated argument was expected`
+
+This error usually means that Prolog expected something, and got another. While it's usually that you passed an unbound value (ie, a variable to fill) to what should be a concrete parameter, it can also be the opposite (a concrete parameter given to something that's supposed to be variable).
+
+Also make sure you're using **single quote strings** when specifying literal strings. In Prolog, double quote strings are a special syntax for lists: `"foo"` is an alias for `['f', 'o', 'o']`, not `'foo'`.
