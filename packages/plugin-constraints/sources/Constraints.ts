@@ -153,7 +153,7 @@ class Thread {
     await new Promise<void>((resolve, reject) => {
       this.thread.consult(source, {
         success: resolve,
-        error: parsed => extractError(parsed),
+        error: parsed => reject(extractError(parsed)),
       });
     });
   }
@@ -162,7 +162,7 @@ class Thread {
     await new Promise<void>((resolve, reject) => {
       this.thread.query(source, {
         success: resolve,
-        error: parsed => extractError(parsed),
+        error: parsed => reject(extractError(parsed)),
       });
     });
   }

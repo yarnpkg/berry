@@ -14,6 +14,7 @@ const queries = {
   [`workspace_field w/ string FieldValue`]: `workspace_field('.', 'name', FieldValue).`,
   [`workspace_field w/ object FieldValue`]: `workspace_field('.', 'repository', FieldValue).`,
   [`workspace_field w/ array FieldValue`]: `workspace_field('.', 'files', FieldValue).`,
+  [`suggested_package_range`]: `suggested_package_range('.', 'no-deps', 'latest', '^2.0.0')`,
 };
 
 const constraintsFile = `

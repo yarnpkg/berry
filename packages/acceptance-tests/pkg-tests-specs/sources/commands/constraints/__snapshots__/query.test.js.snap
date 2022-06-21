@@ -60,6 +60,16 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (empty project / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints query test (empty project / workspace_field w/ array FieldValue) 1`] = `
 Object {
   "code": 0,
@@ -175,6 +185,16 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (multiple workspaces / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints query test (multiple workspaces / workspace_field w/ array FieldValue) 1`] = `
 Object {
   "code": 0,
@@ -261,6 +281,16 @@ Object {
 ➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (one regular dependency / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -358,6 +388,16 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (two development dependencies / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints query test (two development dependencies / workspace_field w/ array FieldValue) 1`] = `
 Object {
   "code": 0,
@@ -447,6 +487,16 @@ Object {
 ➤ YN0000: DependencyType = devDependencies
 ➤ YN0000: DependencyType = peerDependencies
 ➤ YN0000: Done
+",
+}
+`;
+
+exports[`Commands constraints query test (two regular dependencies / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
 ",
 }
 `;
@@ -550,6 +600,16 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (two regular dependencies, two development dependencies / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ array FieldValue) 1`] = `
 Object {
   "code": 0,
@@ -637,6 +697,16 @@ Object {
 }
 `;
 
+exports[`Commands constraints query test (various field types / suggested_package_range) 1`] = `
+Object {
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ YN0075: Instantiation error: an argument is variable when an instantiated argument was expected (in suggested_package_range/4)
+➤ YN0000: Failed with errors
+",
+}
+`;
+
 exports[`Commands constraints query test (various field types / workspace_field w/ array FieldValue) 1`] = `
 Object {
   "code": 0,
@@ -671,7 +741,7 @@ exports[`Commands constraints query test with a syntax error 1`] = `
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0043: Syntax error: . or operator expected at line 1, column 3
+  "stdout": "➤ YN0043: Syntax error: . or operator expected at line 1, column 2
 ➤ YN0000: Failed with errors
 ",
 }
@@ -681,7 +751,7 @@ exports[`Commands constraints query test with an empty predicate 1`] = `
 Object {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0043: Syntax error: argument expected at line 1, column 11
+  "stdout": "➤ YN0043: Syntax error: argument expected at line 1, column 10
 ➤ YN0000: Failed with errors
 ",
 }
