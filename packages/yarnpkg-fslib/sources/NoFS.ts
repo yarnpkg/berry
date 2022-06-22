@@ -246,6 +246,14 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async ftruncatePromise(fd: number, len?: number): Promise<never> {
+    throw makeError();
+  }
+
+  ftruncateSync(fd: number, len?: number): never {
+    throw makeError();
+  }
+
   watch(): never {
     throw makeError();
   }

@@ -6,13 +6,15 @@ import {makeEmptyArchive, ZipFS}       from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
-import {useFakeTime}                   from './utils';
-
 const isNotWin32 = process.platform !== `win32`;
 
 const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
+
+afterEach(() => {
+  jest.useRealTimers();
+});
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -361,6 +363,24 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should support ftruncate`, async () => {
+    const libzip = getLibzipSync();
+    const zipFs = new ZipFS(null, {libzip});
+
+    const fd = zipFs.openSync(`/foo.txt` as PortablePath, `r+`);
+
+    zipFs.writeFileSync(fd, `1234567890`);
+
+    zipFs.ftruncateSync(fd, 5);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`12345`);
+
+    await zipFs.ftruncatePromise(fd, 4);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`1234`);
+
+    zipFs.closeSync(fd);
+    zipFs.discardAndClose();
+  });
+
   it(`should support watchFile and unwatchFile`, () => {
     const libzip = getLibzipSync();
     const zipFs = new ZipFS(null, {libzip});
@@ -372,7 +392,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers();
+    jest.useFakeTimers(`modern`);
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -455,7 +475,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers();
+    jest.useFakeTimers(`modern`);
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -522,18 +542,17 @@ describe(`ZipFS`, () => {
   });
 
   it(`should stop the watcher on closing the archive`, async () => {
-    await useFakeTime(advanceTimeBy => {
-      const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    jest.useFakeTimers(`modern`);
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 
-      zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
 
-      zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
+    zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
 
-      zipFs.discardAndClose();
+    zipFs.discardAndClose();
 
-      // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
-      advanceTimeBy(100);
-    });
+    // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
+    jest.advanceTimersByTime(100);
   });
 
   it(`should support opendir`, async () => {
@@ -844,6 +863,42 @@ describe(`ZipFS`, () => {
     await zipFs.writeFilePromise(fd, `new new content`);
 
     expect(zipFs.readFileSync(fd, `utf8`)).toEqual(`new new content`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOTDIR when trying to stat a file as a directory`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    expect(() => zipFs.statSync(`/foo.txt/` as PortablePath)).toThrowError(`ENOTDIR`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/bar.txt` as PortablePath);
+    expect(() => zipFs.lstatSync(`/bar.txt/` as PortablePath)).toThrowError(`ENOTDIR`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOTDIR when trying to create a file when the dirname is a file`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    expect(() => zipFs.writeFileSync(`/foo.txt/bar.txt` as PortablePath, ``)).toThrowError(`ENOTDIR`);
+
+    zipFs.symlinkSync(`/foo.txt` as PortablePath, `/bar.txt` as PortablePath);
+    expect(() => zipFs.writeFileSync(`/bar.txt/baz.txt` as PortablePath, ``)).toThrowError(`ENOTDIR`);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should throw ENOENT when reading a file that doesn't exist`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    // File doesn't exist
+    expect(() => zipFs.readFileSync(`/foo` as PortablePath, ``)).toThrowError(`ENOENT`);
+
+    // Parent entry doesn't exist
+    expect(() => zipFs.readFileSync(`/foo/bar` as PortablePath, ``)).toThrowError(`ENOENT`);
 
     zipFs.discardAndClose();
   });

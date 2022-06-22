@@ -40,3 +40,5 @@ package.tgz
 /vscode-case-study
 
 .idea
+
+coverage

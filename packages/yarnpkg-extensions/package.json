@@ -1,0 +1,32 @@
+{
+  "name": "@yarnpkg/extensions",
+  "version": "1.1.0-rc.5",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "peerDependencies": {
+    "@yarnpkg/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@yarnpkg/core": "workspace:^"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-extensions"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\""
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "typings": "./lib/index.d.ts"
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "stableVersion": "1.0.0"
+}

@@ -57,6 +57,11 @@ setup-yarn2-pnpm() {
     "compressionLevel: 0"
 }
 
+setup-pnpm() {
+  >> "$BENCH_DIR/.npmrc" echo \
+    "strict-peer-dependencies=false"
+}
+
 case $PACKAGE_MANAGER in
   classic)
     bench install-full-cold \
@@ -134,8 +139,9 @@ case $PACKAGE_MANAGER in
       'npm add dummy-pkg@file:./dummy-pkg'
     ;;
   pnpm)
+    setup-pnpm
     bench install-full-cold \
-      --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.pnpm-store' \
+      --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.local/share/pnpm/store' \
       'pnpm install'
     bench install-cache-only \
       --prepare 'rm -rf node_modules pnpm-lock.yaml' \

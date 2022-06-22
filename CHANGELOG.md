@@ -16,6 +16,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Some legacy layers have been sunset:
   - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
+- The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
+- Set `nmMode` to `hardlinks-local` by default.
 
 ### **API Changes**
 
@@ -30,6 +32,14 @@ The following changes only affect people writing Yarn plugins:
 - The `Resolve#getResolutionDependencies` function must now return an object of arbitrary string keys and descriptor values (instead of a map with `DescriptorHash` keys). Those descriptors will be resolved and assigned to the same keys as the initial object. This change allows resolvers to wrap resolution dependencies from other resolvers, which wasn't possible before since it'd have caused the key to change.
 
 - The `generateLoader` function in `@yarnpkg/pnp` no longer generates the `$$SETUP_STATE` function, it now needs to be present in the `loader` passed to the function.
+
+- The `getCustomDataKey` function in `Installer` from `@yarnpkg/core` has been moved to `Linker`.
+
+### Compatibility
+
+- The patched filesystem now supports `ftruncate`.
+
+## 3.2.1
 
 ### Installs
 

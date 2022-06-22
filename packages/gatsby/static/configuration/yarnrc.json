@@ -26,7 +26,7 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
-    "caFilePath": {
+    "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
       "description": "Path to file containing one or multiple Certificate Authority signing certificates",
       "type": "string",
@@ -365,8 +365,8 @@
           "description": "The hostname to override settings for (glob patterns are supported)",
           "type": "object",
           "properties": {
-            "caFilePath": {
-              "$ref": "#/properties/caFilePath"
+            "httpsCaFilePath": {
+              "$ref": "#/properties/httpsCaFilePath"
             },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
@@ -384,7 +384,7 @@
               "$ref": "#/properties/httpsProxy"
             }
           },
-          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
+          "_exampleKeys": ["httpsCaFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
         }
       },
       "_exampleKeys": ["*.example.com"]
@@ -407,7 +407,7 @@
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
       "type": "string",
       "enum": ["classic", "hardlinks-local", "hardlinks-global"],
-      "default": "classic"
+      "default": "hardlinks-local"
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -449,6 +449,26 @@
       "description": "Defines the default access to use when publishing packages to the npm registry. Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
       "enum": ["public", "restricted"],
       "examples": ["public"]
+    },
+    "npmAuditExcludePackages": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "description": "Array of glob patterns of packages to exclude from `yarn npm audit`. Doesn't need to be defined, in which case no packages will be excluded. Can also be augmented by the `--exclude` flag.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["known_insecure_package"]
+    },
+    "npmAuditIgnoreAdvisories": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "description": "Array of glob patterns of advisory ID's to ignore from `yarn npm audit` results. Doesn't need to be defined, in which case no advisories will be ignored. Can also be augmented by the `--ignore` flag.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["1234567"]
     },
     "npmPublishRegistry": {
       "_package": "@yarnpkg/plugin-npm",
@@ -529,7 +549,7 @@
     },
     "packageExtensions": {
       "_package": "@yarnpkg/core",
-      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
+      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/extensions/sources/index.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)(?:@(.+))$": {

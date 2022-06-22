@@ -13,6 +13,8 @@ import npmWhoami              from './commands/npm/whoami';
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     npmPublishAccess: string | null;
+    npmAuditExcludePackages: Array<string>;
+    npmAuditIgnoreAdvisories: Array<string>;
   }
 }
 
@@ -22,6 +24,18 @@ const plugin: Plugin = {
       description: `Default access of the published packages`,
       type: SettingsType.STRING,
       default: null,
+    },
+    npmAuditExcludePackages: {
+      description: `Array of glob patterns of packages to exclude from npm audit`,
+      type: SettingsType.STRING,
+      default: [],
+      isArray: true,
+    },
+    npmAuditIgnoreAdvisories: {
+      description: `Array of glob patterns of advisory IDs to exclude from npm audit`,
+      type: SettingsType.STRING,
+      default: [],
+      isArray: true,
     },
   },
   commands: [

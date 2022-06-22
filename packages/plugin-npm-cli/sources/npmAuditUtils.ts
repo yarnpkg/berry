@@ -62,7 +62,7 @@ function setDifference<T>(x: Set<T>, y: Set<T>): Set<T> {
 // - are present in the lockfile
 // - are a transitive dependency of some top-level devDependency
 // - are not a transitive dependency of some top-level production dependency
-export function getTransitiveDevDependencies(project: Project, workspace: Workspace, {all}: {all: boolean}): Set<DescriptorHash> {
+function getTransitiveDevDependencies(project: Project, workspace: Workspace, {all}: {all: boolean}): Set<DescriptorHash> {
   // Determine workspaces in scope
   const workspaces = all
     ? project.workspaces
@@ -103,7 +103,7 @@ export function getTransitiveDevDependencies(project: Project, workspace: Worksp
   return setDifference(developmentDependencies, productionDependencies);
 }
 
-export function transformDescriptorIterableToRequiresObject(descriptors: Iterable<Descriptor>) {
+function transformDescriptorIterableToRequiresObject(descriptors: Iterable<Descriptor>) {
   const data: {[key: string]: string} = {};
 
   for (const descriptor of descriptors)
@@ -112,9 +112,9 @@ export function transformDescriptorIterableToRequiresObject(descriptors: Iterabl
   return data;
 }
 
-export function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<npmAuditTypes.Severity> {
+function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<npmAuditTypes.Severity> {
   if (typeof severity === `undefined`)
-    return new Set();
+    return new Set(allSeverities);
 
   const severityIndex = allSeverities.indexOf(severity);
   const severities = allSeverities.slice(severityIndex);
@@ -122,7 +122,7 @@ export function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<np
   return new Set(severities);
 }
 
-export function filterVulnerabilities(vulnerabilities: npmAuditTypes.AuditVulnerabilities, severity?: npmAuditTypes.Severity) {
+function filterVulnerabilities(vulnerabilities: npmAuditTypes.AuditVulnerabilities, severity?: npmAuditTypes.Severity) {
   const inclusions = getSeverityInclusions(severity);
 
   const filteredVulnerabilities: Partial<npmAuditTypes.AuditVulnerabilities> = {};
@@ -157,6 +157,10 @@ export function getReportTree(result: npmAuditTypes.AuditResponse, severity?: np
       label: advisory.module_name,
       value: formatUtils.tuple(formatUtils.Type.RANGE, advisory.findings.map(finding => finding.version).join(`, `)),
       children: {
+        ID: {
+          label: `ID`,
+          value: formatUtils.tuple(formatUtils.Type.NUMBER, advisory.id),
+        },
         Issue: {
           label: `Issue`,
           value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.title),

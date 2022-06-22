@@ -34,6 +34,13 @@ export enum NodeModulesMode {
 export class NodeModulesLinker implements Linker {
   private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
 
+  getCustomDataKey() {
+    return JSON.stringify({
+      name: `NodeModulesLinker`,
+      version: 2,
+    });
+  }
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return this.isEnabled(opts);
   }
@@ -117,13 +124,6 @@ class NodeModulesInstaller implements Installer {
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
-  }
-
-  getCustomDataKey() {
-    return JSON.stringify({
-      name: `NodeModulesInstaller`,
-      version: 2,
-    });
   }
 
   private customData: {
@@ -473,7 +473,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   if (locatorState.__metadata.version > STATE_FILE_VERSION)
     return null;
 
-  const nmMode = locatorState.__metadata.nmMode || NodeModulesMode.CLASSIC;
+  const nmMode = locatorState.__metadata.nmMode || NodeModulesMode.HARDLINKS_LOCAL;
 
   const locatorMap: NodeModulesLocatorMap = new Map();
   const binSymlinks: BinSymlinkMap = new Map();

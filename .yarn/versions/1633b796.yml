@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/extensions": minor
+
+declined:
+  - "@yarnpkg/plugin-compat"

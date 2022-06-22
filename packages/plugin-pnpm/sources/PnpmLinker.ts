@@ -9,6 +9,13 @@ export type PnpmCustomData = {
 };
 
 export class PnpmLinker implements Linker {
+  getCustomDataKey() {
+    return JSON.stringify({
+      name: `PnpmLinker`,
+      version: 2,
+    });
+  }
+
   supportsPackage(pkg: Package, opts: MinimalLinkOptions) {
     return this.isEnabled(opts);
   }
@@ -17,8 +24,8 @@ export class PnpmLinker implements Linker {
     if (!this.isEnabled(opts))
       throw new Error(`Assertion failed: Expected the pnpm linker to be enabled`);
 
-    const customDataKey = getCustomDataKey();
-    const customData = opts.project.installersCustomData.get(customDataKey) as PnpmCustomData | undefined;
+    const customDataKey = this.getCustomDataKey();
+    const customData = opts.project.linkersCustomData.get(customDataKey) as PnpmCustomData | undefined;
     if (!customData)
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
@@ -33,8 +40,8 @@ export class PnpmLinker implements Linker {
     if (!this.isEnabled(opts))
       return null;
 
-    const customDataKey = getCustomDataKey();
-    const customData = opts.project.installersCustomData.get(customDataKey) as any;
+    const customDataKey = this.getCustomDataKey();
+    const customData = opts.project.linkersCustomData.get(customDataKey) as any;
     if (!customData)
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
@@ -75,10 +82,6 @@ class PnpmInstaller implements Installer {
 
   constructor(private opts: LinkOptions) {
     // Nothing to do
-  }
-
-  getCustomDataKey() {
-    return getCustomDataKey();
   }
 
   private customData: PnpmCustomData = {
@@ -284,13 +287,6 @@ class PnpmInstaller implements Installer {
       customData: this.customData,
     };
   }
-}
-
-function getCustomDataKey() {
-  return JSON.stringify({
-    name: `PnpmInstaller`,
-    version: 2,
-  });
 }
 
 function getNodeModulesLocation(project: Project) {

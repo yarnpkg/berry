@@ -162,7 +162,7 @@ const Content = styled.div`
 
     color: #007aa2;
 
-    font-family: "PT Mono";
+    font-family: "PT Mono", monospace;
   }
 
   pre code {
