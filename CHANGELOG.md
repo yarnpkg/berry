@@ -38,6 +38,7 @@ The following changes only affect people writing Yarn plugins:
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.
+- Updates the PnP compatibility layer for TypeScript 4.8 Beta
 
 ## 3.2.1
 
