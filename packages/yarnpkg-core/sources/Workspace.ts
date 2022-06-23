@@ -64,6 +64,7 @@ export class Workspace {
     const relativeCwds = await globby(patterns, {
       cwd: npath.fromPortablePath(this.cwd),
       expandDirectories: false,
+      gitignore: true,
       onlyDirectories: true,
       onlyFiles: false,
       ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
