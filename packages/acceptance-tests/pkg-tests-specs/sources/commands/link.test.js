@@ -205,5 +205,41 @@ describe(`Commands`, () => {
         },
       ),
     );
+
+    test(
+      `it should allow linking multiple workspaces`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const tmp = await createTemporaryFolder();
+
+        await writeJson(`${tmp}/my-workspace/package.json`, {
+          private: true,
+          workspaces: [`packages/*`],
+        });
+
+        await writeJson(`${tmp}/my-workspace/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+        });
+
+        await writeJson(`${tmp}/my-workspace/packages/workspace-b/package.json`, {
+          name: `workspace-b`,
+        });
+
+        await writeJson(`${tmp}/my-workspace/packages/workspace-c/package.json`, {
+          name: `workspace-c`,
+        });
+
+        await run(`link`, `${tmp}/my-workspace/packages/workspace-b`, `${tmp}/my-workspace/packages/workspace-c`);
+
+        const manifest = await readJson(`${path}/package.json`);
+
+        expect(manifest.resolutions).not.toHaveProperty(`workspace-a`);
+        await expect(manifest).toMatchObject({
+          resolutions: {
+            [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
+            [`workspace-c`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-c`)}`,
+          },
+        });
+      }),
+    );
   });
 });
