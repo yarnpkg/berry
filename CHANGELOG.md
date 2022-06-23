@@ -39,6 +39,10 @@ The following changes only affect people writing Yarn plugins:
 
 - The patched filesystem now supports `ftruncate`.
 
+### Installs
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+
 ## 3.2.1
 
 ### Installs

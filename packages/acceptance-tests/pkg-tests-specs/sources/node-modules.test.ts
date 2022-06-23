@@ -563,6 +563,27 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should not create circular self-reference symlinks`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws/package.json`), {
+          name: `ws`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/ws/node_modules/ws` as PortablePath)).toEqual(false);
+      },
+    ),
+  );
+
   test(`should not hoist multiple packages past workspace hoist border`,
     // . -> workspace -> dep1 -> dep2
     // should be hoisted to:
