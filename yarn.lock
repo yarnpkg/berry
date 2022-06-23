@@ -5841,7 +5841,7 @@ __metadata:
     "@yarnpkg/plugin-essentials": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
     lodash: "npm:^4.17.15"
-    tau-prolog: "npm:^0.3.3"
+    tau-prolog: tau-prolog/tau-prolog
     tslib: "npm:^1.13.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -24625,12 +24625,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tau-prolog@npm:^0.3.3":
+tau-prolog@tau-prolog/tau-prolog:
   version: 0.3.3
-  resolution: "tau-prolog@npm:0.3.3"
+  resolution: "tau-prolog@https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"
   dependencies:
     readline-sync: "npm:1.4.9"
-  checksum: a7ad9b7156f5e9b4349fb21bb0f9ec3c6dcbde8728c701de2f66d64407ced4f9225a6ba7149de5be6665bf2869f0be5177a856589a1ee5c5d06bc930772fc27c
+  checksum: a7ab68af5e454ceeecd89c7d91374415a05d31d6277df045b8ad06ec4c45b17e06c33c2b89a03c865856682df58a6a3c701a89837c17e470e746af6780499dc7
   languageName: node
   linkType: hard
 

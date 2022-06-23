@@ -70,16 +70,22 @@ const tauModule = new pl.type.Module(`constraints`, {
       return updated?.range;
     });
 
-    promise.then(result => {
-      prependGoals(thread, point, [new pl.type.Term(`=`, [
-        suggestedRangeVar,
-        new pl.type.Term(String(result)),
-      ])]);
+    const future = new pl.type.Future();
 
-      thread.again();
+    promise.then(result => {
+      future.done(new pl.type.Term(String(result)), 1);
+    }, error => {
+      future.done(error, 3);
     });
 
-    return true;
+    thread.prepend([new pl.type.State(
+      point.goal.replace(new pl.type.Term(`=`, [
+        suggestedRangeVar,
+        future,
+      ])),
+      point.substitution,
+      point,
+    )]);
   },
 
   [`project_workspaces_by_descriptor/3`]: (thread, point, atom) => {
@@ -194,7 +200,6 @@ const tauModule = new pl.type.Module(`constraints`, {
     }
   },
 }, [
-  `await/2`,
   `project_workspaces_by_descriptor/3`,
   `suggested_package_range/4`,
   `workspace_field/3`,

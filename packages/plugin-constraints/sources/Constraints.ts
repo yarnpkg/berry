@@ -1,14 +1,16 @@
 /// <reference path="./tauProlog.d.ts"/>
-
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
 import {xfs, ppath, PortablePath}                            from '@yarnpkg/fslib';
+// @ts-expect-error
+import plConcurrent                                          from 'tau-prolog/modules/concurrent';
 // @ts-expect-error
 import plLists                                               from 'tau-prolog/modules/lists';
 import pl                                                    from 'tau-prolog';
 
 import {linkProjectToSession}                                from './tauModule';
 
+plConcurrent(pl);
 plLists(pl);
 
 export type EnforcedDependency = {
@@ -108,8 +110,12 @@ class Session {
   async init(project: Project, source: string) {
     const setupCode = linkProjectToSession(this.session, project);
 
+    const defaultModules = [`lists`, `concurrent`].map(name => {
+      return `:- use_module(library(${name})).\n`;
+    }).join(``);
+
     await this.main.tauConsult(setupCode);
-    await this.main.tauConsult(`:- use_module(library(lists)).`);
+    await this.main.tauConsult(defaultModules);
     await this.main.tauConsult(source);
   }
 
@@ -172,7 +178,16 @@ function parseLink(link: pl.Link): string | null {
   if (link.id === `null`) {
     return null;
   } else {
-    return `${link.toJavaScript()}`;
+    if (pl.type.is_future_object(link)) {
+      return `<Promise>`;
+    } else {
+      try {
+        return `${link.toJavaScript()}`;
+      } catch (err) {
+        //console.log(require(`util`).inspect({link}, {depth: Infinity}));
+        return `null`;
+      }
+    }
   }
 }
 

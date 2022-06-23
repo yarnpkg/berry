@@ -11549,7 +11549,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11574,7 +11574,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:4a81238740d10a4592ebfa861a1a75b04c570129f95c3adcda1d8d4c36908cf3f7d1602f302ff056ef02767644131a4bbadf5b1b4981fa750f183579e4c2851d#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11599,7 +11599,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:5d5cf1382de65b516debea532b84151bae2220336cf20f59bbf1e5ba130d22b4db26a71ceb1474bb584872aee887a299a65acdece6664de074b85c6eea81c9ef#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11624,7 +11624,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:7f953da1f148dd1c043f5df2fb9b07961f91fb4564dfd683c4bba37b6189baab3047c593f02018fe34d2e288fed17a8da66db1b393417aab8256c1ff189bc143#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11649,7 +11649,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:58c295fd22d57f4e5bea1eae96b508fc3f7be95070bc0c64835fd169ed9cb3e0e45763374d4e0ebf9e96f95202ff0982780af634489f846bd0fe1d385c6b2503#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11674,7 +11674,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:f73dff00a52f20aff8fa5e17ebd35f32bc6d484f0ccdf68c256e702b160f0250f9be6edd154cad8b0c178fe9b4486c260b4e5d37c754bde821633f50044419e4#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11699,7 +11699,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:99fd3d5184c124e2120152b30af37953c9e5bc34253690fd2731834f252ff4a1f701dbb66537477f9ca7635a935c8e474b0ba26d8e249bfe3c5e3c8a268ffcfa#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11724,7 +11724,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:5e229efdf3aaa4d514f3ebaeac207b88c40ab0636540c8b3e0fadecd99c3325773c999ee47ce154a3da8ed935a3e49e8b79967ae7b2eeec95a6e1024e9fc51ac#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11749,7 +11749,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:8fcb17feb979c5c59d1e4cdf7b7ae5826352a09a225e04185d13e252b4379b7f4b2455e4ee45090ee2bdbe0a7113155f771f4ff55fed12d279d1125a15515398#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11774,7 +11774,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11799,7 +11799,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11824,7 +11824,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:98a58bd40641251fce92667d3b38a433480aaea028db4940eb70918f71b706f725fa11547dd5d57b756fb3d5ca2a7f4f675cde5ce2b1d9897a8a34889a4e7c31#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11849,7 +11849,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:52eb924bd8f2490745205c5f6e7fe9a82d095c1b9baf85d226078d783eb12d5dbe298de81a541eea5c419bedcafe0b9321b629f68628c4b5bc70f89a9846abb9#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11874,7 +11874,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:afb367a9d4e60d19e35d37232686188f4a434a6d5e44cfa7ea5985baf30ae720c8c41793b38d7112fa490aed1063b5e45e03e81ef3f28305b831f53acd3bc800#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11899,7 +11899,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:8277fb4b0d3c45610dc08e59fe0d3d6453c6f104ca3bef6901f102579f5993b8ad1e828b2eee7b65f4477c7e316dcbecc7a675a6027c623c3fc575c77cea4a14#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11924,7 +11924,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:ac7583c0b49debbe9a27fe1771d3512c4b70c2c1aefd84065feec036293d453d8efedcebf3f945f611a2feed7580a0728f0dd4146ea54a6b67c714889a2c4316#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11949,7 +11949,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:8a2d582b2ac68096c86d795a20bc8d716924297eceb4790b98f8646eec7b1bec44a6f132676c9f51bb480deb1e878112926ac4985b502ca57997714c8a79d10f#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11974,7 +11974,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:49d51b985cb85922c3f8a8945b2c3a16f33e87494ea10ab43f14c4d99b2720be1a926b81329b671501ed254d3e54fb371e1e7d25e912370e5dc9633742ba28a5#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -11999,7 +11999,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:08000e8377226bc30a8dbfa982fb0bdc5cafeddc94a5537acdcb38341647e0b74b6a5740c76176f476ab25f3cf352b21f8913c0086c5f80ec82a0ec54a2e2126#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "packagePeers": [\
@@ -12022,7 +12022,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-essentials", "virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/plugin-essentials"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["lodash", "npm:4.17.21"],\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["tslib", "npm:1.13.0"]\
         ],\
         "linkType": "SOFT"\
@@ -42893,10 +42893,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["tau-prolog", [\
-      ["npm:0.3.3", {\
-        "packageLocation": "./.yarn/cache/tau-prolog-npm-0.3.3-6131dae97c-a7ad9b7156.zip/node_modules/tau-prolog/",\
+      ["https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f", {\
+        "packageLocation": "./.yarn/cache/tau-prolog-https-86f21f7426-a7ab68af5e.zip/node_modules/tau-prolog/",\
         "packageDependencies": [\
-          ["tau-prolog", "npm:0.3.3"],\
+          ["tau-prolog", "https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"],\
           ["readline-sync", "npm:1.4.9"]\
         ],\
         "linkType": "HARD"\
