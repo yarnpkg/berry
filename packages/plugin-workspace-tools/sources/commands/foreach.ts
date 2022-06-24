@@ -196,7 +196,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const concurrency = this.parallel ?
       (this.jobs === `unlimited`
         ? Infinity
-        : this.jobs || Math.max(1, cpus().length / 2))
+        : Number(this.jobs) || Math.max(1, cpus().length / 2))
       : 1;
 
     // No need to parallelize if we were explicitly asked for one job
