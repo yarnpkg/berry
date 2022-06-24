@@ -1,2 +1,2 @@
 releases:
-  "@yarnpkg/core": patch
+  "@yarnpkg/core": major
