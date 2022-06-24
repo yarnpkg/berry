@@ -517,9 +517,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
     seenNodes.add(pkg);
 
+    const pkgReferences = Array.from(pkg.references).sort().join(`#`);
     for (const dep of pkg.dependencies) {
+      const depReferences = Array.from(dep.references).sort().join(`#`);
       // We do not want self-references in node_modules, since they confuse existing tools
-      if (dep.identName === pkg.identName)
+      if (dep.identName === pkg.identName && depReferences === pkgReferences)
         continue;
       const references = Array.from(dep.references).sort();
       const locator = {name: dep.identName, reference: references[0]};
