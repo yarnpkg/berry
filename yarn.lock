@@ -5838,9 +5838,10 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/plugin-essentials": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
     lodash: "npm:^4.17.15"
-    tau-prolog: "npm:^0.2.66"
+    tau-prolog: tau-prolog/tau-prolog
     tslib: "npm:^1.13.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -8823,13 +8824,6 @@ __metadata:
   version: 1.2.9
   resolution: "command-exists@npm:1.2.9"
   checksum: f49018e2479b5b200ff4a1526f85d0670b72bb97f4006021389daf3b64a845211df5c328e63c602188f7e7cb450cb0c35f81941cacf1aaf74f40ebdfcf707b73
-  languageName: node
-  linkType: hard
-
-"commander@npm:2.12.2":
-  version: 2.12.2
-  resolution: "commander@npm:2.12.2"
-  checksum: be384d7ab24b488e422d85fb8e48ceb878e258f1effc7d131bbc3657521754e436c41119e2ff5ccca3eb1b6f2341913c374a96c5a66e1b85f0e5fc43f62a9d23
   languageName: node
   linkType: hard
 
@@ -12501,13 +12495,6 @@ __metadata:
   version: 1.0.0
   resolution: "fs.realpath@npm:1.0.0"
   checksum: 477fb3547134ce67d71531a19b2597028d2efaeced56a2fcb125ba9994a4204685d256795e4a5b68e5d866d11d8d0dd9050937cb44037beb4caeb3acb75602e2
-  languageName: node
-  linkType: hard
-
-"fs@npm:0.0.1-security":
-  version: 0.0.1-security
-  resolution: "fs@npm:0.0.1-security"
-  checksum: 0bb4dbc28772183fed666a8822959607ef515995a01362c8f7204594478a138edd2834ac908fd2745d21a07611a3e5fdd751f822ad38b4166c035011d72b06a7
   languageName: node
   linkType: hard
 
@@ -16540,13 +16527,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-reporters@npm:1.2.1":
-  version: 1.2.1
-  resolution: "js-reporters@npm:1.2.1"
-  checksum: d1cc2578c672bb8ebfc96df6da6c81bb0aeb4cf06813110fda95bb59adbcbe05e7176708251ced30ff4082feb060734748d9e6dacca2d731cab45f4e4a9d6ccf
-  languageName: node
-  linkType: hard
-
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -18958,13 +18938,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-watch@npm:0.6.0":
-  version: 0.6.0
-  resolution: "node-watch@npm:0.6.0"
-  checksum: 7d480a1af34e1dc590cdce3284ccb4f4af6d8716457e2e8a7c9ddde54c2b4fc1776a609e81b3a35dbb87efde74e461b9a406ea6a9b4bd8fe738be80e113a2911
-  languageName: node
-  linkType: hard
-
 "nopt@npm:^4.0.1":
   version: 4.0.1
   resolution: "nopt@npm:4.0.1"
@@ -21283,21 +21256,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qunit@npm:^2.8.0":
-  version: 2.9.2
-  resolution: "qunit@npm:2.9.2"
-  dependencies:
-    commander: "npm:2.12.2"
-    js-reporters: "npm:1.2.1"
-    minimatch: "npm:3.0.4"
-    node-watch: "npm:0.6.0"
-    resolve: "npm:1.9.0"
-  bin:
-    qunit: bin/qunit.js
-  checksum: 821297968fa62ffa060930109a34d7f8f6f3def812d6cbea756c5dba877b8735c2fd4f9c1f06865ffb652665e24bda987048bc757763239c56951bc159fe4da6
-  languageName: node
-  linkType: hard
-
 "raf@npm:^3.4.0, raf@npm:^3.4.1":
   version: 3.4.1
   resolution: "raf@npm:3.4.1"
@@ -22662,15 +22620,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:1.9.0":
-  version: 1.9.0
-  resolution: "resolve@npm:1.9.0"
-  dependencies:
-    path-parse: "npm:^1.0.6"
-  checksum: d33e75f96855d1291839c6692783c8b1ccc8e8e686a71e294bc78d15511f883ddc563391e60f7dd909ba1f04af6868d2c51cf8c03b4f69b1cad279a37d37a6d7
-  languageName: node
-  linkType: hard
-
 "resolve@npm:^1.1.6, resolve@npm:^1.10.0, resolve@npm:^1.12.0, resolve@npm:^1.14.2, resolve@npm:^1.17.0, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.3.2":
   version: 1.20.0
   resolution: "resolve@npm:1.20.0"
@@ -22688,15 +22637,6 @@ __metadata:
     is-core-module: "npm:^2.2.0"
     path-parse: "npm:^1.0.6"
   checksum: d6207b99d44b74ff6ac1e1e2f5226c1c8005af3cdb8ad598b7ceed447f34638b3ab5c800b4ebaf4bbb5cb1afc2ec5fa663e488ebb13635550bbe33d40169947d
-  languageName: node
-  linkType: hard
-
-"resolve@patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>":
-  version: 1.9.0
-  resolution: "resolve@patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=07638b"
-  dependencies:
-    path-parse: "npm:^1.0.6"
-  checksum: df26fb01a5caa45a13682fa416a61cab364e89505166696dee1b42f4cd73b8f05185e171adb015edfbb7b67df8502e4d93d7b9304470f148cf775844e192f058
   languageName: node
   linkType: hard
 
@@ -24685,14 +24625,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tau-prolog@npm:^0.2.66":
-  version: 0.2.66
-  resolution: "tau-prolog@npm:0.2.66"
+tau-prolog@tau-prolog/tau-prolog:
+  version: 0.3.3
+  resolution: "tau-prolog@https://github.com/tau-prolog/tau-prolog.git#commit=56f180e74e969c68caa24343bb03fafe37035c4f"
   dependencies:
-    fs: "npm:0.0.1-security"
-    qunit: "npm:^2.8.0"
     readline-sync: "npm:1.4.9"
-  checksum: 7fff5753a6c08f9adec79ee95c516ea3984ec462d1c38224122ccf7ca396363d5a77da9028fc4f38eea20bcff589ac76eb76967f13ed93b34f6ef79436c8e85e
+  checksum: a7ab68af5e454ceeecd89c7d91374415a05d31d6277df045b8ad06ec4c45b17e06c33c2b89a03c865856682df58a6a3c701a89837c17e470e746af6780499dc7
   languageName: node
   linkType: hard
 

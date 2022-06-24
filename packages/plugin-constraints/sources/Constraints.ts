@@ -1,14 +1,16 @@
 /// <reference path="./tauProlog.d.ts"/>
-
 import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
 import {miscUtils, structUtils}                              from '@yarnpkg/core';
 import {xfs, ppath, PortablePath}                            from '@yarnpkg/fslib';
+// @ts-expect-error
+import plConcurrent                                          from 'tau-prolog/modules/concurrent';
 // @ts-expect-error
 import plLists                                               from 'tau-prolog/modules/lists';
 import pl                                                    from 'tau-prolog';
 
 import {linkProjectToSession}                                from './tauModule';
 
+plConcurrent(pl);
 plLists(pl);
 
 export type EnforcedDependency = {
@@ -98,38 +100,50 @@ function extractError(val: any) {
 
 class Session {
   private readonly session: pl.type.Session;
+  public readonly main: Thread;
 
-  public constructor(project: Project, source: string) {
-    // The default Tau Prolog resolution steps limit is quite small
-    // By using a proportional limit (instead of no limit), we avoid triggering pathological cases "easily"
-    // See https://github.com/yarnpkg/berry/issues/1260
-    const limit = 1000 * project.workspaces.length;
-    this.session = pl.create(limit);
-    linkProjectToSession(this.session, project);
+  public constructor() {
+    this.session = pl.create();
+    this.main = new Thread(this.session.thread);
+  }
 
-    this.session.consult(`:- use_module(library(lists)).`);
-    this.session.consult(source);
+  async init(project: Project, source: string) {
+    const setupCode = linkProjectToSession(this.session, project);
+
+    const defaultModules = [`lists`, `concurrent`].map(name => {
+      return `:- use_module(library(${name})).\n`;
+    }).join(``);
+
+    await this.main.tauConsult(setupCode);
+    await this.main.tauConsult(defaultModules);
+    await this.main.tauConsult(source);
+  }
+
+  createThread() {
+    return new Thread(new pl.type.Thread(this.session));
+  }
+}
+
+class Thread {
+  private readonly thread: pl.type.Thread;
+
+  public constructor(thread: pl.type.Thread) {
+    this.thread = thread;
   }
 
   private fetchNextAnswer() {
     return new Promise<pl.Answer>(resolve => {
-      this.session.answer((result: any) => {
+      this.thread.answer((result: any) => {
         resolve(result);
       });
     });
   }
 
-  public async * makeQuery(query: string) {
-    const parsed = this.session.query(query);
-
-    if (parsed !== true)
-      throw extractError(parsed);
+  async * makeQuery(query: string) {
+    await this.tauQuery(query);
 
     while (true) {
       const answer = await this.fetchNextAnswer();
-
-      if (answer === null)
-        throw new ReportError(MessageName.PROLOG_LIMIT_EXCEEDED, `Resolution limit exceeded`);
 
       if (!answer)
         break;
@@ -140,13 +154,40 @@ class Session {
       yield answer;
     }
   }
+
+  async tauConsult(source: string) {
+    await new Promise<void>((resolve, reject) => {
+      this.thread.consult(source, {
+        success: resolve,
+        error: parsed => reject(extractError(parsed)),
+      });
+    });
+  }
+
+  async tauQuery(source: string) {
+    await new Promise<void>((resolve, reject) => {
+      this.thread.query(source, {
+        success: resolve,
+        error: parsed => reject(extractError(parsed)),
+      });
+    });
+  }
 }
 
 function parseLink(link: pl.Link): string | null {
   if (link.id === `null`) {
     return null;
   } else {
-    return `${link.toJavaScript()}`;
+    if (pl.type.is_future_object(link)) {
+      return `<Promise>`;
+    } else {
+      try {
+        return `${link.toJavaScript()}`;
+      } catch (err) {
+        //console.log(require(`util`).inspect({link}, {depth: Infinity}));
+        return `null`;
+      }
+    }
   }
 }
 
@@ -234,23 +275,26 @@ export class Constraints {
     return `${this.getProjectDatabase()}\n${this.source}\n${this.getDeclarations()}`;
   }
 
-  private createSession() {
-    return new Session(this.project, this.fullSource);
+  async createSession() {
+    const session = new Session();
+    await session.init(this.project, this.fullSource);
+
+    return session;
   }
 
   async process() {
-    const session = this.createSession();
+    const session = await this.createSession();
 
     return {
-      enforcedDependencies: await this.genEnforcedDependencies(session),
-      enforcedFields: await this.genEnforcedFields(session),
+      enforcedDependencies: await this.genEnforcedDependencies(session.main),
+      enforcedFields: await this.genEnforcedFields(session.main),
     };
   }
 
-  private async genEnforcedDependencies(session: Session) {
+  private async genEnforcedDependencies(thread: Thread) {
     const enforcedDependencies: Array<EnforcedDependency> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
+    for await (const answer of thread.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
@@ -272,10 +316,10 @@ export class Constraints {
     ]);
   }
 
-  private async genEnforcedFields(session: Session) {
+  private async genEnforcedFields(thread: Thread) {
     const enforcedFields: Array<EnforcedField> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
+    for await (const answer of thread.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const fieldPath = parseLink(answer.links.FieldPath);
       const fieldValue = parseLinkToJson(answer.links.FieldValue);
@@ -294,10 +338,15 @@ export class Constraints {
     ]);
   }
 
-  async * query(query: string) {
-    const session = this.createSession();
+  async * query(query: string, {context, session}: {context?: Array<[string, string | null]>, session?: Session} = {}) {
+    const thread = typeof session === `undefined`
+      ? (await this.createSession()).main
+      : session.createThread();
 
-    for await (const answer of session.makeQuery(query)) {
+    const contextPrefix = context?.map(([name, value]) => `${name} = '${value}', `).join(``) ?? ``;
+    const finalQuery = `${contextPrefix}${query}`.replace(/\.?$/, `.`);
+
+    for await (const answer of thread.makeQuery(finalQuery)) {
       const parsedLinks: Record<string, string | null> = {};
 
       for (const [variable, value] of Object.entries(answer.links)) {

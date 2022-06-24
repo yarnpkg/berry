@@ -34,27 +34,53 @@ export default class ConstraintsQueryCommand extends BaseCommand {
     const {project} = await Project.find(configuration, this.context.cwd);
     const constraints = await Constraints.find(project);
 
-    let query = this.query;
-    if (!query.endsWith(`.`))
-      query = `${query}.`;
-
     const report = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      for await (const result of constraints.query(query)) {
-        const lines = Array.from(Object.entries(result));
-        const lineCount = lines.length;
+      const segments = this.query.split(`|`);
+      const session = await constraints.createSession();
 
-        const maxVariableNameLength = lines.reduce((max, [variableName]) => Math.max(max, variableName.length), 0);
+      let results: Array<Array<[string, string | null]>> = [[]];
 
-        for (let i = 0; i < lineCount; i++) {
-          const [variableName, value] = lines[i];
-          report.reportInfo(null, `${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}`);
+      for (const segment of segments) {
+        const contexts = await Promise.all(results);
+        const next: Array<Promise<Array<Array<[string, string | null]>>>> = [];
+
+        for (const context of contexts) {
+          next.push(Promise.resolve().then(async () => {
+            const results: Array<Array<[string, string | null]>> = [];
+
+            for await (const result of constraints.query(segment, {context, session}))
+              results.push(Object.entries(result));
+
+            return results;
+          }));
         }
 
-        report.reportJson(result);
+        results = (await Promise.all(next)).flat();
+      }
+
+      for (const entries of await Promise.all(results)) {
+        // We're not really supposed to do things differently depending on
+        // whether we are in JSON mode or not, but given that this is inside
+        // a tight loop, it doesn't cost a lot to avoid extra computations.
+
+        if (!this.json) {
+          const lineCount = entries.length;
+          const maxVariableNameLength = entries.reduce((max, [variableName]) => Math.max(max, variableName.length), 0);
+
+          for (let i = 0; i < lineCount; i++) {
+            const [variableName, value] = entries[i];
+            report.reportInfo(null, `${getLinePrefix(i, lineCount)}${variableName.padEnd(maxVariableNameLength, ` `)} = ${valueToString(value)}`);
+          }
+        }
+
+        if (this.json) {
+          const record = Object.fromEntries(entries);
+          report.reportJson(record);
+        }
       }
     });
 
