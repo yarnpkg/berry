@@ -781,7 +781,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vuejs/eslint-config-typescript/pull/39
-  [`@vue/eslint-config-typescript@*`, {
+  [`@vue/eslint-config-typescript@<11.0.0`, {
     peerDependenciesMeta: {
       typescript: optionalPeerDep,
     },
