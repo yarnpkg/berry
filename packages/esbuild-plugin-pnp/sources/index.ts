@@ -139,9 +139,11 @@ export function pnpPlugin({
           conditions = conditionsRequire;
 
         // The entry point resolution uses an empty string
-        const effectiveImporter = args.importer
-          ? args.importer
-          : `${baseDir}/`;
+        const effectiveImporter = args.resolveDir
+          ? `${args.resolveDir}/`
+          : args.importer
+            ? args.importer
+            : `${baseDir}/`;
 
         const pnpApi = findPnpApi(effectiveImporter) as PnpApi | null;
         if (!pnpApi)
