@@ -901,4 +901,26 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should return the first created directory in mkdir recursive`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    expect(zipFs.mkdirSync(`/foo` as PortablePath, {recursive: true})).toEqual(`/foo` as PortablePath);
+    expect(zipFs.mkdirSync(`/foo` as PortablePath, {recursive: true})).toEqual(undefined);
+    expect(zipFs.mkdirSync(`/foo/bar/baz` as PortablePath, {recursive: true})).toEqual(`/foo/bar` as PortablePath);
+    expect(zipFs.mkdirSync(`/foo/bar/baz` as PortablePath, {recursive: true})).toEqual(undefined);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should return the first created directory in mkdirp`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    expect(zipFs.mkdirpSync(`/foo` as PortablePath)).toEqual(`/foo` as PortablePath);
+    expect(zipFs.mkdirpSync(`/foo` as PortablePath)).toEqual(undefined);
+    expect(zipFs.mkdirpSync(`/foo/bar/baz` as PortablePath)).toEqual(`/foo/bar` as PortablePath);
+    expect(zipFs.mkdirpSync(`/foo/bar/baz` as PortablePath)).toEqual(undefined);
+
+    zipFs.discardAndClose();
+  });
 });
