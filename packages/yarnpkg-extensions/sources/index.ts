@@ -878,4 +878,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       '@types/unist': `^2.0.0`,
     },
   }],
+  // https://github.com/ntkme/react-github-btn/pull/23
+  [`react-github-btn@<=1.3.0`, {
+    peerDependencies: {
+      react: `>=16.3.0`,
+    },
+  }],
 ];
