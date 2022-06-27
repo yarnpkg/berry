@@ -884,4 +884,18 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `>=16.3.0`,
     },
   }],
+  // There are two candidates upstream, clean this up when either is merged.
+  // - https://github.com/facebook/create-react-app/pull/11526
+  // - https://github.com/facebook/create-react-app/pull/11716
+  [`react-dev-utils@*`, {
+    peerDependencies: {
+      typescript: `>=2.7`,
+      webpack: `>=4`,
+    },
+    peerDependenciesMeta: {
+      typescript: {
+        optional: true,
+      },
+    },
+  }],
 ];
