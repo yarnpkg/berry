@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}     from '@yarnpkg/cli';
-import {Configuration, Project}                  from '@yarnpkg/core';
-import {scriptUtils, structUtils}                from '@yarnpkg/core';
-import {NativePath, Filename, ppath, xfs, npath} from '@yarnpkg/fslib';
-import {Command, Option, Usage}                  from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, stringifyMessageName} from '@yarnpkg/core';
+import {scriptUtils, structUtils, formatUtils}                     from '@yarnpkg/core';
+import {NativePath, Filename, ppath, xfs, npath}                   from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -71,6 +71,14 @@ export default class DlxCommand extends BaseCommand {
             ...current,
             enableGlobalCache,
             enableTelemetry: false,
+            logFilters: [
+              ...(current.logFilters ?? []) as Array<unknown>,
+              // Don't warn if package extensions are unused in dlx projects
+              {
+                code: stringifyMessageName(MessageName.UNUSED_PACKAGE_EXTENSION),
+                level: formatUtils.LogLevel.Discard,
+              },
+            ],
           };
 
           if (Array.isArray(current.plugins)) {

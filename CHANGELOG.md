@@ -40,6 +40,10 @@ The following changes only affect people writing Yarn plugins:
 - The patched filesystem now supports `ftruncate`.
 - Updates the PnP compatibility layer for TypeScript 4.8 Beta
 
+### Bugfixes
+
+- `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
+
 ## 3.2.1
 
 ### Installs
