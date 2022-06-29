@@ -8,8 +8,14 @@ if (fs.existsSync(pnpFile))
 // Adds TS support to Node
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
+const semver = require(`semver`);
+
+const {version} = require(`@yarnpkg/cli/package.json`);
+
 // Exposes the CLI version as like for the bundle
-global.YARN_VERSION = `${require(`@yarnpkg/cli/package.json`).version}-dev`;
+global.YARN_VERSION = semver.prerelease(version) !== null
+  ? `${version}.dev`
+  : `${version}-dev`;
 
 // Inject the plugins in the runtime. With Webpack that would be through
 // val-loader which would execute pluginConfiguration.raw.js, so in Node
