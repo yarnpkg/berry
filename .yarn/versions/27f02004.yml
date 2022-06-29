@@ -1,0 +1,6 @@
+releases:
+  "@yarnpkg/libui": major
+
+declined:
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-version"
