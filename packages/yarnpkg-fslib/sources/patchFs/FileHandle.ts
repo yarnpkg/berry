@@ -101,9 +101,13 @@ export class FileHandle<P extends Path> {
     throw new Error(`Method not implemented.`);
   }
 
-  // FIXME: Missing FakeFS version
-  chmod(mode: Mode): Promise<void> {
-    throw new Error(`Method not implemented.`);
+  async chmod(mode: number): Promise<void> {
+    try {
+      this[kRef](this.chmod);
+      return await this[kBaseFs].fchmodPromise(this.fd, mode);
+    } finally {
+      this[kUnref]();
+    }
   }
 
   createReadStream(options?: CreateReadStreamOptions): ReadStream {

@@ -518,4 +518,17 @@ describe(`patchedFs`, () => {
       await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`f`);
     });
   });
+
+  ifNotWin32It(`should support FileHandle.chmod`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const p = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+
+      const fd = await patchedFs.promises.open(p, `w`);
+      await fd.chmod(0o744);
+      expect((await fd.stat()).mode & 0o777).toBe(0o744);
+      await fd.close();
+    });
+  });
 });
