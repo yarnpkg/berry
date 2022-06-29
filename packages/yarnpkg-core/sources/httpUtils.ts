@@ -181,7 +181,10 @@ export async function request(target: string | URL, body: Body, {configuration, 
 
   const executor = await configuration.reduceHook(hooks => {
     return hooks.wrapNetworkRequest;
-  }, realRequest, {target, body, configuration, headers, jsonRequest, jsonResponse, method});
+  }, {
+    executor: realRequest,
+    extra: {target, body, configuration, headers, jsonRequest, jsonResponse, method},
+  }, `executor`);
 
   return await executor();
 }

@@ -146,8 +146,7 @@ export async function genPackageManifest(workspace: Workspace): Promise<object> 
 
   await workspace.project.configuration.triggerHook(
     (hooks: Hooks) => hooks.beforeWorkspacePacking,
-    workspace,
-    data,
+    {workspace, rawManifest: data},
   );
 
   return data;
@@ -190,8 +189,11 @@ export async function genPackList(workspace: Workspace) {
 
   await configuration.triggerHook((hooks: StageHooks) => {
     return hooks.populateYarnPaths;
-  }, project, (path: PortablePath | null) => {
-    maybeRejectPath(path);
+  }, {
+    project,
+    definePath: (path: PortablePath | null) => {
+      maybeRejectPath(path);
+    },
   });
 
   // All child workspaces are ignored

@@ -198,7 +198,7 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
         onBuiltin: async name => {
           return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
             return hooks.getBuiltinPatch;
-          }, opts.project, name);
+          }, {project: opts.project, name});
         },
       }, patchPath);
 

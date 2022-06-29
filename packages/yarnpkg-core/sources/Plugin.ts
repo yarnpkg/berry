@@ -49,10 +49,10 @@ export interface Hooks {
    * ones. That's for example what the compat plugin uses to automatically fix
    * packages with known flaws.
    */
-  registerPackageExtensions?: (
-    configuration: Configuration,
-    registerPackageExtension: (descriptor: Descriptor, extensionData: PackageExtensionData) => void,
-  ) => Promise<void>;
+  registerPackageExtensions?: ({configuration, registerPackageExtension}: {
+    configuration: Configuration;
+    registerPackageExtension: (descriptor: Descriptor, extensionData: PackageExtensionData) => void;
+  }) => Promise<void>;
 
   /**
    * Called before a script is executed. The hooks are allowed to modify the
@@ -64,11 +64,10 @@ export interface Hooks {
    * suggest you adopt this convention for any new key added to the env (we
    * might enforce it later on).
    */
-  setupScriptEnvironment?: (
-    project: Project,
-    env: ProcessEnvironment,
-    makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
-  ) => Promise<void>;
+  setupScriptEnvironment?: ({project, env}: {
+    project: Project;
+    env: ProcessEnvironment;
+  }) => Promise<void>;
 
   /**
    * Called as a script is getting executed. The `executor` function parameter,
@@ -76,13 +75,13 @@ export interface Hooks {
    * script executions, for example to run some validation or add some
    * performance monitoring.
    */
-  wrapScriptExecution?: (
-    executor: () => Promise<number>,
-    project: Project,
-    locator: Locator,
-    scriptName: string,
-    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
-  ) => Promise<() => Promise<number>>;
+  wrapScriptExecution?: ({project, locator, scriptName, extra}: {
+    executor: () => Promise<number>;
+    project: Project;
+    locator: Locator;
+    scriptName: string;
+    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable};
+  }) => Promise<() => Promise<number>>;
 
   /**
    * Called when a network request is being made. The `executor` function
@@ -90,20 +89,20 @@ export interface Hooks {
    * mechanism to wrap network requests, for example to run some validation or
    * add some logging.
    */
-  wrapNetworkRequest?: (
-    executor: () => Promise<any>,
-    extra: WrapNetworkRequestInfo
-  ) => Promise<() => Promise<any>>;
+  wrapNetworkRequest?: ({executor, extra}: {
+    executor: () => Promise<any>;
+    extra: WrapNetworkRequestInfo;
+  }) => Promise<() => Promise<any>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
    * to detect whether packages must be rebuilt (typically when the Node
    * version changes).
    */
-  globalHashGeneration?: (
-    project: Project,
-    contributeHash: (data: string | Buffer) => void,
-  ) => Promise<void>;
+  globalHashGeneration?: ({project, contributeHash}: {
+    project: Project;
+    contributeHash: (data: string | Buffer) => void;
+  }) => Promise<void>;
 
   /**
    * Called during the resolution, once for each resolved package and each of
@@ -116,63 +115,63 @@ export interface Hooks {
    * `initialDependency` will be the descriptor before any plugin attempted to
    * change it.
    */
-  reduceDependency?: (
-    dependency: Descriptor,
-    project: Project,
-    locator: Locator,
-    initialDependency: Descriptor,
-    extra: {resolver: Resolver, resolveOptions: ResolveOptions},
-  ) => Promise<Descriptor>;
+  reduceDependency?: ({dependency, project, locator, initialDependency, extra}: {
+    dependency: Descriptor;
+    project: Project;
+    locator: Locator;
+    initialDependency: Descriptor;
+    extra: {resolver: Resolver, resolveOptions: ResolveOptions};
+  }) => Promise<Descriptor>;
 
   /**
    * Called after the `install` method from the `Project` class successfully
    * completed.
    */
-  afterAllInstalled?: (
-    project: Project,
-    options: InstallOptions
-  ) => void;
+  afterAllInstalled?: ({project, options}: {
+    project: Project;
+    options: InstallOptions;
+  }) => void;
 
   /**
    * Called during the `Validation step` of the `install` method from the
    * `Project` class.
    */
-  validateProject?: (
-    project: Project,
+  validateProject?: ({project, report}: {
+    project: Project;
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
-  ) => void;
+    };
+  }) => void;
 
   /**
    * Called during the `Validation step` of the `install` method from the
    * `Project` class by the `validateProject` hook.
    */
-  validateWorkspace?: (
-    workspace: Workspace,
+  validateWorkspace?: ({workspace, report}: {
+    workspace: Workspace;
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
-  ) => void;
+    };
+  }) => void;
 
   /**
    * Used to notify the core of all the potential artifacts of the available
    * linkers.
    */
-  populateYarnPaths?: (
-    project: Project,
-    definePath: (path: PortablePath | null) => void,
-  ) => Promise<void>;
+  populateYarnPaths?: ({project, definePath}: {
+    project: Project;
+    definePath: (path: PortablePath | null) => void;
+  }) => Promise<void>;
 
   /**
    * Called when the user requests to clean the global cache. Plugins should
    * use this hook to remove their own global artifacts.
    */
-  cleanGlobalArtifacts?: (
-    configuration: Configuration,
-  ) => Promise<void>;
+  cleanGlobalArtifacts?: ({configuration}: {
+    configuration: Configuration;
+  }) => Promise<void>;
 }
 
 export type Plugin<PluginHooks = any> = {

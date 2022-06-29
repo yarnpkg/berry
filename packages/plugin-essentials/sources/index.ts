@@ -53,12 +53,12 @@ export interface Hooks {
    * dependencies into the manifest and running `yarn install` won't trigger
    * it.
    */
-  afterWorkspaceDependencyAddition?: (
-    workspace: Workspace,
-    target: suggestUtils.Target,
-    descriptor: Descriptor,
-    strategies: Array<suggestUtils.Strategy>
-  ) => Promise<void>;
+  afterWorkspaceDependencyAddition?: ({workspace, target, descriptor, strategies}: {
+    workspace: Workspace;
+    target: suggestUtils.Target;
+    descriptor: Descriptor;
+    strategies: Array<suggestUtils.Strategy>;
+  }) => Promise<void>;
 
   /**
    * Called when a dependency range is replaced inside a workspace. Note that
@@ -66,12 +66,12 @@ export interface Hooks {
    * updating the dependencies from the manifest and running `yarn install`
    * won't trigger it.
    */
-  afterWorkspaceDependencyReplacement?: (
-    workspace: Workspace,
-    target: suggestUtils.Target,
-    fromDescriptor: Descriptor,
-    toDescriptor: Descriptor,
-  ) => Promise<void>;
+  afterWorkspaceDependencyReplacement?: ({workspace, target, fromDescriptor, toDescriptor}: {
+    workspace: Workspace;
+    target: suggestUtils.Target;
+    fromDescriptor: Descriptor;
+    toDescriptor: Descriptor;
+  }) => Promise<void>;
 
   /**
    * Called when a dependency range is removed from a workspace. Note that
@@ -79,11 +79,11 @@ export interface Hooks {
    * removing the dependencies from the manifest and running `yarn install`
    * won't trigger it.
    */
-  afterWorkspaceDependencyRemoval?: (
-    workspace: Workspace,
-    target: suggestUtils.Target,
-    descriptor: Descriptor,
-  ) => Promise<void>;
+  afterWorkspaceDependencyRemoval?: ({workspace, target, descriptor}: {
+    workspace: Workspace;
+    target: suggestUtils.Target;
+    descriptor: Descriptor;
+  }) => Promise<void>;
 
   /**
    * Called by `yarn info`. The `extra` field is the set of parameters passed
@@ -94,11 +94,11 @@ export interface Hooks {
    * requested audit information (via `-X audit`), and call `registerData`
    * with those information (retrieved dynamically) if they did.
    */
-  fetchPackageInfo?: (
-    pkg: Package,
-    extra: Set<string>,
-    registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
-  ) => Promise<void>;
+  fetchPackageInfo?: ({pkg, extra, registerData}: {
+    pkg: Package;
+    extra: Set<string>;
+    registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void;
+  }) => Promise<void>;
 }
 
 declare module '@yarnpkg/core' {
