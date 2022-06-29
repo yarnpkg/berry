@@ -812,6 +812,18 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should support fchmodSync`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+    const fd = zipFs.openSync(`/foo.txt` as Filename, `rw`);
+    zipFs.fchmodSync(fd, 0o754);
+    zipFs.closeSync(fd);
+    expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
+
+    zipFs.discardAndClose();
+  });
+
   it(`should support writeFile mode`, async () => {
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 

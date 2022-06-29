@@ -189,6 +189,8 @@ export abstract class FakeFS<P extends Path> {
 
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
+  abstract fchmodPromise(fd: number, mask: number): Promise<void>;
+  abstract fchmodSync(fd: number, mask: number): void;
 
   abstract chownPromise(p: P, uid: number, gid: number): Promise<void>;
   abstract chownSync(p: P, uid: number, gid: number): void;

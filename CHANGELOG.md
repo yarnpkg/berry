@@ -13,6 +13,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.
+- The patched filesystem now supports `fchmod`.
 - Updates the PnP compatibility layer for TypeScript 4.8 Beta
 
 ## 3.2.1
