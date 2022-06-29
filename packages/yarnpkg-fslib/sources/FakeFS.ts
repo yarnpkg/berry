@@ -1,3 +1,4 @@
+import {createHash}                                      from 'crypto';
 import {EventEmitter}                                    from 'events';
 import {Dirent as NodeDirent, ReadStream}                from 'fs';
 import {Stats as NodeStats, WriteStream}                 from 'fs';
@@ -271,6 +272,25 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
+  async checksumFilePromise(path: P, {algorithm = `sha512`}: {algorithm?: string} = {}) {
+    const fd = await this.openPromise(path, `r`);
+
+    try {
+      const CHUNK_SIZE = 65536;
+      const chunk = Buffer.allocUnsafeSlow(CHUNK_SIZE);
+
+      const hash = createHash(algorithm);
+
+      let bytesRead = 0;
+      while ((bytesRead = await this.readPromise(fd, chunk, 0, CHUNK_SIZE)) !== 0)
+        hash.update(bytesRead === CHUNK_SIZE ? chunk : chunk.slice(0, bytesRead));
+
+      return hash.digest(`hex`);
+    } finally {
+      await this.closePromise(fd);
+    }
+  }
+
   async removePromise(p: P, {recursive = true, maxRetries = 5}: {recursive?: boolean, maxRetries?: number} = {}) {
     let stat;
     try {
@@ -413,9 +433,9 @@ export abstract class FakeFS<P extends Path> {
     return createdDirectory;
   }
 
-  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy}): Promise<void>;
-  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false, linkStrategy = null}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy | null} = {}) {
+  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy<P> | null}): Promise<void>;
+  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy<P> | null}): Promise<void>;
+  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false, linkStrategy = null}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy<P> | null} = {}) {
     return await copyPromise(this, destination, baseFs, source, {overwrite, stableSort, stableTime, linkStrategy});
   }
 

@@ -115,6 +115,7 @@ class PnpmInstaller implements Installer {
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
+    const indexPath = ppath.join(this.opts.project.configuration.get(`globalFolder`), `index` as Filename);
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
     this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
@@ -126,7 +127,12 @@ class PnpmInstaller implements Installer {
       // that we can then create symbolic links to it later.
       await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
         baseFs: fetchResult.packageFs,
-        overwrite: false,
+        overwrite: true,
+        linkStrategy: {
+          type: `HardlinkFromIndex`,
+          indexPath,
+          autoRepair: true,
+        },
       });
     }));
 
