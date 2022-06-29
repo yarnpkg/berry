@@ -46655,6 +46655,14 @@ class NodeFS extends BasePortableFakeFS {
       return this.realFs.lstatSync(npath.fromPortablePath(p));
     }
   }
+  async fchmodPromise(fd, mask) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.fchmod(fd, mask, this.makeCallback(resolve, reject));
+    });
+  }
+  fchmodSync(fd, mask) {
+    return this.realFs.fchmodSync(fd, mask);
+  }
   async chmodPromise(p, mask) {
     return await new Promise((resolve, reject) => {
       this.realFs.chmod(npath.fromPortablePath(p), mask, this.makeCallback(resolve, reject));
@@ -47721,6 +47729,12 @@ class ZipFS extends BasePortableFakeFS {
       this.libzip.free(buffer);
     }
   }
+  async fchmodPromise(fd, mask) {
+    return this.chmodPromise(this.fdToPath(fd, `fchmod`), mask);
+  }
+  fchmodSync(fd, mask) {
+    return this.chmodSync(this.fdToPath(fd, `fchmodSync`), mask);
+  }
   async chmodPromise(p, mask) {
     return this.chmodSync(p, mask);
   }
@@ -48200,6 +48214,12 @@ class ProxiedFS extends FakeFS {
   }
   lstatSync(p, opts) {
     return this.baseFs.lstatSync(this.mapToBase(p), opts);
+  }
+  async fchmodPromise(fd, mask) {
+    return this.baseFs.fchmodPromise(fd, mask);
+  }
+  fchmodSync(fd, mask) {
+    return this.baseFs.fchmodSync(fd, mask);
   }
   async chmodPromise(p, mask) {
     return this.baseFs.chmodPromise(this.mapToBase(p), mask);
@@ -48731,6 +48751,24 @@ class ZipOpenFS extends BasePortableFakeFS {
     }, (zipFs, {subPath}) => {
       return zipFs.lstatSync(subPath, opts);
     });
+  }
+  async fchmodPromise(fd, mask) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fchmodPromise(fd, mask);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fchmod`);
+    const [zipFs, realFd] = entry;
+    return zipFs.fchmodPromise(realFd, mask);
+  }
+  fchmodSync(fd, mask) {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fchmodSync(fd, mask);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fchmodSync`);
+    const [zipFs, realFd] = entry;
+    return zipFs.fchmodSync(realFd, mask);
   }
   async chmodPromise(p, mask) {
     return await this.makeCallPromise(p, async () => {
@@ -49265,6 +49303,7 @@ const SYNC_IMPLEMENTATIONS = new Set([
   `createReadStream`,
   `createWriteStream`,
   `chmodSync`,
+  `fchmodSync`,
   `chownSync`,
   `closeSync`,
   `copyFileSync`,
@@ -49297,6 +49336,7 @@ const SYNC_IMPLEMENTATIONS = new Set([
 const ASYNC_IMPLEMENTATIONS = new Set([
   `accessPromise`,
   `appendFilePromise`,
+  `fchmodPromise`,
   `chmodPromise`,
   `chownPromise`,
   `closePromise`,

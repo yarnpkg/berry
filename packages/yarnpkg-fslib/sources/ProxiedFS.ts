@@ -156,6 +156,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.lstatSync(this.mapToBase(p), opts);
   }
 
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return this.baseFs.fchmodPromise(fd, mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.baseFs.fchmodSync(fd, mask);
+  }
+
   async chmodPromise(p: P, mask: number) {
     return this.baseFs.chmodPromise(this.mapToBase(p), mask);
   }
