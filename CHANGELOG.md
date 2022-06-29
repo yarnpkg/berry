@@ -35,6 +35,8 @@ The following changes only affect people writing Yarn plugins:
 
 - The `getCustomDataKey` function in `Installer` from `@yarnpkg/core` has been moved to `Linker`.
 
+- `renderForm`'s `options` argument is now required to enforce that custom streams are always specified.
+
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.
