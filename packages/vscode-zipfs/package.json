@@ -100,7 +100,7 @@
     "vsce": "^2.9.2"
   },
   "scripts": {
-    "vscode:prepublish": "run build",
+    "vscode:prepublish": "run build && cp ../../LICENSE.md ./LICENSE.md",
     "package:vscode-zipfs": "run package",
     "package": "run vsce package --yarn",
     "build:vscode-zipfs": "run build",
