@@ -109,9 +109,13 @@ class PnpmInstaller implements Installer {
   async installPackageSoft(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
 
+    const dependenciesLocation = this.opts.project.tryWorkspaceByLocator(pkg)
+      ? ppath.join(packageLocation, Filename.nodeModules)
+      : null;
+
     this.customData.pathsByLocator.set(pkg.locatorHash, {
       packageLocation,
-      dependenciesLocation: ppath.join(packageLocation, Filename.nodeModules),
+      dependenciesLocation,
     });
 
     return {
