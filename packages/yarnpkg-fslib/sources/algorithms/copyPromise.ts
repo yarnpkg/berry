@@ -30,6 +30,20 @@ export type Operations =
 export type LUTimes<P extends Path> =
   Array<[P, Date | number, Date | number]>;
 
+export async function setupCopyIndex<P extends Path>(destinationFs: FakeFS<P>, linkStrategy: Pick<HardlinkFromIndexStrategy<P>, `indexPath`>) {
+  const hexCharacters = `0123456789abcdef`;
+  await destinationFs.mkdirPromise(linkStrategy.indexPath, {recursive: true});
+
+  const promises: Array<Promise<any>> = [];
+  for (const l1 of hexCharacters)
+    for (const l2 of hexCharacters)
+      promises.push(destinationFs.mkdirPromise(destinationFs.pathUtils.join(linkStrategy.indexPath, `${l1}${l2}` as any), {recursive: true}));
+
+  await Promise.all(promises);
+
+  return linkStrategy.indexPath;
+}
+
 export async function copyPromise<P1 extends Path, P2 extends Path>(destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: CopyOptions<P1>) {
   const normalizedDestination = destinationFs.pathUtils.normalize(destination);
   const normalizedSource = sourceFs.pathUtils.normalize(source);
@@ -42,18 +56,6 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
     : await sourceFs.lstatPromise(normalizedSource);
 
   await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [atime, mtime]});
-
-  if (opts.linkStrategy?.type === `HardlinkFromIndex` && !await destinationFs.existsPromise(opts.linkStrategy.indexPath)) {
-    const hexCharacters = `0123456789abcdef`;
-    await destinationFs.mkdirPromise(opts.linkStrategy.indexPath, {recursive: true});
-
-    const promises: Array<Promise<any>> = [];
-    for (const l1 of hexCharacters)
-      for (const l2 of hexCharacters)
-        promises.push(destinationFs.mkdirPromise(destinationFs.pathUtils.join(opts.linkStrategy.indexPath, `${l1}${l2}` as any)));
-
-    await Promise.all(promises);
-  }
 
   const updateTime = typeof destinationFs.lutimesPromise === `function`
     ? destinationFs.lutimesPromise.bind(destinationFs)
@@ -174,7 +176,7 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
 }
 
 async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>, linkStrategy: HardlinkFromIndexStrategy<P1>) {
-  const sourceHash = await sourceFs.checksumFilePromise(source);
+  const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
   const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${sourceHash}.dat` as P1);
 
   let indexStat = await maybeLStat(destinationFs, indexPath);
@@ -201,12 +203,17 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
       await destinationFs.lockPromise(indexPath, async () => {
         const content = await sourceFs.readFilePromise(source);
         await destinationFs.writeFilePromise(indexPath, content);
-        await updateTime(indexPath, defaultTime, defaultTime);
       });
     }
 
     if (!destinationStat) {
       await destinationFs.linkPromise(indexPath, destination);
+    }
+  });
+
+  postlayout.push(async () => {
+    if (!indexStat) {
+      await updateTime(indexPath, defaultTime, defaultTime);
     }
   });
 
@@ -229,8 +236,10 @@ async function copyFileDirect<P1 extends Path, P2 extends Path>(prelayout: Opera
   // from one disk to the other; on the other hand, a CwdFS would share the
   // namespace from its base FS and thus would support cloning).
 
-  const content = await sourceFs.readFilePromise(source);
-  await destinationFs.writeFilePromise(destination, content);
+  prelayout.push(async () => {
+    const content = await sourceFs.readFilePromise(source);
+    await destinationFs.writeFilePromise(destination, content);
+  });
 
   return true;
 }

@@ -1,5 +1,5 @@
 import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils} from '@yarnpkg/core';
-import {Dirent, Filename, PortablePath, ppath, xfs}                                                                                                                                                                        from '@yarnpkg/fslib';
+import {Dirent, Filename, PortablePath, setupCopyIndex, ppath, xfs}                                                                                                                                                        from '@yarnpkg/fslib';
 import {jsInstallUtils}                                                                                                                                                                                                    from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                                                        from 'clipanion';
 
@@ -79,9 +79,12 @@ export class PnpmLinker implements Linker {
 
 class PnpmInstaller implements Installer {
   private readonly asyncActions = new miscUtils.AsyncActions(10);
+  private readonly indexFolderPromise: Promise<PortablePath>;
 
   constructor(private opts: LinkOptions) {
-    // Nothing to do
+    this.indexFolderPromise = setupCopyIndex(xfs, {
+      indexPath: ppath.join(opts.project.configuration.get(`globalFolder`), `index` as Filename),
+    });
   }
 
   private customData: PnpmCustomData = {
@@ -115,7 +118,6 @@ class PnpmInstaller implements Installer {
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
     const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
-    const indexPath = ppath.join(this.opts.project.configuration.get(`globalFolder`), `index` as Filename);
 
     this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
     this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
@@ -127,10 +129,10 @@ class PnpmInstaller implements Installer {
       // that we can then create symbolic links to it later.
       await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
         baseFs: fetchResult.packageFs,
-        overwrite: true,
+        overwrite: false,
         linkStrategy: {
           type: `HardlinkFromIndex`,
-          indexPath,
+          indexPath: await this.indexFolderPromise,
           autoRepair: true,
         },
       });
