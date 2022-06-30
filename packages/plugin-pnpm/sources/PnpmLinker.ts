@@ -232,7 +232,6 @@ class PnpmInstaller implements Installer {
       };
 
       let hasExplicitSelfDependency = false;
-
       for (const [descriptor, dependency] of dependencies) {
         if (descriptor.identHash === locator.identHash)
           hasExplicitSelfDependency = true;
@@ -240,7 +239,7 @@ class PnpmInstaller implements Installer {
         installDependency(descriptor, dependency);
       }
 
-      if (!hasExplicitSelfDependency)
+      if (!hasExplicitSelfDependency && !this.opts.project.tryWorkspaceByLocator(locator))
         installDependency(structUtils.convertLocatorToDescriptor(locator), locator);
 
       concurrentPromises.push(cleanNodeModules(dependenciesLocation, extraneous));
