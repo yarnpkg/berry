@@ -8,6 +8,7 @@ import micromatch                                                    from 'micro
 import {cpus}                                                        from 'os';
 import pLimit                                                        from 'p-limit';
 import {Writable}                                                    from 'stream';
+import {WriteStream}                                                 from 'tty';
 import * as t                                                        from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -38,7 +39,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
-      Adding the \`-v,--verbose\` flag will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
+      Adding the \`-v,--verbose\` flag (automatically enabled in interactive terminal environments) will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
 
       If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
     `,
@@ -70,7 +71,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     description: `Run the command on all workspaces of a project`,
   });
 
-  verbose = Option.Boolean(`-v,--verbose`, false, {
+  verbose = Option.Boolean(`-v,--verbose`, {
     description: `Prefix each output line with the name of the originating workspace`,
   });
 
@@ -193,6 +194,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       workspaces.push(workspace);
     }
 
+    // --verbose is automatically enabled in TTYs
+    const verbose = this.verbose ?? (this.context.stdout as WriteStream).isTTY;
+
     const concurrency = this.parallel ?
       (this.jobs === `unlimited`
         ? Infinity
@@ -222,16 +226,16 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         if (abortNextCommands)
           return -1;
 
-        if (!parallel && this.verbose && commandIndex > 1)
+        if (!parallel && verbose && commandIndex > 1)
           report.reportSeparator();
 
-        const prefix = getPrefix(workspace, {configuration, verbose: this.verbose, commandIndex});
+        const prefix = getPrefix(workspace, {configuration, verbose, commandIndex});
 
         const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
         const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
         try {
-          if (this.verbose)
+          if (verbose)
             report.reportInfo(null, `${prefix} Process started`);
 
           const start = Date.now();
@@ -249,7 +253,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           await stderrEnd;
 
           const end = Date.now();
-          if (this.verbose) {
+          if (verbose) {
             const timerMessage = configuration.get(`enableTimers`) ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}` : ``;
             report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})${timerMessage}`);
           }
