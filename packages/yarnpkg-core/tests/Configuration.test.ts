@@ -1,7 +1,7 @@
-import {xfs, PortablePath}     from '@yarnpkg/fslib';
-import NpmPlugin               from '@yarnpkg/plugin-npm';
+import {xfs, PortablePath}                 from '@yarnpkg/fslib';
+import NpmPlugin                           from '@yarnpkg/plugin-npm';
 
-import {Configuration, SECRET} from '../sources/Configuration';
+import {Configuration, SECRET, TAG_REGEXP} from '../sources/Configuration';
 
 async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>) {
   return await xfs.mktempPromise(async dir => {
@@ -10,6 +10,20 @@ async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir:
     return await cb(dir);
   });
 }
+
+describe(`TAG_REGEXP`, () => {
+  const validTags = [
+    `canary`,
+    `latest`,
+    `next`,
+    `legacy_v1`,
+  ];
+
+  it(`should allow all valid tags`, () => {
+    const badTags = validTags.filter(tag => !TAG_REGEXP.test(tag));
+    expect(badTags.length).toBe(0);
+  });
+});
 
 describe(`Configuration`, () => {
   it(`should hide secrets`, async () => {
