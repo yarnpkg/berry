@@ -135,6 +135,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return pnpPath.resolvedPath;
   }
 
+  private resolveDirOrFilePath(p: number): number;
   private resolveDirOrFilePath(p: PortablePath): PortablePath;
   private resolveDirOrFilePath(p: FSPath<PortablePath>): FSPath<PortablePath>;
   private resolveDirOrFilePath(p: FSPath<PortablePath>): FSPath<PortablePath> {
@@ -359,6 +360,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       onRealPath: resolvedPath =>  this.baseFs.lstatSync(resolvedPath, opts),
       statOptions: opts,
     });
+  }
+
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return this.baseFs.fchmodPromise(this.resolveDirOrFilePath(fd), mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.baseFs.fchmodSync(this.resolveDirOrFilePath(fd), mask);
   }
 
   async chmodPromise(p: PortablePath, mask: number) {

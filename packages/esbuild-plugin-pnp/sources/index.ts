@@ -1,6 +1,7 @@
 import {PnpApi}                                                                             from '@yarnpkg/pnp';
 import type {OnLoadArgs, OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild} from 'esbuild';
 import * as fs                                                                              from 'fs';
+import path                                                                                 from 'path';
 
 const matchAll = /()/;
 const defaultExtensions = [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.cjs`, `.js`, `.css`, `.json`];
@@ -54,6 +55,12 @@ async function defaultOnLoad(args: OnLoadArgs): Promise<OnLoadResult> {
   return {
     contents: await fs.promises.readFile(args.path),
     loader: `default`,
+    // For regular imports in the `file` namespace, resolveDir is the directory the
+    // file being resolved lives in. For all other virtual modules, this defaults to
+    // empty string: ""
+    // A sensible value for pnp imports is the same as the `file` namespace, as pnp
+    // still resolves to files on disk (in the cache).
+    resolveDir: path.dirname(args.path),
   };
 }
 

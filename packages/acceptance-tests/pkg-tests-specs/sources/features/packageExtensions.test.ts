@@ -52,7 +52,11 @@ describe(`Features`, () => {
             },
           });
 
-          await run(`install`);
+          await expect(run(`install`)).resolves.toMatchObject({
+            // Makes sure that the packageExtension peerDependency range hasn't accidentally
+            // been altered / normalized and that the installed package is compatible with it.
+            stdout: expect.not.stringContaining(`YN0060`),
+          });
 
           await expect(source(`require('various-requires/invalid-require')`)).resolves.toMatchObject({
             name: `no-deps`,

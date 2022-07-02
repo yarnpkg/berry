@@ -983,6 +983,14 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return this.chmodPromise(this.fdToPath(fd, `fchmod`), mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.chmodSync(this.fdToPath(fd, `fchmodSync`), mask);
+  }
+
   async chmodPromise(p: PortablePath, mask: number) {
     return this.chmodSync(p, mask);
   }

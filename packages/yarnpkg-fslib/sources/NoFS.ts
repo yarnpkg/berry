@@ -126,6 +126,14 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async fchmodPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  fchmodSync(): never {
+    throw makeError();
+  }
+
   async chmodPromise(): Promise<never> {
     throw makeError();
   }
