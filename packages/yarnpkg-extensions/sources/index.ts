@@ -898,4 +898,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       },
     },
   }],
+  // https://github.com/asyncapi/asyncapi-react/pull/614
+  [`@asyncapi/react-component@<=1.0.0-next.39`, {
+    peerDependencies: {
+      react: `>=16.8.0`,
+      'react-dom': `>=16.8.0`,
+    },
+  }],
 ];
