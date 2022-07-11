@@ -8,19 +8,21 @@ order: 2
 
 ## Install Corepack
 
-The preferred way to manage Yarn is through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html), a new binary shipped with all Node.js releases starting from 16.10. It acts as an intermediary between you and Yarn, and lets you use different package manager versions across multiple projects without having to check-in the Yarn binary anymore.
+The preferred way to manage Yarn is through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html), a new binary shipped with all Node.js releases starting from 16.9 and in v14 releases starting from 14.19. It acts as an intermediary between you and Yarn, and lets you use different package manager versions across multiple projects without having to check-in the Yarn binary anymore.
 
-### Node.js >=16.10
+> **Note:** The Corepack version shipped with Node.js 16.9.0 and 16.9.1 contains a bug preventing the execution of `yarn init -2`, so instead of enabling this version, we continue as if it did not exist.
 
-Corepack is included by default with all Node.js installs, but is currently opt-in. To enable it, run the following command:
+### Node.js >=16.10 and ^14.19
+
+Corepack is included by default with all Node.js installs, but is currently opt-in. To enable it, run the following command (may need root):
 
 ```bash
 corepack enable
 ```
 
-### Node.js <16.10
+### Older Node.js releases
 
-Corepack isn't included with Node.js in versions before the 16.10; to address that, run:
+For releases of Node.js, that don't include a suitable version of Corepack, you can install it by running the following command (may need root):
 
 ```bash
 npm i -g corepack
