@@ -31,7 +31,4 @@ jobs:
 
         cd berry-angular
 
-        # TODO: Remove when https://github.com/angular/angular-cli/issues/16980#issuecomment-1006028280 is fixed
-        mkdir node_modules
-
         yarn ng build --aot
