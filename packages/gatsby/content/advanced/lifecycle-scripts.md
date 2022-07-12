@@ -45,6 +45,8 @@ When running scripts and binaries, some environment variables are usually made a
 
 - `$npm_package_version` is its version.
 
+- `$npm_package_json` is the absolute path to its `package.json`.
+
 - `$npm_execpath` is the path to the Yarn binary.
 
 - `$npm_node_execpath` is the path to the Node binary.
