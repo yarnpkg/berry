@@ -111,6 +111,14 @@ export type ExtractHintOptions = {
 
 export type SymlinkType = 'file' | 'dir' | 'junction';
 
+export interface StatOptions {
+  bigint?: boolean | undefined;
+}
+
+export interface StatSyncOptions extends StatOptions {
+  throwIfNoEntry?: boolean | undefined;
+}
+
 export abstract class FakeFS<P extends Path> {
   public readonly pathUtils: PathUtils<P>;
 
@@ -166,12 +174,20 @@ export abstract class FakeFS<P extends Path> {
   abstract accessPromise(p: P, mode?: number): Promise<void>;
   abstract accessSync(p: P, mode?: number): void;
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract statPromise(p: P): Promise<Stats>;
-  abstract statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
-  abstract statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  abstract statPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  abstract statPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  abstract statPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats>;
+
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   abstract statSync(p: P): Stats;
-  abstract statSync(p: P, opts: {bigint: true}): BigIntStats;
-  abstract statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
+  abstract statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  abstract statSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  abstract statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  abstract statSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  abstract statSync(p: P, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  abstract statSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
 
   abstract fstatPromise(fd: number): Promise<Stats>;
   abstract fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
@@ -180,12 +196,20 @@ export abstract class FakeFS<P extends Path> {
   abstract fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
   abstract fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract lstatPromise(p: P): Promise<Stats>;
-  abstract lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
-  abstract lstatPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  abstract lstatPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  abstract lstatPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  abstract lstatPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats>;
+
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   abstract lstatSync(p: P): Stats;
-  abstract lstatSync(p: P, opts: {bigint: true}): BigIntStats;
-  abstract lstatSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
+  abstract lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  abstract lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  abstract lstatSync(p: P, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  abstract lstatSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
 
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
