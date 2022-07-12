@@ -28,6 +28,7 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
+  - "@yarnpkg/extensions"
   - "@yarnpkg/nm"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
