@@ -159,13 +159,14 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
     scriptEnv.npm_package_name = structUtils.stringifyIdent(locator);
     scriptEnv.npm_package_version = version;
 
-    let packageLocation;
+    let packageLocation: PortablePath;
     if (workspace) {
       packageLocation = workspace.cwd;
     } else {
       const pkg = project.storedPackages.get(locator.locatorHash);
       if (!pkg)
         throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+
       const linkers = project.configuration.getLinkers();
       const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration: project.configuration})};
 
