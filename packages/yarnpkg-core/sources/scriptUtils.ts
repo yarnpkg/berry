@@ -158,6 +158,26 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
     scriptEnv.npm_package_name = structUtils.stringifyIdent(locator);
     scriptEnv.npm_package_version = version;
+
+    let packageLocation: PortablePath;
+    if (workspace) {
+      packageLocation = workspace.cwd;
+    } else {
+      const pkg = project.storedPackages.get(locator.locatorHash);
+      if (!pkg)
+        throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+
+      const linkers = project.configuration.getLinkers();
+      const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration: project.configuration})};
+
+      const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
+      if (!linker)
+        throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+
+      packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
+    }
+
+    scriptEnv.npm_package_json = npath.fromPortablePath(ppath.join(packageLocation, Filename.manifest));
   }
 
   const version = YarnVersion !== null
