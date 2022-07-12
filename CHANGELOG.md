@@ -43,6 +43,7 @@ The following changes only affect people writing Yarn plugins:
 - The patched filesystem now supports `ftruncate`.
 - The patched filesystem now supports `fchmod`.
 - Updates the PnP compatibility layer for TypeScript 4.8 Beta
+- The `npm_package_json` environment variable is now set by Yarn.
 
 ## 3.2.1
 
