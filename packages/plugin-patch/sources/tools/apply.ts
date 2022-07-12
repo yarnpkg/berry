@@ -129,7 +129,7 @@ function linesAreEqual(a: string, b: string) {
  *
  * if you edit a file that had a new line and leave it in:
  *
- *    neither insetion nor deletion have the annoation
+ *    neither insertion nor deletion have the annotation
  *
  */
 
