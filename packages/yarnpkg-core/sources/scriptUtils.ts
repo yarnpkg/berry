@@ -103,7 +103,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, packageLocation, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, packageLocation?: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -159,9 +159,24 @@ export async function makeScriptEnv({project, locator, binFolder, packageLocatio
     scriptEnv.npm_package_name = structUtils.stringifyIdent(locator);
     scriptEnv.npm_package_version = version;
 
-    if (packageLocation) {
-      scriptEnv.npm_package_json = npath.fromPortablePath(ppath.join(packageLocation, `package.json` as Filename));
+    let packageLocation;
+    if (workspace) {
+      packageLocation = workspace.cwd;
+    } else {
+      const pkg = project.storedPackages.get(locator.locatorHash);
+      if (!pkg)
+        throw new Error(`Package for ${structUtils.prettyLocator(project.configuration, locator)} not found in the project`);
+      const linkers = project.configuration.getLinkers();
+      const linkerOptions = {project, report: new StreamReport({stdout: new PassThrough(), configuration: project.configuration})};
+
+      const linker = linkers.find(linker => linker.supportsPackage(pkg, linkerOptions));
+      if (!linker)
+        throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
+
+      packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     }
+
+    scriptEnv.npm_package_json = npath.fromPortablePath(ppath.join(packageLocation, Filename.manifest));
   }
 
   const version = YarnVersion !== null
@@ -451,7 +466,7 @@ export async function executePackageShellcode(locator: Locator, command: string,
 }
 
 async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, cwd, lifecycleScript}: {binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
-  const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript, packageLocation: cwd});
+  const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript});
 
   await Promise.all(
     Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
@@ -504,6 +519,8 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
+    const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript});
+
     await Promise.all(
       Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
         makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
@@ -511,7 +528,6 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     );
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
-    const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript, packageLocation});
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
