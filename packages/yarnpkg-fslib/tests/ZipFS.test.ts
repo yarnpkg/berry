@@ -935,4 +935,34 @@ describe(`ZipFS`, () => {
 
     zipFs.discardAndClose();
   });
+
+  it(`should support throwIfNoEntry`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    expect(zipFs.statSync(`/foo` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+    expect(zipFs.statSync(`/foo/bar` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+
+    expect(zipFs.lstatSync(`/foo` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+    expect(zipFs.lstatSync(`/foo/bar` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+
+    await expect(
+      zipFs.statPromise(`/foo` as PortablePath, {
+        // @ts-expect-error throwIfNoEntry is not a valid option but statPromise
+        // calls statSync which does support it, this checks that it's ignored.
+        throwIfNoEntry: false,
+      }),
+    ).rejects.toMatchObject({
+      code: `ENOENT`,
+    });
+
+    await expect(
+      zipFs.lstatPromise(`/foo` as PortablePath, {
+        // @ts-expect-error throwIfNoEntry is not a valid option but statPromise
+        // calls statSync which does support it, this checks that it's ignored.
+        throwIfNoEntry: false,
+      }),
+    ).rejects.toMatchObject({
+      code: `ENOENT`,
+    });
+  });
 });
