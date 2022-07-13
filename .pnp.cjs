@@ -5450,10 +5450,11 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@iconify/icons-logos", [\
-      ["npm:1.0.10", {\
-        "packageLocation": "./.yarn/cache/@iconify-icons-logos-npm-1.0.10-425ce287dd-5a82b08bb3.zip/node_modules/@iconify/icons-logos/",\
+      ["npm:1.2.10", {\
+        "packageLocation": "./.yarn/cache/@iconify-icons-logos-npm-1.2.10-b4bd727e96-002d292859.zip/node_modules/@iconify/icons-logos/",\
         "packageDependencies": [\
-          ["@iconify/icons-logos", "npm:1.0.10"]\
+          ["@iconify/icons-logos", "npm:1.2.10"],\
+          ["@iconify/types", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -5476,6 +5477,15 @@ const RAW_RUNTIME_STATE =
         "packagePeers": [\
           "@types/react",\
           "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@iconify/types", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/@iconify-types-npm-1.1.0-8d8f44f86d-08e927d6f5.zip/node_modules/@iconify/types/",\
+        "packageDependencies": [\
+          ["@iconify/types", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10816,7 +10826,7 @@ const RAW_RUNTIME_STATE =
           ["@emotion/styled", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:11.3.0"],\
           ["@emotion/styled-base", "npm:11.0.0"],\
           ["@haroenv/react-sparklines", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.7.1"],\
-          ["@iconify/icons-logos", "npm:1.0.10"],\
+          ["@iconify/icons-logos", "npm:1.2.10"],\
           ["@iconify/react", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.1.3"],\
           ["@loadable/component", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.12.0"],\
           ["@mdx-js/mdx", "npm:1.6.22"],\
