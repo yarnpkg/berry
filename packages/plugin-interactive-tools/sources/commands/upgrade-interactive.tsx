@@ -1,8 +1,9 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
 import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
+import * as libuiUtils                                                                                                                  from '@yarnpkg/libui/sources/libuiUtils';
 import type {SubmitInjectedComponent}                                                                                                   from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
-import {Command, Usage, UsageError}                                                                                                     from 'clipanion';
+import {Command, Usage}                                                                                                                 from 'clipanion';
 import {diffWords}                                                                                                                      from 'diff';
 import semver                                                                                                                           from 'semver';
 import {WriteStream}                                                                                                                    from 'tty';
@@ -38,6 +39,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
   });
 
   async execute() {
+    libuiUtils.checkRequirements(this.context);
+
     const {ItemOptions} = await import(`@yarnpkg/libui/sources/components/ItemOptions`);
     const {Pad} = await import(`@yarnpkg/libui/sources/components/Pad`);
     const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
@@ -45,9 +48,6 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
     const {Box, Text} = await import(`ink`);
     const {default: React, useEffect, useRef, useState} = await import(`react`);
-
-    if (!(this.context.stdout as WriteStream).isTTY)
-      throw new UsageError(`This command can only be run in a TTY environment`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);

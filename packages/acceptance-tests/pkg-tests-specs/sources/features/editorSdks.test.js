@@ -101,7 +101,7 @@ describe(`Features`, () => {
             const timeout = setTimeout(() => {
               cleanup();
               reject(new Error(`Timeout reached without matching "${marker}"; server answered:\n\n${stdall}`));
-            }, 20000);
+            }, jasmine.DEFAULT_TIMEOUT_INTERVAL);
 
             const cleanup = () => {
               clearTimeout(timeout);
@@ -179,7 +179,6 @@ describe(`Features`, () => {
           child.stdin.end();
         }
       },
-      45000,
     );
   });
 });

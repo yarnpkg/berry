@@ -110,15 +110,15 @@ var createModule = (function() {
         case "i8":
           return HEAP8[ptr >> 0];
         case "i16":
-          return HEAP16[ptr >> 1];
+          return LE_HEAP_LOAD_I16((ptr >> 1) * 2);
         case "i32":
-          return HEAP32[ptr >> 2];
+          return LE_HEAP_LOAD_I32((ptr >> 2) * 4);
         case "i64":
-          return HEAP32[ptr >> 2];
+          return LE_HEAP_LOAD_I32((ptr >> 2) * 4);
         case "float":
-          return HEAPF32[ptr >> 2];
+          return LE_HEAP_LOAD_F32((ptr >> 2) * 4);
         case "double":
-          return HEAPF64[ptr >> 3];
+          return LE_HEAP_LOAD_F64((ptr >> 3) * 8);
         default:
           abort("invalid type for getValue: " + type);
       }
@@ -307,8 +307,10 @@ var createModule = (function() {
       HEAPU32,
       HEAPF32,
       HEAPF64;
+    var HEAP_DATA_VIEW;
     function updateGlobalBufferAndViews(buf) {
       buffer = buf;
+      Module["HEAP_DATA_VIEW"] = HEAP_DATA_VIEW = new DataView(buf);
       Module["HEAP8"] = HEAP8 = new Int8Array(buf);
       Module["HEAP16"] = HEAP16 = new Int16Array(buf);
       Module["HEAP32"] = HEAP32 = new Int32Array(buf);
@@ -477,6 +479,24 @@ var createModule = (function() {
     }
     var tempDouble;
     var tempI64;
+    function LE_HEAP_LOAD_F32(byteOffset) {
+      return HEAP_DATA_VIEW.getFloat32(byteOffset, true);
+    }
+    function LE_HEAP_LOAD_F64(byteOffset) {
+      return HEAP_DATA_VIEW.getFloat64(byteOffset, true);
+    }
+    function LE_HEAP_LOAD_I16(byteOffset) {
+      return HEAP_DATA_VIEW.getInt16(byteOffset, true);
+    }
+    function LE_HEAP_LOAD_I32(byteOffset) {
+      return HEAP_DATA_VIEW.getInt32(byteOffset, true);
+    }
+    function LE_HEAP_STORE_I16(byteOffset, value) {
+      HEAP_DATA_VIEW.setInt16(byteOffset, value, true);
+    }
+    function LE_HEAP_STORE_I32(byteOffset, value) {
+      HEAP_DATA_VIEW.setInt32(byteOffset, value, true);
+    }
     function callRuntimeCallbacks(callbacks) {
       while (callbacks.length > 0) {
         var callback = callbacks.shift();
@@ -497,21 +517,21 @@ var createModule = (function() {
       }
     }
     function _gmtime_r(time, tmPtr) {
-      var date = new Date(HEAP32[time >> 2] * 1e3);
-      HEAP32[tmPtr >> 2] = date.getUTCSeconds();
-      HEAP32[(tmPtr + 4) >> 2] = date.getUTCMinutes();
-      HEAP32[(tmPtr + 8) >> 2] = date.getUTCHours();
-      HEAP32[(tmPtr + 12) >> 2] = date.getUTCDate();
-      HEAP32[(tmPtr + 16) >> 2] = date.getUTCMonth();
-      HEAP32[(tmPtr + 20) >> 2] = date.getUTCFullYear() - 1900;
-      HEAP32[(tmPtr + 24) >> 2] = date.getUTCDay();
-      HEAP32[(tmPtr + 36) >> 2] = 0;
-      HEAP32[(tmPtr + 32) >> 2] = 0;
+      var date = new Date(LE_HEAP_LOAD_I32((time >> 2) * 4) * 1e3);
+      LE_HEAP_STORE_I32((tmPtr >> 2) * 4, date.getUTCSeconds());
+      LE_HEAP_STORE_I32(((tmPtr + 4) >> 2) * 4, date.getUTCMinutes());
+      LE_HEAP_STORE_I32(((tmPtr + 8) >> 2) * 4, date.getUTCHours());
+      LE_HEAP_STORE_I32(((tmPtr + 12) >> 2) * 4, date.getUTCDate());
+      LE_HEAP_STORE_I32(((tmPtr + 16) >> 2) * 4, date.getUTCMonth());
+      LE_HEAP_STORE_I32(((tmPtr + 20) >> 2) * 4, date.getUTCFullYear() - 1900);
+      LE_HEAP_STORE_I32(((tmPtr + 24) >> 2) * 4, date.getUTCDay());
+      LE_HEAP_STORE_I32(((tmPtr + 36) >> 2) * 4, 0);
+      LE_HEAP_STORE_I32(((tmPtr + 32) >> 2) * 4, 0);
       var start = Date.UTC(date.getUTCFullYear(), 0, 1, 0, 0, 0, 0);
       var yday = ((date.getTime() - start) / (1e3 * 60 * 60 * 24)) | 0;
-      HEAP32[(tmPtr + 28) >> 2] = yday;
+      LE_HEAP_STORE_I32(((tmPtr + 28) >> 2) * 4, yday);
       if (!_gmtime_r.GMTString) _gmtime_r.GMTString = allocateUTF8("GMT");
-      HEAP32[(tmPtr + 40) >> 2] = _gmtime_r.GMTString;
+      LE_HEAP_STORE_I32(((tmPtr + 40) >> 2) * 4, _gmtime_r.GMTString);
       return tmPtr;
     }
     function ___gmtime_r(a0, a1) {
@@ -3570,15 +3590,15 @@ var createModule = (function() {
           }
           throw e;
         }
-        HEAP32[buf >> 2] = stat.dev;
-        HEAP32[(buf + 4) >> 2] = 0;
-        HEAP32[(buf + 8) >> 2] = stat.ino;
-        HEAP32[(buf + 12) >> 2] = stat.mode;
-        HEAP32[(buf + 16) >> 2] = stat.nlink;
-        HEAP32[(buf + 20) >> 2] = stat.uid;
-        HEAP32[(buf + 24) >> 2] = stat.gid;
-        HEAP32[(buf + 28) >> 2] = stat.rdev;
-        HEAP32[(buf + 32) >> 2] = 0;
+        LE_HEAP_STORE_I32((buf >> 2) * 4, stat.dev);
+        LE_HEAP_STORE_I32(((buf + 4) >> 2) * 4, 0);
+        LE_HEAP_STORE_I32(((buf + 8) >> 2) * 4, stat.ino);
+        LE_HEAP_STORE_I32(((buf + 12) >> 2) * 4, stat.mode);
+        LE_HEAP_STORE_I32(((buf + 16) >> 2) * 4, stat.nlink);
+        LE_HEAP_STORE_I32(((buf + 20) >> 2) * 4, stat.uid);
+        LE_HEAP_STORE_I32(((buf + 24) >> 2) * 4, stat.gid);
+        LE_HEAP_STORE_I32(((buf + 28) >> 2) * 4, stat.rdev);
+        LE_HEAP_STORE_I32(((buf + 32) >> 2) * 4, 0);
         (tempI64 = [
           stat.size >>> 0,
           ((tempDouble = stat.size),
@@ -3592,16 +3612,25 @@ var createModule = (function() {
                 ) >>> 0
             : 0)
         ]),
-          (HEAP32[(buf + 40) >> 2] = tempI64[0]),
-          (HEAP32[(buf + 44) >> 2] = tempI64[1]);
-        HEAP32[(buf + 48) >> 2] = 4096;
-        HEAP32[(buf + 52) >> 2] = stat.blocks;
-        HEAP32[(buf + 56) >> 2] = (stat.atime.getTime() / 1e3) | 0;
-        HEAP32[(buf + 60) >> 2] = 0;
-        HEAP32[(buf + 64) >> 2] = (stat.mtime.getTime() / 1e3) | 0;
-        HEAP32[(buf + 68) >> 2] = 0;
-        HEAP32[(buf + 72) >> 2] = (stat.ctime.getTime() / 1e3) | 0;
-        HEAP32[(buf + 76) >> 2] = 0;
+          LE_HEAP_STORE_I32(((buf + 40) >> 2) * 4, tempI64[0]),
+          LE_HEAP_STORE_I32(((buf + 44) >> 2) * 4, tempI64[1]);
+        LE_HEAP_STORE_I32(((buf + 48) >> 2) * 4, 4096);
+        LE_HEAP_STORE_I32(((buf + 52) >> 2) * 4, stat.blocks);
+        LE_HEAP_STORE_I32(
+          ((buf + 56) >> 2) * 4,
+          (stat.atime.getTime() / 1e3) | 0
+        );
+        LE_HEAP_STORE_I32(((buf + 60) >> 2) * 4, 0);
+        LE_HEAP_STORE_I32(
+          ((buf + 64) >> 2) * 4,
+          (stat.mtime.getTime() / 1e3) | 0
+        );
+        LE_HEAP_STORE_I32(((buf + 68) >> 2) * 4, 0);
+        LE_HEAP_STORE_I32(
+          ((buf + 72) >> 2) * 4,
+          (stat.ctime.getTime() / 1e3) | 0
+        );
+        LE_HEAP_STORE_I32(((buf + 76) >> 2) * 4, 0);
         (tempI64 = [
           stat.ino >>> 0,
           ((tempDouble = stat.ino),
@@ -3615,8 +3644,8 @@ var createModule = (function() {
                 ) >>> 0
             : 0)
         ]),
-          (HEAP32[(buf + 80) >> 2] = tempI64[0]),
-          (HEAP32[(buf + 84) >> 2] = tempI64[1]);
+          LE_HEAP_STORE_I32(((buf + 80) >> 2) * 4, tempI64[0]),
+          LE_HEAP_STORE_I32(((buf + 84) >> 2) * 4, tempI64[1]);
         return 0;
       },
       doMsync: function(addr, stream, len, flags, offset) {
@@ -3680,8 +3709,8 @@ var createModule = (function() {
       doReadv: function(stream, iov, iovcnt, offset) {
         var ret = 0;
         for (var i = 0; i < iovcnt; i++) {
-          var ptr = HEAP32[(iov + i * 8) >> 2];
-          var len = HEAP32[(iov + (i * 8 + 4)) >> 2];
+          var ptr = LE_HEAP_LOAD_I32(((iov + i * 8) >> 2) * 4);
+          var len = LE_HEAP_LOAD_I32(((iov + (i * 8 + 4)) >> 2) * 4);
           var curr = FS.read(stream, HEAP8, ptr, len, offset);
           if (curr < 0) return -1;
           ret += curr;
@@ -3692,8 +3721,8 @@ var createModule = (function() {
       doWritev: function(stream, iov, iovcnt, offset) {
         var ret = 0;
         for (var i = 0; i < iovcnt; i++) {
-          var ptr = HEAP32[(iov + i * 8) >> 2];
-          var len = HEAP32[(iov + (i * 8 + 4)) >> 2];
+          var ptr = LE_HEAP_LOAD_I32(((iov + i * 8) >> 2) * 4);
+          var len = LE_HEAP_LOAD_I32(((iov + (i * 8 + 4)) >> 2) * 4);
           var curr = FS.write(stream, HEAP8, ptr, len, offset);
           if (curr < 0) return -1;
           ret += curr;
@@ -3703,7 +3732,7 @@ var createModule = (function() {
       varargs: undefined,
       get: function() {
         SYSCALLS.varargs += 4;
-        var ret = HEAP32[(SYSCALLS.varargs - 4) >> 2];
+        var ret = LE_HEAP_LOAD_I32(((SYSCALLS.varargs - 4) >> 2) * 4);
         return ret;
       },
       getStr: function(ptr) {
@@ -3731,7 +3760,7 @@ var createModule = (function() {
       }
     }
     function setErrNo(value) {
-      HEAP32[___errno_location() >> 2] = value;
+      LE_HEAP_STORE_I32((___errno_location() >> 2) * 4, value);
       return value;
     }
     function ___sys_fcntl64(fd, cmd, varargs) {
@@ -3761,7 +3790,7 @@ var createModule = (function() {
           case 12: {
             var arg = SYSCALLS.get();
             var offset = 0;
-            HEAP16[(arg + offset) >> 1] = 2;
+            LE_HEAP_STORE_I16(((arg + offset) >> 1) * 2, 2);
             return 0;
           }
           case 13:
@@ -3815,7 +3844,7 @@ var createModule = (function() {
           case 21519: {
             if (!stream.tty) return -59;
             var argp = SYSCALLS.get();
-            HEAP32[argp >> 2] = 0;
+            LE_HEAP_STORE_I32((argp >> 2) * 4, 0);
             return 0;
           }
           case 21520: {
@@ -3967,7 +3996,7 @@ var createModule = (function() {
       try {
         var stream = SYSCALLS.getStreamFromFD(fd);
         var num = SYSCALLS.doReadv(stream, iov, iovcnt);
-        HEAP32[pnum >> 2] = num;
+        LE_HEAP_STORE_I32((pnum >> 2) * 4, num);
         return 0;
       } catch (e) {
         if (typeof FS === "undefined" || !(e instanceof FS.ErrnoError))
@@ -3998,8 +4027,8 @@ var createModule = (function() {
                 ) >>> 0
             : 0)
         ]),
-          (HEAP32[newOffset >> 2] = tempI64[0]),
-          (HEAP32[(newOffset + 4) >> 2] = tempI64[1]);
+          LE_HEAP_STORE_I32((newOffset >> 2) * 4, tempI64[0]),
+          LE_HEAP_STORE_I32(((newOffset + 4) >> 2) * 4, tempI64[1]);
         if (stream.getdents && offset === 0 && whence === 0)
           stream.getdents = null;
         return 0;
@@ -4013,7 +4042,7 @@ var createModule = (function() {
       try {
         var stream = SYSCALLS.getStreamFromFD(fd);
         var num = SYSCALLS.doWritev(stream, iov, iovcnt);
-        HEAP32[pnum >> 2] = num;
+        LE_HEAP_STORE_I32((pnum >> 2) * 4, num);
         return 0;
       } catch (e) {
         if (typeof FS === "undefined" || !(e instanceof FS.ErrnoError))
@@ -4027,7 +4056,7 @@ var createModule = (function() {
     function _time(ptr) {
       var ret = (Date.now() / 1e3) | 0;
       if (ptr) {
-        HEAP32[ptr >> 2] = ret;
+        LE_HEAP_STORE_I32((ptr >> 2) * 4, ret);
       }
       return ret;
     }
@@ -4040,8 +4069,11 @@ var createModule = (function() {
       var winterOffset = winter.getTimezoneOffset();
       var summerOffset = summer.getTimezoneOffset();
       var stdTimezoneOffset = Math.max(winterOffset, summerOffset);
-      HEAP32[__get_timezone() >> 2] = stdTimezoneOffset * 60;
-      HEAP32[__get_daylight() >> 2] = Number(winterOffset != summerOffset);
+      LE_HEAP_STORE_I32((__get_timezone() >> 2) * 4, stdTimezoneOffset * 60);
+      LE_HEAP_STORE_I32(
+        (__get_daylight() >> 2) * 4,
+        Number(winterOffset != summerOffset)
+      );
       function extractZone(date) {
         var match = date.toTimeString().match(/\(([A-Za-z ]+)\)$/);
         return match ? match[1] : "GMT";
@@ -4051,29 +4083,29 @@ var createModule = (function() {
       var winterNamePtr = allocateUTF8(winterName);
       var summerNamePtr = allocateUTF8(summerName);
       if (summerOffset < winterOffset) {
-        HEAP32[__get_tzname() >> 2] = winterNamePtr;
-        HEAP32[(__get_tzname() + 4) >> 2] = summerNamePtr;
+        LE_HEAP_STORE_I32((__get_tzname() >> 2) * 4, winterNamePtr);
+        LE_HEAP_STORE_I32(((__get_tzname() + 4) >> 2) * 4, summerNamePtr);
       } else {
-        HEAP32[__get_tzname() >> 2] = summerNamePtr;
-        HEAP32[(__get_tzname() + 4) >> 2] = winterNamePtr;
+        LE_HEAP_STORE_I32((__get_tzname() >> 2) * 4, summerNamePtr);
+        LE_HEAP_STORE_I32(((__get_tzname() + 4) >> 2) * 4, winterNamePtr);
       }
     }
     function _timegm(tmPtr) {
       _tzset();
       var time = Date.UTC(
-        HEAP32[(tmPtr + 20) >> 2] + 1900,
-        HEAP32[(tmPtr + 16) >> 2],
-        HEAP32[(tmPtr + 12) >> 2],
-        HEAP32[(tmPtr + 8) >> 2],
-        HEAP32[(tmPtr + 4) >> 2],
-        HEAP32[tmPtr >> 2],
+        LE_HEAP_LOAD_I32(((tmPtr + 20) >> 2) * 4) + 1900,
+        LE_HEAP_LOAD_I32(((tmPtr + 16) >> 2) * 4),
+        LE_HEAP_LOAD_I32(((tmPtr + 12) >> 2) * 4),
+        LE_HEAP_LOAD_I32(((tmPtr + 8) >> 2) * 4),
+        LE_HEAP_LOAD_I32(((tmPtr + 4) >> 2) * 4),
+        LE_HEAP_LOAD_I32((tmPtr >> 2) * 4),
         0
       );
       var date = new Date(time);
-      HEAP32[(tmPtr + 24) >> 2] = date.getUTCDay();
+      LE_HEAP_STORE_I32(((tmPtr + 24) >> 2) * 4, date.getUTCDay());
       var start = Date.UTC(date.getUTCFullYear(), 0, 1, 0, 0, 0, 0);
       var yday = ((date.getTime() - start) / (1e3 * 60 * 60 * 24)) | 0;
-      HEAP32[(tmPtr + 28) >> 2] = yday;
+      LE_HEAP_STORE_I32(((tmPtr + 28) >> 2) * 4, yday);
       return (date.getTime() / 1e3) | 0;
     }
     var FSNode = function(parent, name, mode, rdev) {

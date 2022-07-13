@@ -227,3 +227,39 @@ jobs:
       shell: bash
       if: |
         success() || failure()
+
+  big-endian:
+    name: 'Big-endian debian w/ Node.js latest'
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'refs/heads/master'
+    needs: build
+
+    steps:
+    - uses: actions/checkout@master
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: yarn-artifacts
+        path: packages
+
+    # https://github.com/multiarch/qemu-user-static
+    - name: 'Enable execution of multi-arch containers'
+      run: |
+        docker run --rm --privileged multiarch/qemu-user-static --reset --persistent yes
+      shell: bash
+
+    # Apparently @babel/register is insanely slow inside the big-endian
+    # docker container, so we don't want to run yarn from sources at all.
+
+    - name: 'Run the integration tests'
+      run: |
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100%'
+      shell: bash
+
+    - name: 'Run the unit tests'
+      run: |
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:unit --maxWorkers=100%'
+      shell: bash
+      if: |
+        success() || failure()

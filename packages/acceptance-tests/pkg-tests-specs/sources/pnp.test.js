@@ -1395,7 +1395,6 @@ describe(`Plug'n'Play`, () => {
         expect(rndAfter).not.toEqual(rndBefore);
       },
     ),
-    15000,
   );
 
   test(
@@ -1575,7 +1574,6 @@ describe(`Plug'n'Play`, () => {
         );
       },
     ),
-    15000,
   );
 
   test(
