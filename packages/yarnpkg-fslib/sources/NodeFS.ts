@@ -1,7 +1,7 @@
 import fs, {BigIntStats, Stats}                                                                                                   from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                                      from './FakeFS';
+import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                        from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
 import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
 import {ENOSYS}                                                                                                                   from './errors';
@@ -154,12 +154,14 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.existsSync(npath.fromPortablePath(p));
   }
 
-  async statPromise(p: PortablePath): Promise<Stats>
-  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
-  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async statPromise(p: PortablePath): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await new Promise<Stats>((resolve, reject) => {
       if (opts) {
+        // @ts-expect-error The node types are out of date
         this.realFs.stat(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
       } else {
         this.realFs.stat(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
@@ -167,11 +169,16 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  statSync(p: PortablePath): Stats
-  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
-  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
-  statSync(p: PortablePath, opts?: {bigint: boolean}) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
+  statSync(p: PortablePath): Stats;
+  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  statSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     if (opts) {
+      // @ts-expect-error The node types are out of date
       return this.realFs.statSync(npath.fromPortablePath(p), opts);
     } else {
       return this.realFs.statSync(npath.fromPortablePath(p));
@@ -204,10 +211,11 @@ export class NodeFS extends BasePortableFakeFS {
     }
   }
 
-  async lstatPromise(p: PortablePath): Promise<Stats>
-  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async lstatPromise(p: PortablePath): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await new Promise<Stats>((resolve, reject) => {
       if (opts) {
         // @ts-expect-error - TS does not know this takes options
@@ -218,16 +226,30 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   lstatSync(p: PortablePath): Stats;
-  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     if (opts) {
       // @ts-expect-error - TS does not know this takes options
       return this.realFs.lstatSync(npath.fromPortablePath(p), opts);
     } else {
       return this.realFs.lstatSync(npath.fromPortablePath(p));
     }
+  }
+
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.fchmod(fd, mask, this.makeCallback(resolve, reject));
+    });
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.realFs.fchmodSync(fd, mask);
   }
 
   async chmodPromise(p: PortablePath, mask: number) {
@@ -351,12 +373,14 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
-    return await new Promise<void>((resolve, reject) => {
+    return await new Promise<string | undefined>((resolve, reject) => {
+      // @ts-expect-error - Types are outdated, the second argument in the callback is either a string or undefined
       this.realFs.mkdir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
     });
   }
 
-  mkdirSync(p: PortablePath, opts?: MkdirOptions) {
+  mkdirSync(p: PortablePath, opts?: MkdirOptions): string | undefined {
+    // @ts-expect-error - Types are outdated, returns either a string or undefined
     return this.realFs.mkdirSync(npath.fromPortablePath(p), opts);
   }
 

@@ -1,4 +1,4 @@
-const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
+const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require(`path`);
 
 const {
@@ -157,6 +157,7 @@ describe(`Scripts tests`, () => {
       expect(env).toMatchObject({
         npm_package_name: `helloworld`,
         npm_package_version: `1.2.3`,
+        npm_package_json: npath.join(npath.fromPortablePath(path), Filename.manifest),
       });
     }),
   );

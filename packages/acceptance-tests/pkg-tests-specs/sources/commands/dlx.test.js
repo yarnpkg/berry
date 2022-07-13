@@ -1,6 +1,7 @@
 const {
   fs: {writeFile, realpath},
   tests: {setPackageWhitelist, startPackageServer, validLogins},
+  yarn,
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
@@ -158,6 +159,87 @@ describe(`Commands`, () => {
           stdout: expect.stringContaining(`no-deps-tags@npm:1.0.0-rc.1`),
         });
       }),
+    );
+
+    test(
+      `it shouldn't warn on unused package extensions in projects created by dlx (dependencies)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`various-requires`]: `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await yarn.writeConfiguration(path, {
+            packageExtensions: {
+              [`various-requires@*`]: {
+                dependencies: {
+                  [`no-deps`]: `1.0.0`,
+                },
+              },
+            },
+          });
+
+          await expect(run(`dlx`, `has-bin-entries`)).resolves.toMatchObject({
+            stdout: expect.not.stringContaining(`YN0068`),
+          });
+        },
+      ),
+    );
+
+    test(
+      `it shouldn't warn on unused package extensions in projects created by dlx (peerDependencies)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+            [`various-requires`]: `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await yarn.writeConfiguration(path, {
+            packageExtensions: {
+              [`various-requires@*`]: {
+                peerDependencies: {
+                  [`no-deps`]: `*`,
+                },
+              },
+            },
+          });
+
+          await expect(run(`dlx`, `has-bin-entries`)).resolves.toMatchObject({
+            stdout: expect.not.stringContaining(`YN0068`),
+          });
+        },
+      ),
+    );
+
+    test(
+      `it shouldn't warn on unused package extensions in projects created by dlx (peerDependenciesMeta)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`optional-peer-deps`]: `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await yarn.writeConfiguration(path, {
+            packageExtensions: {
+              [`optional-peer-deps@*`]: {
+                peerDependenciesMeta: {
+                  [`no-deps`]: {
+                    optional: true,
+                  },
+                },
+              },
+            },
+          });
+
+          await expect(run(`dlx`, `has-bin-entries`)).resolves.toMatchObject({
+            stdout: expect.not.stringContaining(`YN0068`),
+          });
+        },
+      ),
     );
   });
 });

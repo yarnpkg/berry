@@ -4,7 +4,7 @@ import {PassThrough}                                                            
 import {types}                                                                                                                                       from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats}                                                                               from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from './FakeFS';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
@@ -548,10 +548,13 @@ export class ZipFS extends BasePortableFakeFS {
     let resolvedP;
 
     try {
-      resolvedP = this.resolveFilename(`stat '${p}'`, p);
+      resolvedP = this.resolveFilename(`stat '${p}'`, p, undefined, false);
     } catch (error) {
       return false;
     }
+
+    if (resolvedP === undefined)
+      return false;
 
     return this.entries.has(resolvedP) || this.listings.has(resolvedP);
   }
@@ -571,21 +574,37 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  async statPromise(p: PortablePath): Promise<Stats>
-  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
-  async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
-    return this.statSync(p, opts);
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async statPromise(p: PortablePath): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
+  async statPromise(p: PortablePath, opts: StatOptions = {bigint: false}): Promise<Stats | BigIntStats> {
+    if (opts.bigint)
+      return this.statSync(p, {bigint: true});
+
+    return this.statSync(p);
   }
 
-  statSync(p: PortablePath): Stats
-  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
-  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
-  statSync(p: PortablePath, opts?: {bigint: boolean}) {
-    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
+  statSync(p: PortablePath): Stats;
+  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  statSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
+  statSync(p: PortablePath, opts: StatSyncOptions = {bigint: false, throwIfNoEntry: true}): Stats | BigIntStats | undefined {
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p, undefined, opts.throwIfNoEntry);
+    if (resolvedP === undefined)
+      return undefined;
 
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+      if (opts.throwIfNoEntry === false)
+        return undefined;
+
       throw errors.ENOENT(`stat '${p}'`);
+    }
 
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw errors.ENOTDIR(`stat '${p}'`);
@@ -621,21 +640,37 @@ export class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`fstat '${p}'`, resolvedP, opts);
   }
 
-  async lstatPromise(p: PortablePath): Promise<Stats>
-  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
-    return this.lstatSync(p, opts);
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async lstatPromise(p: PortablePath): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions = {bigint: false}): Promise<Stats | BigIntStats> {
+    if (opts.bigint)
+      return this.lstatSync(p, {bigint: true});
+
+    return this.lstatSync(p);
   }
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   lstatSync(p: PortablePath): Stats;
-  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
-    const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false);
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
+  lstatSync(p: PortablePath, opts: StatSyncOptions = {bigint: false, throwIfNoEntry: true}): Stats | BigIntStats | undefined {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false, opts.throwIfNoEntry);
+    if (resolvedP === undefined)
+      return undefined;
 
-    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+      if (opts.throwIfNoEntry === false)
+        return undefined;
+
       throw errors.ENOENT(`lstat '${p}'`);
+    }
 
     if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
       throw errors.ENOTDIR(`lstat '${p}'`);
@@ -782,7 +817,9 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true): PortablePath {
+  private resolveFilename(reason: string, p: PortablePath, resolveLastComponent?: boolean): PortablePath;
+  private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean | undefined, throwIfNoEntry: boolean | undefined): PortablePath | undefined;
+  private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true, throwIfNoEntry = true): PortablePath | undefined {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, ${reason}`);
 
@@ -794,20 +831,26 @@ export class ZipFS extends BasePortableFakeFS {
     if (resolveLastComponent && fileIndex !== undefined) {
       if (this.symlinkCount !== 0 && this.isSymbolicLink(fileIndex)) {
         const target = this.getFileSource(fileIndex).toString() as PortablePath;
-        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true);
+        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true, throwIfNoEntry);
       } else {
         return resolvedP;
       }
     }
 
     while (true) {
-      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true);
+      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true, throwIfNoEntry);
+      if (parentP === undefined)
+        return parentP;
 
       const isDir = this.listings.has(parentP);
       const doesExist = this.entries.has(parentP);
 
-      if (!isDir && !doesExist)
+      if (!isDir && !doesExist) {
+        if (throwIfNoEntry === false)
+          return undefined;
+
         throw errors.ENOENT(reason);
+      }
       if (!isDir)
         throw errors.ENOTDIR(reason);
 
@@ -981,6 +1024,14 @@ export class ZipFS extends BasePortableFakeFS {
     } finally {
       this.libzip.free(buffer);
     }
+  }
+
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return this.chmodPromise(this.fdToPath(fd, `fchmod`), mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.chmodSync(this.fdToPath(fd, `fchmodSync`), mask);
   }
 
   async chmodPromise(p: PortablePath, mask: number) {
@@ -1240,10 +1291,8 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
-    if (recursive) {
-      this.mkdirpSync(p, {chmod: mode});
-      return;
-    }
+    if (recursive)
+      return this.mkdirpSync(p, {chmod: mode});
 
     if (this.readOnly)
       throw errors.EROFS(`mkdir '${p}'`);
@@ -1255,6 +1304,7 @@ export class ZipFS extends BasePortableFakeFS {
 
     this.hydrateDirectory(resolvedP);
     this.chmodSync(resolvedP, mode);
+    return undefined;
   }
 
   async rmdirPromise(p: PortablePath, opts?: RmdirOptions) {

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.9",
+  "version": "4.0.0-rc.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
@@ -34,6 +34,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
+    "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.136",
@@ -45,6 +46,7 @@
     "@yarnpkg/plugin-link": "workspace:^",
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
+    "comment-json": "^2.2.0",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",

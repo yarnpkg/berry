@@ -1,12 +1,11 @@
 {
   "name": "@yarnpkg/plugin-init",
-  "version": "4.0.0-rc.9",
+  "version": "4.0.0-rc.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
-    "lodash": "^4.17.15",
     "tslib": "^1.13.0"
   },
   "peerDependencies": {
@@ -14,7 +13,6 @@
     "@yarnpkg/core": "workspace:^"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.136",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^"
   },

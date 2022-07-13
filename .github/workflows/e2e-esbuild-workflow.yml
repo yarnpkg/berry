@@ -48,3 +48,26 @@ jobs:
 
         yarn ts-node --transpile-only build.js
         [[ "$(node dist/bundle.js)" = "Hello webpack" ]]
+
+        # Make sure we play nicely with esbuild plugins that create virtual modules with resolveDirs
+        echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js', plugins: [require('./virtualModulePlugin'), require('@yarnpkg/esbuild-plugin-pnp').pnpPlugin()]})" > build.js
+        cat <<- "EOF" | tee virtualModulePlugin.js
+          const { resolve, dirname } = require('path');
+          module.exports = {
+            name: 'virtualModules',
+            setup(build) {
+              build.onResolve({ filter: /\?virtual$/ }, function({ path, importer }) {
+                const resolveDir = dirname(resolve(dirname(importer), path));
+                return { path, pluginData: { resolveDir }, namespace: 'virtual-module' };
+              });
+              build.onLoad({ filter: /\?virtual$/ }, function({ path, pluginData }) {
+                const specifier = path.replace(/\?virtual/, '');
+                return { resolveDir: pluginData.resolveDir, contents: `export * as virtual from ${JSON.stringify(specifier)}`, loader: 'js' };
+              });
+            }
+          }
+        EOF
+        echo "import {virtual} from './maths.js?virtual'; console.log(virtual.cube(6));" | tee src/main.js
+
+        yarn ts-node --transpile-only build.js
+        [[ "$(node dist/bundle.js)" = "216" ]]

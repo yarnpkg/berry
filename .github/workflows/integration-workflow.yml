@@ -196,7 +196,7 @@ jobs:
         include:
           - node: 16
             platform: ubuntu-latest
-          - node: 17
+          - node: 18
             platform: ubuntu-latest
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'

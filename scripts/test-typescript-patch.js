@@ -21,7 +21,7 @@ const rootSourceFile = program.getSourceFile(require.resolve(`@yarnpkg/core/sour
 const TESTS = [
   [`@yarnpkg/core/sources/Configuration.ts`, `./Configuration`],
   [`@yarnpkg/fslib/README.md`, `@yarnpkg/fslib/README.md`],
-  [`@yarnpkg/fslib/package.json`, `@yarnpkg/fslib/package`],
+  [`@yarnpkg/fslib/package.json`, `@yarnpkg/fslib/package.json`],
   [`@yarnpkg/fslib/sources/ZipFS.ts`, `@yarnpkg/fslib/sources/ZipFS`],
   [`@yarnpkg/fslib/sources/index.ts`, `@yarnpkg/fslib`],
 ];

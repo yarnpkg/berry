@@ -1613,7 +1613,7 @@ export class Configuration {
                 const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
                 if (typeof currentPeerDependency === `undefined`) {
                   extension.status = PackageExtensionStatus.Active;
-                  pkg.peerDependencies.set(extension.descriptor.identHash, this.normalizeDependency(extension.descriptor));
+                  pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
               } break;
 
