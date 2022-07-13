@@ -8,7 +8,7 @@
     "@emotion/styled": "^11.3.0",
     "@emotion/styled-base": "^11.0.0",
     "@haroenv/react-sparklines": "^1.7.1",
-    "@iconify/icons-logos": "^1.0.10",
+    "@iconify/icons-logos": "^1.2.10",
     "@iconify/react": "^1.1.3",
     "@loadable/component": "^5.12.0",
     "@mdx-js/mdx": "^1.6.22",

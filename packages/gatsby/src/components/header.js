@@ -1,11 +1,10 @@
 import styled                                              from '@emotion/styled';
+import discordIcon                                         from '@iconify/icons-logos/discord-icon';
 import githubIcon                                          from '@iconify/icons-logos/github-icon';
 import {InlineIcon}                                        from '@iconify/react';
 import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
 import PropTypes                                           from 'prop-types';
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
-
-import {DiscordLogo}                                       from '../images/logos/Discord';
 
 import {Logo}                                              from './logo';
 import {ifDesktop, ifMobile}                               from './responsive';
@@ -345,7 +344,7 @@ export const Header = ({children}) => {
             <InlineIcon icon={githubIcon} height={25}/>
           </a>
           <a href={`https://discord.com/invite/yarnpkg`}>
-            <DiscordLogo height={25}/>
+            <InlineIcon icon={discordIcon} height={25}/>
           </a>
         </MenuSearchBox>
       </MenuContainer>

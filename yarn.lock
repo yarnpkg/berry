@@ -2409,10 +2409,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iconify/icons-logos@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "@iconify/icons-logos@npm:1.0.10"
-  checksum: 5a82b08bb35f8241fd79149c3709e81d0a2e539c7e1284fb3766ba4e494e3eb0d0dbd6096eccf82c95459e4e609e89c65b8404368e467cfd80fe47a98b0003bc
+"@iconify/icons-logos@npm:^1.2.10":
+  version: 1.2.10
+  resolution: "@iconify/icons-logos@npm:1.2.10"
+  dependencies:
+    "@iconify/types": "npm:*"
+  checksum: 002d292859c7815f811a385dec7a7d7d691791b155b585ebbc9fade1e4ca9f9ec57a11af68b7003bfccace74e2b9b057e76e548bd9fa2183f828a884f0d012db
   languageName: node
   linkType: hard
 
@@ -2422,6 +2424,13 @@ __metadata:
   peerDependencies:
     react: ^16.0.0
   checksum: 1c2cb3ae560bbae144c3b7fff541262cfd17d9592db5f54c48eb843d3f438d77247c22bdead979987cff5ad61e68692fc1bde09b232d151af7bd186d369ca3f4
+  languageName: node
+  linkType: hard
+
+"@iconify/types@npm:*":
+  version: 1.1.0
+  resolution: "@iconify/types@npm:1.1.0"
+  checksum: 08e927d6f5bac1f868ca168137979c0444ef2b912cd23b26487987794959fdf89f879e684618f9a1c3bcccb3b257643def049594c70acf85774fe4c8a3ea7ee1
   languageName: node
   linkType: hard
 
@@ -5613,7 +5622,7 @@ __metadata:
     "@emotion/styled": "npm:^11.3.0"
     "@emotion/styled-base": "npm:^11.0.0"
     "@haroenv/react-sparklines": "npm:^1.7.1"
-    "@iconify/icons-logos": "npm:^1.0.10"
+    "@iconify/icons-logos": "npm:^1.2.10"
     "@iconify/react": "npm:^1.1.3"
     "@loadable/component": "npm:^5.12.0"
     "@mdx-js/mdx": "npm:^1.6.22"
