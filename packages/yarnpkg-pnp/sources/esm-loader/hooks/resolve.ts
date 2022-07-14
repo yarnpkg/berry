@@ -12,17 +12,17 @@ const isRelativeRegexp = /^\.{0,2}\//;
 export async function resolve(
   originalSpecifier: string,
   context: { conditions: Array<string>, parentURL: string | undefined },
-  defaultResolver: typeof resolve,
-): Promise<{ url: string }> {
+  nextResolve: typeof resolve,
+): Promise<{ url: string, shortCircuit: boolean }> {
   const {findPnpApi} = (moduleExports as unknown) as { findPnpApi?: (path: NativePath) => null | PnpApi };
   if (!findPnpApi || nodeUtils.isBuiltinModule(originalSpecifier))
-    return defaultResolver(originalSpecifier, context, defaultResolver);
+    return nextResolve(originalSpecifier, context, nextResolve);
 
   let specifier = originalSpecifier;
   const url = loaderUtils.tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : undefined);
   if (url) {
     if (url.protocol !== `file:`)
-      return defaultResolver(originalSpecifier, context, defaultResolver);
+      return nextResolve(originalSpecifier, context, nextResolve);
 
     specifier = fileURLToPath(url);
   }
@@ -36,7 +36,7 @@ export async function resolve(
   // zip file and the issuer doesn't belong to a pnpapi
   const pnpapi = findPnpApi(issuer) ?? (url ? findPnpApi(specifier) : null);
   if (!pnpapi)
-    return defaultResolver(originalSpecifier, context, defaultResolver);
+    return nextResolve(originalSpecifier, context, nextResolve);
 
   const dependencyNameMatch = specifier.match(pathRegExp);
 
@@ -82,5 +82,6 @@ export async function resolve(
 
   return {
     url: resultURL.href,
+    shortCircuit: true,
   };
 }
