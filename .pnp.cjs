@@ -35804,7 +35804,7 @@ const RAW_RUNTIME_STATE =
     ]],\
     ["open", [\
       ["npm:7.4.2", {\
-        "packageLocation": "./.yarn/cache/open-npm-7.4.2-a378c23959-b3619842c6.zip/node_modules/open/",\
+        "packageLocation": "./.yarn/unplugged/open-npm-7.4.2-a378c23959/node_modules/open/",\
         "packageDependencies": [\
           ["open", "npm:7.4.2"],\
           ["is-docker", "npm:2.2.1"],\
