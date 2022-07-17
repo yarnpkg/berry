@@ -1,13 +1,13 @@
-import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath} from '@yarnpkg/fslib';
-import fs                                                          from 'fs';
-import {Module}                                                    from 'module';
-import {URL, fileURLToPath}                                        from 'url';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath, VirtualFS} from '@yarnpkg/fslib';
+import fs                                                                     from 'fs';
+import {Module}                                                               from 'module';
+import {URL, fileURLToPath}                                                   from 'url';
 
-import {PnpApi}                                                    from '../types';
+import {PnpApi}                                                               from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
-import {Manager}                                                   from './makeManager';
-import * as nodeUtils                                              from './nodeUtils';
+import {ErrorCode, makeError, getIssuerModule}                                from './internalTools';
+import {Manager}                                                              from './makeManager';
+import * as nodeUtils                                                         from './nodeUtils';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>;
@@ -18,6 +18,14 @@ type PatchedModule = Module & {
   load(path: NativePath): void;
   isLoading?: boolean;
 };
+
+declare global {
+  module NodeJS {
+    interface Process {
+      dlopen: (module: Object, filename: string, flags?: number) => void;
+    }
+  }
+}
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   /**
@@ -409,6 +417,17 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     }
 
     originalExtensionJSFunction.call(this, module, filename);
+  };
+
+  const originalDlopen = process.dlopen;
+  process.dlopen = function (...args) {
+    const [module, filename, ...rest] = args;
+    return originalDlopen.call(
+      this,
+      module,
+      npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename))),
+      ...rest,
+    );
   };
 
   // When using the ESM loader Node.js prints either of the following warnings
