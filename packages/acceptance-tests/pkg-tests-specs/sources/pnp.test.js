@@ -1,4 +1,4 @@
-const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
+const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
@@ -2093,6 +2093,35 @@ describe(`Plug'n'Play`, () => {
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should resolve virtual paths passed to process.dlopen`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          pkg: `portal:./pkg`,
+        },
+      },
+      async ({path, run, source}) => {
+        await xfs.mkdirPromise(ppath.join(path, `pkg`));
+        await xfs.writeFilePromise(ppath.join(path, `pkg/test.node`), `invalid`);
+        await xfs.writeJsonPromise(ppath.join(path, `pkg`, Filename.manifest), {
+          name: `pkg`,
+          peerDependencies: {
+            'no-deps': `*`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(source(`require('pkg/test.node')`)).rejects.toMatchObject({
+          externalException: {
+            message: expect.not.stringMatching(/__virtual__|invalid mode/),
+          },
         });
       },
     ),
