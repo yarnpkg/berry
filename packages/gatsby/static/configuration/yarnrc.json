@@ -139,6 +139,12 @@
       "type": "boolean",
       "examples": [false]
     },
+    "enableInlineHunks": {
+      "_package": "@yarnpkg/plugin-patch",
+      "description": "If true, Yarn will print any patch sections (hunks) that could not be applied successfully to the terminal. Defaults to false.",
+      "type": "boolean",
+      "examples": [true]
+    },
     "enableMessageNames": {
       "_package": "@yarnpkg/core",
       "description": "If true, Yarn will prefix most messages with codes suitable for search engines.",
@@ -604,6 +610,13 @@
       },
       "additionalProperties": false,
       "_exampleKeys": ["webpack@*"]
+    },
+    "patchFolder": {
+      "_package": "@yarnpkg/plugin-patch",
+      "description": "Folder where patch files will be written to.",
+      "type": "string",
+      "format": "uri-reference",
+      "default": "./.yarn/patches"
     },
     "pnpDataPath": {
       "_package": "@yarnpkg/plugin-pnp",

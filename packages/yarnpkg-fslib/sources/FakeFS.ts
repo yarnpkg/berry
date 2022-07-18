@@ -1,3 +1,4 @@
+import {createHash}                                      from 'crypto';
 import {EventEmitter}                                    from 'events';
 import {Dirent as NodeDirent, ReadStream}                from 'fs';
 import {Stats as NodeStats, WriteStream}                 from 'fs';
@@ -111,6 +112,14 @@ export type ExtractHintOptions = {
 
 export type SymlinkType = 'file' | 'dir' | 'junction';
 
+export interface StatOptions {
+  bigint?: boolean | undefined;
+}
+
+export interface StatSyncOptions extends StatOptions {
+  throwIfNoEntry?: boolean | undefined;
+}
+
 export abstract class FakeFS<P extends Path> {
   public readonly pathUtils: PathUtils<P>;
 
@@ -166,12 +175,20 @@ export abstract class FakeFS<P extends Path> {
   abstract accessPromise(p: P, mode?: number): Promise<void>;
   abstract accessSync(p: P, mode?: number): void;
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract statPromise(p: P): Promise<Stats>;
-  abstract statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
-  abstract statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  abstract statPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  abstract statPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  abstract statPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats>;
+
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   abstract statSync(p: P): Stats;
-  abstract statSync(p: P, opts: {bigint: true}): BigIntStats;
-  abstract statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
+  abstract statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  abstract statSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  abstract statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  abstract statSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  abstract statSync(p: P, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  abstract statSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
 
   abstract fstatPromise(fd: number): Promise<Stats>;
   abstract fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
@@ -180,21 +197,31 @@ export abstract class FakeFS<P extends Path> {
   abstract fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
   abstract fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract lstatPromise(p: P): Promise<Stats>;
-  abstract lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>;
-  abstract lstatPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  abstract lstatPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  abstract lstatPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  abstract lstatPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats>;
+
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   abstract lstatSync(p: P): Stats;
-  abstract lstatSync(p: P, opts: {bigint: true}): BigIntStats;
-  abstract lstatSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats;
+  abstract lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  abstract lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  abstract lstatSync(p: P, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  abstract lstatSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
 
   abstract chmodPromise(p: P, mask: number): Promise<void>;
   abstract chmodSync(p: P, mask: number): void;
+  abstract fchmodPromise(fd: number, mask: number): Promise<void>;
+  abstract fchmodSync(fd: number, mask: number): void;
 
   abstract chownPromise(p: P, uid: number, gid: number): Promise<void>;
   abstract chownSync(p: P, uid: number, gid: number): void;
 
-  abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<void>;
-  abstract mkdirSync(p: P, opts?: MkdirOptions): void;
+  abstract mkdirPromise(p: P, opts?: MkdirOptions): Promise<string | undefined>;
+  abstract mkdirSync(p: P, opts?: MkdirOptions): string | undefined;
 
   abstract rmdirPromise(p: P, opts?: RmdirOptions): Promise<void>;
   abstract rmdirSync(p: P, opts?: RmdirOptions): void;
@@ -271,6 +298,25 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
+  async checksumFilePromise(path: P, {algorithm = `sha512`}: {algorithm?: string} = {}) {
+    const fd = await this.openPromise(path, `r`);
+
+    try {
+      const CHUNK_SIZE = 65536;
+      const chunk = Buffer.allocUnsafeSlow(CHUNK_SIZE);
+
+      const hash = createHash(algorithm);
+
+      let bytesRead = 0;
+      while ((bytesRead = await this.readPromise(fd, chunk, 0, CHUNK_SIZE)) !== 0)
+        hash.update(bytesRead === CHUNK_SIZE ? chunk : chunk.slice(0, bytesRead));
+
+      return hash.digest(`hex`);
+    } finally {
+      await this.closePromise(fd);
+    }
+  }
+
   async removePromise(p: P, {recursive = true, maxRetries = 5}: {recursive?: boolean, maxRetries?: number} = {}) {
     let stat;
     try {
@@ -333,12 +379,14 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async mkdirpPromise(p: P, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+  async mkdirpPromise(p: P, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}): Promise<string | undefined> {
     p = this.resolve(p);
     if (p === this.pathUtils.dirname(p))
-      return;
+      return undefined;
 
     const parts = p.split(this.pathUtils.sep);
+
+    let createdDirectory: P | undefined;
 
     for (let u = 2; u <= parts.length; ++u) {
       const subPath = parts.slice(0, u).join(this.pathUtils.sep) as P;
@@ -354,6 +402,8 @@ export abstract class FakeFS<P extends Path> {
           }
         }
 
+        createdDirectory ??= subPath;
+
         if (chmod != null)
           await this.chmodPromise(subPath, chmod);
 
@@ -365,14 +415,18 @@ export abstract class FakeFS<P extends Path> {
         }
       }
     }
+
+    return createdDirectory;
   }
 
-  mkdirpSync(p: P, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}) {
+  mkdirpSync(p: P, {chmod, utimes}: {chmod?: number, utimes?: [Date | string | number, Date | string | number]} = {}): string | undefined {
     p = this.resolve(p);
     if (p === this.pathUtils.dirname(p))
-      return;
+      return undefined;
 
     const parts = p.split(this.pathUtils.sep);
+
+    let createdDirectory: P | undefined;
 
     for (let u = 2; u <= parts.length; ++u) {
       const subPath = parts.slice(0, u).join(this.pathUtils.sep) as P;
@@ -388,6 +442,8 @@ export abstract class FakeFS<P extends Path> {
           }
         }
 
+        createdDirectory ??= subPath;
+
         if (chmod != null)
           this.chmodSync(subPath, chmod);
 
@@ -399,11 +455,13 @@ export abstract class FakeFS<P extends Path> {
         }
       }
     }
+
+    return createdDirectory;
   }
 
-  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy}): Promise<void>;
-  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy}): Promise<void>;
-  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false, linkStrategy = null}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy | null} = {}) {
+  copyPromise(destination: P, source: P, options?: {baseFs?: undefined, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy<P> | null}): Promise<void>;
+  copyPromise<P2 extends Path>(destination: P, source: P2, options: {baseFs: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy<P> | null}): Promise<void>;
+  async copyPromise<P2 extends Path>(destination: P, source: P2, {baseFs = this as any, overwrite = true, stableSort = false, stableTime = false, linkStrategy = null}: {baseFs?: FakeFS<P2>, overwrite?: boolean, stableSort?: boolean, stableTime?: boolean, linkStrategy?: LinkStrategy<P> | null} = {}) {
     return await copyPromise(this, destination, baseFs, source, {overwrite, stableSort, stableTime, linkStrategy});
   }
 

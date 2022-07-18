@@ -3,7 +3,6 @@ import {Configuration, Manifest, miscUtils, Project, YarnVersion} from '@yarnpkg
 import {execUtils, scriptUtils, structUtils}                      from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                     from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                       from 'clipanion';
-import merge                                                      from 'lodash/merge';
 import {inspect}                                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -207,7 +206,7 @@ export default class InitCommand extends BaseCommand {
         },
       };
 
-      merge(editorConfigProperties, configuration.get(`initEditorConfig`));
+      miscUtils.mergeIntoTarget(editorConfigProperties, configuration.get(`initEditorConfig`));
 
       let editorConfigBody = `root = true\n`;
       for (const [selector, props] of Object.entries(editorConfigProperties)) {

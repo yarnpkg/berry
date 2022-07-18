@@ -1,5 +1,7 @@
 import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
 import {UsageError}               from 'clipanion';
+import isEqual                    from 'lodash/isEqual';
+import mergeWith                  from 'lodash/mergeWith';
 import micromatch                 from 'micromatch';
 import pLimit, {Limit}            from 'p-limit';
 import semver                     from 'semver';
@@ -521,4 +523,52 @@ export function isPathLike(value: string): boolean {
   if (npath.isAbsolute(value) || value.match(/^(\.{1,2}|~)\//))
     return true;
   return false;
+}
+
+type MergeObjects<T extends Array<unknown>, Accumulator> = T extends [infer U, ...infer Rest]
+  ? MergeObjects<Rest, Accumulator & U>
+  : Accumulator;
+
+/**
+ * Merges multiple objects into the target argument.
+ *
+ * **Important:** This function mutates the target argument.
+ *
+ * Custom classes inside the target parameter are supported (e.g. comment-json's `CommentArray` - comments from target will be preserved).
+ *
+ * @see toMerged for a version that doesn't mutate the target argument
+ *
+ */
+export function mergeIntoTarget<T extends object, S extends Array<object>>(target: T, ...sources: S): MergeObjects<S, T> {
+  // We need to wrap everything in an object because otherwise lodash fails to merge 2 top-level arrays
+  const wrap = <T>(value: T) => ({value});
+
+  const wrappedTarget = wrap(target);
+  const wrappedSources = sources.map(source => wrap(source));
+
+  const {value} = mergeWith(wrappedTarget, ...wrappedSources, (targetValue: unknown, sourceValue: unknown) => {
+    // We need to preserve comments in custom Array classes such as comment-json's `CommentArray`, so we can't use spread or `Set`s
+    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      for (const sourceItem of sourceValue) {
+        if (!targetValue.find(targetItem => isEqual(targetItem, sourceItem))) {
+          targetValue.push(sourceItem);
+        }
+      }
+
+      return targetValue;
+    }
+
+    return undefined;
+  });
+
+  return value;
+}
+
+/**
+ * Merges multiple objects into a single one, without mutating any arguments.
+ *
+ * Custom classes are not supported (i.e. comment-json's comments will be lost).
+ */
+export function toMerged<S extends Array<object>>(...sources: S): MergeObjects<S, {}> {
+  return mergeIntoTarget({}, ...sources);
 }

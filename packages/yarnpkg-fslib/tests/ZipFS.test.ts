@@ -6,13 +6,15 @@ import {makeEmptyArchive, ZipFS}       from '../sources/ZipFS';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
-import {useFakeTime}                   from './utils';
-
 const isNotWin32 = process.platform !== `win32`;
 
 const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
+
+afterEach(() => {
+  jest.useRealTimers();
+});
 
 describe(`ZipFS`, () => {
   it(`should handle symlink correctly`, () => {
@@ -390,7 +392,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers();
+    jest.useFakeTimers(`modern`);
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -473,7 +475,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers();
+    jest.useFakeTimers(`modern`);
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -540,18 +542,17 @@ describe(`ZipFS`, () => {
   });
 
   it(`should stop the watcher on closing the archive`, async () => {
-    await useFakeTime(advanceTimeBy => {
-      const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    jest.useFakeTimers(`modern`);
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 
-      zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
 
-      zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
+    zipFs.watchFile(`/foo.txt` as PortablePath, (current, previous) => {});
 
-      zipFs.discardAndClose();
+    zipFs.discardAndClose();
 
-      // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
-      advanceTimeBy(100);
-    });
+    // If the watcher wasn't stopped this will trigger `EBUSY: archive closed`
+    jest.advanceTimersByTime(100);
   });
 
   it(`should support opendir`, async () => {
@@ -812,6 +813,18 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should support fchmodSync`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    zipFs.writeFileSync(`/foo.txt` as Filename, `foo`);
+    const fd = zipFs.openSync(`/foo.txt` as Filename, `rw`);
+    zipFs.fchmodSync(fd, 0o754);
+    zipFs.closeSync(fd);
+    expect(zipFs.statSync(`/foo.txt` as Filename).mode & 0o777).toBe(0o754);
+
+    zipFs.discardAndClose();
+  });
+
   it(`should support writeFile mode`, async () => {
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 
@@ -900,5 +913,57 @@ describe(`ZipFS`, () => {
     expect(() => zipFs.readFileSync(`/foo/bar` as PortablePath, ``)).toThrowError(`ENOENT`);
 
     zipFs.discardAndClose();
+  });
+
+  it(`should return the first created directory in mkdir recursive`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    expect(zipFs.mkdirSync(`/foo` as PortablePath, {recursive: true})).toEqual(`/foo` as PortablePath);
+    expect(zipFs.mkdirSync(`/foo` as PortablePath, {recursive: true})).toEqual(undefined);
+    expect(zipFs.mkdirSync(`/foo/bar/baz` as PortablePath, {recursive: true})).toEqual(`/foo/bar` as PortablePath);
+    expect(zipFs.mkdirSync(`/foo/bar/baz` as PortablePath, {recursive: true})).toEqual(undefined);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should return the first created directory in mkdirp`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    expect(zipFs.mkdirpSync(`/foo` as PortablePath)).toEqual(`/foo` as PortablePath);
+    expect(zipFs.mkdirpSync(`/foo` as PortablePath)).toEqual(undefined);
+    expect(zipFs.mkdirpSync(`/foo/bar/baz` as PortablePath)).toEqual(`/foo/bar` as PortablePath);
+    expect(zipFs.mkdirpSync(`/foo/bar/baz` as PortablePath)).toEqual(undefined);
+
+    zipFs.discardAndClose();
+  });
+
+  it(`should support throwIfNoEntry`, async () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+
+    expect(zipFs.statSync(`/foo` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+    expect(zipFs.statSync(`/foo/bar` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+
+    expect(zipFs.lstatSync(`/foo` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+    expect(zipFs.lstatSync(`/foo/bar` as PortablePath, {throwIfNoEntry: false})).toEqual(undefined);
+
+    await expect(
+      zipFs.statPromise(`/foo` as PortablePath, {
+        // @ts-expect-error throwIfNoEntry is not a valid option but statPromise
+        // calls statSync which does support it, this checks that it's ignored.
+        throwIfNoEntry: false,
+      }),
+    ).rejects.toMatchObject({
+      code: `ENOENT`,
+    });
+
+    await expect(
+      zipFs.lstatPromise(`/foo` as PortablePath, {
+        // @ts-expect-error throwIfNoEntry is not a valid option but statPromise
+        // calls statSync which does support it, this checks that it's ignored.
+        throwIfNoEntry: false,
+      }),
+    ).rejects.toMatchObject({
+      code: `ENOENT`,
+    });
   });
 });

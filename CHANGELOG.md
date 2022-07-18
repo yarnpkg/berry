@@ -18,6 +18,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
 - The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
 - Set `nmMode` to `hardlinks-local` by default.
+- `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 
 ### **API Changes**
 
@@ -35,12 +36,27 @@ The following changes only affect people writing Yarn plugins:
 
 - The `getCustomDataKey` function in `Installer` from `@yarnpkg/core` has been moved to `Linker`.
 
+- `renderForm`'s `options` argument is now required to enforce that custom streams are always specified.
+
 ### Installs
+
 - Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
+
+- The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
+
+- The `pnpm` linker now automatically uses content indexing
 
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.
+- The patched filesystem now supports `fchmod`.
+- The patched filesystem now supports `throwIfNoEntry`.
+- Updates the PnP compatibility layer for TypeScript 4.8 Beta
+- The `npm_package_json` environment variable is now set by Yarn.
+
+### Bugfixes
+
+- `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 
 ## 3.2.1
 

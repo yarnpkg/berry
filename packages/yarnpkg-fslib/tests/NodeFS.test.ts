@@ -1,7 +1,9 @@
-import {NodeFS}            from '../sources/NodeFS';
-import {xfs, PortablePath} from '../sources';
+import {NodeFS}                             from '../sources/NodeFS';
+import {xfs, PortablePath, ppath, Filename} from '../sources';
 
 const nodeFs = new NodeFS();
+
+const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
 describe(`NodeFS`, () => {
   describe(`copyPromise`, () => {
@@ -63,6 +65,32 @@ describe(`NodeFS`, () => {
 
         expect(nodeFs.readFileSync(p, `utf8`)).toEqual(`fo`);
       });
+    });
+  });
+
+  ifNotWin32It(`should support fchmodPromise`, async () => {
+    await xfs.mktempPromise(async dir => {
+      const p = ppath.join(dir, `foo.txt` as Filename);
+      await nodeFs.writeFilePromise(p, ``);
+
+      const fd = await nodeFs.openPromise(p, `w`);
+      await nodeFs.fchmodPromise(fd, 0o744);
+      await nodeFs.closePromise(fd);
+
+      expect((await nodeFs.statPromise(p)).mode & 0o777).toBe(0o744);
+    });
+  });
+
+  ifNotWin32It(`should support fchmodSync`, () => {
+    xfs.mktempSync(dir => {
+      const p = ppath.join(dir, `bar.txt` as Filename);
+      nodeFs.writeFileSync(p, ``);
+
+      const fd = nodeFs.openSync(p, `w`);
+      nodeFs.fchmodSync(fd, 0o744);
+      nodeFs.closeSync(fd);
+
+      expect((nodeFs.statSync(p)).mode & 0o777).toBe(0o744);
     });
   });
 });

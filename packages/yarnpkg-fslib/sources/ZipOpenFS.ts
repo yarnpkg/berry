@@ -1,7 +1,7 @@
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {BigIntStats, constants, Stats}                                                                                                               from 'fs';
 
-import {WatchOptions, WatchCallback, Watcher}                                                                                                        from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher, StatOptions, StatSyncOptions}                                                                          from './FakeFS';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
@@ -383,10 +383,12 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async statPromise(p: PortablePath): Promise<Stats>
-  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
-  async statPromise(p: PortablePath, opts?: { bigint: boolean }) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async statPromise(p: PortablePath): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
+  async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.statPromise(p, opts);
     }, async (zipFs, {subPath}) => {
@@ -394,10 +396,14 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  statSync(p: PortablePath): Stats
-  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
-  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
-  statSync(p: PortablePath, opts?: { bigint: boolean }) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
+  statSync(p: PortablePath): Stats;
+  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  statSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.makeCallSync(p, () => {
       return this.baseFs.statSync(p, opts);
     }, (zipFs, {subPath}) => {
@@ -435,10 +441,11 @@ export class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.fstatSync(realFd, opts);
   }
 
-  async lstatPromise(p: PortablePath): Promise<Stats>
-  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async lstatPromise(p: PortablePath): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.lstatPromise(p, opts);
     }, async (zipFs, {subPath}) => {
@@ -446,15 +453,43 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   lstatSync(p: PortablePath): Stats;
-  lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.makeCallSync(p, () => {
       return this.baseFs.lstatSync(p, opts);
     }, (zipFs, {subPath}) => {
       return zipFs.lstatSync(subPath, opts);
     });
+  }
+
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fchmodPromise(fd, mask);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fchmod`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.fchmodPromise(realFd, mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    if ((fd & ZIP_FD) === 0)
+      return this.baseFs.fchmodSync(fd, mask);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fchmodSync`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.fchmodSync(realFd, mask);
   }
 
   async chmodPromise(p: PortablePath, mask: number) {

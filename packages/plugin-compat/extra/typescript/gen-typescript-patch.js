@@ -12,6 +12,11 @@ const TMP_DIR = `/tmp/ts-builds`;
 
 const IGNORED_VERSIONS = new Set([
   `3.3.3333`,
+  `3.7.0-beta`,
+  `3.9.0-beta`,
+  `4.0.0-beta`,
+  `4.3.0-beta`,
+  `4.4.0-beta`,
 ]);
 
 const SLICES = [
@@ -97,7 +102,14 @@ const SLICES = [
     from: `cd8d000510ed2d2910e0ebaa903a51adda546a0a`,
     to: `cd8d000510ed2d2910e0ebaa903a51adda546a0a`,
     onto: `6e62273fa1e7469b89b589667c2c233789c62176`,
-    range: `>=4.7.0-beta`,
+    range: `>=4.7.0-beta <4.8`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8
+  {
+    from: `3287098f4785fd652112beadf3b33a960fcd19aa`,
+    to: `3287098f4785fd652112beadf3b33a960fcd19aa`,
+    onto: `9a09c37878a45b06994485fdb510eb4d24587dcb`,
+    range: `>=4.8.0-beta`,
   },
 ];
 
@@ -170,26 +182,15 @@ async function fetchVersions(range) {
 
     relevantVersions = [];
 
-    let highestPre;
     for (const version of allVersions) {
       if (IGNORED_VERSIONS.has(version))
         continue;
 
       const pre = semver.prerelease(version);
-      if (pre) {
-        if (pre[0] !== `beta` && pre[0] !== `rc`)
-          continue;
+      if (pre && pre[0] !== `beta` && pre[0] !== `rc`)
+        continue;
 
-        if (!highestPre || semver.gt(version, highestPre)) {
-          highestPre = version;
-        }
-      } else {
-        relevantVersions.push(version);
-      }
-    }
-
-    if (highestPre) {
-      relevantVersions.push(highestPre);
+      relevantVersions.push(version);
     }
   }
 

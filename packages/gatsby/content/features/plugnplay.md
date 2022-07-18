@@ -137,6 +137,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | Parcel | Starting from 2.0.0-nightly.212+ |
 | Preact CLI | Starting from 3.1.0+ |
 | Prettier | Starting from 1.17+ |
+| 🐊`Putout` | Starting from 22.8 |
 | Rollup | Starting from `resolve` 1.9+ |
 | Storybook | Starting from 6.0+ |
 | TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)

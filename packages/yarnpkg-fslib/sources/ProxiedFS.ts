@@ -1,7 +1,7 @@
 import {Stats, BigIntStats}                                                                                                                                   from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
+import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                    from './FakeFS';
 import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
 import {FSPath, Filename, Path}                                                                                                                               from './path';
 
@@ -114,17 +114,22 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.accessPromise(this.mapToBase(p), mode);
   }
 
-  async statPromise(p: P): Promise<Stats>
-  async statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>
-  async statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
-  async statPromise(p: P, opts?: {bigint: boolean}) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async statPromise(p: P): Promise<Stats>;
+  async statPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async statPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return this.baseFs.statPromise(this.mapToBase(p), opts);
   }
 
-  statSync(p: P): Stats
-  statSync(p: P, opts: {bigint: true}): BigIntStats
-  statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats
-  statSync(p: P, opts?: {bigint: boolean}) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
+  statSync(p: P): Stats;
+  statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  statSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  statSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  statSync(p: P, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  statSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
@@ -142,18 +147,31 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.fstatSync(fd, opts);
   }
 
-  async lstatPromise(p: P): Promise<Stats>
-  async lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>
-  async lstatPromise(p: P, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
-  async lstatPromise(p: P, opts?: { bigint: boolean }) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  lstatPromise(p: P): Promise<Stats>;
+  lstatPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  lstatPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  lstatPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return this.baseFs.lstatPromise(this.mapToBase(p), opts);
   }
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   lstatSync(p: P): Stats;
-  lstatSync(p: P, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: P, opts?: { bigint: boolean }): BigIntStats | Stats
-  lstatSync(p: P, opts?: { bigint: boolean }): BigIntStats | Stats {
+  lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  lstatSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  lstatSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  lstatSync(p: P, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.baseFs.lstatSync(this.mapToBase(p), opts);
+  }
+
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return this.baseFs.fchmodPromise(fd, mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.baseFs.fchmodSync(fd, mask);
   }
 
   async chmodPromise(p: P, mask: number) {
