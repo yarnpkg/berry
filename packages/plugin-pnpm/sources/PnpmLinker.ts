@@ -4,15 +4,18 @@ import {jsInstallUtils}                                                         
 import {UsageError}                                                                                                                                                                                                        from 'clipanion';
 
 export type PnpmCustomData = {
-  pathByLocator: Map<LocatorHash, PortablePath>;
   locatorByPath: Map<PortablePath, string>;
+  pathsByLocator: Map<LocatorHash, {
+    packageLocation: PortablePath;
+    dependenciesLocation: PortablePath | null;
+  }>;
 };
 
 export class PnpmLinker implements Linker {
   getCustomDataKey() {
     return JSON.stringify({
       name: `PnpmLinker`,
-      version: 2,
+      version: 3,
     });
   }
 
@@ -29,11 +32,11 @@ export class PnpmLinker implements Linker {
     if (!customData)
       throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
 
-    const packageLocation = customData.pathByLocator.get(locator.locatorHash);
-    if (typeof packageLocation === `undefined`)
+    const packagePaths = customData.pathsByLocator.get(locator.locatorHash);
+    if (typeof packagePaths === `undefined`)
       throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed pnpm map - running an install might help`);
 
-    return packageLocation;
+    return packagePaths.packageLocation;
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null> {
@@ -88,7 +91,7 @@ class PnpmInstaller implements Installer {
   }
 
   private customData: PnpmCustomData = {
-    pathByLocator: new Map(),
+    pathsByLocator: new Map(),
     locatorByPath: new Map(),
   };
 
@@ -107,27 +110,36 @@ class PnpmInstaller implements Installer {
   }
 
   async installPackageSoft(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
-    const pkgPath = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
-    this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
+    const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
+
+    const dependenciesLocation = this.opts.project.tryWorkspaceByLocator(pkg)
+      ? ppath.join(packageLocation, Filename.nodeModules)
+      : null;
+
+    this.customData.pathsByLocator.set(pkg.locatorHash, {
+      packageLocation,
+      dependenciesLocation,
+    });
 
     return {
-      packageLocation: pkgPath,
+      packageLocation,
       buildDirective: null,
     };
   }
 
   async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
-    const pkgPath = getPackageLocation(pkg, {project: this.opts.project});
+    const packagePaths = getPackagePaths(pkg, {project: this.opts.project});
+    const packageLocation = packagePaths.packageLocation;
 
-    this.customData.locatorByPath.set(pkgPath, structUtils.stringifyLocator(pkg));
-    this.customData.pathByLocator.set(pkg.locatorHash, pkgPath);
+    this.customData.locatorByPath.set(packageLocation, structUtils.stringifyLocator(pkg));
+    this.customData.pathsByLocator.set(pkg.locatorHash, packagePaths);
 
     api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () => {
-      await xfs.mkdirPromise(pkgPath, {recursive: true});
+      await xfs.mkdirPromise(packageLocation, {recursive: true});
 
       // Copy the package source into the <root>/n_m/.store/<hash> directory, so
       // that we can then create symbolic links to it later.
-      await xfs.copyPromise(pkgPath, fetchResult.prefixPath, {
+      await xfs.copyPromise(packageLocation, fetchResult.prefixPath, {
         baseFs: fetchResult.packageFs,
         overwrite: false,
         linkStrategy: {
@@ -152,7 +164,7 @@ class PnpmInstaller implements Installer {
     const buildScripts = jsInstallUtils.extractBuildScripts(pkg, buildConfig, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
 
     return {
-      packageLocation: pkgPath,
+      packageLocation,
       buildDirective: buildScripts,
     };
   }
@@ -165,24 +177,29 @@ class PnpmInstaller implements Installer {
     if (!isPnpmVirtualCompatible(locator, {project: this.opts.project}))
       return;
 
+    const packagePaths = this.customData.pathsByLocator.get(locator.locatorHash);
+    if (typeof packagePaths === `undefined`)
+      throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
+
+    const {
+      dependenciesLocation,
+    } = packagePaths;
+
+    if (!dependenciesLocation)
+      return;
+
     this.asyncActions.reduce(locator.locatorHash, async action => {
-      // Wait that the package is properly installed before starting to copy things into it
-      await action;
-
-      const pkgPath = this.customData.pathByLocator.get(locator.locatorHash);
-      if (typeof pkgPath === `undefined`)
-        throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(locator)})`);
-
-      const nmPath = ppath.join(pkgPath, Filename.nodeModules);
-
-      const concurrentPromises: Array<Promise<void>> = [];
+      await xfs.mkdirPromise(dependenciesLocation, {recursive: true});
 
       // Retrieve what's currently inside the package's true nm folder. We
       // will use that to figure out what are the extraneous entries we'll
       // need to remove.
-      const extraneous = await getNodeModulesListing(nmPath);
+      const initialEntries = await getNodeModulesListing(dependenciesLocation);
+      const extraneous = new Map(initialEntries);
 
-      for (const [descriptor, dependency] of dependencies) {
+      const concurrentPromises: Array<Promise<void>> = [action];
+
+      const installDependency = (descriptor: Descriptor, dependency: Locator) => {
         // Downgrade virtual workspaces (cf isPnpmVirtualCompatible's documentation)
         let targetDependency = dependency;
         if (!isPnpmVirtualCompatible(dependency, {project: this.opts.project})) {
@@ -190,14 +207,14 @@ class PnpmInstaller implements Installer {
           targetDependency = structUtils.devirtualizeLocator(dependency);
         }
 
-        const depSrcPath = this.customData.pathByLocator.get(targetDependency.locatorHash);
-        if (typeof depSrcPath === `undefined`)
+        const depSrcPaths = this.customData.pathsByLocator.get(targetDependency.locatorHash);
+        if (typeof depSrcPaths === `undefined`)
           throw new Error(`Assertion failed: Expected the package to have been registered (${structUtils.stringifyLocator(dependency)})`);
 
         const name = structUtils.stringifyIdent(descriptor) as PortablePath;
-        const depDstPath = ppath.join(nmPath, name);
+        const depDstPath = ppath.join(dependenciesLocation, name);
 
-        const depLinkPath = ppath.relative(ppath.dirname(depDstPath), depSrcPath);
+        const depLinkPath = ppath.relative(ppath.dirname(depDstPath), depSrcPaths.packageLocation);
 
         const existing = extraneous.get(name);
         extraneous.delete(name);
@@ -215,14 +232,25 @@ class PnpmInstaller implements Installer {
           await xfs.mkdirpPromise(ppath.dirname(depDstPath));
 
           if (process.platform == `win32`) {
-            await xfs.symlinkPromise(depSrcPath, depDstPath, `junction`);
+            await xfs.symlinkPromise(depSrcPaths.packageLocation, depDstPath, `junction`);
           } else {
             await xfs.symlinkPromise(depLinkPath, depDstPath);
           }
         }));
+      };
+
+      let hasExplicitSelfDependency = false;
+      for (const [descriptor, dependency] of dependencies) {
+        if (descriptor.identHash === locator.identHash)
+          hasExplicitSelfDependency = true;
+
+        installDependency(descriptor, dependency);
       }
 
-      concurrentPromises.push(cleanNodeModules(nmPath, extraneous));
+      if (!hasExplicitSelfDependency && !this.opts.project.tryWorkspaceByLocator(locator))
+        installDependency(structUtils.convertLocatorToDescriptor(locator), locator);
+
+      concurrentPromises.push(cleanNodeModules(dependenciesLocation, extraneous));
 
       await Promise.all(concurrentPromises);
     });
@@ -238,50 +266,28 @@ class PnpmInstaller implements Installer {
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`) {
       await xfs.removePromise(storeLocation);
     } else {
-      const removals: Array<Promise<void>> = [];
-
-      const expectedEntries = new Set<Filename>();
-      for (const packageLocation of this.customData.pathByLocator.values()) {
-        const subpath = ppath.contains(storeLocation, packageLocation);
-        if (subpath !== null) {
-          const [storeEntry, /* Filename.nodeModules */, ...identComponents] = subpath.split(ppath.sep);
-          expectedEntries.add(storeEntry as Filename);
-
-          const storeEntryPath = ppath.join(storeLocation, storeEntry as Filename);
-
-          removals.push(xfs.readdirPromise(storeEntryPath)
-            .then(entries => {
-              return Promise.all(entries.map(async entry => {
-                const p = ppath.join(storeEntryPath, entry);
-                if (entry === Filename.nodeModules) {
-                  const extraneous = await getNodeModulesListing(p);
-                  extraneous.delete(identComponents.join(ppath.sep) as PortablePath);
-                  return cleanNodeModules(p, extraneous);
-                } else {
-                  return xfs.removePromise(p);
-                }
-              }));
-            })
-            .catch(error => {
-              if (error.code !== `ENOENT`) {
-                throw error;
-              }
-            }) as Promise<void>);
-        }
-      }
-
-      let storeRecords: Array<Filename>;
+      let extraneous: Set<Filename>;
       try {
-        storeRecords = await xfs.readdirPromise(storeLocation);
+        extraneous = new Set(await xfs.readdirPromise(storeLocation));
       } catch {
-        storeRecords = [];
+        extraneous = new Set();
       }
 
-      for (const record of storeRecords)
-        if (!expectedEntries.has(record))
-          removals.push(xfs.removePromise(ppath.join(storeLocation, record)));
+      for (const {dependenciesLocation} of this.customData.pathsByLocator.values()) {
+        if (!dependenciesLocation)
+          continue;
 
-      await Promise.all(removals);
+        const subpath = ppath.contains(storeLocation, dependenciesLocation);
+        if (subpath === null)
+          continue;
+
+        const [storeEntry] = subpath.split(ppath.sep);
+        extraneous.delete(storeEntry as Filename);
+      }
+
+      await Promise.all([...extraneous].map(async extraneousEntry => {
+        await xfs.removePromise(ppath.join(storeLocation, extraneousEntry));
+      }));
     }
 
     // Wait for the package installs to catch up
@@ -305,12 +311,14 @@ function getStoreLocation(project: Project) {
   return ppath.join(getNodeModulesLocation(project), `.store` as Filename);
 }
 
-function getPackageLocation(locator: Locator, {project}: {project: Project}) {
+function getPackagePaths(locator: Locator, {project}: {project: Project}) {
   const pkgKey = structUtils.slugifyLocator(locator);
-  const prefixPath = structUtils.getIdentVendorPath(locator);
-  const pkgPath = ppath.join(getStoreLocation(project), pkgKey, prefixPath);
+  const storeLocation = getStoreLocation(project);
 
-  return pkgPath;
+  const packageLocation = ppath.join(storeLocation, pkgKey, `package` as Filename);
+  const dependenciesLocation = ppath.join(storeLocation, pkgKey, Filename.nodeModules);
+
+  return {packageLocation, dependenciesLocation};
 }
 
 function isPnpmVirtualCompatible(locator: Locator, {project}: {project: Project}) {
