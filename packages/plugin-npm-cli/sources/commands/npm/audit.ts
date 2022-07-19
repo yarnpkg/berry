@@ -142,9 +142,7 @@ export default class AuditCommand extends BaseCommand {
       dependencies,
     };
 
-    const registry = npmConfigUtils.getAuditRegistry(workspace.manifest, {
-      configuration,
-    });
+    const registry = npmConfigUtils.getAuditRegistry({configuration});
 
     let result!: npmAuditTypes.AuditResponse;
     const httpReport = await LightReport.start({
