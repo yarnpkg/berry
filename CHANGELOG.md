@@ -19,6 +19,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
 - Set `nmMode` to `hardlinks-local` by default.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
+- `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
 
 ### **API Changes**
 
@@ -37,6 +38,8 @@ The following changes only affect people writing Yarn plugins:
 - The `getCustomDataKey` function in `Installer` from `@yarnpkg/core` has been moved to `Linker`.
 
 - `renderForm`'s `options` argument is now required to enforce that custom streams are always specified.
+
+- `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
 
 - The `FetchOptions.skipIntegrityCheck` option has been removed. Use `FetchOptions.cacheOptions.skipIntegrityCheck` instead.
 
