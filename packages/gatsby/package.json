@@ -43,7 +43,7 @@
     "gatsby-plugin-offline": "^4.7.0",
     "gatsby-plugin-react-helmet": "^4.7.0",
     "gatsby-plugin-remove-trailing-slashes": "^3.7.0",
-    "gatsby-plugin-sharp": "^3.7.0",
+    "gatsby-plugin-sharp": "^4.18.1",
     "gatsby-plugin-yarn-introspection": "portal:./gatsby-plugin-yarn-introspection",
     "gatsby-remark-autolink-headers": "^4.4.0",
     "gatsby-remark-prismjs": "^5.4.0",
