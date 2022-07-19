@@ -38,6 +38,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `renderForm`'s `options` argument is now required to enforce that custom streams are always specified.
 
+- The `FetchOptions.skipIntegrityCheck` option has been removed. Use `FetchOptions.cacheOptions.skipIntegrityCheck` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
