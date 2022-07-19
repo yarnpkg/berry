@@ -19746,13 +19746,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse-path@npm:^4.0.0":
-  version: 4.0.1
-  resolution: "parse-path@npm:4.0.1"
+"parse-path@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "parse-path@npm:4.0.4"
   dependencies:
     is-ssh: "npm:^1.3.0"
     protocols: "npm:^1.4.0"
-  checksum: 0736b617b2b70f14e72fdae93abb4894521a19f56e7c8b9ff0a3861690373ff0d4a4bb81d57fba2a481187ad590e14c84a781be56cb9f37820df444b43c7ef9b
+    qs: "npm:^6.9.4"
+    query-string: "npm:^6.13.8"
+  checksum: b2419dfe11428f160116d5db086dd0e0756b71b1415ff1787ea96ea758a9da1dfbc3256ff298eed1782afe792b619713e476619b3fc7cde8ceaab12bf5539240
   languageName: node
   linkType: hard
 
@@ -19782,14 +19784,14 @@ __metadata:
   linkType: hard
 
 "parse-url@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "parse-url@npm:6.0.0"
+  version: 6.0.2
+  resolution: "parse-url@npm:6.0.2"
   dependencies:
     is-ssh: "npm:^1.3.0"
     normalize-url: "npm:^6.1.0"
-    parse-path: "npm:^4.0.0"
+    parse-path: "npm:^4.0.4"
     protocols: "npm:^1.4.0"
-  checksum: 07928ef515e49cdf51ac09374e1cad573251c3d079362e32dfa323f481adc2bb7009838f06789f43bcb81ccbd03a47586e0261d1a6c76ebb017e99b82276005a
+  checksum: 59b00c9de0d9366241c5da08e9370478bf60a8a59edbad09ef33418185d108b1637e63bc30f7ddb461125db8c0a75d48eaa87586787771302963beac827b078e
   languageName: node
   linkType: hard
 
@@ -21137,7 +21139,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"query-string@npm:^6.13.1":
+"query-string@npm:^6.13.1, query-string@npm:^6.13.8":
   version: 6.14.1
   resolution: "query-string@npm:6.14.1"
   dependencies:
