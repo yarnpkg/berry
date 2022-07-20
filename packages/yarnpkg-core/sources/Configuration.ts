@@ -546,11 +546,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 };
 
-/**
- * @deprecated Use miscUtils.ToMapValue
- */
-export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
-
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;
 

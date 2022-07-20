@@ -41,6 +41,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
 
+- `MapConfigurationValue` has been removed. Use `miscUtils.ToMapValue` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
