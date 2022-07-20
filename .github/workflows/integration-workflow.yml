@@ -218,12 +218,12 @@ jobs:
 
     - name: 'Run the integration tests'
       run: |
-        node ./scripts/run-yarn.js test:integration --runInBand
+        node ./scripts/run-yarn.js test:integration --maxWorkers=100%
       shell: bash
 
     - name: 'Run the unit tests'
       run: |
-        node ./scripts/run-yarn.js test:unit
+        node ./scripts/run-yarn.js test:unit --maxWorkers=100%
       shell: bash
       if: |
         success() || failure()
