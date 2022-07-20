@@ -41,6 +41,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
 
+- `Manifest.isManifestFieldCompatible` and `Manifest.prototype.isCompatibleWith{OS,CPU}` have been removed. Use `Manifest.prototype.getConditions` and `structUtils.isPackageCompatible` instead.
+
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
 ### Installs
