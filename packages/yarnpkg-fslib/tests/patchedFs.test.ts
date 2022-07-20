@@ -5,7 +5,7 @@ import {promisify}                       from 'util';
 
 import {NodeFS}                          from '../sources/NodeFS';
 import {PosixFS}                         from '../sources/PosixFS';
-import {extendFs}                        from '../sources/patchFs';
+import {extendFs}                        from '../sources/patchFs/patchFs';
 import {Filename, npath, PortablePath}   from '../sources/path';
 import {xfs}                             from '../sources/xfs';
 import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
@@ -290,6 +290,245 @@ describe(`patchedFs`, () => {
       patchedFs.closeSync(fd);
 
       expect((patchedFs.statSync(p)).mode & 0o777).toBe(0o744);
+    });
+  });
+
+  it(`should support FileHandle.stat`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const fd = await patchedFs.promises.open(__filename, `r`);
+    const fdStats = await fd.stat();
+    await fd.close();
+
+    const syncStats = patchedFs.statSync(__filename);
+
+    expect(statUtils.areStatsEqual(fdStats, syncStats)).toEqual(true);
+  });
+
+  it(`should support FileHandle.read`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+
+        const data = Buffer.allocUnsafe(3);
+        await expect(fd.read(data, 0, 3)).resolves.toMatchObject({
+          buffer: data,
+          bytesRead: 3,
+        });
+
+        await fd.close();
+      }
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+
+        // @ts-expect-error - The implementation allows no arguments
+        const {buffer, bytesRead} = await fd.read();
+        expect(bytesRead).toEqual(3);
+        expect(buffer.subarray(0, 3)).toEqual(Buffer.from(`foo`));
+
+        await fd.close();
+      }
+    });
+  });
+
+  it(`should support FileHandle.readFile`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+        await expect(fd.readFile()).resolves.toEqual(Buffer.from(`foo`));
+        await fd.close();
+      }
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+        await expect(fd.readFile({})).resolves.toEqual(Buffer.from(`foo`));
+        await fd.close();
+      }
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+        await expect(fd.readFile(`utf8`)).resolves.toEqual(`foo`);
+        await fd.close();
+      }
+
+      {
+        const fd = await patchedFs.promises.open(filepath, `r`);
+        await expect(fd.readFile({encoding: `utf8`})).resolves.toEqual(`foo`);
+        await fd.close();
+      }
+    });
+  });
+
+  it(`should support FileHandle.write`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      const fd = await patchedFs.promises.open(filepath, `w`);
+
+      await expect(fd.write(`foo`)).resolves.toMatchObject({
+        buffer: `foo`,
+        bytesWritten: 3,
+      });
+
+      const data = Buffer.from(`bar`);
+      await expect(fd.write(data)).resolves.toMatchObject({
+        buffer: data,
+        bytesWritten: 3,
+      });
+
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
+    });
+  });
+
+  it(`should support FileHandle.writev`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      const fd = await patchedFs.promises.open(filepath, `w`);
+
+      await expect(fd.writev([Buffer.from(`foo`), Buffer.from(`bar`)])).resolves.toMatchObject({
+        bytesWritten: 6,
+      });
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
+
+      await expect(fd.writev([Buffer.from(`foo`), Buffer.from(`bar`)], 1)).resolves.toMatchObject({
+        bytesWritten: 6,
+      });
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`ffoobar`);
+
+      await fd.close();
+    });
+  });
+
+  it(`should support FileHandle.writeFile`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+
+      const fd = await patchedFs.promises.open(filepath, `w`);
+      await fd.writeFile(`foo`);
+      await fd.writeFile(`bar`);
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
+    });
+  });
+
+  it(`should support FileHandle.appendFile`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+
+      // Move to the end of the file
+      await fd.readFile();
+
+      await expect(fd.appendFile(`bar`)).resolves.toBeUndefined();
+
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foobar`);
+    });
+  });
+
+  it(`should support ref counting in FileHandle`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+
+      await expect(Promise.all([
+        fd.stat(),
+        fd.close(),
+        fd.stat(),
+      ])).resolves.toBeTruthy();
+
+      expect(fd.fd).toEqual(-1);
+    });
+  });
+
+  it(`should throw when when using a closed FileHandle`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+      await fd.close();
+
+      await expect(fd.stat()).rejects.toMatchObject({
+        message: `file closed`,
+        code: `EBADF`,
+        syscall: `stat`,
+      });
+    });
+  });
+
+  it(`should support passing a FileHandle to fs.promises functions`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+
+      await expect(patchedFs.promises.readFile(fd, `utf8`)).resolves.toEqual(`foo`);
+
+      await fd.close();
+    });
+  });
+
+  it(`should support FileHandle.truncate`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+      await fd.truncate(1);
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`f`);
+    });
+  });
+
+  ifNotWin32It(`should support FileHandle.chmod`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const p = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+
+      const fd = await patchedFs.promises.open(p, `w`);
+      await fd.chmod(0o744);
+      expect((await fd.stat()).mode & 0o777).toBe(0o744);
+      await fd.close();
     });
   });
 });
