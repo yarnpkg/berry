@@ -14,7 +14,7 @@ import * as treeUtils   from './treeUtils';
 export {Cache}                                                                                            from './Cache';
 export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME, TAG_REGEXP}                                           from './Configuration';
 export {Configuration, FormatType, ProjectLookup, SettingsType}                                           from './Configuration';
-export type {PluginConfiguration, SettingsDefinition, MapConfigurationValue, PackageExtensionData}        from './Configuration';
+export type {PluginConfiguration, SettingsDefinition, PackageExtensionData}                               from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                           from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                     from './Fetcher';
 export {BuildType}                                                                                        from './Installer';
