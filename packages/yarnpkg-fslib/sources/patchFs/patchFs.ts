@@ -1,9 +1,11 @@
 import fs           from 'fs';
 import {promisify}  from 'util';
 
-import {FakeFS}     from './FakeFS';
-import {URLFS}      from './URLFS';
-import {NativePath} from './path';
+import {FakeFS}     from '../FakeFS';
+import {URLFS}      from '../URLFS';
+import {NativePath} from '../path';
+
+import {FileHandle} from './FileHandle';
 
 const SYNC_IMPLEMENTATIONS = new Set([
   `accessSync`,
@@ -72,20 +74,6 @@ const ASYNC_IMPLEMENTATIONS = new Set([
   `utimesPromise`,
   `writeFilePromise`,
   `writeSync`,
-]);
-
-const FILEHANDLE_IMPLEMENTATIONS = new Set([
-  `appendFilePromise`,
-  `chmodPromise`,
-  `chownPromise`,
-  `closePromise`,
-  `readPromise`,
-  `readFilePromise`,
-  `statPromise`,
-  `truncatePromise`,
-  `utimesPromise`,
-  `writePromise`,
-  `writeFilePromise`,
 ]);
 
 //#region readSync types
@@ -335,30 +323,19 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         if (fnName === `open`)
           continue;
 
-        setupFn(patchedFsPromises, origName, fakeImpl.bind(fakeFs));
-      }
-
-      class FileHandle {
-        constructor(public fd: number) {
-        }
-      }
-
-      for (const fnName of FILEHANDLE_IMPLEMENTATIONS) {
-        const origName = fnName.replace(/Promise$/, ``);
-
-        const fakeImpl: Function = (fakeFs as any)[fnName];
-        if (typeof fakeImpl === `undefined`)
-          continue;
-
-        setupFn(FileHandle.prototype, origName, function (this: FileHandle, ...args: Array<any>) {
-          return fakeImpl.call(fakeFs, this.fd, ...args);
+        setupFn(patchedFsPromises, origName, (pathLike: string | FileHandle<any>, ...args: Array<any>) => {
+          if (pathLike instanceof FileHandle) {
+            return ((pathLike as any)[origName] as Function).apply(pathLike, args);
+          } else {
+            return fakeImpl.call(fakeFs, pathLike, ...args);
+          }
         });
       }
 
       setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
         // @ts-expect-error
         const fd = await fakeFs.openPromise(...args);
-        return new FileHandle(fd);
+        return new FileHandle(fd, fakeFs);
       });
 
       // `fs.promises.realpath` doesn't have a `native` property

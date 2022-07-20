@@ -15,6 +15,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The patched filesystem now supports `ftruncate`.
 - The patched filesystem now supports `fchmod`.
 - The patched filesystem now supports `throwIfNoEntry`.
+- The PnP filesystem now handles most of the FileHandle methods
 - Updates the PnP compatibility layer for TypeScript 4.8 Beta
 - The `npm_package_json` environment variable is now set by Yarn.
 
