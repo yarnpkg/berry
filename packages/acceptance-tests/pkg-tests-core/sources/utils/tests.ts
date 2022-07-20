@@ -7,6 +7,7 @@ import {IncomingMessage, ServerResponse} from 'http';
 import http                              from 'http';
 import invariant                         from 'invariant';
 import {AddressInfo}                     from 'net';
+import os                                from 'os';
 import pem                               from 'pem';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
@@ -19,6 +20,11 @@ import * as fsUtils                      from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+// Testing things inside a big-endian container takes forever
+export const TEST_TIMEOUT = os.endianness() === `BE`
+  ? 150000
+  : 45000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;
@@ -636,7 +642,7 @@ export type RunFunction = (
     run: Run;
     source: Source;
   }
-) => void;
+) => Promise<void>;
 
 export const generatePkgDriver = ({
   getName,
@@ -721,12 +727,12 @@ export const generatePkgDriver = ({
         try {
           // To pass [citgm](https://github.com/nodejs/citgm), we need to suppress timeout failures
           // So add env variable TEST_IGNORE_TIMEOUT_FAILURES to turn on this suppression
+          // TODO: investigate whether this is still needed.
           if (process.env.TEST_IGNORE_TIMEOUT_FAILURES) {
             await Promise.race([
               new Promise(resolve => {
-                // Maybe we should not hard code the timeout here
-                // resolve 1s ahead the jest timeout
-                setTimeout(resolve, 30000 - 1000);
+                // Resolve 1s ahead of the jest timeout
+                setTimeout(resolve, TEST_TIMEOUT - 1000);
               }),
               fn!({path, run, source}),
             ]);
