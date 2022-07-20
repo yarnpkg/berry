@@ -7,6 +7,7 @@ import {IncomingMessage, ServerResponse} from 'http';
 import http                              from 'http';
 import invariant                         from 'invariant';
 import {AddressInfo}                     from 'net';
+import os                                from 'os';
 import pem                               from 'pem';
 import semver                            from 'semver';
 import serveStatic                       from 'serve-static';
@@ -19,6 +20,11 @@ import * as fsUtils                      from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+// Testing things inside a big-endian container takes forever
+export const TEST_TIMEOUT = os.endianness() === `BE`
+  ? 150000
+  : 45000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;
@@ -726,7 +732,7 @@ export const generatePkgDriver = ({
             await Promise.race([
               new Promise(resolve => {
                 // Resolve 1s ahead of the jest timeout
-                setTimeout(resolve, jasmine.DEFAULT_TIMEOUT_INTERVAL - 1000);
+                setTimeout(resolve, TEST_TIMEOUT - 1000);
               }),
               fn!({path, run, source}),
             ]);
