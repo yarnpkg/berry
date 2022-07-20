@@ -20,6 +20,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Set `nmMode` to `hardlinks-local` by default.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 - `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
+- The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
 
 ### **API Changes**
 
@@ -42,6 +43,12 @@ The following changes only affect people writing Yarn plugins:
 - `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
 
 - The `FetchOptions.skipIntegrityCheck` option has been removed. Use `FetchOptions.cacheOptions.skipIntegrityCheck` instead.
+
+- `MapConfigurationValue` has been removed. Use `miscUtils.ToMapValue` instead.
+
+- `Manifest.isManifestFieldCompatible` and `Manifest.prototype.isCompatibleWith{OS,CPU}` have been removed. Use `Manifest.prototype.getConditions` and `structUtils.isPackageCompatible` instead.
+
+- `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
 ### Installs
 
