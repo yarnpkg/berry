@@ -6,21 +6,6 @@ import {UsageError}                                                             
 import omit                                                                                                                                  from 'lodash/omit';
 import semver                                                                                                                                from 'semver';
 
-/**
- * @deprecated Use `gitUtils.fetchBase` instead
- */
-export const fetchBase = gitUtils.fetchBase;
-
-/**
- * @deprecated Use `gitUtils.fetchRoot` instead
- */
-export const fetchRoot = gitUtils.fetchRoot;
-
-/**
- * @deprecated Use `gitUtils.fetchChangedFiles` instead
- */
-export const fetchChangedFiles = gitUtils.fetchChangedFiles;
-
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
