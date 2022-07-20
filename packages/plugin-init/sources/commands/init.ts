@@ -56,11 +56,6 @@ export default class InitCommand extends BaseCommand {
   usev2 = Option.Boolean(`-2`, false, {hidden: true});
   yes = Option.Boolean(`-y,--yes`, {hidden: true});
 
-  // Deprecated; doesn't have any effect anymore, but we can't remove it for
-  // some time as it has some risks of breaking a few special setups.
-  // TODO: Remove it in 4.x.
-  assumeFreshProject = Option.Boolean(`--assume-fresh-project`, false, {hidden: true});
-
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
