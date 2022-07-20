@@ -223,7 +223,7 @@ jobs:
 
     - name: 'Run the unit tests'
       run: |
-        node ./scripts/run-yarn.js test:unit
+        node ./scripts/run-yarn.js test:unit --maxWorkers=100%
       shell: bash
       if: |
         success() || failure()
