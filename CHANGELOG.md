@@ -43,6 +43,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `Manifest.isManifestFieldCompatible` and `Manifest.prototype.isCompatibleWith{OS,CPU}` have been removed. Use `Manifest.prototype.getConditions` and `structUtils.isPackageCompatible` instead.
 
+- `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
