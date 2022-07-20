@@ -158,7 +158,6 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
     fetcher,
     project,
     report: throwReport,
-    skipIntegrityCheck: true,
     cacheOptions: {
       skipIntegrityCheck: true,
     },

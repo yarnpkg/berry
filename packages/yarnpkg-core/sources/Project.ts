@@ -1035,7 +1035,7 @@ export class Project {
     };
 
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions: FetchOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true, cacheOptions};
+    const fetcherOptions: FetchOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions: LinkOptions = {project: this, report};

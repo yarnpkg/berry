@@ -42,6 +42,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
 
+- The `FetchOptions.skipIntegrityCheck` option has been removed. Use `FetchOptions.cacheOptions.skipIntegrityCheck` instead.
+
 - `MapConfigurationValue` has been removed. Use `miscUtils.ToMapValue` instead.
 
 - `Manifest.isManifestFieldCompatible` and `Manifest.prototype.isCompatibleWith{OS,CPU}` have been removed. Use `Manifest.prototype.getConditions` and `structUtils.isPackageCompatible` instead.
