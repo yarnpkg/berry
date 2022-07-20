@@ -130,11 +130,6 @@ export type InstallOptions = {
    * install has completed.
    */
   persistProject?: boolean;
-
-  /**
-   * @deprecated Use `mode=skip-build`
-   */
-  skipBuild?: never;
 };
 
 const INSTALL_STATE_FIELDS = {
