@@ -41,7 +41,7 @@ The following changes only affect people writing Yarn plugins:
 
 - `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
 
-- `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been removed. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
+- `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
 ### Installs
 
