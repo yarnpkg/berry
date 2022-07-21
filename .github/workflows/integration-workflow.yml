@@ -187,19 +187,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node:
-        - 14
+        node: [14]
         platform:
         - ubuntu-latest
         - windows-latest
         - macos-latest
+        shard: ['1/2', '2/2']
         include:
           - node: 16
             platform: ubuntu-latest
+            shard: 1/2
+          - node: 16
+            platform: ubuntu-latest
+            shard: 2/2
           - node: 18
             platform: ubuntu-latest
+            shard: 1/2
+          - node: 18
+            platform: ubuntu-latest
+            shard: 2/2
 
-    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
+    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
     needs: build
 
@@ -218,12 +226,12 @@ jobs:
 
     - name: 'Run the integration tests'
       run: |
-        node ./scripts/run-yarn.js test:integration --maxWorkers=100%
+        node ./scripts/run-yarn.js test:integration --maxWorkers=100% --shard=${{matrix.shard}}
       shell: bash
 
     - name: 'Run the unit tests'
       run: |
-        node ./scripts/run-yarn.js test:unit --maxWorkers=100%
+        node ./scripts/run-yarn.js test:unit --maxWorkers=100% --shard=${{matrix.shard}}
       shell: bash
       if: |
         success() || failure()
