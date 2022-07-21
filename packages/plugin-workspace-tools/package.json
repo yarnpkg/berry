@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
   "version": "4.0.0-rc.13",
+  "stableVersion": "3.1.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -41,6 +42,5 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "3.1.1"
+  }
 }

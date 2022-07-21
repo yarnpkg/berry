@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/plugin-compat",
   "version": "4.0.0-rc.13",
+  "stableVersion": "3.1.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "peerDependencies": {
@@ -42,6 +43,5 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "3.1.2"
+  }
 }

@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/esbuild-plugin-pnp",
   "version": "3.0.0-rc.13",
+  "stableVersion": "2.0.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -32,6 +33,5 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "2.0.1"
+  }
 }
