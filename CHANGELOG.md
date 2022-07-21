@@ -54,6 +54,12 @@ The following changes only affect people writing Yarn plugins:
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 
+### Bugfixes
+
+- `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
+
+## 3.2.2
+
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.
@@ -62,10 +68,6 @@ The following changes only affect people writing Yarn plugins:
 - The PnP filesystem now handles most of the FileHandle methods
 - Updates the PnP compatibility layer for TypeScript 4.8 Beta
 - The `npm_package_json` environment variable is now set by Yarn.
-
-### Bugfixes
-
-- `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 
 ## 3.2.1
 
