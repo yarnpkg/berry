@@ -80,7 +80,7 @@ export default class RunCommand extends BaseCommand {
     // for the given name
 
     if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
-      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, env: this.context.env});
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
@@ -112,6 +112,7 @@ export default class RunCommand extends BaseCommand {
 
       return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {
         cwd: this.context.cwd,
+        env: this.context.env,
         project,
         stdin: this.context.stdin,
         stdout: this.context.stdout,
@@ -139,7 +140,7 @@ export default class RunCommand extends BaseCommand {
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr, env: this.context.env});
       }
     }
 

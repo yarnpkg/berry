@@ -36,6 +36,7 @@ export default class ExecCommand extends BaseCommand {
 
     return await scriptUtils.executePackageShellcode(locator, this.commandName, this.args, {
       cwd: this.context.cwd,
+      env: this.context.env,
       stdin: this.context.stdin,
       stdout: this.context.stdout,
       stderr: this.context.stderr,
