@@ -109,7 +109,7 @@ export default class YarnCommand extends BaseCommand {
     // These variables are used in Google Cloud Platform environment
     // in process of deploying Google Cloud Functions and
     // Google App Engine
-    const isGCP = !!process.env.FUNCTION_TARGET || !!process.env.GOOGLE_RUNTIME;
+    const isGCP = !!this.context.env.FUNCTION_TARGET || !!this.context.env.GOOGLE_RUNTIME;
 
     const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
       const deprecationReport = await StreamReport.start({

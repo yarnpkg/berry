@@ -33,6 +33,7 @@ export enum PackageManager {
 
 interface PackageManagerSelection {
   packageManager: PackageManager;
+  usesCorepack: boolean;
   reason: string;
 }
 
@@ -64,15 +65,15 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
       switch (locator.name) {
         case `yarn`: {
           const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
-          return {packageManager, reason};
+          return {packageManager, reason, usesCorepack: true};
         } break;
 
         case `npm`: {
-          return {packageManager: PackageManager.Npm, reason};
+          return {packageManager: PackageManager.Npm, reason, usesCorepack: true};
         } break;
 
         case `pnpm`: {
-          return {packageManager: PackageManager.Pnpm, reason};
+          return {packageManager: PackageManager.Pnpm, reason, usesCorepack: true};
         } break;
       }
     }
@@ -85,27 +86,28 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (yarnLock !== undefined) {
     if (yarnLock.match(/^__metadata:$/m)) {
-      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
+      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`, usesCorepack: false};
     } else {
       return {
         packageManager: PackageManager.Yarn1,
         reason: `"__metadata" key not found in yarn.lock, must be a Yarn classic lockfile`,
+        usesCorepack: false,
       };
     }
   }
 
   if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
-    return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
+    return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`, usesCorepack: false};
 
   if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
-    return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
+    return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`, usesCorepack: false};
 
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, lifecycleScript, env = process.env}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string, env?: Record<string, string | undefined>}) {
   const scriptEnv: {[key: string]: string} = {};
-  for (const [key, value] of Object.entries(process.env))
+  for (const [key, value] of Object.entries(env))
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
@@ -117,8 +119,8 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   // Otherwise we'd override the Corepack binaries, and thus break the detection
   // of the `packageManager` field when running Yarn in other directories.
-  const yarnBin = process.env.COREPACK_ROOT
-    ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
+  const yarnBin = scriptEnv.COREPACK_ROOT
+    ? npath.join(scriptEnv.COREPACK_ROOT, `dist/yarn.js`)
     : process.argv[1];
 
   // Register some binaries that must be made available in all subprocesses
@@ -242,7 +244,15 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       }
 
       await xfs.mktempPromise(async binFolder => {
-        const env = await makeScriptEnv({binFolder});
+        const env = await makeScriptEnv({
+          binFolder,
+          env: {
+            ...process.env,
+            // If the project uses Corepack we preserve it, otherwise we
+            // remove it to make sure the current version of Yarn is used
+            COREPACK_ROOT: packageManagerSelection?.usesCorepack ? process.env.COREPACK_ROOT : undefined,
+          },
+        });
 
         const workflows = new Map([
           [PackageManager.Yarn1, async () => {
@@ -250,10 +260,13 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               ? [`workspace`, workspace]
               : [];
 
-            // Makes sure that we'll be using Yarn 1.x
-            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
-            if (version.code !== 0)
-              return version.code;
+            // Makes sure that we'll be using Yarn 1.x if Corepack isn't used
+            if (!packageManagerSelection?.usesCorepack) {
+              const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+              if (version.code !== 0) {
+                return version.code;
+              }
+            }
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
             await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
@@ -430,44 +443,45 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
 
 type ExecutePackageScriptOptions = {
   cwd?: PortablePath | undefined;
+  env?: Record<string, string | undefined>;
   project: Project;
   stdin: Readable | null;
   stdout: Writable;
   stderr: Writable;
 };
 
-export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions): Promise<number> {
+export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, env}: ExecutePackageScriptOptions): Promise<number> {
   return await xfs.mktempPromise(async binFolder => {
-    const {manifest, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName});
+    const {manifest, env: scriptEnv, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName, env});
 
     const script = manifest.scripts.get(scriptName);
     if (typeof script === `undefined`)
       return 1;
 
     const realExecutor = async () => {
-      return await execute(script, args, {cwd: realCwd, env, stdin, stdout, stderr});
+      return await execute(script, args, {cwd: realCwd, env: scriptEnv, stdin, stdout, stderr});
     };
 
     const executor = await project.configuration.reduceHook(hooks => {
       return hooks.wrapScriptExecution;
     }, realExecutor, project, locator, scriptName, {
-      script, args, cwd: realCwd, env, stdin, stdout, stderr,
+      script, args, cwd: realCwd, env: scriptEnv, stdin, stdout, stderr,
     });
 
     return await executor();
   });
 }
 
-export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
+export async function executePackageShellcode(locator: Locator, command: string, args: Array<string>, {cwd, project, env, stdin, stdout, stderr}: ExecutePackageScriptOptions) {
   return await xfs.mktempPromise(async binFolder => {
-    const {env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd});
+    const {env: scriptEnv, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, env});
 
-    return await execute(command, args, {cwd: realCwd, env, stdin, stdout, stderr});
+    return await execute(command, args, {cwd: realCwd, env: scriptEnv, stdin, stdout, stderr});
   });
 }
 
-async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, cwd, lifecycleScript}: {binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
-  const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript});
+async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, cwd, lifecycleScript, env}: {binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string, env?: Record<string, string | undefined>}) {
+  const scriptEnv = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript, env});
 
   await Promise.all(
     Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
@@ -497,14 +511,14 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
   if (typeof cwd === `undefined`)
     cwd = ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json` as Filename)));
 
-  return {manifest: workspace.manifest, binFolder, env, cwd};
+  return {manifest: workspace.manifest, binFolder, env: scriptEnv, cwd};
 }
 
-async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
+async function initializePackageEnvironment(locator: Locator, {project, binFolder, cwd, lifecycleScript, env}: {project: Project, binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string, env?: Record<string, string | undefined>}) {
   // We can avoid using the linkers if the locator is a workspace
   const workspace = project.tryWorkspaceByLocator(locator);
   if (workspace !== null)
-    return initializeWorkspaceEnvironment(workspace, {binFolder, cwd, lifecycleScript});
+    return initializeWorkspaceEnvironment(workspace, {binFolder, cwd, lifecycleScript, env});
 
   const pkg = project.storedPackages.get(locator.locatorHash);
   if (!pkg)
@@ -520,7 +534,7 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     if (!linker)
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
-    const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript});
+    const scriptEnv = await makeScriptEnv({project, locator, binFolder, lifecycleScript, env});
 
     await Promise.all(
       Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
@@ -535,7 +549,7 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
     if (typeof cwd === `undefined`)
       cwd = packageLocation;
 
-    return {manifest, binFolder, env, cwd};
+    return {manifest, binFolder, env: scriptEnv, cwd};
   }, {
     libzip: await getLibzipPromise(),
   });
@@ -543,13 +557,14 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
 
 type ExecuteWorkspaceScriptOptions = {
   cwd?: PortablePath | undefined;
+  env?: Record<string, string | undefined>;
   stdin: Readable | null;
   stdout: Writable;
   stderr: Writable;
 };
 
-export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
-  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr});
+export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr, env}: ExecuteWorkspaceScriptOptions) {
+  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr, env});
 }
 
 export function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
@@ -558,10 +573,11 @@ export function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
 
 type ExecuteWorkspaceLifecycleScriptOptions = {
   cwd?: PortablePath | undefined;
+  env?: Record<string, string | undefined>;
   report: Report;
 };
 
-export async function executeWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, {cwd, report}: ExecuteWorkspaceLifecycleScriptOptions) {
+export async function executeWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, {cwd, report, env}: ExecuteWorkspaceLifecycleScriptOptions) {
   const {configuration} = workspace.project;
   const stdin = null;
 
@@ -578,7 +594,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
 
     report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "${lifecycleScriptName}" lifecycle script`);
 
-    const exitCode = await executeWorkspaceScript(workspace, lifecycleScriptName, [], {cwd, stdin, stdout, stderr});
+    const exitCode = await executeWorkspaceScript(workspace, lifecycleScriptName, [], {cwd, stdin, stdout, stderr, env});
 
     stdout.end();
     stderr.end();
@@ -694,6 +710,7 @@ type ExecutePackageAccessibleBinaryOptions = {
   stdin: Readable | null;
   stdout: Writable;
   stderr: Writable;
+  env?: Record<string, string | undefined>;
   /** @internal */
   packageAccessibleBinaries?: PackageAccessibleBinaries;
 };
@@ -710,7 +727,7 @@ type ExecutePackageAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = [], packageAccessibleBinaries}: ExecutePackageAccessibleBinaryOptions) {
+export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = [], packageAccessibleBinaries, env}: ExecutePackageAccessibleBinaryOptions) {
   packageAccessibleBinaries ??= await getPackageAccessibleBinaries(locator, {project});
 
   const binary = packageAccessibleBinaries.get(binaryName);
@@ -719,19 +736,19 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
   return await xfs.mktempPromise(async binFolder => {
     const [, binaryPath] = binary;
-    const env = await makeScriptEnv({project, locator, binFolder});
+    const scriptEnv = await makeScriptEnv({project, locator, binFolder, env});
 
     await Promise.all(
       Array.from(packageAccessibleBinaries!, ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]),
+        makePathWrapper(scriptEnv.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]),
       ),
     );
 
     let result;
     try {
-      result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
+      result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env: scriptEnv, stdin, stdout, stderr});
     } finally {
-      await xfs.removePromise(env.BERRY_BIN_FOLDER as PortablePath);
+      await xfs.removePromise(scriptEnv.BERRY_BIN_FOLDER as PortablePath);
     }
 
     return result.code;
@@ -743,6 +760,7 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
   stdin: Readable | null;
   stdout: Writable;
   stderr: Writable;
+  env?: Record<string, string | undefined>;
   /** @internal */
   packageAccessibleBinaries?: PackageAccessibleBinaries;
 };
@@ -755,6 +773,6 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  * @param args The arguments to pass to the file
  */
 
-export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr, packageAccessibleBinaries}: ExecuteWorkspaceAccessibleBinaryOptions) {
-  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr, packageAccessibleBinaries});
+export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr, packageAccessibleBinaries, env}: ExecuteWorkspaceAccessibleBinaryOptions) {
+  return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr, packageAccessibleBinaries, env});
 }

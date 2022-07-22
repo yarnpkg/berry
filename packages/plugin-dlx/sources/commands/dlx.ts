@@ -129,12 +129,24 @@ export default class DlxCommand extends BaseCommand {
       if (binaries.has(command) === false && binaries.size === 1 && typeof this.packages === `undefined`)
         command = Array.from(binaries)[0][0];
 
+      let shouldUseCorepack = false;
+      if (projectCwd) {
+        const manifest = await xfs.readJsonPromise(ppath.join(projectCwd, Filename.manifest));
+        shouldUseCorepack = `packageManager` in manifest;
+      }
+
       return await scriptUtils.executeWorkspaceAccessibleBinary(workspace, command, this.args, {
         packageAccessibleBinaries: binaries,
         cwd: this.context.cwd,
         stdin: this.context.stdin,
         stdout: this.context.stdout,
         stderr: this.context.stderr,
+        env: {
+          ...this.context.env,
+          // If the project uses Corepack we preserve it, otherwise we
+          // remove it to make sure the current version of Yarn is used
+          COREPACK_ROOT: shouldUseCorepack ? this.context.env.COREPACK_ROOT : undefined,
+        },
       });
     });
   }

@@ -90,7 +90,7 @@ export default class NpmPublishCommand extends BaseCommand {
         }
       }
 
-      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
+      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report, env: this.context.env});
 
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);

@@ -101,7 +101,7 @@ export default class InitCommand extends BaseCommand {
         stdin: this.context.stdin,
         stdout: this.context.stdout,
         stderr: this.context.stderr,
-        env: await scriptUtils.makeScriptEnv({binFolder}),
+        env: await scriptUtils.makeScriptEnv({binFolder, env: this.context.env}),
       });
 
       return code;
