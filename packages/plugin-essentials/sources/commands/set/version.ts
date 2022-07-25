@@ -3,6 +3,7 @@ import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, 
 import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                                        from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs, npath}                                                        from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                               from 'clipanion';
+import {EOL, homedir}                                                                                     from 'os';
 import semver                                                                                             from 'semver';
 
 export type Tags = {
@@ -78,9 +79,20 @@ export default class SetVersionCommand extends BaseCommand {
     description: `Only lock the Yarn version if it isn't already locked`,
   });
 
+  skipHomeCheck = Option.Boolean(`--skip-home-check`, false, {
+    description: `Allow being run inside the home directory`,
+  });
+
   version = Option.String();
 
   async execute() {
+    if (!this.skipHomeCheck && this.context.cwd === homedir()) {
+      throw new UsageError([
+        `It seems you are trying to set version from the home directory. You probably meant to run this from within a project directory.`,
+        `Use --skip-home-check if you are sure you want to do this.`,
+      ].join(`${EOL}${EOL}`));
+    }
+
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
       return 0;
