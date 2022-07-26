@@ -918,4 +918,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       '@babel/types': `^7.15.4`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`gatsby-plugin-page-creator@<=4.20.0-next.1`, {
+    dependencies: {
+      'fs-extra': `^10.1.0`,
+    },
+  }],
 ];
