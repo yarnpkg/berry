@@ -5685,6 +5685,7 @@ __metadata:
     monaco-editor: "npm:^0.24.0"
     monaco-editor-webpack-plugin: "npm:^3.1.0"
     pify: "npm:^4.0.1"
+    prism-react-renderer: "npm:^1.3.5"
     prismjs: "npm:^1.23.0"
     prop-types: "npm:^15.7.2"
     qs: "npm:^6.7.0"
@@ -5695,6 +5696,7 @@ __metadata:
     react-helmet: "npm:^6.1.0"
     react-icons: "npm:^3.10.0"
     react-instantsearch-dom: "npm:^6.6.0"
+    react-json-doc: "npm:^2.1.0"
     react-monaco-editor: "npm:^0.36.0"
     react-responsive-carousel: "npm:^3.2.22"
     react-scroll-into-view-if-needed: "npm:^2.1.7"
@@ -21010,6 +21012,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prism-react-renderer@npm:^1.3.5":
+  version: 1.3.5
+  resolution: "prism-react-renderer@npm:1.3.5"
+  peerDependencies:
+    react: ">=0.14.9"
+  checksum: aa58d9c8711961b9a9684e2d6bba18e79a8e6e46901de9304209e73f671dc6953e7f4383248d2ba82cf8003d1f6ad0f79e23b94efe11b813504b51d3e45626e3
+  languageName: node
+  linkType: hard
+
 "prismjs@npm:^1.23.0":
   version: 1.23.0
   resolution: "prismjs@npm:1.23.0"
@@ -21704,6 +21715,15 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 24af7af3abd0bf94d4eb018a70db25fd4e23648eec7bb8b203bf59e24a715ac4eec8279939e15a4d90cbad19ed6be243a0f2c9aa0b1faec0a1c102d9c89ca3f9
+  languageName: node
+  linkType: hard
+
+"react-json-doc@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "react-json-doc@npm:2.1.0"
+  peerDependencies:
+    react: "*"
+  checksum: 03ee329d39ee71fb4803ca14b2def82b9c082fce2461b5062f41ad2e07a13cb7401fb0ebe3dedfb95ca55d335319acc309f0debb5f5c1db525625c6d8f919d1e
   languageName: node
   linkType: hard
 

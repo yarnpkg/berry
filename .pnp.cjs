@@ -10889,6 +10889,7 @@ const RAW_RUNTIME_STATE =
           ["monaco-editor", "npm:0.24.0"],\
           ["monaco-editor-webpack-plugin", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.0"],\
           ["pify", "npm:4.0.1"],\
+          ["prism-react-renderer", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.3.5"],\
           ["prismjs", "npm:1.23.0"],\
           ["prop-types", "npm:15.7.2"],\
           ["qs", "npm:6.11.0"],\
@@ -10899,6 +10900,7 @@ const RAW_RUNTIME_STATE =
           ["react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.1.0"],\
           ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],\
           ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.6.0"],\
+          ["react-json-doc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.0"],\
           ["react-monaco-editor", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.36.0"],\
           ["react-responsive-carousel", "npm:3.2.22"],\
           ["react-scroll-into-view-if-needed", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.7"],\
@@ -37987,6 +37989,28 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["prism-react-renderer", [\
+      ["npm:1.3.5", {\
+        "packageLocation": "./.yarn/cache/prism-react-renderer-npm-1.3.5-5891d32b72-aa58d9c871.zip/node_modules/prism-react-renderer/",\
+        "packageDependencies": [\
+          ["prism-react-renderer", "npm:1.3.5"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.3.5", {\
+        "packageLocation": "./.yarn/__virtual__/prism-react-renderer-virtual-ccb828411b/0/cache/prism-react-renderer-npm-1.3.5-5891d32b72-aa58d9c871.zip/node_modules/prism-react-renderer/",\
+        "packageDependencies": [\
+          ["prism-react-renderer", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:1.3.5"],\
+          ["@types/react", "npm:16.9.2"],\
+          ["react", "npm:16.13.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["prismjs", [\
       ["npm:1.23.0", {\
         "packageLocation": "./.yarn/cache/prismjs-npm-1.23.0-3781560845-a6d7c39367.zip/node_modules/prismjs/",\
@@ -38972,6 +38996,28 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/react-is-npm-17.0.2-091bbb8db6-24af7af3ab.zip/node_modules/react-is/",\
         "packageDependencies": [\
           ["react-is", "npm:17.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-json-doc", [\
+      ["npm:2.1.0", {\
+        "packageLocation": "./.yarn/cache/react-json-doc-npm-2.1.0-b819def1a3-03ee329d39.zip/node_modules/react-json-doc/",\
+        "packageDependencies": [\
+          ["react-json-doc", "npm:2.1.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-json-doc-virtual-a616080193/0/cache/react-json-doc-npm-2.1.0-b819def1a3-03ee329d39.zip/node_modules/react-json-doc/",\
+        "packageDependencies": [\
+          ["react-json-doc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.0"],\
+          ["@types/react", "npm:16.9.2"],\
+          ["react", "npm:16.13.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
         ],\
         "linkType": "HARD"\
       }]\

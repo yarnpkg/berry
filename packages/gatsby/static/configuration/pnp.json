@@ -1,0 +1,158 @@
+{
+  "title": "JSON Schema for Node.js Plug'n'Play data files",
+  "$schema": "https://json-schema.org/draft/2019-09/schema#",
+  "description": "The Plug'n'Play data files contains the set of packages used within a project, and their dependencies.",
+  "__info": [
+    "The following document describes the content of the .pnp.data.json files Yarn generates",
+    "when the `pnpEnableInlining` setting is set to `false`."
+  ],
+  "type": "object",
+  "properties": {
+    "__info": {
+      "description": "An array of arbitrary strings; only used as a header field to give some context to Yarn users.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "exampleItems": [
+        "Lorem ipsum",
+        "Dolor sit",
+        "Hello world"
+      ]
+    },
+    "dependencyTreeRoots": {
+      "description": "A list of package locators that are roots of the dependency tree. There will typically be one entry for each workspace in the project.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
+            "examples": ["@app/name"]
+          },
+          "reference": {
+            "type": "string",
+            "examples": ["workspace:."]
+          }
+        }
+      },
+      "exampleItems": [
+        {"name": "@app/monorepo", "reference": "workspace:."},
+        {"name": "@app/website", "reference": "workspace:website"}
+      ]
+    },
+    "ignorePatternData": {
+      "description": "A regexp against which should be matched all project-relative importer paths. If the regexp matches, the resolution should follow the classic Node resolution algorithm rather than the Plug'n'Play one.",
+      "type": "string",
+      "examples": ["^examples/"]
+    },
+    "enableTopLevelFallback": {
+      "description": "If true, should a dependency resolution fail for an importer that isn't explicitly listed in `fallbackExclusionList`, the runtime must first check whether the resolution would succeed for any of the packages in `fallbackPool`; if it would, transparently return this resolution.",
+      "type": "boolean",
+      "examples": [true]
+    },
+    "fallbackPool": {
+      "description": "A list of locators to consider when performing the fallback resolution, in priority order.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
+            "examples": ["@app/name"]
+          },
+          "reference": {
+            "type": "string",
+            "examples": ["workspace:."]
+          }
+        }
+      },
+      "exampleItems": [
+        {"name": "@app/monorepo", "reference": "workspace:."}
+      ]
+    },
+    "fallbackExclusionList": {
+      "description": "A list of locators that must never use the fallback logic.",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [{
+          "type": "string"
+        }, {
+          "type": "array",
+          "foldStyle": false,
+          "items": {
+            "type": "string"
+          }
+        }]
+      },
+      "exampleItems": [
+        ["@app/server", ["workspace:sources/server"]]
+      ]
+    },
+    "packageRegistryData": {
+      "description": "This is the main part of the PnP data file. This table contains the list of all packages, first keyed by package name then by package reference.",
+      "type": "array",
+      "foldStyle": true,
+      "items": {
+        "type": "array",
+        "foldStyle": false,
+        "prefixItems": [{
+          "type": "string"
+        }, {
+          "type": "array",
+          "foldStyle": true,
+          "items": {
+            "type": "array",
+            "foldStyle": false,
+            "prefixItems": [{
+              "type": "string"
+            }, {
+              "type": "object",
+              "properties": {
+                "packageLocation": {
+                  "description": "The location of the package on disk, relative to the Plug'n'Play manifest.",
+                  "type": "string"
+                },
+                "packageDependencies": {
+                  "description": "The set of dependencies that the package is allowed to access. Each entry is a tuple where the first key is a package name, and the value a package reference. Note that this reference may be null! This only happens when a peer dependency is missing.",
+                  "type": "array",
+                  "foldStyle": true,
+                  "items": {
+                    "type": "array",
+                    "foldStyle": false,
+                    "prefixItems": [{
+                      "type": "string"
+                    }, {
+                      "type": "string"
+                    }]
+                  }
+                },
+                "linkType": {
+                  "description": "Can be either SOFT, or HARD. Hard package links are the most common, and mean that the target location is fully owned by the package manager. Soft links, on the other hand, typically point to arbitrary user-defined locations on disk.\nThe link type shouldn't matter much for most implementors - it's only needed because of some subtleties involved in turning a Plug'n'Play tree into a node_modules one.",
+                  "type": "string",
+                  "enum": ["SOFT", "HARD"],
+                  "examples": ["public"]
+                }
+              }
+            }]
+          }
+        }]
+      },
+      "exampleItems": [
+        [null, [
+          [null, {
+            "packageLocation": "./",
+            "packageDependencies": [
+              ["react", "npm:18.0.0"],
+              ["react-dom", "npm:18.0.0"]
+            ],
+            "linkType": "HARD"
+          }]
+        ]]
+      ]
+    }
+  }
+}
