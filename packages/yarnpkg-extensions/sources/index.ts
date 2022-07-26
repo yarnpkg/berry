@@ -924,4 +924,13 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'fs-extra': `^10.1.0`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`gatsby-plugin-utils@<=3.14.0-next.1`, {
+    dependencies: {
+      fastq: `^1.13.0`,
+    },
+    peerDependencies: {
+      graphql: `^15.0.0`,
+    },
+  }],
 ];
