@@ -912,4 +912,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       webpack: optionalPeerDep,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`babel-plugin-remove-graphql-queries@<=4.20.0-next.0`, {
+    dependencies: {
+      '@babel/types': `^7.15.4`,
+    },
+  }],
 ];
