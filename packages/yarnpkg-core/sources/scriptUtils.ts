@@ -251,7 +251,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               : [];
 
             // Makes sure that we'll be using Yarn 1.x
-            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const version = await execUtils.pipevp(process.execPath, [process.argv[1], `set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (version.code !== 0)
               return version.code;
 
