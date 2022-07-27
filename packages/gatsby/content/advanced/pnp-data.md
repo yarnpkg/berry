@@ -60,3 +60,143 @@ import {JsonDoc} from 'react-json-doc';
   anchor: {scrollMarginTop: 60},
   section: {fontFamily: `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`},
 }} data={pnpSchema}/>
+
+## Resolution algorithm
+
+Note: for simplicity, this algorithm doesn't mention all the Node.js features that allow mapping a module to another, such as [`imports`](https://nodejs.org/api/packages.html#imports), [`exports`](https://nodejs.org/api/packages.html#exports), or other vendor-specific features.
+
+### NM_RESOLVE(*specifier*, *parentURL*)
+
+1. This function is specified in the [Node.js documentation](https://nodejs.org/api/esm.html#resolver-algorithm-specification)
+
+### PNP_RESOLVE(*specifier*, *parentURL*)
+
+1. Let *resolved* be **undefined**
+
+2. If *specifier* is a Node.js builtin, then
+
+    1. Set *resolved* to *specifier* itself and return it
+  
+3. Otherwise, if *specifier* starts with "/", "./", or "../", then
+
+    1. Set *resolved* to **NM_RESOLVE**(*specifier*, *parentURL*) and return it
+
+4. Otherwise,
+
+    1. Note: *specifier* is now a bare identifier
+
+    2. Let *unqualified* be **RESOLVE_TO_UNQUALIFIED**(*specifier*, *parentURL*)
+
+    3. Set *resolved* to **NM_RESOLVE**(*unqualified*, *parentURL*)
+
+### RESOLVE_TO_UNQUALIFIED(*specifier*, *parentURL*)
+
+1. Let *resolved* be **undefined**
+
+2. Let *ident* be the package scope and name from *specifier*
+
+3. Let *manifest* be **FIND_PNP_MANIFEST**(*parentURL*)
+
+4. If *manifest* is null, then
+
+    1. Set *resolved* to **NM_RESOLVE**(*specifier*, *parentURL*) and return it
+
+5. Let *parentLocator* be **FIND_LOCATOR**(*manifest*, *parentURL*)
+
+6. If *parentLocator* is null, then
+
+    1. Set *resolved* to **NM_RESOLVE**(*specifier*, *parentURL*) and return it
+
+7. Let *parentPkg* be **GET_PACKAGE**(*manifest*, *parentLocator*)
+
+8. Let *reference* be the entry from *parentPkg.packageDependencies* referenced by *ident*
+
+9. If *dependency* is null, then
+
+    1. If *manifest.enableTopLevelFallback* is **true**, then
+
+        1. If *parentLocator* **isn't** in *manifest.fallbackExclusionList*, then
+
+            1. Set *resolved* to **RESOLVE_VIA_FALLBACK**(*manifest*, *specifier*) and return it
+
+    2. Throw a resolution error
+
+10. Otherwise,
+
+    1. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, {*ident*, *reference*})
+
+    2. Let *modulePath* be everything that follows *ident* in *specifier* 
+
+    2. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
+
+### FIND_LOCATOR(*manifest*, *url*)
+
+Note: The algorithm described here is quite inefficient. You should make sure to prepare data structure more suited for this task when you read the manifest.
+
+1. Let *bestLength* be 0
+
+2. Let *bestLocator* be **null**
+
+3. Let *relativeUrl* be the relative path between *manifest* and *url*
+
+    1. Note: Make sure it always starts with a `./` or `../`
+
+4. If *relativeUrl* matches *manifest.ignorePatternData*, then
+
+    1. Return **null**
+
+5. For each *registryPkg* entry in *manifest.packageRegistryData*
+
+    1. If *registryPkg.discardFromLookup* **isn't true**, then
+
+        1. If *registryPkg.packageLocation.length* is greater than *bestLength*, then
+
+            1. If *url* starts with *registryPkg*, then
+
+                1. Set *bestLength* to *registryPkg.packageLocation.length*
+
+                2. Set *bestLocator* to the current *registryPkg* locator
+
+6. Return *bestLocator*
+
+### RESOLVE_VIA_FALLBACK(*manifest*, *specifier*)
+
+1. For each *fallbackLocator* in *manifest.packageRegistryData*
+
+    1. Let *fallbackPkg* be **GET_PACKAGE**(*manifest*, *fallbackLocator*)
+
+    2. Let *fallbackPath* be *fallbackPkg.packageLocation* turned absolute
+
+    3. Let *resolved* be **PNP_RESOLVE**(*specifier*, *fallbackPath*)
+
+    4. If the previous step threw an error, ignore it
+
+    5. Otherwise,
+
+        1. Return *resolved*
+
+2. Otherwise,
+
+    1. Return **null**
+
+### FIND_PNP_MANIFEST(*url*)
+
+1. Let *manifest* be **null**
+
+2. Let *directoryPath* be the directory for *url*
+
+3. Let *pnpPath* be *directoryPath* concatenated with */.pnp.cjs*
+
+4. If *pnpPath* exists on the filesystem, then
+
+    1. Let *pnpDataPath* be *directoryPath* concatenated with */.pnp.data.json*
+
+    2. Set *manifest* to *JSON.parse(readFile(pnpDataPath))* and return it
+
+5. Otherwise, if *directoryPath* is */*, then
+
+    1. Return **null**
+
+6. Otherwise,
+
+    1. Return **FIND_PNP_MANIFEST**(*directoryPath*)
