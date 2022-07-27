@@ -246,5 +246,21 @@ describe(`Protocols`, () => {
         },
       ),
     );
+
+    test(
+      `it should not add a 'packageManager' field to a Yarn classic project`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toBeTruthy();
+
+          await expect(source(`require('yarn-1-project/package.json').packageManager`)).resolves.toBeUndefined();
+        },
+      ),
+    );
   });
 });
