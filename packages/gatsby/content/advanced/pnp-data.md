@@ -105,194 +105,194 @@ import {JsonDoc} from 'react-json-doc';
 
 > **Note:** for simplicity, this algorithm doesn't mention all the Node.js features that allow mapping a module to another, such as [`imports`](https://nodejs.org/api/packages.html#imports), [`exports`](https://nodejs.org/api/packages.html#exports), or other vendor-specific features.
 
-### NM_RESOLVE(*specifier*, *parentURL*)
+### NM_RESOLVE(`specifier`, `parentURL`)
 
 1. This function is specified in the [Node.js documentation](https://nodejs.org/api/esm.html#resolver-algorithm-specification)
 
-### PNP_RESOLVE(*specifier*, *parentURL*)
+### PNP_RESOLVE(`specifier`, `parentURL`)
 
-1. Let *resolved* be **undefined**
+1. Let `resolved` be **undefined**
 
-2. If *specifier* is a Node.js builtin, then
+2. If `specifier` is a Node.js builtin, then
 
-    1. Set *resolved* to *specifier* itself and return it
+    1. Set `resolved` to `specifier` itself and return it
   
-3. Otherwise, if *specifier* starts with "/", "./", or "../", then
+3. Otherwise, if `specifier` starts with "/", "./", or "../", then
 
-    1. Set *resolved* to **NM_RESOLVE**(*specifier*, *parentURL*) and return it
+    1. Set `resolved` to **NM_RESOLVE**(`specifier`, `parentURL`) and return it
 
 4. Otherwise,
 
-    1. Note: *specifier* is now a bare identifier
+    1. Note: `specifier` is now a bare identifier
 
-    2. Let *unqualified* be **RESOLVE_TO_UNQUALIFIED**(*specifier*, *parentURL*)
+    2. Let `unqualified` be **RESOLVE_TO_UNQUALIFIED**(`specifier`, `parentURL`)
 
-    3. Set *resolved* to **NM_RESOLVE**(*unqualified*, *parentURL*)
+    3. Set `resolved` to **NM_RESOLVE**(`unqualified`, `parentURL`)
 
-### RESOLVE_TO_UNQUALIFIED(*specifier*, *parentURL*)
+### RESOLVE_TO_UNQUALIFIED(`specifier`, `parentURL`)
 
-1. Let *resolved* be **undefined**
+1. Let `resolved` be **undefined**
 
-2. Let *ident* and *modulePath* be the result of **PARSE_BARE_IDENTIFIER**(*specifier*)
+2. Let `ident` and `modulePath` be the result of **PARSE_BARE_IDENTIFIER**(`specifier`)
 
-3. Let *manifest* be **FIND_PNP_MANIFEST**(*parentURL*)
+3. Let `manifest` be **FIND_PNP_MANIFEST**(`parentURL`)
 
-4. If *manifest* is null, then
+4. If `manifest` is null, then
 
-    1. Set *resolved* to **NM_RESOLVE**(*specifier*, *parentURL*) and return it
+    1. Set `resolved` to **NM_RESOLVE**(`specifier`, `parentURL`) and return it
 
-5. Let *parentLocator* be **FIND_LOCATOR**(*manifest*, *parentURL*)
+5. Let `parentLocator` be **FIND_LOCATOR**(`manifest`, `parentURL`)
 
-6. If *parentLocator* is null, then
+6. If `parentLocator` is null, then
 
-    1. Set *resolved* to **NM_RESOLVE**(*specifier*, *parentURL*) and return it
+    1. Set `resolved` to **NM_RESOLVE**(`specifier`, `parentURL`) and return it
 
-7. Let *parentPkg* be **GET_PACKAGE**(*manifest*, *parentLocator*)
+7. Let `parentPkg` be **GET_PACKAGE**(`manifest`, `parentLocator`)
 
-8. Let *referenceOrAlias* be the entry from *parentPkg.packageDependencies* referenced by *ident*
+8. Let `referenceOrAlias` be the entry from `parentPkg.packageDependencies` referenced by `ident`
 
-9. If *referenceOrAlias* is **undefined**, then
+9. If `referenceOrAlias` is **undefined**, then
 
-    1. If *manifest.enableTopLevelFallback* is **true**, then
+    1. If `manifest.enableTopLevelFallback` is **true**, then
 
-        1. If *parentLocator* **isn't** in *manifest.fallbackExclusionList*, then
+        1. If `parentLocator` **isn't** in `manifest.fallbackExclusionList`, then
 
-            1. Set *referenceOrAlias* to **RESOLVE_VIA_FALLBACK**(*manifest*, *ident*)
+            1. Set `referenceOrAlias` to **RESOLVE_VIA_FALLBACK**(`manifest`, `ident`)
 
-10. If *referenceOrAlias* is still **undefined**, then
+10. If `referenceOrAlias` is still **undefined**, then
 
     1. Throw a resolution error
 
-11. If *referenceOrAlias* is **null**, then
+11. If `referenceOrAlias` is **null**, then
 
-    1. Note: It means that *parentPkg* has an unfulfilled peer dependency on *ident*
+    1. Note: It means that `parentPkg` has an unfulfilled peer dependency on `ident`
 
     2. Throw a resolution error
 
-12. Otherwise, if *referenceOrAlias* is an array, then
+12. Otherwise, if `referenceOrAlias` is an array, then
 
-    1. Let *alias* be *referenceOrAlias*
+    1. Let `alias` be `referenceOrAlias`
 
-    2. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, *alias*)
+    2. Let `dependencyPkg` be **GET_PACKAGE**(`manifest`, `alias`)
 
-    3. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
+    3. Return `dependencyPkg.packageLocation` concatenated with `modulePath`
 
 13. Otherwise,
 
-    1. Let *reference* be *referenceOrAlias*
+    1. Let `reference` be `referenceOrAlias`
 
-    2. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, {*ident*, *reference*})
+    2. Let `dependencyPkg` be **GET_PACKAGE**(`manifest`, {`ident`, `reference`})
 
-    3. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
+    3. Return `dependencyPkg.packageLocation` concatenated with `modulePath`
 
-### GET_PACKAGE(*manifest*, *locator*)
+### GET_PACKAGE(`manifest`, `locator`)
 
-1. Let *referenceMap* be the entry from *parentPkg.packageRegistryData* referenced by *locator.ident*
+1. Let `referenceMap` be the entry from `parentPkg.packageRegistryData` referenced by `locator.ident`
 
-2. Let *pkg* be the entry from *referenceMap* referenced by *locator.reference*
+2. Let `pkg` be the entry from `referenceMap` referenced by `locator.reference`
 
-3. Return *pkg*
+3. Return `pkg`
 
-    1. Note: *pkg* cannot be **undefined** here; all packages referenced in any of the Plug'n'Play data tables **MUST** have a corresponding entry inside *packageRegistryData*.
+    1. Note: `pkg` cannot be **undefined** here; all packages referenced in any of the Plug'n'Play data tables **MUST** have a corresponding entry inside `packageRegistryData`.
 
-### FIND_LOCATOR(*manifest*, *moduleUrl*)
+### FIND_LOCATOR(`manifest`, `moduleUrl`)
 
 Note: The algorithm described here is quite inefficient. You should make sure to prepare data structure more suited for this task when you read the manifest.
 
-1. Let *bestLength* be **0**
+1. Let `bestLength` be **0**
 
-2. Let *bestLocator* be **null**
+2. Let `bestLocator` be **null**
 
-3. Let *relativeUrl* be the relative path between *manifest* and *moduleUrl*
+3. Let `relativeUrl` be the relative path between `manifest` and `moduleUrl`
 
     1. Note: Make sure it always starts with a `./` or `../`
 
-4. If *relativeUrl* matches *manifest.ignorePatternData*, then
+4. If `relativeUrl` matches `manifest.ignorePatternData`, then
 
     1. Return **null**
 
-5. For each *referenceMap* value in *manifest.packageRegistryData*
+5. For each `referenceMap` value in `manifest.packageRegistryData`
 
-    1. For each *registryPkg* value in *referenceMap*
+    1. For each `registryPkg` value in `referenceMap`
 
-        1. If *registryPkg.discardFromLookup* **isn't true**, then
+        1. If `registryPkg.discardFromLookup` **isn't true**, then
 
-            1. If *registryPkg.packageLocation.length* is greater than *bestLength*, then
+            1. If `registryPkg.packageLocation.length` is greater than `bestLength`, then
 
-                1. If *relativeUrl* starts with *registryPkg.packageLocation*, then
+                1. If `relativeUrl` starts with `registryPkg.packageLocation`, then
 
-                    1. Set *bestLength* to *registryPkg.packageLocation.length*
+                    1. Set `bestLength` to `registryPkg.packageLocation.length`
 
-                    2. Set *bestLocator* to the current *registryPkg* locator
+                    2. Set `bestLocator` to the current `registryPkg` locator
 
-6. Return *bestLocator*
+6. Return `bestLocator`
 
-### RESOLVE_VIA_FALLBACK(*manifest*, *specifier*)
+### RESOLVE_VIA_FALLBACK(`manifest`, `specifier`)
 
-1. Let *topLevelPkg* be **GET_PACKAGE**(*manifest*, {**null**, **null**})
+1. Let `topLevelPkg` be **GET_PACKAGE**(`manifest`, {**null**, **null**})
 
-2. Let *referenceOrAlias* be the entry from *topLevelPkg.packageDependencies* referenced by *ident*
+2. Let `referenceOrAlias` be the entry from `topLevelPkg.packageDependencies` referenced by `ident`
 
-3. If *referenceOrAlias* is defined, then
+3. If `referenceOrAlias` is defined, then
 
     1. Return it immediately
 
 4. Otherwise,
 
-    1. Let *referenceOrAlias* be the entry from *manifest.fallbackPool* referenced by *ident*
+    1. Let `referenceOrAlias` be the entry from `manifest.fallbackPool` referenced by `ident`
 
     2. Return it immediatly, whether it's defined or not
 
-### FIND_PNP_MANIFEST(*url*)
+### FIND_PNP_MANIFEST(`url`)
 
 Finding the right PnP manifest to use for a resolution isn't always trivial. There are two main options:
 
 - Assume that there is a single PnP manifest covering the whole project. This is the most common case, as even when referencing third-party projects (for example via the [`portal:` protocol](/features/protocols#whats-the-difference-between-link-and-portal)) their dependency trees are stored in the same manifest as the main project.
 
-  To do that, call **FIND_CLOSEST_PNP_MANIFEST**(*require.main.filename*) once at the start of the process, cache its result, and return it for each call to **FIND_PNP_MANIFEST** (if you're running in Node.js, you can even use *require.resolve('pnpapi')* which will do this work for you).
+  To do that, call **FIND_CLOSEST_PNP_MANIFEST**(`require.main.filename`) once at the start of the process, cache its result, and return it for each call to **FIND_PNP_MANIFEST** (if you're running in Node.js, you can even use `require.resolve('pnpapi')` which will do this work for you).
 
-- Try to operate within a multi-project world. **This is rarely required**. We support it inside the Node.js PnP loader, but only because of "project generator" tools like `create-react-app` which are run via `yarn create react-app` and require two different projects (the generator one *and* the generated one) to cooperate within the same Node.js process.
+- Try to operate within a multi-project world. **This is rarely required**. We support it inside the Node.js PnP loader, but only because of "project generator" tools like `create-react-app` which are run via `yarn create react-app` and require two different projects (the generator one `and` the generated one) to cooperate within the same Node.js process.
 
   Supporting this use case is difficult, as it requires a bookkeeping mechanism to track the manifests used to access modules, reusing them as much as possible and only looking for a new one when the chain breaks.
 
-### FIND_CLOSEST_PNP_MANIFEST(*url*)
+### FIND_CLOSEST_PNP_MANIFEST(`url`)
 
-1. Let *manifest* be **null**
+1. Let `manifest` be **null**
 
-2. Let *directoryPath* be the directory for *url*
+2. Let `directoryPath` be the directory for `url`
 
-3. Let *pnpPath* be *directoryPath* concatenated with */.pnp.cjs*
+3. Let `pnpPath` be `directoryPath` concatenated with `/.pnp.cjs`
 
-4. If *pnpPath* exists on the filesystem, then
+4. If `pnpPath` exists on the filesystem, then
 
-    1. Let *pnpDataPath* be *directoryPath* concatenated with */.pnp.data.json*
+    1. Let `pnpDataPath` be `directoryPath` concatenated with `/.pnp.data.json`
 
-    2. Set *manifest* to *JSON.parse(readFile(pnpDataPath))* and return it
+    2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))` and return it
 
-5. Otherwise, if *directoryPath* is */*, then
+5. Otherwise, if `directoryPath` is `/`, then
 
     1. Return **null**
 
 6. Otherwise,
 
-    1. Return **FIND_PNP_MANIFEST**(*directoryPath*)
+    1. Return **FIND_PNP_MANIFEST**(`directoryPath`)
 
-### PARSE_BARE_IDENTIFIER(*specifier*)
+### PARSE_BARE_IDENTIFIER(`specifier`)
 
-1. If *specifier* starts with "@", then
+1. If `specifier` starts with "@", then
 
-    1. If *specifier* doesn't contain a "/" separator, then
+    1. If `specifier` doesn't contain a "/" separator, then
   
         1. Throw an error
 
     2. Otherwise,
 
-        1. Set *ident* to the substring of *specifier* until the second "/" separator or the end of string, whatever happens first
+        1. Set `ident` to the substring of `specifier` until the second "/" separator or the end of string, whatever happens first
 
 2. Otherwise,
 
-    1. Set *ident* to the substring of *specifier* until the first "/" separator or the end of string, whatever happens first
+    1. Set `ident` to the substring of `specifier` until the first "/" separator or the end of string, whatever happens first
 
-3. Set *modulePath* to the substring of *specifier* starting from *ident.length*
+3. Set `modulePath` to the substring of `specifier` starting from `ident.length`
 
-4. Return {*ident*, *modulePath*}
+4. Return {`ident`, `modulePath`}
