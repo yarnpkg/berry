@@ -1,0 +1,72 @@
+[{
+  "manifest": {
+    "__info": [],
+    "dependencyTreeRoots": [{
+      "name": "root",
+      "reference": "workspace:."
+    }],
+    "ignorePatternData": null,
+    "enableTopLevelFallback": false,
+    "fallbackPool": [],
+    "fallbackExclusionList": [],
+    "packageRegistryData": [
+      [null, [
+        [null, {
+          "packageLocation": "./",
+          "packageDependencies": [["root", "workspace:."]],
+          "linkType": "SOFT"
+        }]
+      ]],
+      ["root", [
+        ["workspace:.", {
+          "packageLocation": "./",
+          "packageDependencies": [["root", "workspace:."]],
+          "linkType": "SOFT"
+        }]
+      ]],
+      ["foobar", [
+        ["workspace:foobar", {
+          "packageLocation": "./foobar/",
+          "packageDependencies": [["foobar", "workspace:foobar"], ["test", "npm:2.0.0"]]
+        }]
+      ]],
+      ["foo", [
+        ["workspace:foo", {
+          "packageLocation": "./foo/",
+          "packageDependencies": [["foo", "workspace:foo"], ["test", "npm:1.0.0"]]
+        }]
+      ]],
+      ["foobarbaz", [
+        ["workspace:foobarbaz", {
+          "packageLocation": "./foobarbaz/",
+          "packageDependencies": [["foobarbaz", "workspace:foobarbaz"], ["test", "npm:3.0.0"]]
+        }]
+      ]],
+      ["test", [
+        ["npm:1.0.0", {
+          "packageLocation": "./test-1/",
+          "packageDependencies": [["test", "npm:1.0.0"]]
+        }],
+        ["npm:2.0.0", {
+          "packageLocation": "./test-2/",
+          "packageDependencies": [["test", "npm:2.0.0"]]
+        }],
+        ["npm:3.0.0", {
+          "packageLocation": "./test-3/",
+          "packageDependencies": [["test", "npm:3.0.0"]]
+        }]
+      ]]
+    ]
+  },
+  "tests": [{
+    "it": "should allow a package to import itself",
+    "imported": "root",
+    "importer": "/path/to/project/",
+    "expected": "/path/to/project/"
+  }, {
+    "it": "shouldn't accidentally discard the trailing slash from the package locations",
+    "imported": "test",
+    "importer": "/path/to/project/foo/",
+    "expected": "/path/to/project/test-1/"
+  }]
+}]

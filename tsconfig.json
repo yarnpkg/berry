@@ -9,6 +9,7 @@
     "lib": ["ES2019"],
     "module": "commonjs",
     "noImplicitReturns": true,
+    "resolveJsonModule": true,
     "strict": true,
     "target": "ES2019",
     "declaration": true,

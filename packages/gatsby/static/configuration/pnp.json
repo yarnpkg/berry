@@ -42,9 +42,9 @@
       ]
     },
     "ignorePatternData": {
-      "description": "A regexp against which should be matched all project-relative importer paths. If the regexp matches, the resolution should follow the classic Node resolution algorithm rather than the Plug'n'Play one.",
+      "description": "A nullable regexp. If set, all project-relative importer paths should be matched against it. If the match succeeds, the resolution should follow the classic Node.js resolution algorithm rather than the Plug'n'Play one.",
       "type": "string",
-      "examples": ["^examples/"]
+      "examples": ["^./examples/"]
     },
     "enableTopLevelFallback": {
       "description": "If true, should a dependency resolution fail for an importer that isn't explicitly listed in `fallbackExclusionList`, the runtime must first check whether the resolution would succeed for any of the packages in `fallbackPool`; if it would, transparently return this resolution.",
