@@ -24,6 +24,13 @@
           "linkType": "SOFT"
         }]
       ]],
+      ["workspace-alias-dependency", [
+        ["workspace:workspace-alias-dependency", {
+          "packageLocation": "./workspace-alias-dependency/",
+          "packageDependencies": [["alias", ["test", "npm:1.0.0"]]],
+          "linkType": "SOFT"
+        }]
+      ]],
       ["workspace-self-dependency", [
         ["workspace:workspace-self-dependency", {
           "packageLocation": "./workspace-self-dependency/",
@@ -89,6 +96,11 @@
     "importer": "/path/to/project/workspace-self-dependency/",
     "expected": "/path/to/project/workspace-self-dependency/"
   }, {
+    "it": "should allow a package to import an aliased dependency",
+    "imported": "alias",
+    "importer": "/path/to/project/workspace-alias-dependency/",
+    "expected": "/path/to/project/test-1.0.0/"
+  }, {
     "it": "shouldn't allow a package to import something that isn't one of its dependencies",
     "imported": "missing-dependency",
     "importer": "/path/to/project/",
@@ -114,7 +126,8 @@
     "ignorePatternData": null,
     "enableTopLevelFallback": true,
     "fallbackPool": [
-      ["test-2", "npm:1.0.0"]
+      ["test-2", "npm:1.0.0"],
+      ["alias", ["test-1", "npm:1.0.0"]]
     ],
     "fallbackExclusionList": [[
       "workspace-no-fallbacks",
@@ -178,6 +191,11 @@
   "tests": [{
     "it": "should allow resolution coming from the fallback pool if enableTopLevelFallback is set to true",
     "imported": "test-1",
+    "importer": "/path/to/project/",
+    "expected": "/path/to/project/test-1/"
+  }, {
+    "it": "should allow the fallback pool to contain aliases",
+    "imported": "alias",
     "importer": "/path/to/project/",
     "expected": "/path/to/project/test-1/"
   }, {

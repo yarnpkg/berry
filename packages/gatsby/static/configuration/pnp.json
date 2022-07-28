@@ -47,7 +47,7 @@
       "examples": ["^examples(/|$)"]
     },
     "enableTopLevelFallback": {
-      "description": "If true, should a dependency resolution fail for an importer that isn't explicitly listed in `fallbackExclusionList`, the runtime must first check whether the resolution would succeed for any of the packages in `fallbackPool`; if it would, transparently return this resolution.",
+      "description": "If true, should a dependency resolution fail for an importer that isn't explicitly listed in `fallbackExclusionList`, the runtime must first check whether the resolution would succeed for any of the packages in `fallbackPool`; if it would, transparently return this resolution. Note that all dependencies from the top-level package are implicitly part of the fallback pool, even if not listed here.",
       "type": "boolean",
       "examples": [true]
     },
