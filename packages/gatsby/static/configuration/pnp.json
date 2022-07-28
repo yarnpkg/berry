@@ -73,7 +73,7 @@
       ]
     },
     "fallbackExclusionList": {
-      "description": "A list of locators that must never use the fallback logic.",
+      "description": "A map of packages that must never use the fallback logic, even when enabled. Keys are the package idents, values are sets of references. Combining the ident with each individual reference yields the set of affected locators.",
       "type": "array",
       "items": {
         "type": "array",
@@ -112,7 +112,7 @@
               "type": "object",
               "properties": {
                 "packageLocation": {
-                  "description": "The location of the package on disk, relative to the Plug'n'Play manifest.",
+                  "description": "The location of the package on disk, relative to the Plug'n'Play manifest. This path must begin by either `./` or `../`, and must end with a trailing `/`.",
                   "type": "string"
                 },
                 "packageDependencies": {

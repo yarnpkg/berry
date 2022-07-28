@@ -36,8 +36,7 @@ const EditLink = styled.a`
 
 const Content = styled.div`
   blockquote {
-    margin-left: 0;
-    margin-right: 0;
+    margin: 1.5em 0;
 
     border-left: 5px solid #859daf;
 

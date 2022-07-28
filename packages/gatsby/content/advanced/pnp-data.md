@@ -42,11 +42,51 @@ For improved compatibility with legacy codebases, Plug'n'Play supports a feature
 
 In a sense, the fallback can be seen as a limited and safer form of hoisting. While hoisting allows unconstrainted access through multiple levels of dependencies, the fallback requires to explicitly define a fallback package - usually the top-level one.
 
+## Package locations
+
+While the Plug'n'Play specification doesn't by itself require runtimes to support anything else than the regular filesystem when accessing package files, producers may rely on more complex data storage mechanisms. For instance, Yarn itself requires the two following extensions which we strongly recommend to support:
+
+### Zip access
+
+Files named `*.zip` must be treated as folders for the purpose of file access. For instance, `/foo/bar.zip/package.json` requires to access the `package.json` file located within the `/foo/bar.zip` zip archive.
+
+If writing a JS tool, the [`@yarnpkg/fslib`](https://yarnpkg.com/package/@yarnpkg/fslib) package may be of assistance, providing a zip-aware filesystem layer called `ZipOpenFS`.
+
+### Virtual folders
+
+In order to properly represent packages listing peer dependencies, Yarn relies on a concept called [Virtual Packages](/advanced/lexicon#virtual-package). Their most notable property is that they all have different paths (so that Node.js instantiates them as many times as needed), while still being baked by the same concrete folder on disk.
+
+This is done by adding path support for the following scheme:
+
+```
+/path/to/some/folder/__virtual__/<hash>/<n>/subpath/to/file.dat
+```
+
+When this pattern is found, the `__virtual__/<hash>/<n>` part must be removed, the `hash` ignored, and the `dirname` operation applied `n` times to the `/path/to/some/folder` part. Some examples:
+
+```
+/path/to/some/folder/__virtual__/a0b1c2d3/0/subpath/to/file.dat
+/path/to/some/folder/subpath/to/file.dat
+
+/path/to/some/folder/__virtual__/e4f5a0b1/0/subpath/to/file.dat
+/path/to/some/folder/subpath/to/file.dat (different hash, same result)
+
+/path/to/some/folder/__virtual__/a0b1c2d3/1/subpath/to/file.dat
+/path/to/some/subpath/to/file.dat
+
+/path/to/some/folder/__virtual__/a0b1c2d3/3/subpath/to/file.dat
+/path/subpath/to/file.dat
+```
+
+If writing a JS tool, the [`@yarnpkg/fslib`](https://yarnpkg.com/package/@yarnpkg/fslib) package may be of assistance, providing a virtual-aware filesystem layer called `VirtualFS`.
+
 ## Manifest reference
 
 When [`pnpEnableInlining`](/configuration/yarnrc#pnpEnableInlining) is explicitly set to `false`, Yarn will generate an additional `.pnp.data.json` file containing the following fields.
 
-Note that this document only covers the data file itself - you should define your own in-memory data structures, populated at runtime with the information from the manifest. For example, Yarn turns the `packageRegistryData` table into two separate memory tables: one that maps a path to a package, and another that maps a package to a path.
+This document only covers the data file itself - you should define your own in-memory data structures, populated at runtime with the information from the manifest. For example, Yarn turns the `packageRegistryData` table into two separate memory tables: one that maps a path to a package, and another that maps a package to a path.
+
+> **Note:** You may notice that various places use arrays of tuples in place of maps. This is mostly intended to make it easier to hydrate ES6 maps, but also sometimes to have non-string keys (for instance `packageRegistryData` will have a `null` key in one particular case).
 
 import pnpSchema from '@yarnpkg/gatsby/static/configuration/pnp.json';
 import theme     from 'prism-react-renderer/themes/vsDark';
@@ -63,7 +103,7 @@ import {JsonDoc} from 'react-json-doc';
 
 ## Resolution algorithm
 
-Note: for simplicity, this algorithm doesn't mention all the Node.js features that allow mapping a module to another, such as [`imports`](https://nodejs.org/api/packages.html#imports), [`exports`](https://nodejs.org/api/packages.html#exports), or other vendor-specific features.
+> **Note:** for simplicity, this algorithm doesn't mention all the Node.js features that allow mapping a module to another, such as [`imports`](https://nodejs.org/api/packages.html#imports), [`exports`](https://nodejs.org/api/packages.html#exports), or other vendor-specific features.
 
 ### NM_RESOLVE(*specifier*, *parentURL*)
 
@@ -93,7 +133,7 @@ Note: for simplicity, this algorithm doesn't mention all the Node.js features th
 
 1. Let *resolved* be **undefined**
 
-2. Let *ident* be the package scope and name from *specifier*
+2. Let *ident* and *modulePath* be the result of **PARSE_BARE_IDENTIFIER**(*specifier*)
 
 3. Let *manifest* be **FIND_PNP_MANIFEST**(*parentURL*)
 
@@ -111,7 +151,7 @@ Note: for simplicity, this algorithm doesn't mention all the Node.js features th
 
 8. Let *reference* be the entry from *parentPkg.packageDependencies* referenced by *ident*
 
-9. If *dependency* is null, then
+9. If *reference* is **undefined**, then
 
     1. If *manifest.enableTopLevelFallback* is **true**, then
 
@@ -121,23 +161,37 @@ Note: for simplicity, this algorithm doesn't mention all the Node.js features th
 
     2. Throw a resolution error
 
-10. Otherwise,
+10. Otherwise, if *reference* is **null**, then
+
+    1. Note: It means that *parentPkg* has an unfulfilled peer dependency on *ident*
+
+    2. Throw a resolution error
+
+11. Otherwise,
 
     1. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, {*ident*, *reference*})
 
-    2. Let *modulePath* be everything that follows *ident* in *specifier* 
-
     2. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
 
-### FIND_LOCATOR(*manifest*, *url*)
+### GET_PACKAGE(*manifest*, *locator*)
+
+1. Let *referenceMap* be the entry from *parentPkg.packageRegistryData* referenced by *locator.ident*
+
+2. Let *pkg* be the entry from *referenceMap* referenced by *locator.reference*
+
+3. Return *pkg*
+
+    1. Note: *pkg* cannot be **undefined** here; all packages referenced in any of the Plug'n'Play data tables **MUST** have a corresponding entry inside *packageRegistryData*.
+
+### FIND_LOCATOR(*manifest*, *moduleUrl*)
 
 Note: The algorithm described here is quite inefficient. You should make sure to prepare data structure more suited for this task when you read the manifest.
 
-1. Let *bestLength* be 0
+1. Let *bestLength* be **0**
 
 2. Let *bestLocator* be **null**
 
-3. Let *relativeUrl* be the relative path between *manifest* and *url*
+3. Let *relativeUrl* be the relative path between *manifest* and *moduleUrl*
 
     1. Note: Make sure it always starts with a `./` or `../`
 
@@ -145,23 +199,25 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
     1. Return **null**
 
-5. For each *registryPkg* entry in *manifest.packageRegistryData*
+5. For each *referenceMap* value in *manifest.packageRegistryData*
 
-    1. If *registryPkg.discardFromLookup* **isn't true**, then
+    1. For each *registryPkg* value in *referenceMap*
 
-        1. If *registryPkg.packageLocation.length* is greater than *bestLength*, then
+        1. If *registryPkg.discardFromLookup* **isn't true**, then
 
-            1. If *url* starts with *registryPkg*, then
+            1. If *registryPkg.packageLocation.length* is greater than *bestLength*, then
 
-                1. Set *bestLength* to *registryPkg.packageLocation.length*
+                1. If *relativeUrl* starts with *registryPkg.packageLocation*, then
 
-                2. Set *bestLocator* to the current *registryPkg* locator
+                    1. Set *bestLength* to *registryPkg.packageLocation.length*
+
+                    2. Set *bestLocator* to the current *registryPkg* locator
 
 6. Return *bestLocator*
 
 ### RESOLVE_VIA_FALLBACK(*manifest*, *specifier*)
 
-1. For each *fallbackLocator* in *manifest.packageRegistryData*
+1. For each *fallbackLocator* in *manifest.fallbackPool*
 
     1. Let *fallbackPkg* be **GET_PACKAGE**(*manifest*, *fallbackLocator*)
 
@@ -177,7 +233,7 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 2. Otherwise,
 
-    1. Return **null**
+    1. Throw a resolution error
 
 ### FIND_PNP_MANIFEST(*url*)
 
@@ -200,3 +256,23 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 6. Otherwise,
 
     1. Return **FIND_PNP_MANIFEST**(*directoryPath*)
+
+### PARSE_BARE_IDENTIFIER(*specifier*)
+
+1. If *specifier* starts with "@", then
+
+    1. If *specifier* doesn't contain a "/" separator, then
+  
+        1. Throw an error
+
+    2. Otherwise,
+
+        1. Set *ident* to the substring of *specifier* until the second "/" separator or the end of string, whatever happens first
+
+2. Otherwise,
+
+    1. Set *ident* to the substring of *specifier* until the first "/" separator or the end of string, whatever happens first
+
+3. Set *modulePath* to the substring of *specifier* starting from *ident.length*
+
+4. Return {*ident*, *modulePath*}
