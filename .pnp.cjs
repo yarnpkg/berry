@@ -54536,8 +54536,9 @@ var __spreadValues$1 = (a, b) => {
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 function makeApi(runtimeState, opts) {
+  var _a;
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
-  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
+  const debugLevel = Number((_a = process.env.PNP_DEBUG_LEVEL) != null ? _a : `0`);
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
   const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/;
   const isDirRegExp = /\/$/;
@@ -54575,8 +54576,8 @@ function makeApi(runtimeState, opts) {
     };
   }
   function trace(entry) {
-    var _a, _b, _c, _d, _e, _f;
-    const colors = (_c = (_b = (_a = process.stderr) == null ? void 0 : _a.hasColors) == null ? void 0 : _b.call(_a)) != null ? _c : process.stdout.isTTY;
+    var _a2, _b, _c, _d, _e, _f;
+    const colors = (_c = (_b = (_a2 = process.stderr) == null ? void 0 : _a2.hasColors) == null ? void 0 : _b.call(_a2)) != null ? _c : process.stdout.isTTY;
     const c = (n, str) => `[${n}m${str}[0m`;
     const error = entry.error;
     if (error)
@@ -55005,7 +55006,7 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
     }
   }
   function resolveUnqualified(unqualifiedPath, {extensions = Object.keys(require$$0.Module._extensions)} = {}) {
-    var _a, _b;
+    var _a2, _b;
     const candidates = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
     if (qualifiedPath) {
@@ -55022,7 +55023,7 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
           if ((err == null ? void 0 : err.code) === `ENOENT`) {
             exists = false;
           } else {
-            const readableError = ((_b = (_a = err == null ? void 0 : err.message) != null ? _a : err) != null ? _b : `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
+            const readableError = ((_b = (_a2 = err == null ? void 0 : err.message) != null ? _a2 : err) != null ? _b : `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).
 
 Missing package: ${containingPackage.name}@${containingPackage.reference}

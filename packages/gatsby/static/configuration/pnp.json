@@ -42,9 +42,9 @@
       ]
     },
     "ignorePatternData": {
-      "description": "A nullable regexp. If set, all project-relative importer paths should be matched against it. If the match succeeds, the resolution should follow the classic Node.js resolution algorithm rather than the Plug'n'Play one.",
+      "description": "A nullable regexp. If set, all project-relative importer paths should be matched against it. If the match succeeds, the resolution should follow the classic Node.js resolution algorithm rather than the Plug'n'Play one. Note that unlike other paths in the manifest, the one checked against this regexp won't begin by `./`.",
       "type": "string",
-      "examples": ["^./examples/"]
+      "examples": ["^examples(/|$)"]
     },
     "enableTopLevelFallback": {
       "description": "If true, should a dependency resolution fail for an importer that isn't explicitly listed in `fallbackExclusionList`, the runtime must first check whether the resolution would succeed for any of the packages in `fallbackPool`; if it would, transparently return this resolution.",
@@ -52,7 +52,7 @@
       "examples": [true]
     },
     "fallbackPool": {
-      "description": "A list of locators to consider when performing the fallback resolution, in priority order.",
+      "description": "A map of locators that all packages are allowed to access, regardless whether they list them in their dependencies or not.",
       "type": "array",
       "items": {
         "type": "object",

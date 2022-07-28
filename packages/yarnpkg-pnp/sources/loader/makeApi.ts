@@ -18,7 +18,7 @@ export type MakeApiOptions = {
 
 export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpApi {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
-  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
+  const debugLevel = Number(process.env.PNP_DEBUG_LEVEL ?? `0`);
 
   // Splits a require request into its components, or return null if the request is a file path
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;

@@ -40,12 +40,18 @@ for (const {manifest, tests} of expectations) {
       const imported = test.imported;
       const importer = npath.fromPortablePath(test.importer);
 
-      const resolution = pnpApi.resolveToUnqualified(imported, importer);
-      const expectation = test.expected !== null
-        ? npath.fromPortablePath(test.expected as PortablePath)
-        : null;
+      if (test.expected === `error!`) {
+        expect(() => {
+          pnpApi.resolveToUnqualified(imported, importer);
+        }).toThrow();
+      } else {
+        const resolution = pnpApi.resolveToUnqualified(imported, importer);
+        const expectation = test.expected !== null
+          ? npath.fromPortablePath(test.expected as PortablePath)
+          : null;
 
-      expect(resolution).toEqual(expectation);
+        expect(resolution).toEqual(expectation);
+      }
     });
   }
 }

@@ -56,6 +56,10 @@ const Content = styled.div`
     margin: 0;
   }
 
+  blockquote > p + p {
+    margin-top: 1.5em;
+  }
+
   a:not(.anchor) {
     border-bottom: 1px solid;
 

@@ -149,29 +149,41 @@ import {JsonDoc} from 'react-json-doc';
 
 7. Let *parentPkg* be **GET_PACKAGE**(*manifest*, *parentLocator*)
 
-8. Let *reference* be the entry from *parentPkg.packageDependencies* referenced by *ident*
+8. Let *referenceOrAlias* be the entry from *parentPkg.packageDependencies* referenced by *ident*
 
-9. If *reference* is **undefined**, then
+9. If *referenceOrAlias* is **undefined**, then
 
     1. If *manifest.enableTopLevelFallback* is **true**, then
 
         1. If *parentLocator* **isn't** in *manifest.fallbackExclusionList*, then
 
-            1. Set *resolved* to **RESOLVE_VIA_FALLBACK**(*manifest*, *specifier*) and return it
+            1. Set *referenceOrAlias* to **RESOLVE_VIA_FALLBACK**(*manifest*, *ident*)
 
-    2. Throw a resolution error
+10. If *referenceOrAlias* is still **undefined**, then
 
-10. Otherwise, if *reference* is **null**, then
+    1. Throw a resolution error
+
+11. If *referenceOrAlias* is **null**, then
 
     1. Note: It means that *parentPkg* has an unfulfilled peer dependency on *ident*
 
     2. Throw a resolution error
 
-11. Otherwise,
+12. Otherwise, if *referenceOrAlias* is an array, then
 
-    1. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, {*ident*, *reference*})
+    1. Let *alias* be *referenceOrAlias*
 
-    2. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
+    2. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, *alias*)
+
+    3. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
+
+13. Otherwise,
+
+    1. Let *reference* be *referenceOrAlias*
+
+    2. Let *dependencyPkg* be **GET_PACKAGE**(*manifest*, {*ident*, *reference*})
+
+    3. Return *dependencyPkg.packageLocation* concatenated with *modulePath*
 
 ### GET_PACKAGE(*manifest*, *locator*)
 
@@ -217,25 +229,33 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 ### RESOLVE_VIA_FALLBACK(*manifest*, *specifier*)
 
-1. For each *fallbackLocator* in *manifest.fallbackPool*
+1. Let *topLevelPkg* be **GET_PACKAGE**(*manifest*, {**null**, **null**})
 
-    1. Let *fallbackPkg* be **GET_PACKAGE**(*manifest*, *fallbackLocator*)
+2. Let *referenceOrAlias* be the entry from *topLevelPkg.packageDependencies* referenced by *ident*
 
-    2. Let *fallbackPath* be *fallbackPkg.packageLocation* turned absolute
+3. If *referenceOrAlias* is defined, then
 
-    3. Let *resolved* be **PNP_RESOLVE**(*specifier*, *fallbackPath*)
+    1. Return it immediately
 
-    4. If the previous step threw an error, ignore it
+4. Otherwise,
 
-    5. Otherwise,
+    1. Let *referenceOrAlias* be the entry from *manifest.fallbackPool* referenced by *ident*
 
-        1. Return *resolved*
-
-2. Otherwise,
-
-    1. Throw a resolution error
+    2. Return it immediatly, whether it's defined or not
 
 ### FIND_PNP_MANIFEST(*url*)
+
+Finding the right PnP manifest to use for a resolution isn't always trivial. There are two main options:
+
+- Assume that there is a single PnP manifest covering the whole project. This is the most common case, as even when referencing third-party projects (for example via the [`portal:` protocol](/features/protocols#whats-the-difference-between-link-and-portal)) their dependency trees are stored in the same manifest as the main project.
+
+  To do that, call **FIND_CLOSEST_PNP_MANIFEST**(*require.main.filename*) once at the start of the process, cache its result, and return it for each call to **FIND_PNP_MANIFEST** (if you're running in Node.js, you can even use *require.resolve('pnpapi')* which will do this work for you).
+
+- Try to operate within a multi-project world. **This is rarely required**. We support it inside the Node.js PnP loader, but only because of "project generator" tools like `create-react-app` which are run via `yarn create react-app` and require two different projects (the generator one *and* the generated one) to cooperate within the same Node.js process.
+
+  Supporting this use case is difficult, as it requires a bookkeeping mechanism to track the manifests used to access modules, reusing them as much as possible and only looking for a new one when the chain breaks.
+
+### FIND_CLOSEST_PNP_MANIFEST(*url*)
 
 1. Let *manifest* be **null**
 
