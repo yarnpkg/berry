@@ -82,8 +82,16 @@ export default class SetVersionCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
-      return 0;
+    if (this.onlyIfNeeded && configuration.get(`yarnPath`)) {
+      const yarnPathSource = configuration.sources.get(`yarnPath`) as PortablePath | undefined;
+      if (!yarnPathSource)
+        throw new Error(`Assertion failed: Expected 'yarnPath' to have a source`);
+
+      const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
+      if (ppath.contains(projectCwd, yarnPathSource)) {
+        return 0;
+      }
+    }
 
     const getBundlePath = () => {
       if (typeof YarnVersion === `undefined`)
