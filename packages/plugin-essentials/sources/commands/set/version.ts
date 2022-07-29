@@ -226,11 +226,9 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
     await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
 
-    if (!yarnPath || ppath.contains(releaseFolder, yarnPath)) {
-      await Configuration.updateConfiguration(projectCwd, {
-        yarnPath: ppath.relative(projectCwd, absolutePath),
-      });
-    }
+    await Configuration.updateConfiguration(projectCwd, {
+      yarnPath: ppath.relative(projectCwd, absolutePath),
+    });
   } else {
     await xfs.removePromise(ppath.dirname(absolutePath));
 

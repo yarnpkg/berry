@@ -82,6 +82,24 @@ describe(`Commands`, () => {
         await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
       }),
     );
+
+    test(
+      `it should set yarnPath even if yarnPath is set outside of the project`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `self`);
+        await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
+
+        const projectDir = ppath.join(path, `project` as Filename);
+        await xfs.mkdirPromise(projectDir);
+        await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
+        await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
+
+        await run(`set`, `version`, `self`, {cwd: projectDir});
+        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true});
+      }),
+    );
   });
 });
 
