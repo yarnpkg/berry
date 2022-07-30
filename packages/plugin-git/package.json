@@ -10,7 +10,7 @@
     "git-url-parse": "11.1.2",
     "lodash": "^4.17.15",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"

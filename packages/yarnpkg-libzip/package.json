@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@types/emscripten": "^1.39.6",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "engines": {
     "node": ">=14.15.0"

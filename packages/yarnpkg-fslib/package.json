@@ -7,7 +7,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/libzip": "workspace:^",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",
