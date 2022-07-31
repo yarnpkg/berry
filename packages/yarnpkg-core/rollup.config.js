@@ -41,7 +41,7 @@ export default defineConfig({
     }),
     esbuild({
       tsconfig: false,
-      target: `node14`,
+      target: `node14.15.0`,
       define: {
         document: `undefined`,
         XMLHttpRequest: `undefined`,

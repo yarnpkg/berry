@@ -142,7 +142,7 @@ export default class BuildBundleCommand extends Command {
           plugins: [valLoader, pnpPlugin()],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node14`,
+          target: `node14.15.0`,
         });
 
         for (const warning of res.warnings) {

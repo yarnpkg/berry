@@ -45891,7 +45891,6 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   }));
 }
 async function copyImpl(prelayout, postlayout, updateTime, destinationFs, destination, sourceFs, source, opts) {
-  var _a, _b, _c;
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
   const {atime, mtime} = opts.stableTime ? {atime: defaultTime, mtime: defaultTime} : sourceStat;
@@ -45917,8 +45916,8 @@ async function copyImpl(prelayout, postlayout, updateTime, destinationFs, destin
         throw new Error(`Unsupported file type (${sourceStat.mode})`);
       }
   }
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) !== `HardlinkFromIndex` || !sourceStat.isFile()) {
-    if (updated || ((_b = destinationStat == null ? void 0 : destinationStat.mtime) == null ? void 0 : _b.getTime()) !== mtime.getTime() || ((_c = destinationStat == null ? void 0 : destinationStat.atime) == null ? void 0 : _c.getTime()) !== atime.getTime()) {
+  if (opts.linkStrategy?.type !== `HardlinkFromIndex` || !sourceStat.isFile()) {
+    if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
       postlayout.push(() => updateTime(destination, atime, mtime));
       updated = true;
     }
@@ -45982,7 +45981,7 @@ async function copyFileViaIndex(prelayout, postlayout, updateTime, destinationFs
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
-    const isIndexModified = (indexStat == null ? void 0 : indexStat.mtimeMs) !== defaultTimeMs;
+    const isIndexModified = indexStat?.mtimeMs !== defaultTimeMs;
     if (isDestinationHardlinkedFromIndex) {
       if (isIndexModified && linkStrategy.autoRepair)
         indexStat = null;
@@ -46030,8 +46029,7 @@ async function copyFileDirect(prelayout, postlayout, updateTime, destinationFs, 
   return true;
 }
 async function copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
-  var _a;
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) === `HardlinkFromIndex`) {
+  if (opts.linkStrategy?.type === `HardlinkFromIndex`) {
     return copyFileViaIndex(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, opts.linkStrategy);
   } else {
     return copyFileDirect(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
@@ -46138,9 +46136,8 @@ class CustomDir {
     return Promise.resolve();
   }
   closeSync() {
-    var _a, _b;
     this.throwIfClosed();
-    (_b = (_a = this.opts).onClose) == null ? void 0 : _b.call(_a);
+    this.opts.onClose?.();
     this.closed = true;
   }
 }
@@ -46265,7 +46262,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory != null ? createdDirectory : createdDirectory = subPath;
+        createdDirectory ?? (createdDirectory = subPath);
         if (chmod != null)
           await this.chmodPromise(subPath, chmod);
         if (utimes != null) {
@@ -46296,7 +46293,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory != null ? createdDirectory : createdDirectory = subPath;
+        createdDirectory ?? (createdDirectory = subPath);
         if (chmod != null)
           this.chmodSync(subPath, chmod);
         if (utimes != null) {
@@ -46857,7 +46854,7 @@ class NodeFS extends BasePortableFakeFS {
   }
   async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      if (opts == null ? void 0 : opts.withFileTypes) {
+      if (opts?.withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject));
       } else {
         this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback((value) => resolve(value), reject));
@@ -46865,7 +46862,7 @@ class NodeFS extends BasePortableFakeFS {
     });
   }
   readdirSync(p, opts) {
-    if (opts == null ? void 0 : opts.withFileTypes) {
+    if (opts?.withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true});
     } else {
       return this.realFs.readdirSync(npath.fromPortablePath(p));
@@ -47151,7 +47148,7 @@ class ZipFS extends BasePortableFakeFS {
     this.libzip = opts.libzip;
     const pathOptions = opts;
     this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
-    source != null ? source : source = makeEmptyArchive();
+    source ?? (source = makeEmptyArchive());
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
       this.baseFs = baseFs;
@@ -47621,7 +47618,7 @@ class ZipFS extends BasePortableFakeFS {
   unregisterListing(p) {
     this.listings.delete(p);
     const parentListing = this.listings.get(ppath.dirname(p));
-    parentListing == null ? void 0 : parentListing.delete(ppath.basename(p));
+    parentListing?.delete(ppath.basename(p));
   }
   unregisterEntry(p) {
     this.unregisterListing(p);
@@ -47892,8 +47889,7 @@ class ZipFS extends BasePortableFakeFS {
     return this.writeFileSync(p, content, opts);
   }
   fdToPath(fd, reason) {
-    var _a;
-    const path = (_a = this.fds.get(fd)) == null ? void 0 : _a.p;
+    const path = this.fds.get(fd)?.p;
     if (typeof path === `undefined`)
       throw EBADF(reason);
     return path;
@@ -48100,7 +48096,7 @@ class ZipFS extends BasePortableFakeFS {
     if (!directoryListing)
       throw ENOTDIR(`scandir '${p}'`);
     const entries = [...directoryListing];
-    if (!(opts == null ? void 0 : opts.withFileTypes))
+    if (!opts?.withFileTypes)
       return entries;
     return entries.map((name) => {
       return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
@@ -49407,10 +49403,9 @@ class FileHandle {
     return this[kFd];
   }
   async appendFile(data, options) {
-    var _a2;
     try {
       this[kRef](this.appendFile);
-      const encoding = (_a2 = typeof options === `string` ? options : options == null ? void 0 : options.encoding) != null ? _a2 : void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? {encoding} : void 0);
     } finally {
       this[kUnref]();
@@ -49440,21 +49435,20 @@ class FileHandle {
     throw new Error(`Method not implemented.`);
   }
   async read(bufferOrOptions, offset, length, position) {
-    var _a2, _b2, _c2;
     try {
       this[kRef](this.read);
       let buffer;
       if (!Buffer.isBuffer(bufferOrOptions)) {
-        bufferOrOptions != null ? bufferOrOptions : bufferOrOptions = {};
-        buffer = (_a2 = bufferOrOptions.buffer) != null ? _a2 : Buffer.alloc(16384);
+        bufferOrOptions ?? (bufferOrOptions = {});
+        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
         offset = bufferOrOptions.offset || 0;
-        length = (_b2 = bufferOrOptions.length) != null ? _b2 : buffer.byteLength;
-        position = (_c2 = bufferOrOptions.position) != null ? _c2 : null;
+        length = bufferOrOptions.length ?? buffer.byteLength;
+        position = bufferOrOptions.position ?? null;
       } else {
         buffer = bufferOrOptions;
       }
-      offset != null ? offset : offset = 0;
-      length != null ? length : length = 0;
+      offset ?? (offset = 0);
+      length ?? (length = 0);
       if (length === 0) {
         return {
           bytesRead: length,
@@ -49471,10 +49465,9 @@ class FileHandle {
     }
   }
   async readFile(options) {
-    var _a2;
     try {
       this[kRef](this.readFile);
-      const encoding = (_a2 = typeof options === `string` ? options : options == null ? void 0 : options.encoding) != null ? _a2 : void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       return await this[kBaseFs].readFilePromise(this.fd, encoding);
     } finally {
       this[kUnref]();
@@ -49500,10 +49493,9 @@ class FileHandle {
     throw new Error(`Method not implemented.`);
   }
   async writeFile(data, options) {
-    var _a2;
     try {
       this[kRef](this.writeFile);
-      const encoding = (_a2 = typeof options === `string` ? options : options == null ? void 0 : options.encoding) != null ? _a2 : void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       await this[kBaseFs].writeFilePromise(this.fd, data, encoding);
     } finally {
       this[kUnref]();
@@ -49514,7 +49506,7 @@ class FileHandle {
       this[kRef](this.write);
       if (ArrayBuffer.isView(args[0])) {
         const [buffer, offset, length, position] = args;
-        const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer, offset != null ? offset : void 0, length != null ? length : void 0, position != null ? position : void 0);
+        const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer, offset ?? void 0, length ?? void 0, position ?? void 0);
         return {bytesWritten, buffer};
       } else {
         const [data, position, encoding] = args;
@@ -49667,7 +49659,7 @@ function patchFs(patchedFs, fakeFs) {
   const setupFn = (target, name, replacement) => {
     const orig = target[name];
     target[name] = replacement;
-    if (typeof (orig == null ? void 0 : orig[nodeUtils.promisify.custom]) !== `undefined`) {
+    if (typeof orig?.[nodeUtils.promisify.custom] !== `undefined`) {
       replacement[nodeUtils.promisify.custom] = orig[nodeUtils.promisify.custom];
     }
   };
@@ -53988,7 +53980,7 @@ const MODULE_NOT_FOUND_ERRORS = new Set([
   ErrorCode.UNDECLARED_DEPENDENCY
 ]);
 function makeError(pnpCode, message, data = {}, code) {
-  code != null ? code : code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
+  code ?? (code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode);
   const propertySpec = {
     configurable: true,
     writable: true,
@@ -54123,7 +54115,7 @@ function applyPatch(pnpapi, opts) {
       }
       return cacheEntry.exports;
     }
-    const module = new require$$0.Module(modulePath, parent != null ? parent : void 0);
+    const module = new require$$0.Module(modulePath, parent ?? void 0);
     module.pnpApiPath = moduleApiPath;
     entry.cache[modulePath] = module;
     if (isMain) {
@@ -54151,7 +54143,6 @@ function applyPatch(pnpapi, opts) {
     }));
   }
   function getIssuerSpecsFromModule(module) {
-    var _a;
     if (module && module.id !== `<repl>` && module.id !== `internal/preload` && !module.parent && !module.filename && module.paths.length > 0) {
       return [{
         apiPath: opts.manager.findApiPathFor(module.paths[0]),
@@ -54166,7 +54157,7 @@ function applyPatch(pnpapi, opts) {
       return [{apiPath, path, module}];
     } else {
       const path = process.cwd();
-      const apiPath = (_a = opts.manager.findApiPathFor(npath.join(path, `[file]`))) != null ? _a : opts.manager.getApiPathFromParent(null);
+      const apiPath = opts.manager.findApiPathFor(npath.join(path, `[file]`)) ?? opts.manager.getApiPathFromParent(null);
       return [{apiPath, path, module}];
     }
   }
@@ -54203,10 +54194,10 @@ function applyPatch(pnpapi, opts) {
     }
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = (parent == null ? void 0 : parent.filename) != null ? npath.dirname(parent.filename) : null;
+      const parentDirectory = parent?.filename != null ? npath.dirname(parent.filename) : null;
       const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
       if (absoluteRequest !== null) {
-        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && (parent == null ? void 0 : parent.pnpApiPath) ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
+        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && parent?.pnpApiPath ? parent.pnpApiPath : opts.manager.findApiPathFor(absoluteRequest);
         if (apiPath !== null) {
           issuerSpecs.unshift({
             apiPath,
@@ -54284,11 +54275,10 @@ Require stack:
   };
   const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
   require$$0.Module._extensions[`.js`] = function(module, filename) {
-    var _a, _b;
     if (filename.endsWith(`.js`)) {
       const pkg = readPackageScope(filename);
-      if (pkg && ((_a = pkg.data) == null ? void 0 : _a.type) === `module`) {
-        const err = ERR_REQUIRE_ESM(filename, (_b = module.parent) == null ? void 0 : _b.filename);
+      if (pkg && pkg.data?.type === `module`) {
+        const err = ERR_REQUIRE_ESM(filename, module.parent?.filename);
         Error.captureStackTrace(err);
         throw err;
       }
@@ -54316,10 +54306,9 @@ function hydrateRuntimeState(data, {basePath}) {
   const packageLocatorsByLocations = new Map();
   const packageRegistry = new Map(data.packageRegistryData.map(([packageName, packageStoreData]) => {
     return [packageName, new Map(packageStoreData.map(([packageReference, packageInformationData]) => {
-      var _a;
       if (packageName === null !== (packageReference === null))
         throw new Error(`Assertion failed: The name and reference should be null, or neither should`);
-      const discardFromLookup = (_a = packageInformationData.discardFromLookup) != null ? _a : false;
+      const discardFromLookup = packageInformationData.discardFromLookup ?? false;
       const packageLocator = {name: packageName, reference: packageReference};
       const entry = packageLocatorsByLocations.get(packageInformationData.packageLocation);
       if (!entry) {
@@ -54531,12 +54520,11 @@ function makeApi(runtimeState, opts) {
     };
   }
   function trace(entry) {
-    var _a, _b, _c, _d, _e, _f;
-    const colors = (_c = (_b = (_a = process.stderr) == null ? void 0 : _a.hasColors) == null ? void 0 : _b.call(_a)) != null ? _c : process.stdout.isTTY;
+    const colors = process.stderr?.hasColors?.() ?? process.stdout.isTTY;
     const c = (n, str) => `[${n}m${str}[0m`;
     const error = entry.error;
     if (error)
-      console.error(c(`31;1`, `\u2716 ${(_d = entry.error) == null ? void 0 : _d.message.replace(/\n.*/s, ``)}`));
+      console.error(c(`31;1`, `\u2716 ${entry.error?.message.replace(/\n.*/s, ``)}`));
     else
       console.error(c(`33;1`, `\u203C Resolution`));
     if (entry.args.length > 0)
@@ -54547,7 +54535,7 @@ function makeApi(runtimeState, opts) {
       console.error();
       console.error(`  ${c(`37;1`, `Out \u2192`)} ${nodeUtils.inspect(entry.result, {colors, compact: true})}`);
     }
-    const stack = (_f = (_e = new Error().stack.match(/(?<=^ +)at.*/gm)) == null ? void 0 : _e.slice(2)) != null ? _f : [];
+    const stack = new Error().stack.match(/(?<=^ +)at.*/gm)?.slice(2) ?? [];
     if (stack.length > 0) {
       console.error();
       for (const line of stack) {
@@ -54961,7 +54949,6 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
     }
   }
   function resolveUnqualified(unqualifiedPath, {extensions = Object.keys(require$$0.Module._extensions)} = {}) {
-    var _a, _b;
     const candidates = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
     if (qualifiedPath) {
@@ -54975,10 +54962,10 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
         try {
           opts.fakeFs.accessSync(packageLocation);
         } catch (err) {
-          if ((err == null ? void 0 : err.code) === `ENOENT`) {
+          if (err?.code === `ENOENT`) {
             exists = false;
           } else {
-            const readableError = ((_b = (_a = err == null ? void 0 : err.message) != null ? _a : err) != null ? _b : `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
+            const readableError = (err?.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).
 
 Missing package: ${containingPackage.name}@${containingPackage.reference}
