@@ -5746,7 +5746,7 @@ __metadata:
     remark-parse: ^6.0.3
     tinycolor2: ^1.4.1
     tslib: ^1.13.0
-    typedoc: next
+    typedoc: 0.17.0-3
     typedoc-neo-theme: ^1.0.7
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
     typescript: 5.2.0-beta
@@ -25856,7 +25856,7 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "typedoc-plugin-yarn@portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
   dependencies:
-    typedoc: next
+    typedoc: 0.17.0-3
     typescript: ^3.8.3
   languageName: node
   linkType: soft
@@ -25882,7 +25882,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"typedoc@npm:next":
+"typedoc@npm:0.17.0-3":
   version: 0.17.0-3
   resolution: "typedoc@npm:0.17.0-3"
   dependencies:
