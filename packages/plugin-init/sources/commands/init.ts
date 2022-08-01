@@ -175,8 +175,10 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/sdks`,
         `!.yarn/versions`,
         ``,
-        `# Swap the comments on the following lines if you wish to use zero-installs and run \`yarn config set enableGlobalCache false\``,
+        `# Swap the comments on the following lines if you wish to use zero-installs`,
+        `# Also don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/zero-installs`,
+        ``,
         `#!.yarn/cache`,
         `.pnp.*`,
       ];
