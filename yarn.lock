@@ -5708,7 +5708,7 @@ __metadata:
     remark-parse: "npm:^6.0.3"
     tinycolor2: "npm:^1.4.1"
     tslib: "npm:^2.4.0"
-    typedoc: "npm:next"
+    typedoc: "npm:0.17.0-3"
     typedoc-neo-theme: "npm:^1.0.7"
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
     typescript: "npm:4.8.0-beta"
@@ -25524,7 +25524,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "typedoc-plugin-yarn@portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
   dependencies:
-    typedoc: "npm:next"
+    typedoc: "npm:0.17.0-3"
     typescript: "npm:^3.8.3"
   languageName: node
   linkType: soft
@@ -25550,7 +25550,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:next":
+"typedoc@npm:0.17.0-3":
   version: 0.17.0-3
   resolution: "typedoc@npm:0.17.0-3"
   dependencies:
