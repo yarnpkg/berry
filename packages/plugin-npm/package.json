@@ -8,7 +8,7 @@
     "enquirer": "^2.3.6",
     "semver": "^7.1.2",
     "ssri": "^6.0.1",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^",

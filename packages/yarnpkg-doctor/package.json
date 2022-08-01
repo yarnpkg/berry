@@ -11,7 +11,7 @@
     "globby": "^11.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
-    "tslib": "^1.13.0",
+    "tslib": "^2.4.0",
     "typescript": "4.8.0-beta"
   },
   "devDependencies": {

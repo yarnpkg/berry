@@ -19,7 +19,7 @@
     "directory": "packages/yarnpkg-libui"
   },
   "dependencies": {
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "scripts": {
     "postpack": "find sources -name '*.js' -delete",

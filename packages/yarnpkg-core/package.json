@@ -29,7 +29,7 @@
     "tar": "^6.0.5",
     "tinylogic": "^2.0.0",
     "treeify": "^1.1.0",
-    "tslib": "^1.13.0",
+    "tslib": "^2.4.0",
     "tunnel": "^0.0.6"
   },
   "devDependencies": {

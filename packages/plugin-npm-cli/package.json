@@ -9,7 +9,7 @@
     "enquirer": "^2.3.6",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0",
+    "tslib": "^2.4.0",
     "typanion": "^3.3.0"
   },
   "peerDependencies": {

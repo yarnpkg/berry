@@ -114,7 +114,7 @@
     "directory": "packages/vscode-zipfs"
   },
   "dependencies": {
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "stableVersion": "2.5.0"
 }
