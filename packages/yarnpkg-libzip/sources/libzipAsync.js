@@ -195,45 +195,22 @@ var createModule = (function() {
         return ccall(ident, returnType, argTypes, arguments, opts);
       };
     }
-    var UTF8Decoder =
-      typeof TextDecoder !== "undefined" ? new TextDecoder("utf8") : undefined;
+    var UTF8Decoder = new TextDecoder("utf8");
     function UTF8ArrayToString(heap, idx, maxBytesToRead) {
       var endIdx = idx + maxBytesToRead;
       var endPtr = idx;
       while (heap[endPtr] && !(endPtr >= endIdx)) ++endPtr;
-      if (endPtr - idx > 16 && heap.subarray && UTF8Decoder) {
-        return UTF8Decoder.decode(heap.subarray(idx, endPtr));
-      } else {
-        var str = "";
-        while (idx < endPtr) {
-          var u0 = heap[idx++];
-          if (!(u0 & 128)) {
-            str += String.fromCharCode(u0);
-            continue;
-          }
-          var u1 = heap[idx++] & 63;
-          if ((u0 & 224) == 192) {
-            str += String.fromCharCode(((u0 & 31) << 6) | u1);
-            continue;
-          }
-          var u2 = heap[idx++] & 63;
-          if ((u0 & 240) == 224) {
-            u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
-          } else {
-            u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heap[idx++] & 63);
-          }
-          if (u0 < 65536) {
-            str += String.fromCharCode(u0);
-          } else {
-            var ch = u0 - 65536;
-            str += String.fromCharCode(55296 | (ch >> 10), 56320 | (ch & 1023));
-          }
-        }
-      }
-      return str;
+      return UTF8Decoder.decode(
+        heap.subarray
+          ? heap.subarray(idx, endPtr)
+          : new Uint8Array(heap.slice(idx, endPtr))
+      );
     }
     function UTF8ToString(ptr, maxBytesToRead) {
-      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : "";
+      if (!ptr) return "";
+      var maxPtr = ptr + maxBytesToRead;
+      for (var end = ptr; !(end >= maxPtr) && HEAPU8[end]; ) ++end;
+      return UTF8Decoder.decode(HEAPU8.subarray(ptr, end));
     }
     function stringToUTF8Array(str, heap, outIdx, maxBytesToWrite) {
       if (!(maxBytesToWrite > 0)) return 0;
