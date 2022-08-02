@@ -933,4 +933,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       graphql: `^15.0.0`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/33724
+  [`gatsby-plugin-mdx@<3.1.0-next.1`, {
+    dependencies: {
+      mkdirp: `^1.0.4`,
+    },
+  }],
 ];
