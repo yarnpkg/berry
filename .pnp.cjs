@@ -160,10 +160,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/yarnpkg-fslib"\
       },\
       {\
-        "name": "@yarnpkg/json-proxy",\
-        "reference": "workspace:packages/yarnpkg-json-proxy"\
-      },\
-      {\
         "name": "@yarnpkg/libui",\
         "reference": "workspace:packages/yarnpkg-libui"\
       },\
@@ -207,7 +203,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@yarnpkg/extensions", ["virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions", "workspace:packages/yarnpkg-extensions"]],\
       ["@yarnpkg/fslib", ["workspace:packages/yarnpkg-fslib"]],\
       ["@yarnpkg/gatsby", ["workspace:packages/gatsby"]],\
-      ["@yarnpkg/json-proxy", ["workspace:packages/yarnpkg-json-proxy"]],\
       ["@yarnpkg/libui", ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-libui", "workspace:packages/yarnpkg-libui"]],\
       ["@yarnpkg/libzip", ["workspace:packages/yarnpkg-libzip"]],\
       ["@yarnpkg/monorepo", ["workspace:."]],\
@@ -10629,17 +10624,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["unfetch", "npm:4.1.0"],\
             ["unified", "npm:7.1.0"],\
             ["xss", "npm:1.0.6"]\
-          ],\
-          "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["@yarnpkg/json-proxy", [\
-        ["workspace:packages/yarnpkg-json-proxy", {\
-          "packageLocation": "./packages/yarnpkg-json-proxy/",\
-          "packageDependencies": [\
-            ["@yarnpkg/json-proxy", "workspace:packages/yarnpkg-json-proxy"],\
-            ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
-            ["tslib", "npm:1.13.0"]\
           ],\
           "linkType": "SOFT"\
         }]\

@@ -5792,15 +5792,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/json-proxy@workspace:packages/yarnpkg-json-proxy":
-  version: 0.0.0-use.local
-  resolution: "@yarnpkg/json-proxy@workspace:packages/yarnpkg-json-proxy"
-  dependencies:
-    "@yarnpkg/fslib": "workspace:^"
-    tslib: ^1.13.0
-  languageName: unknown
-  linkType: soft
-
 "@yarnpkg/libui@workspace:^, @yarnpkg/libui@workspace:packages/yarnpkg-libui":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
