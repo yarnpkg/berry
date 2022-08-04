@@ -314,11 +314,11 @@ A package is marked as deprecated by the publisher. Avoid using it, use the alte
 
 ## YN0062 - `INCOMPATIBLE_OS`
 
-> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#INCOMPATIBLE_ARCHITECTURE).
+> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#yn0076---incompatible_architecture).
 
 ## YN0063 - `INCOMPATIBLE_CPU`
 
-> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#INCOMPATIBLE_ARCHITECTURE).
+> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#yn0076---incompatible_architecture).
 
 ## YN0068 - `UNUSED_PACKAGE_EXTENSION`
 
