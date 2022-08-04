@@ -314,11 +314,11 @@ A package is marked as deprecated by the publisher. Avoid using it, use the alte
 
 ## YN0062 - `INCOMPATIBLE_OS`
 
-A package is incompatible with the operating system, as reported by [`process.platform`](https://nodejs.org/api/process.html#process_process_platform).  Its installation will be skipped.
+> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#INCOMPATIBLE_ARCHITECTURE).
 
 ## YN0063 - `INCOMPATIBLE_CPU`
 
-A package is incompatible with the CPU architecture, as reported by [`process.arch`](https://nodejs.org/api/process.html#process_process_arch).  Its installation will be skipped.
+> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#INCOMPATIBLE_ARCHITECTURE).
 
 ## YN0068 - `UNUSED_PACKAGE_EXTENSION`
 
@@ -361,7 +361,7 @@ For more information about the parameters that must be instantiated when calling
 
 ## YN0076 - `INCOMPATIBLE_ARCHITECTURE`
 
-A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) fields) as being incompatible with the system architecture. Its postinstall scripts will not run on this system.
+A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) / [`libc`](/configuration/manifest#libc) fields) as being incompatible with the system architecture. It will not be fetched, linked, and its postinstall scripts will not run on this system.
 
 ## YN0077 - `GHOST_ARCHITECTURE`
 
