@@ -250,10 +250,19 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               ? [`workspace`, workspace]
               : [];
 
+            // `set version` will update the Manifest to contain a `packageManager` field with the latest
+            // Yarn version which causes the results to change depending on when this command was run,
+            // therefore we revert any change made to it.
+            const manifestPath = ppath.join(cwd, Filename.manifest);
+            const manifestBuffer = await xfs.readFilePromise(manifestPath);
+
             // Makes sure that we'll be using Yarn 1.x
-            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const version = await execUtils.pipevp(process.execPath, [process.argv[1], `set`, `version`, `classic`, `--only-if-needed`, `--yarn-path`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (version.code !== 0)
               return version.code;
+
+            // Revert any changes made to the Manifest by `set version`.
+            await xfs.writeFilePromise(manifestPath, manifestBuffer);
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
             await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
