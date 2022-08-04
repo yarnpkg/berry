@@ -627,7 +627,7 @@ export interface ConfigurationValueMap {
     dependencies?: Map<string, string>;
     peerDependencies?: Map<string, string>;
     peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>;
-    disableBin?: boolean;
+    bin?: Map<string, `null` | null>;
   }>>;
 }
 
@@ -1633,16 +1633,10 @@ export class Configuration {
               } break;
 
               case PackageExtensionType.Bin: {
-                const currentBinEntry = pkg.bin.get(extension.key);
-                if (typeof currentBinEntry === `undefined` || currentBinEntry !== extension.entry) {
+                if (extension.entry === `null` || extension.entry === null) {
                   extension.status = PackageExtensionStatus.Active;
-
-                  if (extension.entry === `null`) {
-                    pkg.bin.delete(extension.key);
-                    break;
-                  }
-
-                  pkg.bin.set(extension.key, ppath.resolve(extension.entry as Filename));
+                  pkg.bin.delete(extension.key);
+                  break;
                 }
               } break;
 
