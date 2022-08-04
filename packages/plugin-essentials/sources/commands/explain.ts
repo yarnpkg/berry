@@ -98,19 +98,17 @@ export default class ExplainCommand extends BaseCommand {
         this.context.stdout.write(`${header}\n\n${content}\n`);
       }
     } else {
-      const tree: treeUtils.TreeNode = {
-        children: miscUtils.mapAndFilter(Object.entries(MessageName), ([key, value]) => {
-          if (Number.isNaN(Number(key)))
-            return miscUtils.mapAndFilter.skip;
+      const list = miscUtils.mapAndFilter(Object.entries(MessageName), ([key, value]) => {
+        if (Number.isNaN(Number(key)))
+          return miscUtils.mapAndFilter.skip;
 
-          return {
-            label: stringifyMessageName(Number(key)),
-            value: formatUtils.tuple(formatUtils.Type.CODE, value as string),
-          };
-        }),
-      };
+        return {
+          label: stringifyMessageName(Number(key)),
+          value: formatUtils.tuple(formatUtils.Type.CODE, value as string),
+        };
+      });
 
-      treeUtils.emitTree(tree, {configuration, stdout: this.context.stdout, json: this.json});
+      treeUtils.emitList(list, {configuration, stdout: this.context.stdout, json: this.json});
     }
   }
 }

@@ -83,8 +83,12 @@ export function treeNodeToJson(printTree: TreeNode) {
   return copyTree(printTree);
 }
 
-export function emitList(values: Array<formatUtils.Tuple>, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
-  const children = values.map(value => ({value}));
+export function emitList(list: Array<formatUtils.Tuple | Omit<TreeNode, 'children'>>, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
+  const children = list.map(value => (
+    Array.isArray(value)
+      ? {value}
+      : value
+  ) as TreeNode);
   emitTree({children}, {configuration, stdout, json});
 }
 
