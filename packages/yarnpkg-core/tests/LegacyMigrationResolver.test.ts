@@ -20,6 +20,12 @@ describe(`LegacyMigrationResolver`, () => {
       resolved: `https://company.jfrog.io/company/api/npm/registry-name/@scope/package-name/-/@scope/package-name-1.0.0.tgz#eeeec1e4e8850bed0468f938292b06cda793bf34`,
       expected: `npm:1.0.0::__archiveUrl=https%3A%2F%2Fcompany.jfrog.io%2Fcompany%2Fapi%2Fnpm%2Fregistry-name%2F%40scope%2Fpackage-name%2F-%2F%40scope%2Fpackage-name-1.0.0.tgz%23`,
     },
+    // https://github.com/yarnpkg/berry/pull/4702
+    {
+      version: `1.0.0`,
+      resolved: `https://packages.example.com/artifactory/api/npm/registry-name/@scope/package-name/-/@scope/package-name-1.0.0.tgz#eeeec1e4e8850bed0468f938292b06cda793bf34`,
+      expected: `npm:1.0.0::__archiveUrl=https%3A%2F%2Fpackages.example.com%2Fartifactory%2Fapi%2Fnpm%2Fregistry-name%2F%40scope%2Fpackage-name%2F-%2F%40scope%2Fpackage-name-1.0.0.tgz%23`,
+    },
     // https://github.com/yarnpkg/berry/issues/902#issuecomment-732360991
     {
       version: `0.1.9`,
