@@ -1,24 +1,13 @@
-import {FakeFS, Filename, npath, PortablePath, ppath, ZipFS} from '@yarnpkg/fslib';
-import {getLibzipSync}                                       from '@yarnpkg/libzip';
+import {Filename, npath, PortablePath, ppath, ZipFS} from '@yarnpkg/fslib';
+import {getLibzipSync}                               from '@yarnpkg/libzip';
 
-import {hydratePnpFile}                                      from '../sources';
+import {hydratePnpFile}                              from '../sources';
 
-import expectations                                          from './testExpectations.json';
-
-const withMemoryFs = async (cb: (fs: FakeFS<PortablePath>) => Promise<void>) => {
-  const fs = new ZipFS(null, {
-    libzip: getLibzipSync(),
-  });
-
-  try {
-    await cb(fs);
-  } catch (err) {
-    fs.discardAndClose();
-    throw err;
-  }
-};
+import expectations                                  from './testExpectations.json';
 
 const projectRoot = `/path/to/project` as PortablePath;
+
+process.env.PNP_DEBUG_LEVEL = `0`;
 
 for (const {manifest, tests} of expectations) {
   const fakeFs = new ZipFS(null, {
