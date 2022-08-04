@@ -745,7 +745,7 @@
           "_exampleItems": ["current", "x86", "ia32"]
         },
         "libc": {
-          "description": "The list of standard libraries to cover.",
+          "description": "The list of standard C libraries to cover.",
           "type": "array",
           "items": {
             "type": "string"

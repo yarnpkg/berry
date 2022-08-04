@@ -62,6 +62,14 @@
       },
       "_exampleItems": ["x64", "ia32", "arm64"]
     },
+    "libc": {
+      "description": "A value compared during install with the host standard C library. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "_exampleItems": ["glibc", "musl"]
+    },
     "main": {
       "description": "The path that will be used to resolve the qualified path to use when accessing the package by its name. This field can be modified at publish-time through the use of the `publishConfig.main` field.",
       "type": "string",
