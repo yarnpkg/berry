@@ -42,7 +42,6 @@ module.exports = {
       "Generic Packages": {
         "@yarnpkg/core": `yarnpkg_core`,
         "@yarnpkg/fslib": `yarnpkg_fslib`,
-        "@yarnpkg/json-proxy": `yarnpkg_json_proxy`,
         "@yarnpkg/libzip": `yarnpkg_libzip`,
         "@yarnpkg/nm": `yarnpkg_nm`,
         "@yarnpkg/parsers": `yarnpkg_parsers`,
