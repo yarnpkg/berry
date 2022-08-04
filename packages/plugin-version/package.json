@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-version",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.14",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -12,7 +12,7 @@
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",

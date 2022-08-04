@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "3.0.0-rc.13",
+  "version": "3.0.0-rc.14",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
@@ -10,7 +10,7 @@
     "git-url-parse": "11.1.2",
     "lodash": "^4.17.15",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"

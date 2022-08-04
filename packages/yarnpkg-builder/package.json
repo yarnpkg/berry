@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.14",
   "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
@@ -13,7 +13,7 @@
     "clipanion": "^3.2.0-rc.10",
     "esbuild": "npm:esbuild-wasm@^0.11.20",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",

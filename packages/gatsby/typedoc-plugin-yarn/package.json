@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "typedoc": "next",
+    "typedoc": "0.17.0-3",
     "typescript": "^3.8.3"
   }
 }

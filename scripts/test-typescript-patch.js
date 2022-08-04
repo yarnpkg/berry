@@ -1,4 +1,4 @@
-const {createRequire, createRequireFromPath} = require(`module`);
+const {createRequire} = require(`module`);
 const path = require(`path`);
 const ts = require(`typescript`);
 
@@ -26,16 +26,12 @@ const TESTS = [
   [`@yarnpkg/fslib/sources/index.ts`, `@yarnpkg/fslib`],
 ];
 
-const requireFactory = createRequire
-  ? createRequire
-  : createRequireFromPath;
-
 for (const [test, expected] of TESTS) {
   const actual = ts.moduleSpecifiers.getModuleSpecifier(
     compilerOptions,
     rootSourceFile,
     rootSourceFile.fileName,
-    requireFactory(rootSourceFile.fileName).resolve(test),
+    createRequire(rootSourceFile.fileName).resolve(test),
     moduleSpecifierResolutionHost,
   );
 

@@ -1,11 +1,11 @@
 {
   "name": "@yarnpkg/parsers",
-  "version": "3.0.0-rc.13",
+  "version": "3.0.0-rc.14",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
     "js-yaml": "^3.10.0",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^3.11.1",

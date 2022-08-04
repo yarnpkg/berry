@@ -1,13 +1,13 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "3.0.0-rc.13",
+  "version": "3.0.0-rc.14",
   "stableVersion": "2.7.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/libzip": "workspace:^",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",

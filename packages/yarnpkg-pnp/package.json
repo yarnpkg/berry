@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.14",
   "stableVersion": "3.2.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
@@ -16,7 +16,7 @@
     "resolve.exports": "^1.1.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "scripts": {
     "build:pnp:hook": "rollup -c",

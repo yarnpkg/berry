@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/sdks",
-  "version": "3.0.0-rc.13",
+  "version": "3.0.0-rc.14",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -14,7 +14,7 @@
     "clipanion": "^3.2.0-rc.10",
     "comment-json": "^2.2.0",
     "lodash": "^4.17.15",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/comment-json": "^1.1.1",
