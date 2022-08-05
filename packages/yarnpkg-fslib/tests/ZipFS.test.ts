@@ -393,7 +393,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers(`modern`);
+    jest.useFakeTimers();
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -476,7 +476,7 @@ describe(`ZipFS`, () => {
     const changeListener = jest.fn();
     const stopListener = jest.fn();
 
-    jest.useFakeTimers(`modern`);
+    jest.useFakeTimers();
 
     const statWatcher = zipFs.watchFile(file, {interval: 1000}, changeListener);
     statWatcher.on(`stop`, stopListener);
@@ -543,7 +543,7 @@ describe(`ZipFS`, () => {
   });
 
   it(`should stop the watcher on closing the archive`, async () => {
-    jest.useFakeTimers(`modern`);
+    jest.useFakeTimers();
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 
     zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);

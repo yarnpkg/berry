@@ -113,8 +113,8 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      const api = require(`${path}/.pnp.cjs`);
-      api.resolveToUnqualified(`${path}/.pnp.cjs`, `${path}/some/path/that/doesnt/exists/please/`);
+      const api = require(`${npath.fromPortablePath(path)}/.pnp.cjs`);
+      api.resolveToUnqualified(`${npath.fromPortablePath(path)}/.pnp.cjs`, `${npath.fromPortablePath(path)}/some/path/that/doesnt/exists/please/`);
     }),
   );
 

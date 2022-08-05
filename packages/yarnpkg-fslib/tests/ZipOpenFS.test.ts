@@ -172,7 +172,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`closes ZipFS instances once they become stale`, async () => {
-    jest.useFakeTimers(`modern`);
+    jest.useFakeTimers();
 
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
 
@@ -213,7 +213,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`doesn't crash when watching a file in a archive that gets closed`, async () => {
-    jest.useFakeTimers(`modern`);
+    jest.useFakeTimers();
 
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
 
