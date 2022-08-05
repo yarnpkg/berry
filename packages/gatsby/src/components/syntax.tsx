@@ -22,6 +22,8 @@ export type Theme = {
   formatKey: (value: unknown) => string;
   formatValue: (value: unknown) => string;
 
+  delimiter: string;
+
   keys: {
     suffix: string;
   };
@@ -29,14 +31,12 @@ export type Theme = {
   dictionaries: {
     leading: string;
     trailing: string;
-    suffix: string;
   };
 
   arrays: {
     leading: string;
     trailing: string;
     prefix: string;
-    suffix: string;
   };
 };
 
@@ -108,7 +108,7 @@ const marginContainer = css`
     margin-bottom: -1.5em;
   }
 
-  &[data-dictionaries-suffix=""] > :last-child {
+  &[data-dictionaries-delimiter=""] > :last-child {
     margin-bottom: -2.5em;
   }
 `;
@@ -226,49 +226,45 @@ const Key = ({theme, name, anchorTarget}: KeyProps) => <>
   {theme.keys.suffix}
 </>;
 
-export type ArrayProps = KeyProps & {
-  suffix?: string;
-};
+export type ArrayProps = KeyProps;
 
-export const Array = ({theme, name, suffix, anchorTarget, children}: PropsWithChildren<ArrayProps>) => <div>
+export const Array = ({theme, name, anchorTarget, children}: PropsWithChildren<ArrayProps>) => <div>
   <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.arrays.leading}</div>
   <div style={{position: `relative`, paddingLeft: `2em`, top: !(children as any).every((child: any) => child.type.BaseComponent === Scalar) ? `2em` : ``}}>
     {React.Children.map(children, (child, index) =>
       <div key={index} style={{display: `flex`}}>
         <div>{theme.arrays.prefix}</div>
         <div style={{width: `100%`}}>
-          {React.cloneElement(child as JSX.Element, {suffix: theme.arrays.suffix})}
+          {child}
         </div>
       </div>,
     )}
   </div>
-  <div>{theme.arrays.trailing}{suffix}</div>
+  <div>{theme.arrays.trailing}{theme.delimiter}</div>
 </div>;
 
 export type DictionaryProps = KeyProps & {
-  suffix?: string;
   margin: boolean;
 };
 
-export const Dictionary = ({theme, name, suffix, anchorTarget, children, margin}: PropsWithChildren<DictionaryProps>) => <div>
+export const Dictionary = ({theme, name, anchorTarget, children, margin}: PropsWithChildren<DictionaryProps>) => <div>
   <div>{name && <><Key theme={theme} name={name} anchorTarget={anchorTarget} /></>}{theme.dictionaries.leading}</div>
-  <div style={{paddingLeft: `2em`}} css={margin ? marginContainer : null} data-dictionaries-suffix={theme.dictionaries.suffix}>
+  <div style={{paddingLeft: `2em`}} css={margin ? marginContainer : null} data-dictionaries-delimiter={theme.delimiter}>
     {React.Children.map(children, (child, index) =>
       <React.Fragment key={index}>
-        {React.cloneElement(child as JSX.Element, {suffix: theme.dictionaries.suffix})}
+        {child}
       </React.Fragment>,
     )}
   </div>
-  <div>{theme.dictionaries.trailing}{suffix}</div>
+  <div>{theme.dictionaries.trailing}{theme.delimiter}</div>
 </div>;
 
 export type ScalarProps = KeyProps & {
-  suffix?: string;
   placeholder: unknown;
 };
 
-export const Scalar = ({theme, suffix, placeholder}: ScalarProps) => <div>
-  <span style={{color: getColorForScalar(theme, placeholder) ?? undefined}}>{theme.formatValue(placeholder)}</span>{suffix}
+export const Scalar = ({theme, placeholder}: ScalarProps) => <div>
+  <span style={{color: getColorForScalar(theme, placeholder) ?? undefined}}>{theme.formatValue(placeholder)}</span>{theme.delimiter}
 </div>;
 
 export type DictionaryPropertyProps = DescribeProps & DictionaryProps;
@@ -296,7 +292,7 @@ export type ScalarPropertyProps = DescribeProps & ScalarProps;
 export const ScalarProperty = ({theme, name, anchor = name, placeholder, description}: ScalarPropertyProps) => <>
   <Describe theme={theme} name={name} description={description} anchor={description ? anchor : null}>
     <div style={{marginRight: `-2vw`}}>
-      <Key theme={theme} name={name} anchorTarget={description ? anchor : null} /><span style={{color: getColorForScalar(theme, placeholder) ?? undefined}}>{theme.formatValue(placeholder)}</span>{theme.dictionaries.suffix}
+      <Key theme={theme} name={name} anchorTarget={description ? anchor : null} /><span style={{color: getColorForScalar(theme, placeholder) ?? undefined}}>{theme.formatValue(placeholder)}</span>{theme.delimiter}
     </div>
   </Describe>
 </>;
