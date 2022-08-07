@@ -59,6 +59,10 @@ The following changes only affect people writing Yarn plugins:
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - When Corepack is enabled Yarn will now use the current CLI to prepare external Yarn classic projects, matching the behaviour of when Corepack is disabled.
 
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript 4.8.1-rc
+
 ## 3.2.2
 
 ### Compatibility
