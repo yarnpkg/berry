@@ -55,8 +55,8 @@
     "checksumBehavior": {
       "_package": "@yarnpkg/core",
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
-      "enum": ["throw", "update", "ignore"],
-      "default": "throw"
+      "enum": ["throw", "update", "ignore", "reset"],
+      "default": "\"reset\" on CI or \"throw\""
     },
     "cloneConcurrency": {
       "_package": "@yarnpkg/plugin-git",

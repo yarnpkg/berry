@@ -184,11 +184,11 @@ export class Cache {
       return zipFs;
     };
 
-    const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
+    const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null): Promise<[isValid: boolean, hash: string | null]> => {
       // We hide the checksum if the package presence is conditional, because it becomes unreliable
       // so there is no point in computing it unless we're checking the cache
       if (refetchPath === null && opts.unstablePackages?.has(locator.locatorHash))
-        return null;
+        return [true, null];
 
       const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
         ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}`
@@ -218,19 +218,21 @@ export class Cache {
 
         switch (checksumBehavior) {
           case `ignore`:
-            return expectedChecksum;
+            return [true, expectedChecksum];
 
           case `update`:
-            return actualChecksum;
+            return [true, actualChecksum];
 
+          case `reset`:
+            return [false, expectedChecksum];
           default:
           case `throw`: {
-            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the expected checksum`);
+            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote2 archive doesn't match the expected checksum`);
           }
         }
       }
 
-      return actualChecksum;
+      return [true, actualChecksum];
     };
 
     const validateFileAgainstRemote = async (cachePath: PortablePath) => {
@@ -244,7 +246,11 @@ export class Cache {
 
       await xfs.chmodPromise(refetchPath, 0o644);
 
-      return await validateFile(cachePath, refetchPath);
+      const result = await validateFile(cachePath, refetchPath);
+      if (!result[0])
+        throw new Error(`Not expected`);
+
+      return result[1];
     };
 
     const loadPackageThroughMirror = async () => {
@@ -268,7 +274,7 @@ export class Cache {
       const {path: packagePath, source: packageSource} = await loadPackageThroughMirror();
 
       // Do this before moving the file so that we don't pollute the cache with corrupted archives
-      const checksum = await validateFile(packagePath);
+      const checksum = (await validateFile(packagePath))[1];
 
       const cachePath = this.getLocatorPath(locator, checksum, opts);
       if (!cachePath)
@@ -333,11 +339,18 @@ export class Cache {
         } else {
           let checksum: string | null = null;
           const cachePath = tentativeCachePath!;
-
-          if (!shouldMock)
-            checksum = this.check
-              ? await validateFileAgainstRemote(cachePath)
-              : await validateFile(cachePath);
+          if (!shouldMock) {
+            if (this.check) {
+              checksum = await validateFileAgainstRemote(cachePath);
+            } else {
+              const mbChecksum = await validateFile(cachePath);
+              if (mbChecksum[0]) {
+                checksum = mbChecksum[1];
+              } else {
+                return loadPackage();
+              }
+            }
+          }
 
           return [shouldMock, cachePath, checksum] as const;
         }

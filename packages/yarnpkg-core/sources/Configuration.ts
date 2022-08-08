@@ -507,7 +507,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   checksumBehavior: {
     description: `Enumeration defining what to do when a checksum doesn't match expectations`,
     type: SettingsType.STRING,
-    default: `throw`,
+    default: isCI ? `reset` : `throw`,
   },
 
   // Package patching - to fix incorrect definitions
