@@ -939,4 +939,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       mkdirp: `^1.0.4`,
     },
   }],
+  // https://github.com/gatsbyjs/gatsby/pull/33170
+  [`gatsby-plugin-mdx@^2`, {
+    peerDependencies: {
+      gatsby: `^3.0.0-next`,
+    },
+  }],
 ];
