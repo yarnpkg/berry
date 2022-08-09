@@ -904,7 +904,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/xojs/xo/pull/678
-  [`xo**`, {
+  [`xo@*`, {
     peerDependencies: {
       webpack: `>=1.11.0`,
     },
