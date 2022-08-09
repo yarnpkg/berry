@@ -55,21 +55,19 @@
       "description": "A map of locators that all packages are allowed to access, regardless whether they list them in their dependencies or not.",
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
-            "examples": ["@app/name"]
-          },
-          "reference": {
-            "type": "string",
-            "examples": ["workspace:."]
-          }
-        }
+        "type": "array",
+        "prefixItems": [{
+          "type": "string",
+          "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
+          "examples": ["@app/name"]
+        }, {
+          "type": "string",
+          "foldStyle": false,
+          "examples": ["workspace:."]
+        }]
       },
       "exampleItems": [
-        {"name": "@app/monorepo", "reference": "workspace:."}
+        ["@app/monorepo", "workspace:."]
       ]
     },
     "fallbackExclusionList": {

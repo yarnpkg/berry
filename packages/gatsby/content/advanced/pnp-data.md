@@ -151,19 +151,23 @@ import {JsonDoc} from 'react-json-doc';
 
 8. Let `referenceOrAlias` be the entry from `parentPkg.packageDependencies` referenced by `ident`
 
-9. If `referenceOrAlias` is **undefined**, then
+9. If `referenceOrAlias` is **null** or **undefined**, then
 
     1. If `manifest.enableTopLevelFallback` is **true**, then
 
         1. If `parentLocator` **isn't** in `manifest.fallbackExclusionList`, then
 
-            1. Set `referenceOrAlias` to **RESOLVE_VIA_FALLBACK**(`manifest`, `ident`)
+            1. Let `fallback` be **RESOLVE_VIA_FALLBACK**(`manifest`, `ident`)
+
+            2. If `fallback` is neither **null** nor **undefined**
+
+                1. Set `referenceOrAlias` to `fallback`
 
 10. If `referenceOrAlias` is still **undefined**, then
 
     1. Throw a resolution error
 
-11. If `referenceOrAlias` is **null**, then
+11. If `referenceOrAlias` is still **null**, then
 
     1. Note: It means that `parentPkg` has an unfulfilled peer dependency on `ident`
 
@@ -205,13 +209,15 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 3. Let `relativeUrl` be the relative path between `manifest` and `moduleUrl`
 
-    1. Note: Make sure it always starts with a `./` or `../`
+    1. Note: The relative path must not start with `./`; trim it if needed
 
 4. If `relativeUrl` matches `manifest.ignorePatternData`, then
 
     1. Return **null**
 
-5. For each `referenceMap` value in `manifest.packageRegistryData`
+5. Let `relativeUrlWithDot` be `relativeUrl` prefixed with `./` or `../` as necessary
+
+6. For each `referenceMap` value in `manifest.packageRegistryData`
 
     1. For each `registryPkg` value in `referenceMap`
 
@@ -227,7 +233,7 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 6. Return `bestLocator`
 
-### RESOLVE_VIA_FALLBACK(`manifest`, `specifier`)
+### RESOLVE_VIA_FALLBACK(`manifest`, `ident`)
 
 1. Let `topLevelPkg` be **GET_PACKAGE**(`manifest`, {**null**, **null**})
 
