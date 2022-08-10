@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
-import {IdentHash, structUtils}                                                                                     from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, InstallMode}                                                              from '@yarnpkg/core';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                                                                         from 'clipanion';
-import {prompt}                                                                                                     from 'enquirer';
-import micromatch                                                                                                   from 'micromatch';
-import * as t                                                                                                       from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
+import {IdentHash, structUtils}                                                                         from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, InstallMode}                                                  from '@yarnpkg/core';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                                                             from 'clipanion';
+import {prompt}                                                                                         from 'enquirer';
+import micromatch                                                                                       from 'micromatch';
+import * as t                                                                                           from 'typanion';
 
-import * as suggestUtils                                                                                            from '../suggestUtils';
-import {Hooks}                                                                                                      from '..';
+import * as suggestUtils                                                                                from '../suggestUtils';
+import {Hooks}                                                                                          from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
@@ -218,9 +218,9 @@ export default class UpCommand extends BaseCommand {
     }
 
     if (unreferencedPatterns.length > 1)
-      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} don't match any packages referenced by any workspace`);
+      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by any workspace`);
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} doesn't match any packages referenced by any workspace`);
+      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 

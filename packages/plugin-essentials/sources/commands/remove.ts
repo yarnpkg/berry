@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                from '@yarnpkg/cli';
-import {Configuration, Cache, Descriptor, Project, formatUtils, FormatType} from '@yarnpkg/core';
-import {StreamReport, Workspace, InstallMode}                               from '@yarnpkg/core';
-import {structUtils}                                                        from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                                 from 'clipanion';
-import micromatch                                                           from 'micromatch';
-import * as t                                                               from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                    from '@yarnpkg/cli';
+import {Configuration, Cache, Descriptor, Project, formatUtils} from '@yarnpkg/core';
+import {StreamReport, Workspace, InstallMode}                   from '@yarnpkg/core';
+import {structUtils}                                            from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                     from 'clipanion';
+import micromatch                                               from 'micromatch';
+import * as t                                                   from 'typanion';
 
-import * as suggestUtils                                                    from '../suggestUtils';
-import {Hooks}                                                              from '..';
+import * as suggestUtils                                        from '../suggestUtils';
+import {Hooks}                                                  from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends BaseCommand {
@@ -149,7 +149,7 @@ export default class RemoveCommand extends BaseCommand {
       : `this`;
 
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`${patterns} ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} ${dont} match any packages referenced by ${which} workspace`);
+      throw new UsageError(`${patterns} ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} ${dont} match any packages referenced by ${which} workspace`);
 
     if (hasChanged) {
       await configuration.triggerMultipleHooks(

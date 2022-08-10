@@ -12,7 +12,7 @@ import v8                                                               from 'v8
 import zlib                                                             from 'zlib';
 
 import {Cache, CacheOptions}                                            from './Cache';
-import {Configuration, FormatType}                                      from './Configuration';
+import {Configuration}                                                  from './Configuration';
 import {Fetcher, FetchOptions}                                          from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
@@ -913,7 +913,7 @@ export class Project {
           }-${
             process.arch
           }) is supported by this package, but is missing from the ${
-            formatUtils.pretty(this.configuration, `supportedArchitectures`, FormatType.SETTING)
+            formatUtils.pretty(this.configuration, `supportedArchitectures`, formatUtils.Type.SETTING)
           } setting`);
         }
 

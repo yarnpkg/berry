@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                         from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                           from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                           from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
-import semver                                                                                from 'semver';
+import {BaseCommand}                                                             from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}               from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                               from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                      from 'clipanion';
+import semver                                                                    from 'semver';
 
 export type Tags = {
   latest: Record<string, string>;
@@ -125,10 +125,10 @@ export default class SetVersionCommand extends BaseCommand {
 
       let bundleBuffer: Buffer;
       if (bundleUrl.startsWith(filePrefix)) {
-        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, FormatType.URL)}`);
+        report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleUrl, formatUtils.Type.URL)}`);
         bundleBuffer = await xfs.readFilePromise(npath.toPortablePath(bundleUrl.slice(filePrefix.length)));
       } else {
-        report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, FormatType.PATH)}`);
+        report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleUrl, formatUtils.Type.PATH)}`);
         bundleBuffer = await httpUtils.get(bundleUrl, {configuration});
       }
 

@@ -91,7 +91,13 @@ export type SupportedArchitectures = {
   libc: Array<string> | null;
 };
 
+/**
+ * @deprecated Use {@link formatUtils.Type}
+ */
 export type FormatType = formatUtils.Type;
+/**
+ * @deprecated Use {@link formatUtils.Type}
+ */
 export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
