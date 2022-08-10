@@ -384,3 +384,23 @@ This error should never trigger under normal circumstances, as Yarn should alway
 - Or you might have someone doing strange things on your lockfile. It might be a mistake (for example someone manually modifying a lockfile for debug but forgetting to revert the changes), or a problem (for example a malicious users trying to perform some sort of [supply chain attack](https://en.wikipedia.org/wiki/Supply_chain_attack)).
 
 If the use case appears legit (for example if the bug comes from Yarn), you can bypass the check on PRs by adding a `--no-check-resolutions` flag to your `yarn install` command. But be careful: this is a security feature; disabling it may have consequences.
+
+## YN0080 - `NETWORK_DISABLED`
+
+The `enableNetwork` flag is set to `false`, preventing any request to be made.
+
+Note that the Yarn configuration allows [`enableNetwork`](/configuration/yarnrc#enableNetwork) to be set on a per-registry basis via `npmRegistries`.
+
+## YN0081 - `NETWORK_UNSAFE_HTTP`
+
+Yarn will by default refuse to perform http (non-https) queries to protect you against accidental man-in-the-middle attacks.
+
+To bypass this protection, add the specified hostname to [`unsafeHttpWhitelist`](/configuration/yarnrc#unsafeHttpWhitelist).
+
+## YN0082 - `RESOLUTION_FAILED`
+
+Yarn failed to locate a package version that could satisfy the requested range. This usually happens with semver ranges that target versions not published yet (for example `^1.0.0` when the latest version is `0.9.0`), but can be also caused by a couple of other reasons:
+
+- The registry may not have been set properly (so Yarn is querying the public npm registry instead of your internal one)
+
+- The version may have been unpublished (although this shouldn't be possible for the public registry)
