@@ -1,7 +1,7 @@
-import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils} from '@yarnpkg/core';
-import {Dirent, Filename, PortablePath, setupCopyIndex, ppath, xfs}                                                                                                                                                        from '@yarnpkg/fslib';
-import {jsInstallUtils}                                                                                                                                                                                                    from '@yarnpkg/plugin-pnp';
-import {UsageError}                                                                                                                                                                                                        from 'clipanion';
+import {Descriptor, FetchResult, formatUtils, Installer, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils} from '@yarnpkg/core';
+import {Dirent, Filename, PortablePath, setupCopyIndex, ppath, xfs}                                                                                                                                from '@yarnpkg/fslib';
+import {jsInstallUtils}                                                                                                                                                                            from '@yarnpkg/plugin-pnp';
+import {UsageError}                                                                                                                                                                                from 'clipanion';
 
 export type PnpmCustomData = {
   locatorByPath: Map<PortablePath, string>;
@@ -100,16 +100,16 @@ class PnpmInstaller implements Installer {
     // it needs to be invalidated because otherwise we'll never prune the store or we might run into various issues.
   }
 
-  async installPackage(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+  async installPackage(pkg: Package, fetchResult: FetchResult) {
     switch (pkg.linkType) {
-      case LinkType.SOFT: return this.installPackageSoft(pkg, fetchResult, api);
-      case LinkType.HARD: return this.installPackageHard(pkg, fetchResult, api);
+      case LinkType.SOFT: return this.installPackageSoft(pkg, fetchResult);
+      case LinkType.HARD: return this.installPackageHard(pkg, fetchResult);
     }
 
     throw new Error(`Assertion failed: Unsupported package link type`);
   }
 
-  async installPackageSoft(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+  async installPackageSoft(pkg: Package, fetchResult: FetchResult) {
     const packageLocation = ppath.resolve(fetchResult.packageFs.getRealPath(), fetchResult.prefixPath);
 
     const dependenciesLocation = this.opts.project.tryWorkspaceByLocator(pkg)
@@ -127,14 +127,14 @@ class PnpmInstaller implements Installer {
     };
   }
 
-  async installPackageHard(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+  async installPackageHard(pkg: Package, fetchResult: FetchResult) {
     const packagePaths = getPackagePaths(pkg, {project: this.opts.project});
     const packageLocation = packagePaths.packageLocation;
 
     this.customData.locatorByPath.set(packageLocation, structUtils.stringifyLocator(pkg));
     this.customData.pathsByLocator.set(pkg.locatorHash, packagePaths);
 
-    api.holdFetchResult(this.asyncActions.set(pkg.locatorHash, async () => {
+    this.asyncActions.set(pkg.locatorHash, async () => {
       await xfs.mkdirPromise(packageLocation, {recursive: true});
 
       // Copy the package source into the <root>/n_m/.store/<hash> directory, so
@@ -148,7 +148,7 @@ class PnpmInstaller implements Installer {
           autoRepair: true,
         },
       });
-    }));
+    });
 
     const isVirtual = structUtils.isVirtualLocator(pkg);
     const devirtualizedLocator: Locator = isVirtual ? structUtils.devirtualizeLocator(pkg) : pkg;

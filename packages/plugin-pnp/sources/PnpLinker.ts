@@ -1,4 +1,4 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash}                                           from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
 import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
@@ -121,7 +121,7 @@ export class PnpInstaller implements Installer {
     this.customData = customData;
   }
 
-  async installPackage(pkg: Package, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+  async installPackage(pkg: Package, fetchResult: FetchResult) {
     const key1 = structUtils.stringifyIdent(pkg);
     const key2 = pkg.reference;
 
@@ -171,7 +171,7 @@ export class PnpInstaller implements Installer {
       : [];
 
     const packageFs = mayNeedToBeUnplugged
-      ? await this.unplugPackageIfNeeded(pkg, customPackageData!, fetchResult, dependencyMeta!, api)
+      ? await this.unplugPackageIfNeeded(pkg, customPackageData!, fetchResult, dependencyMeta!)
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
@@ -416,9 +416,9 @@ export class PnpInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, api: InstallPackageExtraApi) {
+  private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta) {
     if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
-      return this.unplugPackage(pkg, fetchResult, api);
+      return this.unplugPackage(pkg, fetchResult);
     } else {
       return fetchResult.packageFs;
     }
@@ -443,14 +443,14 @@ export class PnpInstaller implements Installer {
     return false;
   }
 
-  private async unplugPackage(locator: Locator, fetchResult: FetchResult, api: InstallPackageExtraApi) {
+  private async unplugPackage(locator: Locator, fetchResult: FetchResult) {
     const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
     if (this.opts.project.disabledLocators.has(locator.locatorHash))
       return new AliasFS(unplugPath, {baseFs: fetchResult.packageFs, pathUtils: ppath});
 
     this.unpluggedPaths.add(unplugPath);
 
-    api.holdFetchResult(this.asyncActions.set(locator.locatorHash, async () => {
+    this.asyncActions.set(locator.locatorHash, async () => {
       const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
       if (await xfs.existsPromise(readyFile))
         return;
@@ -463,7 +463,7 @@ export class PnpInstaller implements Installer {
       await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
 
       await xfs.writeFilePromise(readyFile, ``);
-    }));
+    });
 
     return new CwdFS(unplugPath);
   }

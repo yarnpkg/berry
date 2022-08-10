@@ -237,12 +237,7 @@ export default class InfoCommand extends BaseCommand {
 
         const fetchResult = await fetcher.fetch(pkg, fetcherOptions);
 
-        let manifest;
-        try {
-          manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
-        } finally {
-          fetchResult.releaseFs?.();
-        }
+        const manifest = await Manifest.find(fetchResult.prefixPath, {baseFs: fetchResult.packageFs});
 
         registerData(`Manifest`, {
           [`License`]: formatUtils.tuple(formatUtils.Type.NO_HINT, manifest.license),

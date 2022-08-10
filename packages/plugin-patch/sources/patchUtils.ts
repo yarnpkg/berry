@@ -169,42 +169,36 @@ export async function loadPatchFiles(parentLocator: Locator | null, patchPaths: 
     ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
     : parentFetch;
 
-  // Discard the parent fs unless we really need it to access the files
-  if (parentFetch && parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
-    parentFetch.releaseFs();
-
   // First we obtain the specification for all the patches that we'll have to
   // apply to the original package.
-  const patchFiles = await miscUtils.releaseAfterUseAsync(async () => {
-    return await Promise.all(patchPaths.map(async patchPath => {
-      const flags = extractPatchFlags(patchPath);
+  const patchFiles = await Promise.all(patchPaths.map(async patchPath => {
+    const flags = extractPatchFlags(patchPath);
 
-      const source = await visitPatchPath({
-        onAbsolute: async patchPath => {
-          return await xfs.readFilePromise(patchPath, `utf8`);
-        },
+    const source = await visitPatchPath({
+      onAbsolute: async patchPath => {
+        return await xfs.readFilePromise(patchPath, `utf8`);
+      },
 
-        onRelative: async patchPath => {
-          if (effectiveParentFetch === null)
-            throw new Error(`Assertion failed: The parent locator should have been fetched`);
+      onRelative: async patchPath => {
+        if (effectiveParentFetch === null)
+          throw new Error(`Assertion failed: The parent locator should have been fetched`);
 
-          return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
-        },
+        return await effectiveParentFetch.packageFs.readFilePromise(ppath.join(effectiveParentFetch.prefixPath, patchPath), `utf8`);
+      },
 
-        onProject: async patchPath => {
-          return await xfs.readFilePromise(ppath.join(opts.project.cwd, patchPath), `utf8`);
-        },
+      onProject: async patchPath => {
+        return await xfs.readFilePromise(ppath.join(opts.project.cwd, patchPath), `utf8`);
+      },
 
-        onBuiltin: async name => {
-          return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
-            return hooks.getBuiltinPatch;
-          }, opts.project, name);
-        },
-      }, patchPath);
+      onBuiltin: async name => {
+        return await opts.project.configuration.firstHook((hooks: PatchHooks) => {
+          return hooks.getBuiltinPatch;
+        }, opts.project, name);
+      },
+    }, patchPath);
 
-      return {...flags, source};
-    }));
-  });
+    return {...flags, source};
+  }));
 
   // Normalizes the line endings to prevent mismatches when cloning a
   // repository on Windows systems (the default settings for Git are to
@@ -234,43 +228,31 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 
   const fetcher = project.configuration.makeFetcher();
 
-  const cleanup: Array<() => void> = [];
+  let sourceFetchResult: FetchResult;
+  let userFetchResult: FetchResult;
 
-  try {
-    let sourceFetchResult: FetchResult;
-    let userFetchResult: FetchResult;
+  if (locator.locatorHash === unpatchedLocator.locatorHash) {
+    const fetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
 
-    if (locator.locatorHash === unpatchedLocator.locatorHash) {
-      const fetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
-      cleanup.push(() => fetchResult.releaseFs?.());
-
-      sourceFetchResult = fetchResult;
-      userFetchResult = fetchResult;
-    } else {
-      sourceFetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
-      cleanup.push(() => sourceFetchResult.releaseFs?.());
-
-      userFetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
-      cleanup.push(() => userFetchResult.releaseFs?.());
-    }
-
-    await Promise.all([
-      xfs.copyPromise(sourcePath, sourceFetchResult.prefixPath, {
-        baseFs: sourceFetchResult.packageFs,
-      }),
-      xfs.copyPromise(userPath, userFetchResult.prefixPath, {
-        baseFs: userFetchResult.packageFs,
-      }),
-      xfs.writeJsonPromise(metaPath, {
-        locator: structUtils.stringifyLocator(locator),
-        version: pkg.version,
-      }),
-    ]);
-  } finally {
-    for (const cleanupFn of cleanup) {
-      cleanupFn();
-    }
+    sourceFetchResult = fetchResult;
+    userFetchResult = fetchResult;
+  } else {
+    sourceFetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
+    userFetchResult = await fetcher.fetch(locator, {cache, project, fetcher, checksums, report});
   }
+
+  await Promise.all([
+    xfs.copyPromise(sourcePath, sourceFetchResult.prefixPath, {
+      baseFs: sourceFetchResult.packageFs,
+    }),
+    xfs.copyPromise(userPath, userFetchResult.prefixPath, {
+      baseFs: userFetchResult.packageFs,
+    }),
+    xfs.writeJsonPromise(metaPath, {
+      locator: structUtils.stringifyLocator(locator),
+      version: pkg.version,
+    }),
+  ]);
 
   xfs.detachTemp(temp);
   return userPath;

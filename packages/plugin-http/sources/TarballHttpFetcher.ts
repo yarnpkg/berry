@@ -22,7 +22,7 @@ export class TarballHttpFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+    const {packageFs, checksum} = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote server`),
       loader: () => this.fetchFromNetwork(locator, opts),
@@ -31,7 +31,6 @@ export class TarballHttpFetcher implements Fetcher {
 
     return {
       packageFs,
-      releaseFs,
       prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };

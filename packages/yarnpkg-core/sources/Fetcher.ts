@@ -21,12 +21,6 @@ export type FetchResult = {
   packageFs: FakeFS<PortablePath>;
 
   /**
-   * If set, this function will be called once the fetch result isn't needed
-   * anymore. Typically used to release the ZipFS memory.
-   */
-  releaseFs?: () => void;
-
-  /**
    * The path where the package can be found within the `packageFs`. This is
    * typically the `node_modules/<scope>/<name>` path.
    */

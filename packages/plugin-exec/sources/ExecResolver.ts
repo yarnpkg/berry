@@ -1,7 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
+import {structUtils, hashUtils}                          from '@yarnpkg/core';
 
 import {PROTOCOL}                                        from './constants';
 import * as execUtils                                    from './execUtils';
@@ -75,9 +75,7 @@ export class ExecResolver implements Resolver {
 
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
-    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
-    }, packageFetch.releaseFs);
+    const manifest = await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
 
     return {
       ...locator,

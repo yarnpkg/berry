@@ -47058,6 +47058,15 @@ function makeEmptyArchive() {
     0
   ]);
 }
+const zipFsRegistry = typeof FinalizationRegistry !== `undefined` ? new FinalizationRegistry(({libzip, zip}) => {
+  var _a, _b;
+  (_b = (_a = setImmediate(() => {
+    try {
+      libzip.discard(zip);
+    } catch {
+    }
+  })) == null ? void 0 : _a.unref) == null ? void 0 : _b.call(_a);
+}) : null;
 class ZipFS extends BasePortableFakeFS {
   constructor(source, opts) {
     super();
@@ -47143,6 +47152,7 @@ class ZipFS extends BasePortableFakeFS {
     if (this.symlinkCount === -1)
       throw this.makeLibzipError(this.libzip.getError(this.zip));
     this.ready = true;
+    zipFsRegistry == null ? void 0 : zipFsRegistry.register(this, {libzip: this.libzip, zip: this.zip}, this);
   }
   makeLibzipError(error) {
     const errorCode = this.libzip.struct.errorCodeZip(error);
@@ -47212,6 +47222,7 @@ class ZipFS extends BasePortableFakeFS {
     if (!this.ready)
       throw EBUSY(`archive closed, close`);
     unwatchAllFiles(this);
+    zipFsRegistry == null ? void 0 : zipFsRegistry.unregister(this);
   }
   saveAndClose() {
     if (!this.path || !this.baseFs)

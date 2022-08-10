@@ -40,10 +40,6 @@ export class LinkFetcher implements Fetcher {
       ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath), localPath: PortablePath.root}
       : parentFetch;
 
-    // Discard the parent fs unless we really need it to access the files
-    if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
-      parentFetch.releaseFs();
-
     const sourceFs = effectiveParentFetch.packageFs;
     const sourcePath = ppath.resolve(
       effectiveParentFetch.localPath ?? effectiveParentFetch.packageFs.getRealPath(),
@@ -52,9 +48,9 @@ export class LinkFetcher implements Fetcher {
     );
 
     if (parentFetch.localPath) {
-      return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, localPath: sourcePath};
+      return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), prefixPath: PortablePath.dot, localPath: sourcePath};
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), prefixPath: PortablePath.dot};
     }
   }
 }
