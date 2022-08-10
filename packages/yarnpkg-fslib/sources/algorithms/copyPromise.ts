@@ -2,7 +2,7 @@ import {Stats}             from 'fs';
 
 import {FakeFS}            from '../FakeFS';
 import * as constants      from '../constants';
-import {Path, convertPath} from '../path';
+import {Path, convertPath, PortablePath} from '../path';
 
 const defaultTime = new Date(constants.SAFE_TIME * 1000);
 const defaultTimeMs = defaultTime.getTime();
@@ -200,10 +200,11 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
 
   prelayout.push(async () => {
     if (!indexStat) {
-      await destinationFs.lockPromise(indexPath, async () => {
+        const tempPath = `${indexPath}.${(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1;
+
         const content = await sourceFs.readFilePromise(source);
-        await destinationFs.writeFilePromise(indexPath, content);
-      });
+        await destinationFs.writeFilePromise(tempPath, content);
+        await destinationFs.renamePromise(tempPath, indexPath);
     }
 
     if (!destinationStat) {
