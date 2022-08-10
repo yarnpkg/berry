@@ -2,7 +2,7 @@ import {Stats}             from 'fs';
 
 import {FakeFS}            from '../FakeFS';
 import * as constants      from '../constants';
-import {Path, convertPath, PortablePath} from '../path';
+import {Path, convertPath} from '../path';
 
 const defaultTime = new Date(constants.SAFE_TIME * 1000);
 const defaultTimeMs = defaultTime.getTime();
@@ -198,13 +198,33 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
     }
   }
 
-  prelayout.push(async () => {
-    if (!indexStat) {
-        const tempPath = `${indexPath}.${(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1;
+  const tempPath = !indexStat
+    ? `${indexPath}.${(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1
+    : null;
 
+  prelayout.push(async () => {
+    if (tempPath) {
         const content = await sourceFs.readFilePromise(source);
         await destinationFs.writeFilePromise(tempPath, content);
-        await destinationFs.renamePromise(tempPath, indexPath);
+
+        // We use `linkPromise` rather than `renamePromise` because the later
+        // overwrites the destination if it already exists; usually this
+        // wouldn't be a problem, but since we care about preserving the
+        // hardlink identity of the destination, we can't do that.
+        //
+        // So instead we create a hardlink of the source file (which will
+        // fail with EEXIST if the destination already exists), and we remove
+        // the source in the postlayout steps.
+        //
+        try {
+          await destinationFs.linkPromise(tempPath, indexPath);
+        } catch (err) {
+          if (err.code === `EEXIST`) {
+            await destinationFs.unlinkPromise(tempPath);
+          } else {
+            throw err;
+          }
+        }
     }
 
     if (!destinationStat) {
@@ -213,8 +233,9 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   });
 
   postlayout.push(async () => {
-    if (!indexStat) {
+    if (tempPath) {
       await updateTime(indexPath, defaultTime, defaultTime);
+      await destinationFs.unlinkPromise(tempPath);
     }
   });
 
