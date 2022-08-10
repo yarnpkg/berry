@@ -36,6 +36,8 @@ Extra features can then be designed, but are optional. For example, Yarn leverag
 
 All packages are uniquely referenced by **locators**. A locator is a combination of a **package ident**, which includes its scope if relevant, and a **package reference**, which can be seen as a unique ID used to distinguish different instances (or versions) of a same package. The package references should be treated as an opaque value: it doesn't matter from a resolution algorithm perspective that they start with `workspace:`, `virtual:`, `npm:`, or any other protocol.
 
+For portability reasons, all paths must be relative to the manifest folder (so that they can be the same regardless of the location of the project on disk), and all paths must use the unix path format (`/` as separators).
+
 ## Fallback
 
 For improved compatibility with legacy codebases, Plug'n'Play supports a feature we call "fallback". The fallback triggers when a package makes a resolution request to a dependency it doesn't list in its dependencies. In normal circumstances the resolver would throw, but when the fallback is enabled the resolver should first try to find the dependency packages amongst the dependencies of a set of special packages. If it finds it, it then returns it transparently.
@@ -117,7 +119,7 @@ import {JsonDoc} from 'react-json-doc';
 
     1. Set `resolved` to `specifier` itself and return it
   
-3. Otherwise, if `specifier` starts with "/", "./", or "../", then
+3. Otherwise, if `specifier` is either an absolute path or a path prefixed with "./" or "../", then
 
     1. Set `resolved` to **NM_RESOLVE**(`specifier`, `parentURL`) and return it
 
