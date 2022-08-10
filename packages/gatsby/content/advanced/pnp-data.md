@@ -36,6 +36,8 @@ Extra features can then be designed, but are optional. For example, Yarn leverag
 
 All packages are uniquely referenced by **locators**. A locator is a combination of a **package ident**, which includes its scope if relevant, and a **package reference**, which can be seen as a unique ID used to distinguish different instances (or versions) of a same package. The package references should be treated as an opaque value: it doesn't matter from a resolution algorithm perspective that they start with `workspace:`, `virtual:`, `npm:`, or any other protocol.
 
+For portability reasons, all paths must be relative to the manifest folder (so that they can be the same regardless of the location of the project on disk), and all paths must use the unix path format (`/` as separators).
+
 ## Fallback
 
 For improved compatibility with legacy codebases, Plug'n'Play supports a feature we call "fallback". The fallback triggers when a package makes a resolution request to a dependency it doesn't list in its dependencies. In normal circumstances the resolver would throw, but when the fallback is enabled the resolver should first try to find the dependency packages amongst the dependencies of a set of special packages. If it finds it, it then returns it transparently.
@@ -80,6 +82,8 @@ When this pattern is found, the `__virtual__/<hash>/<n>` part must be removed, t
 
 If writing a JS tool, the [`@yarnpkg/fslib`](https://yarnpkg.com/package/@yarnpkg/fslib) package may be of assistance, providing a virtual-aware filesystem layer called `VirtualFS`.
 
+> **Note:** The `__virtual__` folder name appeared with Yarn 3.0. Earlier releases used `$$virtual`, but we changed it after discovering that this pattern triggered bugs in softwares where paths were used as either regexps or replacement. For example, `$$` found in the second parameter from [`String.prototype.replace`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) silently turned into `$`.
+
 ## Manifest reference
 
 When [`pnpEnableInlining`](/configuration/yarnrc#pnpEnableInlining) is explicitly set to `false`, Yarn will generate an additional `.pnp.data.json` file containing the following fields.
@@ -117,7 +121,7 @@ import {JsonDoc} from 'react-json-doc';
 
     1. Set `resolved` to `specifier` itself and return it
   
-3. Otherwise, if `specifier` starts with "/", "./", or "../", then
+3. Otherwise, if `specifier` is either an absolute path or a path prefixed with "./" or "../", then
 
     1. Set `resolved` to **NM_RESOLVE**(`specifier`, `parentURL`) and return it
 
@@ -151,19 +155,23 @@ import {JsonDoc} from 'react-json-doc';
 
 8. Let `referenceOrAlias` be the entry from `parentPkg.packageDependencies` referenced by `ident`
 
-9. If `referenceOrAlias` is **undefined**, then
+9. If `referenceOrAlias` is **null** or **undefined**, then
 
     1. If `manifest.enableTopLevelFallback` is **true**, then
 
         1. If `parentLocator` **isn't** in `manifest.fallbackExclusionList`, then
 
-            1. Set `referenceOrAlias` to **RESOLVE_VIA_FALLBACK**(`manifest`, `ident`)
+            1. Let `fallback` be **RESOLVE_VIA_FALLBACK**(`manifest`, `ident`)
+
+            2. If `fallback` is neither **null** nor **undefined**
+
+                1. Set `referenceOrAlias` to `fallback`
 
 10. If `referenceOrAlias` is still **undefined**, then
 
     1. Throw a resolution error
 
-11. If `referenceOrAlias` is **null**, then
+11. If `referenceOrAlias` is still **null**, then
 
     1. Note: It means that `parentPkg` has an unfulfilled peer dependency on `ident`
 
@@ -175,7 +183,7 @@ import {JsonDoc} from 'react-json-doc';
 
     2. Let `dependencyPkg` be **GET_PACKAGE**(`manifest`, `alias`)
 
-    3. Return `dependencyPkg.packageLocation` concatenated with `modulePath`
+    3. Return `path.resolve(manifest.dirPath, dependencyPkg.packageLocation, modulePath)`
 
 13. Otherwise,
 
@@ -183,7 +191,7 @@ import {JsonDoc} from 'react-json-doc';
 
     2. Let `dependencyPkg` be **GET_PACKAGE**(`manifest`, {`ident`, `reference`})
 
-    3. Return `dependencyPkg.packageLocation` concatenated with `modulePath`
+    3. Return `path.resolve(manifest.dirPath, dependencyPkg.packageLocation, modulePath)`
 
 ### GET_PACKAGE(`manifest`, `locator`)
 
@@ -205,13 +213,15 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 3. Let `relativeUrl` be the relative path between `manifest` and `moduleUrl`
 
-    1. Note: Make sure it always starts with a `./` or `../`
+    1. Note: The relative path must not start with `./`; trim it if needed
 
 4. If `relativeUrl` matches `manifest.ignorePatternData`, then
 
     1. Return **null**
 
-5. For each `referenceMap` value in `manifest.packageRegistryData`
+5. Let `relativeUrlWithDot` be `relativeUrl` prefixed with `./` or `../` as necessary
+
+6. For each `referenceMap` value in `manifest.packageRegistryData`
 
     1. For each `registryPkg` value in `referenceMap`
 
@@ -227,7 +237,7 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 6. Return `bestLocator`
 
-### RESOLVE_VIA_FALLBACK(`manifest`, `specifier`)
+### RESOLVE_VIA_FALLBACK(`manifest`, `ident`)
 
 1. Let `topLevelPkg` be **GET_PACKAGE**(`manifest`, {**null**, **null**})
 
@@ -267,7 +277,11 @@ Finding the right PnP manifest to use for a resolution isn't always trivial. The
 
     1. Let `pnpDataPath` be `directoryPath` concatenated with `/.pnp.data.json`
 
-    2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))` and return it
+    2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))`
+    
+    3. Set `manifest.dirPath` to `directoryPath`
+    
+    4. Return `manifest`
 
 5. Otherwise, if `directoryPath` is `/`, then
 
