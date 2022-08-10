@@ -199,8 +199,10 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   }
 
   const tempPath = !indexStat
-    ? `${indexPath}.${(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1
+    ? `${indexPath}.${Math.floor(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1
     : null;
+
+  let tempPathCleaned = false;
 
   prelayout.push(async () => {
     if (tempPath) {
@@ -220,6 +222,7 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
           await destinationFs.linkPromise(tempPath, indexPath);
         } catch (err) {
           if (err.code === `EEXIST`) {
+            tempPathCleaned = true;
             await destinationFs.unlinkPromise(tempPath);
           } else {
             throw err;
@@ -235,7 +238,9 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   postlayout.push(async () => {
     if (tempPath) {
       await updateTime(indexPath, defaultTime, defaultTime);
-      await destinationFs.unlinkPromise(tempPath);
+      if (!tempPathCleaned) {
+        await destinationFs.unlinkPromise(tempPath);
+      }
     }
   });
 
