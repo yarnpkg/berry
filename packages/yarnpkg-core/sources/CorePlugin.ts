@@ -55,8 +55,11 @@ export const CorePlugin: Plugin = {
       // Validate manifest
       const {manifest} = workspace;
 
-      if (manifest.resolutions.length && workspace.cwd !== workspace.project.cwd)
-        manifest.errors.push(new Error(`Resolutions field will be ignored`));
+      if (workspace.cwd !== workspace.project.cwd) {
+        for (const field of manifest.topLevelWorkspaceFields) {
+          manifest.errors.push(new Error(`Field only allowed in top-level workspace manifest, will be ignored: ${field}`));
+        }
+      }
 
       for (const manifestError of manifest.errors) {
         report.reportWarning(MessageName.INVALID_MANIFEST, manifestError.message);

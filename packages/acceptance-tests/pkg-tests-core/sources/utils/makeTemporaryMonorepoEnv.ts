@@ -16,7 +16,10 @@ export const mtme = (
       const workspacePath = ppath.join(path, workspace as PortablePath);
       await fsUtils.mkdirp(workspacePath);
 
-      await fsUtils.writeJson(ppath.join(workspacePath, Filename.manifest), await deepResolve(manifest));
+      await fsUtils.writeJson(ppath.join(workspacePath, Filename.manifest), await deepResolve({
+        name: ppath.basename(workspace as PortablePath),
+        ...manifest,
+      }));
     }
   };
 

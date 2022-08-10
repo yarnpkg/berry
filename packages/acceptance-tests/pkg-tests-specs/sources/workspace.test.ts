@@ -56,7 +56,7 @@ describe(`Workspaces tests`, () => {
   );
 
   test(
-    `it should not implicitely make workspaces require-able`,
+    `it should not implicitly make workspaces require-able`,
     makeTemporaryEnv(
       {
         private: true,
@@ -83,7 +83,7 @@ describe(`Workspaces tests`, () => {
   );
 
   test(
-    `it should allow workspaces to require each others`,
+    `it should allow workspaces to require each other`,
     makeTemporaryEnv(
       {
         private: true,
@@ -279,5 +279,49 @@ describe(`Workspaces tests`, () => {
         ].join(``));
       },
     ),
+  );
+
+  test(
+    `it should show warnings when top-level manifest fields are declared inside workspace manifests`,
+    makeTemporaryMonorepoEnv({
+      workspaces: [
+        `packages/*`,
+      ],
+    }, {
+      [`packages/foo`]: {
+        resolutions: {
+          [`x`]: `1.0.0`,
+        },
+      },
+      [`packages/bar`]: {
+        dependenciesMeta: {
+          [`x`]: {
+            built: false,
+          },
+        },
+      },
+      [`packages/baz`]: {
+        dependenciesMeta: {
+          [`x`]: {
+            unplugged: true,
+          },
+        },
+      },
+      [`packages/qux`]: {
+        dependenciesMeta: {
+          [`x`]: {
+            optional: true,
+          },
+        },
+      },
+    }, async ({path, run, source}) => {
+      const {stdout} = await run(`install`);
+
+      expect(stdout).toContain(`foo: Field only allowed in top-level workspace manifest, will be ignored: resolutions`);
+      expect(stdout).toContain(`bar: Field only allowed in top-level workspace manifest, will be ignored: dependenciesMeta ➤ x ➤ built`);
+      expect(stdout).toContain(`baz: Field only allowed in top-level workspace manifest, will be ignored: dependenciesMeta ➤ x ➤ unplugged`);
+
+      expect(stdout).not.toContain(`qux: Field only allowed in top-level workspace manifest, will be ignored: dependenciesMeta ➤ x ➤ optional`);
+    }),
   );
 });
