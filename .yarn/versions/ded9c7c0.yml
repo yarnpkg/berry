@@ -1,8 +1,8 @@
 releases:
-  "@yarnpkg/builder": minor
-  "@yarnpkg/core": minor
-  "@yarnpkg/plugin-pnp": minor
-  "@yarnpkg/pnp": minor
+  "@yarnpkg/builder": patch
+  "@yarnpkg/core": patch
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/pnp": patch
   vscode-zipfs: patch
 
 declined:
