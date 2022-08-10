@@ -179,7 +179,7 @@ import {JsonDoc} from 'react-json-doc';
 
     2. Let `dependencyPkg` be **GET_PACKAGE**(`manifest`, `alias`)
 
-    3. Return `dependencyPkg.packageLocation` concatenated with `modulePath`
+    3. Return `path.resolve(manifest.dirPath, dependencyPkg.packageLocation, modulePath)`
 
 13. Otherwise,
 
@@ -187,7 +187,7 @@ import {JsonDoc} from 'react-json-doc';
 
     2. Let `dependencyPkg` be **GET_PACKAGE**(`manifest`, {`ident`, `reference`})
 
-    3. Return `dependencyPkg.packageLocation` concatenated with `modulePath`
+    3. Return `path.resolve(manifest.dirPath, dependencyPkg.packageLocation, modulePath)`
 
 ### GET_PACKAGE(`manifest`, `locator`)
 
@@ -273,7 +273,11 @@ Finding the right PnP manifest to use for a resolution isn't always trivial. The
 
     1. Let `pnpDataPath` be `directoryPath` concatenated with `/.pnp.data.json`
 
-    2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))` and return it
+    2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))`
+    
+    3. Set `manifest.dirPath` to `directoryPath`
+    
+    4. Return `manifest`
 
 5. Otherwise, if `directoryPath` is `/`, then
 
