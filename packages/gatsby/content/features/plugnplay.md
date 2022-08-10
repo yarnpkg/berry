@@ -128,6 +128,7 @@ Many common frontend tools now support Plug'n'Play natively!
 | Babel | Starting from `resolve` 1.9 |
 | Create-React-App | Starting from 2.0+ |
 | Docusaurus | Starting from 2.0.0-beta.14 |
+| ESBuild | Starting from [0.15.0](https://github.com/evanw/esbuild/releases/tag/v0.15.0) |
 | ESLint | Some compatibility issues w/ shared configs (fixable using [@rushstack/eslint-patch](https://yarnpkg.com/package/@rushstack/eslint-patch)) |
 | Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
 | Gulp | Supported with version 4.0+ | 
@@ -150,7 +151,6 @@ Many common frontend tools now support Plug'n'Play natively!
 
 | <div style="width:150px">Project name</div> | Note |
 | --- | --- |
-| ESBuild | Since [0.15.0](https://github.com/evanw/esbuild/releases/tag/v0.15.0), or via [`@yarnpkg/esbuild-plugin-pnp`](https://github.com/yarnpkg/berry/tree/master/packages/esbuild-plugin-pnp#yarnpkgesbuild-plugin-pnp) |
 | VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | VSCode | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
 | Webpack 4.x | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) (native starting from 5+) |
