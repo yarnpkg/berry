@@ -4,6 +4,7 @@ releases:
   "@yarnpkg/plugin-compat": patch
 
 declined:
+  - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
   - "@yarnpkg/plugin-init"
