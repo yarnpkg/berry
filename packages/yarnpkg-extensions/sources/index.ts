@@ -893,9 +893,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       webpack: `>=4`,
     },
     peerDependenciesMeta: {
-      typescript: {
-        optional: true,
-      },
+      typescript: optionalPeerDep,
     },
   }],
   // https://github.com/asyncapi/asyncapi-react/pull/614
@@ -903,6 +901,15 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     peerDependencies: {
       react: `>=16.8.0`,
       'react-dom': `>=16.8.0`,
+    },
+  }],
+  // https://github.com/xojs/xo/pull/678
+  [`xo@*`, {
+    peerDependencies: {
+      webpack: `>=1.11.0`,
+    },
+    peerDependenciesMeta: {
+      webpack: optionalPeerDep,
     },
   }],
 ];
