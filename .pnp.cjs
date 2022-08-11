@@ -9872,7 +9872,7 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.11.20"\
+            "npm:0.15.1"\
           ]],\
           ["semver", "npm:7.3.5"],\
           ["tslib", "npm:2.4.0"],\
@@ -10913,7 +10913,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.11.20"\
+            "npm:0.15.1"\
           ]],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -25943,6 +25943,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.11.20-f5c272c5ce-f72a2ebab3.zip/node_modules/esbuild-wasm/",\
         "packageDependencies": [\
           ["esbuild-wasm", "npm:0.11.20"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:0.15.1", {\
+        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.1-deecd2ae44-1f954db9a8.zip/node_modules/esbuild-wasm/",\
+        "packageDependencies": [\
+          ["esbuild-wasm", "npm:0.15.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -45900,13 +45907,21 @@ async function copyFolder(prelayout, postlayout, updateTime, destinationFs, dest
 async function copyFileViaIndex(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, linkStrategy) {
   const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
   const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2), `${sourceHash}.dat`);
+  var AtomicBehavior;
+  (function(AtomicBehavior2) {
+    AtomicBehavior2[AtomicBehavior2["Lock"] = 0] = "Lock";
+    AtomicBehavior2[AtomicBehavior2["Rename"] = 1] = "Rename";
+  })(AtomicBehavior || (AtomicBehavior = {}));
+  let atomicBehavior = 1;
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
     const isIndexModified = (indexStat == null ? void 0 : indexStat.mtimeMs) !== defaultTimeMs;
     if (isDestinationHardlinkedFromIndex) {
-      if (isIndexModified && linkStrategy.autoRepair)
+      if (isIndexModified && linkStrategy.autoRepair) {
+        atomicBehavior = 0;
         indexStat = null;
+      }
     }
     if (!isDestinationHardlinkedFromIndex) {
       if (opts.overwrite) {
@@ -45917,20 +45932,40 @@ async function copyFileViaIndex(prelayout, postlayout, updateTime, destinationFs
       }
     }
   }
+  const tempPath = !indexStat && atomicBehavior === 1 ? `${indexPath}.${Math.floor(Math.random() * 4294967296).toString(16).padStart(8, `0`)}` : null;
+  let tempPathCleaned = false;
   prelayout.push(async () => {
     if (!indexStat) {
-      await destinationFs.lockPromise(indexPath, async () => {
+      if (atomicBehavior === 0) {
+        await destinationFs.lockPromise(indexPath, async () => {
+          const content = await sourceFs.readFilePromise(source);
+          await destinationFs.writeFilePromise(indexPath, content);
+        });
+      }
+      if (atomicBehavior === 1 && tempPath) {
         const content = await sourceFs.readFilePromise(source);
-        await destinationFs.writeFilePromise(indexPath, content);
-      });
+        await destinationFs.writeFilePromise(tempPath, content);
+        try {
+          await destinationFs.linkPromise(tempPath, indexPath);
+        } catch (err) {
+          if (err.code === `EEXIST`) {
+            tempPathCleaned = true;
+            await destinationFs.unlinkPromise(tempPath);
+          } else {
+            throw err;
+          }
+        }
+      }
     }
     if (!destinationStat) {
       await destinationFs.linkPromise(indexPath, destination);
     }
   });
   postlayout.push(async () => {
-    if (!indexStat) {
+    if (!indexStat)
       await updateTime(indexPath, defaultTime, defaultTime);
+    if (tempPath && !tempPathCleaned) {
+      await destinationFs.unlinkPromise(tempPath);
     }
   });
   return false;
@@ -48014,6 +48049,8 @@ class ZipFS extends BasePortableFakeFS {
     return this.readdirSync(p, opts);
   }
   readdirSync(p, opts) {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw ENOENT(`scandir '${p}'`);
@@ -48437,7 +48474,8 @@ class VirtualFS extends ProxiedFS {
   }
 }
 
-const ZIP_FD = 2147483648;
+const ZIP_MASK = 4278190080;
+const ZIP_MAGIC = 704643072;
 const getArchivePart = (path, extension) => {
   let idx = path.indexOf(extension);
   if (idx <= 0)
@@ -48514,7 +48552,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return this.baseFs.resolve(p);
   }
   remapFd(zipFs, fd) {
-    const remappedFd = this.nextFd++ | ZIP_FD;
+    const remappedFd = this.nextFd++ | ZIP_MAGIC;
     this.fdMap.set(remappedFd, [zipFs, fd]);
     return remappedFd;
   }
@@ -48551,7 +48589,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
   async readPromise(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return await this.baseFs.readPromise(fd, buffer, offset, length, position);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48560,7 +48598,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return await zipFs.readPromise(realFd, buffer, offset, length, position);
   }
   readSync(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.readSync(fd, buffer, offset, length, position);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48569,7 +48607,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.readSync(realFd, buffer, offset, length, position);
   }
   async writePromise(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0) {
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC) {
       if (typeof buffer === `string`) {
         return await this.baseFs.writePromise(fd, buffer, offset);
       } else {
@@ -48587,7 +48625,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     }
   }
   writeSync(fd, buffer, offset, length, position) {
-    if ((fd & ZIP_FD) === 0) {
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC) {
       if (typeof buffer === `string`) {
         return this.baseFs.writeSync(fd, buffer, offset);
       } else {
@@ -48605,7 +48643,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     }
   }
   async closePromise(fd) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return await this.baseFs.closePromise(fd);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48615,7 +48653,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return await zipFs.closePromise(realFd);
   }
   closeSync(fd) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.closeSync(fd);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48711,7 +48749,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
   async fstatPromise(fd, opts) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.fstatPromise(fd, opts);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48720,7 +48758,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.fstatPromise(realFd, opts);
   }
   fstatSync(fd, opts) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.fstatSync(fd, opts);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48743,7 +48781,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
   async fchmodPromise(fd, mask) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.fchmodPromise(fd, mask);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -48752,7 +48790,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.fchmodPromise(realFd, mask);
   }
   fchmodSync(fd, mask) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.fchmodSync(fd, mask);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -49073,7 +49111,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     });
   }
   async ftruncatePromise(fd, len) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.ftruncatePromise(fd, len);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
@@ -49082,7 +49120,7 @@ class ZipOpenFS extends BasePortableFakeFS {
     return zipFs.ftruncatePromise(realFd, len);
   }
   ftruncateSync(fd, len) {
-    if ((fd & ZIP_FD) === 0)
+    if ((fd & ZIP_MASK) !== ZIP_MAGIC)
       return this.baseFs.ftruncateSync(fd, len);
     const entry = this.fdMap.get(fd);
     if (typeof entry === `undefined`)
