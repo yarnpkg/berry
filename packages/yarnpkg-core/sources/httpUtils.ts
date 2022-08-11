@@ -227,10 +227,10 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
 
   const networkConfig = getNetworkSettings(url, {configuration});
   if (networkConfig.enableNetwork === false)
-    throw new Error(`Request to '${url.href}' has been blocked because of your configuration settings`);
+    throw new ReportError(MessageName.NETWORK_DISABLED, `Request to '${url.href}' has been blocked because of your configuration settings`);
 
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
-    throw new Error(`Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
+    throw new ReportError(MessageName.NETWORK_UNSAFE_HTTP, `Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
   const agent = {
     http: networkConfig.httpProxy

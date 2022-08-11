@@ -827,7 +827,7 @@ export class Project {
 
         const finalResolution = candidateResolutions[0];
         if (typeof finalResolution === `undefined`)
-          throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+          throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
 
         allDescriptors.set(descriptor.descriptorHash, descriptor);
         allResolutions.set(descriptor.descriptorHash, finalResolution.locatorHash);

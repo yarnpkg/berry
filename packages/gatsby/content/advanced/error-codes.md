@@ -368,3 +368,23 @@ A package is specified in its manifest (through the [`os`](/configuration/manife
 Some native packages may be excluded from the install if they signal they don't support the systems the project is intended for. This detection is typically based on your current system parameters, but it can be configured using the [`supportedArchitectures` config option](/configuration/yarnrc#supportedArchitectures). If your os or cpu are missing from this list, Yarn will skip the packages and raise a warning.
 
 Note that all fields from `supportedArchitectures` default to `current`, which is a dynamic value depending on your local parameters. For instance, if you wish to support "my current os, whatever it is, plus linux", you can set `supportedArchitectures.os` to `["current", "linux"]`.
+
+## YN0080 - `NETWORK_DISABLED`
+
+The `enableNetwork` flag is set to `false`, preventing any request to be made.
+
+Note that the Yarn configuration allows [`enableNetwork`](/configuration/yarnrc#enableNetwork) to be set on a per-registry basis via `npmRegistries`.
+
+## YN0081 - `NETWORK_UNSAFE_HTTP`
+
+Yarn will by default refuse to perform http (non-https) queries to protect you against accidental man-in-the-middle attacks.
+
+To bypass this protection, add the specified hostname to [`unsafeHttpWhitelist`](/configuration/yarnrc#unsafeHttpWhitelist).
+
+## YN0082 - `RESOLUTION_FAILED`
+
+Yarn failed to locate a package version that could satisfy the requested range. This usually happens with semver ranges that target versions not published yet (for example `^1.0.0` when the latest version is `0.9.0`), but can be also caused by a couple of other reasons:
+
+- The registry may not have been set properly (so Yarn is querying the public npm registry instead of your internal one)
+
+- The version may have been unpublished (although this shouldn't be possible for the public registry)
