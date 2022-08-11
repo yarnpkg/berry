@@ -64,6 +64,7 @@ export function makeEmptyArchive() {
 // version check completes, which is why the `undefined` isn't reflected in the type.
 const zipFsRegistry = typeof FinalizationRegistry !== `undefined`
   ? new FinalizationRegistry<{libzip: Libzip, zip: number}>(({libzip, zip}) => {
+    process.emitWarning(`libzip: Discarding ${zip}`);
     libzip.discard(zip);
   })
   : undefined!;

@@ -47059,6 +47059,7 @@ function makeEmptyArchive() {
   ]);
 }
 const zipFsRegistry = typeof FinalizationRegistry !== `undefined` ? new FinalizationRegistry(({libzip, zip}) => {
+  process.emitWarning(`libzip: Discarding ${zip}`);
   libzip.discard(zip);
 }) : void 0;
 class ZipFS extends BasePortableFakeFS {
