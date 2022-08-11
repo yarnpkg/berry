@@ -60,6 +60,15 @@ export function makeEmptyArchive() {
   ]);
 }
 
+// The only purpose of this check is to delay the error until after the Node
+// version check completes, which is why the `undefined` isn't reflected in the type.
+const zipFsRegistry = typeof FinalizationRegistry !== `undefined`
+  ? new FinalizationRegistry<{libzip: Libzip, zip: number}>(({libzip, zip}) => {
+    process.emitWarning(`libzip: Discarding ${zip}`);
+    libzip.discard(zip);
+  })
+  : undefined!;
+
 export class ZipFS extends BasePortableFakeFS {
   private readonly libzip: Libzip;
 
@@ -195,6 +204,8 @@ export class ZipFS extends BasePortableFakeFS {
       throw this.makeLibzipError(this.libzip.getError(this.zip));
 
     this.ready = true;
+
+    zipFsRegistry.register(this, {libzip: this.libzip, zip: this.zip}, this);
   }
 
   makeLibzipError(error: number) {
@@ -294,6 +305,8 @@ export class ZipFS extends BasePortableFakeFS {
       throw errors.EBUSY(`archive closed, close`);
 
     unwatchAllFiles(this);
+
+    zipFsRegistry.unregister(this);
   }
 
   saveAndClose() {

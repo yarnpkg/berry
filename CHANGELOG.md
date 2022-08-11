@@ -50,6 +50,20 @@ The following changes only affect people writing Yarn plugins:
 
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
+- `Cache.prototype.fetchPackageFromCache` now returns an object instead of a tuple, allowing us to change the return type without it being order-dependent.
+
+- `FetchResult` memory management is now entirely automatic, therefore:
+
+  - The underlying `ZipFS` memory is now automatically discarded when the `ZipFS` gets garbage-collected. There's no need to manually call `discardAndClose` anymore.
+
+  - The `releaseFs` method of `FetchResult` has been removed.
+    - If you called this method on a `fetchResult`, you can safely remove the call as the garbage-collector will release the memory associated with the FS once it goes out of scope.
+    - If you implemented this method on a `fetchResult`, you should use [`FinalizationRegistry`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/FinalizationRegistry) to instead request a callback when the FS gets garbage-collected.
+
+  - The return type of `Cache.prototype.fetchPackageFromCache` no longer includes `releaseFs`.
+
+  - `api.holdFetchResult`, the entire `api` argument of `Installer['installPackage']`, and `InstallPackageExtraApi` have been removed.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.

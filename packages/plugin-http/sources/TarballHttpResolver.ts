@@ -1,7 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest}                            from '@yarnpkg/core';
 import {LinkType}                                                 from '@yarnpkg/core';
-import {miscUtils, structUtils}                                   from '@yarnpkg/core';
+import {structUtils}                                              from '@yarnpkg/core';
 
 import {PROTOCOL_REGEXP, TARBALL_REGEXP}                          from './constants';
 
@@ -57,9 +57,7 @@ export class TarballHttpResolver implements Resolver {
 
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
-    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
-    }, packageFetch.releaseFs);
+    const manifest = await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
 
     return {
       ...locator,

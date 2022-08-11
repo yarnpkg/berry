@@ -53,10 +53,6 @@ export async function loadGeneratorFile(range: string, protocol: string, opts: F
     ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
     : parentFetch;
 
-  // Discard the parent fs unless we really need it to access the files
-  if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
-    parentFetch.releaseFs();
-
   const generatorFs = effectiveParentFetch.packageFs;
   const generatorPath = ppath.join(effectiveParentFetch.prefixPath, path);
 

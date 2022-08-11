@@ -1,6 +1,6 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
 import {Locator}                                                 from '@yarnpkg/core';
-import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
+import {scriptUtils, structUtils, tgzUtils}                      from '@yarnpkg/core';
 import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 
 import * as gitUtils                                             from './gitUtils';
@@ -27,7 +27,7 @@ export class GitFetcher implements Fetcher {
     if (result !== null)
       return result;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+    const {packageFs, checksum} = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote repository`),
       loader: () => this.cloneFromRemote(normalizedLocator, nextOpts),
@@ -36,7 +36,6 @@ export class GitFetcher implements Fetcher {
 
     return {
       packageFs,
-      releaseFs,
       prefixPath: structUtils.getIdentVendorPath(locator),
       checksum,
     };
@@ -63,12 +62,10 @@ export class GitFetcher implements Fetcher {
 
     const sourceBuffer = await xfs.readFilePromise(packagePath);
 
-    return await miscUtils.releaseAfterUseAsync(async () => {
-      return await tgzUtils.convertToZip(sourceBuffer, {
-        compressionLevel: opts.project.configuration.get(`compressionLevel`),
-        prefixPath: structUtils.getIdentVendorPath(locator),
-        stripComponents: 1,
-      });
+    return await tgzUtils.convertToZip(sourceBuffer, {
+      compressionLevel: opts.project.configuration.get(`compressionLevel`),
+      prefixPath: structUtils.getIdentVendorPath(locator),
+      stripComponents: 1,
     });
   }
 }

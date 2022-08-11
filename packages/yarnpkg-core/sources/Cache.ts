@@ -158,7 +158,7 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, ...opts}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS> } & CacheOptions): Promise<[FakeFS<PortablePath>, () => void, string | null]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, ...opts}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS> } & CacheOptions): Promise<{packageFs: FakeFS<PortablePath>, checksum: string | null}> {
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
     const baseFs = new NodeFS();
@@ -361,8 +361,6 @@ export class Cache {
     if (!shouldMock)
       this.markedFiles.add(cachePath);
 
-    let zipFs: ZipFS | undefined;
-
     const libzip = await getLibzipPromise();
 
     const zipFsBuilder = shouldMock
@@ -370,7 +368,7 @@ export class Cache {
       : () => new ZipFS(cachePath, {baseFs, libzip, readOnly: true});
 
     const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
-      return zipFs = zipFsBuilder();
+      return zipFsBuilder();
     }, message => {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
@@ -379,16 +377,16 @@ export class Cache {
     // (there's no need to create the lazy baseFs instance to gather the already-known cachePath)
     const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
 
-    const releaseFs = () => {
-      zipFs?.discardAndClose();
-    };
-
     // We hide the checksum if the package presence is conditional, because it becomes unreliable
     const exposedChecksum = !opts.unstablePackages?.has(locator.locatorHash)
       ? checksum
       : null;
 
-    return [aliasFs, releaseFs, exposedChecksum];
+    // TODO: remove the tuple fallback in Yarn 5
+    return Object.assign({
+      packageFs: aliasFs,
+      checksum: exposedChecksum,
+    }, [aliasFs, () => {}, exposedChecksum]);
   }
 }
 

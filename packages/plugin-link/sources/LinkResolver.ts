@@ -1,7 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
+import {structUtils}                                     from '@yarnpkg/core';
 import {npath}                                           from '@yarnpkg/fslib';
 
 import {LINK_PROTOCOL}                                   from './constants';
@@ -56,9 +56,7 @@ export class LinkResolver implements Resolver {
 
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
-    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
-    }, packageFetch.releaseFs);
+    const manifest = await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
 
     return {
       ...locator,

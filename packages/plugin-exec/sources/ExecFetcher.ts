@@ -47,7 +47,7 @@ export class ExecFetcher implements Fetcher {
   async fetch(locator: Locator, opts: FetchOptions) {
     const expectedChecksum = opts.checksums.get(locator.locatorHash) || null;
 
-    const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
+    const {packageFs, checksum} = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator),
       loader: () => this.fetchFromDisk(locator, opts),
@@ -56,7 +56,6 @@ export class ExecFetcher implements Fetcher {
 
     return {
       packageFs,
-      releaseFs,
       prefixPath: structUtils.getIdentVendorPath(locator),
       localPath: this.getLocalPath(locator, opts),
       checksum,
