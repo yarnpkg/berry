@@ -90,7 +90,7 @@ export enum MessageName {
   PROLOG_LIMIT_EXCEEDED = 79,
   NETWORK_DISABLED = 80,
   NETWORK_UNSAFE_HTTP = 81,
-  RESOLUTION_FAILED = 82
+  RESOLUTION_FAILED = 82,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {
