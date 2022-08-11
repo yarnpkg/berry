@@ -47059,12 +47059,7 @@ function makeEmptyArchive() {
   ]);
 }
 const zipFsRegistry = typeof FinalizationRegistry !== `undefined` ? new FinalizationRegistry(({libzip, zip}) => {
-  setImmediate(() => {
-    try {
-      libzip.discard(zip);
-    } catch {
-    }
-  }).unref();
+  libzip.discard(zip);
 }) : void 0;
 class ZipFS extends BasePortableFakeFS {
   constructor(source, opts) {
