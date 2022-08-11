@@ -179,14 +179,36 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
   const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${sourceHash}.dat` as P1);
 
+  enum AtomicBehavior {
+    Lock,
+    Rename,
+  }
+
+  let atomicBehavior = AtomicBehavior.Rename;
+
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
     const isIndexModified = indexStat?.mtimeMs !== defaultTimeMs;
 
-    if (isDestinationHardlinkedFromIndex)
-      if (isIndexModified && linkStrategy.autoRepair)
+    if (isDestinationHardlinkedFromIndex) {
+      // If the index is modified, we will want to repair it. However, the
+      // default logic ensuring atomicity (creating a file in a temporary
+      // place before atomically moving it into its final location) won't
+      // work: we'd lose all the existing hardlinks.
+      //
+      // To avoid that, when repairing a file, we fallback to the slow but
+      // safer `lockPromise`-based mutex, which will prevent multiple
+      // processes to modify the file without impacting their inode.
+      //
+      // Give that the repair mechanism should be very rarely needed in
+      // situation where performance is critical, it should be ok.
+      //
+      if (isIndexModified && linkStrategy.autoRepair) {
+        atomicBehavior = AtomicBehavior.Lock;
         indexStat = null;
+      }
+    }
 
     if (!isDestinationHardlinkedFromIndex) {
       if (opts.overwrite) {
@@ -198,14 +220,22 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
     }
   }
 
-  const tempPath = !indexStat
+  const tempPath = !indexStat && atomicBehavior === AtomicBehavior.Rename
     ? `${indexPath}.${Math.floor(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1
     : null;
 
   let tempPathCleaned = false;
 
   prelayout.push(async () => {
-    if (tempPath) {
+    if (!indexStat) {
+      if (atomicBehavior === AtomicBehavior.Lock) {
+        await destinationFs.lockPromise(indexPath, async () => {
+          const content = await sourceFs.readFilePromise(source);
+          await destinationFs.writeFilePromise(indexPath, content);
+        });
+      }
+
+      if (atomicBehavior === AtomicBehavior.Rename && tempPath) {
         const content = await sourceFs.readFilePromise(source);
         await destinationFs.writeFilePromise(tempPath, content);
 
@@ -228,6 +258,7 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
             throw err;
           }
         }
+      }
     }
 
     if (!destinationStat) {
@@ -236,11 +267,11 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   });
 
   postlayout.push(async () => {
-    if (tempPath) {
+    if (!indexStat)
       await updateTime(indexPath, defaultTime, defaultTime);
-      if (!tempPathCleaned) {
-        await destinationFs.unlinkPromise(tempPath);
-      }
+
+    if (tempPath && !tempPathCleaned) {
+      await destinationFs.unlinkPromise(tempPath);
     }
   });
 
