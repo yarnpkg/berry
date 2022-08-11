@@ -831,7 +831,7 @@ export class Project {
 
         const finalResolution = candidateResolutions[0];
         if (typeof finalResolution === `undefined`)
-          throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+          throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
 
         if (opts.checkResolutions) {
           const {locators} = await noLockfileResolver.getSatisfying(descriptor, resolvedDependencies, [finalResolution], {...resolveOptions, resolver: noLockfileResolver});

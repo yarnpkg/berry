@@ -88,6 +88,9 @@ export enum MessageName {
   GHOST_ARCHITECTURE = 77,
   RESOLUTION_MISMATCH = 78,
   PROLOG_LIMIT_EXCEEDED = 79,
+  NETWORK_DISABLED = 80,
+  NETWORK_UNSAFE_HTTP = 81,
+  RESOLUTION_FAILED = 82,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {
