@@ -28,7 +28,7 @@ const ZIP_MAGIC = 0x2a000000;
 
 binding.fstat = function(...args) {
   const [fd, useBigint, req] = args;
-  if ((fd & ZIP_MASK) !== ZIP_MAGIC && useBigint === false && req === undefined) {
+  if ((fd & ZIP_MASK) === ZIP_MAGIC && useBigint === false && req === undefined) {
     try {
       const stats = fs.fstatSync(fd);
       // The reverse of this internal util
