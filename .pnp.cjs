@@ -48042,8 +48042,6 @@ class ZipFS extends BasePortableFakeFS {
     return this.readdirSync(p, opts);
   }
   readdirSync(p, opts) {
-    if (typeof p === `number`)
-      p = this.fdToPath(p, `read`);
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw ENOENT(`scandir '${p}'`);
