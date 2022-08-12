@@ -12,9 +12,11 @@ import * as errors                                                              
 import {Filename, FSPath, npath, PortablePath, ppath}                                                                                                from './path';
 
 // Only file descriptors prefixed by those values will be forwarded to the ZipFS
-// instances. Not that the highest ZIP_MAGIC bit MUST NOT be set, otherwise the
+// instances. Note that the highest ZIP_MAGIC bit MUST NOT be set, otherwise the
 // resulting fd becomes a negative integer, which isn't supposed to happen per
 // the unix rules (caused problems w/ Go).
+//
+// Those values must be synced with packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
 //
 const ZIP_MASK  = 0xff000000;
 const ZIP_MAGIC = 0x2a000000;
