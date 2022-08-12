@@ -6,7 +6,6 @@ releases:
   "@yarnpkg/esbuild-plugin-pnp": major
   "@yarnpkg/eslint-config": major
   "@yarnpkg/fslib": major
-  "@yarnpkg/json-proxy": major
   "@yarnpkg/libui": major
   "@yarnpkg/libzip": major
   "@yarnpkg/nm": major

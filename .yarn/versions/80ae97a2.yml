@@ -5,7 +5,6 @@ releases:
   "@yarnpkg/doctor": patch
   "@yarnpkg/esbuild-plugin-pnp": patch
   "@yarnpkg/fslib": patch
-  "@yarnpkg/json-proxy": patch
   "@yarnpkg/libui": patch
   "@yarnpkg/libzip": patch
   "@yarnpkg/parsers": patch
