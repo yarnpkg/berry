@@ -1536,6 +1536,8 @@ export class Project {
       await this.resolveEverything(opts);
     });
 
+    return;
+
     await opts.report.startTimerPromise(`Post-resolution validation`, {
       skipIfEmpty: true,
     }, async () => {

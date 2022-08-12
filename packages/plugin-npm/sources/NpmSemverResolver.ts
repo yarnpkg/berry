@@ -48,6 +48,9 @@ export class NpmSemverResolver implements Resolver {
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
     const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
+      headers: {
+        [`Accept`]: `application/vnd.npm.install-v1+json`,
+      },
       customErrorMessage: npmHttpUtils.customPackageError,
       configuration: opts.project.configuration,
       ident: descriptor,

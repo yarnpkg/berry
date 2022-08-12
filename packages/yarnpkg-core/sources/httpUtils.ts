@@ -15,7 +15,7 @@ import * as miscUtils                               from './miscUtils';
 
 export type {RequestError}                                   from 'got';
 
-const cache = new Map<string, Promise<Buffer> | Buffer>();
+const cache = new Map<string, Promise<any>>();
 const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
@@ -187,21 +187,13 @@ export async function request(target: string | URL, body: Body, {configuration, 
 }
 
 export async function get(target: string, {configuration, jsonResponse, customErrorMessage, ...rest}: Options) {
-  let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
-    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration, customErrorMessage}).then(response => {
-      cache.set(target, response.body);
-      return response.body;
-    });
+  const key = `${target}!${!!jsonResponse}`;
+
+  return await miscUtils.getFactoryWithDefault(cache, key, async () => {
+    const response = await prettyNetworkError(request(target, null, {configuration, jsonResponse, ...rest}), {configuration, customErrorMessage});
+    cache.set(key, response.body);
+    return response.body;
   });
-
-  if (Buffer.isBuffer(entry) === false)
-    entry = await entry;
-
-  if (jsonResponse) {
-    return JSON.parse(entry.toString());
-  } else {
-    return entry;
-  }
 }
 
 export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
