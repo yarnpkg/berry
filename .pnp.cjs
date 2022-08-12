@@ -9872,7 +9872,7 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.1"\
+            "npm:0.11.20"\
           ]],\
           ["semver", "npm:7.3.5"],\
           ["tslib", "npm:2.4.0"],\
@@ -10913,7 +10913,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.1"\
+            "npm:0.11.20"\
           ]],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -25943,13 +25943,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.11.20-f5c272c5ce-f72a2ebab3.zip/node_modules/esbuild-wasm/",\
         "packageDependencies": [\
           ["esbuild-wasm", "npm:0.11.20"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:0.15.1", {\
-        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.1-deecd2ae44-1f954db9a8.zip/node_modules/esbuild-wasm/",\
-        "packageDependencies": [\
-          ["esbuild-wasm", "npm:0.15.1"]\
         ],\
         "linkType": "HARD"\
       }]\

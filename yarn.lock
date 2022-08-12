@@ -5510,7 +5510,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^3.2.0-rc.10"
-    esbuild: "npm:esbuild-wasm@^0.15.1"
+    esbuild: "npm:esbuild-wasm@^0.11.20"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
     typescript: "npm:4.8.0-beta"
@@ -10938,15 +10938,6 @@ __metadata:
   bin:
     esbuild: bin/esbuild
   checksum: f72a2ebab38c342dfa787a3d8b180cf6288898e40b69062634a1096ba65da2cd373a43d4eb49ff28d47c983fa8ab03d548e66b646e14e7ebb3edab6dcf479a12
-  languageName: node
-  linkType: hard
-
-"esbuild@npm:esbuild-wasm@^0.15.1":
-  version: 0.15.1
-  resolution: "esbuild-wasm@npm:0.15.1"
-  bin:
-    esbuild: bin/esbuild
-  checksum: 1f954db9a8bbe2750dfb9a06fb34b22054b99da15c39707e5657cf88a3e261f99d89d8ec78392359fcee5aeed1009325fab578bb5518f606c245aaf706148c65
   languageName: node
   linkType: hard
 

@@ -1432,22 +1432,19 @@ export class ZipFS extends BasePortableFakeFS {
     return this.getFileSource(entry, opts);
   }
 
-  async readdirPromise(p: FSPath<PortablePath>): Promise<Array<Filename>>;
-  async readdirPromise(p: FSPath<PortablePath>, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
-  async readdirPromise(p: FSPath<PortablePath>, opts: {withFileTypes: true}): Promise<Array<statUtils.DirEntry>>;
-  async readdirPromise(p: FSPath<PortablePath>, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<statUtils.DirEntry>>;
-  async readdirPromise(p: FSPath<PortablePath>, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<statUtils.DirEntry>> {
+  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<statUtils.DirEntry>>;
+  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<statUtils.DirEntry>>;
+  async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<statUtils.DirEntry>> {
     return this.readdirSync(p, opts as any);
   }
 
-  readdirSync(p: FSPath<PortablePath>): Array<Filename>;
-  readdirSync(p: FSPath<PortablePath>, opts: {withFileTypes: false} | null): Array<Filename>;
-  readdirSync(p: FSPath<PortablePath>, opts: {withFileTypes: true}): Array<statUtils.DirEntry>;
-  readdirSync(p: FSPath<PortablePath>, opts: {withFileTypes: boolean}): Array<Filename> | Array<statUtils.DirEntry>;
-  readdirSync(p: FSPath<PortablePath>, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<statUtils.DirEntry> {
-    if (typeof p === `number`)
-      p = this.fdToPath(p, `read`);
-
+  readdirSync(p: PortablePath): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: false} | null): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<statUtils.DirEntry>;
+  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<statUtils.DirEntry>;
+  readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<statUtils.DirEntry> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
