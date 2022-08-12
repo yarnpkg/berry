@@ -581,4 +581,30 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+
+  // Tests /packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
+  test(
+    `it should support named exports in commonjs files`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-exports': `1.0.0`,
+        },
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `import {foo} from 'no-deps-exports';\nconsole.log(foo)`,
+        );
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
 });
