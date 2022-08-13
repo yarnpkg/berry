@@ -33,7 +33,6 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
   - "@yarnpkg/sdks"
   - "@yarnpkg/shell"
