@@ -37,7 +37,7 @@ export class NodeModulesLinker implements Linker {
   getCustomDataKey() {
     return JSON.stringify({
       name: `NodeModulesLinker`,
-      version: 2,
+      version: 3,
     });
   }
 
@@ -386,7 +386,6 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
       scripts: manifest.scripts,
     },
     misc: {
-      extractHint: jsInstallUtils.getExtractHint(fetchResult),
       hasBindingGyp: jsInstallUtils.hasBindingGyp(fetchResult),
     },
   };
