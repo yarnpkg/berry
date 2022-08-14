@@ -232,6 +232,11 @@ jobs:
         success() || failure()
 
   big-endian:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/4', '2/4', '3/4', '4/4']
+
     name: 'Big-endian debian w/ Node.js latest'
     runs-on: ubuntu-latest
     if: |
@@ -257,12 +262,12 @@ jobs:
 
     - name: 'Run the integration tests'
       run: |
-        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100%'
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100% --shard=${{matrix.shard}}'
       shell: bash
 
     - name: 'Run the unit tests'
       run: |
-        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:unit --maxWorkers=100%'
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:unit --maxWorkers=100% --shard=${{matrix.shard}}'
       shell: bash
       if: |
         success() || failure()
