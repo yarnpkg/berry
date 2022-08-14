@@ -237,7 +237,7 @@ jobs:
       matrix:
         shard: ['1/4', '2/4', '3/4', '4/4']
 
-    name: 'Big-endian debian w/ Node.js latest'
+    name: 'Big-endian debian w/ Node.js latest (${{matrix.shard}})'
     runs-on: ubuntu-latest
     if: |
       github.ref == 'refs/heads/master'
