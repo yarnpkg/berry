@@ -46,7 +46,7 @@ jobs:
       run: |
         case ${{matrix.packageManager}} in
           npm)
-            npm install -g npm@^7;;
+            npm install -g npm;;
           pnpm)
             npm install -g pnpm;;
           classic)
