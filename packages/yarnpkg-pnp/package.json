@@ -12,7 +12,7 @@
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@yarnpkg/libzip": "workspace:^",
-    "esbuild": "npm:esbuild-wasm@^0.15.0",
+    "esbuild": "npm:esbuild-wasm@^0.15.3",
     "resolve.exports": "^1.1.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",

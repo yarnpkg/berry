@@ -5509,7 +5509,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^3.2.0-rc.10"
-    esbuild: "npm:esbuild-wasm@^0.15.0"
+    esbuild: "npm:esbuild-wasm@^0.15.3"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
     typescript: "npm:4.8.0-beta"
@@ -5597,7 +5597,7 @@ __metadata:
     comment-json: "npm:^2.2.0"
     cross-spawn: "npm:7.0.3"
     diff: "npm:^5.1.0"
-    esbuild: "npm:esbuild-wasm@^0.15.0"
+    esbuild: "npm:esbuild-wasm@^0.15.3"
     globby: "npm:^11.0.1"
     got: "npm:^11.7.0"
     lodash: "npm:^4.17.15"
@@ -6314,7 +6314,7 @@ __metadata:
     "@types/node": "npm:^13.7.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
-    esbuild: "npm:esbuild-wasm@^0.15.0"
+    esbuild: "npm:esbuild-wasm@^0.15.3"
     resolve.exports: "npm:^1.1.0"
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
@@ -10919,12 +10919,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:esbuild-wasm@^0.15.0":
-  version: 0.15.0
-  resolution: "esbuild-wasm@npm:0.15.0"
+"esbuild@npm:esbuild-wasm@^0.15.3":
+  version: 0.15.3
+  resolution: "esbuild-wasm@npm:0.15.3"
   bin:
     esbuild: bin/esbuild
-  checksum: ad56f6922a034bde9a2765cd93f64d4b2b0f3d343d60eeaf0a552556ae4a456dbce31275358a4a73be02537c13cbd082267d35bbe031a2228e26f10ae9f57dec
+  checksum: 27fc728e54e520e923aa69ad794886177fe8407aba4f2e5e5f8dc514e96b86ba01c342bacfb361ff4fffc6a21deabe4d22d21c7a7aa9f9ed725d644041e4a7be
   languageName: node
   linkType: hard
 
@@ -26278,7 +26278,7 @@ __metadata:
     "@types/vscode": "npm:^1.54.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
-    esbuild: "npm:esbuild-wasm@^0.15.0"
+    esbuild: "npm:esbuild-wasm@^0.15.3"
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
