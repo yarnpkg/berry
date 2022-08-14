@@ -2,7 +2,7 @@ inputs:
   minify-bundle:
     description: 'Whether to minify the bundle'
     required: false
-    default: 'true'
+    default: 'false'
 
 runs:
   using: composite

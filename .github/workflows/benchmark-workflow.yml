@@ -37,7 +37,7 @@ jobs:
 
     - uses: ./.github/actions/prepare
       with:
-        minify-bundle: false
+        minify-bundle: true
 
     - name: 'Install Hyperfine'
       run: |
