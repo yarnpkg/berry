@@ -1,5 +1,6 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {createTemporaryFolder, readFile, writeFile},
+  fs: {writeFile},
   tests: {startPackageServer, validLogins},
 } = require(`pkg-tests-core`);
 
@@ -15,7 +16,7 @@ describe(`Commands`, () => {
     test(
       `it should login a user with no OTP setup`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const homePath = await createTemporaryFolder();
+        const homePath = await xfs.mktempPromise();
         await writeFile(`${homePath}/${SPEC_RC_FILENAME}`, ``);
 
         let code;
@@ -36,7 +37,7 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        const finalRcFileContent = await readFile(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
+        const finalRcFileContent = await xfs.readFilePromise(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
         const cleanFileContent = cleanupFileContent(finalRcFileContent);
 
         expect(cleanFileContent).toMatchSnapshot();
@@ -47,7 +48,7 @@ describe(`Commands`, () => {
     test(
       `it should login a user with OTP setup`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const homePath = await createTemporaryFolder();
+        const homePath = await xfs.mktempPromise();
 
         await writeFile(`${homePath}/${SPEC_RC_FILENAME}`, ``);
 
@@ -70,7 +71,7 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        const finalRcFileContent = await readFile(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
+        const finalRcFileContent = await xfs.readFilePromise(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
         const cleanFileContent = cleanupFileContent(finalRcFileContent);
 
         expect(cleanFileContent).toMatchSnapshot();
@@ -111,7 +112,7 @@ describe(`Commands`, () => {
       `it should login a user with no OTP setup to a specific scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const url = await startPackageServer();
-        const homePath = await createTemporaryFolder();
+        const homePath = await xfs.mktempPromise();
 
         await writeFile(`${homePath}/${SPEC_RC_FILENAME}`, [
           `npmScopes:\n`,
@@ -137,7 +138,7 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        const finalRcFileContent = await readFile(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
+        const finalRcFileContent = await xfs.readFilePromise(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
         const cleanFileContent = cleanupFileContent(finalRcFileContent);
 
         expect(cleanFileContent).toMatchSnapshot();
@@ -149,7 +150,7 @@ describe(`Commands`, () => {
       `it should login a user with OTP to a specific scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const url = await startPackageServer();
-        const homePath = await createTemporaryFolder();
+        const homePath = await xfs.mktempPromise();
 
         const initialRcFileContent = [
           `npmScopes:\n`,
@@ -178,7 +179,7 @@ describe(`Commands`, () => {
           ({code, stdout, stderr} = error);
         }
 
-        const finalRcFileContent = await readFile(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
+        const finalRcFileContent = await xfs.readFilePromise(`${homePath}/${SPEC_RC_FILENAME}`, `utf8`);
         const cleanFileContent = cleanupFileContent(finalRcFileContent);
 
         expect(cleanFileContent).toMatchSnapshot();

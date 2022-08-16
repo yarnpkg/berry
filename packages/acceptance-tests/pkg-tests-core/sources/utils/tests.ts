@@ -1,22 +1,22 @@
-import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
-import assert                            from 'assert';
-import crypto                            from 'crypto';
-import finalhandler                      from 'finalhandler';
-import https                             from 'https';
-import {IncomingMessage, ServerResponse} from 'http';
-import http                              from 'http';
-import invariant                         from 'invariant';
-import {AddressInfo}                     from 'net';
-import os                                from 'os';
-import pem                               from 'pem';
-import semver                            from 'semver';
-import serveStatic                       from 'serve-static';
-import {promisify}                       from 'util';
-import {v5 as uuidv5}                    from 'uuid';
-import {Gzip}                            from 'zlib';
+import {PortablePath, npath, toFilename, xfs} from '@yarnpkg/fslib';
+import assert                                 from 'assert';
+import crypto                                 from 'crypto';
+import finalhandler                           from 'finalhandler';
+import https                                  from 'https';
+import {IncomingMessage, ServerResponse}      from 'http';
+import http                                   from 'http';
+import invariant                              from 'invariant';
+import {AddressInfo}                          from 'net';
+import os                                     from 'os';
+import pem                                    from 'pem';
+import semver                                 from 'semver';
+import serveStatic                            from 'serve-static';
+import {promisify}                            from 'util';
+import {v5 as uuidv5}                         from 'uuid';
+import {Gzip}                                 from 'zlib';
 
-import {ExecResult}                      from './exec';
-import * as fsUtils                      from './fs';
+import {ExecResult}                           from './exec';
+import * as fsUtils                           from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
@@ -148,7 +148,7 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
     for (const packageFile of await fsUtils.walk(npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
       filter: [`package.json`],
     })) {
-      const packageJson = await fsUtils.readJson(packageFile);
+      const packageJson = await xfs.readJsonPromise(packageFile);
 
       const {name, version} = packageJson;
       if (name.startsWith(`git-`))
@@ -197,7 +197,8 @@ export const getPackageArchivePath = async (name: string, version: string): Prom
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  const archivePath = await fsUtils.createTemporaryFile(toFilename(`${name}-${version}.tar.gz`));
+  const tmpDir = await xfs.mktempPromise();
+  const archivePath = `${tmpDir}/${toFilename(`${name}-${version}.tar.gz`)}` as PortablePath;
 
   await fsUtils.packToFile(archivePath, npath.toPortablePath(packageVersionEntry.path), {
     virtualPath: npath.toPortablePath(`/package`),
@@ -666,12 +667,12 @@ export const generatePkgDriver = ({
       }
 
       return Object.assign(async (): Promise<void> => {
-        const path = await fsUtils.realpath(await fsUtils.createTemporaryFolder());
+        const path = await xfs.mktempPromise();
 
         const registryUrl = await startPackageServer();
 
         // Writes a new package.json file into our temporary directory
-        await fsUtils.writeJson(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
+        await xfs.writeJsonPromise(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
         const run = (...args: Array<any>) => {
           let callDefinition = {};
