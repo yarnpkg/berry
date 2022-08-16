@@ -8,7 +8,7 @@ LABEL "com.github.actions.color"="blue"
 RUN apk add --no-cache bash nodejs rsync git
 
 # For building Sharp
-RUN apk add fftw-dev build-base autoconf python2 imagemagick --update-cache \
+RUN apk add fftw-dev build-base autoconf python3 imagemagick --update-cache \
     --repository https://alpine.global.ssl.fastly.net/alpine/edge/testing/ \
     --repository https://alpine.global.ssl.fastly.net/alpine/edge/main
 
