@@ -5,7 +5,7 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
-    "@types/node": "^13.7.0",
+    "@types/node": "^18.7.6",
     "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {

@@ -264,7 +264,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.9"],\
           ["@types/jest", "npm:28.1.6"],\
-          ["@types/node", "npm:13.7.0"],\
+          ["@types/node", "npm:18.7.6"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
@@ -8630,17 +8630,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@types/node", [\
-      ["npm:13.7.0", {\
-        "packageLocation": "./.yarn/cache/@types-node-npm-13.7.0-6051c9578d-4088d6fc07.zip/node_modules/@types/node/",\
-        "packageDependencies": [\
-          ["@types/node", "npm:13.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:14.17.3", {\
         "packageLocation": "./.yarn/cache/@types-node-npm-14.17.3-e3cd89920d-47949d119e.zip/node_modules/@types/node/",\
         "packageDependencies": [\
           ["@types/node", "npm:14.17.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:18.7.6", {\
+        "packageLocation": "./.yarn/cache/@types-node-npm-18.7.6-c1eafa3d9a-5a8817b093.zip/node_modules/@types/node/",\
+        "packageDependencies": [\
+          ["@types/node", "npm:18.7.6"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -10841,7 +10841,7 @@ const RAW_RUNTIME_STATE =
           ["@types/diff", "npm:5.0.2"],\
           ["@types/lodash", "npm:4.14.172"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:13.7.0"],\
+          ["@types/node", "npm:18.7.6"],\
           ["@types/semver", "npm:7.1.0"],\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/treeify", "npm:1.0.0"],\
@@ -11174,7 +11174,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.9"],\
           ["@types/jest", "npm:28.1.6"],\
-          ["@types/node", "npm:13.7.0"],\
+          ["@types/node", "npm:18.7.6"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
@@ -20435,7 +20435,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
-          ["@types/node", "npm:13.7.0"],\
+          ["@types/node", "npm:18.7.6"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],\
           ["esbuild", [\
@@ -47353,7 +47353,8 @@ class ZipFS extends BasePortableFakeFS {
         stream$1.destroy();
       },
       bytesRead: 0,
-      path: p
+      path: p,
+      pending: false
     });
     const immediate = setImmediate(async () => {
       try {
@@ -47391,11 +47392,12 @@ class ZipFS extends BasePortableFakeFS {
         }
       }
     }), {
-      bytesWritten: 0,
-      path: p,
       close() {
         stream$1.destroy();
-      }
+      },
+      bytesWritten: 0,
+      path: p,
+      pending: false
     });
     stream$1.on(`data`, (chunk) => {
       const chunkBuffer = Buffer.from(chunk);
@@ -48322,18 +48324,10 @@ class ProxiedFS extends FakeFS {
     return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
   }
   async readFilePromise(p, encoding) {
-    if (encoding === `utf8`) {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    } else {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    }
+    return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
   }
   readFileSync(p, encoding) {
-    if (encoding === `utf8`) {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    } else {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    }
+    return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
   async readdirPromise(p, opts) {
     return this.baseFs.readdirPromise(this.mapToBase(p), opts);

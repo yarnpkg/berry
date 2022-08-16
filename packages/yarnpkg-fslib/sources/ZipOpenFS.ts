@@ -644,7 +644,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.appendFilePromise(p, content, opts);
     }, async (zipFs, {subPath}) => {
@@ -652,7 +652,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  appendFileSync(p: FSPath<PortablePath>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.appendFileSync(p, content, opts);
     }, (zipFs, {subPath}) => {
@@ -660,7 +660,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.writeFilePromise(p, content, opts);
     }, async (zipFs, {subPath}) => {
@@ -668,7 +668,7 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<PortablePath>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return this.makeCallSync(p, () => {
       return this.baseFs.writeFileSync(p, content, opts);
     }, (zipFs, {subPath}) => {
@@ -772,9 +772,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return this.makeCallPromise(p, async () => {
       // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
       switch (encoding) {
@@ -788,9 +789,10 @@ export class ZipOpenFS extends BasePortableFakeFS {
     });
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return this.makeCallSync(p, () => {
       // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
       switch (encoding) {

@@ -40,7 +40,7 @@
     "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^13.7.0",
+    "@types/node": "^18.7.6",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^",

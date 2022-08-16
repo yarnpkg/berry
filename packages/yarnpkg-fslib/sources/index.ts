@@ -10,6 +10,7 @@ export {opendir}           from './algorithms/opendir';
 export {statUtils};
 
 export {normalizeLineEndings}          from './FakeFS';
+export type {BufferEncodingOrBuffer}   from './FakeFS';
 export type {CreateReadStreamOptions}  from './FakeFS';
 export type {CreateWriteStreamOptions} from './FakeFS';
 export type {Dirent, Dir, SymlinkType} from './FakeFS';
