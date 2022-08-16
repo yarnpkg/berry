@@ -474,26 +474,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
-    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    switch (encoding) {
-      case `utf8`:
-        return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
-      default:
-        return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
-    }
+    return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
   }
 
   readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
   readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
-    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    switch (encoding) {
-      case `utf8`:
-        return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
-      default:
-        return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
-    }
+    return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
