@@ -123,7 +123,7 @@ import {JsonDoc} from 'react-json-doc';
 
 1. This function is specified in the [Node.js documentation](https://nodejs.org/api/esm.html#resolver-algorithm-specification)
 
-    1. Note: This final resolution pass should start from `unqualified` rather than `specifier`, however some Node.js behavior (such as the [`exports` field](https://nodejs.org/api/packages.html#exports) remapping) are only triggered when the starting specifiers are [bare specifiers](https://nodejs.org/api/esm.html#terminology). It's to allow you to check that that the original `specifier` is forwarded to this function.
+    1. Note: This final resolution pass should start from `unqualified` rather than `specifier`, however Node.js specifies that some behaviors (such as the [`exports` field](https://nodejs.org/api/packages.html#exports) remapping) should only be triggered when the starting specifiers are [bare specifiers](https://nodejs.org/api/esm.html#terminology). It's to allow you to check it that the original `specifier` is forwarded to this function.
 
 ### PNP_RESOLVE(`specifier`, `parentURL`)
 
