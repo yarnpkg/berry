@@ -36,7 +36,13 @@ Extra features can then be designed, but are optional. For example, Yarn leverag
 
 All packages are uniquely referenced by **locators**. A locator is a combination of a **package ident**, which includes its scope if relevant, and a **package reference**, which can be seen as a unique ID used to distinguish different instances (or versions) of a same package. The package references should be treated as an opaque value: it doesn't matter from a resolution algorithm perspective that they start with `workspace:`, `virtual:`, `npm:`, or any other protocol.
 
-For portability reasons, all paths must be relative to the manifest folder (so that they can be the same regardless of the location of the project on disk), and all paths must use the unix path format (`/` as separators).
+### Portability
+
+For portability reasons, all paths inside of the manifests:
+- must use the unix path format (`/` as separators).
+- must be relative to the manifest folder (so that they can be the same regardless of the location of the project on disk).
+
+> **Important: This specification assumes all paths to have been normalized to the unix path format (`/` as separators).**
 
 ## Fallback
 
@@ -120,7 +126,7 @@ import {JsonDoc} from 'react-json-doc';
 2. If `specifier` is a Node.js builtin, then
 
     1. Set `resolved` to `specifier` itself and return it
-  
+
 3. Otherwise, if `specifier` is either an absolute path or a path prefixed with "./" or "../", then
 
     1. Set `resolved` to **NM_RESOLVE**(`specifier`, `parentURL`) and return it
@@ -278,9 +284,9 @@ Finding the right PnP manifest to use for a resolution isn't always trivial. The
     1. Let `pnpDataPath` be `directoryPath` concatenated with `/.pnp.data.json`
 
     2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))`
-    
+
     3. Set `manifest.dirPath` to `directoryPath`
-    
+
     4. Return `manifest`
 
 5. Otherwise, if `directoryPath` is `/`, then
@@ -296,7 +302,7 @@ Finding the right PnP manifest to use for a resolution isn't always trivial. The
 1. If `specifier` starts with "@", then
 
     1. If `specifier` doesn't contain a "/" separator, then
-  
+
         1. Throw an error
 
     2. Otherwise,
