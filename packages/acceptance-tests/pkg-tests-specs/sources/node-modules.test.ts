@@ -719,7 +719,7 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).toMatch(new RegExp(`'nohoist' is deprecated.*`));
-        expect(await xfs.readJsonPromise(`${path}/package.json`)).toHaveProperty(`workspaces.nohoist`);
+        expect(await xfs.readJsonPromise(`${path}/package.json` as PortablePath)).toHaveProperty(`workspaces.nohoist`);
       },
     ),
   );

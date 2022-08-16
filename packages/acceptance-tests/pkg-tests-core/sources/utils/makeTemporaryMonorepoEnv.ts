@@ -1,6 +1,5 @@
 import {PortablePath, ppath, Filename, xfs} from '@yarnpkg/fslib';
 
-import * as fsUtils                         from './fs';
 import {RunFunction}                        from './tests';
 
 const deepResolve = require(`super-resolve`);
