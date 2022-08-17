@@ -174,7 +174,7 @@ This error code isn't used at the moment (it used to print the number of package
 
 The checksum of a package from the cache doesn't match what the lockfile expects.
 
-This situation usually happens after you've modified the zip archives from your cache by editing the files it contains for debug purposes. Use one of the two following commands in order to bypass it:
+This situation usually happens after you've modified the zip archives from your cache by editing the files it contains for debug purposes. Use one of the three following commands in order to bypass it:
 
   - `YARN_CHECKSUM_BEHAVIOR=reset` will remove the files from the cache and download them again
   - `YARN_CHECKSUM_BEHAVIOR=update` will update the lockfile to contain the new checksum
