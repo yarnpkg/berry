@@ -21,6 +21,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 - `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
 - The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
+- Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
 
 ### **API Changes**
 

@@ -952,9 +952,9 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const pnpJs = await readFile(`${path}/.pnp.cjs`, `utf8`);
+        const pnpCjs = await readFile(`${path}/.pnp.cjs`, `utf8`);
 
-        expect(pnpJs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
+        expect(pnpCjs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
       },
     ),
   );
