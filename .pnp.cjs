@@ -9866,7 +9866,7 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.3"\
+            "npm:0.15.5"\
           ]],\
           ["semver", "npm:7.3.5"],\
           ["tslib", "npm:2.4.0"],\
@@ -10857,7 +10857,7 @@ const RAW_RUNTIME_STATE =
           ["diff", "npm:5.1.0"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.3"\
+            "npm:0.15.5"\
           ]],\
           ["globby", "npm:11.0.4"],\
           ["got", "npm:11.8.2"],\
@@ -20401,7 +20401,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.3"\
+            "npm:0.15.5"\
           ]],\
           ["resolve.exports", "npm:1.1.0"],\
           ["rollup", "npm:2.59.0"],\
@@ -25900,10 +25900,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["esbuild-wasm", [\
-      ["npm:0.15.3", {\
-        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.3-d44a577e82-27fc728e54.zip/node_modules/esbuild-wasm/",\
+      ["npm:0.15.5", {\
+        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.5-bc4c954bca-149219c551.zip/node_modules/esbuild-wasm/",\
         "packageDependencies": [\
-          ["esbuild-wasm", "npm:0.15.3"]\
+          ["esbuild-wasm", "npm:0.15.5"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -40349,7 +40349,7 @@ const RAW_RUNTIME_STATE =
           ["@types/rollup", null],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.3"\
+            "npm:0.15.5"\
           ]],\
           ["joycon", "npm:3.0.1"],\
           ["jsonc-parser", "npm:3.0.0"],\
@@ -44372,7 +44372,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.3"\
+            "npm:0.15.5"\
           ]],\
           ["rollup", "npm:2.59.0"],\
           ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],\
