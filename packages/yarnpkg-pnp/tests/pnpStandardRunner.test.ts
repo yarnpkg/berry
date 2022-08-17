@@ -16,10 +16,10 @@ for (const {manifest, tests} of expectations) {
 
   fakeFs.mkdirSync(projectRoot, {recursive: true});
 
-  const pnpApiFile = ppath.join(projectRoot, `.pnp.cjs` as Filename);
+  const pnpApiFile = ppath.join(projectRoot, Filename.pnpCjs);
   fakeFs.writeFileSync(pnpApiFile, `/* something */`);
 
-  const pnpDataFile = ppath.join(projectRoot, `.pnp.data.json` as Filename);
+  const pnpDataFile = ppath.join(projectRoot, Filename.pnpData);
   fakeFs.writeJsonSync(pnpDataFile, manifest);
 
   for (const test of tests) {

@@ -1651,25 +1651,7 @@ describe(`Plug'n'Play`, () => {
     }, async ({path, run, source}) => {
       await run(`add`, `no-deps`);
 
-      expect(xfs.existsSync(`${path}/.pnp.data.json`)).toBeTruthy();
-
-      await writeFile(`${path}/file.js`, `
-        console.log(require.resolve('no-deps'));
-      `);
-
-      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
-    }),
-  );
-
-  test(
-    `it should work with pnpEnableInlining set to false and with a custom pnpDataPath`,
-    makeTemporaryEnv({}, {
-      pnpEnableInlining: false,
-      pnpDataPath: `./.pnp.meta.json`,
-    }, async ({path, run, source}) => {
-      await run(`add`, `no-deps`);
-
-      expect(xfs.existsSync(`${path}/.pnp.meta.json`)).toBeTruthy();
+      expect(xfs.existsSync(`${path}/${Filename.pnpData}`)).toBeTruthy();
 
       await writeFile(`${path}/file.js`, `
         console.log(require.resolve('no-deps'));
