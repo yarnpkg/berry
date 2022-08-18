@@ -8,6 +8,12 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
+## 3.3.1
+
+### Installs
+
+- The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
+
 ## 3.3.0
 
 ### Installs
