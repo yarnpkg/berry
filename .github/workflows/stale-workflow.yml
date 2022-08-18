@@ -25,6 +25,8 @@ jobs:
         days-before-stale: 30
         days-before-close: 5
 
+        close-issue-reason: not_planned
+
         only-labels: 'bug'
 
         stale-issue-label: 'stale'
@@ -43,6 +45,8 @@ jobs:
 
         days-before-stale: 30
         days-before-close: 5
+
+        close-issue-reason: not_planned
 
         only-labels: 'waiting for feedback'
 
