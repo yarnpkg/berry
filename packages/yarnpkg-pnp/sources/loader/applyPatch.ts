@@ -30,7 +30,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   let enableNativeHooks = true;
 
-  // @ts-expect-error
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
   const moduleExports = require(`module`);
@@ -318,7 +317,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // Since that doesn't provide any value we suppress the warning.
   const originalEmit = process.emit;
   // @ts-expect-error - TS complains about the return type of originalEmit.apply
-  process.emit = function (name, data, ...args) {
+  process.emit = function (name, data: any, ...args) {
     if (
       name === `warning` &&
       typeof data === `object` &&

@@ -631,7 +631,6 @@ export function isNodeScript(p: PortablePath) {
     xfs.closeSync(fd);
   }
 
-  // @ts-expect-error - Types are incorrect
   const magic = buf.readUint32BE();
   if (
     magic === 0xcafebabe ||             // OSX Universal Binary

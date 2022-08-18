@@ -219,7 +219,7 @@ describe(`patchedFs`, () => {
       const chunks: Array<Buffer> = [];
 
       readStream.on(`data`, chunk => {
-        chunks.push(chunk);
+        chunks.push(chunk as Buffer);
       });
 
       readStream.on(`close`, () => {
@@ -265,7 +265,6 @@ describe(`patchedFs`, () => {
 
     const buffer = Buffer.alloc(128);
     try {
-      // @ts-expect-error - Node types are out of date
       const bytesRead = patchedFs.readSync(fd, buffer);
 
       expect(bytesRead).toEqual(buffer.byteLength);
@@ -282,7 +281,6 @@ describe(`patchedFs`, () => {
     const buffer = Buffer.alloc(42);
     try {
       const bytesRead = await new Promise<number>((resolve, reject) => {
-        // @ts-expect-error - Node types are out of date
         patchedFs.read(fd, {buffer}, (err, bytesRead, buffer) => {
           if (err) {
             reject(err);
@@ -365,7 +363,6 @@ describe(`patchedFs`, () => {
       {
         const fd = await patchedFs.promises.open(filepath, `r`);
 
-        // @ts-expect-error - The implementation allows no arguments
         const {buffer, bytesRead} = await fd.read();
         expect(bytesRead).toEqual(3);
         expect(buffer.subarray(0, 3)).toEqual(Buffer.from(`foo`));

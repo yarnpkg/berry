@@ -4732,17 +4732,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^14.14.10":
-  version: 14.17.3
-  resolution: "@types/node@npm:14.17.3"
-  checksum: c24c1f222b83a4cba584ae1bce2ab262d48d9d502346d82dd261236d29ce11ad63c5a5b1bfc74e50eaae032384893d443297d4da758e1eb540d9bf2495d7814e
+"@types/node@npm:*, @types/node@npm:^18.7.6":
+  version: 18.7.6
+  resolution: "@types/node@npm:18.7.6"
+  checksum: 5122988c325eda8d1f5cbe4494916036aae1758f9d5bb2d8139a800b8bad1540fbb167cd3c759da9a5cb4600cd3507609ac7969747113c1549a3e4320a17b1a9
   languageName: node
   linkType: hard
 
-"@types/node@npm:^13.7.0":
-  version: 13.7.0
-  resolution: "@types/node@npm:13.7.0"
-  checksum: ccc4eb30fd225dfdbf15307704b4acdb34fe57b13ff0942b1122723fe27b218d8d30915d7ff61f63e58a8213304ec3bd58bbb9cb0bcf13e687e57f5b25af6ec6
+"@types/node@npm:^14.14.10":
+  version: 14.17.3
+  resolution: "@types/node@npm:14.17.3"
+  checksum: c24c1f222b83a4cba584ae1bce2ab262d48d9d502346d82dd261236d29ce11ad63c5a5b1bfc74e50eaae032384893d443297d4da758e1eb540d9bf2495d7814e
   languageName: node
   linkType: hard
 
@@ -5762,7 +5762,7 @@ __metadata:
     "@types/diff": ^5.0.0
     "@types/lodash": ^4.14.136
     "@types/micromatch": ^4.0.1
-    "@types/node": ^13.7.0
+    "@types/node": ^18.7.6
     "@types/semver": ^7.1.0
     "@types/tar": ^4.0.4
     "@types/treeify": ^1.0.0
@@ -5999,7 +5999,7 @@ __metadata:
     "@babel/preset-typescript": ^7.23.3
     "@babel/register": ^7.22.15
     "@types/jest": ^28.1.6
-    "@types/node": ^13.7.0
+    "@types/node": ^18.7.6
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/eslint-config": "workspace:^"
@@ -6494,7 +6494,7 @@ __metadata:
   dependencies:
     "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^11.0.1
-    "@types/node": ^13.7.0
+    "@types/node": ^18.7.6
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     arg: ^5.0.2
