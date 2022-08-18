@@ -1,3 +1,9 @@
+inputs:
+  minify-bundle:
+    description: 'Whether to minify the bundle'
+    required: false
+    default: 'false'
+
 runs:
   using: composite
   steps:
@@ -11,12 +17,12 @@ runs:
       id: cache-build
       with:
         path: packages/yarnpkg-cli/bundles/yarn.js
-        key: cli-bundle-${{ github.sha }}
+        key: cli-bundle-minified-${{ inputs.minify-bundle }}-${{ github.sha }}
 
     - name: 'Build the standard bundle'
       if: steps.cache-build.outputs.cache-hit != 'true'
       run: |
-        node ./scripts/run-yarn.js build:cli
+        node ./scripts/run-yarn.js build:cli ${{ inputs.minify-bundle == 'false' && '--no-minify' || '' }}
       shell: bash
     #endregion
 
