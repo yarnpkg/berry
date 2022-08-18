@@ -14,6 +14,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - When Corepack is enabled Yarn will now use the current CLI to prepare external Yarn classic projects, matching the behaviour of when Corepack is disabled.
 
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript 4.8.1-rc
+
 ## 3.2.2
 
 ### Compatibility

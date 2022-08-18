@@ -265,7 +265,7 @@ export default class UpCommand extends BaseCommand {
     ]> = [];
 
     for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {
-      let selected;
+      let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
@@ -278,7 +278,7 @@ export default class UpCommand extends BaseCommand {
         selected = firstSuggestedDescriptor;
       } else {
         askedQuestions = true;
-        ({answer: selected} = await prompt({
+        ({answer: selected} = await prompt<{answer: Descriptor}>({
           type: `select`,
           name: `answer`,
           message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
