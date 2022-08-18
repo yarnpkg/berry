@@ -3,6 +3,7 @@ import {S_IFREG}                       from 'constants';
 import fs                              from 'fs';
 
 import {makeEmptyArchive, ZipFS}       from '../sources/ZipFS';
+import {SAFE_TIME}                     from '../sources/constants';
 import {PortablePath, ppath, Filename} from '../sources/path';
 import {xfs, statUtils}                from '../sources';
 
@@ -979,5 +980,18 @@ describe(`ZipFS`, () => {
     ).rejects.toMatchObject({
       code: `ENOENT`,
     });
+  });
+
+  // https://github.com/nih-at/libzip/issues/146
+  // https://github.com/yarnpkg/berry/pull/647
+  // https://github.com/arcanis/libzip/commit/5f6dc0f43f23d4dd143f504270bb9c5de34c80a7
+  it(`should be able to update the mtime after adding a file`, () => {
+    const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, ``);
+    zipFs.utimesSync(`/foo.txt` as PortablePath, SAFE_TIME, SAFE_TIME);
+
+    expect(zipFs.statSync(`/foo.txt` as PortablePath).mtimeMs).toEqual(SAFE_TIME * 1000);
+
+    zipFs.discardAndClose();
   });
 });
