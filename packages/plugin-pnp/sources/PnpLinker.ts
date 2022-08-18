@@ -248,7 +248,7 @@ export class PnpInstaller implements Installer {
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
       await xfs.removePromise(pnpPath.cjs);
-      await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+      await xfs.removePromise(pnpPath.data);
       await xfs.removePromise(pnpPath.esmLoader);
       await xfs.removePromise(this.opts.project.configuration.get(`pnpUnpluggedFolder`));
 
@@ -323,7 +323,6 @@ export class PnpInstaller implements Installer {
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     const pnpPath = getPnpPath(this.opts.project);
-    const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
@@ -343,17 +342,16 @@ export class PnpInstaller implements Installer {
         mode: 0o755,
       });
 
-      await xfs.removePromise(pnpDataPath);
+      await xfs.removePromise(pnpPath.data);
     } else {
-      const dataLocation = ppath.relative(ppath.dirname(pnpPath.cjs), pnpDataPath);
-      const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
+      const {dataFile, loaderFile} = generateSplitScript(pnpSettings);
 
       await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {
         automaticNewlines: true,
         mode: 0o755,
       });
 
-      await xfs.changeFilePromise(pnpDataPath, dataFile, {
+      await xfs.changeFilePromise(pnpPath.data, dataFile, {
         automaticNewlines: true,
         mode: 0o644,
       });

@@ -45714,6 +45714,8 @@ const Filename = {
   virtual: `__virtual__`,
   pnpJs: `.pnp.js`,
   pnpCjs: `.pnp.cjs`,
+  pnpData: `.pnp.data.json`,
+  pnpEsmLoader: `.pnp.loader.mjs`,
   rc: `.yarnrc.yml`
 };
 const npath = Object.create(path__default.default);
@@ -49027,24 +49029,14 @@ class ZipOpenFS extends BasePortableFakeFS {
   }
   async readFilePromise(p, encoding) {
     return this.makeCallPromise(p, async () => {
-      switch (encoding) {
-        case `utf8`:
-          return await this.baseFs.readFilePromise(p, encoding);
-        default:
-          return await this.baseFs.readFilePromise(p, encoding);
-      }
+      return await this.baseFs.readFilePromise(p, encoding);
     }, async (zipFs, {subPath}) => {
       return await zipFs.readFilePromise(subPath, encoding);
     });
   }
   readFileSync(p, encoding) {
     return this.makeCallSync(p, () => {
-      switch (encoding) {
-        case `utf8`:
-          return this.baseFs.readFileSync(p, encoding);
-        default:
-          return this.baseFs.readFileSync(p, encoding);
-      }
+      return this.baseFs.readFileSync(p, encoding);
     }, (zipFs, {subPath}) => {
       return zipFs.readFileSync(subPath, encoding);
     });

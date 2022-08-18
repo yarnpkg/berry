@@ -618,13 +618,6 @@
       "format": "uri-reference",
       "default": "./.yarn/patches"
     },
-    "pnpDataPath": {
-      "_package": "@yarnpkg/plugin-pnp",
-      "description": "The location where Yarn will read and write the `.pnp.meta.json` file.",
-      "type": "string",
-      "format": "uri-reference",
-      "default": "./.pnp.data.json"
-    },
     "pnpEnableEsmLoader": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`). Yarn tries to automatically detect whether ESM support is required.",
