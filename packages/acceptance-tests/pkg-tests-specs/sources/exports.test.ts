@@ -1,5 +1,4 @@
 import {NativePath, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {createTemporaryFolder}                       from 'pkg-tests-core/sources/utils/fs';
 import {yarn}                                        from 'pkg-tests-core';
 
 export type Manifest = {
@@ -797,7 +796,7 @@ describe(`"exports" field`, () => {
   test(
     `link: with exports (outside the project)`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
-      const tmp = await createTemporaryFolder();
+      const tmp = await xfs.mktempPromise();
 
       await xfs.writeJsonPromise(`${tmp}/package.json` as PortablePath, {
         name: `linked`,

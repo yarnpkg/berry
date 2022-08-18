@@ -1,7 +1,7 @@
-import {npath} from '@yarnpkg/fslib';
+import {npath, xfs} from '@yarnpkg/fslib';
 
 const {
-  fs: {mkdirp, writeFile},
+  fs: {writeFile},
   misc: {parseJsonStream},
 } = require(`pkg-tests-core`);
 
@@ -29,7 +29,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await mkdirp(`${path}/subfolder`);
+          await xfs.mkdirPromise(`${path}/subfolder`);
 
           await writeFile(`${path}/subfolder/package.json`, `{}`);
 
@@ -50,7 +50,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await mkdirp(`${path}/subfolder`);
+          await xfs.mkdirPromise(`${path}/subfolder`);
 
           await writeFile(`${path}/subfolder/package.json`, `{}`);
           await writeFile(`${path}/subfolder/yarn.lock`, ``);
