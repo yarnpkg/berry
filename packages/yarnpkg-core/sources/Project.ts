@@ -390,10 +390,6 @@ export class Project {
 
         const workspace = await this.addWorkspace(workspaceCwd);
 
-        const workspacePkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
-        if (workspacePkg)
-          workspace.dependencies = workspacePkg.dependencies;
-
         for (const workspaceCwd of workspace.workspacesCwds) {
           workspaceCwds.push(workspaceCwd);
         }
