@@ -170,7 +170,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return onRealPath(pnpPath.forwardedDirPath || pnpPath.resolvedPath);
   }
 
-  private static makeSymlinkStats(stats: fs.Stats): fs.Stats {
+  private static makeSymlinkStats<T extends fs.Stats | fs.BigIntStats>(stats: T): T {
     return Object.assign(stats, {
       isFile: () => false,
       isDirectory: () => false,
@@ -402,19 +402,19 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.copyFileSync(this.resolveFilePath(sourceP), this.resolveDirOrFilePath(destP), flags);
   }
 
-  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return await this.baseFs.appendFilePromise(this.resolveDirOrFilePath(p), content, opts);
   }
 
-  appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  appendFileSync(p: FSPath<PortablePath>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return this.baseFs.appendFileSync(this.resolveDirOrFilePath(p), content, opts);
   }
 
-  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return await this.baseFs.writeFilePromise(this.resolveDirOrFilePath(p), content, opts);
   }
 
-  writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<PortablePath>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return this.baseFs.writeFileSync(this.resolveDirOrFilePath(p), content, opts);
   }
 
@@ -470,28 +470,18 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.symlinkSync(this.resolveDirOrFilePath(target), this.resolveDirOrFilePath(p));
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
-    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    switch (encoding) {
-      case `utf8`:
-        return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
-      default:
-        return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
-    }
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
+    return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
-    // This weird switch is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    switch (encoding) {
-      case `utf8`:
-        return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
-      default:
-        return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
-    }
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
+    return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
   }
 
   async readdirPromise(p: PortablePath): Promise<Array<Filename>>;

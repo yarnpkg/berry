@@ -14,7 +14,7 @@ export function dynamicRequireNoCache(path: PortablePath) {
   try {
     result = dynamicRequire(physicalPath);
 
-    const freshCacheEntry = dynamicRequire.cache[physicalPath];
+    const freshCacheEntry = dynamicRequire.cache[physicalPath]!;
 
     const dynamicModule = eval(`module`) as NodeModule;
     const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);

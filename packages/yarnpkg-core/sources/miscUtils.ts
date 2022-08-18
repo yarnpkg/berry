@@ -340,7 +340,7 @@ function dynamicRequireNoCache(path: string) {
   try {
     result = dynamicRequireNode(physicalPath);
 
-    const freshCacheEntry = realRequire.cache[physicalPath];
+    const freshCacheEntry = realRequire.cache[physicalPath]!;
 
     const dynamicModule = eval(`module`) as NodeModule;
     const freshCacheIndex = dynamicModule.children.indexOf(freshCacheEntry);
