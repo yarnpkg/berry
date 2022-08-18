@@ -170,7 +170,7 @@ export const writeFile = async (target: PortablePath, body: string | Buffer): Pr
   await xfs.writeFilePromise(target, body);
 };
 
-export const readFile = (source: PortablePath, encoding?: string): Promise<any> => {
+export const readFile = (source: PortablePath, encoding?: BufferEncoding): Promise<any> => {
   return xfs.readFilePromise(source, encoding);
 };
 

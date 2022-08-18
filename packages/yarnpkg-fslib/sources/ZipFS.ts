@@ -455,6 +455,8 @@ export class ZipFS extends BasePortableFakeFS {
         },
         bytesRead: 0,
         path: p,
+        // "This property is `true` if the underlying file has not been opened yet"
+        pending: false,
       },
     );
 
@@ -502,11 +504,13 @@ export class ZipFS extends BasePortableFakeFS {
         },
       }),
       {
-        bytesWritten: 0,
-        path: p,
         close() {
           stream.destroy();
         },
+        bytesWritten: 0,
+        path: p,
+        // "This property is `true` if the underlying file has not been opened yet"
+        pending: false,
       },
     );
 
@@ -678,6 +682,9 @@ export class ZipFS extends BasePortableFakeFS {
     return this.statImpl(`lstat '${p}'`, resolvedP, opts);
   }
 
+  private statImpl(reason: string, p: PortablePath, opts: {bigint: true}): BigIntStats;
+  private statImpl(reason: string, p: PortablePath, opts?: {bigint?: false}): Stats;
+  private statImpl(reason: string, p: PortablePath, opts?: {bigint?: boolean}): Stats | BigIntStats;
   private statImpl(reason: string, p: PortablePath, opts: {bigint?: boolean} = {}): Stats | BigIntStats {
     const entry = this.entries.get(p);
 
@@ -1122,7 +1129,7 @@ export class ZipFS extends BasePortableFakeFS {
     };
   }
 
-  async appendFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<PortablePath>, content: string | Uint8Array, opts?: WriteFileOptions) {
     if (this.readOnly)
       throw errors.EROFS(`open '${p}'`);
 
@@ -1136,7 +1143,7 @@ export class ZipFS extends BasePortableFakeFS {
     return this.writeFilePromise(p, content, opts);
   }
 
-  appendFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts: WriteFileOptions = {}) {
+  appendFileSync(p: FSPath<PortablePath>, content: string | Uint8Array, opts: WriteFileOptions = {}) {
     if (this.readOnly)
       throw errors.EROFS(`open '${p}'`);
 
@@ -1158,13 +1165,14 @@ export class ZipFS extends BasePortableFakeFS {
     return path;
   }
 
-  async writeFilePromise(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: FSPath<PortablePath>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([await this.getFileSource(index, {asyncDecompress: true}), Buffer.from(content as any)]);
 
     if (encoding !== null)
+      // @ts-expect-error: toString ignores unneeded arguments
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
@@ -1176,13 +1184,14 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  writeFileSync(p: FSPath<PortablePath>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<PortablePath>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     const {encoding, mode, index, resolvedP} = this.prepareWriteFile(p, opts);
 
     if (index !== undefined && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content as any)]);
 
     if (encoding !== null)
+      // @ts-expect-error: toString ignores unneeded arguments
       content = content.toString(encoding);
 
     const newIndex = this.setFileSource(resolvedP, content);
@@ -1382,9 +1391,10 @@ export class ZipFS extends BasePortableFakeFS {
     this.symlinkCount += 1;
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding: 'utf8'): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: FSPath<PortablePath>, encoding?: string) {
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-expect-error
@@ -1394,9 +1404,10 @@ export class ZipFS extends BasePortableFakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding: 'utf8'): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<PortablePath>, encoding?: string) {
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
       // @ts-expect-error

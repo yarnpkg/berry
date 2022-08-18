@@ -907,10 +907,10 @@ describe(`ZipFS`, () => {
     const zipFs = new ZipFS(null, {libzip: getLibzipSync()});
 
     // File doesn't exist
-    expect(() => zipFs.readFileSync(`/foo` as PortablePath, ``)).toThrowError(`ENOENT`);
+    expect(() => zipFs.readFileSync(`/foo` as PortablePath)).toThrowError(`ENOENT`);
 
     // Parent entry doesn't exist
-    expect(() => zipFs.readFileSync(`/foo/bar` as PortablePath, ``)).toThrowError(`ENOENT`);
+    expect(() => zipFs.readFileSync(`/foo/bar` as PortablePath)).toThrowError(`ENOENT`);
 
     zipFs.discardAndClose();
   });
