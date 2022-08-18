@@ -24,7 +24,7 @@
     "eslint": "^8.2.0",
     "jest": "^28.1.3",
     "tslib": "^2.4.0",
-    "typescript": "4.8.0-beta"
+    "typescript": "4.8.1-rc"
   },
   "resolutions": {
     "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
