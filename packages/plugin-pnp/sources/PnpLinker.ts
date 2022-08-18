@@ -250,6 +250,7 @@ export class PnpInstaller implements Installer {
       await xfs.removePromise(pnpPath.cjs);
       await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
       await xfs.removePromise(pnpPath.esmLoader);
+      await xfs.removePromise(this.opts.project.configuration.get(`pnpUnpluggedFolder`));
 
       return undefined;
     }
