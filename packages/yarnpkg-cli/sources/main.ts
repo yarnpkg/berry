@@ -148,6 +148,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
       await cli.runExit(command, {
         cwd: npath.toPortablePath(process.cwd()),
+        env: {},
         plugins: pluginConfiguration,
         quiet: false,
         stdin: process.stdin,
