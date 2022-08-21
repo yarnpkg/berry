@@ -17,6 +17,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Compatibility
 
 - Updates the PnP compatibility layer for TypeScript 4.8.1-rc
+- The ESM loader now supports unflagged JSON modules.
 
 ## 3.2.2
 

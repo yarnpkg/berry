@@ -20470,11 +20470,13 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/pnp": "workspace:^"
     fs-extra: ^7.0.1
     lodash: ^4.17.15
     pkg-tests-core: "workspace:^"
     semver: ^7.1.2
     tar: ^6.0.5
+    tslib: ^1.13.0
   languageName: unknown
   linkType: soft
 
