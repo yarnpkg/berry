@@ -20249,10 +20249,12 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/pnp": "workspace:^"
     lodash: "npm:^4.17.15"
     pkg-tests-core: "workspace:^"
     semver: "npm:^7.1.2"
     tar: "npm:^6.0.5"
+    tslib: "npm:^2.4.0"
   languageName: unknown
   linkType: soft
 

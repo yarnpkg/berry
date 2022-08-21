@@ -37014,10 +37014,12 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
+          ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["lodash", "npm:4.17.21"],\
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],\
           ["semver", "npm:7.3.5"],\
-          ["tar", "npm:6.0.5"]\
+          ["tar", "npm:6.0.5"],\
+          ["tslib", "npm:2.4.0"]\
         ],\
         "linkType": "SOFT"\
       }]\
