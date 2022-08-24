@@ -1,5 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError}       from '@yarnpkg/cli';
-import {Configuration, Project, structUtils}       from '@yarnpkg/core';
+import {Configuration, Descriptor, DescriptorHash, Project, structUtils}       from '@yarnpkg/core';
 import {npath, xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}        from 'clipanion';
 
@@ -63,12 +63,54 @@ export default class PatchCommitCommand extends BaseCommand {
     await xfs.mkdirPromise(patchFolder, {recursive: true});
     await xfs.writeFilePromise(patchPath, diff);
 
-    const relPath = ppath.relative(project.cwd, patchPath);
+    const transitiveDependencies = new Map<DescriptorHash, Descriptor>();
 
-    project.topLevelWorkspace.manifest.resolutions.push({
-      pattern: {descriptor: {fullName: structUtils.stringifyIdent(locator), description: meta.version}},
-      reference: `patch:${structUtils.stringifyLocator(locator)}#${relPath}`,
-    });
+    for (const pkg of project.storedPackages.values()) {
+      if (structUtils.isVirtualLocator(pkg))
+        continue;
+
+      const descriptor = pkg.dependencies.get(locator.identHash);
+      if (!descriptor)
+        continue;
+
+      const devirtualizedDescriptor = structUtils.isVirtualDescriptor(descriptor)
+        ? structUtils.devirtualizeDescriptor(descriptor)
+        : descriptor;
+
+      const unpatchedDescriptor = patchUtils.ensureUnpatchedDescriptor(devirtualizedDescriptor);
+
+      const resolution = project.storedResolutions.get(unpatchedDescriptor.descriptorHash);
+      if (!resolution)
+        throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+
+      const dependency = project.storedPackages.get(resolution);
+      if (!dependency)
+        throw new Error(`Assertion failed: Expected the package to have been registered`);
+
+      const originalPkg = project.originalPackages.get(pkg.locatorHash);
+      if (!originalPkg)
+        throw new Error(`Assertion failed: Expected the original package to have been registered`);
+
+      const originalDependency = originalPkg.dependencies.get(descriptor.identHash);
+      if (!originalDependency)
+        throw new Error(`Assertion failed: Expected the original dependency to have been registered`);
+
+      transitiveDependencies.set(originalDependency.descriptorHash, originalDependency);
+    }
+
+    for (const originalDescriptor of transitiveDependencies.values()) {
+      const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
+        parentLocator: null,
+        sourceDescriptor: structUtils.convertLocatorToDescriptor(locator),
+        sourceVersion: null,
+        patchPaths: [`./${ppath.relative(project.cwd, patchPath)}` as PortablePath],
+      });
+
+      project.topLevelWorkspace.manifest.resolutions.push({
+        pattern: {descriptor: {fullName: structUtils.stringifyIdent(newDescriptor), description: originalDescriptor.range}},
+        reference: newDescriptor.range,
+      });
+    }
 
     await project.persist();
   }

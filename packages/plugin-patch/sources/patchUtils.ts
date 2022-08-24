@@ -40,6 +40,14 @@ export function parseLocator(locator: Locator) {
   return {...rest, sourceLocator: sourceItem};
 }
 
+export function ensureUnpatchedDescriptor(descriptor: Descriptor) {
+  if (!descriptor.range.startsWith(`patch:`))
+    return descriptor;
+
+  const {sourceItem} = parseSpec(descriptor.range, structUtils.parseDescriptor);
+  return sourceItem;
+}
+
 function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patchHash}: {parentLocator: Locator | null, sourceItem: T, patchPaths: Array<PortablePath>, sourceVersion?: string | null, patchHash?: string}, sourceStringifier: (source: T) => string) {
   const parentLocatorSpread = parentLocator !== null
     ? {locator: structUtils.stringifyLocator(parentLocator)}
@@ -66,10 +74,10 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patc
 }
 
 export function makeDescriptor(ident: Ident, {parentLocator, sourceDescriptor, patchPaths}: ReturnType<typeof parseDescriptor>) {
-  return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
+  return structUtils.makeDescriptor(ident, makeSpec({parentLocator, sourceItem: sourceDescriptor, patchPaths}, structUtils.stringifyDescriptor));
 }
 
-export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPaths, patchHash}: Omit<ReturnType<typeof parseLocator>, 'sourceLocator' | 'sourceVersion'> & {sourcePackage: Package, patchHash: string}) {
+  export function makeLocator(ident: Ident, {parentLocator, sourcePackage, patchPaths, patchHash}: Omit<ReturnType<typeof parseLocator>, 'sourceLocator' | 'sourceVersion'> & {sourcePackage: Package, patchHash: string}) {
   return structUtils.makeLocator(ident, makeSpec({parentLocator, sourceItem: sourcePackage, sourceVersion: sourcePackage.version, patchPaths, patchHash}, structUtils.stringifyLocator));
 }
 
