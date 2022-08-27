@@ -174,9 +174,9 @@ export default class AddCommand extends BaseCommand {
         optional: this.optional,
       });
 
-      const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
+      const suggestedDescriptors = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
 
-      return {request, suggestions, target};
+      return {request, suggestedDescriptors, target};
     }));
 
     const checkReport = await LightReport.start({
@@ -184,7 +184,7 @@ export default class AddCommand extends BaseCommand {
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const {request, suggestions: {suggestions, rejections}} of allSuggestions) {
+      for (const {request, suggestedDescriptors: {suggestions, rejections}} of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
@@ -224,7 +224,7 @@ export default class AddCommand extends BaseCommand {
       Descriptor,
     ]> = [];
 
-    for (const {suggestions: {suggestions}, target} of allSuggestions) {
+    for (const {suggestedDescriptors: {suggestions}, target} of allSuggestions) {
       let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
