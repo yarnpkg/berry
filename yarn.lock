@@ -4402,13 +4402,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/js-yaml@npm:^3.11.1":
-  version: 3.12.5
-  resolution: "@types/js-yaml@npm:3.12.5"
-  checksum: 15d44f172ebb88ed45678fa3664f93b97ed69da119d9e40ad02459215991546dd7a9708d9e66884409e76cd75128ff2afbbd05c0f1df34b26c4fdc5612c8cf1e
-  languageName: node
-  linkType: hard
-
 "@types/json-patch@npm:0.0.30":
   version: 0.0.30
   resolution: "@types/json-patch@npm:0.0.30"
@@ -5843,6 +5836,8 @@ __metadata:
     tslib: "npm:^2.4.0"
     typescript: "npm:4.8.1-rc"
   dependenciesMeta:
+    binary-install:
+      unplugged: true
     core-js:
       built: false
     core-js-pure:
@@ -5878,10 +5873,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
-    "@types/js-yaml": "npm:^3.11.1"
-    js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
     tslib: "npm:^2.4.0"
+    wasm-pack: "npm:^0.10.3"
   languageName: unknown
   linkType: soft
 
@@ -7633,6 +7627,17 @@ __metadata:
   version: 2.0.0
   resolution: "binary-extensions@npm:2.0.0"
   checksum: d9aeff7603805a72bcdfaf91750a7f19cdd6c4d017bba782ccfbb6e0b9d910fb9d16163815eb253d53503856893b04959b3e627e624b8f22de16a18e24e43471
+  languageName: node
+  linkType: hard
+
+"binary-install@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "binary-install@npm:0.1.1"
+  dependencies:
+    axios: "npm:^0.21.1"
+    rimraf: "npm:^3.0.2"
+    tar: "npm:^6.1.0"
+  checksum: 2c877af7119bc5f1cfa7ab4a7616e05ee70686f7f33b5ad03975012689b1b48e3f0e039ecd757bb4267b483b973be57c3f62cb74f37887e8eaae7a1aafe01edf
   languageName: node
   linkType: hard
 
@@ -16542,7 +16547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^3.10.0, js-yaml@npm:^3.13.1, js-yaml@npm:^3.14.1":
+"js-yaml@npm:^3.13.1, js-yaml@npm:^3.14.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:
@@ -24549,6 +24554,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tar@npm:^6.1.0":
+  version: 6.1.11
+  resolution: "tar@npm:6.1.11"
+  dependencies:
+    chownr: "npm:^2.0.0"
+    fs-minipass: "npm:^2.0.0"
+    minipass: "npm:^3.0.0"
+    minizlib: "npm:^2.1.1"
+    mkdirp: "npm:^1.0.3"
+    yallist: "npm:^4.0.0"
+  checksum: 5499de6e1998ca602c327f3359d085f6ab41e63a0ce530fb15de13089d3795262b6dfb7731989b7e1d0289a76658d715d8e1239fc06f70ae49349205e3a5fbcc
+  languageName: node
+  linkType: hard
+
 "tau-prolog@npm:^0.2.66":
   version: 0.2.66
   resolution: "tau-prolog@npm:0.2.66"
@@ -26326,6 +26345,17 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: a8a2ebdd8fb207ea69d9db8f5e02e2b74399cd3b6df3b0cc8c536ea3b8bd4d1c6da6605ea30eee25f5cd1acb44ceecf9b0a1eb7f1d3537e20212f4b3f218d688
+  languageName: node
+  linkType: hard
+
+"wasm-pack@npm:^0.10.3":
+  version: 0.10.3
+  resolution: "wasm-pack@npm:0.10.3"
+  dependencies:
+    binary-install: "npm:^0.1.0"
+  bin:
+    wasm-pack: run.js
+  checksum: 58f5c939eca068b4c103e2784590b89db8b1caa3ee02e510a7da71f61b4a2e0c190e8fd705369ff0bbf1eae419810555ee32b7a7c9fa83378639476acad2b5e5
   languageName: node
   linkType: hard
 

@@ -200,7 +200,8 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
 
   const versionContent = xfs.existsSync(versionPath)
     ? await xfs.readFilePromise(versionPath, `utf8`)
-    : `{}`;
+    // TODO: Revert to empty flow mapping.
+    : ``;
 
   const versionData = parseSyml(versionContent);
   const releaseStore: Releases = new Map();

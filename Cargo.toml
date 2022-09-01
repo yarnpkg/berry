@@ -1,0 +1,10 @@
+[workspace]
+members = ["packages/yarnpkg-parsers/artifacts"]
+
+# Can only be specified at the root
+[profile.release]
+opt-level = 3
+lto = true
+panic = "abort"
+strip = true
+codegen-units = 1

@@ -99,9 +99,9 @@ jobs:
 
     - name: 'Check that the grammars are consistent with fresh builds (fix w/ "yarn grammar:all")'
       run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-parsers/sources/grammars/*.{pegjs,js}' | wc -l) -gt 0 ]]; then
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-parsers/{artifacts,sources/grammars}/**/*' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js grammar:all
-          [[ $(git diff --name-only packages/yarnpkg-parsers/sources/grammars/*.js | tee /dev/stderr | wc -l) -eq 0 ]]
+          [[ $(git diff --name-only packages/yarnpkg-parsers/sources/grammars/* | tee /dev/stderr | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |
@@ -116,9 +116,16 @@ jobs:
       if: |
         (success() || failure()) && github.event.pull_request != ''
 
-    - name: 'Check for linting errors (fix w/ "yarn test:lint --fix")'
+    - name: 'Check for linting errors (fix w/ "yarn test:lint:fix")'
       run: |
         node ./scripts/run-yarn.js test:lint
+      shell: bash
+      if: |
+        success() || failure()
+
+    - name: 'Check for formatting errors (fix w/ "yarn test:format:fix")'
+      run: |
+        node ./scripts/run-yarn.js test:format
       shell: bash
       if: |
         success() || failure()

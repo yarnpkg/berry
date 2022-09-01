@@ -1,0 +1,17 @@
+[package]
+name = "yarnpkg-parsers"
+version = "0.0.0"
+license = "BSD-2-Clause"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+nom = "7.1.1"
+wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
+# We need to preserve key order even though it's slower
+serde_json = { version = "1.0.85", features = ["preserve_order"] }
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-O4']
