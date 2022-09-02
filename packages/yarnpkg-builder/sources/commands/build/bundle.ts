@@ -1,6 +1,5 @@
 import {getDynamicLibs}                                                     from '@yarnpkg/cli';
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
-import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
@@ -139,7 +138,7 @@ export default class BuildBundleCommand extends Command {
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,
-          plugins: [valLoader, pnpPlugin()],
+          plugins: [valLoader],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node14`,
