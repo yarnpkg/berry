@@ -124,7 +124,7 @@ export function stringifySyml(value: any) {
 
 stringifySyml.PreserveOrdering = PreserveOrdering;
 
-export function parseSyml(source: string): Record<string, unknown> {
+export function parseSyml(source: string): Record<string, any> {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
