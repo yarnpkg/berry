@@ -10,6 +10,7 @@
     "noImplicitReturns": true,
     "resolveJsonModule": true,
     "strict": true,
+    "alwaysStrict": false,
     "target": "ES2019",
     "declaration": true,
     "importHelpers": true,
