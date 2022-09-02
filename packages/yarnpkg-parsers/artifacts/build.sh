@@ -3,7 +3,7 @@ WORKSPACE_DIR="$(dirname "$PWD")"
 # TODO: Pass "--weak-refs" once https://github.com/rustwasm/wasm-pack/pull/937 is merged.
 # TODO: Enable simd after dropping support for Node 14.
 # TODO: Enable support for WASM reference types after it stabilizes.
-yarn wasm-pack build \
+RUST_LOG=info yarn wasm-pack build \
   --release \
   --target nodejs \
   --out-dir ./pkg \
