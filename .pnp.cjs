@@ -10866,7 +10866,7 @@ const RAW_RUNTIME_STATE =
           ["rollup-plugin-terser", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:7.0.2"],\
           ["semver", "npm:7.3.5"],\
           ["strip-ansi", "npm:6.0.1"],\
-          ["tar", "npm:6.0.5"],\
+          ["tar", "npm:6.1.11"],\
           ["tinylogic", "npm:2.0.0"],\
           ["treeify", "npm:1.1.0"],\
           ["tslib", "npm:2.4.0"],\
@@ -37020,7 +37020,7 @@ const RAW_RUNTIME_STATE =
           ["lodash", "npm:4.17.21"],\
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],\
           ["semver", "npm:7.3.5"],\
-          ["tar", "npm:6.0.5"],\
+          ["tar", "npm:6.1.11"],\
           ["tslib", "npm:2.4.0"]\
         ],\
         "linkType": "SOFT"\
@@ -42333,19 +42333,6 @@ const RAW_RUNTIME_STATE =
           ["mkdirp", "npm:0.5.5"],\
           ["safe-buffer", "npm:5.2.1"],\
           ["yallist", "npm:3.0.3"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:6.0.5", {\
-        "packageLocation": "./.yarn/cache/tar-npm-6.0.5-a5360f3389-0b5c8cc547.zip/node_modules/tar/",\
-        "packageDependencies": [\
-          ["tar", "npm:6.0.5"],\
-          ["chownr", "npm:2.0.0"],\
-          ["fs-minipass", "npm:2.0.0"],\
-          ["minipass", "npm:3.1.3"],\
-          ["minizlib", "npm:2.1.2"],\
-          ["mkdirp", "npm:1.0.4"],\
-          ["yallist", "npm:4.0.0"]\
         ],\
         "linkType": "HARD"\
       }],\
