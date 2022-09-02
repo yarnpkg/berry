@@ -1,4 +1,5 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import * as loaderFlags       from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -195,8 +196,8 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
-    `it should not resolve JSON files`,
+  (loaderFlags.HAS_UNFLAGGED_JSON_MODULES === false ? test : test.skip)(
+    `it should not resolve JSON modules without --experimental-json-modules`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -213,6 +214,55 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension`),
+        });
+      },
+    ),
+  );
+
+  (loaderFlags.HAS_UNFLAGGED_JSON_MODULES ? test : test.skip)(
+    `it should not resolve JSON modules without an import assertion`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `import './foo.json';`,
+        );
+        await xfs.writeFilePromise(ppath.join(path, `foo.json` as Filename), `{"name": "foo"}`);
+
+        await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
+          code: 1,
+          stderr: expect.stringContaining(`ERR_IMPORT_ASSERTION_TYPE_MISSING`),
+        });
+      },
+    ),
+  );
+
+  (loaderFlags.HAS_UNFLAGGED_JSON_MODULES ? test : test.skip)(
+    `it should resolve JSON modules with an import assertion`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `
+          import foo from './foo.json' assert { type: 'json' };
+          console.log(foo.name);
+          `,
+        );
+        await xfs.writeFilePromise(ppath.join(path, `foo.json` as Filename), `{"name": "foo"}`);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `foo\n`,
         });
       },
     ),

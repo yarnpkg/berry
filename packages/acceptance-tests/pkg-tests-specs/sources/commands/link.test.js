@@ -1,7 +1,7 @@
 import {Filename, npath, xfs} from '@yarnpkg/fslib';
 
 const {
-  fs: {createTemporaryFolder, readJson, writeJson},
+  fs: {writeJson},
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
@@ -9,7 +9,7 @@ describe(`Commands`, () => {
     test(
       `it should allow to link a project with another one`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-package/package.json`, {
           name: `my-package`,
@@ -17,7 +17,7 @@ describe(`Commands`, () => {
 
         await run(`link`, `${tmp}/my-package`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
             [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
           },
@@ -33,7 +33,7 @@ describe(`Commands`, () => {
           workspaces: [`packages/*`],
         },
         async ({path, run, source}) => {
-          const tmp = await createTemporaryFolder();
+          const tmp = await xfs.mktempPromise();
 
           await writeJson(`${tmp}/my-package/package.json`, {
             name: `my-package`,
@@ -47,7 +47,7 @@ describe(`Commands`, () => {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
             resolutions: {
               [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
             },
@@ -59,7 +59,7 @@ describe(`Commands`, () => {
     test(
       `it should allow to link all workspaces from another project`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
           private: true,
@@ -76,7 +76,7 @@ describe(`Commands`, () => {
 
         await run(`link`, `${tmp}/my-workspace`, `--all`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
             [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
             [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
@@ -88,7 +88,7 @@ describe(`Commands`, () => {
     test(
       `it should not link the private workspaces by default`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
           private: true,
@@ -106,13 +106,13 @@ describe(`Commands`, () => {
 
         await run(`link`, `${tmp}/my-workspace`, `--all`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
             [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
           },
         });
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toMatchObject({
           resolutions: {
             [`workspace-b`]: expect.anything(),
           },
@@ -123,7 +123,7 @@ describe(`Commands`, () => {
     test(
       `it should link the private workspaces if the right flag is used`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
           private: true,
@@ -141,7 +141,7 @@ describe(`Commands`, () => {
 
         await run(`link`, `${tmp}/my-workspace`, `--all`, `--private`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
           resolutions: {
             [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
             [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
@@ -209,7 +209,7 @@ describe(`Commands`, () => {
     test(
       `it should allow linking multiple workspaces`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
           private: true,
@@ -230,7 +230,7 @@ describe(`Commands`, () => {
 
         await run(`link`, `${tmp}/my-workspace/packages/workspace-b`, `${tmp}/my-workspace/packages/workspace-c`);
 
-        const manifest = await readJson(`${path}/package.json`);
+        const manifest = await xfs.readJsonPromise(`${path}/package.json`);
 
         expect(manifest.resolutions).not.toHaveProperty(`workspace-a`);
         await expect(manifest).toMatchObject({

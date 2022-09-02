@@ -123,8 +123,8 @@ export interface Resolver {
   getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
 
   /**
-   * This function will, given a descriptor and a list of locator references,
-   * find out which of the references potentially satisfy the descriptor.
+   * This function will, given a descriptor and a list of locators,
+   * find out which of the locators potentially satisfy the descriptor.
    *
    * This function is different from `getCandidates`, as `getCandidates` will
    * resolve the descriptor into a list of locators (potentially using the network),
@@ -143,7 +143,7 @@ export interface Resolver {
    *
    * @param descriptor The target descriptor.
    * @param dependencies The resolution dependencies and their resolutions.
-   * @param references The candidate references.
+   * @param locators The candidate locators.
    * @param opts The resolution options.
    */
   getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions): Promise<{

@@ -4549,17 +4549,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^14.14.10":
-  version: 14.17.3
-  resolution: "@types/node@npm:14.17.3"
-  checksum: 47949d119e7331995fe363f5ef44afee4e67ef3b5345c86eb1f6afa3cf40a8e35a37033d343e5640e08334ee0987031bfbc7894d16add1ffbf9c186612ba2dfc
+"@types/node@npm:*, @types/node@npm:^18.7.6":
+  version: 18.7.6
+  resolution: "@types/node@npm:18.7.6"
+  checksum: 5a8817b093c8a6dfb2b7c4be1efdde2c58ca262417de1fe8cc8a62fe294a33293417796281d98f3a3a36051aca8f9ab309811bf8121bbeb9086360d689d02a55
   languageName: node
   linkType: hard
 
-"@types/node@npm:^13.7.0":
-  version: 13.7.0
-  resolution: "@types/node@npm:13.7.0"
-  checksum: 4088d6fc07aa99a4fb0f6b314289458396cfdd9bf2814b97c5c9614f6214a3ec930e4a598f05c8f3c82df5f12e552245de148f1c21851fdd571193f6c59d9794
+"@types/node@npm:^14.14.10":
+  version: 14.17.3
+  resolution: "@types/node@npm:14.17.3"
+  checksum: 47949d119e7331995fe363f5ef44afee4e67ef3b5345c86eb1f6afa3cf40a8e35a37033d343e5640e08334ee0987031bfbc7894d16add1ffbf9c186612ba2dfc
   languageName: node
   linkType: hard
 
@@ -5512,7 +5512,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.5"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:4.8.0-beta"
+    typescript: "npm:4.8.1-rc"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5577,7 +5577,7 @@ __metadata:
     "@types/diff": "npm:^5.0.0"
     "@types/lodash": "npm:^4.14.136"
     "@types/micromatch": "npm:^4.0.1"
-    "@types/node": "npm:^13.7.0"
+    "@types/node": "npm:^18.7.6"
     "@types/semver": "npm:^7.1.0"
     "@types/tar": "npm:^4.0.4"
     "@types/treeify": "npm:^1.0.0"
@@ -5630,7 +5630,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:4.8.0-beta"
+    typescript: "npm:4.8.1-rc"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5773,7 +5773,7 @@ __metadata:
     typedoc: "npm:0.17.0-3"
     typedoc-neo-theme: "npm:^1.0.7"
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
-    typescript: "npm:4.8.0-beta"
+    typescript: "npm:4.8.1-rc"
     unescape-html: "npm:^1.1.0"
     unfetch: "npm:^4.1.0"
     unified: "npm:^7.1.0"
@@ -5818,7 +5818,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.18.6"
     "@babel/register": "npm:^7.18.9"
     "@types/jest": "npm:^28.1.6"
-    "@types/node": "npm:^13.7.0"
+    "@types/node": "npm:^18.7.6"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/eslint-config": "workspace:^"
@@ -5828,7 +5828,7 @@ __metadata:
     eslint: "npm:^8.2.0"
     jest: "npm:^28.1.3"
     tslib: "npm:^2.4.0"
-    typescript: "npm:4.8.0-beta"
+    typescript: "npm:4.8.1-rc"
   dependenciesMeta:
     core-js:
       built: false
@@ -6311,7 +6311,7 @@ __metadata:
   dependencies:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
-    "@types/node": "npm:^13.7.0"
+    "@types/node": "npm:^18.7.6"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     esbuild: "npm:esbuild-wasm@^0.15.5"
@@ -11830,12 +11830,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fastq@npm:^1.10.0, fastq@npm:^1.6.0":
-  version: 1.11.0
-  resolution: "fastq@npm:1.11.0"
+"fastq@npm:^1.10.0, fastq@npm:^1.13.0, fastq@npm:^1.6.0":
+  version: 1.13.0
+  resolution: "fastq@npm:1.13.0"
   dependencies:
     reusify: "npm:^1.0.4"
-  checksum: 0c4d8c45c970c9f343068d5d96fa5c67b512ba8ac3ab38e135d65739af7698945b1c446be8068158a96b917ba7e27c2454f23bde1f6ffd3379f02054b3f93d23
+  checksum: 150b77dcf0d1e023aaed9bb5f9789f9c8828497fa44b050ba79b039798aeee6c4bcab7e533b5bacb6476811ca9c0eb7f1d021fd7ff8da54f67e3db9b35efd84c
   languageName: node
   linkType: hard
 
@@ -12383,14 +12383,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "fs-extra@npm:10.0.0"
+"fs-extra@npm:^10.0.0, fs-extra@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "fs-extra@npm:10.1.0"
   dependencies:
     graceful-fs: "npm:^4.2.0"
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
-  checksum: 768d137af1a607d59985b063b632031406a40d3ea528e7e720a9f36ed8f48c951aad025b03f491074869d25f53c2a56a4b331b1fe49519b40154228553abc7eb
+  checksum: c397c1bfbb8976afb6758a96b9d5781c179b01ec843caa9f6613b8d95d95e17229d1ba7132dd811e112df5f2537bce1f68a3c0a722decc345947f133921fa3b3
   languageName: node
   linkType: hard
 
@@ -18497,15 +18497,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:*, mkdirp@npm:^1.0.3":
-  version: 1.0.4
-  resolution: "mkdirp@npm:1.0.4"
-  bin:
-    mkdirp: bin/cmd.js
-  checksum: 123361119829ab8115234f36ed8ef8f697b0f6f83ec9f9bc8f76da587487976d74bc874ffa892e7a66df607fa8f2cc758eed8db225e9cd3a84846350209e53db
-  languageName: node
-  linkType: hard
-
 "mkdirp@npm:0.5.1":
   version: 0.5.1
   resolution: "mkdirp@npm:0.5.1"
@@ -18525,6 +18516,15 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: ba231a2cf67dc273fef81ea2e9e36cc0c9df5d659f432cada144a2ae057a10e1a4d3f67219dc5b16c9100d2521cc0368f2833460003c629e5461c2c487a70db3
+  languageName: node
+  linkType: hard
+
+"mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "mkdirp@npm:1.0.4"
+  bin:
+    mkdirp: bin/cmd.js
+  checksum: 123361119829ab8115234f36ed8ef8f697b0f6f83ec9f9bc8f76da587487976d74bc874ffa892e7a66df607fa8f2cc758eed8db225e9cd3a84846350209e53db
   languageName: node
   linkType: hard
 
@@ -20236,10 +20236,12 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/pnp": "workspace:^"
     lodash: "npm:^4.17.15"
     pkg-tests-core: "workspace:^"
     semver: "npm:^7.1.2"
     tar: "npm:^6.0.5"
+    tslib: "npm:^2.4.0"
   languageName: unknown
   linkType: soft
 
@@ -25317,13 +25319,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.8.0-beta":
-  version: 4.8.0-beta
-  resolution: "typescript@npm:4.8.0-beta"
+"typescript@npm:4.8.1-rc":
+  version: 4.8.1-rc
+  resolution: "typescript@npm:4.8.1-rc"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 7b366952201d8b74349cc6513bbc0eb9f705f3cdef7a62215335b886a28cf15bcf968babb3e9b7605319c9a1b4ddb5255190b7f0d3e362b9ad44b5627587d45f
+  checksum: 1c8fdbdb63588078108eb993cadc005459cbea2163f9cadefc1f55bcf9fc9b5c5ea0db9a4dfbf70178d20056b6828486d613dae5b6f6eec5ecc6482e207e90a4
   languageName: node
   linkType: hard
 
@@ -25339,7 +25341,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A3.7.x#optional!builtin<compat/typescript>":
   version: 3.7.7
-  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25347,19 +25349,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A4.8.0-beta#optional!builtin<compat/typescript>":
-  version: 4.8.0-beta
-  resolution: "typescript@patch:typescript@npm%3A4.8.0-beta#optional!builtin<compat/typescript>::version=4.8.0-beta&hash=f456af"
+"typescript@patch:typescript@npm%3A4.8.1-rc#optional!builtin<compat/typescript>":
+  version: 4.8.1-rc
+  resolution: "typescript@patch:typescript@npm%3A4.8.1-rc#optional!builtin<compat/typescript>::version=4.8.1-rc&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 6cb92f6feac50e05db09266c31ff0a8c08617b266a352e10129d253ce11de18e9f3d733c95fd5efb9c37f3ff5c2e3afc4756ae73646423d91dc2b6181ffc6fd6
+  checksum: 65fb2b858106d882b73ade7ad6b7aba008c9c3d23cc1a50b964a5ee547bb28cd5785a4b0d055c750df746da1ea84b9c9e02dd8b29ce2b421b16c69c4fd894fa8
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@npm%3A^3.8.3#optional!builtin<compat/typescript>":
   version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver

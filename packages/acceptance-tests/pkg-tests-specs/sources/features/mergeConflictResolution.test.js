@@ -1,6 +1,7 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
   exec: {execFile},
-  fs: {readFile, writeFile, writeJson},
+  fs: {writeFile},
 } = require(`pkg-tests-core`);
 
 const LOCKFILE_1_0_0 = `
@@ -36,7 +37,7 @@ describe(`Features`, () => {
           await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
 
           await run(`install`);
-          await writeJson(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
+          await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
 
           await execFile(`git`, [`add`, `-A`], {cwd: path});
           await execFile(`git`, [`commit`, `-a`, `-m`, `my-commit`], {cwd: path});
@@ -58,7 +59,7 @@ describe(`Features`, () => {
 
           await expect(execFile(`git`, [`merge`, `2.0.0`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
 
-          let lockfile = await readFile(`${path}/yarn.lock`, `utf8`);
+          let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
           lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
 
           await expect(lockfile).toMatchSnapshot();
@@ -76,7 +77,7 @@ describe(`Features`, () => {
           await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
           await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
 
-          await writeJson(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
+          await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
           await writeFile(`${path}/yarn.lock`, LOCKFILE_1_0_0);
 
           await execFile(`git`, [`add`, `-A`], {cwd: path});
@@ -99,7 +100,7 @@ describe(`Features`, () => {
 
           await expect(execFile(`git`, [`merge`, `yarn2`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
 
-          let lockfile = await readFile(`${path}/yarn.lock`, `utf8`);
+          let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
           lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
 
           await expect(lockfile).toMatchSnapshot();

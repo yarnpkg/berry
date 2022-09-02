@@ -206,19 +206,19 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
   }
 
-  async appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<P>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
   }
 
-  appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  appendFileSync(p: FSPath<P>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
   }
 
-  async writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: FSPath<P>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
   }
 
-  writeFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<P>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
   }
 
@@ -286,26 +286,18 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
   }
 
-  async readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
-  async readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: FSPath<P>, encoding?: string) {
-    // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === `utf8`) {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    } else {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    }
+  async readFilePromise(p: FSPath<P>, encoding?: null): Promise<Buffer>;
+  async readFilePromise(p: FSPath<P>, encoding: BufferEncoding): Promise<string>;
+  async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null) {
+    return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
   }
 
-  readFileSync(p: FSPath<P>, encoding: 'utf8'): string;
-  readFileSync(p: FSPath<P>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<P>, encoding?: string) {
-    // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === `utf8`) {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    } else  {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    }
+  readFileSync(p: FSPath<P>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<P>, encoding: BufferEncoding): string;
+  readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null) {
+    return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
 
   async readdirPromise(p: P): Promise<Array<Filename>>;

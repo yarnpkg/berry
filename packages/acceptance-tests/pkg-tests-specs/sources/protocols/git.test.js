@@ -1,10 +1,9 @@
 const {
-  fs: {readFile},
   tests: {startPackageServer},
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
 const {execUtils, semverUtils} = require(`@yarnpkg/core`);
-const {npath} = require(`@yarnpkg/fslib`);
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -41,7 +40,7 @@ describe(`Protocols`, () => {
           async ({path, run, source}) => {
             await run(`install`);
 
-            const content = await readFile(`${path}/yarn.lock`, `utf8`);
+            const content = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
             const lock = parseSyml(content);
 
             const key = `util-deprecate@${url}`;

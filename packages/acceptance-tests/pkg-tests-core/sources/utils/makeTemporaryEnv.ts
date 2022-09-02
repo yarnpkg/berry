@@ -1,14 +1,12 @@
-import {npath}     from '@yarnpkg/fslib';
-import {delimiter} from 'path';
-import {URL}       from 'url';
+import {npath, xfs} from '@yarnpkg/fslib';
+import {delimiter}  from 'path';
+import {URL}        from 'url';
 
-import * as exec   from './exec';
-import * as fs     from './fs';
-import * as tests  from './tests';
+import * as exec    from './exec';
+import * as tests   from './tests';
 
 const {generatePkgDriver} = tests;
 const {execFile} = exec;
-const {createTemporaryFolder} = fs;
 
 const mte = generatePkgDriver({
   getName() {
@@ -24,7 +22,7 @@ const mte = generatePkgDriver({
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`;`) : value;
 
     const nativePath = npath.fromPortablePath(path);
-    const tempHomeFolder = npath.fromPortablePath(await createTemporaryFolder());
+    const tempHomeFolder = npath.fromPortablePath(await xfs.mktempPromise());
 
     const cwdArgs = typeof projectFolder !== `undefined`
       ? [projectFolder]
