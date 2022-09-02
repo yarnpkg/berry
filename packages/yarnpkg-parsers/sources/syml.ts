@@ -124,7 +124,7 @@ export function stringifySyml(value: any) {
 
 stringifySyml.PreserveOrdering = PreserveOrdering;
 
-export function parseSyml(source: string) {
+export function parseSyml(source: string): Record<string, unknown> {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
@@ -136,5 +136,5 @@ export function parseSyml(source: string) {
   if (Array.isArray(value))
     throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
 
-  return value as {[key: string]: string};
+  return value;
 }
