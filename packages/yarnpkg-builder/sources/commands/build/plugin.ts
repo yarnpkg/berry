@@ -1,5 +1,4 @@
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
-import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath, xfs}                                                         from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import {build, Plugin}                                                      from 'esbuild';
@@ -117,7 +116,7 @@ export default class BuildPluginCommand extends Command {
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,
-          plugins: [dynamicLibResolver, pnpPlugin()],
+          plugins: [dynamicLibResolver],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node12`,

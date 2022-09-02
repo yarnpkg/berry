@@ -5388,12 +5388,11 @@ __metadata:
     "@types/semver": ^7.1.0
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
-    "@yarnpkg/esbuild-plugin-pnp": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     chalk: ^3.0.0
     clipanion: 3.2.0-rc.4
-    esbuild: "npm:esbuild-wasm@^0.11.20"
+    esbuild: "npm:esbuild-wasm@^0.15.5"
     semver: ^7.1.2
     tslib: ^1.13.0
     typescript: 4.8.1-rc
@@ -5477,7 +5476,7 @@ __metadata:
     clipanion: 3.2.0-rc.4
     cross-spawn: 7.0.3
     diff: ^5.1.0
-    esbuild: "npm:esbuild-wasm@^0.11.20"
+    esbuild: "npm:esbuild-wasm@^0.15.5"
     globby: ^11.0.1
     got: ^11.7.0
     json-file-plus: ^3.3.1
@@ -5518,18 +5517,6 @@ __metadata:
     typescript: 4.8.1-rc
   bin:
     doctor: ./sources/boot-cli-dev.js
-  languageName: unknown
-  linkType: soft
-
-"@yarnpkg/esbuild-plugin-pnp@workspace:^, @yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp":
-  version: 0.0.0-use.local
-  resolution: "@yarnpkg/esbuild-plugin-pnp@workspace:packages/esbuild-plugin-pnp"
-  dependencies:
-    "@yarnpkg/pnp": "workspace:^"
-    esbuild: "npm:esbuild-wasm@^0.11.20"
-    tslib: ^1.13.0
-  peerDependencies:
-    esbuild: ">=0.10.0"
   languageName: unknown
   linkType: soft
 
@@ -6239,7 +6226,7 @@ __metadata:
     "@types/node": ^13.7.0
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
-    esbuild: "npm:esbuild-wasm@^0.11.20"
+    esbuild: "npm:esbuild-wasm@^0.15.5"
     resolve.exports: ^1.1.0
     rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
@@ -10963,12 +10950,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:esbuild-wasm@^0.11.20":
-  version: 0.11.20
-  resolution: "esbuild-wasm@npm:0.11.20"
+"esbuild@npm:esbuild-wasm@^0.15.5":
+  version: 0.15.6
+  resolution: "esbuild-wasm@npm:0.15.6"
   bin:
     esbuild: bin/esbuild
-  checksum: b2cf5801c310d3d5ec9d2db2244e43b76e1da74c1965de7a8ac956f04306fd90ea515d18f789edad443a63412214921bd86fa9f3b93e8adcc45442368bc7332e
+  checksum: 7ce157ae3568e5a68df0a38423c9fc5b6cf807e4d429f0133496d3a45728d0db0f93f14cc03931d5d3e48a61a4220244e89d92af9ae93d09ee280bc8831db0ef
   languageName: node
   linkType: hard
 
@@ -26694,7 +26681,7 @@ typescript@^3.8.3:
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
-    esbuild: "npm:esbuild-wasm@^0.11.20"
+    esbuild: "npm:esbuild-wasm@^0.15.5"
     rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     rollup-plugin-terser: ^7.0.2

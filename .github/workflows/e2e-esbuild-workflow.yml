@@ -26,9 +26,9 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D esbuild @yarnpkg/esbuild-plugin-pnp@portal:"$HERE_DIR/../packages/esbuild-plugin-pnp" ts-node typescript
+        yarn add -D esbuild ts-node typescript
 
-        echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js', plugins: [require('@yarnpkg/esbuild-plugin-pnp').pnpPlugin()]})" > build.js
+        echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js'})" > build.js
 
         # Tree-shaking
         echo "export default {input: 'src/main.js', output: {file: 'dist/bundle.js', format: 'cjs'}};" | tee rollup.config.js
@@ -50,7 +50,7 @@ jobs:
         [[ "$(node dist/bundle.js)" = "Hello webpack" ]]
 
         # Make sure we play nicely with esbuild plugins that create virtual modules with resolveDirs
-        echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js', plugins: [require('./virtualModulePlugin'), require('@yarnpkg/esbuild-plugin-pnp').pnpPlugin()]})" > build.js
+        echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js', plugins: [require('./virtualModulePlugin')]})" > build.js
         cat <<- "EOF" | tee virtualModulePlugin.js
           const { resolve, dirname } = require('path');
           module.exports = {
