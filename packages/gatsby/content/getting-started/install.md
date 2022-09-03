@@ -26,6 +26,12 @@ Corepack isn't included with Node.js in versions before the 16.10; to address th
 npm i -g corepack
 ```
 
+## Activate Yarn
+
+```bash
+corepack prepare yarn@stable --activate
+```
+
 ## Initializing your project
 
 Just run the following command. It will generate some files inside your current directory; add them all to your next commit, and you'll be done!
