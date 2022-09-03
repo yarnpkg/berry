@@ -37,7 +37,7 @@ In pre-2.0, upgrading `common` would have required you to run the command there,
 /packages/client (depends on common@^1.1.1)
 ```
 
-Of course it's not that important when the packages from the monorepo are always meant to be used as part of the monorepo, but it becomes much more interesting when you work with multiple packages meant to be published. Have you forgotten to update the range of either of your dependent packages, your users would have potentially downloaded an old version of `common` which wouldn't have been compatible with the newer one.
+Of course it's not that important when the packages from the monorepo are always meant to be used as part of the monorepo, but it becomes much more interesting when you work with multiple packages meant to be published. Had you forgotten to update the range of either of your dependent packages, your users would have potentially downloaded an old version of `common` which wouldn't have been compatible with the newer one.
 
 ## Deferred versioning
 
