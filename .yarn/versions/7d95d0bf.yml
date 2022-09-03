@@ -33,7 +33,6 @@ declined:
   - vscode-zipfs
   - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"

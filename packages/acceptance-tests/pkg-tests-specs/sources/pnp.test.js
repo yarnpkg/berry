@@ -3,7 +3,7 @@ const cp = require(`child_process`);
 const {satisfies} = require(`semver`);
 
 const {
-  fs: {createTemporaryFolder, readFile, writeFile, writeJson, mkdirp},
+  fs: {writeFile, writeJson},
   tests: {getPackageDirectoryPath, testIf},
 } = require(`pkg-tests-core`);
 
@@ -113,8 +113,8 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      const api = require(`${path}/.pnp.cjs`);
-      api.resolveToUnqualified(`${path}/.pnp.cjs`, `${path}/some/path/that/doesnt/exists/please/`);
+      const api = require(`${npath.fromPortablePath(path)}/.pnp.cjs`);
+      api.resolveToUnqualified(`${npath.fromPortablePath(path)}/.pnp.cjs`, `${npath.fromPortablePath(path)}/some/path/that/doesnt/exists/please/`);
     }),
   );
 
@@ -652,8 +652,8 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const tmpA = await createTemporaryFolder();
-        const tmpB = await createTemporaryFolder();
+        const tmpA = await xfs.mktempPromise();
+        const tmpB = await xfs.mktempPromise();
 
         await writeJson(`${tmpA}/package.json`, {
           dependencies: {[`no-deps`]: `1.0.0`},
@@ -690,7 +690,7 @@ describe(`Plug'n'Play`, () => {
     }, async ({path, run, source}) => {
       await run(`install`);
 
-      const tmp = await createTemporaryFolder();
+      const tmp = await xfs.mktempPromise();
 
       await xfs.writeJsonPromise(ppath.join(tmp, `package.json`), {
         dependencies: {
@@ -736,7 +736,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      const tmp = await createTemporaryFolder();
+      const tmp = await xfs.mktempPromise();
 
       await writeFile(`${tmp}/node_modules/dep/index.js`, `module.exports = 42;`);
       await writeFile(`${tmp}/index.js`, `require('dep')`);
@@ -752,7 +752,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeFile(`${tmp}/first.js`, `require(process.argv[2])`);
         await writeFile(`${path}/second.js`, `require('no-deps')`);
@@ -769,7 +769,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeFile(`${tmp}/package.json`, `{}`);
 
@@ -790,7 +790,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeFile(`${tmp}/package.json`, `{}`);
 
@@ -811,7 +811,7 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const tmp = await createTemporaryFolder();
+        const tmp = await xfs.mktempPromise();
 
         await writeFile(`${tmp}/index.js`, `require(process.argv[2])`);
         await writeFile(`${path}/index.js`, `require('no-deps')`);
@@ -952,9 +952,9 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const pnpJs = await readFile(`${path}/.pnp.cjs`, `utf8`);
+        const pnpCjs = await xfs.readFilePromise(`${path}/.pnp.cjs`, `utf8`);
 
-        expect(pnpJs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
+        expect(pnpCjs.replace(/(\r\n|\r|\n).*/s, ``)).toMatch(/^#!foo$/);
       },
     ),
   );
@@ -1096,7 +1096,7 @@ describe(`Plug'n'Play`, () => {
 
             await run2(`install`);
 
-            expect(readFile(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await readFile(`${path}/.pnp.cjs`, `utf8`));
+            expect(xfs.readFilePromise(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await xfs.readFilePromise(`${path}/.pnp.cjs`, `utf8`));
           },
         )();
       },
@@ -1651,25 +1651,7 @@ describe(`Plug'n'Play`, () => {
     }, async ({path, run, source}) => {
       await run(`add`, `no-deps`);
 
-      expect(xfs.existsSync(`${path}/.pnp.data.json`)).toBeTruthy();
-
-      await writeFile(`${path}/file.js`, `
-        console.log(require.resolve('no-deps'));
-      `);
-
-      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
-    }),
-  );
-
-  test(
-    `it should work with pnpEnableInlining set to false and with a custom pnpDataPath`,
-    makeTemporaryEnv({}, {
-      pnpEnableInlining: false,
-      pnpDataPath: `./.pnp.meta.json`,
-    }, async ({path, run, source}) => {
-      await run(`add`, `no-deps`);
-
-      expect(xfs.existsSync(`${path}/.pnp.meta.json`)).toBeTruthy();
+      expect(xfs.existsSync(`${path}/${Filename.pnpData}`)).toBeTruthy();
 
       await writeFile(`${path}/file.js`, `
         console.log(require.resolve('no-deps'));
@@ -1684,7 +1666,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv({},  async ({path, run, source}) => {
       await writeFile(`${path}/foo.js`, ``);
 
-      await mkdirp(`${path}/foo`);
+      await xfs.mkdirPromise(`${path}/foo`);
       await writeFile(`${path}/foo/index.js`, ``);
 
       await run(`install`);
@@ -1707,7 +1689,7 @@ describe(`Plug'n'Play`, () => {
         },
       }));
 
-      await mkdirp(`${path}/package`);
+      await xfs.mkdirPromise(`${path}/package`);
       await writeFile(`${path}/package/index.js`, ``);
 
       await run(`install`);

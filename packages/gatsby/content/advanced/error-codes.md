@@ -174,7 +174,7 @@ This error code isn't used at the moment (it used to print the number of package
 
 The checksum of a package from the cache doesn't match what the lockfile expects.
 
-This situation usually happens after you've modified the zip archives from your cache by editing the files it contains for debug purposes. Use one of the two following commands in order to bypass it:
+This situation usually happens after you've modified the zip archives from your cache by editing the files it contains for debug purposes. Use one of the three following commands in order to bypass it:
 
   - `YARN_CHECKSUM_BEHAVIOR=reset` will remove the files from the cache and download them again
   - `YARN_CHECKSUM_BEHAVIOR=update` will update the lockfile to contain the new checksum
@@ -314,11 +314,11 @@ A package is marked as deprecated by the publisher. Avoid using it, use the alte
 
 ## YN0062 - `INCOMPATIBLE_OS`
 
-A package is incompatible with the operating system, as reported by [`process.platform`](https://nodejs.org/api/process.html#process_process_platform).  Its installation will be skipped.
+> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#yn0076---incompatible_architecture).
 
 ## YN0063 - `INCOMPATIBLE_CPU`
 
-A package is incompatible with the CPU architecture, as reported by [`process.arch`](https://nodejs.org/api/process.html#process_process_arch).  Its installation will be skipped.
+> **Removed:** Replaced by [`INCOMPATIBLE_ARCHITECTURE`](#yn0076---incompatible_architecture).
 
 ## YN0068 - `UNUSED_PACKAGE_EXTENSION`
 
@@ -361,7 +361,7 @@ For more information about the parameters that must be instantiated when calling
 
 ## YN0076 - `INCOMPATIBLE_ARCHITECTURE`
 
-A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) fields) as being incompatible with the system architecture. Its postinstall scripts will not run on this system.
+A package is specified in its manifest (through the [`os`](/configuration/manifest#os) / [`cpu`](/configuration/manifest#cpu) / [`libc`](/configuration/manifest#libc) fields) as being incompatible with the system architecture. It will not be fetched, linked, and its postinstall scripts will not run on this system.
 
 ## YN0077 - `GHOST_ARCHITECTURE`
 
@@ -384,3 +384,23 @@ This error should never trigger under normal circumstances, as Yarn should alway
 - Or you might have someone doing strange things on your lockfile. It might be a mistake (for example someone manually modifying a lockfile for debug but forgetting to revert the changes), or a problem (for example a malicious users trying to perform some sort of [supply chain attack](https://en.wikipedia.org/wiki/Supply_chain_attack)).
 
 If the use case appears legit (for example if the bug comes from Yarn), you can bypass the check on PRs by adding a `--no-check-resolutions` flag to your `yarn install` command. But be careful: this is a security feature; disabling it may have consequences.
+
+## YN0080 - `NETWORK_DISABLED`
+
+The `enableNetwork` flag is set to `false`, preventing any request to be made.
+
+Note that the Yarn configuration allows [`enableNetwork`](/configuration/yarnrc#enableNetwork) to be set on a per-registry basis via `npmRegistries`.
+
+## YN0081 - `NETWORK_UNSAFE_HTTP`
+
+Yarn will by default refuse to perform http (non-https) queries to protect you against accidental man-in-the-middle attacks.
+
+To bypass this protection, add the specified hostname to [`unsafeHttpWhitelist`](/configuration/yarnrc#unsafeHttpWhitelist).
+
+## YN0082 - `RESOLUTION_FAILED`
+
+Yarn failed to locate a package version that could satisfy the requested range. This usually happens with semver ranges that target versions not published yet (for example `^1.0.0` when the latest version is `0.9.0`), but can be also caused by a couple of other reasons:
+
+- The registry may not have been set properly (so Yarn is querying the public npm registry instead of your internal one)
+
+- The version may have been unpublished (although this shouldn't be possible for the public registry)

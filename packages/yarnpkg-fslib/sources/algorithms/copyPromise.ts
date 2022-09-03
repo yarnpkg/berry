@@ -179,14 +179,36 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
   const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${sourceHash}.dat` as P1);
 
+  enum AtomicBehavior {
+    Lock,
+    Rename,
+  }
+
+  let atomicBehavior = AtomicBehavior.Rename;
+
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
     const isIndexModified = indexStat?.mtimeMs !== defaultTimeMs;
 
-    if (isDestinationHardlinkedFromIndex)
-      if (isIndexModified && linkStrategy.autoRepair)
+    if (isDestinationHardlinkedFromIndex) {
+      // If the index is modified, we will want to repair it. However, the
+      // default logic ensuring atomicity (creating a file in a temporary
+      // place before atomically moving it into its final location) won't
+      // work: we'd lose all the existing hardlinks.
+      //
+      // To avoid that, when repairing a file, we fallback to the slow but
+      // safer `lockPromise`-based mutex, which will prevent multiple
+      // processes to modify the file without impacting their inode.
+      //
+      // Give that the repair mechanism should be very rarely needed in
+      // situation where performance is critical, it should be ok.
+      //
+      if (isIndexModified && linkStrategy.autoRepair) {
+        atomicBehavior = AtomicBehavior.Lock;
         indexStat = null;
+      }
+    }
 
     if (!isDestinationHardlinkedFromIndex) {
       if (opts.overwrite) {
@@ -198,12 +220,45 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
     }
   }
 
+  const tempPath = !indexStat && atomicBehavior === AtomicBehavior.Rename
+    ? `${indexPath}.${Math.floor(Math.random() * 0x100000000).toString(16).padStart(8, `0`)}` as P1
+    : null;
+
+  let tempPathCleaned = false;
+
   prelayout.push(async () => {
     if (!indexStat) {
-      await destinationFs.lockPromise(indexPath, async () => {
+      if (atomicBehavior === AtomicBehavior.Lock) {
+        await destinationFs.lockPromise(indexPath, async () => {
+          const content = await sourceFs.readFilePromise(source);
+          await destinationFs.writeFilePromise(indexPath, content);
+        });
+      }
+
+      if (atomicBehavior === AtomicBehavior.Rename && tempPath) {
         const content = await sourceFs.readFilePromise(source);
-        await destinationFs.writeFilePromise(indexPath, content);
-      });
+        await destinationFs.writeFilePromise(tempPath, content);
+
+        // We use `linkPromise` rather than `renamePromise` because the later
+        // overwrites the destination if it already exists; usually this
+        // wouldn't be a problem, but since we care about preserving the
+        // hardlink identity of the destination, we can't do that.
+        //
+        // So instead we create a hardlink of the source file (which will
+        // fail with EEXIST if the destination already exists), and we remove
+        // the source in the postlayout steps.
+        //
+        try {
+          await destinationFs.linkPromise(tempPath, indexPath);
+        } catch (err) {
+          if (err.code === `EEXIST`) {
+            tempPathCleaned = true;
+            await destinationFs.unlinkPromise(tempPath);
+          } else {
+            throw err;
+          }
+        }
+      }
     }
 
     if (!destinationStat) {
@@ -212,8 +267,11 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   });
 
   postlayout.push(async () => {
-    if (!indexStat) {
+    if (!indexStat)
       await updateTime(indexPath, defaultTime, defaultTime);
+
+    if (tempPath && !tempPathCleaned) {
+      await destinationFs.unlinkPromise(tempPath);
     }
   });
 

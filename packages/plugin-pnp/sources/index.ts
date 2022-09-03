@@ -15,8 +15,8 @@ export {pnpUtils};
 export const getPnpPath = (project: Project) => {
   return {
     cjs: ppath.join(project.cwd, Filename.pnpCjs),
-    cjsLegacy: ppath.join(project.cwd, Filename.pnpJs),
-    esmLoader: ppath.join(project.cwd, `.pnp.loader.mjs` as Filename),
+    data: ppath.join(project.cwd, Filename.pnpData),
+    esmLoader: ppath.join(project.cwd, Filename.pnpEsmLoader),
   };
 };
 
@@ -52,9 +52,9 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 async function populateYarnPaths(project: Project, definePath: (path: PortablePath | null) => void) {
   const pnpPath = getPnpPath(project);
   definePath(pnpPath.cjs);
+  definePath(pnpPath.data);
   definePath(pnpPath.esmLoader);
 
-  definePath(project.configuration.get(`pnpDataPath`));
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
 }
 
@@ -68,7 +68,6 @@ declare module '@yarnpkg/core' {
     pnpEnableInlining: boolean;
     pnpFallbackMode: string;
     pnpUnpluggedFolder: PortablePath;
-    pnpDataPath: PortablePath;
   }
 }
 
@@ -118,11 +117,6 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       description: `Folder where the unplugged packages must be stored`,
       type: SettingsType.ABSOLUTE_PATH,
       default: `./.yarn/unplugged`,
-    },
-    pnpDataPath: {
-      description: `Path of the file where the PnP data (used by the loader) must be written`,
-      type: SettingsType.ABSOLUTE_PATH,
-      default: `./.pnp.data.json`,
     },
   },
   linkers: [

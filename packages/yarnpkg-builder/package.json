@@ -1,24 +1,23 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.0.0-rc.14",
+  "version": "4.0.0-rc.15",
   "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "dependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/esbuild-plugin-pnp": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "chalk": "^3.0.0",
     "clipanion": "^3.2.0-rc.10",
-    "esbuild": "npm:esbuild-wasm@^0.11.20",
+    "esbuild": "npm:esbuild-wasm@^0.15.5",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/monorepo": "workspace:^",
-    "typescript": "4.8.0-beta"
+    "typescript": "4.8.1-rc"
   },
   "scripts": {
     "postpack": "rm -rf lib",

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/libui",
-  "version": "3.0.0-rc.14",
+  "version": "3.0.0-rc.15",
   "stableVersion": "2.2.2",
   "license": "BSD-2-Clause",
   "sideEffects": false,

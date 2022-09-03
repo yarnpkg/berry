@@ -21,10 +21,14 @@ const binding = (process as any).binding(`fs`) as {
 };
 const originalfstat = binding.fstat;
 
-const ZIP_FD = 0x80000000;
+// Those values must be synced with packages/yarnpkg-fslib/sources/ZipOpenFS.ts
+//
+const ZIP_MASK  = 0xff000000;
+const ZIP_MAGIC = 0x2a000000;
+
 binding.fstat = function(...args) {
   const [fd, useBigint, req] = args;
-  if ((fd & ZIP_FD) !== 0 && useBigint === false && req === undefined) {
+  if ((fd & ZIP_MASK) === ZIP_MAGIC && useBigint === false && req === undefined) {
     try {
       const stats = fs.fstatSync(fd);
       // The reverse of this internal util

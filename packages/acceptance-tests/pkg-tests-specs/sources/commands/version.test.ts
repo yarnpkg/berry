@@ -1,9 +1,5 @@
 import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 
-const {
-  fs: {readJson},
-} = require(`pkg-tests-core`);
-
 describe(`Commands`, () => {
   describe(`version check`, () => {
     test(
@@ -41,7 +37,7 @@ describe(`Commands`, () => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `2.0.0`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `2.0.0`,
         });
       }),
@@ -55,7 +51,7 @@ describe(`Commands`, () => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `major`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `2.0.0`,
         });
       }),
@@ -69,7 +65,7 @@ describe(`Commands`, () => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `1.1.0`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `1.1.0`,
         });
       }),
@@ -83,7 +79,7 @@ describe(`Commands`, () => {
         await run(`version`, `1.1.0`, `--deferred`);
         await run(`version`, `minor`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `1.1.0`,
         });
       }),
@@ -96,7 +92,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`version`, `patch`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `0.0.1`,
         });
       }),
@@ -109,13 +105,13 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`version`, `patch`, `--deferred`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `0.0.0`,
         });
 
         await run(`version`, `apply`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `0.0.1`,
         });
       }),
@@ -130,13 +126,13 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`version`, `patch`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `0.0.0`,
         });
 
         await run(`version`, `apply`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `0.0.1`,
         });
       }),
@@ -151,7 +147,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`version`, `patch`, `--immediate`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `0.0.1`,
         });
       }),
@@ -235,7 +231,7 @@ describe(`Commands`, () => {
           code: 0,
         });
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `2.0.0`,
         });
       }),
@@ -250,7 +246,7 @@ describe(`Commands`, () => {
           code: 0,
         });
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `3.4.5`,
         });
       }),
@@ -267,7 +263,7 @@ describe(`Commands`, () => {
           code: 0,
         });
 
-        await expect(readJson(`${path}/package.json`)).resolves.toMatchObject({
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
           version: `3.4.5`,
         });
       }),

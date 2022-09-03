@@ -22,6 +22,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
 - The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
 - `yarn init` no longer enables zero-installs by default.
+- Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
+- The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
 
 ### **API Changes**
 
@@ -54,10 +56,17 @@ The following changes only affect people writing Yarn plugins:
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
+- The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
 
 ### Bugfixes
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
+- When Corepack is enabled Yarn will now use the current CLI to prepare external Yarn classic projects, matching the behaviour of when Corepack is disabled.
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript 4.8.1-rc
+- The ESM loader now supports unflagged JSON modules.
 
 ## 3.2.2
 

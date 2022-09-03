@@ -1,5 +1,6 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {readJson, writeJson},
+  fs: {writeJson},
   yarn: {readManifest},
 } = require(`pkg-tests-core`);
 
@@ -15,7 +16,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`dependencies.no-deps`);
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toHaveProperty(`dependencies.no-deps`);
       }),
     );
 
@@ -29,7 +30,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.no-deps`);
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies.no-deps`);
       }),
     );
 
@@ -43,7 +44,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toHaveProperty(`dependencies.one-fixed-dep`);
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toHaveProperty(`dependencies.one-fixed-dep`);
       }),
     );
 
@@ -57,7 +58,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.toHaveProperty(`devDependencies.one-fixed-dep`);
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toHaveProperty(`devDependencies.one-fixed-dep`);
       }),
     );
 
@@ -73,7 +74,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        const pkgJsonPromise = readJson(`${path}/package.json`);
+        const pkgJsonPromise = xfs.readJsonPromise(`${path}/package.json`);
 
         await expect(pkgJsonPromise).resolves.not.toHaveProperty(`dependencies.no-deps`);
         await expect(pkgJsonPromise).resolves.not.toHaveProperty(`devDependencies.no-deps`);
@@ -89,7 +90,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toHaveProperty(`dependencies`);
       }),
     );
 
@@ -102,7 +103,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`remove`, `no-deps`);
 
-        await expect(readJson(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies`);
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toHaveProperty(`devDependencies`);
       }),
     );
 
@@ -137,9 +138,9 @@ describe(`Commands`, () => {
 
         await run(`remove`, `-A`, `no-deps`);
 
-        await expect(readJson(`${path}/packages/workspace-a/package.json`)).resolves.not.toHaveProperty(`dependencies`);
-        await expect(readJson(`${path}/packages/workspace-b/package.json`)).resolves.not.toHaveProperty(`dependencies`);
-        await expect(readJson(`${path}/packages/workspace-c/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+        await expect(xfs.readJsonPromise(`${path}/packages/workspace-a/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+        await expect(xfs.readJsonPromise(`${path}/packages/workspace-b/package.json`)).resolves.not.toHaveProperty(`dependencies`);
+        await expect(xfs.readJsonPromise(`${path}/packages/workspace-c/package.json`)).resolves.not.toHaveProperty(`dependencies`);
       }),
     );
 

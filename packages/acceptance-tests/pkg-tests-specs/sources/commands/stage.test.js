@@ -1,7 +1,7 @@
 const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {
   exec: {execFile},
-  fs: {writeFile, writeJson, mkdirp},
+  fs: {writeFile},
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
@@ -74,7 +74,7 @@ describe(`Commands`, () => {
         await execFile(`git`, [`config`, `user.email`, `john.doe@example.org`], {cwd: path});
         await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
 
-        await mkdirp(`${path}/new-package`);
+        await xfs.mkdirPromise(`${path}/new-package`);
         await run(`${path}/new-package`, `init`);
 
         await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
@@ -85,7 +85,7 @@ describe(`Commands`, () => {
         await execFile(`git`, [`commit`, `-m`, `wip`], {cwd: path});
 
         await xfs.removePromise(`${path}/new-package/package.json`);
-        await writeJson(`${path}/package.json`, {
+        await xfs.writeJsonPromise(`${path}/package.json`, {
           name: `my-commit-package`,
           dependencies: {
             [`deps1`]: `2.0.0`,
