@@ -175,10 +175,12 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/sdks`,
         `!.yarn/versions`,
         ``,
-        `# Swap the comments on the following lines if you don't wish to use zero-installs`,
+        `# Swap the comments on the following lines if you wish to use zero-installs`,
+        `# Also don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/zero-installs`,
-        `!.yarn/cache`,
-        `#.pnp.*`,
+        ``,
+        `#!.yarn/cache`,
+        `.pnp.*`,
       ];
 
       const gitignoreBody = gitignoreLines.map(line => {
