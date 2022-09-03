@@ -1,4 +1,6 @@
-import {parse} from './grammars/syml';
+import {TextEncoder} from 'util';
+
+import {parse}       from './grammars/syml';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -124,11 +126,16 @@ export function stringifySyml(value: any) {
 
 stringifySyml.PreserveOrdering = PreserveOrdering;
 
+const textEncoder = new TextEncoder();
+
 export function parseSyml(source: string): Record<string, any> {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
-  const value = parse(source);
+  // TODO: Use `encodeInto` to avoid the extra copy overhead.
+  const encodedSource = textEncoder.encode(source);
+
+  const value = parse(encodedSource);
 
   if (typeof value !== `object`)
     throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);

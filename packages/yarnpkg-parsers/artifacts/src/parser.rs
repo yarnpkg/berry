@@ -1,6 +1,6 @@
 use nom::{
   branch::alt,
-  bytes::complete::{escaped_transform, is_not, take_while_m_n},
+  bytes::complete::{is_not, take_while_m_n},
   character::complete::{char, line_ending, not_line_ending, space0, space1},
   combinator::{map, map_opt, map_res, opt, recognize, value},
   error::VerboseError,
@@ -10,10 +10,13 @@ use nom::{
 };
 use serde_json::{json, Value};
 
+use crate::combinators::escaped_transform;
+use crate::utils::{from_utf8, from_utf8_to_owned};
+
 // TODO:: Automatically detect indentation from input.
 const INDENT_STEP: usize = 2;
 
-pub type Input<'a> = &'a str;
+pub type Input<'a> = &'a [u8];
 
 pub type ParseResult<'input, O> = IResult<Input<'input>, O, VerboseError<Input<'input>>>;
 
@@ -101,7 +104,7 @@ fn double_quoted_scalar(input: Input) -> ParseResult<String> {
 fn double_quoted_scalar_text(input: Input) -> ParseResult<String> {
   escaped_transform(
     // TODO: "\0-\x1F" was part of the original regexp
-    is_not("\"\\\x7f"),
+    map(is_not("\"\\\x7f"), from_utf8),
     '\\',
     alt((
       value('"', char('"')),
@@ -121,9 +124,10 @@ fn double_quoted_scalar_text(input: Input) -> ParseResult<String> {
 
 fn unicode_escape_digits(input: Input) -> ParseResult<char> {
   map_opt(
-    map_res(take_while_m_n(4, 4, |ch: char| ch.is_hex_digit()), |hex| {
-      u32::from_str_radix(hex, 16)
-    }),
+    map_res(
+      take_while_m_n(4, 4, |byte: u8| byte.is_hex_digit()),
+      |hex| u32::from_str_radix(from_utf8(hex), 16),
+    ),
     char::from_u32,
   )(input)
 }
@@ -134,7 +138,7 @@ fn plain_scalar(input: Input) -> ParseResult<String> {
       is_not("\r\n\t ?:,][{}#&*!|>'\"%@`-"),
       many0_count(preceded(space0, is_not("\r\n\t ,][{}:#\"'"))),
     )),
-    |scalar: Input| scalar.to_owned(),
+    from_utf8_to_owned,
   )(input)
 }
 
