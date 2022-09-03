@@ -10,12 +10,8 @@ import {PnpSettings}             from './types';
 export function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
     shebang ? `${shebang}\n` : ``,
-    `/* eslint-disable */\n\n`,
-    `try {\n`,
-    `  Object.freeze({}).detectStrictMode = true;\n`,
-    `} catch (error) {\n`,
-    `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
-    `}\n`,
+    `/* eslint-disable */\n`,
+    `"use strict";\n`,
     `\n`,
     loader,
     `\n`,

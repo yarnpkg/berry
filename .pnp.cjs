@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable */
-
-try {
-  Object.freeze({}).detectStrictMode = true;
-} catch (error) {
-  throw new Error(`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.`);
-}
+"use strict";
 
 const RAW_RUNTIME_STATE =
 '{\
