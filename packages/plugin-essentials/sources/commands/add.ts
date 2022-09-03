@@ -167,24 +167,27 @@ export default class AddCommand extends BaseCommand {
       if (!request)
         throw new UsageError(`The ${formatUtils.pretty(configuration, pseudoDescriptor, formatUtils.Type.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`);
 
-      const target = suggestTarget(workspace, request, {
+      const targetList = suggestTargetList(workspace, request, {
         dev: this.dev,
         peer: this.peer,
         preferDev: this.preferDev,
         optional: this.optional,
       });
 
-      const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
+      const results = await Promise.all(targetList.map(async target => {
+        const suggestedDescriptors = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
+        return {request, suggestedDescriptors, target};
+      }));
 
-      return [request, suggestions, target] as const;
-    }));
+      return results;
+    })).then(results => results.flat());
 
     const checkReport = await LightReport.start({
       configuration,
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [request, {suggestions, rejections}] of allSuggestions) {
+      for (const {request, suggestedDescriptors: {suggestions, rejections}} of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
@@ -224,7 +227,7 @@ export default class AddCommand extends BaseCommand {
       Descriptor,
     ]> = [];
 
-    for (const [/*request*/, {suggestions}, target] of allSuggestions) {
+    for (const {suggestedDescriptors: {suggestions}, target} of allSuggestions) {
       let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
@@ -327,7 +330,7 @@ export default class AddCommand extends BaseCommand {
   }
 }
 
-function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
+function suggestTargetList(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
   const hasRegular = workspace.manifest[suggestUtils.Target.REGULAR].has(ident.identHash);
   const hasDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].has(ident.identHash);
   const hasPeer = workspace.manifest[suggestUtils.Target.PEER].has(ident.identHash);
@@ -346,16 +349,23 @@ function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev
   if ((dev || preferDev) && optional)
     throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" cannot simultaneously be a dev dependency and an optional dependency`);
 
-
+  // When the program executes this line, the command is expected to be legal
+  const targetList = [];
   if (peer)
-    return suggestUtils.Target.PEER;
+    targetList.push(suggestUtils.Target.PEER);
   if (dev || preferDev)
-    return suggestUtils.Target.DEVELOPMENT;
+    targetList.push(suggestUtils.Target.DEVELOPMENT);
+  if (optional)
+    targetList.push(suggestUtils.Target.REGULAR);
 
-  if (hasRegular)
-    return suggestUtils.Target.REGULAR;
+  // The user explicitly define the targets
+  if (targetList.length > 0)
+    return targetList;
+
+  // The user does not define the targets, find it from the `workspace.manifest`
   if (hasDev)
-    return suggestUtils.Target.DEVELOPMENT;
-
-  return suggestUtils.Target.REGULAR;
+    return [suggestUtils.Target.DEVELOPMENT];
+  if (hasPeer)
+    return [suggestUtils.Target.PEER];
+  return [suggestUtils.Target.REGULAR];
 }
