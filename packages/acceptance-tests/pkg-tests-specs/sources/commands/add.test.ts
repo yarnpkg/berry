@@ -1,4 +1,4 @@
-import {PortablePath, xfs} from '@yarnpkg/fslib';
+import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {getPackageDirectoryPath},
@@ -265,6 +265,22 @@ describe(`Commands`, () => {
         await run(`add`, `no-deps`, `-P`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should add a new peer dependency and a new development dependency to the current project when using --peer and --dev together`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps`, `-D`, `-P`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           devDependencies: {
             [`no-deps`]: `^2.0.0`,
           },
