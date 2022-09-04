@@ -3,7 +3,7 @@ use nom::{
   bytes::complete::{is_not, take_while_m_n},
   character::complete::{char, line_ending, not_line_ending, space0, space1},
   combinator::{map, map_opt, map_res, opt, recognize, value},
-  multi::{count, fold_many1, many0_count},
+  multi::{count, fold_many1, many0_count, separated_list0},
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
@@ -77,6 +77,22 @@ fn item_statement(input: Input, indent: usize) -> ParseResult<Value> {
   )(input)
 }
 
+fn flow_sequence(input: Input) -> ParseResult<Value> {
+  delimited(
+    char('['),
+    delimited(
+      space0,
+      map(
+        // TODO: Support other node types too.
+        separated_list0(delimited(space0, char(','), space0), scalar),
+        Value::Array,
+      ),
+      space0,
+    ),
+    char(']'),
+  )(input)
+}
+
 fn expression(input: Input, indent: usize) -> ParseResult<Value> {
   alt((
     preceded(line_ending, |input| {
@@ -85,6 +101,7 @@ fn expression(input: Input, indent: usize) -> ParseResult<Value> {
     preceded(line_ending, |input| {
       property_statements(input, indent + INDENT_STEP)
     }),
+    terminated(flow_sequence, eol_any),
     terminated(scalar, eol_any),
   ))(input)
 }
