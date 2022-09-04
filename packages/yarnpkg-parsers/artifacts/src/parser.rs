@@ -4,7 +4,7 @@ use nom::{
   character::complete::{char, line_ending, not_line_ending, space0, space1},
   combinator::{map, map_opt, map_res, opt, recognize, value},
   error::VerboseError,
-  multi::{count, fold_many0, fold_many1, many0_count},
+  multi::{count, fold_many1, many0_count},
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
@@ -25,7 +25,7 @@ pub fn parse(input: Input) -> ParseResult<Value> {
 }
 
 fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
-  fold_many0(
+  fold_many1(
     alt((map(comment, |_| Default::default()), |input| {
       property_statement(input, indent)
     })),
