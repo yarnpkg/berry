@@ -2,13 +2,35 @@ use std::ops::RangeFrom;
 
 use nom::{
   error::{ErrorKind, ParseError},
-  AsChar, Err, ExtendInto, IResult, InputIter, InputLength, InputTake, InputTakeAtPosition, Offset,
-  Parser, Slice,
+  AsChar, Err as NomErr, Err, ExtendInto, IResult, InputIter, InputLength, InputTake,
+  InputTakeAtPosition, Offset, Parser, Slice,
 };
+use nom_supreme::{error::ErrorTree, final_parser::ExtractContext, ParserExt};
 
-// Original implementation: https://docs.rs/nom/7.1.1/src/nom/bytes/complete.rs.html#623-705
-//
-// Issue: https://github.com/Geal/nom/issues/1522
+use crate::utils::{convert_error_tree, from_utf8};
+
+/// Original implementation: https://docs.rs/nom-supreme/0.8.0/src/nom_supreme/final_parser.rs.html#229-243
+///
+/// This is a modified version that converts the `ErrorTree<&[u8]>` to `ErrorTree<&str>` so that it can be displayed and so that context can be extracted from it.
+pub fn final_parser<'input, O>(
+  parser: impl Parser<&'input [u8], O, ErrorTree<&'input [u8]>>,
+) -> impl FnMut(&'input [u8]) -> Result<O, ErrorTree<&'input str>> {
+  let mut parser = parser.complete().all_consuming();
+
+  move |input| match parser.parse(input) {
+    Ok((_, parsed)) => Ok(parsed),
+    Err(NomErr::Error(err)) | Err(NomErr::Failure(err)) => {
+      Err(convert_error_tree(err).extract_context(from_utf8(input)))
+    }
+    Err(NomErr::Incomplete(..)) => {
+      unreachable!("Complete combinator should make this impossible")
+    }
+  }
+}
+
+/// Original implementation: https://docs.rs/nom/7.1.1/src/nom/bytes/complete.rs.html#623-705
+///
+/// Issue: https://github.com/Geal/nom/issues/1522
 pub fn escaped_transform<Input, Error, F, G, O1, O2, ExtendItem, Output>(
   mut normal: F,
   control_char: char,

@@ -9,6 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 nom = "7.1.1"
+nom-supreme = "0.8.0"
 wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 # We need to preserve key order even though it's slower
 serde_json = { version = "1.0.85", features = ["preserve_order"] }

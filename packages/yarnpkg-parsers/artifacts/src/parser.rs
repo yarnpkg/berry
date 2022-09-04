@@ -3,11 +3,11 @@ use nom::{
   bytes::complete::{is_not, take_while_m_n},
   character::complete::{char, line_ending, not_line_ending, space0, space1},
   combinator::{map, map_opt, map_res, opt, recognize, value},
-  error::VerboseError,
   multi::{count, fold_many1, many0_count},
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
+use nom_supreme::error::ErrorTree;
 use serde_json::{json, Value};
 
 use crate::combinators::escaped_transform;
@@ -18,7 +18,7 @@ const INDENT_STEP: usize = 2;
 
 pub type Input<'a> = &'a [u8];
 
-pub type ParseResult<'input, O> = IResult<Input<'input>, O, VerboseError<Input<'input>>>;
+pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'input>>>;
 
 pub fn parse(input: Input) -> ParseResult<Value> {
   property_statements(input, 0)
