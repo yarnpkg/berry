@@ -2,8 +2,8 @@ use std::ops::RangeFrom;
 
 use nom::{
   error::{ErrorKind, ParseError},
-  AsChar, Err as NomErr, Err, ExtendInto, IResult, InputIter, InputLength, InputTake,
-  InputTakeAtPosition, Offset, Parser, Slice,
+  AsChar, Err, ExtendInto, IResult, InputIter, InputLength, InputTake, InputTakeAtPosition, Offset,
+  Parser, Slice,
 };
 use nom_supreme::{error::ErrorTree, final_parser::ExtractContext, ParserExt};
 
@@ -19,10 +19,10 @@ pub fn final_parser<'input, O>(
 
   move |input| match parser.parse(input) {
     Ok((_, parsed)) => Ok(parsed),
-    Err(NomErr::Error(err)) | Err(NomErr::Failure(err)) => {
+    Err(Err::Error(err)) | Err(Err::Failure(err)) => {
       Err(convert_error_tree(err).extract_context(from_utf8(input)))
     }
-    Err(NomErr::Incomplete(..)) => {
+    Err(Err::Incomplete(..)) => {
       unreachable!("Complete combinator should make this impossible")
     }
   }
