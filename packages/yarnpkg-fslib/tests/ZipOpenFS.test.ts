@@ -177,24 +177,24 @@ describe(`ZipOpenFS`, () => {
     const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
 
     await fs.existsPromise(ZIP_FILE1);
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(1);
+    // @ts-expect-error: mountInstances is private
+    expect(fs.mountInstances!.size).toEqual(1);
 
     jest.advanceTimersByTime(1000);
 
     fs.existsSync(ZIP_FILE2);
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(2);
+    // @ts-expect-error: mountInstances is private
+    expect(fs.mountInstances!.size).toEqual(2);
 
     jest.advanceTimersByTime(1000);
 
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(1);
+    // @ts-expect-error: mountInstances is private
+    expect(fs.mountInstances!.size).toEqual(1);
 
     jest.advanceTimersByTime(1000);
 
-    // @ts-expect-error: zipInstances is private
-    expect(fs.zipInstances!.size).toEqual(0);
+    // @ts-expect-error: mountInstances is private
+    expect(fs.mountInstances!.size).toEqual(0);
 
     fs.discardAndClose();
   });
