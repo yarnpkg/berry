@@ -13,8 +13,7 @@ exports[`Commands workspace <workspace-name> <sub-command> should preserve INIT_
 Object {
   "code": 0,
   "stderr": "",
-  "stdout": "/docs
-",
+  "stdout": "docs",
 }
 `;
 

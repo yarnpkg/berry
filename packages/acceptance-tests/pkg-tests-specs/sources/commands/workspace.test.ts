@@ -92,7 +92,7 @@ describe(`Commands`, () => {
             ({code, stdout, stderr} = error);
           }
 
-          stdout = npath.toPortablePath(stdout).replace(path, ``);
+          stdout = ppath.relative(path, npath.toPortablePath(stdout.trim()));
 
           await expect({code, stdout, stderr}).toMatchSnapshot();
         },
