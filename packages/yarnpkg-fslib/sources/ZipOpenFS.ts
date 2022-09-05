@@ -10,7 +10,7 @@ import {PortablePath, ppath}                      from './path';
  *
  * The indexOf-based implementation is ~3.7x faster than a RegExp-based implementation.
  */
-function getArchivePart(path: string, extension: string) {
+export function getArchivePart(path: string, extension: string) {
   let idx = path.indexOf(extension);
   if (idx <= 0)
     return null;
@@ -35,7 +35,11 @@ function getArchivePart(path: string, extension: string) {
   return path.slice(0, nextCharIdx) as PortablePath;
 }
 
-export type ZipOpenFSOptions = MountFSOptions<ZipFS> & {
+export type ZipOpenFSOptions = Omit<MountFSOptions<ZipFS>,
+  | `factoryPromise`
+  | `factorySync`
+  | `getMountPoint`
+> & {
   libzip: Libzip | (() => Libzip);
   readOnlyArchives?: boolean;
 
