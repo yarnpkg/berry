@@ -378,6 +378,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.chmodSync(this.resolveDirOrFilePath(p), mask);
   }
 
+  async fchownPromise(fd: number, uid: number, gid: number): Promise<void> {
+    return this.baseFs.fchownPromise(this.resolveDirOrFilePath(fd), uid, gid);
+  }
+
+  fchownSync(fd: number, uid: number, gid: number): void {
+    return this.baseFs.fchownSync(this.resolveDirOrFilePath(fd), uid, gid);
+  }
+
   async chownPromise(p: PortablePath, uid: number, gid: number) {
     return await this.baseFs.chownPromise(this.resolveDirOrFilePath(p), uid, gid);
   }

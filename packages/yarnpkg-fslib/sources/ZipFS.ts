@@ -1067,6 +1067,14 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
+  async fchownPromise(fd: number, uid: number, gid: number): Promise<void> {
+    return this.chownPromise(this.fdToPath(fd, `fchown`), uid, gid);
+  }
+
+  fchownSync(fd: number, uid: number, gid: number): void {
+    return this.chownSync(this.fdToPath(fd, `fchownSync`), uid, gid);
+  }
+
   async chownPromise(p: PortablePath, uid: number, gid: number) {
     return this.chownSync(p, uid, gid);
   }
