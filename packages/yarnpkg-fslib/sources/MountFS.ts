@@ -480,6 +480,30 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
+  async fchownPromise(fd: number, uid: number, gid: number): Promise<void> {
+    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+      return this.baseFs.fchownPromise(fd, uid, gid);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fchown`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.fchownPromise(realFd, uid, gid);
+  }
+
+  fchownSync(fd: number, uid: number, gid: number): void {
+    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+      return this.baseFs.fchownSync(fd, uid, gid);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fchownSync`);
+
+    const [zipFs, realFd] = entry;
+    return zipFs.fchownSync(realFd, uid, gid);
+  }
+
   async chownPromise(p: PortablePath, uid: number, gid: number) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.chownPromise(p, uid, gid);

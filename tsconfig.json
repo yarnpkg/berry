@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,6 +10,7 @@
     "noImplicitReturns": true,
     "resolveJsonModule": true,
     "strict": true,
+    "alwaysStrict": false,
     "target": "ES2019",
     "declaration": true,
     "importHelpers": true,

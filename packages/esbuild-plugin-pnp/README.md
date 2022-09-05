@@ -1,22 +1,5 @@
-# `@yarnpkg/esbuild-plugin-pnp`
+# esbuild-plugin-pnp
 
-This plugin lets you use Yarn with esbuild. We use it in order to build Yarn itself!
+Yarn used to maintain a plugin called [`esbuild-plugin-pnp`](https://yarnpkg.com/package/@yarnpkg/esbuild-plugin-pnp) which added PnP support to Esbuild.
 
-## Usage
-
-Add the plugin to your dependencies:
-
-```
-yarn add @yarnpkg/esbuild-plugin-pnp
-```
-
-Reference it via your esbuild configuration ([build API only](https://esbuild.github.io/plugins/)):
-
-```ts
-import {pnpPlugin} from '@yarnpkg/esbuild-plugin-pnp';
-
-await build({
-  plugins: [pnpPlugin()],
-  // ...
-});
-```
+Starting from Esbuild 0.15, this plugin isn't needed anymore and has been deprecated: [Esbuild now implements native support](https://esbuild.github.io/getting-started/#yarn-pnp) for both PnP and zip archives, with much better performances than what the plugin could achieve.
