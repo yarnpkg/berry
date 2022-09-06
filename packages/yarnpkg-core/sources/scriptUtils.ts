@@ -134,7 +134,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
   ]);
 
   if (project) {
-    scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
+    scriptEnv.INIT_CWD = npath.cwd();
     scriptEnv.PROJECT_CWD = npath.fromPortablePath(project.cwd);
   }
 

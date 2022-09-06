@@ -62,6 +62,7 @@ The following changes only affect people writing Yarn plugins:
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - When Corepack is enabled Yarn will now use the current CLI to prepare external Yarn classic projects, matching the behaviour of when Corepack is disabled.
+- `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
 
 ### Compatibility
 
