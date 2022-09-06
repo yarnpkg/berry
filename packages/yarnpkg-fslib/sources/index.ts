@@ -40,7 +40,7 @@ export {FakeFS}                                                from './FakeFS';
 export {CwdFS}                                                 from './CwdFS';
 export {JailFS}                                                from './JailFS';
 export {LazyFS}                                                from './LazyFS';
-export {MountFS, GetMountPointFn, MountableFS, MountFSOptions} from './LazyFS';
+export {MountFS, GetMountPointFn, MountableFS, MountFSOptions} from './MountFS';
 export {NoFS}                                                  from './NoFS';
 export {NodeFS}                                                from './NodeFS';
 export {PosixFS}                                               from './PosixFS';
