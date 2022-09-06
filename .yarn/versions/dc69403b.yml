@@ -8,7 +8,6 @@ releases:
   vscode-zipfs: patch
 
 declined:
-  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"

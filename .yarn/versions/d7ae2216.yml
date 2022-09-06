@@ -3,7 +3,6 @@ releases:
   "@yarnpkg/cli": major
   "@yarnpkg/core": major
   "@yarnpkg/doctor": major
-  "@yarnpkg/esbuild-plugin-pnp": major
   "@yarnpkg/eslint-config": major
   "@yarnpkg/fslib": major
   "@yarnpkg/libui": major

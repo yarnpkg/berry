@@ -3,7 +3,6 @@ releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
   "@yarnpkg/doctor": patch
-  "@yarnpkg/esbuild-plugin-pnp": patch
   "@yarnpkg/fslib": patch
   "@yarnpkg/libui": patch
   "@yarnpkg/libzip": patch
