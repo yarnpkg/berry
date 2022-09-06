@@ -48675,94 +48675,6 @@ class ProxiedFS extends FakeFS {
   }
 }
 
-class PosixFS extends ProxiedFS {
-  constructor(baseFs) {
-    super(npath);
-    this.baseFs = baseFs;
-  }
-  mapFromBase(path) {
-    return npath.fromPortablePath(path);
-  }
-  mapToBase(path) {
-    return npath.toPortablePath(path);
-  }
-}
-
-const NUMBER_REGEXP = /^[0-9]+$/;
-const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
-const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
-class VirtualFS extends ProxiedFS {
-  constructor({ baseFs = new NodeFS() } = {}) {
-    super(ppath);
-    this.baseFs = baseFs;
-  }
-  static makeVirtualPath(base, component, to) {
-    if (ppath.basename(base) !== `__virtual__`)
-      throw new Error(`Assertion failed: Virtual folders must be named "__virtual__"`);
-    if (!ppath.basename(component).match(VALID_COMPONENT))
-      throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`);
-    const target = ppath.relative(ppath.dirname(base), to);
-    const segments = target.split(`/`);
-    let depth = 0;
-    while (depth < segments.length && segments[depth] === `..`)
-      depth += 1;
-    const finalSegments = segments.slice(depth);
-    const fullVirtualPath = ppath.join(base, component, String(depth), ...finalSegments);
-    return fullVirtualPath;
-  }
-  static resolveVirtual(p) {
-    const match = p.match(VIRTUAL_REGEXP);
-    if (!match || !match[3] && match[5])
-      return p;
-    const target = ppath.dirname(match[1]);
-    if (!match[3] || !match[4])
-      return target;
-    const isnum = NUMBER_REGEXP.test(match[4]);
-    if (!isnum)
-      return p;
-    const depth = Number(match[4]);
-    const backstep = `../`.repeat(depth);
-    const subpath = match[5] || `.`;
-    return VirtualFS.resolveVirtual(ppath.join(target, backstep, subpath));
-  }
-  getExtractHint(hints) {
-    return this.baseFs.getExtractHint(hints);
-  }
-  getRealPath() {
-    return this.baseFs.getRealPath();
-  }
-  realpathSync(p) {
-    const match = p.match(VIRTUAL_REGEXP);
-    if (!match)
-      return this.baseFs.realpathSync(p);
-    if (!match[5])
-      return p;
-    const realpath = this.baseFs.realpathSync(this.mapToBase(p));
-    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
-  }
-  async realpathPromise(p) {
-    const match = p.match(VIRTUAL_REGEXP);
-    if (!match)
-      return await this.baseFs.realpathPromise(p);
-    if (!match[5])
-      return p;
-    const realpath = await this.baseFs.realpathPromise(this.mapToBase(p));
-    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
-  }
-  mapToBase(p) {
-    if (p === ``)
-      return p;
-    if (this.pathUtils.isAbsolute(p))
-      return VirtualFS.resolveVirtual(p);
-    const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
-    const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
-    return ppath.relative(resolvedRoot, resolvedP) || PortablePath.dot;
-  }
-  mapFromBase(p) {
-    return p;
-  }
-}
-
 const MOUNT_MASK = 4278190080;
 const MOUNT_MAGIC = 704643072;
 class MountFS extends BasePortableFakeFS {
@@ -49569,6 +49481,94 @@ class MountFS extends BasePortableFakeFS {
         (_a = childFs.saveAndClose) == null ? void 0 : _a.call(childFs);
       }
     }
+  }
+}
+
+class PosixFS extends ProxiedFS {
+  constructor(baseFs) {
+    super(npath);
+    this.baseFs = baseFs;
+  }
+  mapFromBase(path) {
+    return npath.fromPortablePath(path);
+  }
+  mapToBase(path) {
+    return npath.toPortablePath(path);
+  }
+}
+
+const NUMBER_REGEXP = /^[0-9]+$/;
+const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
+const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
+class VirtualFS extends ProxiedFS {
+  constructor({ baseFs = new NodeFS() } = {}) {
+    super(ppath);
+    this.baseFs = baseFs;
+  }
+  static makeVirtualPath(base, component, to) {
+    if (ppath.basename(base) !== `__virtual__`)
+      throw new Error(`Assertion failed: Virtual folders must be named "__virtual__"`);
+    if (!ppath.basename(component).match(VALID_COMPONENT))
+      throw new Error(`Assertion failed: Virtual components must be ended by an hexadecimal hash`);
+    const target = ppath.relative(ppath.dirname(base), to);
+    const segments = target.split(`/`);
+    let depth = 0;
+    while (depth < segments.length && segments[depth] === `..`)
+      depth += 1;
+    const finalSegments = segments.slice(depth);
+    const fullVirtualPath = ppath.join(base, component, String(depth), ...finalSegments);
+    return fullVirtualPath;
+  }
+  static resolveVirtual(p) {
+    const match = p.match(VIRTUAL_REGEXP);
+    if (!match || !match[3] && match[5])
+      return p;
+    const target = ppath.dirname(match[1]);
+    if (!match[3] || !match[4])
+      return target;
+    const isnum = NUMBER_REGEXP.test(match[4]);
+    if (!isnum)
+      return p;
+    const depth = Number(match[4]);
+    const backstep = `../`.repeat(depth);
+    const subpath = match[5] || `.`;
+    return VirtualFS.resolveVirtual(ppath.join(target, backstep, subpath));
+  }
+  getExtractHint(hints) {
+    return this.baseFs.getExtractHint(hints);
+  }
+  getRealPath() {
+    return this.baseFs.getRealPath();
+  }
+  realpathSync(p) {
+    const match = p.match(VIRTUAL_REGEXP);
+    if (!match)
+      return this.baseFs.realpathSync(p);
+    if (!match[5])
+      return p;
+    const realpath = this.baseFs.realpathSync(this.mapToBase(p));
+    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
+  }
+  async realpathPromise(p) {
+    const match = p.match(VIRTUAL_REGEXP);
+    if (!match)
+      return await this.baseFs.realpathPromise(p);
+    if (!match[5])
+      return p;
+    const realpath = await this.baseFs.realpathPromise(this.mapToBase(p));
+    return VirtualFS.makeVirtualPath(match[1], match[3], realpath);
+  }
+  mapToBase(p) {
+    if (p === ``)
+      return p;
+    if (this.pathUtils.isAbsolute(p))
+      return VirtualFS.resolveVirtual(p);
+    const resolvedRoot = VirtualFS.resolveVirtual(this.baseFs.resolve(PortablePath.dot));
+    const resolvedP = VirtualFS.resolveVirtual(this.baseFs.resolve(p));
+    return ppath.relative(resolvedRoot, resolvedP) || PortablePath.dot;
+  }
+  mapFromBase(p) {
+    return p;
   }
 }
 
