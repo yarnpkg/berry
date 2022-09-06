@@ -35,18 +35,19 @@ export type {FSPath, Path, NativePath}                     from './path';
 export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename}                          from './path';
 
-export {AliasFS}                   from './AliasFS';
-export {FakeFS}                    from './FakeFS';
-export {CwdFS}                     from './CwdFS';
-export {JailFS}                    from './JailFS';
-export {LazyFS}                    from './LazyFS';
-export {NoFS}                      from './NoFS';
-export {NodeFS}                    from './NodeFS';
-export {PosixFS}                   from './PosixFS';
-export {ProxiedFS}                 from './ProxiedFS';
-export {VirtualFS}                 from './VirtualFS';
-export {ZipFS}                     from './ZipFS';
-export {ZipOpenFS}                 from './ZipOpenFS';
+export {AliasFS}                                               from './AliasFS';
+export {FakeFS}                                                from './FakeFS';
+export {CwdFS}                                                 from './CwdFS';
+export {JailFS}                                                from './JailFS';
+export {LazyFS}                                                from './LazyFS';
+export {MountFS, GetMountPointFn, MountableFS, MountFSOptions} from './LazyFS';
+export {NoFS}                                                  from './NoFS';
+export {NodeFS}                                                from './NodeFS';
+export {PosixFS}                                               from './PosixFS';
+export {ProxiedFS}                                             from './ProxiedFS';
+export {VirtualFS}                                             from './VirtualFS';
+export {ZipFS}                                                 from './ZipFS';
+export {ZipOpenFS}                                             from './ZipOpenFS';
 
 export {patchFs, extendFs} from './patchFs/patchFs';
 
