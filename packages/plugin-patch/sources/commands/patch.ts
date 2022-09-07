@@ -32,6 +32,8 @@ export default class PatchCommand extends BaseCommand {
 
   package = Option.String();
 
+  tempPatchPath: string = ``;
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -76,10 +78,13 @@ export default class PatchCommand extends BaseCommand {
     }, async report => {
       const unpatchedLocator = patchUtils.ensureUnpatchedLocator(locator);
       const temp = await patchUtils.extractPackageToDisk(locator, {cache, project});
+      const tempPath = npath.fromPortablePath(temp);
+
+      this.tempPatchPath = tempPath;
 
       report.reportJson({
         locator: structUtils.stringifyLocator(unpatchedLocator),
-        path: npath.fromPortablePath(temp),
+        path: tempPath,
       });
 
       const updateString = this.update
@@ -88,7 +93,7 @@ export default class PatchCommand extends BaseCommand {
 
       report.reportInfo(MessageName.UNNAMED, `Package ${structUtils.prettyLocator(configuration, unpatchedLocator)} got extracted with success${updateString}!`);
       report.reportInfo(MessageName.UNNAMED, `You can now edit the following folder: ${formatUtils.pretty(configuration, npath.fromPortablePath(temp), `magenta`)}`);
-      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit -s ${process.platform === `win32` ? `"` : ``}${npath.fromPortablePath(temp)}${process.platform === `win32` ? `"` : ``}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
+      report.reportInfo(MessageName.UNNAMED, `Once you are done run ${formatUtils.pretty(configuration, `yarn patch-commit -s ${process.platform === `win32` ? `"` : ``}${tempPath}${process.platform === `win32` ? `"` : ``}`, `cyan`)} and Yarn will store a patchfile based on your changes.`);
     });
   }
 }

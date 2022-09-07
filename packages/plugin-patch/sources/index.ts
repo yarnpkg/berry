@@ -9,6 +9,8 @@ import * as patchUtils                 from './patchUtils';
 
 export {patchUtils};
 
+export {PatchCommit, Patch};
+
 export interface Hooks {
   /**
    * Registers a builtin patch that can be referenced using the dedicated
