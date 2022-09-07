@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/cli": patch
+  "@yarnpkg/cli": minor
   "@yarnpkg/plugin-essentials": minor
 
 declined:
