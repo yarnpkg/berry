@@ -10,8 +10,10 @@ use nom::{
 use nom_supreme::error::ErrorTree;
 use serde_json::{json, Value};
 
-use crate::combinators::escaped_transform;
-use crate::utils::{from_utf8, from_utf8_to_owned};
+use crate::{
+  combinators::{empty, escaped_transform},
+  utils::{from_utf8, from_utf8_to_owned},
+};
 
 // TODO:: Automatically detect indentation from input.
 const INDENT_STEP: usize = 2;
@@ -124,7 +126,11 @@ fn scalar(input: Input) -> ParseResult<Value> {
 }
 
 fn double_quoted_scalar(input: Input) -> ParseResult<String> {
-  delimited(char('"'), double_quoted_scalar_text, char('"'))(input)
+  delimited(
+    char('"'),
+    alt((double_quoted_scalar_text, empty)),
+    char('"'),
+  )(input)
 }
 
 fn double_quoted_scalar_text(input: Input) -> ParseResult<String> {

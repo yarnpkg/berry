@@ -1,3 +1,5 @@
+//! Various reusable generic combinators.
+
 use std::ops::RangeFrom;
 
 use nom::{
@@ -8,6 +10,12 @@ use nom::{
 use nom_supreme::{error::ErrorTree, final_parser::ExtractContext, ParserExt};
 
 use crate::utils::{convert_error_tree, from_utf8};
+
+/// A more ergonomic version of `success` that skips the extra allocation via clone
+/// and returns the default value for the inferred output.
+pub fn empty<I, O: Default, E: ParseError<I>>(input: I) -> IResult<I, O, E> {
+  Ok((input, O::default()))
+}
 
 /// Original implementation: https://docs.rs/nom-supreme/0.8.0/src/nom_supreme/final_parser.rs.html#229-243
 ///

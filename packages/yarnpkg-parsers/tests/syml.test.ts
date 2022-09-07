@@ -19,6 +19,10 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`"foo"`)).toStrictEqual(`foo`);
   });
 
+  it(`should parse empty double quoted scalars`, () => {
+    expect(parseSyml(`""`)).toStrictEqual(``);
+  });
+
   it(`should parse empty flow sequences`, () => {
     expect(parseSyml(`[]`)).toStrictEqual([]);
   });
