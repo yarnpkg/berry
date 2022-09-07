@@ -19,6 +19,8 @@ export default class WorkspacesListCommand extends BaseCommand {
 
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
+      - If \`--no-private\` is set, Yarn will not list any workspaces that have the \`private\` field set to \`true\`.
+
       - If both the \`-v,--verbose\` and \`--json\` options are set, Yarn will also return the cross-dependencies between each workspaces (useful when you wish to automatically generate Buck / Bazel rules).
     `,
   });
@@ -30,6 +32,10 @@ export default class WorkspacesListCommand extends BaseCommand {
 
   recursive = Option.Boolean(`-R,--recursive`, false, {
     description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
+  });
+
+  noPrivate = Option.Boolean(`--no-private`, {
+    description: `Exclude workspaces that have the private field set to true`,
   });
 
   verbose = Option.Boolean(`-v,--verbose`, false, {
@@ -61,6 +67,9 @@ export default class WorkspacesListCommand extends BaseCommand {
 
       for (const workspace of workspaces) {
         const {manifest} = workspace;
+
+        if (manifest.private && this.noPrivate)
+          continue;
 
         let extra;
         if (this.verbose) {

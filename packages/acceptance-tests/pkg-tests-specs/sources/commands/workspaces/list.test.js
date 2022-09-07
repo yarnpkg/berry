@@ -160,6 +160,39 @@ describe(`Commands`, () => {
     );
 
     test(
+      `--no-private excludes private workspaces`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [`packages/*`],
+      }, async ({run, path}) => {
+        await writeJson(`${path}/packages/workspace-a/package.json`, {
+          name: `workspace-a`,
+          private: true,
+          version: `1.0.0`,
+        });
+
+        await writeJson(`${path}/packages/workspace-b/package.json`, {
+          name: `workspace-b`,
+          version: `1.0.0`,
+        });
+
+        await expect(
+          parseJsonStream(
+            (await run(`workspaces`, `list`, `-v`, `--no-private`, `--json`)).stdout,
+            `location`,
+          ),
+        ).toEqual({
+          [`packages/workspace-b`]: {
+            location: `packages/workspace-b`,
+            name: `workspace-b`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+        });
+      }),
+    );
+
+    test(
       `--since returns only changed workspaces`,
       makeWorkspacesListSinceEnv(async ({path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
