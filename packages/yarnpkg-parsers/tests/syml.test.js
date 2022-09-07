@@ -32,7 +32,7 @@ describe(`Syml parser`, () => {
   });
 });
 
-describe(`Syml stringifyer`, () => {
+describe(`Syml stringifier`, () => {
   it(`stringifies an object`, () => {
     expect(stringifySyml({foo: {bar: `true`, baz: `quux`}})).toEqual(`foo:\n  bar: true\n  baz: quux\n`);
   });
