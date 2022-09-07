@@ -137,11 +137,11 @@ export function parseSyml(source: string): Record<string, any> {
 
   const value = parse(encodedSource);
 
-  if (typeof value !== `object`)
-    throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
+  // if (typeof value !== `object`)
+  //   throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
 
-  if (Array.isArray(value))
-    throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
+  // if (Array.isArray(value))
+  //   throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
 
   return value;
 }

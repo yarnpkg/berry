@@ -21,7 +21,16 @@ pub type Input<'a> = &'a [u8];
 pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'input>>>;
 
 pub fn parse(input: Input) -> ParseResult<Value> {
-  property_statements(input, 0)
+  top_level_expression(input)
+}
+
+fn top_level_expression(input: Input) -> ParseResult<Value> {
+  alt((
+    |input| item_statements(input, 0),
+    |input| property_statements(input, 0),
+    terminated(flow_sequence, eol_any),
+    terminated(scalar, eol_any),
+  ))(input)
 }
 
 fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
