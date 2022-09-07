@@ -94,7 +94,7 @@ export default class SetVersionCommand extends BaseCommand {
     else if (this.version === `canary`)
       bundleUrl = `https://repo.yarnpkg.com/${await resolveTag(configuration, `canary`)}/packages/yarnpkg-cli/bin/yarn.js`;
     else if (this.version === `classic`)
-      bundleUrl = `https://nightly.yarnpkg.com/latest.js`;
+      bundleUrl = `https://classic.yarnpkg.com/latest.js`;
     else if (this.version.match(/^https?:/))
       bundleUrl = this.version;
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
