@@ -6,12 +6,9 @@
   "browser": "./sources/async.ts",
   "exports": {
     ".": {
-      "node": "./sources/sync.ts",
       "browser": "./sources/async.ts",
       "default": "./sources/sync.ts"
     },
-    "./sync": "./sources/sync.ts",
-    "./async": "./sources/async.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -25,22 +22,14 @@
     "browser": "./lib/async.js",
     "exports": {
       ".": {
-        "node": {
-          "types": "./lib/sync.d.ts",
-          "require": "./lib/sync.js"
-        },
         "browser": {
           "types": "./lib/async.d.ts",
           "require": "./lib/async.js"
+        },
+        "default": {
+          "types": "./lib/sync.d.ts",
+          "require": "./lib/sync.js"
         }
-      },
-      "./sync": {
-        "types": "./lib/sync.d.ts",
-        "require": "./lib/sync.js"
-      },
-      "./async": {
-        "types": "./lib/async.d.ts",
-        "require": "./lib/async.js"
       },
       "./package.json": "./package.json"
     }

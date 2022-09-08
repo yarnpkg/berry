@@ -6,7 +6,6 @@
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
-    "./command/*": "./sources/commands/*.ts",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -50,10 +49,6 @@
       ".": {
         "types": "./lib/index.d.ts",
         "require": "./lib/index.js"
-      },
-      "./command/*": {
-        "types": "./lib/commands/*.d.ts",
-        "require": "./lib/commands/*.js"
       },
       "./package.json": "./package.json"
     }

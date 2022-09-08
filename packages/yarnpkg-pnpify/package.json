@@ -9,7 +9,6 @@
   "exports": {
     ".": "./sources/index.ts",
     "./utils": "./sources/utils.ts",
-    "./command/*": "./sources/commands/*.ts",
     "./cli": "./sources/cli.ts",
     "./package.json": "./package.json"
   },
@@ -43,10 +42,6 @@
       "./utils": {
         "types": "./lib/utils.d.ts",
         "require": "./lib/utils.js"
-      },
-      "./command/*": {
-        "types": "./lib/commands/*.d.ts",
-        "require": "./lib/commands/*.js"
       },
       "./cli": {
         "types": "./lib/cli.d.ts",

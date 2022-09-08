@@ -3,13 +3,15 @@ import {PortablePath}                  from '@yarnpkg/fslib';
 
 import {PatchFetcher}                  from './PatchFetcher';
 import {PatchResolver}                 from './PatchResolver';
-import PatchCommit                     from './commands/patchCommit';
-import Patch                           from './commands/patch';
+import PatchCommitCommand              from './commands/patchCommit';
+import PatchCommand                    from './commands/patch';
 import * as patchUtils                 from './patchUtils';
 
-export {patchUtils};
 export {PatchFetcher};
 export {PatchResolver};
+export {PatchCommitCommand};
+export {PatchCommand};
+export {patchUtils};
 
 export interface Hooks {
   /**
@@ -44,8 +46,8 @@ const plugin: Plugin = {
     },
   },
   commands: [
-    PatchCommit,
-    Patch,
+    PatchCommitCommand,
+    PatchCommand,
   ],
   fetchers: [
     PatchFetcher,

@@ -5,8 +5,8 @@
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "exports": {
+    ".": "./sources/index.ts",
     "./cli": "./sources/boot-cli-dev.js",
-    "./command/*": "./sources/commands/*.ts",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -32,9 +32,9 @@
   "publishConfig": {
     "bin": "./lib/cli.js",
     "exports": {
-      "./command/*": {
-        "types": "./lib/commands/*.d.ts",
-        "require": "./lib/commands/*.js"
+      ".": {
+        "types": "./lib/index.d.ts",
+        "require": "./lib/index.js"
       },
       "./cli": {
         "types": "./lib/cli.d.ts",

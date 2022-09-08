@@ -2,49 +2,83 @@ import {Descriptor, Plugin, SettingsType, Package, formatUtils} from '@yarnpkg/c
 import {Workspace}                                              from '@yarnpkg/core';
 import {isCI}                                                   from 'ci-info';
 
-import add                                                      from './commands/add';
-import bin                                                      from './commands/bin';
-import cleanCache                                               from './commands/cache/clean';
-import getConfig                                                from './commands/config/get';
-import setConfig                                                from './commands/config/set';
-import unsetConfig                                              from './commands/config/unset';
-import config                                                   from './commands/config';
-import dedupe                                                   from './commands/dedupe';
-import clipanionEntry                                           from './commands/entries/clipanion';
-import helpEntry                                                from './commands/entries/help';
-import runEntry                                                 from './commands/entries/run';
-import versionEntry                                             from './commands/entries/version';
-import exec                                                     from './commands/exec';
-import explainPeerRequirements                                  from './commands/explain/peerRequirements';
-import explain                                                  from './commands/explain';
-import info                                                     from './commands/info';
-import install                                                  from './commands/install';
-import link                                                     from './commands/link';
-import node                                                     from './commands/node';
-import pluginImportSources                                      from './commands/plugin/import/sources';
-import pluginImport                                             from './commands/plugin/import';
-import pluginList                                               from './commands/plugin/list';
-import pluginRemove                                             from './commands/plugin/remove';
-import pluginRuntime                                            from './commands/plugin/runtime';
-import rebuild                                                  from './commands/rebuild';
-import remove                                                   from './commands/remove';
-import runIndex                                                 from './commands/runIndex';
-import run                                                      from './commands/run';
-import setResolutionPolicy                                      from './commands/set/resolution';
-import setVersionFromSources                                    from './commands/set/version/sources';
-import setVersionPolicy                                         from './commands/set/version';
-import unlink                                                   from './commands/unlink';
-import up                                                       from './commands/up';
-import why                                                      from './commands/why';
-import listWorkspaces                                           from './commands/workspaces/list';
-import workspace                                                from './commands/workspace';
+import AddCommand                                               from './commands/add';
+import BinCommand                                               from './commands/bin';
+import CacheCleanCommand                                        from './commands/cache/clean';
+import ConfigGetCommand                                         from './commands/config/get';
+import ConfigSetCommand                                         from './commands/config/set';
+import ConfigUnsetCommand                                       from './commands/config/unset';
+import ConfigCommand                                            from './commands/config';
+import DedupeCommand                                            from './commands/dedupe';
+import ClipanionCommand                                         from './commands/entries/clipanion';
+import HelpCommand                                              from './commands/entries/help';
+import EntryCommand                                             from './commands/entries/run';
+import VersionCommand                                           from './commands/entries/version';
+import ExecCommand                                              from './commands/exec';
+import ExplainPeerRequirementsCommand                           from './commands/explain/peerRequirements';
+import ExplainCommand                                           from './commands/explain';
+import InfoCommand                                              from './commands/info';
+import YarnCommand                                              from './commands/install';
+import LinkCommand                                              from './commands/link';
+import NodeCommand                                              from './commands/node';
+import PluginImportSourcesCommand                               from './commands/plugin/import/sources';
+import PluginImportCommand                                      from './commands/plugin/import';
+import PluginListCommand                                        from './commands/plugin/list';
+import PluginRemoveCommand                                      from './commands/plugin/remove';
+import PluginRuntimeCommand                                     from './commands/plugin/runtime';
+import RebuildCommand                                           from './commands/rebuild';
+import RemoveCommand                                            from './commands/remove';
+import RunIndexCommand                                          from './commands/runIndex';
+import RunCommand                                               from './commands/run';
+import SetResolutionCommand                                     from './commands/set/resolution';
+import SetVersionSourcesCommand                                 from './commands/set/version/sources';
+import SetVersionCommand                                        from './commands/set/version';
+import UnlinkCommand                                            from './commands/unlink';
+import UpCommand                                                from './commands/up';
+import WhyCommand                                               from './commands/why';
+import WorkspacesListCommand                                    from './commands/workspaces/list';
+import WorkspaceCommand                                         from './commands/workspace';
 import * as dedupeUtils                                         from './dedupeUtils';
 import * as suggestUtils                                        from './suggestUtils';
 
-export {
-  dedupeUtils,
-  suggestUtils,
-};
+export {AddCommand};
+export {BinCommand};
+export {CacheCleanCommand};
+export {ConfigGetCommand};
+export {ConfigSetCommand};
+export {ConfigUnsetCommand};
+export {ConfigCommand};
+export {DedupeCommand};
+export {ClipanionCommand};
+export {HelpCommand};
+export {EntryCommand};
+export {VersionCommand};
+export {ExecCommand};
+export {ExplainPeerRequirementsCommand};
+export {ExplainCommand};
+export {InfoCommand};
+export {YarnCommand};
+export {LinkCommand};
+export {NodeCommand};
+export {PluginImportSourcesCommand};
+export {PluginImportCommand};
+export {PluginListCommand};
+export {PluginRemoveCommand};
+export {PluginRuntimeCommand};
+export {RebuildCommand};
+export {RemoveCommand};
+export {RunIndexCommand};
+export {RunCommand};
+export {SetResolutionCommand};
+export {SetVersionSourcesCommand};
+export {SetVersionCommand};
+export {UnlinkCommand};
+export {UpCommand};
+export {WhyCommand};
+export {WorkspacesListCommand};
+export {WorkspaceCommand};
+export {dedupeUtils};
+export {suggestUtils};
 
 export interface Hooks {
   /**
@@ -134,42 +168,42 @@ const plugin: Plugin = {
     },
   },
   commands: [
-    cleanCache,
-    getConfig,
-    setConfig,
-    unsetConfig,
-    setResolutionPolicy,
-    setVersionFromSources,
-    setVersionPolicy,
-    listWorkspaces,
-    clipanionEntry,
-    helpEntry,
-    runEntry,
-    versionEntry,
-    add,
-    bin,
-    config,
-    dedupe,
-    exec,
-    explainPeerRequirements,
-    explain,
-    info,
-    install,
-    link,
-    unlink,
-    node,
-    pluginImportSources,
-    pluginImport,
-    pluginRemove,
-    pluginList,
-    pluginRuntime,
-    rebuild,
-    remove,
-    runIndex,
-    run,
-    up,
-    why,
-    workspace,
+    CacheCleanCommand,
+    ConfigGetCommand,
+    ConfigSetCommand,
+    ConfigUnsetCommand,
+    SetResolutionCommand,
+    SetVersionSourcesCommand,
+    SetVersionCommand,
+    WorkspacesListCommand,
+    ClipanionCommand,
+    HelpCommand,
+    EntryCommand,
+    VersionCommand,
+    AddCommand,
+    BinCommand,
+    ConfigCommand,
+    DedupeCommand,
+    ExecCommand,
+    ExplainPeerRequirementsCommand,
+    ExplainCommand,
+    InfoCommand,
+    YarnCommand,
+    LinkCommand,
+    UnlinkCommand,
+    NodeCommand,
+    PluginImportSourcesCommand,
+    PluginImportCommand,
+    PluginRemoveCommand,
+    PluginListCommand,
+    PluginRuntimeCommand,
+    RebuildCommand,
+    RemoveCommand,
+    RunIndexCommand,
+    RunCommand,
+    UpCommand,
+    WhyCommand,
+    WorkspaceCommand,
   ],
 };
 

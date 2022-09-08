@@ -7,7 +7,6 @@
   "types": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
-    "./command/*": "./sources/commands/*.ts",
     "./cli": "./sources/boot-cli-dev.js",
     "./package.json": "./package.json"
   },
@@ -41,10 +40,6 @@
       ".": {
         "types": "./lib/index.d.ts",
         "require": "./lib/index.js"
-      },
-      "./command/*": {
-        "types": "./lib/commands/*.d.ts",
-        "require": "./lib/commands/*.js"
       },
       "./cli": {
         "types": "./lib/cli.d.ts",
