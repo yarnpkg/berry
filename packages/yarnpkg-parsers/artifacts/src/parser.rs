@@ -168,7 +168,11 @@ fn unicode_escape_digits(input: Input) -> ParseResult<char> {
 }
 
 fn single_quoted_scalar(input: Input) -> ParseResult<String> {
-  delimited(char('\''), single_quoted_scalar_text, char('\''))(input)
+  delimited(
+    char('\''),
+    alt((single_quoted_scalar_text, empty)),
+    char('\''),
+  )(input)
 }
 
 fn single_quoted_scalar_text(input: Input) -> ParseResult<String> {
