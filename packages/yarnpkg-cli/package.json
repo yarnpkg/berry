@@ -6,6 +6,7 @@
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
+    "./polyfills": "./sources/polyfills.ts",
     "./package.json": "./package.json"
   },
   "dependencies": {

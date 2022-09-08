@@ -6,6 +6,6 @@ module.exports = {
     `<rootDir>/packages/gatsby/.cache`,
     `<rootDir>/packages/plugin-compat`,
   ],
-  setupFiles: [require.resolve(`@yarnpkg/cli/sources/polyfills.ts`)],
+  setupFiles: [require.resolve(`@yarnpkg/cli/polyfills`)],
   testTimeout: 50000,
 };
