@@ -35,7 +35,6 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "types": "./lib/index.d.ts",
     "exports": {
       ".": "./lib/index.js",
       "./cli": "./lib/cli.js",

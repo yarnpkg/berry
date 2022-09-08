@@ -64,7 +64,6 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts",
     "bin": null,
     "exports": {
       ".": "./lib/index.js",

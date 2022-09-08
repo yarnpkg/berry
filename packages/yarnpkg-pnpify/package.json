@@ -5,7 +5,6 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
-  "types": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
     "./utils": "./sources/utils.ts",
@@ -33,7 +32,6 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "types": "./lib/index.d.ts",
     "exports": {
       ".": "./lib/index.js",
       "./utils": "./lib/utils.js",
