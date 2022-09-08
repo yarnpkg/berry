@@ -19,8 +19,9 @@ exports.sourceNodes = async ({actions, createNodeId, createContentDigest}, opts)
     }
   });
 
+  const monorepoRoot = require.resolve(`@yarnpkg/monorepo/package.json`).replace(`/package.json`, ``);
   const data = await execute([
-    require.resolve(`@yarnpkg/monorepo/packages/yarnpkg-core/sources/Plugin.ts`),
+    require.resolve(`${monorepoRoot}/packages/yarnpkg-core/sources/Plugin.ts`),
     ...indexList,
   ]);
 
