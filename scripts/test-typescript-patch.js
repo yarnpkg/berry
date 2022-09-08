@@ -16,14 +16,17 @@ const compilerOptions = ts.parseJsonSourceFileConfigFileContent(
 const compilerHost = ts.createCompilerHost(compilerOptions);
 const program = ts.createProgram(compilerOptions.fileNames, compilerOptions, compilerHost);
 const moduleSpecifierResolutionHost = ts.createModuleSpecifierResolutionHost(program, compilerHost);
-const rootSourceFile = program.getSourceFile(require.resolve(`@yarnpkg/core/sources/Project.ts`));
+
+const yarnCorePkgDir = require.resolve(`@yarnpkg/core/package.json`).replace(`/package.json`, ``);
+const fslibPkgDir = require.resolve(`@yarnpkg/fslib/package.json`).replace(`/package.json`, ``);
+const rootSourceFile = program.getSourceFile(require.resolve(`${yarnCorePkgDir}/sources/Project.ts`));
 
 const TESTS = [
-  [`@yarnpkg/core/sources/Configuration.ts`, `./Configuration`],
-  [`@yarnpkg/fslib/README.md`, `@yarnpkg/fslib/README.md`],
-  [`@yarnpkg/fslib/package.json`, `@yarnpkg/fslib/package.json`],
-  [`@yarnpkg/fslib/sources/ZipFS.ts`, `@yarnpkg/fslib/sources/ZipFS`],
-  [`@yarnpkg/fslib/sources/index.ts`, `@yarnpkg/fslib`],
+  [`${yarnCorePkgDir}/sources/Configuration.ts`, `./Configuration`],
+  [`${fslibPkgDir}/README.md`, `@yarnpkg/fslib/README.md`],
+  [`${fslibPkgDir}/package.json`, `@yarnpkg/fslib/package.json`],
+  [`${fslibPkgDir}/sources/ZipFS.ts`, `@yarnpkg/fslib/sources/ZipFS`],
+  [`${fslibPkgDir}/sources/index.ts`, `@yarnpkg/fslib`],
 ];
 
 for (const [test, expected] of TESTS) {
