@@ -8,6 +8,8 @@ import Patch                           from './commands/patch';
 import * as patchUtils                 from './patchUtils';
 
 export {patchUtils};
+export {PatchFetcher};
+export {PatchResolver};
 
 export interface Hooks {
   /**

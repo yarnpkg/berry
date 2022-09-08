@@ -6,6 +6,13 @@
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
   "types": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./utils": "./sources/utils.ts",
+    "./command/*": "./sources/commands/*.ts",
+    "./cli": "./sources/cli.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
@@ -27,7 +34,26 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "types": "./lib/index.d.ts"
+    "types": "./lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./lib/index.d.ts",
+        "require": "./lib/index.js"
+      },
+      "./utils": {
+        "types": "./lib/utils.d.ts",
+        "require": "./lib/utils.js"
+      },
+      "./command/*": {
+        "types": "./lib/commands/*.d.ts",
+        "require": "./lib/commands/*.js"
+      },
+      "./cli": {
+        "types": "./lib/cli.d.ts",
+        "require": "./lib/cli.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*",

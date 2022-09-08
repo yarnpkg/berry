@@ -9,6 +9,9 @@ import npmTagAdd              from './commands/npm/tag/add';
 import npmTagList             from './commands/npm/tag/list';
 import npmTagRemove           from './commands/npm/tag/remove';
 import npmWhoami              from './commands/npm/whoami';
+import * as npmAuditUtils     from './npmAuditUtils';
+
+export {npmAuditUtils};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {

@@ -4,6 +4,15 @@
   "license": "BSD-2-Clause",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
+  "exports": {
+    ".": {
+      "node": "./sources/sync.ts",
+      "browser": "./sources/async.ts"
+    },
+    "./sync": "./sources/sync.ts",
+    "./async": "./sources/async.ts",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
@@ -12,7 +21,28 @@
   },
   "publishConfig": {
     "main": "./lib/sync.js",
-    "browser": "./lib/async.js"
+    "browser": "./lib/async.js",
+    "exports": {
+      ".": {
+        "node": {
+          "types": "./lib/sync.d.ts",
+          "require": "./lib/sync.js"
+        },
+        "browser": {
+          "types": "./lib/async.d.ts",
+          "require": "./lib/async.js"
+        }
+      },
+      "./sync": {
+        "types": "./lib/sync.d.ts",
+        "require": "./lib/sync.js"
+      },
+      "./async": {
+        "types": "./lib/async.d.ts",
+        "require": "./lib/async.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

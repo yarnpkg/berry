@@ -4,6 +4,10 @@
   "stableVersion": "3.2.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@types/node": "^18.7.6",
     "@yarnpkg/fslib": "workspace:^"
@@ -29,7 +33,14 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    "types": "./lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./lib/index.d.ts",
+        "require": "./lib/index.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

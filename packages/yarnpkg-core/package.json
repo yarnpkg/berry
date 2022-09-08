@@ -4,6 +4,10 @@
   "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@arcanis/slice-ansi": "^1.1.1",
@@ -61,7 +65,14 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    "types": "./lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./lib/index.d.ts",
+        "require": "./lib/index.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

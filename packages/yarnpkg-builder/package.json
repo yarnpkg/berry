@@ -4,6 +4,11 @@
   "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
+  "exports": {
+    "./cli": "./sources/boot-cli-dev.js",
+    "./command/*": "./sources/commands/*.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -25,7 +30,18 @@
     "release": "yarn npm publish"
   },
   "publishConfig": {
-    "bin": "./lib/cli.js"
+    "bin": "./lib/cli.js",
+    "exports": {
+      "./command/*": {
+        "types": "./lib/commands/*.d.ts",
+        "require": "./lib/commands/*.js"
+      },
+      "./cli": {
+        "types": "./lib/cli.d.ts",
+        "require": "./lib/cli.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

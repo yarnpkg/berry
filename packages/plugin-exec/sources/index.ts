@@ -6,6 +6,8 @@ import * as execUtils         from './execUtils';
 
 export type {ExecEnv};
 export {execUtils};
+export {ExecFetcher};
+export {ExecResolver};
 
 const plugin: Plugin = {
   fetchers: [
