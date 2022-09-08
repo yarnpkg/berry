@@ -6,6 +6,7 @@
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
+    "./sources/esm-loader/loaderFlags": "./sources/esm-loader/loaderFlags.ts",
     "./package.json": "./package.json"
   },
   "dependencies": {
