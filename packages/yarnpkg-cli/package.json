@@ -67,10 +67,7 @@
     "types": "./lib/index.d.ts",
     "bin": null,
     "exports": {
-      ".": {
-        "types": "./lib/index.d.ts",
-        "require": "./lib/index.js"
-      },
+      ".": "./lib/index.js",
       "./package.json": "./package.json"
     }
   },

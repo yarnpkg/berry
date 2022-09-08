@@ -30,10 +30,7 @@
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "exports": {
-      ".": {
-        "types": "./lib/index.d.ts",
-        "require": "./lib/index.js"
-      },
+      ".": "./lib/index.js",
       "./package.json": "./package.json"
     }
   },

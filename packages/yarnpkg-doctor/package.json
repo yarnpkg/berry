@@ -29,10 +29,7 @@
   "publishConfig": {
     "bin": "./lib/cli.js",
     "exports": {
-      "./cli": {
-        "types": "./lib/cli.d.ts",
-        "require": "./lib/cli.js"
-      },
+      "./cli": "./lib/cli.js",
       "./package.json": "./package.json"
     }
   },

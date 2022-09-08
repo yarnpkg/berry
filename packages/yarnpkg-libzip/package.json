@@ -22,14 +22,8 @@
     "browser": "./lib/async.js",
     "exports": {
       ".": {
-        "browser": {
-          "types": "./lib/async.d.ts",
-          "require": "./lib/async.js"
-        },
-        "default": {
-          "types": "./lib/sync.d.ts",
-          "require": "./lib/sync.js"
-        }
+        "browser": "./lib/async.js",
+        "default": "./lib/sync.js"
       },
       "./package.json": "./package.json"
     }

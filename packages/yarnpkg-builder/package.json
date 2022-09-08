@@ -32,14 +32,8 @@
   "publishConfig": {
     "bin": "./lib/cli.js",
     "exports": {
-      ".": {
-        "types": "./lib/index.d.ts",
-        "require": "./lib/index.js"
-      },
-      "./cli": {
-        "types": "./lib/cli.d.ts",
-        "require": "./lib/cli.js"
-      },
+      ".": "./lib/index.js",
+      "./cli": "./lib/cli.js",
       "./package.json": "./package.json"
     }
   },

@@ -35,18 +35,9 @@
     "bin": "./lib/cli.js",
     "types": "./lib/index.d.ts",
     "exports": {
-      ".": {
-        "types": "./lib/index.d.ts",
-        "require": "./lib/index.js"
-      },
-      "./utils": {
-        "types": "./lib/utils.d.ts",
-        "require": "./lib/utils.js"
-      },
-      "./cli": {
-        "types": "./lib/cli.d.ts",
-        "require": "./lib/cli.js"
-      },
+      ".": "./lib/index.js",
+      "./utils": "./lib/utils.js",
+      "./cli": "./lib/cli.js",
       "./package.json": "./package.json"
     }
   },
