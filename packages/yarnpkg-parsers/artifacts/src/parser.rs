@@ -122,7 +122,10 @@ fn indentation(input: Input, indent: usize) -> ParseResult<Vec<char>> {
 }
 
 fn scalar(input: Input) -> ParseResult<Value> {
-  map(alt((double_quoted_scalar, plain_scalar)), Value::String)(input)
+  map(
+    alt((double_quoted_scalar, single_quoted_scalar, plain_scalar)),
+    Value::String,
+  )(input)
 }
 
 fn double_quoted_scalar(input: Input) -> ParseResult<String> {
@@ -162,6 +165,14 @@ fn unicode_escape_digits(input: Input) -> ParseResult<char> {
     ),
     char::from_u32,
   )(input)
+}
+
+fn single_quoted_scalar(input: Input) -> ParseResult<String> {
+  delimited(char('\''), single_quoted_scalar_text, char('\''))(input)
+}
+
+fn single_quoted_scalar_text(input: Input) -> ParseResult<String> {
+  map(is_not("'"), from_utf8_to_owned)(input)
 }
 
 fn plain_scalar(input: Input) -> ParseResult<String> {
