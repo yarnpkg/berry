@@ -7,7 +7,8 @@
   "exports": {
     ".": {
       "node": "./sources/sync.ts",
-      "browser": "./sources/async.ts"
+      "browser": "./sources/async.ts",
+      "default": "./sources/sync.ts"
     },
     "./sync": "./sources/sync.ts",
     "./async": "./sources/async.ts",
