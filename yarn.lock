@@ -6051,9 +6051,11 @@ __metadata:
   resolution: "@yarnpkg/plugin-http@workspace:packages/plugin-http"
   dependencies:
     "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/fslib": "workspace:^"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/fslib": "workspace:^"
   languageName: unknown
   linkType: soft
 

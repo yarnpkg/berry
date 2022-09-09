@@ -13464,12 +13464,16 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/plugin-http", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-http"],\
           ["@types/yarnpkg__core", null],\
+          ["@types/yarnpkg__fslib", null],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+          ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["tslib", "npm:2.4.0"]\
         ],\
         "packagePeers": [\
           "@types/yarnpkg__core",\
-          "@yarnpkg/core"\
+          "@types/yarnpkg__fslib",\
+          "@yarnpkg/core",\
+          "@yarnpkg/fslib"\
         ],\
         "linkType": "SOFT"\
       }],\
@@ -13478,6 +13482,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/plugin-http", "workspace:packages/plugin-http"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+          ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["tslib", "npm:2.4.0"]\
         ],\
         "linkType": "SOFT"\
