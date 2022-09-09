@@ -1,7 +1,7 @@
 use nom::{
   branch::alt,
   bytes::complete::{is_not, take_while_m_n},
-  character::complete::{char, line_ending, not_line_ending, space0, space1},
+  character::complete::{char, line_ending, multispace0, not_line_ending, space0, space1},
   combinator::{map, map_opt, map_res, opt, recognize, value},
   multi::{count, fold_many1, many0_count, separated_list0},
   sequence::{delimited, preceded, separated_pair, terminated},
@@ -91,11 +91,11 @@ fn item_statement(input: Input, indent: usize) -> ParseResult<Value> {
 
 fn flow_mapping(input: Input) -> ParseResult<Value> {
   preceded(
-    terminated(char('{'), space0),
+    terminated(char('{'), multispace0),
     parse_separated_terminated(
       opt(flow_mapping_entry),
-      delimited(space0, char(','), space0),
-      preceded(space0, char('}')),
+      delimited(multispace0, char(','), multispace0),
+      preceded(multispace0, char('}')),
       || json!({}),
       |mut acc, entry| {
         if let Some((key, value)) = entry {

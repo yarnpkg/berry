@@ -1,5 +1,7 @@
 import {parseSyml} from '@yarnpkg/parsers';
 
+import {joinYaml}  from './utils';
+
 describe(`Syml parser`, () => {
   describe(`Non-values`, () => {
     it(`should parse empty strings as an empty object`, () => {
@@ -71,5 +73,29 @@ describe(`Syml parser`, () => {
   it(`should parse flow mappings with single quoted scalar entries`, () => {
     expect(parseSyml(`{'foo': 'bar'}`)).toStrictEqual({foo: `bar`});
     expect(parseSyml(`{'foo': 'bar', 'baz': 'qux'}`)).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should allow whitespace inside flow mappings`, () => {
+    expect(parseSyml(joinYaml([
+      `{  `,
+      `     }`,
+    ]))).toStrictEqual({});
+
+    expect(parseSyml(joinYaml([
+      `{   \t `,
+      `     foo:  \t  bar  \t  `,
+      ` \t ,  \t `,
+      `   \t  baz: qux  \t `,
+      ` \t }`,
+    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should allow trailing commas inside flow mappings`, () => {
+    expect(parseSyml(joinYaml([
+      `{`,
+      `  foo: bar,`,
+      `  baz: qux,`,
+      `}`,
+    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
   });
 });
