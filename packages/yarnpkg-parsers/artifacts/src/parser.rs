@@ -7,7 +7,7 @@ use nom::{
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
-use nom_supreme::error::ErrorTree;
+use nom_supreme::{error::ErrorTree, multi::parse_separated_terminated};
 use serde_json::{json, Value};
 
 use crate::{
@@ -30,6 +30,7 @@ fn top_level_expression(input: Input) -> ParseResult<Value> {
   alt((
     |input| item_statements(input, 0),
     |input| property_statements(input, 0),
+    terminated(flow_mapping, eol_any),
     terminated(flow_sequence, eol_any),
     terminated(scalar, eol_any),
   ))(input)
@@ -88,6 +89,31 @@ fn item_statement(input: Input, indent: usize) -> ParseResult<Value> {
   )(input)
 }
 
+fn flow_mapping(input: Input) -> ParseResult<Value> {
+  preceded(
+    terminated(char('{'), space0),
+    parse_separated_terminated(
+      opt(flow_mapping_entry),
+      delimited(space0, char(','), space0),
+      preceded(space0, char('}')),
+      || json!({}),
+      |mut acc, entry| {
+        if let Some((key, value)) = entry {
+          // TODO: handle duplicates
+          // TODO: propagate the error
+          acc[key.as_str().unwrap()] = value;
+        }
+        acc
+      },
+    ),
+  )(input)
+}
+
+fn flow_mapping_entry(input: Input) -> ParseResult<(Value, Value)> {
+  // TODO: Support other node types too.
+  separated_pair(scalar, delimited(space0, char(':'), space0), scalar)(input)
+}
+
 fn flow_sequence(input: Input) -> ParseResult<Value> {
   delimited(
     char('['),
@@ -112,6 +138,7 @@ fn expression(input: Input, indent: usize) -> ParseResult<Value> {
     preceded(line_ending, |input| {
       property_statements(input, indent + INDENT_STEP)
     }),
+    terminated(flow_mapping, eol_any),
     terminated(flow_sequence, eol_any),
     terminated(scalar, eol_any),
   ))(input)

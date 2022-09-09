@@ -45,7 +45,31 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`["foo", "bar"]`)).toStrictEqual([`foo`, `bar`]);
   });
 
+  it(`should parse flow sequences with single quoted scalar items`, () => {
+    expect(parseSyml(`['foo']`)).toStrictEqual([`foo`]);
+    expect(parseSyml(`['foo', 'bar']`)).toStrictEqual([`foo`, `bar`]);
+  });
+
   it(`should parse flow sequences with mixed scalar items`, () => {
-    expect(parseSyml(`[foo, "bar"]`)).toStrictEqual([`foo`, `bar`]);
+    expect(parseSyml(`[foo, "bar", 'baz']`)).toStrictEqual([`foo`, `bar`, `baz`]);
+  });
+
+  it(`should parse empty flow mappings`, () => {
+    expect(parseSyml(`{}`)).toStrictEqual({});
+  });
+
+  it(`should parse flow mappings with plain scalar entries`, () => {
+    expect(parseSyml(`{foo: bar}`)).toStrictEqual({foo: `bar`});
+    expect(parseSyml(`{foo: bar, baz: qux}`)).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse flow mappings with double quoted scalar entries`, () => {
+    expect(parseSyml(`{"foo": "bar"}`)).toStrictEqual({foo: `bar`});
+    expect(parseSyml(`{"foo": "bar", "baz": "qux"}`)).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse flow mappings with single quoted scalar entries`, () => {
+    expect(parseSyml(`{'foo': 'bar'}`)).toStrictEqual({foo: `bar`});
+    expect(parseSyml(`{'foo': 'bar', 'baz': 'qux'}`)).toStrictEqual({foo: `bar`, baz: `qux`});
   });
 });
