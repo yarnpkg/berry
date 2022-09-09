@@ -2,6 +2,8 @@ import {parseSyml} from '@yarnpkg/parsers';
 
 import {joinYaml}  from './utils';
 
+// TODO: Update the terminology used in this file to match the way it's used in the YAML spec.
+
 describe(`Syml parser`, () => {
   describe(`Non-values`, () => {
     it(`should parse empty strings as an empty object`, () => {
@@ -141,5 +143,53 @@ describe(`Syml parser`, () => {
       `  baz: qux,`,
       `}`,
     ]))).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse block sequences`, () => {
+    expect(parseSyml(joinYaml([
+      `- foo`,
+    ]))).toStrictEqual([`foo`]);
+
+    expect(parseSyml(joinYaml([
+      `- foo`,
+      `- bar`,
+    ]))).toStrictEqual([`foo`, `bar`]);
+  });
+
+  it(`should parse compact block mappings`, () => {
+    expect(parseSyml(joinYaml([
+      `foo: bar`,
+    ]))).toStrictEqual({foo: `bar`});
+
+    expect(parseSyml(joinYaml([
+      `foo: bar`,
+      `baz: qux`,
+    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse block mappings`, () => {
+    expect(parseSyml(joinYaml([
+      `foo:`,
+      `  bar: baz`,
+    ]))).toStrictEqual({foo: {bar: `baz`}});
+
+    expect(parseSyml(joinYaml([
+      `foo:`,
+      `  bar: baz`,
+      `  a: b`,
+    ]))).toStrictEqual({foo: {bar: `baz`, a: `b`}});
+  });
+
+  it(`should parse block mappings containing block sequences`, () => {
+    expect(parseSyml(joinYaml([
+      `foo:`,
+      `  - bar`,
+    ]))).toStrictEqual({foo: [`bar`]});
+
+    expect(parseSyml(joinYaml([
+      `foo:`,
+      `  - bar`,
+      `  - baz`,
+    ]))).toStrictEqual({foo: [`bar`, `baz`]});
   });
 });
