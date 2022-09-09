@@ -39,7 +39,6 @@ function getPotentialDescriptor(descriptor: Descriptor) {
       return potentialDescriptor;
     }
   } catch { }
-  return undefined;
 }
 
 export class LegacyMigrationResolver implements Resolver {
