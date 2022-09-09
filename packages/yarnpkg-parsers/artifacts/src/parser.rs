@@ -122,8 +122,7 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
     terminated(char('['), multispace0),
     map(
       parse_separated_terminated(
-        // TODO: Support compact mappings.
-        opt(flow_expression),
+        opt(alt((flow_compact_mapping, flow_expression))),
         delimited(multispace0, char(','), multispace0),
         preceded(multispace0, char(']')),
         Vec::new,
@@ -137,6 +136,12 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
       Value::Array,
     ),
   )(input)
+}
+
+fn flow_compact_mapping(input: Input) -> ParseResult<Value> {
+  map(flow_mapping_entry, |(key, value)| {
+    json!({ key.as_str().unwrap(): value })
+  })(input)
 }
 
 fn expression(input: Input, indent: usize) -> ParseResult<Value> {

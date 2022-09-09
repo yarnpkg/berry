@@ -65,7 +65,13 @@ describe(`Syml parser`, () => {
   });
 
   it(`should parse flow sequences with flow mapping items`, () => {
+    expect(parseSyml(`[{foo: bar}]`)).toStrictEqual([{foo: `bar`}]);
     expect(parseSyml(`[{foo: bar}, {baz: qux}]`)).toStrictEqual([{foo: `bar`}, {baz: `qux`}]);
+  });
+
+  it(`should parse flow sequences with compact flow mapping items`, () => {
+    expect(parseSyml(`[foo: bar]`)).toStrictEqual([{foo: `bar`}]);
+    expect(parseSyml(`[foo: bar, baz: qux]`)).toStrictEqual([{foo: `bar`}, {baz: `qux`}]);
   });
 
   it(`should allow whitespace inside flow sequences`, () => {
