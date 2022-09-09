@@ -118,13 +118,13 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
   delimited(
     char('['),
     delimited(
-      space0,
+      multispace0,
       map(
         // TODO: Support other node types too.
-        separated_list0(delimited(space0, char(','), space0), scalar),
+        separated_list0(delimited(multispace0, char(','), multispace0), scalar),
         Value::Array,
       ),
-      space0,
+      multispace0,
     ),
     char(']'),
   )(input)

@@ -56,6 +56,21 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`[foo, "bar", 'baz']`)).toStrictEqual([`foo`, `bar`, `baz`]);
   });
 
+  it(`should allow whitespace inside flow sequences`, () => {
+    expect(parseSyml(joinYaml([
+      `[  `,
+      `     ]`,
+    ]))).toStrictEqual([]);
+
+    expect(parseSyml(joinYaml([
+      `[   \t `,
+      `     foo  \t  `,
+      ` \t ,  \t `,
+      `   \t  bar  \t `,
+      ` \t ]`,
+    ]))).toStrictEqual([`foo`, `bar`]);
+  });
+
   it(`should parse empty flow mappings`, () => {
     expect(parseSyml(`{}`)).toStrictEqual({});
   });
