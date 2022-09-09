@@ -46,10 +46,9 @@ fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
       })),
       Map::new,
       |mut acc, (key, value)| {
-        if !key.is_null() {
-          // TODO: handle duplicates
-          // TODO: propagate the error
-          acc.insert(key.as_str().unwrap().to_owned(), value);
+        // TODO: handle duplicates
+        if let Value::String(key) = key {
+          acc.insert(key, value);
         }
         acc
       },
@@ -104,10 +103,9 @@ fn flow_mapping(input: Input) -> ParseResult<Value> {
         preceded(multispace0, char('}')),
         Map::new,
         |mut acc, entry| {
-          if let Some((key, value)) = entry {
+          if let Some((Value::String(key), value)) = entry {
             // TODO: handle duplicates
-            // TODO: propagate the error
-            acc.insert(key.as_str().unwrap().to_owned(), value);
+            acc.insert(key, value);
           }
           acc
         },
@@ -149,7 +147,9 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
 fn flow_compact_mapping(input: Input) -> ParseResult<Value> {
   map(flow_mapping_entry, |(key, value)| {
     let mut map = Map::new();
-    map.insert(key.as_str().unwrap().to_owned(), value);
+    if let Value::String(key) = key {
+      map.insert(key, value);
+    }
 
     Value::Object(map)
   })(input)
