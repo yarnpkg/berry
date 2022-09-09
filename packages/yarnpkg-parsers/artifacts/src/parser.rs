@@ -8,7 +8,9 @@ use nom::{
   AsChar, IResult,
 };
 use nom_supreme::{error::ErrorTree, multi::parse_separated_terminated};
-use serde_json::{json, Value};
+
+// Note: Don't use the `json!` macro - the bundle will be larger and the code will likely be slower.
+use serde_json::{Map, Value};
 
 use crate::{
   combinators::{empty, escaped_transform},
@@ -37,19 +39,22 @@ fn top_level_expression(input: Input) -> ParseResult<Value> {
 }
 
 fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
-  fold_many1(
-    alt((map(comment, |_| Default::default()), |input| {
-      property_statement(input, indent)
-    })),
-    || json!({}),
-    |mut acc, (key, value)| {
-      if !key.is_null() {
-        // TODO: handle duplicates
-        // TODO: propagate the error
-        acc[key.as_str().unwrap()] = value;
-      }
-      acc
-    },
+  map(
+    fold_many1(
+      alt((map(comment, |_| Default::default()), |input| {
+        property_statement(input, indent)
+      })),
+      Map::new,
+      |mut acc, (key, value)| {
+        if !key.is_null() {
+          // TODO: handle duplicates
+          // TODO: propagate the error
+          acc.insert(key.as_str().unwrap().to_owned(), value);
+        }
+        acc
+      },
+    ),
+    Value::Object,
   )(input)
 }
 
@@ -92,19 +97,22 @@ fn item_statement(input: Input, indent: usize) -> ParseResult<Value> {
 fn flow_mapping(input: Input) -> ParseResult<Value> {
   preceded(
     terminated(char('{'), multispace0),
-    parse_separated_terminated(
-      opt(flow_mapping_entry),
-      delimited(multispace0, char(','), multispace0),
-      preceded(multispace0, char('}')),
-      || json!({}),
-      |mut acc, entry| {
-        if let Some((key, value)) = entry {
-          // TODO: handle duplicates
-          // TODO: propagate the error
-          acc[key.as_str().unwrap()] = value;
-        }
-        acc
-      },
+    map(
+      parse_separated_terminated(
+        opt(flow_mapping_entry),
+        delimited(multispace0, char(','), multispace0),
+        preceded(multispace0, char('}')),
+        Map::new,
+        |mut acc, entry| {
+          if let Some((key, value)) = entry {
+            // TODO: handle duplicates
+            // TODO: propagate the error
+            acc.insert(key.as_str().unwrap().to_owned(), value);
+          }
+          acc
+        },
+      ),
+      Value::Object,
     ),
   )(input)
 }
@@ -140,7 +148,10 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
 
 fn flow_compact_mapping(input: Input) -> ParseResult<Value> {
   map(flow_mapping_entry, |(key, value)| {
-    json!({ key.as_str().unwrap(): value })
+    let mut map = Map::new();
+    map.insert(key.as_str().unwrap().to_owned(), value);
+
+    Value::Object(map)
   })(input)
 }
 
