@@ -3,7 +3,7 @@ use nom::{
   bytes::complete::{is_not, take_while_m_n},
   character::complete::{char, line_ending, multispace0, not_line_ending, space0, space1},
   combinator::{map, map_opt, map_res, opt, recognize, value},
-  multi::{count, fold_many1, many0_count, separated_list0},
+  multi::{count, fold_many1, many0_count},
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
@@ -118,21 +118,24 @@ fn flow_mapping_entry(input: Input) -> ParseResult<(Value, Value)> {
 }
 
 fn flow_sequence(input: Input) -> ParseResult<Value> {
-  delimited(
-    char('['),
-    delimited(
-      multispace0,
-      map(
-        separated_list0(
-          delimited(multispace0, char(','), multispace0),
-          // TODO: Support compact mappings.
-          flow_expression,
-        ),
-        Value::Array,
+  preceded(
+    terminated(char('['), multispace0),
+    map(
+      parse_separated_terminated(
+        // TODO: Support compact mappings.
+        opt(flow_expression),
+        delimited(multispace0, char(','), multispace0),
+        preceded(multispace0, char(']')),
+        Vec::new,
+        |mut acc, value| {
+          if let Some(value) = value {
+            acc.push(value);
+          }
+          acc
+        },
       ),
-      multispace0,
+      Value::Array,
     ),
-    char(']'),
   )(input)
 }
 

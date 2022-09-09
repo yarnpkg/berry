@@ -81,6 +81,15 @@ describe(`Syml parser`, () => {
     ]))).toStrictEqual([`foo`, `bar`]);
   });
 
+  it(`should allow trailing commas inside flow sequences`, () => {
+    expect(parseSyml(joinYaml([
+      `[`,
+      `  foo,`,
+      `  bar,`,
+      `]`,
+    ]))).toStrictEqual([`foo`, `bar`]);
+  });
+
   it(`should parse empty flow mappings`, () => {
     expect(parseSyml(`{}`)).toStrictEqual({});
   });
