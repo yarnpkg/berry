@@ -110,8 +110,11 @@ fn flow_mapping(input: Input) -> ParseResult<Value> {
 }
 
 fn flow_mapping_entry(input: Input) -> ParseResult<(Value, Value)> {
-  // TODO: Support other node types too.
-  separated_pair(scalar, delimited(space0, char(':'), space0), scalar)(input)
+  separated_pair(
+    scalar,
+    delimited(space0, char(':'), space0),
+    flow_expression,
+  )(input)
 }
 
 fn flow_sequence(input: Input) -> ParseResult<Value> {
@@ -120,8 +123,11 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
     delimited(
       multispace0,
       map(
-        // TODO: Support other node types too.
-        separated_list0(delimited(multispace0, char(','), multispace0), scalar),
+        separated_list0(
+          delimited(multispace0, char(','), multispace0),
+          // TODO: Support compact mappings.
+          flow_expression,
+        ),
         Value::Array,
       ),
       multispace0,
@@ -138,10 +144,12 @@ fn expression(input: Input, indent: usize) -> ParseResult<Value> {
     preceded(line_ending, |input| {
       property_statements(input, indent + INDENT_STEP)
     }),
-    terminated(flow_mapping, eol_any),
-    terminated(flow_sequence, eol_any),
-    terminated(scalar, eol_any),
+    flow_expression,
   ))(input)
+}
+
+fn flow_expression(input: Input) -> ParseResult<Value> {
+  terminated(alt((flow_mapping, flow_sequence, scalar)), opt(eol_any))(input)
 }
 
 fn indentation(input: Input, indent: usize) -> ParseResult<Vec<char>> {
