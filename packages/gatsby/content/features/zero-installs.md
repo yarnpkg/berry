@@ -58,3 +58,9 @@ $> yarn install --check-cache
 ```
 
 This way Yarn will re-download the package files from whatever their remote location would be and will report any mismatching checksum.
+
+### What does this do to my repository size?
+
+Every time you update a dependency and commit this, the repository will grow.
+This may lead to large repository sizes, which makes it slower to clone a repo.
+However, the time saved by not having to install every dependency will probably be far greater.
