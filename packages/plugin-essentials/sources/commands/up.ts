@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
-import {IdentHash, structUtils}                                                                         from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, InstallMode}                                                  from '@yarnpkg/core';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                                                             from 'clipanion';
-import {prompt}                                                                                         from 'enquirer';
-import micromatch                                                                                       from 'micromatch';
-import * as t                                                                                           from 'typanion';
+import {BaseCommand}                                                              from '@yarnpkg/cli';
+import {IdentHash, structUtils}                                                   from '@yarnpkg/core';
+import {StreamReport, Workspace, InstallMode}                                     from '@yarnpkg/core';
+import {Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                                       from 'clipanion';
+import {prompt}                                                                   from 'enquirer';
+import micromatch                                                                 from 'micromatch';
+import * as t                                                                     from 'typanion';
 
-import * as suggestUtils                                                                                from '../suggestUtils';
-import {Hooks}                                                                                          from '..';
+import * as suggestUtils                                                          from '../suggestUtils';
+import {Hooks}                                                                    from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
@@ -104,16 +104,7 @@ export default class UpCommand extends BaseCommand {
   }
 
   async executeUpRecursive() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    const {configuration, project, cache} = await this.getInstallState();
 
     const allDescriptors = [...project.storedDescriptors.values()];
 
@@ -152,16 +143,7 @@ export default class UpCommand extends BaseCommand {
   }
 
   async executeUpClassic() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    const {cache, configuration, project} = await this.getInstallState();
 
     const fixed = this.fixed;
     const interactive = this.interactive ?? configuration.get(`preferInteractive`);

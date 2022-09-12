@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Cache, Configuration, MessageName}   from '@yarnpkg/core';
-import {Project, StreamReport}               from '@yarnpkg/core';
-import {Command, Option, Usage}              from 'clipanion';
+import {BaseCommand}            from '@yarnpkg/cli';
+import {MessageName}            from '@yarnpkg/core';
+import {StreamReport}           from '@yarnpkg/core';
+import {Command, Option, Usage} from 'clipanion';
 
-import * as versionUtils                     from '../../versionUtils';
+import * as versionUtils        from '../../versionUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends BaseCommand {
@@ -57,16 +57,7 @@ export default class VersionApplyCommand extends BaseCommand {
   });
 
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    const {project, cache, configuration, workspace} = await this.getInstallState();
 
     const applyReport = await StreamReport.start({
       configuration,

@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                             from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}               from '@yarnpkg/cli';
+import {Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                                      from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
@@ -38,16 +38,7 @@ export default class LinkCommand extends BaseCommand {
   destinations = Option.Rest();
 
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    const {configuration, project, cache} = await this.getInstallState();
 
     const topLevelWorkspace = project.topLevelWorkspace;
     const linkedWorkspaces = [];

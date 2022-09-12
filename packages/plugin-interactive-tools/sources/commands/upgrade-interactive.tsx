@@ -1,12 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
-import * as libuiUtils                                                                                                                  from '@yarnpkg/libui/sources/libuiUtils';
-import type {SubmitInjectedComponent}                                                                                                   from '@yarnpkg/libui/sources/misc/renderForm';
-import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                                 from 'clipanion';
-import {diffWords}                                                                                                                      from 'diff';
-import semver                                                                                                                           from 'semver';
-import {WriteStream}                                                                                                                    from 'tty';
+import {BaseCommand}                                                                                     from '@yarnpkg/cli';
+import {HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
+import * as libuiUtils                                                                                   from '@yarnpkg/libui/sources/libuiUtils';
+import type {SubmitInjectedComponent}                                                                    from '@yarnpkg/libui/sources/misc/renderForm';
+import {suggestUtils}                                                                                    from '@yarnpkg/plugin-essentials';
+import {Command, Usage}                                                                                  from 'clipanion';
+import {diffWords}                                                                                       from 'diff';
+import semver                                                                                            from 'semver';
+import {WriteStream}                                                                                     from 'tty';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
@@ -49,16 +49,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const {Box, Text} = await import(`ink`);
     const {default: React, useEffect, useRef, useState} = await import(`react`);
 
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    const {configuration, project, cache, workspace} = await this.getInstallState();
 
     // 7 = 1-line command written by the user
     //   + 2-line prompt

@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                    from '@yarnpkg/cli';
-import {Configuration, Cache, Descriptor, Project, formatUtils} from '@yarnpkg/core';
-import {StreamReport, Workspace, InstallMode}                   from '@yarnpkg/core';
-import {structUtils}                                            from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                     from 'clipanion';
-import micromatch                                               from 'micromatch';
-import * as t                                                   from 'typanion';
+import {BaseCommand}                          from '@yarnpkg/cli';
+import {Descriptor, formatUtils}              from '@yarnpkg/core';
+import {StreamReport, Workspace, InstallMode} from '@yarnpkg/core';
+import {structUtils}                          from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}   from 'clipanion';
+import micromatch                             from 'micromatch';
+import * as t                                 from 'typanion';
 
-import * as suggestUtils                                        from '../suggestUtils';
-import {Hooks}                                                  from '..';
+import * as suggestUtils                      from '../suggestUtils';
+import {Hooks}                                from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RemoveCommand extends BaseCommand {
@@ -58,16 +58,7 @@ export default class RemoveCommand extends BaseCommand {
   patterns = Option.Rest();
 
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    const {project, configuration, workspace, cache} = await this.getInstallState();
 
     const affectedWorkspaces = this.all
       ? project.workspaces
