@@ -32,9 +32,7 @@ fn top_level_expression(input: Input) -> ParseResult<Value> {
   alt((
     |input| item_statements(input, 0),
     |input| property_statements(input, 0),
-    terminated(flow_mapping, eol_any),
-    terminated(flow_sequence, eol_any),
-    terminated(scalar, eol_any),
+    flow_expression,
   ))(input)
 }
 
