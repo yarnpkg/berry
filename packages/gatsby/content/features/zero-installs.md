@@ -61,6 +61,6 @@ This way Yarn will re-download the package files from whatever their remote loca
 
 ### What does this do to my repository size?
 
-Every time you update a dependency and commit this, the repository will grow.
+Every time you update a dependency and commit this, the repository will grow, as its git history will now contain both the new and the old version.
 This may lead to large repository sizes, which makes it slower to clone a repo.
 However, the time saved by not having to install every dependency will probably be far greater.
