@@ -35,9 +35,7 @@ function getPotentialDescriptor(descriptor: Descriptor) {
   try {
     const parsedRange = structUtils.parseRange(descriptor.range);
     const potentialDescriptor = structUtils.tryParseDescriptor(parsedRange.selector, true);
-    if (potentialDescriptor) {
-      return potentialDescriptor;
-    }
+    return potentialDescriptor || undefined;
   } catch { }
   return undefined;
 }
