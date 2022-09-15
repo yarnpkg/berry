@@ -30,7 +30,7 @@ npm i -g corepack
 
 Corepack won't always have the latest Yarn release. You can make sure it does with [`corepack prepare`](https://nodejs.org/api/corepack.html#upgrading-the-global-versions).
 
-### Node.js >=16.17 or >=18.6
+### Node.js ^16.17 or >=18.6
 
 ```bash
 corepack prepare yarn@stable --activate
@@ -41,7 +41,7 @@ corepack prepare yarn@stable --activate
 Take a look at the [latest Yarn release](https://github.com/yarnpkg/berry/releases/latest), note the version number, and run:
 
 ```bash
-corepack prepare pnpm@<version> --activate
+corepack prepare yarn@<version> --activate
 ```
 ## Initializing your project
 
