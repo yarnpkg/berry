@@ -4,7 +4,7 @@ import {structUtils}                                                      from '
 import {Command, Option, Usage}                                           from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class WorkspacesFocus extends BaseCommand {
+export default class WorkspacesFocusCommand extends BaseCommand {
   static paths = [
     [`workspaces`, `focus`],
   ];

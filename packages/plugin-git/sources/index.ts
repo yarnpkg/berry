@@ -60,6 +60,8 @@ const plugin: Plugin = {
 };
 
 export {gitUtils};
+export {GitFetcher};
+export {GitResolver};
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

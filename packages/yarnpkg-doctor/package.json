@@ -3,6 +3,10 @@
   "version": "4.0.0-rc.18",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
+  "exports": {
+    "./cli": "./sources/boot-cli-dev.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -23,7 +27,11 @@
     "prepack": "run build:compile \"$(pwd)\""
   },
   "publishConfig": {
-    "bin": "./lib/cli.js"
+    "bin": "./lib/cli.js",
+    "exports": {
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

@@ -6,6 +6,10 @@ import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
 import {getGlobalHardlinksStore}            from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
+export {NodeModulesLinker};
+export {NodeModulesMode};
+export {PnpLooseLinker};
+
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;

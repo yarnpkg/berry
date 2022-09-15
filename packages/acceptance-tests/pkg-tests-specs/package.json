@@ -3,6 +3,10 @@
   "private": true,
   "license": "BSD-2-Clause",
   "main": "./sources/index.js",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git",

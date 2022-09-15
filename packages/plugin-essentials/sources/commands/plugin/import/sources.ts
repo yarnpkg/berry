@@ -14,7 +14,7 @@ const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: s
 ];
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlSourcesCommand extends BaseCommand {
+export default class PluginImportSourcesCommand extends BaseCommand {
   static paths = [
     [`plugin`, `import`, `from`, `sources`],
   ];

@@ -5,6 +5,11 @@
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./cli": "./sources/boot-cli-dev.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
@@ -30,7 +35,11 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

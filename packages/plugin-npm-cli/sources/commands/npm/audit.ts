@@ -9,7 +9,7 @@ import * as npmAuditTypes                                                       
 import * as npmAuditUtils                                                          from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
-export default class AuditCommand extends BaseCommand {
+export default class NpmAuditCommand extends BaseCommand {
   static paths = [
     [`npm`, `audit`],
   ];

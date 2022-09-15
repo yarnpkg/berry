@@ -5,6 +5,11 @@ import {LinkResolver}    from './LinkResolver';
 import {RawLinkFetcher}  from './RawLinkFetcher';
 import {RawLinkResolver} from './RawLinkResolver';
 
+export {LinkFetcher};
+export {LinkResolver};
+export {RawLinkFetcher};
+export {RawLinkResolver};
+
 const plugin: Plugin = {
   fetchers: [
     RawLinkFetcher,

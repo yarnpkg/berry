@@ -4,6 +4,10 @@
   "stableVersion": "2.7.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/libzip": "workspace:^",
@@ -18,7 +22,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

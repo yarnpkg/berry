@@ -5,10 +5,11 @@ import semver                                              from 'semver';
 import {pathToFileURL}                                     from 'url';
 
 import {PnpLinker}                                         from './PnpLinker';
-import unplug                                              from './commands/unplug';
+import UnplugCommand                                       from './commands/unplug';
 import * as jsInstallUtils                                 from './jsInstallUtils';
 import * as pnpUtils                                       from './pnpUtils';
 
+export {UnplugCommand};
 export {jsInstallUtils};
 export {pnpUtils};
 
@@ -123,7 +124,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
     PnpLinker,
   ],
   commands: [
-    unplug,
+    UnplugCommand,
   ],
 };
 

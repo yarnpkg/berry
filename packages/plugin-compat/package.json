@@ -4,6 +4,10 @@
   "stableVersion": "3.1.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/plugin-patch": "workspace:^"
@@ -36,7 +40,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

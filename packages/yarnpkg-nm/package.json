@@ -3,7 +3,10 @@
   "version": "4.0.0-rc.18",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
-  "types": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
@@ -20,7 +23,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

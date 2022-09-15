@@ -12,6 +12,11 @@ import * as npmPublishUtils                                    from './npmPublis
 export {npmConfigUtils};
 export {npmHttpUtils};
 export {npmPublishUtils};
+export {NpmHttpFetcher};
+export {NpmRemapResolver};
+export {NpmSemverFetcher};
+export {NpmSemverResolver};
+export {NpmTagResolver};
 
 export interface Hooks {
   /**

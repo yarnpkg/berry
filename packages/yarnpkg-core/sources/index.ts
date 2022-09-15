@@ -19,8 +19,10 @@ export type {ConfigurationValueMap, ConfigurationDefinitionMap}                 
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                     from './Fetcher';
 export {BuildType}                                                                                        from './Installer';
 export type {Installer, BuildDirective, InstallStatus, InstallPackageExtraApi, FinalizeInstallStatus}     from './Installer';
+export {LegacyMigrationResolver}                                                                          from './LegacyMigrationResolver';
 export {LightReport}                                                                                      from './LightReport';
 export type {Linker, LinkOptions, MinimalLinkOptions}                                                     from './Linker';
+export {LockfileResolver}                                                                                 from './LockfileResolver';
 export {Manifest}                                                                                         from './Manifest';
 export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMeta}                       from './Manifest';
 export {MessageName, parseMessageName, stringifyMessageName}                                              from './MessageName';
