@@ -1,9 +1,12 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
+import assert                                                                                                                                                                              from 'assert';
 import {Module}                                                                                                                                                                            from 'module';
 import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
+import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
 import {inspect}                                                                                                                                                                           from 'util';
 
+import {packageImportsResolve}                                                                                                                                                             from '../node/resolve.js';
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
@@ -522,6 +525,17 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return null;
   }
 
+  function tryReadFile(filePath: NativePath) {
+    try {
+      return opts.fakeFs.readFileSync(npath.toPortablePath(filePath), `utf8`);
+    } catch (err) {
+      if (err.code === `ENOENT`)
+        return undefined;
+
+      throw err;
+    }
+  }
+
   /**
    * Transforms a request (what's typically passed as argument to the require function) into an unqualified path.
    * This path is called "unqualified" because it only changes the package name to the package location on the disk,
@@ -535,6 +549,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function resolveToUnqualified(request: PortablePath, issuer: PortablePath | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): PortablePath | null {
+    if (request.startsWith(`#`))
+      throw new Error(`resolveToUnqualified can not handle private import mappings`);
+
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
     if (request === `pnpapi`)
       return npath.toPortablePath(opts.pnpapiResolution);
@@ -863,6 +880,28 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions}: ResolveRequestOptions = {}): PortablePath | null {
     try {
+      if (request.startsWith(`#`)) {
+        assert(issuer, `An issuer is required to resolve private import mappings`);
+
+        const resolved = packageImportsResolve({
+          name: request,
+          base: pathToFileURL(npath.fromPortablePath(issuer)),
+          conditions: conditions ?? defaultExportsConditions,
+          readFileSyncFn: tryReadFile,
+        });
+
+        if (resolved instanceof URL) {
+          return resolveUnqualified(npath.toPortablePath(fileURLToPath(resolved)), {extensions});
+        } else {
+          if (resolved.startsWith(`#`))
+            // Node behaves interestingly by default so just block the request for now.
+            // https://github.com/nodejs/node/issues/40579
+            throw new Error(`Mapping from one private import to another isn't allowed`);
+
+          return resolveRequest(resolved as PortablePath, issuer, {conditions, considerBuiltins});
+        }
+      }
+
       const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
       // If the request is the pnpapi, we can just return the unqualifiedPath

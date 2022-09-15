@@ -74,6 +74,7 @@ The following changes only affect people writing Yarn plugins:
 ### Compatibility
 
 - The patched filesystem now supports `fchown`.
+- PnP now handles private import mappings.
 
 ### Shell
 

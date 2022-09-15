@@ -42,7 +42,7 @@ export async function resolve(
 
   let allowLegacyResolve = false;
 
-  if (dependencyNameMatch) {
+  if (dependencyNameMatch && specifier.startsWith(`#`) === false) {
     const [, dependencyName, subPath] = dependencyNameMatch as [unknown, string, PortablePath];
 
     // If the package.json doesn't list an `exports` field, Node will tolerate omitting the extension
