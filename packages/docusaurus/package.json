@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "docusaurus": "docusaurus",
-    "start": "docusaurus start",
+    "docusaurus": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./xxx.js\" docusaurus",
+    "start": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./xxx.js\" docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -24,8 +24,12 @@
   },
   "devDependencies": {
     "@docusaurus/theme-classic": "^2.1.0",
+    "@docusaurus/theme-common": "^2.1.0",
     "@tsconfig/docusaurus": "^1.0.5",
-    "@types/react": "^18.0.20"
+    "@types/react": "^18.0.20",
+    "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/libzip": "workspace:^",
+    "@yarnpkg/monorepo": "workspace:^"
   },
   "browserslist": {
     "production": [

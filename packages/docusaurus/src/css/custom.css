@@ -4,6 +4,88 @@
  * work well for content-centric websites.
  */
 
+html {
+  background-image: url('/img/yarn-bg-lossless.webp');
+}
+
+.theme-doc-sidebar-container {
+  border-right: 0 !important;
+}
+
+.menu {
+  border-right: 1px solid var(--ifm-toc-border-color);
+}
+
+.theme-doc-breadcrumbs {
+  padding-bottom: 1.5rem;
+}
+
+.navbar {
+  margin-top: 40px;
+  margin-bottom: 0;
+
+  padding: 0 40px;
+}
+
+.navbar:not(.navbar--is-fixed) {
+  --ifm-navbar-link-color: #ffffff;
+  --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
+
+  background: none;
+  box-shadow: none;
+}
+
+.navbar__brand {
+  margin-right: 100px;
+}
+
+.navbar__title {
+  display: none;
+}
+
+.navbar__logo {
+  height: var(--ifm-navbar-height);
+}
+
+.navbar__link--active {
+  position: relative;
+}
+
+.navbar__link--active::before {
+  position: absolute;
+
+  left: var(--ifm-navbar-item-padding-horizontal);
+  right: var(--ifm-navbar-item-padding-horizontal);
+  bottom: -3px;
+
+  height: 3px;
+  background: linear-gradient(to left, #7678ff, #c326ef);
+}
+
+.navbar:not(.navbar--is-fixed) .navbar__link--active::before {
+  content: '';
+}
+
+article {
+  padding-left: 1.5rem;
+}
+
+a[target] svg {
+  display: inline-block;
+  margin-left: .6rem;
+  opacity: .2;
+}
+
+.footer__links {
+  margin-bottom: 0;
+}
+
+.table-of-contents.table-of-contents__left-border a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #2e8555;
@@ -13,6 +95,10 @@
   --ifm-color-primary-light: #33925d;
   --ifm-color-primary-lighter: #359962;
   --ifm-color-primary-lightest: #3cad6e;
+  --ifm-navbar-height: 60px;
+  --ifm-navbar-padding-horizontal: 0;
+  --ifm-navbar-padding-vertical: 0;
+  --ifm-breadcrumb-item-background-active: #f5f5f5;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
