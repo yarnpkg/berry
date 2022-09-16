@@ -1,6 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Configuration, Project}              from '@yarnpkg/core';
+import {Configuration, Project, Workspace}   from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}  from 'clipanion';
+import {prompt}                              from 'enquirer';
 import semver                                from 'semver';
 
 import * as versionUtils                     from '../versionUtils';
@@ -37,15 +38,9 @@ export default class VersionCommand extends BaseCommand {
     ]],
   });
 
-  deferred = Option.Boolean(`-d,--deferred`, {
-    description: `Prepare the version to be bumped during the next release cycle`,
+  strategy = Option.String({
+    required: false,
   });
-
-  immediate = Option.Boolean(`-i,--immediate`, {
-    description: `Bump the version immediately`,
-  });
-
-  strategy = Option.String();
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -54,11 +49,50 @@ export default class VersionCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    let deferred = configuration.get(`preferDeferredVersions`);
-    if (this.deferred)
-      deferred = true;
-    if (this.immediate)
-      deferred = false;
+    return await this.executeImmediate({configuration, project, workspace});
+    const deferred = configuration.get(`preferDeferredVersions`);
+    if (deferred) {
+      return await this.executeImmediate({configuration, project, workspace});
+    } else {
+      return await this.executeDeferred({configuration, project, workspace});
+    }
+  }
+
+  async executeImmediate({configuration, project, workspace}: {configuration: Configuration, project: Project, workspace: Workspace}) {
+    const initialVersion = `1.0.0`;
+
+    const getChoice = (name: string, strategy: string) => {
+      const newVersion = semver.inc(initialVersion, strategy)!;
+      return {name: `${name} - ${newVersion}`, value: newVersion};
+    };
+
+    const {version} = await prompt<{version: string}>({
+      type: `select`,
+      name: `version`,
+      message: `New version:`,
+      required: true,
+      choices: [
+        getChoice(`Major`, `major`),
+        getChoice(`Minor`, `minor`),
+        getChoice(`Patch`, `patch`),
+      ],
+      onCancel: () => process.exit(130),
+    });
+
+    console.log(version);
+  }
+
+  async executeDeferred({configuration, project, workspace}: {configuration: Configuration, project: Project, workspace: Workspace}) {
+  }
+
+  async executeXXX() {
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+
+    if (!workspace)
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+
+    const deferred = configuration.get(`preferDeferredVersions`);
 
     const isSemver = semver.valid(this.strategy);
     const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
