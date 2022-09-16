@@ -2414,7 +2414,7 @@ function applyVirtualResolutionMutations({
     }
   }
 
-  const warningSortCriterias: Array<((warning: Warning) => string)> = [
+  const warningSortCriteria: Array<((warning: Warning) => string)> = [
     warning => structUtils.prettyLocatorNoColors(warning.subject),
     warning => structUtils.stringifyIdent(warning.requested),
     warning => `${warning.type}`,
@@ -2426,7 +2426,7 @@ function applyVirtualResolutionMutations({
     },
     skipIfEmpty: true,
   }, () => {
-    for (const warning of miscUtils.sortMap(warnings, warningSortCriterias)) {
+    for (const warning of miscUtils.sortMap(warnings, warningSortCriteria)) {
       switch (warning.type) {
         case WarningType.NotProvided: {
           report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${

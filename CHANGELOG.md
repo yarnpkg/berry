@@ -53,6 +53,10 @@ The following changes only affect people writing Yarn plugins:
 
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
+### Commands
+
+- `yarn explain peer-requirements` now uses the same output format as `yarn explain`, resulting in no more useless `YN0000` line prefixes.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.

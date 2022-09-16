@@ -1,8 +1,8 @@
-import {BaseCommand}                                                                                                          from '@yarnpkg/cli';
-import {Configuration, MessageName, miscUtils, Project, StreamReport, structUtils, semverUtils, formatUtils, PeerRequirement} from '@yarnpkg/core';
-import {Command, Option}                                                                                                      from 'clipanion';
-import {Writable}                                                                                                             from 'stream';
-import * as t                                                                                                                 from 'typanion';
+import {BaseCommand}                                                                                                                     from '@yarnpkg/cli';
+import {Configuration, MessageName, miscUtils, Project, StreamReport, structUtils, semverUtils, formatUtils, PeerRequirement, treeUtils} from '@yarnpkg/core';
+import {Command, Option}                                                                                                                 from 'clipanion';
+import {Writable}                                                                                                                        from 'stream';
+import * as t                                                                                                                            from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
@@ -54,43 +54,40 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
       });
     }
 
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      includeFooter: false,
-    }, async report => {
-      const sortCriterias: Array<(opts: [string, PeerRequirement]) => string> = [
-        ([, requirement]) => structUtils.stringifyLocator(project.storedPackages.get(requirement.subject)!),
-        ([, requirement]) => structUtils.stringifyIdent(requirement.requested),
-      ];
+    const sortCriteria: Array<(opts: [string, PeerRequirement]) => string> = [
+      ([, requirement]) => structUtils.stringifyLocator(project.storedPackages.get(requirement.subject)!),
+      ([, requirement]) => structUtils.stringifyIdent(requirement.requested),
+    ];
 
-      for (const [hash, requirement] of miscUtils.sortMap(project.peerRequirements, sortCriterias)) {
-        const subject = project.storedPackages.get(requirement.subject);
-        if (typeof subject === `undefined`)
-          throw new Error(`Assertion failed: Expected the subject package to have been registered`);
+    const list = miscUtils.sortMap(project.peerRequirements, sortCriteria).map(([hash, requirement]) => {
+      const subject = project.storedPackages.get(requirement.subject);
+      if (typeof subject === `undefined`)
+        throw new Error(`Assertion failed: Expected the subject package to have been registered`);
 
-        const rootRequester = project.storedPackages.get(requirement.rootRequester);
-        if (typeof rootRequester === `undefined`)
-          throw new Error(`Assertion failed: Expected the root package to have been registered`);
+      const rootRequester = project.storedPackages.get(requirement.rootRequester);
+      if (typeof rootRequester === `undefined`)
+        throw new Error(`Assertion failed: Expected the root package to have been registered`);
 
-        const providedDescriptor = subject.dependencies.get(requirement.requested.identHash) ?? null;
+      const providedDescriptor = subject.dependencies.get(requirement.requested.identHash) ?? null;
 
-        const prettyHash = formatUtils.pretty(configuration, hash, formatUtils.Type.CODE);
-        const prettySubject = structUtils.prettyLocator(configuration, subject);
-        const prettyIdent = structUtils.prettyIdent(configuration, requirement.requested);
-        const prettyRoot = structUtils.prettyIdent(configuration, rootRequester);
+      const prettyHash = formatUtils.pretty(configuration, hash, formatUtils.Type.CODE);
+      const prettySubject = structUtils.prettyLocator(configuration, subject);
+      const prettyIdent = structUtils.prettyIdent(configuration, requirement.requested);
+      const prettyRoot = structUtils.prettyIdent(configuration, rootRequester);
 
-        const descendantCount = requirement.allRequesters.length - 1;
+      const descendantCount = requirement.allRequesters.length - 1;
 
-        const pluralized = `descendant${descendantCount === 1 ? `` : `s`}`;
-        const maybeDescendants = descendantCount > 0 ? ` and ${descendantCount} ${pluralized}` : ``;
-        const provides = providedDescriptor !== null ? `provides` : `doesn't provide`;
+      const pluralized = `descendant${descendantCount === 1 ? `` : `s`}`;
+      const maybeDescendants = descendantCount > 0 ? ` and ${descendantCount} ${pluralized}` : ``;
+      const provides = providedDescriptor !== null ? `provides` : `doesn't provide`;
 
-        report.reportInfo(null, `${prettyHash} → ${prettySubject} ${provides} ${prettyIdent} to ${prettyRoot}${maybeDescendants}`);
-      }
+      return {
+        label: prettyHash,
+        value: formatUtils.tuple(formatUtils.Type.NO_HINT, `${prettySubject} ${provides} ${prettyIdent} to ${prettyRoot}${maybeDescendants}`),
+      };
     });
 
-    return report.exitCode();
+    return treeUtils.emitList(list, {configuration, stdout: this.context.stdout, json: false});
   }
 }
 
