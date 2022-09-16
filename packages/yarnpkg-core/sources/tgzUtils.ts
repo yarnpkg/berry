@@ -1,11 +1,11 @@
-import {Filename, FakeFS, PortablePath, ZipCompression, ZipFS, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                            from '@yarnpkg/libzip';
-import {PassThrough, Readable}                                                                       from 'stream';
-import tar                                                                                           from 'tar';
+import {Filename, FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
+import {ZipCompression, ZipFS}                                                from '@yarnpkg/libzip';
+import {PassThrough, Readable}                                                from 'stream';
+import tar                                                                    from 'tar';
 
-import {WorkerPool}                                                                                  from './WorkerPool';
-import * as miscUtils                                                                                from './miscUtils';
-import {getContent as getZipWorkerSource, ConvertToZipPayload}                                       from './worker-zip';
+import {WorkerPool}                                                           from './WorkerPool';
+import * as miscUtils                                                         from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
@@ -15,16 +15,14 @@ interface MakeArchiveFromDirectoryOptions {
 }
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
-  const libzip = await getLibzipPromise();
-
   let zipFs;
   if (inMemory) {
-    zipFs = new ZipFS(null, {libzip, level: compressionLevel});
+    zipFs = new ZipFS(null, {level: compressionLevel});
   } else {
     const tmpFolder = await xfs.mktempPromise();
     const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-    zipFs = new ZipFS(tmpFile, {create: true, libzip, level: compressionLevel});
+    zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel});
   }
 
   const target = ppath.resolve(PortablePath.root, prefixPath!);
@@ -49,7 +47,7 @@ export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
 
   await workerPool.run({tmpFile, tgz, opts});
 
-  return new ZipFS(tmpFile, {libzip: await getLibzipPromise(), level: opts.compressionLevel});
+  return new ZipFS(tmpFile, {level: opts.compressionLevel});
 }
 
 async function * parseTar(tgz: Buffer) {

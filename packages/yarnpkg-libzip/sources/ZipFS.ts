@@ -1,25 +1,23 @@
+import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from '@yarnpkg/fslib';
+import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from '@yarnpkg/fslib';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
+import {NodeFS}                                                                                                                                      from '@yarnpkg/fslib';
+import {opendir}                                                                                                                                     from '@yarnpkg/fslib';
+import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from '@yarnpkg/fslib';
+import {errors, statUtils}                                                                                                                           from '@yarnpkg/fslib';
+import {FSPath, PortablePath, npath, ppath, Filename}                                                                                                from '@yarnpkg/fslib';
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 import {types}                                                                                                                                       from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
-import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from './FakeFS';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from './FakeFS';
-import {NodeFS}                                                                                                                                      from './NodeFS';
-import {opendir}                                                                                                                                     from './algorithms/opendir';
-import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
-import {S_IFLNK, S_IFDIR, S_IFMT, S_IFREG}                                                                                                           from './constants';
-import * as errors                                                                                                                                   from './errors';
-import {FSPath, PortablePath, npath, ppath, Filename}                                                                                                from './path';
-import * as statUtils                                                                                                                                from './statUtils';
+import {getInstance}                                                                                                                                 from './instance';
 
 export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
 
 export type ZipBufferOptions = {
-  libzip: Libzip;
   readOnly?: boolean;
   stats?: Stats;
   level?: ZipCompression;
@@ -89,17 +87,16 @@ export class ZipFS extends BasePortableFakeFS {
   private ready = false;
   private readOnly = false;
 
-  constructor(p: PortablePath, opts: ZipPathOptions);
+  constructor();
+  constructor(p: PortablePath, opts?: ZipPathOptions);
   /**
    * Create a ZipFS in memory
    * @param data If null; an empty zip file will be created
    */
-  constructor(data: Buffer | null, opts: ZipBufferOptions);
+  constructor(data: Buffer | null, opts?: ZipBufferOptions);
 
-  constructor(source: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions) {
+  constructor(source?: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions = {}) {
     super();
-
-    this.libzip = opts.libzip;
 
     const pathOptions = opts as ZipPathOptions;
     this.level = typeof pathOptions.level !== `undefined`
@@ -134,6 +131,8 @@ export class ZipFS extends BasePortableFakeFS {
         this.stats = statUtils.makeDefaultStats();
       }
     }
+
+    this.libzip = getInstance();
 
     const errPtr = this.libzip.malloc(4);
 
@@ -714,12 +713,12 @@ export class ZipFS extends BasePortableFakeFS {
       const mtime = new Date(mtimeMs);
 
       const type = this.listings.has(p)
-        ? S_IFDIR
+        ? constants.S_IFDIR
         : this.isSymbolicLink(entry)
-          ? S_IFLNK
-          : S_IFREG;
+          ? constants.S_IFLNK
+          : constants.S_IFREG;
 
-      const defaultMode = type === S_IFDIR
+      const defaultMode = type === constants.S_IFDIR
         ? 0o755
         : 0o644;
 
@@ -749,7 +748,7 @@ export class ZipFS extends BasePortableFakeFS {
       const ctime = new Date(ctimeMs);
       const mtime = new Date(mtimeMs);
 
-      const mode = S_IFDIR | 0o755;
+      const mode = constants.S_IFDIR | 0o755;
       const crc = 0;
 
       const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
@@ -966,7 +965,7 @@ export class ZipFS extends BasePortableFakeFS {
       return false;
 
     const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
-    return (attributes & S_IFMT) === S_IFLNK;
+    return (attributes & constants.S_IFMT) === constants.S_IFLNK;
   }
 
   private getFileSource(index: number): Buffer
@@ -1058,7 +1057,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof entry === `undefined`)
       throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
 
-    const oldMod = this.getUnixMode(entry, S_IFREG | 0o000);
+    const oldMod = this.getUnixMode(entry, constants.S_IFREG | 0o000);
     const newMod = oldMod & (~0o777) | mask;
 
     const rc = this.libzip.file.setExternalAttributes(this.zip, entry, 0, 0, this.libzip.ZIP_OPSYS_UNIX, newMod << 16);
@@ -1392,7 +1391,7 @@ export class ZipFS extends BasePortableFakeFS {
     const index = this.setFileSource(resolvedP, target);
     this.registerEntry(resolvedP, index);
 
-    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (S_IFLNK | 0o777) << 16);
+    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (constants.S_IFLNK | 0o777) << 16);
     if (rc === -1)
       throw this.makeLibzipError(this.libzip.getError(this.zip));
 

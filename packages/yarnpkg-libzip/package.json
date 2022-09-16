@@ -42,7 +42,11 @@
   },
   "dependencies": {
     "@types/emscripten": "^1.39.6",
+    "@yarnpkg/fslib": "workspace:^",
     "tslib": "^2.4.0"
+  },
+  "peerDependencies": {
+    "@yarnpkg/fslib": "*"
   },
   "engines": {
     "node": ">=14.15.0"

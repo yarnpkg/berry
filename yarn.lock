@@ -5835,8 +5835,11 @@ __metadata:
   dependencies:
     "@types/emscripten": "npm:^1.39.6"
     "@types/prettier": "npm:1.19.0"
+    "@yarnpkg/fslib": "workspace:^"
     prettier: "npm:^1.19.1"
     tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@yarnpkg/fslib": "*"
   languageName: unknown
   linkType: soft
 
@@ -6007,6 +6010,7 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/libzip": "workspace:^"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
