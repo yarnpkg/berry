@@ -1,5 +1,3 @@
-/packages/yarnpkg-core/ @arcanis
-
 # Security: Could otherwise change the checked-in artifacts
 /packages/*/bin/**/*.js @arcanis
 
