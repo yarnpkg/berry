@@ -183,7 +183,6 @@ describe(`Protocols`, () => {
           await expect(source(`require('npm-has-prepack')`)).resolves.toEqual(42);
         },
       ),
-      45000,
     );
 
     test(
