@@ -144,7 +144,7 @@ case $PACKAGE_MANAGER in
       --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.local/share/pnpm/store ~/.cache/pnpm' \
       'pnpm install'
     bench install-cache-only \
-      --prepare 'rm -rf node_modules pnpm-lock.yaml ~/.cache/pnpm' \
+      --prepare 'rm -rf node_modules pnpm-lock.yaml' \
       'pnpm install'
     bench install-cache-and-lock \
       --prepare 'rm -rf node_modules' \
