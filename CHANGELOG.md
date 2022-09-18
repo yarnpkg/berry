@@ -71,6 +71,10 @@ The following changes only affect people writing Yarn plugins:
 
 - The patched filesystem now supports `fchown`.
 
+### Shell
+
+- The builtin shell now supports whitespace-only commands.
+
 ## 3.2.3
 
 ### Bugfixes
