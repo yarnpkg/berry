@@ -242,7 +242,7 @@ This option is typically meant to be used on your CI and production servers, and
 
 ## YN0029 - `CROSS_DRIVE_VIRTUAL_LOCAL`
 
-This error code is deprecated.
+> **Removed:** Virtuals aren't implemented using symlinks anymore.
 
 ## YN0030 - `FETCH_FAILED`
 
