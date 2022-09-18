@@ -48,6 +48,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
 - PnP now reports loaded modules when in watch mode.
 
+### Shell
+
+- The builtin shell now supports whitespace-only commands.
+
 ## 3.2.3
 
 ### Bugfixes

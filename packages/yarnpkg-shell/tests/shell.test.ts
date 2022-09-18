@@ -87,22 +87,54 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
 
 describe(`Shell`, () => {
   describe(`Simple shell features`, () => {
-    it(`should support an empty string`, async () => {
-      await expect(bufferResult(
-        ``,
-      )).resolves.toMatchObject({
+    describe(`Empty commands`, () => {
+      const EMPTY_COMMAND_RESULT = {
         exitCode: 0,
         stdout: ``,
-      });
-    });
+      };
 
-    it(`should support an empty string when passing arguments`, async () => {
-      await expect(bufferResult(
-        ``,
-        [`hello`, `world`],
-      )).resolves.toMatchObject({
-        exitCode: 0,
-        stdout: ``,
+      it(`should support an empty string`, async () => {
+        await expect(bufferResult(
+          ``,
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+      });
+
+      it(`should support a whitespace-only string`, async () => {
+        await expect(bufferResult(
+          ` `,
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+
+        await expect(bufferResult(
+          `\t`,
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+
+        await expect(bufferResult(
+          `  \t   \t   \t  `,
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+      });
+
+      it(`should support an empty string when passing arguments`, async () => {
+        await expect(bufferResult(
+          ``,
+          [`hello`, `world`],
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+      });
+
+      it(`should support a whitespace-only string when passing arguments`, async () => {
+        await expect(bufferResult(
+          ` `,
+          [`hello`, `world`],
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+
+        await expect(bufferResult(
+          `\t`,
+          [`hello`, `world`],
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+
+        await expect(bufferResult(
+          `  \t   \t   \t  `,
+          [`hello`, `world`],
+        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
       });
     });
 
