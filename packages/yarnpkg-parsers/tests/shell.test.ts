@@ -137,8 +137,8 @@ describe(`Shell parser`, () => {
     });
   });
 
-  describe(`String parse`, () => {
-    it(`should parse parse double quote string correctly`, () => {
+  describe(`Strings`, () => {
+    it(`should parse double quoted strings correctly`, () => {
       for (const [original, raw] of DOUBLE_QUOTE_STRING_ESCAPE_TESTS) {
         expect(parseShell(`echo "${original}"`)).toStrictEqual([expect.objectContaining({
           command: expect.objectContaining({
@@ -153,7 +153,7 @@ describe(`Shell parser`, () => {
       }
     });
 
-    it(`should parse parse ANSI-C quote string correctly`, () => {
+    it(`should parse ANSI-C strings correctly`, () => {
       for (const [original, raw] of ANSI_C_STRING_ESCAPE_TESTS) {
         expect(parseShell(`echo $'${original}'`)).toStrictEqual([expect.objectContaining({
           command: expect.objectContaining({
