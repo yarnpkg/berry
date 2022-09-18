@@ -53,6 +53,10 @@ The following changes only affect people writing Yarn plugins:
 
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
+- For consistency reasons:
+  - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
+  - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
