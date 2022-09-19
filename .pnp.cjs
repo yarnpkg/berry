@@ -55974,7 +55974,8 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
   function resolveRequest(request, issuer, { considerBuiltins, extensions, conditions } = {}) {
     try {
       if (request.startsWith(`#`)) {
-        assert__default.default(issuer, `An issuer is required to resolve private import mappings`);
+        if (!issuer)
+          throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
         const resolved = packageImportsResolve({
           name: request,
           base: url.pathToFileURL(npath.fromPortablePath(issuer)),

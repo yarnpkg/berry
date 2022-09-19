@@ -1,6 +1,5 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
-import assert                                                                                                                                                                              from 'assert';
 import {Module}                                                                                                                                                                            from 'module';
 import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
 import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
@@ -881,7 +880,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions}: ResolveRequestOptions = {}): PortablePath | null {
     try {
       if (request.startsWith(`#`)) {
-        assert(issuer, `An issuer is required to resolve private import mappings`);
+        if (!issuer)
+          throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
 
         const resolved = packageImportsResolve({
           name: request,
