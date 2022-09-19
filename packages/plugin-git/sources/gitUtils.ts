@@ -1,11 +1,11 @@
-import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
-import {UsageError}                                                                                                                               from 'clipanion';
-import GitUrlParse                                                                                                                                from 'git-url-parse';
-import capitalize                                                                                                                                 from 'lodash/capitalize';
-import querystring                                                                                                                                from 'querystring';
-import semver                                                                                                                                     from 'semver';
-import urlLib                                                                                                                                     from 'url';
+import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils, Workspace} from '@yarnpkg/core';
+import {Filename, npath, PortablePath, ppath, xfs}                                                                                                           from '@yarnpkg/fslib';
+import {UsageError}                                                                                                                                          from 'clipanion';
+import GitUrlParse                                                                                                                                           from 'git-url-parse';
+import capitalize                                                                                                                                            from 'lodash/capitalize';
+import querystring                                                                                                                                           from 'querystring';
+import semver                                                                                                                                                from 'semver';
+import urlLib                                                                                                                                                from 'url';
 
 function makeGitEnvironment() {
   return {
@@ -340,6 +340,81 @@ export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array
   const title = showStdout.trim();
 
   return {hash, title};
+}
+
+export async function findLastPackageJsonUpdate(workspaceCwd: PortablePath) {
+  let currentVersion: string | undefined;
+
+  const gitLogOutput = await execUtils.execvp(`git`, [`log`, `--format=%H`, `--`, `./package.json`], {
+    cwd: workspaceCwd,
+    strict: true,
+  });
+
+  for (const [commitHash] of gitLogOutput.stdout.matchAll(/^.+$/gm)) {
+    const gitShowOutput = await execUtils.execvp(`git`, [`show`, `${commitHash}:./package.json`], {
+      cwd: workspaceCwd,
+      strict: true,
+    });
+
+    let parsed;
+    try {
+      parsed = JSON.parse(gitShowOutput.stdout);
+    } catch {
+      continue;
+    }
+
+    if (typeof currentVersion === `undefined`) {
+      currentVersion = parsed.version;
+    } else if (parsed.version !== currentVersion) {
+      return commitHash;
+    }
+  }
+
+  return null;
+}
+
+const GH_MERGE_REGEXP = /^Merge pull request #(?<number>[0-9]+) from.*\n\n(?<message>(?<title>.*)($|\n)[\s\S]*)/;
+const GH_SQUASH_REGEXP = /^(?<message>(?<title>.*) \(#(?<number>[0-9]+)\)($|\n)[\s\S]*)/;
+
+export function parsePullRequestInfo(hash: string, message: string) {
+  let match: RegExpMatchArray | null = null;
+
+  for (const regex of [GH_MERGE_REGEXP, GH_SQUASH_REGEXP])
+    if ((match = message.match(regex)))
+      break;
+
+  if (!match?.groups)
+    return null;
+
+  return {
+    hash,
+    number: parseInt(match.groups.number, 10),
+    title: match.groups.title,
+    message: match.groups.message,
+  };
+}
+
+export async function findPullRequestsSince(since: string, {project, workspace}: {project: Project, workspace: Workspace}) {
+  const otherWorkspacesRelCwds = project.workspaces
+    .filter(otherWorkspace => otherWorkspace !== workspace)
+    .map(otherWorkspace => ppath.relative(workspace.cwd, otherWorkspace.cwd))
+    .filter(otherWorkspaceRelCwd => !otherWorkspaceRelCwd.startsWith(`../`))
+    .map(otherWorkspaceRelCwd => otherWorkspaceRelCwd.replace(/^(?!\.{0,2}\/)/, `./`));
+
+  const {stdout: localStdout} = await execUtils.execvp(`git`, [`log`, `--first-parent`, `--pretty=format:%H%n%w(0,4,4)%B`, `${since}...HEAD`, `--`, `.`, ...otherWorkspacesRelCwds.map(entry => `:!${entry}`)], {cwd: workspace.cwd, strict: true});
+  const rawCommits = localStdout.matchAll(/^(?<hash>[a-f0-9]+)(?<body>(?:\n {4}.*)*)\n/gm);
+
+  const pullRequests: Array<NonNullable<ReturnType<typeof parsePullRequestInfo>>> = [];
+  for (const {groups} of rawCommits) {
+    const body = groups!.body.replace(/\n {4}/gm, `\n`).trim();
+    const pullRequest = parsePullRequestInfo(groups!.hash, body);
+
+    if (pullRequest) {
+      pullRequests.push(pullRequest);
+    }
+  }
+
+  return pullRequests;
 }
 
 // Note: This returns all changed files from the git diff,

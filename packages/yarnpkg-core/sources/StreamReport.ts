@@ -677,14 +677,14 @@ export class StreamReport extends Report {
     return str;
   }
 
-  private formatName(name: MessageName | null) {
+  formatName(name: MessageName | null) {
     return formatName(name, {
       configuration: this.configuration,
       json: this.json,
     });
   }
 
-  private formatNameWithHyperlink(name: MessageName | null) {
+  formatNameWithHyperlink(name: MessageName | null) {
     return formatNameWithHyperlink(name, {
       configuration: this.configuration,
       json: this.json,
