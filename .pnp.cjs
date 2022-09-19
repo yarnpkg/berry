@@ -55971,25 +55971,28 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
       );
     }
   }
-  function resolveRequest(request, issuer, { considerBuiltins, extensions, conditions } = {}) {
+  function resolvePrivateRequest(request, issuer, opts2) {
+    if (!issuer)
+      throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
+    const resolved = packageImportsResolve({
+      name: request,
+      base: url.pathToFileURL(npath.fromPortablePath(issuer)),
+      conditions: opts2.conditions ?? defaultExportsConditions,
+      readFileSyncFn: tryReadFile
+    });
+    if (resolved instanceof URL) {
+      return resolveUnqualified(npath.toPortablePath(url.fileURLToPath(resolved)), { extensions: opts2.extensions });
+    } else {
+      if (resolved.startsWith(`#`))
+        throw new Error(`Mapping from one private import to another isn't allowed`);
+      return resolveRequest(resolved, issuer, opts2);
+    }
+  }
+  function resolveRequest(request, issuer, opts2 = {}) {
     try {
-      if (request.startsWith(`#`)) {
-        if (!issuer)
-          throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
-        const resolved = packageImportsResolve({
-          name: request,
-          base: url.pathToFileURL(npath.fromPortablePath(issuer)),
-          conditions: conditions ?? defaultExportsConditions,
-          readFileSyncFn: tryReadFile
-        });
-        if (resolved instanceof URL) {
-          return resolveUnqualified(npath.toPortablePath(url.fileURLToPath(resolved)), { extensions });
-        } else {
-          if (resolved.startsWith(`#`))
-            throw new Error(`Mapping from one private import to another isn't allowed`);
-          return resolveRequest(resolved, issuer, { conditions, considerBuiltins, extensions });
-        }
-      }
+      if (request.startsWith(`#`))
+        return resolvePrivateRequest(request, issuer, opts2);
+      const { considerBuiltins, extensions, conditions } = opts2;
       const unqualifiedPath = resolveToUnqualified(request, issuer, { considerBuiltins });
       if (request === `pnpapi`)
         return unqualifiedPath;

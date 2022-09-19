@@ -869,6 +869,29 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     }
   }
 
+  function resolvePrivateRequest(request: PortablePath, issuer: PortablePath | null, opts: ResolveRequestOptions) {
+    if (!issuer)
+      throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
+
+    const resolved = packageImportsResolve({
+      name: request,
+      base: pathToFileURL(npath.fromPortablePath(issuer)),
+      conditions: opts.conditions ?? defaultExportsConditions,
+      readFileSyncFn: tryReadFile,
+    });
+
+    if (resolved instanceof URL) {
+      return resolveUnqualified(npath.toPortablePath(fileURLToPath(resolved)), {extensions: opts.extensions});
+    } else {
+      if (resolved.startsWith(`#`))
+        // Node behaves interestingly by default so just block the request for now.
+        // https://github.com/nodejs/node/issues/40579
+        throw new Error(`Mapping from one private import to another isn't allowed`);
+
+      return resolveRequest(resolved as PortablePath, issuer, opts);
+    }
+  }
+
   /**
    * Transforms a request into a fully qualified path.
    *
@@ -877,30 +900,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, {considerBuiltins, extensions, conditions}: ResolveRequestOptions = {}): PortablePath | null {
+  function resolveRequest(request: PortablePath, issuer: PortablePath | null, opts: ResolveRequestOptions = {}): PortablePath | null {
     try {
-      if (request.startsWith(`#`)) {
-        if (!issuer)
-          throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
+      if (request.startsWith(`#`))
+        return resolvePrivateRequest(request, issuer, opts);
 
-        const resolved = packageImportsResolve({
-          name: request,
-          base: pathToFileURL(npath.fromPortablePath(issuer)),
-          conditions: conditions ?? defaultExportsConditions,
-          readFileSyncFn: tryReadFile,
-        });
-
-        if (resolved instanceof URL) {
-          return resolveUnqualified(npath.toPortablePath(fileURLToPath(resolved)), {extensions});
-        } else {
-          if (resolved.startsWith(`#`))
-            // Node behaves interestingly by default so just block the request for now.
-            // https://github.com/nodejs/node/issues/40579
-            throw new Error(`Mapping from one private import to another isn't allowed`);
-
-          return resolveRequest(resolved as PortablePath, issuer, {conditions, considerBuiltins, extensions});
-        }
-      }
+      const {considerBuiltins, extensions, conditions} = opts;
 
       const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
 
