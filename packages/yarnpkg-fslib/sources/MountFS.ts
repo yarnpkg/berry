@@ -961,7 +961,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
 
       filePath = this.pathUtils.join(filePath, mountPoint);
 
-      if (!this.isMount.has(filePath) === false) {
+      if (!this.isMount.has(filePath)) {
         if (this.notMount.has(filePath))
           continue;
 

@@ -10,7 +10,7 @@ setFactory(() => {
 });
 
 export function getLibzipSync() {
-  getInstance();
+  return getInstance();
 }
 
 export async function getLibzipPromise() {

@@ -1,6 +1,5 @@
 import {ppath, npath, Filename, PortablePath} from '@yarnpkg/fslib';
-
-import {ZipOpenFS, getArchivePart}            from '../sources/ZipOpenFS';
+import {ZipOpenFS, getArchivePart}            from '@yarnpkg/libzip';
 
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),

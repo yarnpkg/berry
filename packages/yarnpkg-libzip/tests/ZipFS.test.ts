@@ -1,8 +1,7 @@
 import {Filename, PortablePath, constants, ppath, statUtils, xfs} from '@yarnpkg/fslib';
+import {makeEmptyArchive, ZipFS}                                  from '@yarnpkg/libzip';
 import {S_IFREG}                                                  from 'constants';
 import fs                                                         from 'fs';
-
-import {makeEmptyArchive, ZipFS}                                  from '../sources/ZipFS';
 
 const isNotWin32 = process.platform !== `win32`;
 
