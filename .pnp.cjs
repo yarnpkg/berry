@@ -55987,7 +55987,7 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
         } else {
           if (resolved.startsWith(`#`))
             throw new Error(`Mapping from one private import to another isn't allowed`);
-          return resolveRequest(resolved, issuer, { conditions, considerBuiltins });
+          return resolveRequest(resolved, issuer, { conditions, considerBuiltins, extensions });
         }
       }
       const unqualifiedPath = resolveToUnqualified(request, issuer, { considerBuiltins });

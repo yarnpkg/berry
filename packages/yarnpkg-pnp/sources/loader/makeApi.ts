@@ -898,7 +898,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             // https://github.com/nodejs/node/issues/40579
             throw new Error(`Mapping from one private import to another isn't allowed`);
 
-          return resolveRequest(resolved as PortablePath, issuer, {conditions, considerBuiltins});
+          return resolveRequest(resolved as PortablePath, issuer, {conditions, considerBuiltins, extensions});
         }
       }
 
