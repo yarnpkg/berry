@@ -17,7 +17,6 @@ import {Filename, FSPath, npath, PortablePath}                                  
 // Those values must be synced with packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
 //
 const MOUNT_MASK  = 0xff000000;
-const MOUNT_MAGIC = 0x2a000000;
 
 export type GetMountPointFn = (path: PortablePath, prefixPath: PortablePath) => PortablePath | null;
 
@@ -30,6 +29,7 @@ export interface MountableFS extends FakeFS<PortablePath> {
 export type MountFSOptions<MountedFS extends MountableFS> = {
   baseFs?: FakeFS<PortablePath>;
   filter?: RegExp | null;
+  magicByte?: number;
   maxOpenFiles?: number;
   useCache?: boolean;
 
@@ -70,6 +70,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   private readonly factorySync: MountFSOptions<MountedFS>[`factorySync`];
   private readonly filter: RegExp | null;
   private readonly getMountPoint: GetMountPointFn;
+  private readonly magic: number;
   private readonly maxAge: number;
   private readonly maxOpenFiles: number;
 
@@ -77,7 +78,10 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   private notMount: Set<PortablePath> = new Set();
   private realPaths: Map<PortablePath, PortablePath> = new Map();
 
-  constructor({baseFs = new NodeFS(), filter = null, maxOpenFiles = Infinity, useCache = true, maxAge = 5000, getMountPoint, factoryPromise, factorySync}: MountFSOptions<MountedFS>) {
+  constructor({baseFs = new NodeFS(), filter = null, magicByte = 0x2a, maxOpenFiles = Infinity, useCache = true, maxAge = 5000, getMountPoint, factoryPromise, factorySync}: MountFSOptions<MountedFS>) {
+    if (Math.floor(magicByte) !== magicByte || !(magicByte > 1 && magicByte <= 127))
+      throw new Error(`The magic byte must be set to a round value between 1 and 127 included`);
+
     super();
 
     this.baseFs = baseFs;
@@ -88,6 +92,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     this.factorySync = factorySync;
     this.filter = filter;
     this.getMountPoint = getMountPoint;
+    this.magic = magicByte << 24;
     this.maxAge = maxAge;
     this.maxOpenFiles = maxOpenFiles;
   }
@@ -127,7 +132,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   private remapFd(mountFs: MountedFS, fd: number) {
-    const remappedFd = this.nextFd++ | MOUNT_MAGIC;
+    const remappedFd = this.nextFd++ | this.magic;
     this.fdMap.set(remappedFd, [mountFs, fd]);
     return remappedFd;
   }
@@ -169,7 +174,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   async readPromise(fd: number, buffer: Buffer, offset: number, length: number, position: number) {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return await this.baseFs.readPromise(fd, buffer, offset, length, position);
 
     const entry = this.fdMap.get(fd);
@@ -181,7 +186,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   readSync(fd: number, buffer: Buffer, offset: number, length: number, position: number) {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.readSync(fd, buffer, offset, length, position);
 
     const entry = this.fdMap.get(fd);
@@ -195,7 +200,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   writePromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): Promise<number>;
   writePromise(fd: number, buffer: string, position?: number): Promise<number>;
   async writePromise(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): Promise<number> {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC) {
+    if ((fd & MOUNT_MASK) !== this.magic) {
       if (typeof buffer === `string`) {
         return await this.baseFs.writePromise(fd, buffer, offset);
       } else {
@@ -219,7 +224,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   writeSync(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number): number;
   writeSync(fd: number, buffer: string, position?: number): number;
   writeSync(fd: number, buffer: Buffer | string, offset?: number, length?: number, position?: number): number {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC) {
+    if ((fd & MOUNT_MASK) !== this.magic) {
       if (typeof buffer === `string`) {
         return this.baseFs.writeSync(fd, buffer, offset);
       } else {
@@ -241,7 +246,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   async closePromise(fd: number) {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return await this.baseFs.closePromise(fd);
 
     const entry = this.fdMap.get(fd);
@@ -255,7 +260,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   closeSync(fd: number) {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.closeSync(fd);
 
     const entry = this.fdMap.get(fd);
@@ -387,7 +392,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
   async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
   async fstatPromise(fd: number, opts?: { bigint: boolean }) {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fstatPromise(fd, opts);
 
     const entry = this.fdMap.get(fd);
@@ -402,7 +407,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   fstatSync(fd: number, opts: {bigint: true}): BigIntStats
   fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
   fstatSync(fd: number, opts?: { bigint: boolean }) {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fstatSync(fd, opts);
 
     const entry = this.fdMap.get(fd);
@@ -441,7 +446,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   async fchmodPromise(fd: number, mask: number): Promise<void> {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fchmodPromise(fd, mask);
 
     const entry = this.fdMap.get(fd);
@@ -453,7 +458,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   fchmodSync(fd: number, mask: number): void {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fchmodSync(fd, mask);
 
     const entry = this.fdMap.get(fd);
@@ -481,7 +486,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   async fchownPromise(fd: number, uid: number, gid: number): Promise<void> {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fchownPromise(fd, uid, gid);
 
     const entry = this.fdMap.get(fd);
@@ -493,7 +498,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   fchownSync(fd: number, uid: number, gid: number): void {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fchownSync(fd, uid, gid);
 
     const entry = this.fdMap.get(fd);
@@ -843,7 +848,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   async ftruncatePromise(fd: number, len?: number): Promise<void> {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.ftruncatePromise(fd, len);
 
     const entry = this.fdMap.get(fd);
@@ -855,7 +860,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   }
 
   ftruncateSync(fd: number, len?: number): void {
-    if ((fd & MOUNT_MASK) !== MOUNT_MAGIC)
+    if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.ftruncateSync(fd, len);
 
     const entry = this.fdMap.get(fd);
@@ -956,7 +961,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
 
       filePath = this.pathUtils.join(filePath, mountPoint);
 
-      if (this.isMount.has(filePath) === false) {
+      if (!this.isMount.has(filePath)) {
         if (this.notMount.has(filePath))
           continue;
 
@@ -1006,7 +1011,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
       closeCount -= 1;
     }
 
-    if (this.limitOpenFilesTimeout === null && ((max === null && this.mountInstances.size > 0) || max !== null)) {
+    if (this.limitOpenFilesTimeout === null && ((max === null && this.mountInstances.size > 0) || max !== null) && isFinite(nextExpiresAt)) {
       this.limitOpenFilesTimeout = setTimeout(() => {
         this.limitOpenFilesTimeout = null;
         this.limitOpenFiles(null);
