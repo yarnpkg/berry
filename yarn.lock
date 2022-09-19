@@ -5839,7 +5839,7 @@ __metadata:
     prettier: "npm:^1.19.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
-    "@yarnpkg/fslib": "*"
+    "@yarnpkg/fslib": "workspace:^"
   languageName: unknown
   linkType: soft
 
