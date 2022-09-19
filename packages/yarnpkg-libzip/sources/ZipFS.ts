@@ -58,6 +58,16 @@ export function makeEmptyArchive() {
   ]);
 }
 
+export class LibzipError extends Error {
+  code: string;
+
+  constructor(message: string, code: string) {
+    super(message);
+    this.name = `Libzip Error`;
+    this.code = code;
+  }
+}
+
 export class ZipFS extends BasePortableFakeFS {
   private readonly libzip: Libzip;
 
@@ -200,7 +210,7 @@ export class ZipFS extends BasePortableFakeFS {
     const errorCode = this.libzip.struct.errorCodeZip(error);
     const strerror = this.libzip.error.strerror(error);
 
-    const libzipError = new errors.LibzipError(strerror, this.libzip.errors[errorCode]);
+    const libzipError = new LibzipError(strerror, this.libzip.errors[errorCode]);
 
     // This error should never come up because of the file source cache
     if (errorCode === this.libzip.errors.ZIP_ER_CHANGED)

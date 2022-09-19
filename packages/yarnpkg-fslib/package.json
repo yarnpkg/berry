@@ -10,8 +10,10 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/libzip": "workspace:^",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@yarnpkg/libzip": "workspace:^"
   },
   "scripts": {
     "postpack": "rm -rf lib",
