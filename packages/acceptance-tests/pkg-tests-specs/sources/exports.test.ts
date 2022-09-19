@@ -147,7 +147,7 @@ describe(`"exports" field`, () => {
         [`$PKG`, `file.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
       ],
     }),
   );
@@ -167,8 +167,8 @@ describe(`"exports" field`, () => {
         [`$PKG`, `file.js`],
       ],
       fail: [
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
       ],
     }),
   );
@@ -194,10 +194,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/node`, `Package subpath './node' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -225,11 +225,11 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/node`, `Package subpath './node' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -257,10 +257,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/node`, `Package subpath './node' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -290,11 +290,11 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/node`, `Package subpath './node' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -323,10 +323,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `require.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/node`, `Package subpath './node' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -357,11 +357,11 @@ describe(`"exports" field`, () => {
         [`$PKG`, `require.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/node`, `Missing "./node" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/node`, `Package subpath './node' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -383,9 +383,9 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -396,7 +396,7 @@ describe(`"exports" field`, () => {
       main: `main.js`,
       exports: [
         {import: `./import.mjs`},
-        `default.js`,
+        `./default.js`,
       ],
     }, [
       `index.js`,
@@ -409,10 +409,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -436,9 +436,9 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -450,7 +450,7 @@ describe(`"exports" field`, () => {
       exports: {
         [`.`]: [
           {import: `./import.mjs`},
-          `default.js`,
+          `./default.js`,
         ],
       },
     }, [
@@ -464,10 +464,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/import`, `Missing "./import" export in "$PKG" package`],
-        [`$PKG/default`, `Missing "./default" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/import`, `Package subpath './import' is not defined`],
+        [`$PKG/default`, `Package subpath './default' is not defined`],
       ],
     }),
   );
@@ -476,7 +476,7 @@ describe(`"exports" field`, () => {
     `object subpath "exports" field`,
     makeTemporaryExportsEnv(`exports-object-subpath`, {
       exports: {
-        [`.`]: `file.js`,
+        [`.`]: `./file.js`,
         [`./submodule`]: `./lib/submodule`,
       },
     }, [
@@ -490,8 +490,8 @@ describe(`"exports" field`, () => {
         [`$PKG/submodule`, `lib/submodule.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/inexistent`, `Package subpath './inexistent' is not defined`],
       ],
     }),
   );
@@ -501,7 +501,7 @@ describe(`"exports" field`, () => {
     makeTemporaryExportsEnv(`main-exports-object-subpath`, {
       main: `main.js`,
       exports: {
-        [`.`]: `file.js`,
+        [`.`]: `./file.js`,
         [`./submodule`]: `./lib/submodule`,
       },
     }, [
@@ -516,9 +516,9 @@ describe(`"exports" field`, () => {
         [`$PKG/submodule`, `lib/submodule.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/inexistent`, `Package subpath './inexistent' is not defined`],
       ],
     }),
   );
@@ -527,7 +527,7 @@ describe(`"exports" field`, () => {
     `object subpath patterns "exports" field`,
     makeTemporaryExportsEnv(`exports-object-subpath-patterns`, {
       exports: {
-        [`.`]: `file.js`,
+        [`.`]: `./file.js`,
         [`./src/*`]: `./lib/*`,
       },
     }, [
@@ -544,11 +544,11 @@ describe(`"exports" field`, () => {
         [`$PKG/src/b`, `lib/b.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
-        [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
-        [`$PKG/src/`, `Missing "./src/" export in "$PKG" package`],
-        [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/inexistent`, `Package subpath './inexistent' is not defined`],
+        [`$PKG/src`, `Package subpath './src' is not defined`],
+        [`$PKG/src/`, `Package subpath './src/' is not defined`],
+        [`$PKG/lib/c`, `Package subpath './lib/c' is not defined`],
         [`$PKG/src/d`, {
           code: `MODULE_NOT_FOUND`,
           message: `Qualified path resolution failed`,
@@ -563,7 +563,7 @@ describe(`"exports" field`, () => {
     makeTemporaryExportsEnv(`main-exports-object-subpath-patterns`, {
       main: `main.js`,
       exports: {
-        [`.`]: `file.js`,
+        [`.`]: `./file.js`,
         [`./src/*`]: `./lib/*`,
       },
     }, [
@@ -581,12 +581,12 @@ describe(`"exports" field`, () => {
         [`$PKG/src/b`, `lib/b.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
-        [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
-        [`$PKG/src/`, `Missing "./src/" export in "$PKG" package`],
-        [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/inexistent`, `Package subpath './inexistent' is not defined`],
+        [`$PKG/src`, `Package subpath './src' is not defined`],
+        [`$PKG/src/`, `Package subpath './src/' is not defined`],
+        [`$PKG/lib/c`, `Package subpath './lib/c' is not defined`],
         [`$PKG/src/d`, {
           code: `MODULE_NOT_FOUND`,
           message: `Qualified path resolution failed`,
@@ -601,7 +601,7 @@ describe(`"exports" field`, () => {
     `object subpath folder mappings "exports" field`,
     makeTemporaryExportsEnv(`exports-object-subpath-folder-mappings`, {
       exports: {
-        [`.`]: `file.js`,
+        [`.`]: `./file.js`,
         [`./src/`]: `./lib/`,
       },
     }, [
@@ -620,10 +620,10 @@ describe(`"exports" field`, () => {
         [`$PKG/src/b`, `lib/b.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
-        [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
-        [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/inexistent`, `Package subpath './inexistent' is not defined`],
+        [`$PKG/src`, `Package subpath './src' is not defined`],
+        [`$PKG/lib/c`, `Package subpath './lib/c' is not defined`],
         [`$PKG/src/d`, {
           code: `MODULE_NOT_FOUND`,
           message: `Qualified path resolution failed`,
@@ -639,7 +639,7 @@ describe(`"exports" field`, () => {
     makeTemporaryExportsEnv(`main-exports-object-subpath-folder-mappings`, {
       main: `main.js`,
       exports: {
-        [`.`]: `file.js`,
+        [`.`]: `./file.js`,
         [`./src/`]: `./lib/`,
       },
     }, [
@@ -659,11 +659,11 @@ describe(`"exports" field`, () => {
         [`$PKG/src/b`, `lib/b.js`],
       ],
       fail: [
-        [`$PKG/index`, `Missing "./index" export in "$PKG" package`],
-        [`$PKG/main`, `Missing "./main" export in "$PKG" package`],
-        [`$PKG/inexistent`, `Missing "./inexistent" export in "$PKG" package`],
-        [`$PKG/src`, `Missing "./src" export in "$PKG" package`],
-        [`$PKG/lib/c`, `Missing "./lib/c" export in "$PKG" package`],
+        [`$PKG/index`, `Package subpath './index' is not defined`],
+        [`$PKG/main`, `Package subpath './main' is not defined`],
+        [`$PKG/inexistent`, `Package subpath './inexistent' is not defined`],
+        [`$PKG/src`, `Package subpath './src' is not defined`],
+        [`$PKG/lib/c`, `Package subpath './lib/c' is not defined`],
         [`$PKG/src/d`, {
           code: `MODULE_NOT_FOUND`,
           message: `Qualified path resolution failed`,
@@ -689,7 +689,7 @@ describe(`"exports" field`, () => {
       `node-import.mjs`,
     ], {
       fail: [
-        [`$PKG`, `No known conditions for "." entry in "$PKG" package`],
+        [`$PKG`, `No "exports" main defined`],
       ],
     }),
   );
@@ -712,7 +712,7 @@ describe(`"exports" field`, () => {
       `node-import.mjs`,
     ], {
       fail: [
-        [`$PKG`, `No known conditions for "." entry in "$PKG" package`],
+        [`$PKG`, `No "exports" main defined`],
       ],
     }),
   );
@@ -727,7 +727,7 @@ describe(`"exports" field`, () => {
       `file.js`,
     ], {
       fail: [
-        [`$PKG/package.json`, `Missing "./package.json" export in "$PKG" package`],
+        [`$PKG/package.json`, `Package subpath './package.json' is not defined`],
       ],
     }),
   );
@@ -750,7 +750,7 @@ describe(`"exports" field`, () => {
       await expect(source(`require.resolve('pkg/foo')`)).resolves.toStrictEqual(npath.fromPortablePath(`${path}/bar.js`));
       await expect(source(`require.resolve('pkg/bar')`)).rejects.toMatchObject({
         externalException: {
-          message: expect.stringContaining(`Missing "./bar" export in "pkg" package`),
+          message: expect.stringContaining(`Package subpath './bar' is not defined`),
         },
       });
     }),
