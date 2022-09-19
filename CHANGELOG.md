@@ -24,6 +24,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn init` no longer enables zero-installs by default.
 - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
 - The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
+- The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
 
 ### **API Changes**
 
