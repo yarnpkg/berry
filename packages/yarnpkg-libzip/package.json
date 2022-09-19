@@ -46,7 +46,7 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@yarnpkg/fslib": "*"
+    "@yarnpkg/fslib": "workspace:^"
   },
   "engines": {
     "node": ">=14.15.0"
