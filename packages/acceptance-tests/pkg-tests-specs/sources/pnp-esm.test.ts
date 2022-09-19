@@ -767,7 +767,7 @@ describe(`Plug'n'Play - ESM`, () => {
             "no-deps": `1.0.0`,
           },
           imports: {
-            "#foo": `no-deps`,
+            "#foo/*": `no-deps/*`,
           },
         },
         async ({path, run, source}) => {
@@ -775,7 +775,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js` as Filename),
-            `import noDeps from 'no-deps/index.js';\nconsole.log(noDeps)`,
+            `import noDeps from '#foo/index.js';\nconsole.log(noDeps)`,
           );
 
           await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
