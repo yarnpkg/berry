@@ -45884,13 +45884,6 @@ function EOPNOTSUPP(reason) {
 function ERR_DIR_CLOSED() {
   return makeError$1(`ERR_DIR_CLOSED`, `Directory handle was closed`);
 }
-class LibzipError extends Error {
-  constructor(message, code) {
-    super(message);
-    this.name = `Libzip Error`;
-    this.code = code;
-  }
-}
 
 const DEFAULT_MODE = S_IFREG | 420;
 class StatEntry {
@@ -53347,6 +53340,13 @@ function makeEmptyArchive() {
     0,
     0
   ]);
+}
+class LibzipError extends Error {
+  constructor(message, code) {
+    super(message);
+    this.name = `Libzip Error`;
+    this.code = code;
+  }
 }
 class ZipFS extends BasePortableFakeFS {
   constructor(source, opts = {}) {
