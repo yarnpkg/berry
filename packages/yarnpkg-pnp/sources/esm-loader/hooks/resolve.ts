@@ -1,17 +1,55 @@
 import {NativePath, PortablePath}     from '@yarnpkg/fslib';
+import fs                             from 'fs';
 import moduleExports                  from 'module';
 import {fileURLToPath, pathToFileURL} from 'url';
 
 import * as nodeUtils                 from '../../loader/nodeUtils';
+import {packageImportsResolve}        from '../../node/resolve';
 import {PnpApi}                       from '../../types';
 import * as loaderUtils               from '../loaderUtils';
 
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 const isRelativeRegexp = /^\.{0,2}\//;
 
+type ResolveContext = {
+  conditions: Array<string>;
+  parentURL: string | undefined;
+};
+
+function tryReadFile(filePath: string) {
+  try {
+    return fs.readFileSync(filePath, `utf8`);
+  } catch (err) {
+    if (err.code === `ENOENT`)
+      return undefined;
+
+    throw err;
+  }
+}
+
+async function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext, nextResolve: typeof resolve): Promise<{ url: string, shortCircuit: boolean }> {
+  const resolved = packageImportsResolve({
+    name: specifier,
+    base: pathToFileURL(issuer),
+    conditions: new Set(context.conditions),
+    readFileSyncFn: tryReadFile,
+  });
+
+  if (resolved instanceof URL) {
+    return {url: resolved.href, shortCircuit: true};
+  } else {
+    if (resolved.startsWith(`#`))
+      // Node behaves interestingly by default so just block the request for now.
+      // https://github.com/nodejs/node/issues/40579
+      throw new Error(`Mapping from one private import to another isn't allowed`);
+
+    return resolve(resolved, context, nextResolve);
+  }
+}
+
 export async function resolve(
   originalSpecifier: string,
-  context: { conditions: Array<string>, parentURL: string | undefined },
+  context: ResolveContext,
   nextResolve: typeof resolve,
 ): Promise<{ url: string, shortCircuit: boolean }> {
   const {findPnpApi} = (moduleExports as unknown) as { findPnpApi?: (path: NativePath) => null | PnpApi };
@@ -38,11 +76,14 @@ export async function resolve(
   if (!pnpapi)
     return nextResolve(originalSpecifier, context, nextResolve);
 
+  if (specifier.startsWith(`#`))
+    return resolvePrivateRequest(specifier, issuer, context, nextResolve);
+
   const dependencyNameMatch = specifier.match(pathRegExp);
 
   let allowLegacyResolve = false;
 
-  if (dependencyNameMatch && specifier.startsWith(`#`) === false) {
+  if (dependencyNameMatch) {
     const [, dependencyName, subPath] = dependencyNameMatch as [unknown, string, PortablePath];
 
     // If the package.json doesn't list an `exports` field, Node will tolerate omitting the extension

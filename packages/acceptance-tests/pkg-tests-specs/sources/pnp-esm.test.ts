@@ -787,6 +787,34 @@ describe(`Plug'n'Play - ESM`, () => {
     );
 
     test(
+      `it should use legacy resolve when mapping to a dependency without an exports field`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          dependencies: {
+            "no-deps": `1.0.0`,
+          },
+          imports: {
+            "#foo": `no-deps`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import noDeps from '#foo';\nconsole.log(noDeps)`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `{ name: 'no-deps', version: '1.0.0' }\n`,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should support wildcards`,
       makeTemporaryEnv(
         {
