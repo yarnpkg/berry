@@ -19,13 +19,14 @@ const moduleSpecifierResolutionHost = ts.createModuleSpecifierResolutionHost(pro
 
 const yarnCorePkgDir = require.resolve(`@yarnpkg/core/package.json`).replace(`/package.json`, ``);
 const fslibPkgDir = require.resolve(`@yarnpkg/fslib/package.json`).replace(`/package.json`, ``);
+const libzipPkgDir = require.resolve(`@yarnpkg/libzip/package.json`).replace(`/package.json`, ``);
 const rootSourceFile = program.getSourceFile(require.resolve(`${yarnCorePkgDir}/sources/Project.ts`));
 
 const TESTS = [
   [`${yarnCorePkgDir}/sources/Configuration.ts`, `./Configuration`],
   [`${fslibPkgDir}/README.md`, `@yarnpkg/fslib/README.md`],
   [`${fslibPkgDir}/package.json`, `@yarnpkg/fslib/package.json`],
-  [`${fslibPkgDir}/sources/ZipFS.ts`, `@yarnpkg/fslib/sources/ZipFS`],
+  [`${libzipPkgDir}/sources/ZipFS.ts`, `@yarnpkg/libzip/sources/ZipFS`],
   [`${fslibPkgDir}/sources/index.ts`, `@yarnpkg/fslib`],
 ];
 
