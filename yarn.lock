@@ -5860,6 +5860,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/eslint-config": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
     eslint: "npm:^8.2.0"
