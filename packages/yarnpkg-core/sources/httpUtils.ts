@@ -1,21 +1,22 @@
-import {PortablePath, xfs}                          from '@yarnpkg/fslib';
-import type {ExtendOptions, RequestError, Response} from 'got';
-import {Agent as HttpsAgent}                        from 'https';
-import {Agent as HttpAgent}                         from 'http';
-import micromatch                                   from 'micromatch';
-import tunnel, {ProxyOptions}                       from 'tunnel';
-import {URL}                                        from 'url';
+import {PortablePath, xfs}                       from '@yarnpkg/fslib';
+import type {ExtendOptions, RequestError}        from 'got';
+import {Agent as HttpsAgent}                     from 'https';
+import {Agent as HttpAgent, IncomingHttpHeaders} from 'http';
+import micromatch                                from 'micromatch';
+import tunnel, {ProxyOptions}                    from 'tunnel';
+import {URL}                                     from 'url';
 
-import {ConfigurationValueMap, Configuration}       from './Configuration';
-import {MessageName}                                from './MessageName';
-import {ReportError}                                from './Report';
-import * as formatUtils                             from './formatUtils';
-import {MapValue, MapValueToObjectValue}            from './miscUtils';
-import * as miscUtils                               from './miscUtils';
+import {ConfigurationValueMap, Configuration}    from './Configuration';
+import {MessageName}                             from './MessageName';
+import {WrapNetworkRequestInfo}                  from './Plugin';
+import {ReportError}                             from './Report';
+import * as formatUtils                          from './formatUtils';
+import {MapValue, MapValueToObjectValue}         from './miscUtils';
+import * as miscUtils                            from './miscUtils';
 
 export type {RequestError}                                   from 'got';
 
-const cache = new Map<string, Promise<Buffer> | Buffer>();
+const cache = new Map<string, any>();
 const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
@@ -50,7 +51,7 @@ function prettyResponseCode({statusCode, statusMessage}: Response, configuration
   return formatUtils.applyHyperlink(configuration, `${prettyStatusCode}${statusMessage ? ` (${statusMessage})` : ``}`, href);
 }
 
-async function prettyNetworkError(response: Promise<Response<any>>, {configuration, customErrorMessage}: {configuration: Configuration, customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null}) {
+async function prettyNetworkError(response: Promise<Response>, {configuration, customErrorMessage}: {configuration: Configuration, customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null}) {
   try {
     return await response;
   } catch (err) {
@@ -153,6 +154,13 @@ export function getNetworkSettings(target: string | URL, opts: { configuration: 
   return mergedNetworkSettings as NetworkSettingsType;
 }
 
+export type Response = {
+  body: any;
+  headers: IncomingHttpHeaders;
+  statusCode: number;
+  statusMessage?: string;
+};
+
 export type Body = (
   {[key: string]: any} |
   string |
@@ -170,18 +178,25 @@ export enum Method {
 export type Options = {
   configuration: Configuration;
   customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null;
-  headers?: {[headerName: string]: string};
+  headers?: {[headerName: string]: string | undefined};
   jsonRequest?: boolean;
   jsonResponse?: boolean;
   method?: Method;
+  wrapNetworkRequest?: (executor: () => Promise<Response>, extra: WrapNetworkRequestInfo) => Promise<() => Promise<Response>>;
 };
 
-export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
-  const realRequest = async () => await requestImpl(target, body, {configuration, headers, jsonRequest, jsonResponse, method});
+export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, wrapNetworkRequest}: Omit<Options, 'customErrorMessage'>) {
+  const options = {target, body, configuration, headers, jsonRequest, jsonResponse, method};
+
+  const realRequest = async () => await requestImpl(target, body, options);
+
+  const wrappedRequest = typeof wrapNetworkRequest !== `undefined`
+    ? await wrapNetworkRequest(realRequest, options)
+    : realRequest;
 
   const executor = await configuration.reduceHook(hooks => {
     return hooks.wrapNetworkRequest;
-  }, realRequest, {target, body, configuration, headers, jsonRequest, jsonResponse, method});
+  }, wrappedRequest, options);
 
   return await executor();
 }
@@ -194,7 +209,7 @@ export async function get(target: string, {configuration, jsonResponse, customEr
     });
   });
 
-  if (Buffer.isBuffer(entry) === false)
+  if (miscUtils.isThenable(entry))
     entry = await entry;
 
   if (jsonResponse) {
@@ -222,7 +237,7 @@ export async function del(target: string, {customErrorMessage, ...options}: Opti
   return response.body;
 }
 
-async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>) {
+async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>): Promise<Response> {
   const url = typeof target === `string` ? new URL(target) : target;
 
   const networkConfig = getNetworkSettings(url, {configuration});
@@ -289,6 +304,6 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   });
 
   return configuration.getLimit(`networkConcurrency`)(() => {
-    return gotClient(url) as unknown as Response<any>;
+    return gotClient(url);
   });
 }

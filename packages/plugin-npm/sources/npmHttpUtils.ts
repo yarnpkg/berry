@@ -1,11 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                     from '@yarnpkg/core';
-import {prompt}                                       from 'enquirer';
-import {URL}                                          from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, structUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                  from '@yarnpkg/core';
+import {Filename, ppath, toFilename, xfs}                          from '@yarnpkg/fslib';
+import {prompt}                                                    from 'enquirer';
+import pick                                                        from 'lodash/pick';
+import {URL}                                                       from 'url';
 
-import {Hooks}                                        from './index';
-import * as npmConfigUtils                            from './npmConfigUtils';
-import {MapLike}                                      from './npmConfigUtils';
+import {Hooks}                                                     from './index';
+import * as npmConfigUtils                                         from './npmConfigUtils';
+import {MapLike}                                                   from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -33,7 +35,7 @@ export type Options = httpUtils.Options & RegistryOptions & {
  * It doesn't handle 403 Forbidden, as the npm registry uses it when the user attempts
  * a prohibited action, such as publishing a package with a similar name to an existing package.
  */
-export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
+export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string | undefined} | undefined, configuration: Configuration}) {
   if (isOtpError(error))
     throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid OTP token`);
 
@@ -64,14 +66,109 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+type CachedMetadata = {
+  metadata: PackageMetadata;
+  etag?: string;
+  lastModified?: string;
+};
+
+export type PackageMetadata = {
+  'dist-tags': Record<string, string>;
+  versions: Record<string, any>;
+};
+
+export type GetPackageMetadataOptions = Omit<Options, 'ident'> /*& {
+  version?: string;
+}*/;
+
+export async function getPackageMetadata(ident: Ident, {configuration, registry, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+  ({registry} = normalizeRegistryOptions(configuration, {ident, registry}));
+
+  return await get(getIdentUrl(ident), {
+    ...rest,
+    customErrorMessage: customPackageError,
+    configuration,
+    registry,
+    ident,
+    wrapNetworkRequest: async (executor, options) => async () => {
+      // TODO: Use a cache key for the metadata cache.
+      const registryFolder = getRegistryFolder(configuration, registry!);
+      const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json` as Filename);
+
+      let cachedMetadata: CachedMetadata | null = null;
+      try {
+        cachedMetadata = await xfs.readJsonPromise(identPath);
+      } catch {}
+
+      // if (version && typeof cachedMetadata?.metadata.versions[version] !== `undefined`) {
+      //   return {
+      //     body: cachedMetadata.metadata,
+      //     headers: {},
+      //     statusCode: 304,
+      //   };
+      // }
+
+      // TODO: Find a less hacky way to compose headers.
+      options.headers = {
+        ...options.headers,
+        // We set both headers in case a registry doesn't support ETags
+        [`If-None-Match`]: cachedMetadata?.etag,
+        [`If-Modified-Since`]: cachedMetadata?.lastModified,
+      };
+
+      const response = await executor();
+
+      if (response.statusCode === 304) {
+        if (cachedMetadata === null)
+          throw new Error(`Assertion failed: cachedMetadata should not be null`);
+
+        return {
+          ...response,
+          body: cachedMetadata.metadata,
+        };
+      }
+
+      const packageMetadata = pickPackageMetadata(JSON.parse(response.body.toString()));
+
+      const metadata: CachedMetadata = {
+        metadata: packageMetadata,
+        etag: response.headers.etag,
+        lastModified: response.headers[`last-modified`],
+      };
+
+      await xfs.mkdirPromise(registryFolder, {recursive: true});
+      await xfs.writeJsonPromise(identPath, metadata, {compact: true});
+
+      return {
+        ...response,
+        body: packageMetadata,
+      };
+    },
+  });
+}
+
+function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
+  return pick(metadata, [`dist-tags`, `versions`]);
+}
+
+function getRegistryFolder(configuration: Configuration, registry: string) {
+  const metadataFolder = getMetadataFolder(configuration);
+
+  const parsed = new URL(registry);
+  const registryFilename = toFilename(parsed.hostname);
+
+  return ppath.join(metadataFolder, registryFilename);
+}
+
+function getMetadataFolder(configuration: Configuration) {
+  return ppath.join(configuration.get(`globalFolder`), `npm-metadata` as Filename);
+}
+
+export async function get(path: string, {configuration, headers, authType, ...rest}: Options) {
+  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
+
   if (ident && ident.scope && typeof authType === `undefined`)
     authType = AuthType.BEST_EFFORT;
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -86,12 +183,8 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
 }
 
-export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, authType = AuthType.ALWAYS_AUTH, otp, ...rest}: Options & {attemptedAs?: string}) {
+  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -122,12 +215,8 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, authType = AuthType.ALWAYS_AUTH, otp, ...rest}: Options & {attemptedAs?: string}) {
+  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -158,12 +247,8 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
+export async function del(path: string, {attemptedAs, configuration, headers, authType = AuthType.ALWAYS_AUTH, otp, ...rest}: Options & {attemptedAs?: string}) {
+  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -192,6 +277,18 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
       throw error;
     }
   }
+}
+
+type WithRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
+
+function normalizeRegistryOptions(configuration: Configuration, {ident, registry}: RegistryOptions): WithRequired<RegistryOptions, 'registry'> {
+  if (typeof registry === `undefined` && ident)
+    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  return {ident, registry};
 }
 
 async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
@@ -242,7 +339,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
   }
 }
 
-async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
+async function whoami(registry: string, headers: {[key: string]: string | undefined} | undefined, {configuration}: {configuration: Configuration}) {
   if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
     return `an anonymous user`;
 

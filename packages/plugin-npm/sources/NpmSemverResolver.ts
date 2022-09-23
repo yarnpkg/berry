@@ -47,11 +47,9 @@ export class NpmSemverResolver implements Resolver {
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
-      customErrorMessage: npmHttpUtils.customPackageError,
+    const registryData = await npmHttpUtils.getPackageMetadata(descriptor, {
       configuration: opts.project.configuration,
-      ident: descriptor,
-      jsonResponse: true,
+      // version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
     const candidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
@@ -127,11 +125,9 @@ export class NpmSemverResolver implements Resolver {
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
-    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(locator), {
-      customErrorMessage: npmHttpUtils.customPackageError,
+    const registryData = await npmHttpUtils.getPackageMetadata(locator, {
       configuration: opts.project.configuration,
-      ident: locator,
-      jsonResponse: true,
+      // version,
     });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))

@@ -6167,12 +6167,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
+    "@types/lodash": "npm:^4.14.136"
     "@types/semver": "npm:^7.1.0"
     "@types/ssri": "npm:^6.0.1"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
     enquirer: "npm:^2.3.6"
+    lodash: "npm:^4.17.15"
     semver: "npm:^7.1.2"
     ssri: "npm:^6.0.1"
     tslib: "npm:^2.4.0"

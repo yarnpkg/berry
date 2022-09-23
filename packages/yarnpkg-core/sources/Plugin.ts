@@ -91,9 +91,9 @@ export interface Hooks {
    * add some logging.
    */
   wrapNetworkRequest?: (
-    executor: () => Promise<any>,
+    executor: () => Promise<httpUtils.Response>,
     extra: WrapNetworkRequestInfo
-  ) => Promise<() => Promise<any>>;
+  ) => Promise<() => Promise<httpUtils.Response>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
