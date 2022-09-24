@@ -25,6 +25,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
 - The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
 - The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
+- Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
 
 ### **API Changes**
 
@@ -57,6 +58,8 @@ The following changes only affect people writing Yarn plugins:
 - For consistency reasons:
   - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
   - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
+
+- `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
 
 ### Installs
 
