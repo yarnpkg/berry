@@ -58,6 +58,8 @@ The following changes only affect people writing Yarn plugins:
   - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
   - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
 
+- `workspace.dependencies` has been removed. Use `workspace.getPackage().dependencies` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
