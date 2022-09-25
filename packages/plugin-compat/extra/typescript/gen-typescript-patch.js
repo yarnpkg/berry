@@ -17,6 +17,8 @@ const IGNORED_VERSIONS = new Set([
   `4.0.0-beta`,
   `4.3.0-beta`,
   `4.4.0-beta`,
+  // Broken publish - missing files
+  `4.9.0-beta`,
 ]);
 
 const SLICES = [
@@ -116,7 +118,14 @@ const SLICES = [
     from: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
     to: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
     onto: `60b5167a2a7015759d048cdd4655d1f66a8416a2`,
-    range: `>=4.8.1-rc`,
+    range: `>=4.8.1-rc <4.9.1-beta`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9
+  {
+    from: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
+    to: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
+    onto: `549b5429d4837344e8c99657109bb6538fd2dbb5`,
+    range: `>=4.9.1-beta`,
   },
 ];
 
