@@ -7,7 +7,7 @@ enum PathType {
 }
 
 export type PortablePath = string & { __pathType: PathType.File | PathType.Portable };
-export type NativePath = string & { __pathType?: PathType.File | PathType.Native };
+export type NativePath = (string | Buffer) & { __pathType?: PathType.File | PathType.Native };
 
 export const PortablePath = {
   root: `/` as PortablePath,
@@ -51,8 +51,8 @@ ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
 };
 
 const contains = function <T extends Path>(pathUtils: PathUtils<T>, from: T, to: T) {
-  from = pathUtils.normalize(from);
-  to = pathUtils.normalize(to);
+  from = pathUtils.normalize(from.toString());
+  to = pathUtils.normalize(to.toString());
 
   if (from === to)
     return `.` as T;
@@ -111,7 +111,7 @@ export interface PathUtils<P extends Path> {
 }
 
 export interface ConvertUtils {
-  fromPortablePath: (p: Path) => NativePath;
+  fromPortablePath: (p: PortablePath) => NativePath;
   toPortablePath: (p: Path) => PortablePath;
 }
 
@@ -123,7 +123,7 @@ const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
 
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
 // And transform to "N:\berry\scripts\plugin-pack.js"
-function fromPortablePath(p: Path): NativePath {
+function fromPortablePath(p: PortablePath): NativePath {
   if (process.platform !== `win32`)
     return p as NativePath;
 
@@ -141,6 +141,7 @@ function fromPortablePath(p: Path): NativePath {
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
 function toPortablePath(p: Path): PortablePath {
+  p = p.toString()
   if (process.platform !== `win32`)
     return p as PortablePath;
 
