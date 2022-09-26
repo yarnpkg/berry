@@ -277,8 +277,8 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 }
 
 export async function diffFolders(folderA: PortablePath, folderB: PortablePath) {
-  const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
-  const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
+  const folderAN = npath.fromPortablePath(folderA).toString().replace(/\\/g, `/`);
+  const folderBN = npath.fromPortablePath(folderB).toString().replace(/\\/g, `/`);
 
   const {stdout, stderr} = await execUtils.execvp(`git`, [`-c`, `core.safecrlf=false`, `diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, `--no-renames`, `--text`, folderAN, folderBN], {
     cwd: npath.toPortablePath(process.cwd()),
@@ -302,8 +302,8 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
 
 
   const normalizePath = folderAN.startsWith(`/`)
-    ? (p: NativePath) => p.slice(1)
-    : (p: NativePath) => p;
+    ? (p: string) => p.slice(1)
+    : (p: string) => p;
 
   return stdout
     .replace(new RegExp(`(a|b)(${miscUtils.escapeRegExp(`/${normalizePath(folderAN)}/`)})`, `g`), `$1/`)

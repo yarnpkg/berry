@@ -1,0 +1,3 @@
+releases:
+  "@yarnpkg/fslib": minor
+  "@yarnpkg/plugin-patch": patch

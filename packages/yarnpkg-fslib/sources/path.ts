@@ -135,13 +135,13 @@ function fromPortablePath(p: PortablePath): NativePath {
   else
     return p as NativePath;
 
-  return p.replace(/\//g, `\\`);
+  return p.replace(/\//g, `\\`) as NativePath;
 }
 
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
 function toPortablePath(p: Path): PortablePath {
-  p = p.toString()
+  p = p.toString();
   if (process.platform !== `win32`)
     return p as PortablePath;
 
