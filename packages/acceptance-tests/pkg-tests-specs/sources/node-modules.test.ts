@@ -1,7 +1,7 @@
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
 
 const {
-  fs: {readJson, writeFile, writeJson},
+  fs: {writeFile, writeJson},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -719,7 +719,7 @@ describe(`Node_Modules`, () => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).toMatch(new RegExp(`'nohoist' is deprecated.*`));
-        expect(await readJson(`${path}/package.json`)).toHaveProperty(`workspaces.nohoist`);
+        expect(await xfs.readJsonPromise(`${path}/package.json` as PortablePath)).toHaveProperty(`workspaces.nohoist`);
       },
     ),
   );
@@ -915,7 +915,7 @@ describe(`Node_Modules`, () => {
 
           const {stdout} = await run(`install`);
 
-          await expect(readJson(`${path}/node_modules/portal/package.json` as PortablePath)).resolves.toMatchObject({
+          await expect(xfs.readJsonPromise(`${path}/node_modules/portal/package.json` as PortablePath)).resolves.toMatchObject({
             name: `portal`,
           });
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({

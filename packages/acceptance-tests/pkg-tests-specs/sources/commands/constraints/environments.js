@@ -1,5 +1,6 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {mkdirp, writeJson},
+  fs: {writeJson},
 } = require(`pkg-tests-core`);
 
 exports.environments = {
@@ -47,8 +48,10 @@ exports.environments = {
       workspaces: [`packages/**`],
     });
 
-    await mkdirp(`${path}/packages/workspace-a`);
-    await mkdirp(`${path}/packages/workspace-b`);
+    await xfs.mkdirPromise(`${path}/packages`);
+
+    await xfs.mkdirPromise(`${path}/packages/workspace-a`);
+    await xfs.mkdirPromise(`${path}/packages/workspace-b`);
 
     await writeJson(`${path}/packages/workspace-a/package.json`, {
       name: `workspace-a`,

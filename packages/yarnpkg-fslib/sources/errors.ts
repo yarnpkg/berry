@@ -51,15 +51,3 @@ export function EOPNOTSUPP(reason: string) {
 export function ERR_DIR_CLOSED() {
   return makeError(`ERR_DIR_CLOSED`, `Directory handle was closed`);
 }
-
-// ------------------------------------------------------------------------
-
-export class LibzipError extends Error {
-  code: string;
-
-  constructor(message: string, code: string) {
-    super(message);
-    this.name = `Libzip Error`;
-    this.code = code;
-  }
-}

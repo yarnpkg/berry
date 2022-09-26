@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                                      from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion, ReportError} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                                        from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                               from 'clipanion';
-import semver                                                                                             from 'semver';
+import {BaseCommand}                                                                          from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                                            from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
+import semver                                                                                 from 'semver';
 
 export type Tags = {
   latest: Record<string, string>;
@@ -108,7 +108,7 @@ export default class SetVersionCommand extends BaseCommand {
     else if (this.version === `canary`)
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `canary`));
     else if (this.version === `classic`)
-      bundleRef = {url: `https://nightly.yarnpkg.com/latest.js`, version: `classic`};
+      bundleRef = {url: `https://classic.yarnpkg.com/latest.js`, version: `classic`};
     else if (this.version.match(/^https?:/))
       bundleRef = {url: this.version, version: `remote`};
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
@@ -131,10 +131,10 @@ export default class SetVersionCommand extends BaseCommand {
         const filePrefix = `file://`;
 
         if (bundleRef.url.startsWith(filePrefix)) {
-          report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, FormatType.PATH)}`);
+          report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.PATH)}`);
           return await xfs.readFilePromise(bundleRef.url.slice(filePrefix.length) as PortablePath);
         } else {
-          report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, FormatType.URL)}`);
+          report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.URL)}`);
           return await httpUtils.get(bundleRef.url, {configuration});
         }
       };

@@ -1,6 +1,5 @@
 const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {readJson, writeJson},
   tests: {getPackageDirectoryPath},
 } = require(`pkg-tests-core`);
 
@@ -78,13 +77,13 @@ describe(`Protocols`, () => {
         await xfs.copyPromise(`${path}/provides-peer-deps-1-0-0`, await getPackageDirectoryPath(`provides-peer-deps-1-0-0`, `1.0.0`));
         await xfs.copyPromise(`${path}/provides-peer-deps-2-0-0`, await getPackageDirectoryPath(`provides-peer-deps-2-0-0`, `1.0.0`));
 
-        const providesPeerDeps100 = await readJson(`${path}/provides-peer-deps-1-0-0/package.json`);
+        const providesPeerDeps100 = await xfs.readJsonPromise(`${path}/provides-peer-deps-1-0-0/package.json`);
         providesPeerDeps100.dependencies[`peer-deps`] = `portal:${await getPackageDirectoryPath(`peer-deps`, `1.0.0`)}`;
-        await writeJson(`${path}/provides-peer-deps-1-0-0/package.json`, providesPeerDeps100);
+        await xfs.writeJsonPromise(`${path}/provides-peer-deps-1-0-0/package.json`, providesPeerDeps100);
 
-        const providesPeerDeps200 = await readJson(`${path}/provides-peer-deps-2-0-0/package.json`);
+        const providesPeerDeps200 = await xfs.readJsonPromise(`${path}/provides-peer-deps-2-0-0/package.json`);
         providesPeerDeps200.dependencies[`peer-deps`] = `portal:${await getPackageDirectoryPath(`peer-deps`, `1.0.0`)}`;
-        await writeJson(`${path}/provides-peer-deps-2-0-0/package.json`, providesPeerDeps200);
+        await xfs.writeJsonPromise(`${path}/provides-peer-deps-2-0-0/package.json`, providesPeerDeps200);
 
         await run(`install`);
 

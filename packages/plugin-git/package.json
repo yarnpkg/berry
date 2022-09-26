@@ -1,8 +1,12 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "3.0.0-rc.13",
+  "version": "3.0.0-rc.21",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
@@ -10,7 +14,7 @@
     "git-url-parse": "^12.0.0",
     "lodash": "^4.17.15",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"
@@ -31,7 +35,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

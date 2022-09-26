@@ -1,8 +1,8 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report} from '@yarnpkg/core';
 import {Locator}                                                                      from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
-import {ppath, xfs, ZipFS, Filename, CwdFS, PortablePath}                             from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                             from '@yarnpkg/libzip';
+import {ppath, xfs, Filename, CwdFS, PortablePath}                                    from '@yarnpkg/fslib';
+import {ZipFS}                                                                        from '@yarnpkg/libzip';
 
 import * as patchUtils                                                                from './patchUtils';
 import {UnmatchedHunkError}                                                           from './tools/UnmatchedHunkError';
@@ -27,7 +27,6 @@ export class PatchFetcher implements Fetcher {
       onHit: () => opts.report.reportCacheHit(locator),
       onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
       loader: () => this.patchPackage(locator, opts),
-      skipIntegrityCheck: opts.skipIntegrityCheck,
       ...opts.cacheOptions,
     });
 
@@ -50,11 +49,8 @@ export class PatchFetcher implements Fetcher {
     const sourceFetch = await opts.fetcher.fetch(sourceLocator, opts);
     const prefixPath = structUtils.getIdentVendorPath(locator);
 
-    const libzip = await getLibzipPromise();
-
     // First we create a copy of the package that we'll be free to mutate
     const initialCopy = new ZipFS(currentFile, {
-      libzip,
       create: true,
       level: opts.project.configuration.get(`compressionLevel`),
     });
@@ -74,7 +70,6 @@ export class PatchFetcher implements Fetcher {
       // single time) because it lets us easily rollback when hitting errors
       // on optional patches (we just need to call `discardAndClose`).
       const patchedPackage = new ZipFS(currentFile, {
-        libzip,
         level: opts.project.configuration.get(`compressionLevel`),
       });
 
@@ -123,7 +118,6 @@ export class PatchFetcher implements Fetcher {
     }
 
     return new ZipFS(currentFile, {
-      libzip,
       level: opts.project.configuration.get(`compressionLevel`),
     });
   }

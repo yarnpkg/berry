@@ -2,9 +2,10 @@ import {spawnSync}                           from 'child_process';
 import fs                                    from 'fs';
 
 import {PLAYGROUND_DIR, BERRY_DIR, REPO_URL} from '../../constants';
+import {setupCors}                           from '../../cors';
 
 // eslint-disable-next-line arca/no-default-export
-export default async (req, res) => {
+export default setupCors(async (req, res) => {
   try {
     fs.rmSync(BERRY_DIR, {recursive: true, force: true});
 
@@ -30,4 +31,4 @@ export default async (req, res) => {
       error: error.toString(),
     });
   }
-};
+});

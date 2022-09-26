@@ -1,5 +1,5 @@
 import {Filename, PortablePath, npath, ppath, xfs}                                                      from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/libzip';
 import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
 import camelcase                                                                                        from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
@@ -87,7 +87,13 @@ export type SupportedArchitectures = {
   libc: Array<string> | null;
 };
 
+/**
+ * @deprecated Use {@link formatUtils.Type}
+ */
 export type FormatType = formatUtils.Type;
+/**
+ * @deprecated Use {@link formatUtils.Type}
+ */
 export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
@@ -545,11 +551,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     },
   },
 };
-
-/**
- * @deprecated Use miscUtils.ToMapValue
- */
-export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
 
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;

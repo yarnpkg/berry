@@ -1,10 +1,10 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
+import {Descriptor, Locator}                                      from '@yarnpkg/core';
+import {LinkType}                                                 from '@yarnpkg/core';
+import {structUtils}                                              from '@yarnpkg/core';
+import {npath}                                                    from '@yarnpkg/fslib';
 
-import {LINK_PROTOCOL}                                   from './constants';
+import {LINK_PROTOCOL}                                            from './constants';
 
 export class LinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -50,33 +50,24 @@ export class LinkResolver implements Resolver {
     };
   }
 
-  async resolve(locator: Locator, opts: ResolveOptions): Promise<Package> {
-    if (!opts.fetchOptions)
-      throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
-
-    const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
-
-    const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
-    }, packageFetch.releaseFs);
-
+  async resolve(locator: Locator, opts: ResolveOptions) {
     return {
       ...locator,
 
-      version: manifest.version || `0.0.0`,
+      version: `0.0.0`,
 
-      languageName: manifest.languageName || opts.project.configuration.get(`defaultLanguageName`),
+      languageName: opts.project.configuration.get(`defaultLanguageName`),
       linkType: LinkType.SOFT,
 
-      conditions: manifest.getConditions(),
+      conditions: null,
 
-      dependencies: opts.project.configuration.normalizeDependencyMap(manifest.dependencies),
-      peerDependencies: manifest.peerDependencies,
+      dependencies: new Map(),
+      peerDependencies: new Map(),
 
-      dependenciesMeta: manifest.dependenciesMeta,
-      peerDependenciesMeta: manifest.peerDependenciesMeta,
+      dependenciesMeta: new Map(),
+      peerDependenciesMeta: new Map(),
 
-      bin: manifest.bin,
+      bin: new Map(),
     };
   }
 }

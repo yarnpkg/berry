@@ -203,7 +203,7 @@ class PnpmInstaller implements Installer {
         // Downgrade virtual workspaces (cf isPnpmVirtualCompatible's documentation)
         let targetDependency = dependency;
         if (!isPnpmVirtualCompatible(dependency, {project: this.opts.project})) {
-          this.opts.report.reportWarning(MessageName.UNNAMED, `The pnpm linker doesn't support providing different versions to workspaces' peer dependencies`);
+          this.opts.report.reportWarningOnce(MessageName.UNNAMED, `The pnpm linker doesn't support providing different versions to workspaces' peer dependencies`);
           targetDependency = structUtils.devirtualizeLocator(dependency);
         }
 

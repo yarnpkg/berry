@@ -1,9 +1,11 @@
-import {NativePath}   from '@yarnpkg/fslib';
-import fs             from 'fs';
-import path           from 'path';
-import {URL}          from 'url';
+import {NativePath}                 from '@yarnpkg/fslib';
+import fs                           from 'fs';
+import path                         from 'path';
+import {URL}                        from 'url';
 
-import * as nodeUtils from '../loader/nodeUtils';
+import * as nodeUtils               from '../loader/nodeUtils';
+
+import {HAS_UNFLAGGED_JSON_MODULES} from './loaderFlags';
 
 export async function tryReadFile(path: NativePath): Promise<string | null> {
   try {
@@ -48,6 +50,9 @@ export function getFileFormat(filepath: string): string | null {
       );
     }
     case `.json`: {
+      if (HAS_UNFLAGGED_JSON_MODULES)
+        return `json`;
+
       // TODO: Enable if --experimental-json-modules is present
       // Waiting on https://github.com/nodejs/node/issues/36935
       throw new Error(

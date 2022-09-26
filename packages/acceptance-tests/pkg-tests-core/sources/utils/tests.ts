@@ -1,24 +1,30 @@
-import {PortablePath, npath, toFilename} from '@yarnpkg/fslib';
-import assert                            from 'assert';
-import crypto                            from 'crypto';
-import finalhandler                      from 'finalhandler';
-import https                             from 'https';
-import {IncomingMessage, ServerResponse} from 'http';
-import http                              from 'http';
-import invariant                         from 'invariant';
-import {AddressInfo}                     from 'net';
-import pem                               from 'pem';
-import semver                            from 'semver';
-import serveStatic                       from 'serve-static';
-import {promisify}                       from 'util';
-import {v5 as uuidv5}                    from 'uuid';
-import {Gzip}                            from 'zlib';
+import {PortablePath, npath, toFilename, xfs} from '@yarnpkg/fslib';
+import assert                                 from 'assert';
+import crypto                                 from 'crypto';
+import finalhandler                           from 'finalhandler';
+import https                                  from 'https';
+import {IncomingMessage, ServerResponse}      from 'http';
+import http                                   from 'http';
+import invariant                              from 'invariant';
+import {AddressInfo}                          from 'net';
+import os                                     from 'os';
+import pem                                    from 'pem';
+import semver                                 from 'semver';
+import serveStatic                            from 'serve-static';
+import {promisify}                            from 'util';
+import {v5 as uuidv5}                         from 'uuid';
+import {Gzip}                                 from 'zlib';
 
-import {ExecResult}                      from './exec';
-import * as fsUtils                      from './fs';
+import {ExecResult}                           from './exec';
+import * as fsUtils                           from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+// Testing things inside a big-endian container takes forever
+export const TEST_TIMEOUT = os.endianness() === `BE`
+  ? 150000
+  : 50000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;
@@ -142,7 +148,7 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
     for (const packageFile of await fsUtils.walk(npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
       filter: [`package.json`],
     })) {
-      const packageJson = await fsUtils.readJson(packageFile);
+      const packageJson = await xfs.readJsonPromise(packageFile);
 
       const {name, version} = packageJson;
       if (name.startsWith(`git-`))
@@ -191,7 +197,8 @@ export const getPackageArchivePath = async (name: string, version: string): Prom
   if (!packageVersionEntry)
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
-  const archivePath = await fsUtils.createTemporaryFile(toFilename(`${name}-${version}.tar.gz`));
+  const tmpDir = await xfs.mktempPromise();
+  const archivePath = `${tmpDir}/${toFilename(`${name}-${version}.tar.gz`)}` as PortablePath;
 
   await fsUtils.packToFile(archivePath, npath.toPortablePath(packageVersionEntry.path), {
     virtualPath: npath.toPortablePath(`/package`),
@@ -636,7 +643,7 @@ export type RunFunction = (
     run: Run;
     source: Source;
   }
-) => void;
+) => Promise<void>;
 
 export const generatePkgDriver = ({
   getName,
@@ -660,12 +667,12 @@ export const generatePkgDriver = ({
       }
 
       return Object.assign(async (): Promise<void> => {
-        const path = await fsUtils.realpath(await fsUtils.createTemporaryFolder());
+        const path = await xfs.mktempPromise();
 
         const registryUrl = await startPackageServer();
 
         // Writes a new package.json file into our temporary directory
-        await fsUtils.writeJson(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
+        await xfs.writeJsonPromise(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
         const run = (...args: Array<any>) => {
           let callDefinition = {};
@@ -721,15 +728,20 @@ export const generatePkgDriver = ({
         try {
           // To pass [citgm](https://github.com/nodejs/citgm), we need to suppress timeout failures
           // So add env variable TEST_IGNORE_TIMEOUT_FAILURES to turn on this suppression
+          // TODO: investigate whether this is still needed.
           if (process.env.TEST_IGNORE_TIMEOUT_FAILURES) {
+            let timer: NodeJS.Timeout | undefined;
             await Promise.race([
               new Promise(resolve => {
-                // Maybe we should not hard code the timeout here
-                // resolve 1s ahead the jest timeout
-                setTimeout(resolve, 30000 - 1000);
+                // Resolve 1s ahead of the jest timeout
+                timer = setTimeout(resolve, TEST_TIMEOUT - 1000);
               }),
               fn!({path, run, source}),
-            ]);
+            ]).finally(() => {
+              if (timer) {
+                clearTimeout(timer);
+              }
+            });
             return;
           }
           await fn!({path, run, source});
