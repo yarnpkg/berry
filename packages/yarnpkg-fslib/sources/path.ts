@@ -140,10 +140,15 @@ function fromPortablePath(p: Path): NativePath {
 
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
-function toPortablePath(p: Path): PortablePath {
+function toPortablePath(p: Path | Buffer): PortablePath {
   if (process.platform !== `win32`)
     return p as PortablePath;
 
+  // Convert buffers to string paths.
+  if (typeof p !== 'string') {
+    return toPortablePath(p.toString());
+  }
+  
   p = p.replace(/\\/g, `/`);
 
   let windowsPathMatch, uncWindowsPathMatch;
