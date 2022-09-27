@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "docusaurus": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./xxx.js\" docusaurus",
-    "start": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./xxx.js\" docusaurus start",
+    "docusaurus": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus",
+    "start": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",

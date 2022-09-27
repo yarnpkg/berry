@@ -21,15 +21,16 @@ html {
 }
 
 .navbar {
-  margin-top: 40px;
-  margin-bottom: 0;
+  margin: 0;
 
   padding: 0 40px;
 }
 
-.navbar:not(.navbar--is-fixed) {
+body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) {
   --ifm-navbar-link-color: #ffffff;
   --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
+
+  margin-top: 40px;
 
   background: none;
   box-shadow: none;
@@ -62,7 +63,7 @@ html {
   background: linear-gradient(to left, #7678ff, #c326ef);
 }
 
-.navbar:not(.navbar--is-fixed) .navbar__link--active::before {
+body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) .navbar__link--active::before {
   content: '';
 }
 
@@ -129,15 +130,22 @@ a[target] svg {
   color: rgb(156, 220, 254);
 }
 
+.terminal-code pre {
+  --prism-background-color: #393A34 !important;
+  --prism-color: #f6f8fa !important;
+}
+
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary:  #514C87;
+  --ifm-color-primary-dark: #29285E;
+  --ifm-color-primary-darker: #26265C;
+  --ifm-color-primary-darkest: #1F2054;
+  --ifm-color-primary-light: #7B73B2;
+  --ifm-color-primary-lighter: #A69DDF;
+  --ifm-color-primary-lightest: #D4C9FF;
+  --ifm-menu-link-padding-vertical: 1rem;
+  --ifm-menu-link-padding-horizontal: 1rem;
   --ifm-navbar-height: 60px;
   --ifm-navbar-padding-horizontal: 0;
   --ifm-navbar-padding-vertical: 0;

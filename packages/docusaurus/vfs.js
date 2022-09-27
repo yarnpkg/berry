@@ -13,26 +13,33 @@ const memoryDrive = mountMemoryDrive(
 );
 
 const binaries = [{
-  package: null,
+  package: `@yarnpkg/cli`,
   binary: `${__dirname}/../../scripts/run-yarn.js`,
+}, {
+  package: `@yarnpkg/builder`,
+  binary: `${__dirname}/../../scripts/run-builder.js`,
 }, {
   package: `@yarnpkg/pnpify`,
   binary: `${__dirname}/../../scripts/run-pnpify.js`,
 }, {
   package: `@yarnpkg/sdks`,
   binary: `${__dirname}/../../scripts/run-sdks.js`,
-}, {
-  package: `@yarnpkg/builder`,
-  binary: `${__dirname}/../../scripts/run-builder.js`,
 }];
 
-for (const {binary, package} of binaries) {
+for (const [position, {binary, package}] of binaries.entries()) {
+  const isMainPackage = package === `@yarnpkg/cli`;
   const packageParts = package?.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
 
   const [, scope, name] = packageParts ?? [];
 
-  const namespaceLeadingSlash = name ? `/${name}` : ``;
-  const namespaceTrailingSlash = name ? `${name}/` : ``;
+  const docFolder = name.replace(/\//g, `-`);
+  memoryDrive.mkdirSync(docFolder);
+
+  const docUrl = isMainPackage
+    ? `/cli`
+    : `/${name}/cli`;
+
+  let categoryIndex;
 
   const output = execFileSync(`yarn`, [`node`, binary, `--clipanion=definitions`], {
     env: {...process.env, NODE_OPTIONS: undefined},
@@ -45,20 +52,36 @@ for (const {binary, package} of binaries) {
     throw new Error(`Failed to parse "${output}"`);
   }
 
+  commands.sort((a, b) => {
+    return a.path < b.path ? -1 : a.path > b.path ? +1 : 0;
+  });
+
   for (let t = 0; t < commands.length; ++t) {
     const command = commands[t];
     const sections = [];
 
-    const url = command.path.split(` `).slice(1).join(`/`) || `default`;
+    const pathSegments = command.path.split(` `);
+    if (!isMainPackage)
+      pathSegments.unshift(`yarn`);
 
+    const navPath = `${docUrl}/${command.path.split(` `).slice(1).join(`/`) || `default`}`;
     const description = `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`;
+
+    const id = `cli-${command.path.replace(/ /g, `-`)}`;
+
+    if (typeof index === `undefined` || id === `cli-yarn-install`)
+      categoryIndex = id;
 
     sections.push([
       `---\n`,
-      `slug: ${namespaceLeadingSlash}/cli/${url}\n`,
-      `title: ${JSON.stringify(command.path)}\n`,
+      `id: ${JSON.stringify(id)}\n`,
+      `slug: ${JSON.stringify(navPath)}\n`,
+      `title: ${JSON.stringify(pathSegments.join(` `))}\n`,
       `description: ${JSON.stringify(description)}\n`,
       `---\n`,
+      `\n`,
+      `import {TerminalCode} from '@yarnpkg/docusaurus/src/components/TerminalCode';`,
+      `\n`,
     ].join(``));
 
     if (command.plugin && !command.plugin.isDefault) {
@@ -71,7 +94,7 @@ for (const {binary, package} of binaries) {
       ].join(``));
     }
 
-    if (package) {
+    if (!isMainPackage) {
       sections.push([
         `:::note\n`,
         `To use this command, you need to use the [\`${package}\`](https://github.com/yarnpkg/berry/blob/HEAD/packages/${scope}-${name}/README.md) package either:\n`,
@@ -94,9 +117,7 @@ for (const {binary, package} of binaries) {
     sections.push([
       `## Usage\n`,
       `\n`,
-      `\`\`\`\n`,
-      `$> ${command.usage}\n`,
-      `\`\`\`\n`,
+      `<TerminalCode command={${JSON.stringify(`${!isMainPackage ? `yarn ` : ``}${command.usage}`)}}/>\n`,
     ].join(``));
 
     if (command.examples && command.examples.length > 0) {
@@ -104,11 +125,10 @@ for (const {binary, package} of binaries) {
         `## Examples\n`,
         `\n`,
         ...command.examples.map(([description, example]) => [
-          `${description}:\n`,
-          `\`\`\`\n`,
-          `${example}\n`,
-          `\`\`\`\n`,
-        ].join(``)),
+          `<p>${description}:</p>\n`,
+          `\n`,
+          `<TerminalCode command={${JSON.stringify(example)}}/>\n`,
+        ].join(`\n`)),
       ].join(``));
     }
 
@@ -138,9 +158,19 @@ for (const {binary, package} of binaries) {
     }
 
     const content = sections.join(`\n`);
-    const filePath = `${url.replace(/\//g, `-`)}.md`;
+    const filePath = ppath.join(docFolder, `${id}.md`);
 
-    memoryDrive.mkdirSync(ppath.dirname(filePath), {recursive: true});
     memoryDrive.writeFileSync(filePath, content);
   }
+
+  memoryDrive.writeJsonSync(ppath.join(docFolder, `_category_.json`), {
+    label: package,
+    collapsible: false,
+    position,
+    link: {
+      type: `generated-index`,
+      title: package,
+      slug: `/${docUrl}`,
+    },
+  });
 }

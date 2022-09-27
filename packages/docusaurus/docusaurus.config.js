@@ -55,6 +55,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        defaultMode: `light`,
+        disableSwitch: true,
+        respectPrefersColorScheme: false,
+      },
       navbar: {
         title: `Yarn`,
         logo: {
@@ -63,24 +68,26 @@ const config = {
         },
         items: [
           {
-            type: `doc`,
-            docId: `getting-started/intro`,
+            type: `docSidebar`,
+            sidebarId: `gettingStarted`,
             position: `left`,
             label: `Getting Started`,
           },
           {
-            type: `doc`,
-            docId: `features/plugnplay`,
+            type: `docSidebar`,
+            sidebarId: `features`,
             position: `left`,
             label: `Features`,
           },
           {
-            href: `/cli`,
+            type: `docSidebar`,
+            sidebarId: `cli`,
             label: `CLI`,
             position: `left`,
           },
           {
-            href: `/configuration`,
+            type: `docSidebar`,
+            sidebarId: `configuration`,
             label: `Configuration`,
             position: `left`,
           },
