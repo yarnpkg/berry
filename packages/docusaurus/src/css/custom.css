@@ -14,6 +14,8 @@ html {
 
 .menu {
   border-right: 1px solid var(--ifm-toc-border-color);
+
+  overflow-y: scroll;
 }
 
 .theme-doc-breadcrumbs {
@@ -24,6 +26,17 @@ html {
   margin: 0;
 
   padding: 0 40px;
+}
+
+body:not([x-doc-route="/"]) footer {
+  display: none;
+}
+
+body:not([x-doc-route="/"]) .main-wrapper > :last-child {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  margin-bottom: 0;
 }
 
 body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) {
@@ -67,8 +80,12 @@ body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) .navbar__link--active::befo
   content: '';
 }
 
-article {
-  padding-left: 1.5rem;
+.menu.thin-scrollbar {
+  padding: 0.5rem;
+}
+
+.container {
+  padding-left: calc(var(--ifm-spacing-horizontal) + 1.5rem);
 }
 
 body[x-doc-route^="/configuration/"] article {

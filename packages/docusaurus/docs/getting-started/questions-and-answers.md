@@ -5,9 +5,9 @@ title: "Questions & Answers"
 description: A list of answers to commonly asked questions.
 ---
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+import TOCInline from '@theme/TOCInline';
+
+<TOCInline toc={toc} />
 
 ## Why should you upgrade to Yarn Modern?
 
