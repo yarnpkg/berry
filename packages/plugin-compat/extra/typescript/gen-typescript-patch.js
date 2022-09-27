@@ -113,12 +113,19 @@ const SLICES = [
     onto: `9a09c37878a45b06994485fdb510eb4d24587dcb`,
     range: `>=4.8.0-beta <4.8.1-rc`,
   },
-  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8-stable
   {
     from: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
     to: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
     onto: `60b5167a2a7015759d048cdd4655d1f66a8416a2`,
-    range: `>=4.8.1-rc <4.9.1-beta`,
+    range: `>=4.8.1-rc <4.8.4`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8
+  {
+    from: `d3747e92c3cd2d1f98739382c14226a725df38fd`,
+    to: `d3747e92c3cd2d1f98739382c14226a725df38fd`,
+    onto: `a614119c1921ca61d549a7eee65c0b8c69c28752`,
+    range: `>=4.8.4 <4.9.1-beta`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9
   {

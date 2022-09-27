@@ -25621,7 +25621,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A3.7.x#optional!builtin<compat/typescript>":
   version: 3.7.7
-  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=2e86aa"
+  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25631,7 +25631,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>":
   version: 4.9.1-beta
-  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>::version=4.9.1-beta&hash=2e86aa"
+  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>::version=4.9.1-beta&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25641,7 +25641,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^3.8.3#optional!builtin<compat/typescript>":
   version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=2e86aa"
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
