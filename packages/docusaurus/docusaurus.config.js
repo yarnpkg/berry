@@ -34,6 +34,7 @@ const config = {
       ({
         blog: false,
         docs: {
+          routeBasePath: `/`,
           sidebarPath: require.resolve(`./sidebars.js`),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -74,12 +75,12 @@ const config = {
             label: `Features`,
           },
           {
-            href: `/`,
+            href: `/cli`,
             label: `CLI`,
             position: `left`,
           },
           {
-            href: `/`,
+            href: `/configuration`,
             label: `Configuration`,
             position: `left`,
           },

@@ -1,18 +1,16 @@
-import {Filename, npath, PortablePath, ppath, ZipFS} from '@yarnpkg/fslib';
-import {getLibzipSync}                               from '@yarnpkg/libzip';
+import {Filename, npath, PortablePath, ppath} from '@yarnpkg/fslib';
+import {ZipFS}                                from '@yarnpkg/libzip';
 
-import {hydratePnpFile}                              from '../sources';
+import {hydratePnpFile}                       from '../sources';
 
-import expectations                                  from './testExpectations.json';
+import expectations                           from './testExpectations.json';
 
 const projectRoot = `/path/to/project` as PortablePath;
 
 process.env.PNP_DEBUG_LEVEL = `0`;
 
 for (const {manifest, tests} of expectations) {
-  const fakeFs = new ZipFS(null, {
-    libzip: getLibzipSync(),
-  });
+  const fakeFs = new ZipFS();
 
   fakeFs.mkdirSync(projectRoot, {recursive: true});
 

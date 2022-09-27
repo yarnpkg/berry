@@ -1,9 +1,8 @@
+import {FakeFS}                                   from '@yarnpkg/fslib';
+import {GetMountPointFn, MountFS, MountFSOptions} from '@yarnpkg/fslib';
+import {PortablePath, ppath}                      from '@yarnpkg/fslib';
 import {Libzip}                                   from '@yarnpkg/libzip';
-
-import {FakeFS}                                   from './FakeFS';
-import {GetMountPointFn, MountFS, MountFSOptions} from './MountFS';
-import {ZipFS}                                    from './ZipFS';
-import {PortablePath, ppath}                      from './path';
+import {ZipFS}                                    from '@yarnpkg/libzip';
 
 /**
  * Extracts the archive part (ending in the first instance of `extension`) from a path.
@@ -40,7 +39,7 @@ export type ZipOpenFSOptions = Omit<MountFSOptions<ZipFS>,
   | `factorySync`
   | `getMountPoint`
 > & {
-  libzip: Libzip | (() => Libzip);
+  libzip?: Libzip | (() => Libzip);
   readOnlyArchives?: boolean;
 
   /**
@@ -53,7 +52,7 @@ export type ZipOpenFSOptions = Omit<MountFSOptions<ZipFS>,
 };
 
 export class ZipOpenFS extends MountFS<ZipFS> {
-  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>, opts: ZipOpenFSOptions): Promise<T> {
+  static async openPromise<T>(fn: (zipOpenFs: ZipOpenFS) => Promise<T>, opts?: ZipOpenFSOptions): Promise<T> {
     const zipOpenFs = new ZipOpenFS(opts);
 
     try {
@@ -63,20 +62,7 @@ export class ZipOpenFS extends MountFS<ZipFS> {
     }
   }
 
-  constructor(opts: ZipOpenFSOptions) {
-    let libzipInstance: Libzip | undefined;
-
-    const libzipFactory: () => Libzip = typeof opts.libzip !== `function`
-      ? () => opts.libzip as Exclude<(typeof opts)[`libzip`], Function>
-      : opts.libzip;
-
-    const getLibzip = () => {
-      if (typeof libzipInstance === `undefined`)
-        libzipInstance = libzipFactory();
-
-      return libzipInstance;
-    };
-
+  constructor(opts: ZipOpenFSOptions = {}) {
     const fileExtensions = opts.fileExtensions;
     const readOnlyArchives = opts.readOnlyArchives;
 
@@ -96,7 +82,6 @@ export class ZipOpenFS extends MountFS<ZipFS> {
     const factorySync = (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
       return new ZipFS(p, {
         baseFs,
-        libzip: getLibzip(),
         readOnly: readOnlyArchives,
         stats: baseFs.statSync(p),
       });
@@ -105,7 +90,6 @@ export class ZipOpenFS extends MountFS<ZipFS> {
     const factoryPromise = async (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
       const zipOptions = {
         baseFs,
-        libzip: getLibzip(),
         readOnly: readOnlyArchives,
         stats: await baseFs.statPromise(p),
       };

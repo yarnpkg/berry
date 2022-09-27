@@ -31,6 +31,9 @@ export enum MessageName {
   CONSTRAINTS_INVALID_DEPENDENCY = 26,
   CANT_SUGGEST_RESOLUTIONS = 27,
   FROZEN_LOCKFILE_EXCEPTION = 28,
+  /**
+   * @deprecated Virtuals aren't implemented using symlinks anymore. Context: https://github.com/yarnpkg/berry/pull/43#discussion_r269578031
+   */
   CROSS_DRIVE_VIRTUAL_LOCAL = 29,
   FETCH_FAILED = 30,
   DANGEROUS_NODE_MODULES = 31,

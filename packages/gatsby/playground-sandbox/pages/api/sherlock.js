@@ -2,9 +2,10 @@ import {executeRepro} from '@arcanis/sherlock/lib/executeRepro';
 import path           from 'path';
 
 import {BERRY_DIR}    from '../../constants';
+import {setupCors}    from '../../cors';
 
 // eslint-disable-next-line arca/no-default-export
-export default async (req, res) => {
+export default setupCors(async (req, res) => {
   try {
     const {code} = req.query;
 
@@ -22,4 +23,4 @@ export default async (req, res) => {
       error: error.toString(),
     });
   }
-};
+});

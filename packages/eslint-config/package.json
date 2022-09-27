@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/eslint-config",
-  "version": "1.0.0-rc.18",
+  "version": "1.0.0-rc.20",
   "license": "BSD-2-Clause",
   "exports": {
     ".": "./index.js",

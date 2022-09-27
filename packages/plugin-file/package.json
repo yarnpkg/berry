@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-file",
-  "version": "3.0.0-rc.18",
+  "version": "3.0.0-rc.20",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/libzip": "workspace:^",
     "tslib": "^2.4.0"
   },
   "peerDependencies": {

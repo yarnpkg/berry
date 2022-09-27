@@ -1,5 +1,5 @@
-import {PortablePath, statUtils, ZipFS}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                       from '@yarnpkg/libzip';
+import {PortablePath, statUtils}                from '@yarnpkg/fslib';
+import {ZipFS}                                  from '@yarnpkg/libzip';
 import {parentPort}                             from 'worker_threads';
 
 import {extractArchiveTo, ExtractBufferOptions} from '../tgzUtils';
@@ -13,7 +13,7 @@ parentPort.on(`message`, async (data: ConvertToZipPayload) => {
   const {opts, tgz, tmpFile} = data;
   const {compressionLevel, ...bufferOpts} = opts;
 
-  const zipFs = new ZipFS(tmpFile, {create: true, libzip: await getLibzipPromise(), level: compressionLevel, stats: statUtils.makeDefaultStats()});
+  const zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel, stats: statUtils.makeDefaultStats()});
 
   // Buffers sent through Node are turned into regular Uint8Arrays
   const tgzBuffer = Buffer.from(tgz.buffer, tgz.byteOffset, tgz.byteLength);

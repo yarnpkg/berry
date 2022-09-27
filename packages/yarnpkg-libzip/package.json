@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "3.0.0-rc.18",
+  "version": "3.0.0-rc.20",
   "license": "BSD-2-Clause",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
@@ -42,7 +42,11 @@
   },
   "dependencies": {
     "@types/emscripten": "^1.39.6",
+    "@yarnpkg/fslib": "workspace:^",
     "tslib": "^2.4.0"
+  },
+  "peerDependencies": {
+    "@yarnpkg/fslib": "workspace:^"
   },
   "engines": {
     "node": ">=14.15.0"

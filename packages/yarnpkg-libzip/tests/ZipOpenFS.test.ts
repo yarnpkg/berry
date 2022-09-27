@@ -1,8 +1,5 @@
-import {getLibzipSync}                        from '@yarnpkg/libzip';
-
-import {getArchivePart}                       from '../sources/ZipOpenFS';
-import {ppath, npath, Filename, PortablePath} from '../sources/path';
-import {ZipOpenFS}                            from '../sources';
+import {ppath, npath, Filename, PortablePath} from '@yarnpkg/fslib';
+import {ZipOpenFS, getArchivePart}            from '@yarnpkg/libzip';
 
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
@@ -51,7 +48,7 @@ describe(`getArchivePart`, () => {
 
 describe(`ZipOpenFS`, () => {
   it(`can read from a zip file`, () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync()});
+    const fs = new ZipOpenFS();
 
     expect(fs.readFileSync(ZIP_FILE1, `utf8`)).toEqual(`foo\n`);
 
@@ -59,7 +56,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`can read from a zip file in a path containing .zip`, () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync()});
+    const fs = new ZipOpenFS();
 
     expect(fs.readFileSync(ZIP_FILE2, `utf8`)).toEqual(`foo\n`);
 
@@ -67,7 +64,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`can read from a zip file with an unusual extension if so configured`, () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), fileExtensions: [`.hiddenzip`]});
+    const fs = new ZipOpenFS({fileExtensions: [`.hiddenzip`]});
 
     expect(fs.readFileSync(ZIP_FILE3, `utf8`)).toEqual(`foo\n`);
 
@@ -75,7 +72,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`throws when reading from a zip file with an unusual extension`, () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync()});
+    const fs = new ZipOpenFS();
 
     expect(() => {
       fs.readFileSync(ZIP_FILE3, `utf8`);
@@ -85,7 +82,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`doesn't close a ZipFS instance with open handles`, () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     const fileHandle = fs.openSync(ZIP_FILE1, ``);
 
@@ -101,7 +98,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`sets the path property of the stream object returned by createReadStream to the normalized native version of the input path`, async () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     const unnormalizedPortablePath = ZIP_FILE1.replace(/\//g, `/./`) as PortablePath;
     const normalizedNativePath = npath.fromPortablePath(ZIP_FILE1);
@@ -115,7 +112,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`treats createReadStream as an open file handle`, async () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     const chunks: Array<Buffer> = [];
     await new Promise<void>(resolve => {
@@ -149,7 +146,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`treats createWriteStream as an open file handle`, async () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     const stream1 = fs.createWriteStream(ZIP_FILE1);
     const stream2 = fs.createWriteStream(ZIP_FILE2);
@@ -174,7 +171,7 @@ describe(`ZipOpenFS`, () => {
   it(`closes ZipFS instances once they become stale`, async () => {
     jest.useFakeTimers();
 
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxAge: 2000});
+    const fs = new ZipOpenFS({maxAge: 2000});
 
     await fs.existsPromise(ZIP_FILE1);
     // @ts-expect-error: mountInstances is private
@@ -200,7 +197,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`doesn't close zip files while they are in use`, async () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     await Promise.all([
       fs.readFilePromise(ZIP_FILE1),
@@ -215,7 +212,7 @@ describe(`ZipOpenFS`, () => {
   it(`doesn't crash when watching a file in a archive that gets closed`, async () => {
     jest.useFakeTimers();
 
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     fs.watchFile(ZIP_FILE1, (current, previous) => {});
     fs.watchFile(ZIP_FILE2, (current, previous) => {});
@@ -226,7 +223,7 @@ describe(`ZipOpenFS`, () => {
   });
 
   it(`treats Dir instances opened via opendir as open file handles`, () => {
-    const fs = new ZipOpenFS({libzip: getLibzipSync(), maxOpenFiles: 1});
+    const fs = new ZipOpenFS({maxOpenFiles: 1});
 
     const dir1 = fs.opendirSync(ZIP_DIR1);
     const dir2 = fs.opendirSync(ZIP_DIR2);

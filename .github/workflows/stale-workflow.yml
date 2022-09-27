@@ -7,7 +7,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stale@v3
+    - uses: actions/stale@v5
       with:
         repo-token: ${{secrets.YARNBOT_TOKEN}}
 
@@ -32,7 +32,7 @@ jobs:
         stale-issue-label: 'stale'
         exempt-issue-labels: 'reproducible,upholded,good first issue,help wanted'
 
-    - uses: actions/stale@v3
+    - uses: actions/stale@v5
       with:
         repo-token: ${{secrets.YARNBOT_TOKEN}}
 

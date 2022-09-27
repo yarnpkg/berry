@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-stage",
-  "version": "4.0.0-rc.18",
+  "version": "4.0.0-rc.20",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {

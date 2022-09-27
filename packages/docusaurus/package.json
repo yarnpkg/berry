@@ -18,14 +18,17 @@
     "@docusaurus/preset-classic": "2.1.0",
     "@mdx-js/react": "^1.6.22",
     "clsx": "^1.2.1",
+    "markdown-it": "^13.0.1",
     "prism-react-renderer": "^1.3.5",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-json-doc": "^2.2.0"
   },
   "devDependencies": {
     "@docusaurus/theme-classic": "^2.1.0",
     "@docusaurus/theme-common": "^2.1.0",
     "@tsconfig/docusaurus": "^1.0.5",
+    "@types/markdown-it": "^12.2.3",
     "@types/react": "^18.0.20",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",

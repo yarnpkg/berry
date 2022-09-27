@@ -2,9 +2,10 @@ import {spawnSync} from 'child_process';
 import fs          from 'fs';
 
 import {BERRY_DIR} from '../../constants';
+import {setupCors} from '../../cors';
 
 // eslint-disable-next-line arca/no-default-export
-export default async (req, res) => {
+export default setupCors(async (req, res) => {
   try {
     if (fs.existsSync(BERRY_DIR)) {
       const gitArgs = [
@@ -35,4 +36,4 @@ export default async (req, res) => {
       error: error.toString(),
     });
   }
-};
+});

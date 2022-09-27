@@ -70,6 +70,38 @@ article {
   padding-left: 1.5rem;
 }
 
+body[x-doc-route^="/configuration/"] article {
+  padding-right: 1.5rem;
+}
+
+body[x-doc-route^="/configuration/"] .col {
+  max-width: 100% !important;
+}
+
+.markdown table {
+  display: table;
+
+  width: 100%;
+
+  line-height: 1.5em;
+}
+
+.markdown .subtitle {
+  margin: calc(var(--ifm-h2-vertical-rhythm-top) * var(--ifm-leading)) 0;
+}
+
+.markdown header + .theme-admonition {
+  margin-bottom: calc(var(--ifm-h1-vertical-rhythm-bottom) * var(--ifm-leading));
+}
+
+.markdown table h4 {
+  margin: 0;
+}
+
+.markdown .option-table + table td:nth-child(1) {
+  width: 230px;
+}
+
 a[target] svg {
   display: inline-block;
   margin-left: .6rem;
@@ -84,6 +116,17 @@ a[target] svg {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.rjd-annotation p:last-child {
+  margin-bottom: 0;
+}
+
+.rjd-annotation code {
+  all: initial;
+
+  font-family: var(--ifm-font-family-monospace);
+  color: rgb(156, 220, 254);
 }
 
 /* You can override the default Infima variables here. */

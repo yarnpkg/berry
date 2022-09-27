@@ -1,16 +1,16 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
-import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                          from '@yarnpkg/fslib';
-import {getLibzipPromise}                                               from '@yarnpkg/libzip';
-import {randomBytes}                                                    from 'crypto';
-import fs                                                               from 'fs';
+import {FakeFS, LazyFS, NodeFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
+import {ppath, xfs}                                              from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL, ZipFS}                        from '@yarnpkg/libzip';
+import {randomBytes}                                             from 'crypto';
+import fs                                                        from 'fs';
 
-import {Configuration}                                                  from './Configuration';
-import {MessageName}                                                    from './MessageName';
-import {ReportError}                                                    from './Report';
-import * as hashUtils                                                   from './hashUtils';
-import * as miscUtils                                                   from './miscUtils';
-import * as structUtils                                                 from './structUtils';
-import {LocatorHash, Locator}                                           from './types';
+import {Configuration}                                           from './Configuration';
+import {MessageName}                                             from './MessageName';
+import {ReportError}                                             from './Report';
+import * as hashUtils                                            from './hashUtils';
+import * as miscUtils                                            from './miscUtils';
+import * as structUtils                                          from './structUtils';
+import {LocatorHash, Locator}                                    from './types';
 
 const CACHE_VERSION = 9;
 
@@ -172,7 +172,7 @@ export class Cache {
     // it seem like it actually exist on the disk, at the location of the
     // cache the package would fill if it was normally fetched.
     const makeMockPackage = () => {
-      const zipFs = new ZipFS(null, {libzip});
+      const zipFs = new ZipFS();
 
       const rootPackageDir = ppath.join(PortablePath.root, structUtils.getIdentVendorPath(locator));
       zipFs.mkdirSync(rootPackageDir, {recursive: true});
@@ -363,11 +363,9 @@ export class Cache {
 
     let zipFs: ZipFS | undefined;
 
-    const libzip = await getLibzipPromise();
-
     const zipFsBuilder = shouldMock
       ? () => makeMockPackage()
-      : () => new ZipFS(cachePath, {baseFs, libzip, readOnly: true});
+      : () => new ZipFS(cachePath, {baseFs, readOnly: true});
 
     const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
       return zipFs = zipFsBuilder();

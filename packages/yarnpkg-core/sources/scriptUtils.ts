@@ -1,25 +1,25 @@
-import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
-import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
-import {getLibzipPromise}                                     from '@yarnpkg/libzip';
-import {execute}                                              from '@yarnpkg/shell';
-import capitalize                                             from 'lodash/capitalize';
-import pLimit                                                 from 'p-limit';
-import {PassThrough, Readable, Writable}                      from 'stream';
+import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
+import {xfs, npath, ppath, toFilename}             from '@yarnpkg/fslib';
+import {ZipOpenFS}                                 from '@yarnpkg/libzip';
+import {execute}                                   from '@yarnpkg/shell';
+import capitalize                                  from 'lodash/capitalize';
+import pLimit                                      from 'p-limit';
+import {PassThrough, Readable, Writable}           from 'stream';
 
-import {Configuration}                                        from './Configuration';
-import {Manifest}                                             from './Manifest';
-import {MessageName}                                          from './MessageName';
-import {Project}                                              from './Project';
-import {ReportError, Report}                                  from './Report';
-import {StreamReport}                                         from './StreamReport';
-import {Workspace}                                            from './Workspace';
-import {YarnVersion}                                          from './YarnVersion';
-import * as execUtils                                         from './execUtils';
-import * as formatUtils                                       from './formatUtils';
-import * as miscUtils                                         from './miscUtils';
-import * as semverUtils                                       from './semverUtils';
-import * as structUtils                                       from './structUtils';
-import {LocatorHash, Locator}                                 from './types';
+import {Configuration}                             from './Configuration';
+import {Manifest}                                  from './Manifest';
+import {MessageName}                               from './MessageName';
+import {Project}                                   from './Project';
+import {ReportError, Report}                       from './Report';
+import {StreamReport}                              from './StreamReport';
+import {Workspace}                                 from './Workspace';
+import {YarnVersion}                               from './YarnVersion';
+import * as execUtils                              from './execUtils';
+import * as formatUtils                            from './formatUtils';
+import * as miscUtils                              from './miscUtils';
+import * as semverUtils                            from './semverUtils';
+import * as structUtils                            from './structUtils';
+import {LocatorHash, Locator}                      from './types';
 
 /**
  * @internal
@@ -432,8 +432,6 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     return manifest.scripts.has(scriptName);
-  }, {
-    libzip: await getLibzipPromise(),
   });
 }
 
@@ -545,8 +543,6 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
       cwd = packageLocation;
 
     return {manifest, binFolder, env, cwd};
-  }, {
-    libzip: await getLibzipPromise(),
   });
 }
 

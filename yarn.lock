@@ -2749,7 +2749,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/theme-common@npm:2.1.0":
+"@docusaurus/theme-common@npm:2.1.0, @docusaurus/theme-common@npm:^2.1.0":
   version: 2.1.0
   resolution: "@docusaurus/theme-common@npm:2.1.0"
   dependencies:
@@ -5885,6 +5885,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/linkify-it@npm:*":
+  version: 3.0.2
+  resolution: "@types/linkify-it@npm:3.0.2"
+  checksum: 2de369c0c17d27bd6f6a4b19cc2cea0593c2c4a9e2c27fc039ce787ef54f42507085c82228f782ada40c678712abae41d9a6254fc0dd95f6d0bc7fc8d36798b3
+  languageName: node
+  linkType: hard
+
 "@types/loadable__component@npm:5.10.0":
   version: 5.10.0
   resolution: "@types/loadable__component@npm:5.10.0"
@@ -5910,6 +5917,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/markdown-it@npm:^12.2.3":
+  version: 12.2.3
+  resolution: "@types/markdown-it@npm:12.2.3"
+  dependencies:
+    "@types/linkify-it": "npm:*"
+    "@types/mdurl": "npm:*"
+  checksum: dc16c467cb8dee852ddc598e6e53d4572ae79df2b9457173abc7e85304eca421b4e17d77d8b7f5476a1627442643b86696e321871cd7734788e97fb3f994e1f5
+  languageName: node
+  linkType: hard
+
 "@types/marked@npm:^1.1.0":
   version: 1.1.0
   resolution: "@types/marked@npm:1.1.0"
@@ -5923,6 +5940,13 @@ __metadata:
   dependencies:
     "@types/unist": "npm:*"
   checksum: 533f71f5e93fb83b509c3c187432135cb2aeaff256d7bb9e37fd3cd2012dc715f339e79ed9e3c6da86b0a8d285180971abe8dd0d45adc00ae140af72f6363503
+  languageName: node
+  linkType: hard
+
+"@types/mdurl@npm:*":
+  version: 1.0.2
+  resolution: "@types/mdurl@npm:1.0.2"
+  checksum: ae01753ed922f0de9b7897d2da73794453df9a1e04832bce6ed55c84fe4bf0cadc5539452de21e37a5303ed699049c3c533c1cc1ef00392c47b403034eee686c
   languageName: node
   linkType: hard
 
@@ -7190,13 +7214,20 @@ __metadata:
     "@docusaurus/core": "npm:2.1.0"
     "@docusaurus/preset-classic": "npm:2.1.0"
     "@docusaurus/theme-classic": "npm:^2.1.0"
+    "@docusaurus/theme-common": "npm:^2.1.0"
     "@mdx-js/react": "npm:^1.6.22"
     "@tsconfig/docusaurus": "npm:^1.0.5"
+    "@types/markdown-it": "npm:^12.2.3"
     "@types/react": "npm:^18.0.20"
+    "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/libzip": "workspace:^"
+    "@yarnpkg/monorepo": "workspace:^"
     clsx: "npm:^1.2.1"
+    markdown-it: "npm:^13.0.1"
     prism-react-renderer: "npm:^1.3.5"
     react: "npm:^17.0.2"
     react-dom: "npm:^17.0.2"
+    react-json-doc: "npm:^2.2.0"
   languageName: unknown
   linkType: soft
 
@@ -7320,7 +7351,7 @@ __metadata:
     react-helmet: "npm:^6.1.0"
     react-icons: "npm:^3.10.0"
     react-instantsearch-dom: "npm:^6.6.0"
-    react-json-doc: "npm:^2.1.0"
+    react-json-doc: "npm:^2.2.0"
     react-monaco-editor: "npm:^0.36.0"
     react-responsive-carousel: "npm:^3.2.22"
     react-scroll-into-view-if-needed: "npm:^2.1.7"
@@ -7365,8 +7396,11 @@ __metadata:
   dependencies:
     "@types/emscripten": "npm:^1.39.6"
     "@types/prettier": "npm:1.19.0"
+    "@yarnpkg/fslib": "workspace:^"
     prettier: "npm:^1.19.1"
     tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@yarnpkg/fslib": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -7412,6 +7446,8 @@ __metadata:
       unplugged: true
     gatsby-telemetry:
       built: false
+    react-json-doc@2.1.0:
+      unplugged: true
     svg2png:
       unplugged: true
   languageName: unknown
@@ -7539,6 +7575,7 @@ __metadata:
   dependencies:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/libzip": "workspace:^"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
@@ -13222,6 +13259,13 @@ __metadata:
   version: 2.1.0
   resolution: "entities@npm:2.1.0"
   checksum: 87e14da51029c0f52f439d82e39188af6433afa86e72f34446979fa37580f3250ed581cdd51073842117ac76d0501995a20b27bd8eafa64f62edada0d5f35d0e
+  languageName: node
+  linkType: hard
+
+"entities@npm:~3.0.1":
+  version: 3.0.1
+  resolution: "entities@npm:3.0.1"
+  checksum: 8c10fef51039eef30d6047ede847755a83824cd0e04cfeece5a9ac0a107f34dbed1167270f9442ba8d020a01596253279c2b14969669f6dead5f720e70ac3b0b
   languageName: node
   linkType: hard
 
@@ -19977,6 +20021,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"linkify-it@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "linkify-it@npm:4.0.1"
+  dependencies:
+    uc.micro: "npm:^1.0.1"
+  checksum: 780733527a2a08cd553b5fa5a1ca443e10c708e867d371a39d1121456f2c620607c28720446c43b610fd0021ff9906eecaef473034c866bc87ec2ae6f868909a
+  languageName: node
+  linkType: hard
+
 "load-bmfont@npm:^1.2.3, load-bmfont@npm:^1.3.1, load-bmfont@npm:^1.4.0":
   version: 1.4.0
   resolution: "load-bmfont@npm:1.4.0"
@@ -20647,6 +20700,21 @@ __metadata:
   bin:
     markdown-it: bin/markdown-it.js
   checksum: 5d937f600be0135f2881fa7c98abbdcf026731dfb190d700b3f14f556af0fe2fb087cddfc5397216b802634240b871106ae32ad5332ec2e4746797b6525d261a
+  languageName: node
+  linkType: hard
+
+"markdown-it@npm:^13.0.1":
+  version: 13.0.1
+  resolution: "markdown-it@npm:13.0.1"
+  dependencies:
+    argparse: "npm:^2.0.1"
+    entities: "npm:~3.0.1"
+    linkify-it: "npm:^4.0.1"
+    mdurl: "npm:^1.0.1"
+    uc.micro: "npm:^1.0.5"
+  bin:
+    markdown-it: bin/markdown-it.js
+  checksum: 8b7dae5403e65de4123383bed7070e895abd76937d2573aa32084b99ba1e1042e0d159709b8a0ef71cf5671a49ef89c3df47b799df7b991aa5ca38e6f7aa60fb
   languageName: node
   linkType: hard
 
@@ -25019,6 +25087,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"punycode@npm:*, punycode@npm:^2.1.0, punycode@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "punycode@npm:2.1.1"
+  checksum: fd728ef9db90e7b4db37d5c4937d6c6302cf4f64748b2dea3abbf1efd21e6193bb670efb7814766c858b2e1ccdb65ce34e44b498d734922e1dcb2a8623a925d8
+  languageName: node
+  linkType: hard
+
 "punycode@npm:1.3.2":
   version: 1.3.2
   resolution: "punycode@npm:1.3.2"
@@ -25030,13 +25105,6 @@ __metadata:
   version: 1.4.1
   resolution: "punycode@npm:1.4.1"
   checksum: 6c45a3cd2ba296ffd13488000e947a22b0e7885d2c570f04aef0f4f6f6008f1392b928c3f2bca5fe4c9030bbe94837bdb461050a941df286a597de741397ceb1
-  languageName: node
-  linkType: hard
-
-"punycode@npm:^2.1.0, punycode@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "punycode@npm:2.1.1"
-  checksum: fd728ef9db90e7b4db37d5c4937d6c6302cf4f64748b2dea3abbf1efd21e6193bb670efb7814766c858b2e1ccdb65ce34e44b498d734922e1dcb2a8623a925d8
   languageName: node
   linkType: hard
 
@@ -25611,12 +25679,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-json-doc@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "react-json-doc@npm:2.1.0"
+"react-json-doc@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "react-json-doc@npm:2.2.0"
   peerDependencies:
     react: "*"
-  checksum: 03ee329d39ee71fb4803ca14b2def82b9c082fce2461b5062f41ad2e07a13cb7401fb0ebe3dedfb95ca55d335319acc309f0debb5f5c1db525625c6d8f919d1e
+  checksum: 3584ff2668bca2ceba785e5702af5074ca69f2e4a61b0a58fd78dd42b43737af0d5d1fff7523e7448f1fbd15a577717a09951ebe4bc21dcf82380aed7618666f
   languageName: node
   linkType: hard
 
