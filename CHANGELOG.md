@@ -74,6 +74,7 @@ The following changes only affect people writing Yarn plugins:
 ### Compatibility
 
 - The patched filesystem now supports `fchown`.
+- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
 
 ### Shell
 
