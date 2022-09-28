@@ -1885,8 +1885,6 @@ function applyVirtualResolutionMutations({
   volatileDescriptors = new Set(),
 
   report,
-
-  tolerateMissingPackages = false,
 }: {
   project: Project;
 
@@ -1900,8 +1898,6 @@ function applyVirtualResolutionMutations({
   volatileDescriptors?: Set<DescriptorHash>;
 
   report: Report | null;
-
-  tolerateMissingPackages?: boolean;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -1926,15 +1922,10 @@ function applyVirtualResolutionMutations({
   // may be overriden during the virtual package resolution - cf Dragon Test #5
   const originalWorkspaceDefinitions = new Map<LocatorHash, Package | null>(project.workspaces.map(workspace => {
     const locatorHash = workspace.anchoredLocator.locatorHash;
-    const pkg = allPackages.get(locatorHash);
 
-    if (typeof pkg === `undefined`) {
-      if (tolerateMissingPackages) {
-        return [locatorHash, null];
-      } else {
-        throw new Error(`Assertion failed: The workspace should have an associated package`);
-      }
-    }
+    const pkg = allPackages.get(locatorHash);
+    if (typeof pkg === `undefined`)
+      throw new Error(`Assertion failed: The workspace should have an associated package`);
 
     return [locatorHash, structUtils.copyPackage(pkg)];
   }));
@@ -1988,13 +1979,8 @@ function applyVirtualResolutionMutations({
       optionalBuilds.delete(parentLocator.locatorHash);
 
     const parentPackage = allPackages.get(parentLocator.locatorHash);
-    if (!parentPackage) {
-      if (tolerateMissingPackages) {
-        return;
-      } else {
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
-      }
-    }
+    if (!parentPackage)
+      throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
 
     const newVirtualInstances: Array<[Locator, Descriptor, Package]> = [];
 
@@ -2036,18 +2022,13 @@ function applyVirtualResolutionMutations({
       }
 
       const resolution = allResolutions.get(descriptor.descriptorHash);
-      if (!resolution) {
+      if (!resolution)
         // Note that we can't use `getPackageFromDescriptor` (defined below,
         // because when doing the initial tree building right after loading the
         // project it's possible that we get some entries that haven't been
         // registered into the lockfile yet - for example when the user has
         // manually changed the package.json dependencies)
-        if (tolerateMissingPackages) {
-          continue;
-        } else {
-          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
-        }
-      }
+        throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       const pkg = originalWorkspaceDefinitions.get(resolution) || allPackages.get(resolution);
       if (!pkg)
