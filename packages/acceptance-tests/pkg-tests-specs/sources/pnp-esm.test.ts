@@ -1,5 +1,5 @@
-import {Filename, ppath, xfs} from '@yarnpkg/fslib';
-import * as loaderFlags       from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import * as loaderFlags                     from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -657,4 +657,221 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+
+  describe(`private import mappings`, () => {
+    test(
+      `it should support private import mappings`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          imports: {
+            "#foo": `./foo.js`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import {foo} from '#foo';\nconsole.log(foo)`,
+          );
+          await xfs.writeFilePromise(
+            ppath.join(path, `foo.js` as Filename),
+            `export const foo = 42;`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `42\n`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support conditions`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          imports: {
+            "#foo": {
+              node: `./foo.js`,
+              default: `./404.js`,
+            },
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import {foo} from '#foo';\nconsole.log(foo)`,
+          );
+          await xfs.writeFilePromise(
+            ppath.join(path, `foo.js` as Filename),
+            `export const foo = 42;`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `42\n`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should use the closest manifest`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          imports: {
+            "#foo": `./foo/index.js`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.mkdirPromise(ppath.join(path, `foo` as Filename));
+          await xfs.writeJsonPromise(ppath.join(path, `foo/package.json` as PortablePath), {
+            type: `module`,
+            imports: {
+              "#bar": `./bar.js`,
+            },
+          });
+          await xfs.writeFilePromise(
+            ppath.join(path, `foo/bar.js` as Filename),
+            `export const bar = 42;`,
+          );
+          await xfs.writeFilePromise(ppath.join(path, `foo/index.js` as PortablePath), `export * from '#bar';`);
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import {bar} from '#foo';\nconsole.log(bar)`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `42\n`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support mapping to a dependency`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          dependencies: {
+            "no-deps": `1.0.0`,
+          },
+          imports: {
+            "#foo/*": `no-deps/*`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import noDeps from '#foo/index.js';\nconsole.log(noDeps)`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `{ name: 'no-deps', version: '1.0.0' }\n`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should use legacy resolve when mapping to a dependency without an exports field`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          dependencies: {
+            "no-deps": `1.0.0`,
+          },
+          imports: {
+            "#foo": `no-deps`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import noDeps from '#foo';\nconsole.log(noDeps)`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `{ name: 'no-deps', version: '1.0.0' }\n`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support wildcards`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          imports: {
+            "#foo/*": `./*.js`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import {foo} from '#foo/foo';\nconsole.log(foo)`,
+          );
+          await xfs.writeFilePromise(
+            ppath.join(path, `foo.js` as Filename),
+            `export const foo = 42;`,
+          );
+
+          await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `42\n`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should not allow mapping to another private mapping`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+          imports: {
+            "#foo": `#bar`,
+            "#bar": `./bar.js`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import {foo} from '#foo';\nconsole.log(foo)`,
+          );
+          await xfs.writeFilePromise(
+            ppath.join(path, `bar.js` as Filename),
+            `export const foo = 42;`,
+          );
+
+          await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
+            code: 1,
+            stdout: ``,
+            stderr: expect.stringContaining(`Mapping from one private import to another isn't allowed`),
+          });
+        },
+      ),
+    );
+  });
 });
