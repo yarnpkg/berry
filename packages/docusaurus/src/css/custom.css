@@ -20,8 +20,14 @@ html {
   border-radius: 0 !important;
 }
 
-.theme-doc-breadcrumbs {
-  padding-bottom: 1.5rem;
+@media (min-width: 996px) {
+  .theme-doc-breadcrumbs {
+    padding-bottom: 1.5rem;
+  }
+
+  .container {
+    padding-left: calc(var(--ifm-spacing-horizontal) + 1.5rem);
+  }
 }
 
 .navbar {
@@ -39,6 +45,14 @@ body:not([x-doc-route="/"]) .main-wrapper > :last-child {
   border-bottom-right-radius: 0;
 
   margin-bottom: 0;
+}
+
+@media (max-width: 996px) {
+  .main-wrapper > :last-child {
+    margin: 0;
+    width: 100vw;
+    border-radius: 0;
+  }
 }
 
 body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) {
@@ -84,10 +98,6 @@ body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) .navbar__link--active::befo
 
 .menu.thin-scrollbar {
   padding: 0.5rem;
-}
-
-.container {
-  padding-left: calc(var(--ifm-spacing-horizontal) + 1.5rem);
 }
 
 body[x-doc-route^="/configuration/"] article {
