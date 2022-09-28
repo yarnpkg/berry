@@ -13,6 +13,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Compatibility
 
 - The patched filesystem now supports `fchown`.
+- PnP now handles private import mappings.
 - Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
 
 ## 3.2.3
