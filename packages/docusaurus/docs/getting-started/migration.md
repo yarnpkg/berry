@@ -5,50 +5,42 @@ title: "Migration"
 description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 ---
 
-Any major release has its breaking changes, and Yarn 2 isn't the exception. A few old behaviors were cleaned, fixed, modified, or removed. While one of our goals is to make the transition as easy as we can, there are a few things to be aware of when migrating a codebase. To make this process more efficient we've listed below the recommended migration steps, along with solutions for the most common problems you might face.
+Any major release has its breaking changes, and migrating from Classic to Modern isn't an exception. A few old behaviors were cleaned, others got fixed or modified, and some even got removed.
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+While one of our goals is to make the transition as easy as we can, there are a few things to be aware of when migrating your codebase. To make this process more efficient we've listed below the [recommended migration steps](/getting-started/migration#step-by-step), along with solutions for the most common problems you might face.
 
 ## Why should you migrate?
 
 We answer this question in details [here](https://yarnpkg.com/getting-started/qa#why-should-you-upgrade-to-yarn-modern).
 
-In a few words, upgrading to the latest versions is critical to a fast and stable Yarn experience. Numerous bugs were fixed since the first major version, and we no longer expect to build new features on the old trunk. **Even if you don't plan to use the new default installation strategy called Plug'n'Play** your projects will still get benefits from the upgrade:
+In a few words, upgrading to the latest versions is critical to a fast and stable Yarn experience. Numerous bugs were fixed since the first major version, and we no longer expect to build new features on the old trunk. **Even if you don't plan to use the new default installation strategy called Plug'n'Play**, your projects will still get benefits from the upgrade:
 
 - The good old `node_modules` installer improved as well as various edge cases got fixed
-- A renewed focus on performances and good practices (we now formally track perfs via a [dashboard](https://yarnpkg.com/benchmarks))
-- Improved user experience for various CLI commands and settings ([`yarn add -i`](/cli/add), [`yarn up`](/cli/up), [`logFilters`](/configuration/yarnrc#logFilters), ...)
-- New commands and capabilities (such as the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript#yarnpkgplugin-typescript), or the [release workflow](/features/release-workflow))
+- A renewed focus on performances (we now formally track perfs via a [dashboard](https://yarnpkg.com/benchmarks))
+- Improved user experience ([`yarn add -i`](/cli/add), [`yarn up`](/cli/up), [`logFilters`](/configuration/yarnrc#logFilters), ...)
+- New workflows and capabilities ([`@types` auto-management](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript#yarnpkgplugin-typescript), [release workflow](/features/release-workflow), ...)
 
 And of course a very active development cycle.
 
 ## Step by step
 
-**Note:** Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**. Only in a later optional section we will cover how to enable PnP support, and this part will only be recommended, not mandatory. Baby steps! 😉
+:::info
+Don't worry if your project isn't quite ready for [Plug'n'Play](/features/pnp) just yet! This guide will let you migrate **without losing your `node_modules` folder**. Only in a later optional section we will cover how to enable PnP support, and this part will only be recommended, not mandatory. Baby steps! 😉
+:::
 
 Note that those commands only need to be run once for the whole project and will automatically take effect for all your contributors as soon as they pull the migration commit, thanks to the power of [`yarnPath`](/configuration/yarnrc#yarnPath):
 
-1. Run `npm install -g yarn` to update the global yarn version to latest v1
+1. Make sure you're using Node 16 or higher
+2. Run `corepack enable` to activate [Corepack](https://nodejs.org/api/corepack.html)
 2. Go into your project directory
-3. Run `yarn set version berry` to enable v2 (cf [Install](/getting-started/install) for more details)
+3. Run `yarn set version berry` to enable (cf [Install](/getting-started/install) for more details)
 4. If you used `.npmrc` or `.yarnrc`, you'll need to turn them into the [new format](/configuration/yarnrc) (see also [1](/getting-started/migration#update-your-configuration-to-the-new-settings), [2](https://yarnpkg.com/getting-started/migration#dont-use-npmrc-files))
-5. Add [`nodeLinker: node-modules`](/configuration/yarnrc#nodeLinker) in your `.yarnrc.yml` file
-6. Commit the changes so far (`yarn-X.Y.Z.js`, `.yarnrc.yml`, ...)
-7. Run `yarn install` to migrate the lockfile
-8. Take a look at [this article](/getting-started/qa#which-files-should-be-gitignored) to see what should be gitignored
-9. Commit everything remaining
+5. Run `yarn install` to migrate the lockfile
+6. Commit all changes
 
-Some optional features are available via external plugins:
+Good, you should now have a working Yarn install! Some things might still require some adjustments in your CI scripts (for example the deprecation of [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), or the renaming of `--frozen-lockfile` into `--immutable`),  but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts) for `pre/post`-scripts).
 
-10. Run [`yarn plugin import interactive-tools`](/cli/plugin/import) if you want [`upgrade-interactive`](/cli/upgrade-interactive)
-11. Run [`yarn plugin list`](/cli/plugin/list) to see what other official plugins exist and might be useful
-12. Commit the yarn plugins
-
-Good, you should now have a working Yarn install! Some things might still require a bit of work (for instance we deprecated [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), and renamed `--frozen-lockfile` into `--immutable`), but those special cases will be documented on a case-by-case basis in the rest of this document (for example [here](/getting-started/migration#explicitly-call-the-pre-and-post-scripts)).
-
-## Switching to Plug'n'Play
+## Enabling Plug'n'Play
 
 This step is completely optional - while we recommend to use Plug'n'Play for most new projects, it may sometimes require an average time investment to enable it on existing projects. For this reason, we prefer to list it here as a separate step that you can look into if you're curious or simply want the absolute best of what Yarn has to offer.
 
@@ -56,7 +48,7 @@ This step is completely optional - while we recommend to use Plug'n'Play for mos
 
 Plug'n'Play enforces strict dependency rules. In particular, you'll hit problems if you (or your dependencies) rely on unlisted dependencies (the reasons for that are detailed in our [Rulebook](/advanced/rulebook)), but the gist is that it was the cause of many "project doesn't work on my computer" issues, both in Yarn and other package managers.
 
-To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could result in a subpar experience. For example here's what `webpack-dev-server` would reveal:
+To quickly detect which places may rely on unsafe patterns run `yarn dlx @yarnpkg/doctor` in your project - it'll statically analyze your sources to try to locate the most common issues that could result in a subpar experience. For example here's what running it on the `webpack-dev-server` repository would reveal:
 
 ```
 ➤ YN0000: Found 1 package(s) to process
@@ -85,8 +77,7 @@ In this case, the doctor noticed that:
 2. If you don't find it, or if it's set to `pnp`, then it's all good: you're already using Plug'n'Play!
 3. Otherwise, remove it from your configuration file
 4. Run `yarn install`
-5. Various files may have appeared; check [this article](/getting-started/qa#which-files-should-be-gitignored) to see what to put in your gitignore
-6. Commit the changes
+5. Commit the changes
 
 ### Editor support
 
@@ -102,9 +93,10 @@ We have a [dedicated documentation](/getting-started/editor-sdks), but if you're
 
 Now you should have a working Yarn Plug'n'Play setup, but your repository might still need some extra care. Some things to keep in mind:
 
-- There is no `node_modules` folder and no `.bin` folder. If you relied on these, [call `yarn run` instead](##call-binaries-using-yarn-run-rather-than-node_modulesbin).
-- Replace any calls to `node` that are not inside a Yarn script with `yarn node`
-- Custom pre-hooks (e.g. prestart) need to be called manually now
+- There are no `node_modules` folders. Use `require.resolve` instead.
+- There are no `.bin` folders. If you relied on them, use [`yarn run <binary name>`](#call-binaries-using-yarn-run-rather-than-node_modulesbin) instead.
+- Replace any calls to `node` that are not inside the `scripts` field by `yarn node`.
+- Custom pre-hooks (e.g. `prestart`) need to be called manually now (`yarn prestart`).
 
 All of this and more is documented in the following sections. In general, we advise you at this point to try to run your application and see what breaks, then check here to find out tips on how to correct your install.
 
@@ -136,19 +128,11 @@ packageExtensions:
       "@babel/core": "*"
 ```
 
+Should you use dependencies or peer dependencies? It depends on the context; as a rule of thumb, if the package is a singleton (for example `react`, or `react-redux` which also relies on the React context), you'll want to make it a peer dependency. In other cases, where the package is just a collection of utilities, using a regular dependency should be fine (for example `tslib`, `lodash`, etc).
+
 ### Use `yarn dlx` instead of `yarn global`
 
-`yarn dlx` is designed to execute one off scripts that may have been installed as global packages with `yarn 1.x`. Managing system-wide packages is outside of the scope of `yarn`. To reflect this, `yarn global` has been removed. [Read more on GitHub](https://github.com/yarnpkg/berry/issues/821).
-
-### Enable the PnP plugin when using Webpack 4
-
-Webpack 5 supports PnP natively, but if you use Webpack 4 you'll need to add the [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) plugin yourself.
-
-### Upgrade `resolve` to 1.9+
-
-The `resolve` package is used by many tools in order to retrieve the dependencies for any given folder on the filesystem. It's compatible with Plug'n'Play, but only starting from 1.9+, so make sure you don't have an older release in your dependency tree (especially as transitive dependency).
-
-**Fix:** Open your lockfile, look for all the `resolve` entries that could match 1.9+ (for example `^1.0.0`), and remove them. Then run `yarn install` again. If you run `yarn why resolve`, you'll also get a good idea of which package is depending on outdated version of `resolve` - maybe you can upgrade them too?
+Managing system-wide packages is outside of the scope of Yarn, so [`yarn global` has been removed](https://github.com/yarnpkg/berry/issues/821). We however still provide `yarn dlx` to run one off scripts. 
 
 ### Call binaries using `yarn run` rather than `node_modules/.bin`
 
@@ -194,37 +178,27 @@ Into:
 
 ### Setup your IDE for PnP support
 
-We've written a [guide](/getting-started/editor-sdks) entirely designed to explain how to use Yarn with your IDE. Make sure to take a look at it, and maybe contribute to it if some instructions are unclear or missing!
+Since Yarn Plug'n'Play doesn't generate `node_modules` folders, some IDE integrations may not work out of the box. Check our [guide](/getting-started/editor-sdks) to see how to fix them.
 
 ### Update your configuration to the new settings
 
-Yarn 2 uses a different style of configuration files than Yarn 1. While mostly invisible for the lockfile (because we import them on the fly), it might cause some issues for your rc files.
+Modern uses a different style of configuration files than Classic. While mostly invisible for the lockfile (because we convert them on the fly), it might cause some issues for your rc files.
 
-- The main change is the name of the file. Yarn 1 used `.yarnrc`, but Yarn 2 is moving to a different name: `.yarnrc.yml`. This should make it easier for third-party tools to detect whether a project uses Yarn 1 or Yarn 2, and will allow you to easily set different settings in your home folders when working with a mix of Yarn 1 and Yarn 2 projects.
+- Classic used `.yarnrc` files, but Modern now uses `.yarnrc.yml`.
 
-- As evidenced by the new file extension, the Yarnrc files are now to be written in [YAML](https://en.wikipedia.org/wiki/YAML). This has been requested for a long time, and we hope it'll allow easier integrations for the various third-party tools that need to interact with the Yarnrc files (think Dependabot, etc).
+- As evidenced by the new file extension, the Yarnrc files are now to be written in [YAML](https://en.wikipedia.org/wiki/YAML).
 
 - The configuration keys have changed. The comprehensive settings list is available in our [documentation](/configuration/yarnrc), but here are some particular changes you need to be aware of:
+
+  - We no longer read any settings from the `.npmrc` files.
 
   - Custom registries are now configured via [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
 
   - Registry authentication tokens are now configured via [`npmAuthToken`](/configuration/yarnrc#npmAuthToken).
 
-  - The `yarn-offline-mirror` has been removed, since the offline mirror has been merged with the cache as part of the [Zero-Install effort](/features/zero-installs). Just commit the Yarn cache and you're ready to go.
-
-### Don't use `.npmrc` files
-
-On top of their naming, the way we load the Yarnrc files has also been changed and simplified. In particular:
-
-- Yarn doesn't use the configuration from your `.npmrc` files anymore; we instead read all of our configuration from the `.yarnrc.yml` files whose available settings can be found in [our documentation](/configuration/yarnrc).
-
-- As mentioned in the previous section, the yarnrc files are now called `.yarnrc.yml`, with an extension. We've completely stopped reading the values from the regular `.yarnrc` files.
-
-- All environment variables prefixed with `YARN_` are automatically used to override the matching configuration settings. So for example, adding `YARN_NPM_REGISTRY_SERVER` into your environment will change the value of [`npmRegistryServer`](/configuration/yarnrc#npmRegistryServer).
-
 ### Take a look at our end-to-end tests
 
-We now run daily [end-to-end tests](https://github.com/yarnpkg/berry#current-status) against various popular JavaScript tools in order to make sure that we never regress - or to be notified when those tools do.
+We now run daily [end-to-end tests](https://github.com/yarnpkg/berry#current-status) against various popular JavaScript tools in order to make sure that we never regress - or be notified when third-party project ship incompatible changes.
 
 Consulting the sources for those tests is a great way to check whether some special configuration values have to be set when using a particular toolchain.
 
@@ -232,32 +206,14 @@ Consulting the sources for those tests is a great way to check whether some spec
 
 The `bundleDependencies` (or `bundledDependencies`) is an artifact of the past that used to let you define a set of packages that would be stored as-is within the package archive, `node_modules` and all. This feature has many problems:
 
-- It uses `node_modules`, which doesn't easily allow different install strategies such as Plug'n'Play.
-- It encodes the hoisting inside the package, which is the exact opposite of what we aim for
-- It messes with the hoisting of other packages
-- Etc, etc, etc
+- It uses `node_modules`, which doesn't exist under Plug'n'Play installs.
+- It encodes the hoisting inside the package, messing with the hoisting from other packages.
 
 So how to replace them? There are different ways:
 
 - If you need to patch a package, just fork it or reference it through `file:` (it's perfectly fine even for transitive dependencies to use this protocol). The `portal:` and `patch:` protocols are also options, although they'll only work for Yarn consumers.
 
-- If you need to ship a package to your customers as a standalone (no dependencies), bundle it yourself using Webpack, Rollup, or similar tools.
-
-### If required: enable the `node-modules` plugin
-
-**[PnP Compatibility Table](/features/pnp#compatibility-table)**
-
-Despite our best efforts some tools don't work at all under Plug'n'Play environments, and we don't have the resources to update them ourselves. There are only two notorious ones on our list: Flow, and React Native.
-
-In such a radical case, you can enable the built-in [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm) by adding the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file before running a fresh `yarn install`:
-
-```yaml
-nodeLinker: node-modules
-```
-
-This will cause Yarn to install the project just like Yarn 1 used to, by copying the packages into various `node_modules` folders.
-
-[More information about the `nodeLinker` option.](/configuration/yarnrc#nodeLinker)
+- If you need to ship a package to your customers as a standalone (no dependencies), bundle it yourself using Esbuild, Webpack, Rollup, or similar tools.
 
 ### Replace `nohoist` by `nmHoistingLimits`
 
@@ -273,24 +229,24 @@ nmHoistingLimits: workspaces
 
 ### Renamed
 
-| <div style="width:150px">Yarn Classic (1.x)</div> | <div style="width: 250px">Yarn (2.x)</div> | Notes |
-| ------------------ | -------------------------- | ----------------------------- |
-| `yarn audit`    | `yarn npm audit`           ||
-| `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
-| `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
-| `yarn info`     | `yarn npm info`            ||
-| `yarn login`    | `yarn npm login`           ||
-| `yarn logout`   | `yarn npm logout`          ||
-| `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
-| `yarn publish`  | `yarn npm publish`         ||
-| `yarn tag`      | `yarn npm tag`             ||
-| `yarn upgrade`  | `yarn up`                  | Will now upgrade packages across all workspaces |
-| `yarn install --production` | `yarn workspaces focus --all --production` | Requires the `workspace-tools` plugin
-| `yarn install --verbose` | `YARN_ENABLE_INLINE_BUILDS=true yarn install` ||
+| Yarn Classic (1.x) | Yarn Modern |
+| ------------------ | -------------------------- |
+| `yarn audit`    | `yarn npm audit`           |
+| `yarn create`   | `yarn dlx create-<name>` <br/> (`yarn create` still works, but prefer using `yarn dlx`) |
+| `yarn global`   | `yarn dlx` <br/> ([Dedicated section](#use-yarn-dlx-instead-of-yarn-global)) |
+| `yarn info`     | `yarn npm info`            |
+| `yarn login`    | `yarn npm login`           |
+| `yarn logout`   | `yarn npm logout`          |
+| `yarn outdated` | `yarn upgrade-interactive` <br/> ([Read more on GitHub](https://github.com/yarnpkg/berry/issues/749)) |
+| `yarn publish`  | `yarn npm publish`         |
+| `yarn tag`      | `yarn npm tag`             |
+| `yarn upgrade`  | `yarn up` <br/> (Will now upgrade packages across all workspaces)                 |
+| `yarn install --production` | `yarn workspaces focus --all --production` |
+| `yarn install --verbose` | `YARN_ENABLE_INLINE_BUILDS=true yarn install` |
 
 ### Removed from core
 
-| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| <div style={{width: 150}}>Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
 | `yarn check`    | Cache integrity is now checked on regular installs; [read more on GitHub](https://github.com/yarnpkg/rfcs/pull/106) |
 | `yarn import`   | First import to Classic, then migrate to 2.x |
@@ -301,7 +257,7 @@ nmHoistingLimits: workspaces
 
 Those features simply haven't been implemented yet. Help welcome!
 
-| <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
+| <div style={{width: 150}}>Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
 | `yarn list`     | `yarn why` may provide some information in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
@@ -311,24 +267,16 @@ Those features simply haven't been implemented yet. Help welcome!
 
 ### `Cannot find module [...]`
 
-Interestingly, this error often **doesn't** come from Yarn. In fact, seeing this message should be extremely rare when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
+This error **doesn't** come from Yarn: it's emitted by the Node.js resolution pipeline, telling you a package cannot be found on disk.
 
-This error appears when Node is executed without the proper environment variables. In such a case, the underlying application won't be able to access the dependencies and Node will throw this message. To fix that, make sure that the script is called through `yarn node [...]` (instead of `node [...]`) if you run it from the command line.
+If you have enabled Plug'n'Play, then the Node.js resolution pipeline is supposed to forward resolution requests to Yarn - meaning that if you get this message, it's that this forwarding didn't occur, and your first action should be to figure out why.
 
-### `A package is trying to access another package [...]`
+Usually, it'll be because you called a Node.js script using `node ./my-script` instead of `yarn node ./my-script`.
 
-> **Full message:** A package is trying to access another package without the second one being listed as a dependency of the first one.
+### `A package is trying to access [...]`
 
-Some packages don't properly list their actual dependencies for a reason or another. Now that we've fully switched to Plug'n'Play and enforce boundaries between the various branches of the dependency tree, this kind of issue will start to become more apparent than it previously was.
+Although rare, some packages don't list all their dependencies. Now that we enforce boundaries between the various branches of the dependency tree, this kind of issue is more apparent than it used to be (although it's always been problematic).
 
-The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take some time before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting](/configuration/yarnrc#packageExtensions) to add the missing dependency to the relevant packages. Once you're done, run `yarn install` to apply your changes and voilà!
+The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take some time before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting](#fix-dependencies-with-packageextensions) to add the missing dependency to the relevant packages. Run `yarn install` to apply your changes, and voilà!
 
-```yaml
-packageExtensions:
-  "debug@*":
-    peerDependenciesMeta:
-      "supports-color":
-        optional: true
-```
-
-If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.
+Should you choose to open a PR on the upstream repository, you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.

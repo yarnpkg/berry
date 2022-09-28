@@ -6,7 +6,6 @@ description: A list of answers to commonly asked questions.
 ---
 
 import TOCInline from '@theme/TOCInline';
-
 <TOCInline toc={toc} />
 
 ## Why should you upgrade to Yarn Modern?

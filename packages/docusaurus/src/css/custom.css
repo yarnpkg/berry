@@ -13,9 +13,11 @@ html {
 }
 
 .menu {
-  border-right: 1px solid var(--ifm-toc-border-color);
-
   overflow-y: scroll;
+}
+
+.menu.thin-scrollbar::-webkit-scrollbar-track {
+  border-radius: 0 !important;
 }
 
 .theme-doc-breadcrumbs {

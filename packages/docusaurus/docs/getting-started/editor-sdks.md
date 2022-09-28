@@ -15,9 +15,9 @@ Generally speaking:
 
 ---
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+import TOCInline from '@theme/TOCInline';
+
+<TOCInline toc={toc} />
 
 ## Tools currently supported
 
