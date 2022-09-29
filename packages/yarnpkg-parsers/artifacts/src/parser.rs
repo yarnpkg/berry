@@ -13,7 +13,7 @@ use nom_supreme::{error::ErrorTree, multi::parse_separated_terminated};
 use serde_json::{Map, Value};
 
 use crate::{
-  combinators::{empty, escaped_transform},
+  combinators::{empty, escaped_transform, final_parser},
   utils::{from_utf8, from_utf8_to_owned},
 };
 
@@ -24,7 +24,13 @@ pub type Input<'a> = &'a [u8];
 
 pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'input>>>;
 
-pub fn parse(input: Input) -> ParseResult<Value> {
+pub fn parse(input: Input) -> Result<Value, ErrorTree<&str>> {
+  let mut parser = final_parser(start);
+
+  parser(input)
+}
+
+fn start(input: Input) -> ParseResult<Value> {
   top_level_expression(input)
 }
 
