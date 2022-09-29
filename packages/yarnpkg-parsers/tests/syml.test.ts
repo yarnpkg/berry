@@ -5,6 +5,28 @@ import {joinYaml}  from './utils';
 // TODO: Update the terminology used in this file to match the way it's used in the YAML spec.
 
 describe(`Syml parser`, () => {
+  // TODO: Check the error messages.
+  describe(`Duplicate mapping entries`, () => {
+    it(`should throw on duplicate entries in flow mappings`, () => {
+      expect(() => parseSyml(`{foo: bar, foo: baz}`)).toThrow();
+    });
+
+    it(`should throw on duplicate entries in compact block mappings`, () => {
+      expect(() => parseSyml(joinYaml([
+        `foo: bar`,
+        `foo: baz`,
+      ]))).toThrow();
+    });
+
+    it(`should throw on duplicate entries in block mappings`, () => {
+      expect(() => parseSyml(joinYaml([
+        `foo:`,
+        `  bar: baz`,
+        `  bar: qux`,
+      ]))).toThrow();
+    });
+  });
+
   describe(`Non-values`, () => {
     it(`should parse empty strings as an empty object`, () => {
       expect(parseSyml(``)).toStrictEqual({});

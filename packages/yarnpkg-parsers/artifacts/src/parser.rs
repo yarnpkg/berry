@@ -44,9 +44,13 @@ fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
       })),
       Map::new,
       |mut acc, (key, value)| {
-        // TODO: handle duplicates
         if let Value::String(key) = key {
-          acc.insert(key, value);
+          let existing = acc.insert(key, value);
+          if existing.is_some() {
+            // TODO: Don't panic.
+            // TODO: Better error message.
+            panic!("Duplicate key");
+          }
         }
         acc
       },
@@ -102,8 +106,12 @@ fn flow_mapping(input: Input) -> ParseResult<Value> {
         Map::new,
         |mut acc, entry| {
           if let Some((Value::String(key), value)) = entry {
-            // TODO: handle duplicates
-            acc.insert(key, value);
+            let existing = acc.insert(key, value);
+            if existing.is_some() {
+              // TODO: Don't panic.
+              // TODO: Better error message.
+              panic!("Duplicate key");
+            }
           }
           acc
         },
@@ -146,6 +154,7 @@ fn flow_compact_mapping(input: Input) -> ParseResult<Value> {
   map(flow_mapping_entry, |(key, value)| {
     let mut map = Map::new();
     if let Value::String(key) = key {
+      // It's impossible for an existing entry to exist since we've just created the map.
       map.insert(key, value);
     }
 
