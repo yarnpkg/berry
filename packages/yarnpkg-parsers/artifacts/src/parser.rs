@@ -17,7 +17,7 @@ use crate::{
   utils::{from_utf8, from_utf8_to_owned},
 };
 
-// TODO:: Automatically detect indentation from input.
+// TODO: Automatically detect indentation from input.
 const INDENT_STEP: usize = 2;
 
 pub type Input<'a> = &'a [u8];
