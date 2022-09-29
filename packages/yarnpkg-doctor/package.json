@@ -1,8 +1,12 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "4.0.0-rc.15",
+  "version": "4.0.0-rc.22",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
+  "exports": {
+    "./cli": "./sources/boot-cli-dev.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -12,7 +16,7 @@
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^2.4.0",
-    "typescript": "4.8.1-rc"
+    "typescript": "4.9.1-beta"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
@@ -23,7 +27,11 @@
     "prepack": "run build:compile \"$(pwd)\""
   },
   "publishConfig": {
-    "bin": "./lib/cli.js"
+    "bin": "./lib/cli.js",
+    "exports": {
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

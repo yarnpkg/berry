@@ -5,7 +5,6 @@ releases:
 
 declined:
   - "@yarnpkg/builder"
-  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"

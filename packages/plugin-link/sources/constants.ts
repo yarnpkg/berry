@@ -1,3 +1,3 @@
-export const LINK_PROTOCOL = `portal:`;
+export const PORTAL_PROTOCOL = `portal:`;
 
-export const RAW_LINK_PROTOCOL = `link:`;
+export const LINK_PROTOCOL = `link:`;

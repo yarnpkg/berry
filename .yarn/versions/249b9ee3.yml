@@ -4,7 +4,6 @@ releases:
   "@yarnpkg/pnp": major
 
 declined:
-  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"

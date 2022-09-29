@@ -24,7 +24,7 @@ const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtu
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
   ? 150000
-  : 45000;
+  : 50000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;

@@ -1,9 +1,13 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.15",
+  "version": "4.0.0-rc.22",
   "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@arcanis/slice-ansi": "^1.1.1",
@@ -61,7 +65,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

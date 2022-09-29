@@ -1,6 +1,5 @@
 releases:
   "@yarnpkg/builder": patch
-  "@yarnpkg/esbuild-plugin-pnp": patch
 
 declined:
   - "@yarnpkg/plugin-constraints"

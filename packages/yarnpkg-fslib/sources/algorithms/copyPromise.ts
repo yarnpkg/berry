@@ -57,11 +57,7 @@ export async function copyPromise<P1 extends Path, P2 extends Path>(destinationF
 
   await destinationFs.mkdirpPromise(destinationFs.pathUtils.dirname(destination), {utimes: [atime, mtime]});
 
-  const updateTime = typeof destinationFs.lutimesPromise === `function`
-    ? destinationFs.lutimesPromise.bind(destinationFs)
-    : destinationFs.utimesPromise.bind(destinationFs);
-
-  await copyImpl(prelayout, postlayout, updateTime, destinationFs, normalizedDestination, sourceFs, normalizedSource, {...opts, didParentExist: true});
+  await copyImpl(prelayout, postlayout, destinationFs, normalizedDestination, sourceFs, normalizedSource, {...opts, didParentExist: true});
 
   for (const operation of prelayout)
     await operation();
@@ -75,7 +71,7 @@ type InternalCopyOptions<P> = CopyOptions<P> & {
   didParentExist: boolean;
 };
 
-async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: InternalCopyOptions<P1>) {
+async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, sourceFs: FakeFS<P2>, source: P2, opts: InternalCopyOptions<P1>) {
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
 
@@ -86,15 +82,15 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
   let updated: boolean;
   switch (true) {
     case sourceStat.isDirectory(): {
-      updated = await copyFolder(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+      updated = await copyFolder(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
     } break;
 
     case sourceStat.isFile(): {
-      updated = await copyFile(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+      updated = await copyFile(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
     } break;
 
     case sourceStat.isSymbolicLink(): {
-      updated = await copySymlink(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+      updated = await copySymlink(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
     } break;
 
     default: {
@@ -106,7 +102,7 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
   // since otherwise we'd accidentally propagate the changes to all projects.
   if (opts.linkStrategy?.type !== `HardlinkFromIndex` || !sourceStat.isFile()) {
     if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
-      postlayout.push(() => updateTime(destination, atime, mtime));
+      postlayout.push(() => destinationFs.lutimesPromise(destination, atime, mtime));
       updated = true;
     }
 
@@ -127,7 +123,7 @@ async function maybeLStat<P extends Path>(baseFs: FakeFS<P>, p: P) {
   }
 }
 
-async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: InternalCopyOptions<P1>) {
+async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: InternalCopyOptions<P1>) {
   if (destinationStat !== null && !destinationStat.isDirectory()) {
     if (opts.overwrite) {
       prelayout.push(async () => destinationFs.removePromise(destination));
@@ -158,13 +154,13 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
 
   if (opts.stableSort) {
     for (const entry of entries.sort()) {
-      if (await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts)) {
+      if (await copyImpl(prelayout, postlayout, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts)) {
         updated = true;
       }
     }
   } else {
     const entriesUpdateStatus = await Promise.all(entries.map(async entry => {
-      await copyImpl(prelayout, postlayout, updateTime, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts);
+      await copyImpl(prelayout, postlayout, destinationFs, destinationFs.pathUtils.join(destination, entry), sourceFs, sourceFs.pathUtils.join(source, entry), nextOpts);
     }));
 
     if (entriesUpdateStatus.some(status => status)) {
@@ -175,7 +171,7 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
   return updated;
 }
 
-async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>, linkStrategy: HardlinkFromIndexStrategy<P1>) {
+async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>, linkStrategy: HardlinkFromIndexStrategy<P1>) {
   const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
   const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${sourceHash}.dat` as P1);
 
@@ -268,7 +264,7 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
 
   postlayout.push(async () => {
     if (!indexStat)
-      await updateTime(indexPath, defaultTime, defaultTime);
+      await destinationFs.lutimesPromise(indexPath, defaultTime, defaultTime);
 
     if (tempPath && !tempPathCleaned) {
       await destinationFs.unlinkPromise(tempPath);
@@ -278,7 +274,7 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   return false;
 }
 
-async function copyFileDirect<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>) {
+async function copyFileDirect<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
       prelayout.push(async () => destinationFs.removePromise(destination));
@@ -302,15 +298,15 @@ async function copyFileDirect<P1 extends Path, P2 extends Path>(prelayout: Opera
   return true;
 }
 
-async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>) {
+async function copyFile<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>) {
   if (opts.linkStrategy?.type === `HardlinkFromIndex`) {
-    return copyFileViaIndex(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, opts.linkStrategy);
+    return copyFileViaIndex(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, opts.linkStrategy);
   } else {
-    return copyFileDirect(prelayout, postlayout, updateTime, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
+    return copyFileDirect(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
   }
 }
 
-async function copySymlink<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, updateTime: typeof FakeFS.prototype.utimesPromise, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>) {
+async function copySymlink<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>) {
   if (destinationStat !== null) {
     if (opts.overwrite) {
       prelayout.push(async () => destinationFs.removePromise(destination));

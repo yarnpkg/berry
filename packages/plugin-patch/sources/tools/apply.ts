@@ -11,13 +11,7 @@ async function preserveTime(baseFs: FakeFS<PortablePath>, p: PortablePath, cb: (
   if (typeof result !== `undefined`)
     p = result;
 
-  if (baseFs.lutimesPromise) {
-    await baseFs.lutimesPromise(p, stat.atime, stat.mtime);
-  } else if (!stat.isSymbolicLink()) {
-    await baseFs.utimesPromise(p, stat.atime, stat.mtime);
-  } else {
-    throw new Error(`Cannot preserve the time values of a symlink`);
-  }
+  await baseFs.lutimesPromise(p, stat.atime, stat.mtime);
 }
 
 export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new NodeFS(), dryRun = false, version = null}: {baseFs?: FakeFS<PortablePath>, dryRun?: boolean, version?: string | null} = {}) {

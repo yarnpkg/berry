@@ -1,15 +1,15 @@
-import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ZipOpenFS, ProxiedFS, ppath} from '@yarnpkg/fslib';
-import {getLibzipSync}                                                                    from '@yarnpkg/libzip';
-import fs                                                                                 from 'fs';
-import Module                                                                             from 'module';
-import StringDecoder                                                                      from 'string_decoder';
+import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ProxiedFS, ppath} from '@yarnpkg/fslib';
+import {ZipOpenFS}                                                             from '@yarnpkg/libzip';
+import fs                                                                      from 'fs';
+import Module                                                                  from 'module';
+import StringDecoder                                                           from 'string_decoder';
 
-import {RuntimeState, PnpApi}                                                             from '../types';
+import {RuntimeState, PnpApi}                                                  from '../types';
 
-import {applyPatch}                                                                       from './applyPatch';
-import {hydrateRuntimeState}                                                              from './hydrateRuntimeState';
-import {MakeApiOptions, makeApi}                                                          from './makeApi';
-import {Manager, makeManager}                                                             from './makeManager';
+import {applyPatch}                                                            from './applyPatch';
+import {hydrateRuntimeState}                                                   from './hydrateRuntimeState';
+import {MakeApiOptions, makeApi}                                               from './makeApi';
+import {Manager, makeManager}                                                  from './makeManager';
 
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
 
@@ -29,7 +29,6 @@ const defaultPnpapiResolution = __filename;
 const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
   baseFs: new ZipOpenFS({
     baseFs: nodeFs,
-    libzip: () => getLibzipSync(),
     maxOpenFiles: 80,
     readOnlyArchives: true,
   }),

@@ -4,7 +4,7 @@ import {ThrowReport, structUtils, Project}             from '@yarnpkg/core';
 import {Command, Option, Usage}                        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class RunCommand extends BaseCommand {
+export default class RebuildCommand extends BaseCommand {
   static paths = [
     [`rebuild`],
   ];

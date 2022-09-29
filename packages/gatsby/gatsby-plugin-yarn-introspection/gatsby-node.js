@@ -20,7 +20,7 @@ exports.sourceNodes = async ({actions, createNodeId, createContentDigest}, opts)
   });
 
   const data = await execute([
-    require.resolve(`@yarnpkg/monorepo/packages/yarnpkg-core/sources/Plugin.ts`),
+    require.resolve(path.resolve(packageDirectory, `yarnpkg-core/sources/Plugin.ts`)),
     ...indexList,
   ]);
 

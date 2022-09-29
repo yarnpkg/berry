@@ -1,4 +1,6 @@
-import {allSeverities, isError, getReportTree, getRequires, getDependencies} from '@yarnpkg/plugin-npm-cli/sources/npmAuditUtils';
+import {npmAuditUtils} from '@yarnpkg/plugin-npm-cli';
+
+const {allSeverities, isError, getReportTree, getRequires, getDependencies} = npmAuditUtils;
 
 describe(`npmAuditUtils`, () => {
   // Severity levels

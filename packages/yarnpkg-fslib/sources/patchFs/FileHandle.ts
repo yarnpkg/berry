@@ -96,9 +96,13 @@ export class FileHandle<P extends Path> {
     }
   }
 
-  // FIXME: Missing FakeFS version
-  chown(uid: number, gid: number): Promise<void> {
-    throw new Error(`Method not implemented.`);
+  async chown(uid: number, gid: number): Promise<void> {
+    try {
+      this[kRef](this.chown);
+      return await this[kBaseFs].fchownPromise(this.fd, uid, gid);
+    } finally {
+      this[kUnref]();
+    }
   }
 
   async chmod(mode: number): Promise<void> {

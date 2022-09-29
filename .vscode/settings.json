@@ -22,8 +22,8 @@
   "pasteImage.prefix": "/",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
+    "**/.pnp.*": true,
+    "**/.yarn": true
   },
   // Use clippy to lint rust code
   "rust-analyzer.checkOnSave.command": "clippy",

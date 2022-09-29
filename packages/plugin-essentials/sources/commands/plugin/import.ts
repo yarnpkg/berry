@@ -10,7 +10,7 @@ import {runInNewContext}                                                        
 import {getAvailablePlugins}                                                               from './list';
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlCommand extends BaseCommand {
+export default class PluginImportCommand extends BaseCommand {
   static paths = [
     [`plugin`, `import`],
   ];

@@ -24,6 +24,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn init` no longer enables zero-installs by default.
 - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
 - The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
+- The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
+- Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
 
 ### **API Changes**
 
@@ -53,6 +55,12 @@ The following changes only affect people writing Yarn plugins:
 
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
+- For consistency reasons:
+  - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
+  - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
+
+- `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
@@ -61,6 +69,22 @@ The following changes only affect people writing Yarn plugins:
 ### Bugfixes
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
+- `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
+
+### Compatibility
+
+- The patched filesystem now supports `fchown`.
+- PnP now handles private import mappings.
+- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
+
+### Shell
+
+- The builtin shell now supports whitespace-only commands.
+
+## 3.2.3
+
+### Bugfixes
+
 - When Corepack is enabled Yarn will now use the current CLI to prepare external Yarn classic projects, matching the behaviour of when Corepack is disabled.
 
 ### Compatibility

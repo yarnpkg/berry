@@ -1,7 +1,11 @@
 import {Plugin, Project} from '@yarnpkg/core';
 import {PortablePath}    from '@yarnpkg/fslib';
 
-import stage             from './commands/stage';
+import StageCommand      from './commands/stage';
+import * as stageUtils   from './stageUtils';
+
+export {StageCommand};
+export {stageUtils};
 
 export interface Hooks {
   populateYarnPaths?: (
@@ -12,7 +16,7 @@ export interface Hooks {
 
 const plugin: Plugin = {
   commands: [
-    stage,
+    StageCommand,
   ],
 };
 

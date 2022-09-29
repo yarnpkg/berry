@@ -11,7 +11,6 @@ releases:
   vscode-zipfs: minor
 
 declined:
-  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"

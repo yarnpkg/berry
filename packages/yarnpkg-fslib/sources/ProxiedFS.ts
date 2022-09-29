@@ -182,6 +182,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.chmodSync(this.mapToBase(p), mask);
   }
 
+  async fchownPromise(fd: number, uid: number, gid: number): Promise<void> {
+    return this.baseFs.fchownPromise(fd, uid, gid);
+  }
+
+  fchownSync(fd: number, uid: number, gid: number): void {
+    return this.baseFs.fchownSync(fd, uid, gid);
+  }
+
   async chownPromise(p: P, uid: number, gid: number) {
     return this.baseFs.chownPromise(this.mapToBase(p), uid, gid);
   }
@@ -236,6 +244,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number) {
     return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
+  }
+
+  async lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesPromise(this.mapToBase(p), atime, mtime);
+  }
+
+  lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesSync(this.mapToBase(p), atime, mtime);
   }
 
   async mkdirPromise(p: P, opts?: MkdirOptions) {

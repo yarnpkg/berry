@@ -1,10 +1,14 @@
 {
   "name": "@yarnpkg/sdks",
-  "version": "3.0.0-rc.15",
+  "version": "3.0.0-rc.22",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
-  "types": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./cli": "./sources/boot-cli-dev.js",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
@@ -30,7 +34,11 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "types": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
