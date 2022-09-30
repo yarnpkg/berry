@@ -30,14 +30,14 @@ describe(`Syml parser`, () => {
 
     describe(`overwriteDuplicates: true`, () => {
       it(`should overwrite duplicate entries in flow mappings`, () => {
-        expect(parseSyml(`{foo: bar, foo: baz}`, {overwriteDuplicates: true})).toStrictEqual({foo: `baz`});
+        expect(parseSyml(`{foo: bar, foo: baz}`, {overwriteDuplicateEntries: true})).toStrictEqual({foo: `baz`});
       });
 
       it(`should overwrite duplicate entries in compact block mappings`, () => {
         expect(parseSyml(joinYaml([
           `foo: bar`,
           `foo: baz`,
-        ]), {overwriteDuplicates: true})).toStrictEqual({foo: `baz`});
+        ]), {overwriteDuplicateEntries: true})).toStrictEqual({foo: `baz`});
       });
 
       it(`should overwrite duplicate entries in block mappings`, () => {
@@ -45,7 +45,7 @@ describe(`Syml parser`, () => {
           `foo:`,
           `  bar: baz`,
           `  bar: qux`,
-        ]), {overwriteDuplicates: true})).toStrictEqual({foo: {bar: `qux`}});
+        ]), {overwriteDuplicateEntries: true})).toStrictEqual({foo: {bar: `qux`}});
       });
     });
   });

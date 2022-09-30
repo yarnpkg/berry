@@ -27,7 +27,7 @@ pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'inp
 #[derive(Clone, Copy)]
 struct Context {
   indent: usize,
-  overwrite_duplicates: bool,
+  overwrite_duplicate_entries: bool,
 }
 
 fn parser<O>(
@@ -37,10 +37,10 @@ fn parser<O>(
   move |input| parser(input, ctx)
 }
 
-pub fn parse(input: Input, overwrite_duplicates: bool) -> Result<Value, ErrorTree<&str>> {
+pub fn parse(input: Input, overwrite_duplicate_entries: bool) -> Result<Value, ErrorTree<&str>> {
   let ctx = Context {
     indent: 0,
-    overwrite_duplicates,
+    overwrite_duplicate_entries,
   };
 
   let mut parse = final_parser(parser(start, ctx));
@@ -71,7 +71,7 @@ fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
       |mut acc, (key, value)| {
         if let Value::String(key) = key {
           let existing = acc.insert(key, value);
-          if existing.is_some() && !ctx.overwrite_duplicates {
+          if existing.is_some() && !ctx.overwrite_duplicate_entries {
             // TODO: Don't panic.
             // TODO: Better error message.
             panic!("Duplicate key");
@@ -128,7 +128,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
         |mut acc, entry| {
           if let Some((Value::String(key), value)) = entry {
             let existing = acc.insert(key, value);
-            if existing.is_some() && !ctx.overwrite_duplicates {
+            if existing.is_some() && !ctx.overwrite_duplicate_entries {
               // TODO: Don't panic.
               // TODO: Better error message.
               panic!("Duplicate key");

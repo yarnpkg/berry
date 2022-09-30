@@ -132,17 +132,17 @@ export type ParseSymlOptions = {
   /**
    * If true, the parser will keep the last value when it encounters duplicate keys. Otherwise, it will throw an error.
    */
-  overwriteDuplicates?: boolean;
+  overwriteDuplicateEntries?: boolean;
 };
 
-export function parseSyml(source: string, {overwriteDuplicates = false}: ParseSymlOptions = {}): Record<string, any> {
+export function parseSyml(source: string, {overwriteDuplicateEntries = false}: ParseSymlOptions = {}): Record<string, any> {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
   // TODO: Use `encodeInto` to avoid the extra copy overhead.
   const encodedSource = textEncoder.encode(source);
 
-  const value = parse(encodedSource, overwriteDuplicates);
+  const value = parse(encodedSource, overwriteDuplicateEntries);
 
   // if (typeof value !== `object`)
   //   throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);

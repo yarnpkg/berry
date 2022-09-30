@@ -71,15 +71,15 @@ function takeObject(idx) {
 *
 * **Everything** assumes that the bytes passed in are valid UTF-8 and very bad things will happen if they aren't.
 * @param {Uint8Array} input
-* @param {boolean} overwrite_duplicates
+* @param {boolean} overwrite_duplicate_entries
 * @returns {any}
 */
-module.exports.parse = function(input, overwrite_duplicates) {
+module.exports.parse = function(input, overwrite_duplicate_entries) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passArray8ToWasm0(input, wasm.__wbindgen_export_0);
         const len0 = WASM_VECTOR_LEN;
-        wasm.parse(retptr, ptr0, len0, overwrite_duplicates);
+        wasm.parse(retptr, ptr0, len0, overwrite_duplicate_entries);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];

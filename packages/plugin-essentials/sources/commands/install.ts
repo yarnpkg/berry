@@ -351,7 +351,7 @@ const MERGE_CONFLICT_START = `<<<<<<<`;
 function parseVariant(source: string) {
   // Merge conflicts can sometimes create duplicate fields.
   // In such cases, we keep the last one.
-  return parseSyml(source, {overwriteDuplicates: true});
+  return parseSyml(source, {overwriteDuplicateEntries: true});
 }
 
 async function autofixMergeConflicts(configuration: Configuration, immutable: boolean) {
