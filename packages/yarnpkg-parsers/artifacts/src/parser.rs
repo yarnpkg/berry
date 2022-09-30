@@ -2,12 +2,15 @@ use nom::{
   branch::alt,
   bytes::complete::{is_not, take_while_m_n},
   character::complete::{char, line_ending, multispace0, not_line_ending, space0, space1},
-  combinator::{map, map_opt, map_res, opt, recognize, value},
-  multi::{count, fold_many1, many0_count},
+  combinator::{eof, map, map_opt, map_res, not, opt, peek, recognize, value},
+  multi::{count, many0_count},
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
-use nom_supreme::{error::ErrorTree, multi::parse_separated_terminated};
+use nom_supreme::{
+  error::ErrorTree,
+  multi::{collect_separated_terminated, parse_separated_terminated},
+};
 
 // Note: Don't use the `json!` macro - the bundle will be larger and the code will likely be slower.
 use serde_json::{Map, Value};
@@ -30,10 +33,10 @@ struct Context {
   overwrite_duplicate_entries: bool,
 }
 
-fn parser<O>(
-  parser: impl Fn(Input, Context) -> ParseResult<O>,
+fn parser<'input, O>(
+  parser: impl Fn(Input<'input>, Context) -> ParseResult<'input, O>,
   ctx: Context,
-) -> impl Fn(Input) -> ParseResult<O> {
+) -> impl Fn(Input<'input>) -> ParseResult<'input, O> {
   move |input| parser(input, ctx)
 }
 
@@ -49,7 +52,12 @@ pub fn parse(input: Input, overwrite_duplicate_entries: bool) -> Result<Value, E
 }
 
 fn start(input: Input, ctx: Context) -> ParseResult<Value> {
-  parser(top_level_expression, ctx)(input)
+  terminated(
+    map(opt(parser(top_level_expression, ctx)), |value| {
+      value.unwrap_or_else(|| Value::Object(Map::new()))
+    }),
+    opt(comments),
+  )(input)
 }
 
 fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
@@ -62,11 +70,10 @@ fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
-    fold_many1(
-      alt((
-        map(comment, |_| Default::default()),
-        parser(property_statement, ctx),
-      )),
+    parse_separated_terminated(
+      preceded(comments, parser(property_statement, ctx)),
+      eol_any,
+      parser(block_terminator, ctx),
       Map::new,
       |mut acc, (key, value)| {
         if let Value::String(key) = key {
@@ -95,18 +102,33 @@ fn property_statement(input: Input, ctx: Context) -> ParseResult<(Value, Value)>
   )(input)
 }
 
+fn item_statements(input: Input, ctx: Context) -> ParseResult<Value> {
+  map(
+    collect_separated_terminated(
+      preceded(comments, parser(item_statement, ctx)),
+      eol_any,
+      parser(block_terminator, ctx),
+    ),
+    Value::Array,
+  )(input)
+}
+
+fn comments(input: Input) -> ParseResult<usize> {
+  many0_count(comment)(input)
+}
+
 fn comment(input: Input) -> ParseResult<Option<Input>> {
   delimited(space0, opt(preceded(char('#'), not_line_ending)), eol_any)(input)
 }
 
-fn item_statements(input: Input, ctx: Context) -> ParseResult<Value> {
-  map(
-    fold_many1(parser(item_statement, ctx), Vec::new, |mut acc, value| {
-      acc.push(value);
-      acc
-    }),
-    Value::Array,
-  )(input)
+fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
+  peek(terminated(eol_any, |input| {
+    if ctx.indent == 0 {
+      value((), eof)(input)
+    } else {
+      not(parser(indentation, ctx))(input)
+    }
+  }))(input)
 }
 
 fn item_statement(input: Input, ctx: Context) -> ParseResult<Value> {
@@ -213,14 +235,11 @@ fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  terminated(
-    alt((
-      parser(flow_mapping, ctx),
-      parser(flow_sequence, ctx),
-      scalar,
-    )),
-    opt(eol_any),
-  )(input)
+  alt((
+    parser(flow_mapping, ctx),
+    parser(flow_sequence, ctx),
+    scalar,
+  ))(input)
 }
 
 fn indentation(input: Input, ctx: Context) -> ParseResult<Vec<char>> {

@@ -136,9 +136,6 @@ export type ParseSymlOptions = {
 };
 
 export function parseSyml(source: string, {overwriteDuplicateEntries = false}: ParseSymlOptions = {}): Record<string, any> {
-  if (!source.endsWith(`\n`))
-    source += `\n`;
-
   // TODO: Use `encodeInto` to avoid the extra copy overhead.
   const encodedSource = textEncoder.encode(source);
 
