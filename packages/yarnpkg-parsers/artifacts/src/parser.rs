@@ -9,7 +9,9 @@ use nom::{
 };
 use nom_supreme::{
   error::ErrorTree,
-  multi::{collect_separated_terminated, parse_separated_terminated},
+  multi::{
+    collect_separated_terminated, parse_separated_terminated, parse_separated_terminated_res,
+  },
 };
 
 // Note: Don't use the `json!` macro - the bundle will be larger and the code will likely be slower.
@@ -70,7 +72,7 @@ fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
-    parse_separated_terminated(
+    parse_separated_terminated_res(
       preceded(comments, parser(property_statement, ctx)),
       eol_any,
       parser(block_terminator, ctx),
@@ -79,12 +81,11 @@ fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
         if let Value::String(key) = key {
           let existing = acc.insert(key, value);
           if existing.is_some() && !ctx.overwrite_duplicate_entries {
-            // TODO: Don't panic.
             // TODO: Better error message.
-            panic!("Duplicate key");
+            return Err("Duplicate key");
           }
         }
-        acc
+        Ok(acc)
       },
     ),
     Value::Object,
@@ -142,7 +143,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   preceded(
     terminated(char('{'), multispace0),
     map(
-      parse_separated_terminated(
+      parse_separated_terminated_res(
         opt(parser(flow_mapping_entry, ctx)),
         delimited(multispace0, char(','), multispace0),
         preceded(multispace0, char('}')),
@@ -151,12 +152,11 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
           if let Some((Value::String(key), value)) = entry {
             let existing = acc.insert(key, value);
             if existing.is_some() && !ctx.overwrite_duplicate_entries {
-              // TODO: Don't panic.
               // TODO: Better error message.
-              panic!("Duplicate key");
+              return Err("Duplicate key");
             }
           }
-          acc
+          Ok(acc)
         },
       ),
       Value::Object,
