@@ -129,6 +129,9 @@ stringifySyml.PreserveOrdering = PreserveOrdering;
 const textEncoder = new TextEncoder();
 
 export type ParseSymlOptions = {
+  /**
+   * If true, the parser will keep the last value when it encounters duplicate keys. Otherwise, it will throw an error.
+   */
   overwriteDuplicates?: boolean;
 };
 

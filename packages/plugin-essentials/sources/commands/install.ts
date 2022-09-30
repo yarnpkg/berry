@@ -348,6 +348,12 @@ const MERGE_CONFLICT_END = `>>>>>>>`;
 const MERGE_CONFLICT_SEP = `=======`;
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
+function parseVariant(source: string) {
+  // Merge conflicts can sometimes create duplicate fields.
+  // In such cases, we keep the last one.
+  return parseSyml(source, {overwriteDuplicates: true});
+}
+
 async function autofixMergeConflicts(configuration: Configuration, immutable: boolean) {
   if (!configuration.projectCwd)
     return false;
@@ -368,8 +374,8 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   let parsedLeft;
   let parsedRight;
   try {
-    parsedLeft = parseSyml(left);
-    parsedRight = parseSyml(right);
+    parsedLeft = parseVariant(left);
+    parsedRight = parseVariant(right);
   } catch (error) {
     throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }
