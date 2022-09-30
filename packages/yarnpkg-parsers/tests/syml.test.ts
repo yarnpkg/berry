@@ -7,23 +7,46 @@ import {joinYaml}  from './utils';
 describe(`Syml parser`, () => {
   // TODO: Check the error messages.
   describe(`Duplicate mapping entries`, () => {
-    it(`should throw on duplicate entries in flow mappings`, () => {
-      expect(() => parseSyml(`{foo: bar, foo: baz}`)).toThrow();
+    describe(`Default behavior`, () => {
+      it(`should throw on duplicate entries in flow mappings`, () => {
+        expect(() => parseSyml(`{foo: bar, foo: baz}`)).toThrow();
+      });
+
+      it(`should throw on duplicate entries in compact block mappings`, () => {
+        expect(() => parseSyml(joinYaml([
+          `foo: bar`,
+          `foo: baz`,
+        ]))).toThrow();
+      });
+
+      it(`should throw on duplicate entries in block mappings`, () => {
+        expect(() => parseSyml(joinYaml([
+          `foo:`,
+          `  bar: baz`,
+          `  bar: qux`,
+        ]))).toThrow();
+      });
     });
 
-    it(`should throw on duplicate entries in compact block mappings`, () => {
-      expect(() => parseSyml(joinYaml([
-        `foo: bar`,
-        `foo: baz`,
-      ]))).toThrow();
-    });
+    describe(`overwriteDuplicates: true`, () => {
+      it(`should overwrite duplicate entries in flow mappings`, () => {
+        expect(parseSyml(`{foo: bar, foo: baz}`, {overwriteDuplicates: true})).toStrictEqual({foo: `baz`});
+      });
 
-    it(`should throw on duplicate entries in block mappings`, () => {
-      expect(() => parseSyml(joinYaml([
-        `foo:`,
-        `  bar: baz`,
-        `  bar: qux`,
-      ]))).toThrow();
+      it(`should overwrite duplicate entries in compact block mappings`, () => {
+        expect(parseSyml(joinYaml([
+          `foo: bar`,
+          `foo: baz`,
+        ]), {overwriteDuplicates: true})).toStrictEqual({foo: `baz`});
+      });
+
+      it(`should overwrite duplicate entries in block mappings`, () => {
+        expect(parseSyml(joinYaml([
+          `foo:`,
+          `  bar: baz`,
+          `  bar: qux`,
+        ]), {overwriteDuplicates: true})).toStrictEqual({foo: {bar: `qux`}});
+      });
     });
   });
 

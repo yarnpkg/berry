@@ -24,35 +24,54 @@ pub type Input<'a> = &'a [u8];
 
 pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'input>>>;
 
-pub fn parse(input: Input) -> Result<Value, ErrorTree<&str>> {
-  let mut parser = final_parser(start);
-
-  parser(input)
+#[derive(Clone, Copy)]
+struct Context {
+  indent: usize,
+  overwrite_duplicates: bool,
 }
 
-fn start(input: Input) -> ParseResult<Value> {
-  top_level_expression(input)
+fn parser<O>(
+  parser: impl Fn(Input, Context) -> ParseResult<O>,
+  ctx: Context,
+) -> impl Fn(Input) -> ParseResult<O> {
+  move |input| parser(input, ctx)
 }
 
-fn top_level_expression(input: Input) -> ParseResult<Value> {
+pub fn parse(input: Input, overwrite_duplicates: bool) -> Result<Value, ErrorTree<&str>> {
+  let ctx = Context {
+    indent: 0,
+    overwrite_duplicates,
+  };
+
+  let mut parse = final_parser(parser(start, ctx));
+
+  parse(input)
+}
+
+fn start(input: Input, ctx: Context) -> ParseResult<Value> {
+  parser(top_level_expression, ctx)(input)
+}
+
+fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
-    |input| item_statements(input, 0),
-    |input| property_statements(input, 0),
-    flow_expression,
+    parser(item_statements, ctx),
+    parser(property_statements, ctx),
+    parser(flow_expression, ctx),
   ))(input)
 }
 
-fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
+fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     fold_many1(
-      alt((map(comment, |_| Default::default()), |input| {
-        property_statement(input, indent)
-      })),
+      alt((
+        map(comment, |_| Default::default()),
+        parser(property_statement, ctx),
+      )),
       Map::new,
       |mut acc, (key, value)| {
         if let Value::String(key) = key {
           let existing = acc.insert(key, value);
-          if existing.is_some() {
+          if existing.is_some() && !ctx.overwrite_duplicates {
             // TODO: Don't panic.
             // TODO: Better error message.
             panic!("Duplicate key");
@@ -65,12 +84,14 @@ fn property_statements(input: Input, indent: usize) -> ParseResult<Value> {
   )(input)
 }
 
-fn property_statement(input: Input, indent: usize) -> ParseResult<(Value, Value)> {
+fn property_statement(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
   preceded(
-    |input| indentation(input, indent),
-    separated_pair(scalar, delimited(space0, char(':'), space0), |input| {
-      expression(input, indent)
-    }),
+    parser(indentation, ctx),
+    separated_pair(
+      scalar,
+      delimited(space0, char(':'), space0),
+      parser(expression, ctx),
+    ),
   )(input)
 }
 
@@ -78,42 +99,36 @@ fn comment(input: Input) -> ParseResult<Option<Input>> {
   delimited(space0, opt(preceded(char('#'), not_line_ending)), eol_any)(input)
 }
 
-fn item_statements(input: Input, indent: usize) -> ParseResult<Value> {
+fn item_statements(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
-    fold_many1(
-      |input| item_statement(input, indent),
-      Vec::new,
-      |mut acc, value| {
-        acc.push(value);
-        acc
-      },
-    ),
+    fold_many1(parser(item_statement, ctx), Vec::new, |mut acc, value| {
+      acc.push(value);
+      acc
+    }),
     Value::Array,
   )(input)
 }
 
-fn item_statement(input: Input, indent: usize) -> ParseResult<Value> {
+fn item_statement(input: Input, ctx: Context) -> ParseResult<Value> {
   preceded(
-    |input| indentation(input, indent),
-    preceded(terminated(char('-'), space1), |input| {
-      expression(input, indent)
-    }),
+    parser(indentation, ctx),
+    preceded(terminated(char('-'), space1), parser(expression, ctx)),
   )(input)
 }
 
-fn flow_mapping(input: Input) -> ParseResult<Value> {
+fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   preceded(
     terminated(char('{'), multispace0),
     map(
       parse_separated_terminated(
-        opt(flow_mapping_entry),
+        opt(parser(flow_mapping_entry, ctx)),
         delimited(multispace0, char(','), multispace0),
         preceded(multispace0, char('}')),
         Map::new,
         |mut acc, entry| {
           if let Some((Value::String(key), value)) = entry {
             let existing = acc.insert(key, value);
-            if existing.is_some() {
+            if existing.is_some() && !ctx.overwrite_duplicates {
               // TODO: Don't panic.
               // TODO: Better error message.
               panic!("Duplicate key");
@@ -127,20 +142,23 @@ fn flow_mapping(input: Input) -> ParseResult<Value> {
   )(input)
 }
 
-fn flow_mapping_entry(input: Input) -> ParseResult<(Value, Value)> {
+fn flow_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
   separated_pair(
     scalar,
     delimited(space0, char(':'), space0),
-    flow_expression,
+    parser(flow_expression, ctx),
   )(input)
 }
 
-fn flow_sequence(input: Input) -> ParseResult<Value> {
+fn flow_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
   preceded(
     terminated(char('['), multispace0),
     map(
       parse_separated_terminated(
-        opt(alt((flow_compact_mapping, flow_expression))),
+        opt(alt((
+          parser(flow_compact_mapping, ctx),
+          parser(flow_expression, ctx),
+        ))),
         delimited(multispace0, char(','), multispace0),
         preceded(multispace0, char(']')),
         Vec::new,
@@ -156,8 +174,8 @@ fn flow_sequence(input: Input) -> ParseResult<Value> {
   )(input)
 }
 
-fn flow_compact_mapping(input: Input) -> ParseResult<Value> {
-  map(flow_mapping_entry, |(key, value)| {
+fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
+  map(parser(flow_mapping_entry, ctx), |(key, value)| {
     let mut map = Map::new();
     if let Value::String(key) = key {
       // It's impossible for an existing entry to exist since we've just created the map.
@@ -168,24 +186,45 @@ fn flow_compact_mapping(input: Input) -> ParseResult<Value> {
   })(input)
 }
 
-fn expression(input: Input, indent: usize) -> ParseResult<Value> {
+fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
-    preceded(line_ending, |input| {
-      item_statements(input, indent + INDENT_STEP)
-    }),
-    preceded(line_ending, |input| {
-      property_statements(input, indent + INDENT_STEP)
-    }),
-    flow_expression,
+    preceded(
+      line_ending,
+      parser(
+        item_statements,
+        Context {
+          indent: ctx.indent + INDENT_STEP,
+          ..ctx
+        },
+      ),
+    ),
+    preceded(
+      line_ending,
+      parser(
+        property_statements,
+        Context {
+          indent: ctx.indent + INDENT_STEP,
+          ..ctx
+        },
+      ),
+    ),
+    parser(flow_expression, ctx),
   ))(input)
 }
 
-fn flow_expression(input: Input) -> ParseResult<Value> {
-  terminated(alt((flow_mapping, flow_sequence, scalar)), opt(eol_any))(input)
+fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  terminated(
+    alt((
+      parser(flow_mapping, ctx),
+      parser(flow_sequence, ctx),
+      scalar,
+    )),
+    opt(eol_any),
+  )(input)
 }
 
-fn indentation(input: Input, indent: usize) -> ParseResult<Vec<char>> {
-  count(char(' '), indent)(input)
+fn indentation(input: Input, ctx: Context) -> ParseResult<Vec<char>> {
+  count(char(' '), ctx.indent)(input)
 }
 
 fn scalar(input: Input) -> ParseResult<Value> {

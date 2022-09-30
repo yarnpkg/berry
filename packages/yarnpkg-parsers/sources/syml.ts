@@ -128,14 +128,18 @@ stringifySyml.PreserveOrdering = PreserveOrdering;
 
 const textEncoder = new TextEncoder();
 
-export function parseSyml(source: string): Record<string, any> {
+export type ParseSymlOptions = {
+  overwriteDuplicates?: boolean;
+};
+
+export function parseSyml(source: string, {overwriteDuplicates = false}: ParseSymlOptions = {}): Record<string, any> {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
   // TODO: Use `encodeInto` to avoid the extra copy overhead.
   const encodedSource = textEncoder.encode(source);
 
-  const value = parse(encodedSource);
+  const value = parse(encodedSource, overwriteDuplicates);
 
   // if (typeof value !== `object`)
   //   throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
