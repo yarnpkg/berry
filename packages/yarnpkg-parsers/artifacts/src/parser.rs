@@ -64,8 +64,8 @@ fn start(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
-    parser(item_statements, ctx),
     parser(property_statements, ctx),
+    parser(item_statements, ctx),
     parser(flow_expression, ctx),
   ))(input)
 }
@@ -213,7 +213,7 @@ fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
     preceded(
       line_ending,
       parser(
-        item_statements,
+        property_statements,
         Context {
           indent: ctx.indent + INDENT_STEP,
           ..ctx
@@ -223,7 +223,7 @@ fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
     preceded(
       line_ending,
       parser(
-        property_statements,
+        item_statements,
         Context {
           indent: ctx.indent + INDENT_STEP,
           ..ctx
