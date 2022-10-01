@@ -1,5 +1,5 @@
 [toolchain]
-channel = "nightly-2022-08-31"
+channel = "nightly-2022-09-30"
 profile = "default"
 # Required for `build-std`
 components = ["rust-src"]
