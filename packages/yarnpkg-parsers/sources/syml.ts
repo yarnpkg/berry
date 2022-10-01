@@ -139,7 +139,8 @@ export function parseSyml(source: string, {overwriteDuplicateEntries = false}: P
   // TODO: Use `encodeInto` to avoid the extra copy overhead.
   const encodedSource = textEncoder.encode(source);
 
-  const value = parse(encodedSource, overwriteDuplicateEntries);
+  const json = parse(encodedSource, overwriteDuplicateEntries);
+  const value = JSON.parse(json);
 
   // if (typeof value !== `object`)
   //   throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
