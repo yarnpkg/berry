@@ -5,6 +5,20 @@ import {joinYaml}  from './utils';
 // TODO: Update the terminology used in this file to match the way it's used in the YAML spec.
 
 describe(`Syml parser`, () => {
+  describe(`Lockfile tests`, () => {
+    it(`should merge duplicates resulting from merge conflicts`, () => {
+      expect(
+        parseSyml(joinYaml([
+          `"lodash@npm:^4.17.20":`,
+          `  version: 4.17.20`,
+          ``,
+          `"lodash@npm:^4.17.20":`,
+          `  version: 4.17.20`,
+        ]), {overwriteDuplicateEntries: true}),
+      ).toEqual({'lodash@npm:^4.17.20': {version: `4.17.20`}});
+    });
+  });
+
   // TODO: Check the error messages.
   describe(`Duplicate mapping entries`, () => {
     describe(`Default behavior`, () => {
