@@ -76,6 +76,7 @@ The following changes only affect people writing Yarn plugins:
 - The patched filesystem now supports `fchown`.
 - PnP now handles private import mappings.
 - Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
+- PnP now reports loaded modules when in watch mode.
 
 ### Shell
 

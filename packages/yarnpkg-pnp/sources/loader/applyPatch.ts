@@ -27,6 +27,14 @@ declare global {
   }
 }
 
+// https://github.com/nodejs/node/pull/44366
+const shouldReportRequiredModules = process.env.WATCH_REPORT_DEPENDENCIES;
+function reportModuleToWatchMode(filename: NativePath) {
+  if (shouldReportRequiredModules && process.send) {
+    process.send({'watch:require': npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename)))});
+  }
+}
+
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
@@ -166,6 +174,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     const module = new Module(modulePath, parent ?? undefined) as PatchedModule;
     module.pnpApiPath = moduleApiPath;
+
+    reportModuleToWatchMode(modulePath);
 
     entry.cache[modulePath] = module;
 
