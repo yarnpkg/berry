@@ -6,6 +6,7 @@ import {homedir}                                                                
 import {PassThrough, Readable, Writable}                                                                    from 'stream';
 import {promisify}                                                                                          from 'util';
 
+import EntryCommand                                                                                         from './commands/entry';
 import {ShellError}                                                                                         from './errors';
 import * as globUtils                                                                                       from './globUtils';
 import {createOutputStreamsWithPrefix, makeBuiltin, makeProcess}                                            from './pipe';
@@ -13,7 +14,9 @@ import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}     
 
 const setTimeoutPromise = promisify(setTimeout);
 
-export {globUtils, ShellError};
+export {EntryCommand};
+export {ShellError};
+export {globUtils};
 
 export type Glob = globUtils.Glob;
 

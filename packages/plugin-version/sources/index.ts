@@ -1,11 +1,14 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 import {PortablePath}         from '@yarnpkg/fslib';
 
-import versionApply           from './commands/version/apply';
-import versionCheck           from './commands/version/check';
-import version                from './commands/version';
+import VersionApplyCommand    from './commands/version/apply';
+import VersionCheckCommand    from './commands/version/check';
+import VersionCommand         from './commands/version';
 import * as versionUtils      from './versionUtils';
 
+export {VersionApplyCommand};
+export {VersionCheckCommand};
+export {VersionCommand};
 export {versionUtils};
 
 declare module '@yarnpkg/core' {
@@ -29,9 +32,9 @@ const plugin: Plugin = {
     },
   },
   commands: [
-    versionApply,
-    versionCheck,
-    version,
+    VersionApplyCommand,
+    VersionCheckCommand,
+    VersionCommand,
   ],
 };
 

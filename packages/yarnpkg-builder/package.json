@@ -1,9 +1,14 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.0.0-rc.18",
+  "version": "4.0.0-rc.22",
   "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./cli": "./sources/boot-cli-dev.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -17,7 +22,7 @@
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/monorepo": "workspace:^",
-    "typescript": "4.8.1-rc"
+    "typescript": "4.9.1-beta"
   },
   "scripts": {
     "postpack": "rm -rf lib",
@@ -25,7 +30,12 @@
     "release": "yarn npm publish"
   },
   "publishConfig": {
-    "bin": "./lib/cli.js"
+    "bin": "./lib/cli.js",
+    "exports": {
+      ".": "./lib/index.js",
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

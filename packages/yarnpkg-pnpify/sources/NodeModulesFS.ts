@@ -36,7 +36,7 @@ export class NodeModulesFS extends ProxiedFS<NativePath, PortablePath> {
   }
 }
 
-interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
+export interface PortableNodeModulesFSOptions extends NodeModulesTreeOptions {
   baseFs?: FakeFS<PortablePath>;
   pnpifyFs?: boolean;
 }
@@ -440,6 +440,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   utimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     return this.baseFs.utimesSync(this.resolveDirOrFilePath(p), atime, mtime);
+  }
+
+  async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    return await this.baseFs.lutimesPromise(this.resolveDirOrFilePath(p), atime, mtime);
+  }
+
+  lutimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesSync(this.resolveDirOrFilePath(p), atime, mtime);
   }
 
   async mkdirPromise(p: PortablePath, opts: MkdirOptions) {

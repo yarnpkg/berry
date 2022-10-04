@@ -1,9 +1,14 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "4.0.0-rc.18",
+  "version": "4.0.0-rc.22",
   "stableVersion": "3.2.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./polyfills": "./sources/polyfills.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
@@ -59,8 +64,11 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts",
-    "bin": null
+    "bin": null,
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*",

@@ -1,12 +1,15 @@
-import {Plugin}           from '@yarnpkg/core';
+import {Plugin}                  from '@yarnpkg/core';
 
-import search             from './commands/search';
-import upgradeInteractive from './commands/upgrade-interactive';
+import SearchCommand             from './commands/search';
+import UpgradeInteractiveCommand from './commands/upgrade-interactive';
+
+export {SearchCommand};
+export {UpgradeInteractiveCommand};
 
 const plugin: Plugin = {
   commands: [
-    search,
-    upgradeInteractive,
+    SearchCommand,
+    UpgradeInteractiveCommand,
   ],
 };
 

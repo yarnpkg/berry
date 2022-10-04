@@ -1,0 +1,15 @@
+export const ArrayIsArray =  Array.isArray;
+export const JSONStringify =  JSON.stringify;
+export const ObjectGetOwnPropertyNames =  Object.getOwnPropertyNames;
+export const ObjectPrototypeHasOwnProperty =  (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
+export const RegExpPrototypeExec =  (obj, string) => RegExp.prototype.exec.call(obj, string);
+export const RegExpPrototypeSymbolReplace =  (obj, ...rest) => RegExp.prototype[Symbol.replace].apply(obj, rest);
+export const StringPrototypeEndsWith =  (str, ...rest) => String.prototype.endsWith.apply(str, rest);
+export const StringPrototypeIncludes =  (str, ...rest) => String.prototype.includes.apply(str, rest);
+export const StringPrototypeLastIndexOf =  (str, ...rest) => String.prototype.lastIndexOf.apply(str, rest);
+export const StringPrototypeIndexOf =  (str, ...rest) => String.prototype.indexOf.apply(str, rest);
+export const StringPrototypeReplace =  (str, ...rest) => String.prototype.replace.apply(str, rest);
+export const StringPrototypeSlice =  (str, ...rest) => String.prototype.slice.apply(str, rest);
+export const StringPrototypeStartsWith =  (str, ...rest) => String.prototype.startsWith.apply(str, rest);
+export const SafeMap = Map;
+export const JSONParse =  JSON.parse;

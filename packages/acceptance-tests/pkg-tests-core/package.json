@@ -3,6 +3,10 @@
   "private": true,
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
     "@types/invariant": "^2.2.30",

@@ -1,5 +1,5 @@
 Start
-  = line:ShellLine? { return line ? line : [] }
+  = S* line:ShellLine? { return line ? line : [] }
 
 ShellLine
   = command:CommandLine S* type:ShellLineType then:ShellLineThen? { return [ { command, type } ].concat(then || []) }

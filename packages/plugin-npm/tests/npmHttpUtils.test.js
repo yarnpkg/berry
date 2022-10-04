@@ -1,5 +1,5 @@
 import {httpUtils}         from '@yarnpkg/core';
-import {get}               from '@yarnpkg/plugin-npm/sources/npmHttpUtils';
+import {npmHttpUtils}      from '@yarnpkg/plugin-npm';
 
 import {makeConfiguration} from './_makeConfiguration';
 
@@ -19,7 +19,7 @@ describe(`npmHttpUtils.get`, () => {
       it(`should craft the final path correctly (${registry} + ${path} = ${expected})`, async () => {
         const configuration = await makeConfiguration();
 
-        await get(path, {
+        await npmHttpUtils.get(path, {
           configuration,
           registry,
         });

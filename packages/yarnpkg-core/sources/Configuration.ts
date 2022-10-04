@@ -1,5 +1,5 @@
 import {Filename, PortablePath, npath, ppath, xfs}                                                      from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/libzip';
 import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
 import camelcase                                                                                        from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
