@@ -27,7 +27,7 @@ interface RunDriverOptions extends Record<string, any> {
   cwd?: PortablePath;
   projectFolder?: PortablePath;
   registryUrl: string;
-  env?: Record<string, string>;
+  env?: Record<string, string | undefined>;
 }
 
 export type PackageRunDriver = (
