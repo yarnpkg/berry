@@ -41,3 +41,20 @@ runs:
         path: ${{ steps.global-path.outputs.globalFolder }}/cache
         key: dependencies-${{ runner.os }}-${{ github.workflow }}-${{ github.sha }}
     #endregion
+
+    #region Remove npm when running e2e tests
+    - name: Remove npm
+      if: startsWith(github.workflow, 'E2E')
+      run: |
+        for name in npm npx; do
+          while true; do
+            path="$(which $name || echo '')"
+            if [[ $path ]]; then
+              rm "$path"
+            else
+              break
+            fi
+          done
+        done
+      shell: bash
+    #endregion
