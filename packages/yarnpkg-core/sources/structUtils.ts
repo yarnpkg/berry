@@ -46,7 +46,7 @@ export function makeDescriptor(ident: Ident, range: string): Descriptor {
  * Creates a package locator.
  *
  * @param ident The base ident (see `makeIdent`)
- * @param range The reference to attach (eg. `1.0.0`)
+ * @param reference The reference to attach (eg. `1.0.0`)
  */
 export function makeLocator(ident: Ident, reference: string): Locator {
   return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference};
