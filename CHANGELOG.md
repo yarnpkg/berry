@@ -61,7 +61,7 @@ The following changes only affect people writing Yarn plugins:
 
 - `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
 
-- `workspace.dependencies` has been removed. Use `workspace.getPackage().dependencies` instead.
+- `workspace.dependencies` has been removed. Use `workspace.anchoredPackage.dependencies` instead.
 
 ### Installs
 

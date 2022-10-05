@@ -146,7 +146,7 @@ export default class UnplugCommand extends BaseCommand {
       };
 
       for (const workspace of roots)
-        traverse(workspace.getPackage(), 0);
+        traverse(workspace.anchoredPackage, 0);
 
       return selection;
     };

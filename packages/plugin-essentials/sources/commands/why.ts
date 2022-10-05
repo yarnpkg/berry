@@ -152,7 +152,7 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
   };
 
   for (const workspace of sortedWorkspaces)
-    markAllDependents(workspace.getPackage());
+    markAllDependents(workspace.anchoredPackage);
 
   const printed: Set<LocatorHash> = new Set();
 
@@ -205,7 +205,7 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
   };
 
   for (const workspace of sortedWorkspaces)
-    printAllDependents(workspace.getPackage(), rootChildren, null);
+    printAllDependents(workspace.anchoredPackage, rootChildren, null);
 
   return root;
 }

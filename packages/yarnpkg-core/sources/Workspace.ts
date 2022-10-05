@@ -78,6 +78,14 @@ export class Workspace {
     }
   }
 
+  get anchoredPackage() {
+    const pkg = this.project.storedPackages.get(this.anchoredLocator.locatorHash);
+    if (!pkg)
+      throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.project.configuration, this)} (${formatUtils.pretty(this.project.configuration, ppath.join(this.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
+
+    return pkg;
+  }
+
   accepts(range: string) {
     const protocolIndex = range.indexOf(`:`);
 
@@ -117,14 +125,6 @@ export class Workspace {
     } else {
       return `${ppath.basename(this.cwd)}` || `unnamed-workspace`;
     }
-  }
-
-  getPackage() {
-    const pkg = this.project.storedPackages.get(this.anchoredLocator.locatorHash);
-    if (!pkg)
-      throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.project.configuration, this)} (${formatUtils.pretty(this.project.configuration, ppath.join(this.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
-
-    return pkg;
   }
 
   /**
