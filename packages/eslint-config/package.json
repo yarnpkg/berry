@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/eslint-config",
   "version": "1.0.0-rc.22",
+  "stableVersion": "0.5.1",
   "license": "BSD-2-Clause",
   "exports": {
     ".": "./index.js",
@@ -29,6 +30,5 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "0.5.0"
+  }
 }
