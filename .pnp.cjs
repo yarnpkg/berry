@@ -49482,6 +49482,12 @@ Instead change the require of ${basename} in ${parentPath} to a dynamic import()
   return err;
 }
 
+const shouldReportRequiredModules = process.env.WATCH_REPORT_DEPENDENCIES;
+function reportModuleToWatchMode(filename) {
+  if (shouldReportRequiredModules && process.send) {
+    process.send({ "watch:require": npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename))) });
+  }
+}
 function applyPatch(pnpapi, opts) {
   const defaultCache = {};
   let enableNativeHooks = true;
@@ -49541,6 +49547,7 @@ function applyPatch(pnpapi, opts) {
     }
     const module = new require$$0.Module(modulePath, parent != null ? parent : void 0);
     module.pnpApiPath = moduleApiPath;
+    reportModuleToWatchMode(modulePath);
     entry.cache[modulePath] = module;
     if (isMain) {
       process.mainModule = module;
