@@ -71,16 +71,18 @@ The following changes only affect people writing Yarn plugins:
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
 
-### Compatibility
-
-- The patched filesystem now supports `fchown`.
-- PnP now handles private import mappings.
-- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
-- PnP now reports loaded modules when in watch mode.
-
 ### Shell
 
 - The builtin shell now supports whitespace-only commands.
+
+## 3.2.4
+
+### Compatibility
+
+- The patched filesystem now supports fchown.
+- PnP now handles private import mappings.
+- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
+- PnP now reports loaded modules when in watch mode.
 
 ## 3.2.3
 
