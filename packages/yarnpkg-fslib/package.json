@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "sideEffects": false,
