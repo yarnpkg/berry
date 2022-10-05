@@ -945,4 +945,14 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       gatsby: `^3.0.0-next`,
     },
   }],
+  // https://github.com/thecodrr/fdir/pull/76
+  // https://github.com/thecodrr/fdir/pull/80
+  [`fdir@<=5.2.0`, {
+    peerDependencies: {
+      picomatch: `2.x`,
+    },
+    peerDependenciesMeta: {
+      picomatch: optionalPeerDep,
+    },
+  }],
 ];
