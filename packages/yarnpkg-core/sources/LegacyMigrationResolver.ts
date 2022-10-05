@@ -53,15 +53,16 @@ export class LegacyMigrationResolver implements Resolver {
     const resolutions = this.resolutions = new Map();
 
     for (const key of Object.keys(parsed)) {
-      let descriptor = structUtils.tryParseDescriptor(key);
+      const parsedDescriptor = structUtils.tryParseDescriptor(key);
 
-      if (!descriptor) {
+      if (!parsedDescriptor) {
         report.reportWarning(MessageName.YARN_IMPORT_FAILED, `Failed to parse the string "${key}" into a proper descriptor`);
         continue;
       }
 
-      if (semverUtils.validRange(descriptor.range))
-        descriptor = structUtils.makeDescriptor(descriptor, `npm:${descriptor.range}`);
+      const descriptor = semverUtils.validRange(parsedDescriptor.range)
+        ? structUtils.makeDescriptor(parsedDescriptor, `npm:${parsedDescriptor.range}`)
+        : parsedDescriptor;
 
       const {version, resolved} = (parsed as any)[key];
 
