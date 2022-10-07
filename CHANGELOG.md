@@ -61,6 +61,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
 
+- `workspace.dependencies` has been removed. Use `workspace.anchoredPackage.dependencies` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
