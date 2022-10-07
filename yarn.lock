@@ -4010,7 +4010,7 @@ __metadata:
 
 "@strictsoftware/typedoc-plugin-monorepo@patch:@strictsoftware/typedoc-plugin-monorepo@^0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby":
   version: 0.2.2
-  resolution: "@strictsoftware/typedoc-plugin-monorepo@patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=916087&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
+  resolution: "@strictsoftware/typedoc-plugin-monorepo@patch:@strictsoftware/typedoc-plugin-monorepo@npm%3A0.2.2#./.patches/@strictsoftware/typedoc-plugin-monorepo.patch::version=0.2.2&hash=dc07b1&locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"
   dependencies:
     highlight.js: "npm:^9.15.6"
     marked: "npm:^0.8.0"
@@ -12648,7 +12648,7 @@ __metadata:
 
 "fsevents@patch:fsevents@npm%3A^1.2.7#optional!builtin<compat/fsevents>":
   version: 1.2.13
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#optional!builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#optional!builtin<compat/fsevents>::version=1.2.13&hash=d11327"
   dependencies:
     bindings: "npm:^1.5.0"
     nan: "npm:^2.12.1"
@@ -12658,7 +12658,7 @@ __metadata:
 
 "fsevents@patch:fsevents@npm%3A^2.3.2#optional!builtin<compat/fsevents>, fsevents@patch:fsevents@npm%3A~2.3.2#optional!builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
   dependencies:
     node-gyp: "npm:latest"
   conditions: os=darwin
@@ -15150,7 +15150,7 @@ __metadata:
 
 "ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch":
   version: 3.0.8
-  resolution: "ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=1e50c6"
+  resolution: "ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"
   dependencies:
     ansi-escapes: "npm:^4.2.1"
     auto-bind: "npm:4.0.0"
@@ -23013,7 +23013,7 @@ __metadata:
 
 "resolve@patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>":
   version: 1.9.0
-  resolution: "resolve@patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=c3c19d"
   dependencies:
     path-parse: "npm:^1.0.6"
   checksum: df26fb01a5caa45a13682fa416a61cab364e89505166696dee1b42f4cd73b8f05185e171adb015edfbb7b67df8502e4d93d7b9304470f148cf775844e192f058
@@ -23022,7 +23022,7 @@ __metadata:
 
 "resolve@patch:resolve@npm%3A^1.1.6#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.12.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.17.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.19.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.3.2#optional!builtin<compat/resolve>":
   version: 1.20.0
-  resolution: "resolve@patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A1.20.0#optional!builtin<compat/resolve>::version=1.20.0&hash=c3c19d"
   dependencies:
     is-core-module: "npm:^2.2.0"
     path-parse: "npm:^1.0.6"
@@ -23032,7 +23032,7 @@ __metadata:
 
 "resolve@patch:resolve@npm%3A^2.0.0-next.3#optional!builtin<compat/resolve>":
   version: 2.0.0-next.3
-  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"
+  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#optional!builtin<compat/resolve>::version=2.0.0-next.3&hash=c3c19d"
   dependencies:
     is-core-module: "npm:^2.2.0"
     path-parse: "npm:^1.0.6"
@@ -25771,7 +25771,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A3.7.x#optional!builtin<compat/typescript>":
   version: 3.7.7
-  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=c44097"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25781,7 +25781,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>":
   version: 4.9.1-beta
-  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>::version=4.9.1-beta&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>::version=4.9.1-beta&hash=7f4d21"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -25791,7 +25791,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^3.8.3#optional!builtin<compat/typescript>":
   version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=3bd3d3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -27615,7 +27615,7 @@ __metadata:
 
 "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
   version: 1.10.0
-  resolution: "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=8c2d4c&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
+  resolution: "yoga-layout-prebuilt@patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=79d122&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
   dependencies:
     "@types/yoga-layout": "npm:1.9.2"
   checksum: d89737ba97cf57b908966ee867c99184308fb76f9c5883e9522556db1e290831c91972c7afa999c988ec5f44703354ceaa03824a99e01234737b9b01e3fc7457

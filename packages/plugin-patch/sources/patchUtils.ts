@@ -1,10 +1,12 @@
-import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils, FetchResult} from '@yarnpkg/core';
-import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                                   from '@yarnpkg/fslib';
+import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils, FetchResult, semverUtils, hashUtils} from '@yarnpkg/core';
+import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                                                           from '@yarnpkg/fslib';
 
-import {Hooks as PatchHooks}                                                                                                            from './index';
+import {CACHE_VERSION}                                                                                                                                          from './constants';
+import {Hooks as PatchHooks}                                                                                                                                    from './index';
+import {parsePatchFile}                                                                                                                                         from './tools/parse';
 
 export {applyPatchFile} from './tools/apply';
-export {parsePatchFile} from './tools/parse';
+export {parsePatchFile};
 
 const BUILTIN_REGEXP = /^builtin<([^>]+)>$/;
 
@@ -310,4 +312,30 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
     .replace(new RegExp(`(a|b)${miscUtils.escapeRegExp(`/${normalizePath(folderBN)}/`)}`, `g`), `$1/`)
     .replace(new RegExp(miscUtils.escapeRegExp(`${folderAN}/`), `g`), ``)
     .replace(new RegExp(miscUtils.escapeRegExp(`${folderBN}/`), `g`), ``);
+}
+
+export function makePatchHash(
+  patchFiles: Array<{
+    source: string | null;
+    optional: boolean;
+  }>,
+  sourceVersion: string | null,
+) {
+  const parts: Array<string> = [];
+
+  for (const {source} of patchFiles) {
+    if (source === null) continue;
+
+    const effects = parsePatchFile(source);
+
+    for (const effect of effects) {
+      const {semverExclusivity, ...effectWithoutRange} = effect;
+      if (effect.semverExclusivity !== null && sourceVersion !== null)
+        if (!semverUtils.satisfiesWithPrereleases(sourceVersion, effect.semverExclusivity)) continue;
+
+      parts.push(JSON.stringify(effectWithoutRange));
+    }
+  }
+
+  return hashUtils.makeHash(`${CACHE_VERSION}`, ...parts).slice(0, 6);
 }
