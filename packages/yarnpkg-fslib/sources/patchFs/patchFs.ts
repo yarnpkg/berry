@@ -2,7 +2,7 @@ import fs           from 'fs';
 import {promisify}  from 'util';
 
 import {FakeFS}     from '../FakeFS';
-import {URLFS}      from '../URLFS';
+import {NodePathFS} from '../NodePathFS';
 import {NativePath} from '../path';
 
 import {FileHandle} from './FileHandle';
@@ -137,8 +137,8 @@ type ReadArgumentsCallback = [fd: number, callback: ReadCallback];
 //#endregion
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
-  // We wrap the `fakeFs` with a `URLFS` to add support for URL instances
-  fakeFs = new URLFS(fakeFs);
+  // We wrap the `fakeFs` with a `NodePathFS` to add support for all path types supported by Node
+  fakeFs = new NodePathFS(fakeFs);
 
   const setupFn = (target: any, name: string, replacement: any) => {
     const orig = target[name];
