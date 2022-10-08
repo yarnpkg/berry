@@ -8,9 +8,7 @@ This plugin will add support to Yarn for the `exec:` protocol. This protocol is 
 
 ## Install
 
-```
-yarn plugin import exec
-```
+This plugin is included by default starting from Yarn 4.
 
 ## Usage
 
