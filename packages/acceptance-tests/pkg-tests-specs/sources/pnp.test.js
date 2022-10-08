@@ -1096,7 +1096,7 @@ describe(`Plug'n'Play`, () => {
 
             await run2(`install`);
 
-            expect(readFile(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await readFile(`${path}/.pnp.cjs`, `utf8`));
+            await expect(readFile(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await readFile(`${path}/.pnp.cjs`, `utf8`));
           },
         )();
       },

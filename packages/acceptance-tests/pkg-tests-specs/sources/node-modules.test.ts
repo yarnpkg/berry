@@ -430,9 +430,9 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         const binPath = `${path}/node_modules/.bin/dep1` as PortablePath;
-        expect(xfs.lstatPromise(binPath)).resolves.toBeDefined();
+        await expect(xfs.lstatPromise(binPath)).resolves.toBeDefined();
         await run(`remove`, `dep1`);
-        expect(xfs.lstatPromise(binPath)).rejects.toBeDefined();
+        await expect(xfs.lstatPromise(binPath)).rejects.toBeDefined();
       },
     ),
   );

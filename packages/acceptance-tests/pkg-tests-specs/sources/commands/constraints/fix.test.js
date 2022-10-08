@@ -91,7 +91,7 @@ describe(`Commands`, () => {
     }));
 
     test(`test apply fix to string fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
-      environments[`various field types`](path);
+      await environments[`various field types`](path);
 
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
       gen_enforced_field(WorkspaceCwd, '_name', FieldValue) :- workspace_field(WorkspaceCwd, 'name', FieldValue).
@@ -105,7 +105,7 @@ describe(`Commands`, () => {
     }));
 
     test(`test apply fix to object fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
-      environments[`various field types`](path);
+      await environments[`various field types`](path);
 
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
       gen_enforced_field(WorkspaceCwd, '_repository', FieldValue) :- workspace_field(WorkspaceCwd, 'repository', FieldValue).
@@ -123,7 +123,7 @@ describe(`Commands`, () => {
     }));
 
     test(`test apply fix to array fields`, makeTemporaryEnv(manifest, config, async ({path, run, source}) => {
-      environments[`various field types`](path);
+      await environments[`various field types`](path);
 
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
       gen_enforced_field(WorkspaceCwd, '_files', FieldValue) :- workspace_field(WorkspaceCwd, 'files', FieldValue).
