@@ -91,7 +91,7 @@ describe(`ZipFS`, () => {
     const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip` as Filename);
     const zipFs = new ZipFS(tmpfile, {create: true});
 
-    zipFs.mkdirPromise(`/dir` as PortablePath);
+    zipFs.mkdirSync(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
 
     zipFs.symlinkSync(`dir/file` as PortablePath, `linkToFileA` as PortablePath);
@@ -825,13 +825,13 @@ describe(`ZipFS`, () => {
   it(`should support fd in writeFile and readFile`, async () => {
     const zipFs = new ZipFS();
 
-    zipFs.mkdirPromise(`/dir` as PortablePath);
+    zipFs.mkdirSync(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
 
     const fd = zipFs.openSync(`/dir/file` as PortablePath, `r`);
     zipFs.writeFileSync(fd, `new content`);
 
-    expect(zipFs.readFilePromise(fd, `utf8`)).resolves.toEqual(`new content`);
+    await expect(zipFs.readFilePromise(fd, `utf8`)).resolves.toEqual(`new content`);
 
     await zipFs.writeFilePromise(fd, `new new content`);
 

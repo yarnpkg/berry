@@ -963,7 +963,7 @@ export class Project {
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
-    report.reportProgress(progress);
+    await report.reportProgress(progress);
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
