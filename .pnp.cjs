@@ -277,6 +277,7 @@ const RAW_RUNTIME_STATE =
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
           ["micromatch", "npm:4.0.5"],\
           ["pirates", "npm:4.0.5"],\
+          ["prettier", "npm:3.2.4"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"],\
@@ -6905,13 +6906,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@types/prettier", [\
-      ["npm:1.19.0", {\
-        "packageLocation": "./.yarn/cache/@types-prettier-npm-1.19.0-a6b7c059dc-8ad508d90b.zip/node_modules/@types/prettier/",\
-        "packageDependencies": [\
-          ["@types/prettier", "npm:1.19.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:2.6.3", {\
         "packageLocation": "./.yarn/cache/@types-prettier-npm-2.6.3-8d27063d48-fbaba4bfe1.zip/node_modules/@types/prettier/",\
         "packageDependencies": [\
@@ -9045,10 +9039,8 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@types/emscripten", "npm:1.39.6"],\
-          ["@types/prettier", "npm:1.19.0"],\
           ["@types/yarnpkg__fslib", null],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
-          ["prettier", "npm:1.19.1"],\
           ["tslib", "npm:2.4.0"]\
         ],\
         "packagePeers": [\
@@ -9062,9 +9054,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],\
           ["@types/emscripten", "npm:1.39.6"],\
-          ["@types/prettier", "npm:1.19.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
-          ["prettier", "npm:1.19.1"],\
           ["tslib", "npm:2.4.0"]\
         ],\
         "linkType": "SOFT"\
@@ -9101,6 +9091,7 @@ const RAW_RUNTIME_STATE =
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
           ["micromatch", "npm:4.0.5"],\
           ["pirates", "npm:4.0.5"],\
+          ["prettier", "npm:3.2.4"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"],\
@@ -29616,10 +29607,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["prettier", [\
-      ["npm:1.19.1", {\
-        "packageLocation": "./.yarn/cache/prettier-npm-1.19.1-e56d246fd2-21d245fe78.zip/node_modules/prettier/",\
+      ["npm:3.2.4", {\
+        "packageLocation": "./.yarn/unplugged/prettier-npm-3.2.4-3ca24592c3/node_modules/prettier/",\
         "packageDependencies": [\
-          ["prettier", "npm:1.19.1"]\
+          ["prettier", "npm:3.2.4"]\
         ],\
         "linkType": "HARD"\
       }]\

@@ -27,6 +27,7 @@
     "eslint": "^8.45.0",
     "jest": "^29.2.1",
     "pirates": "^4.0.5",
+    "prettier": "^3.2.4",
     "tslib": "^2.4.0",
     "typescript": "5.3.1-rc"
   },
@@ -62,7 +63,8 @@
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' --exclude '*.tsx' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
     "test:lint": "eslint --max-warnings 0 \"./**/*.@(tsx|ts|js)\"",
     "test:unit": "jest",
-    "typecheck:all": "tsc --noEmit"
+    "typecheck:all": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "sherlock": {
     "requireList": [

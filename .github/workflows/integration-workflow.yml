@@ -139,6 +139,13 @@ jobs:
       if: |
         success() || failure()
 
+    - name: 'Check for formatting errors (fix w/ "yarn format")'
+      run: |
+        node ./scripts/run-yarn.js prettier --check .
+      shell: bash
+      if: |
+        success() || failure()
+
     - name: 'Check for unmet constraints (fix w/ "yarn constraints --fix")'
       run: |
         node ./scripts/run-yarn.js constraints

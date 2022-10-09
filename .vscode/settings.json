@@ -24,5 +24,6 @@
   "search.exclude": {
     "**/.pnp.*": true,
     "**/.yarn": true
-  }
+  },
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs"
 }

@@ -4,9 +4,7 @@
     {
       "type": "npm",
       "script": "typecheck:all",
-      "problemMatcher": [
-        "$tsc"
-      ]
+      "problemMatcher": ["$tsc"]
     }
   ]
 }

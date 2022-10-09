@@ -1,18 +1,18 @@
 var frozenFs = Object.assign({}, require("fs"));
 
-var createModule = (function() {
+var createModule = (function () {
   var _scriptDir =
     typeof document !== "undefined" && document.currentScript
       ? document.currentScript.src
       : undefined;
   if (typeof __filename !== "undefined") _scriptDir = _scriptDir || __filename;
-  return function(createModule) {
+  return function (createModule) {
     createModule = createModule || {};
 
     null;
     var Module = typeof createModule !== "undefined" ? createModule : {};
     var readyPromiseResolve, readyPromiseReject;
-    Module["ready"] = new Promise(function(resolve, reject) {
+    Module["ready"] = new Promise(function (resolve, reject) {
       readyPromiseResolve = resolve;
       readyPromiseReject = reject;
     });
@@ -25,7 +25,7 @@ var createModule = (function() {
     }
     var arguments_ = [];
     var thisProgram = "./this.program";
-    var quit_ = function(status, toThrow) {
+    var quit_ = function (status, toThrow) {
       throw toThrow;
     };
     var ENVIRONMENT_IS_WORKER = false;
@@ -68,10 +68,10 @@ var createModule = (function() {
         thisProgram = process["argv"][1].replace(/\\/g, "/");
       }
       arguments_ = process["argv"].slice(2);
-      quit_ = function(status) {
+      quit_ = function (status) {
         process["exit"](status);
       };
-      Module["inspect"] = function() {
+      Module["inspect"] = function () {
         return "[Emscripten Module object]";
       };
     } else {
@@ -88,7 +88,7 @@ var createModule = (function() {
     if (Module["thisProgram"]) thisProgram = Module["thisProgram"];
     if (Module["quit"]) quit_ = Module["quit"];
     var tempRet0 = 0;
-    var setTempRet0 = function(value) {
+    var setTempRet0 = function (value) {
       tempRet0 = value;
     };
     var wasmBinary;
@@ -132,13 +132,13 @@ var createModule = (function() {
       var func = Module["_" + ident];
       assert(
         func,
-        "Cannot call unknown function " + ident + ", make sure it is exported"
+        "Cannot call unknown function " + ident + ", make sure it is exported",
       );
       return func;
     }
     function ccall(ident, returnType, argTypes, args, opts) {
       var toC = {
-        string: function(str) {
+        string: function (str) {
           var ret = 0;
           if (str !== null && str !== undefined && str !== 0) {
             var len = (str.length << 2) + 1;
@@ -147,11 +147,11 @@ var createModule = (function() {
           }
           return ret;
         },
-        array: function(arr) {
+        array: function (arr) {
           var ret = stackAlloc(arr.length);
           writeArrayToMemory(arr, ret);
           return ret;
-        }
+        },
       };
       function convertReturnValue(ret) {
         if (returnType === "string") return UTF8ToString(ret);
@@ -179,14 +179,14 @@ var createModule = (function() {
     }
     function cwrap(ident, returnType, argTypes, opts) {
       argTypes = argTypes || [];
-      var numericArgs = argTypes.every(function(type) {
+      var numericArgs = argTypes.every(function (type) {
         return type === "number";
       });
       var numericRet = returnType !== "string";
       if (numericRet && numericArgs && !opts) {
         return getCFunc(ident);
       }
-      return function() {
+      return function () {
         return ccall(ident, returnType, argTypes, arguments, opts);
       };
     }
@@ -403,7 +403,7 @@ var createModule = (function() {
         err("failed to compile wasm module: " + str);
         if (str.includes("imported Memory") || str.includes("memory import")) {
           err(
-            "Memory size incompatibility issues may be due to changing INITIAL_MEMORY at runtime to something too large. Use ALLOW_MEMORY_GROWTH to allow any size memory (and also make sure not to set INITIAL_MEMORY at runtime to something smaller than it was at compile time)."
+            "Memory size incompatibility issues may be due to changing INITIAL_MEMORY at runtime to something too large. Use ALLOW_MEMORY_GROWTH to allow any size memory (and also make sure not to set INITIAL_MEMORY at runtime to something smaller than it was at compile time).",
           );
         }
         throw e;
@@ -511,11 +511,11 @@ var createModule = (function() {
         var overGrownHeapSize = oldSize * (1 + 0.2 / cutDown);
         overGrownHeapSize = Math.min(
           overGrownHeapSize,
-          requestedSize + 100663296
+          requestedSize + 100663296,
         );
         var newSize = Math.min(
           maxHeapSize,
-          alignUp(Math.max(requestedSize, overGrownHeapSize), 65536)
+          alignUp(Math.max(requestedSize, overGrownHeapSize), 65536),
         );
         var replacement = emscripten_realloc_buffer(newSize);
         if (replacement) {
@@ -546,7 +546,7 @@ var createModule = (function() {
       LE_HEAP_STORE_I32((__get_timezone() >> 2) * 4, stdTimezoneOffset * 60);
       LE_HEAP_STORE_I32(
         (__get_daylight() >> 2) * 4,
-        Number(winterOffset != summerOffset)
+        Number(winterOffset != summerOffset),
       );
       function extractZone(date) {
         var match = date.toTimeString().match(/\(([A-Za-z ]+)\)$/);
@@ -573,7 +573,7 @@ var createModule = (function() {
         LE_HEAP_LOAD_I32(((tmPtr + 8) >> 2) * 4),
         LE_HEAP_LOAD_I32(((tmPtr + 4) >> 2) * 4),
         LE_HEAP_LOAD_I32((tmPtr >> 2) * 4),
-        0
+        0,
       );
       var date = new Date(time);
       LE_HEAP_STORE_I32(((tmPtr + 24) >> 2) * 4, date.getUTCDay());
@@ -585,7 +585,7 @@ var createModule = (function() {
     var decodeBase64 =
       typeof atob === "function"
         ? atob
-        : function(input) {
+        : function (input) {
             var keyStr =
               "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var output = "";
@@ -622,7 +622,7 @@ var createModule = (function() {
         return new Uint8Array(
           buf["buffer"],
           buf["byteOffset"],
-          buf["byteLength"]
+          buf["byteLength"],
         );
       }
       try {
@@ -648,7 +648,7 @@ var createModule = (function() {
       d: _emscripten_resize_heap,
       a: _setTempRet0,
       b: _time,
-      f: _timegm
+      f: _timegm,
     };
     var asm = createWasm();
     var ___wasm_call_ctors = (Module["___wasm_call_ctors"] = asm["h"]);
@@ -739,8 +739,8 @@ var createModule = (function() {
       }
       if (Module["setStatus"]) {
         Module["setStatus"]("Running...");
-        setTimeout(function() {
-          setTimeout(function() {
+        setTimeout(function () {
+          setTimeout(function () {
             Module["setStatus"]("");
           }, 1);
           doRun();
@@ -765,7 +765,7 @@ var createModule = (function() {
 if (typeof exports === "object" && typeof module === "object")
   module.exports = createModule;
 else if (typeof define === "function" && define["amd"])
-  define([], function() {
+  define([], function () {
     return createModule;
   });
 else if (typeof exports === "object") exports["createModule"] = createModule;
