@@ -244,7 +244,7 @@ export class Project {
     Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
     Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
 
-    const packageCwd = project.getPackageCwd(configuration.projectCwd, startingCwd);
+    const packageCwd = Project.getPackageCwd(configuration.projectCwd, startingCwd);
 
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
@@ -271,16 +271,16 @@ export class Project {
     ].join(`\n`)}`);
   }
 
-  constructor(projectCwd: PortablePath, {configuration}: {configuration: Configuration}) {
-    this.configuration = configuration;
-    this.cwd = projectCwd;
-  }
-
-  private getPackageCwd(projectCwd: PortablePath, startingCwd: PortablePath) {
+  private static getPackageCwd(projectCwd: PortablePath, startingCwd: PortablePath) {
     for (let currentCwd = startingCwd; currentCwd !== projectCwd; currentCwd = ppath.dirname(currentCwd))
       if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest)))
         return currentCwd;
     return projectCwd;
+  }
+
+  constructor(projectCwd: PortablePath, {configuration}: {configuration: Configuration}) {
+    this.configuration = configuration;
+    this.cwd = projectCwd;
   }
 
   private async setupResolutions() {
