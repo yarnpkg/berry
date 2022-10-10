@@ -277,22 +277,18 @@ export class Project {
   }
 
   private getPackageCwd(projectCwd: PortablePath, startingCwd: PortablePath) {
-    let packageCwd = projectCwd;
-
     let nextCwd = startingCwd;
     let currentCwd = null;
 
     while (currentCwd !== projectCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest))) {
-        packageCwd = currentCwd;
-        break;
-      }
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest)))
+        return currentCwd;
 
       nextCwd = ppath.dirname(currentCwd);
     }
-    return packageCwd;
+    return projectCwd;
   }
 
   private async setupResolutions() {
