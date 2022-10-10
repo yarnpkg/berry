@@ -234,22 +234,6 @@ export class Project {
     if (!configuration.projectCwd)
       throw new UsageError(`No project found in ${startingCwd}`);
 
-    let packageCwd = configuration.projectCwd;
-
-    let nextCwd = startingCwd;
-    let currentCwd = null;
-
-    while (currentCwd !== configuration.projectCwd) {
-      currentCwd = nextCwd;
-
-      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest))) {
-        packageCwd = currentCwd;
-        break;
-      }
-
-      nextCwd = ppath.dirname(currentCwd);
-    }
-
     const project = new Project(configuration.projectCwd, {configuration});
 
     Configuration.telemetry?.reportProject(project.cwd);
@@ -259,6 +243,8 @@ export class Project {
 
     Configuration.telemetry?.reportWorkspaceCount(project.workspaces.length);
     Configuration.telemetry?.reportDependencyCount(project.workspaces.reduce((sum, workspace) => sum + workspace.manifest.dependencies.size + workspace.manifest.devDependencies.size, 0));
+
+    const packageCwd = project.getPackageCwd(configuration.projectCwd, startingCwd);
 
     // If we're in a workspace, no need to go any further to find which package we're in
     const workspace = project.tryWorkspaceByCwd(packageCwd);
@@ -288,6 +274,25 @@ export class Project {
   constructor(projectCwd: PortablePath, {configuration}: {configuration: Configuration}) {
     this.configuration = configuration;
     this.cwd = projectCwd;
+  }
+
+  private getPackageCwd(projectCwd: PortablePath, startingCwd: PortablePath) {
+    let packageCwd = projectCwd;
+
+    let nextCwd = startingCwd;
+    let currentCwd = null;
+
+    while (currentCwd !== projectCwd) {
+      currentCwd = nextCwd;
+
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest))) {
+        packageCwd = currentCwd;
+        break;
+      }
+
+      nextCwd = ppath.dirname(currentCwd);
+    }
+    return packageCwd;
   }
 
   private async setupResolutions() {
