@@ -226,7 +226,8 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/tajo/react-portal/pull/233
-  [`react-portal@*`, {
+  // https://github.com/tajo/react-portal/commit/daf85792c2fce25a3481b6f9132ef61a110f3d78
+  [`react-portal@<4.2.2`, {
     peerDependencies: {
       'react-dom': `^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0`,
     },
