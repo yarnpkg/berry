@@ -801,7 +801,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/wemaintain/auto-relay/pull/95
-  [`auto-relay@*`, {
+  [`auto-relay@<=0.14.0`, {
     peerDependencies: {
       'reflect-metadata': `^0.1.13`,
     },
