@@ -402,7 +402,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/tj/consolidate.js/pull/339
-  [`consolidate@*`, {
+  [`consolidate@<=0.16.0`, {
     peerDependencies: {
       velocityjs: `^2.0.1`,
       tinyliquid: `^0.2.34`,
