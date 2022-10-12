@@ -7,7 +7,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stale@v5
+    - uses: actions/stale@v6
       with:
         repo-token: ${{secrets.YARNBOT_TOKEN}}
 
@@ -25,14 +25,12 @@ jobs:
         days-before-stale: 30
         days-before-close: 5
 
-        close-issue-reason: not_planned
-
         only-labels: 'bug'
 
         stale-issue-label: 'stale'
         exempt-issue-labels: 'reproducible,upholded,good first issue,help wanted'
 
-    - uses: actions/stale@v5
+    - uses: actions/stale@v6
       with:
         repo-token: ${{secrets.YARNBOT_TOKEN}}
 
@@ -45,8 +43,6 @@ jobs:
 
         days-before-stale: 30
         days-before-close: 5
-
-        close-issue-reason: not_planned
 
         only-labels: 'waiting for feedback'
 
