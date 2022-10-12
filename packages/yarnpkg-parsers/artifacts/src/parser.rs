@@ -213,17 +213,7 @@ fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
     preceded(
       line_ending,
       parser(
-        property_statements,
-        Context {
-          indent: ctx.indent + INDENT_STEP,
-          ..ctx
-        },
-      ),
-    ),
-    preceded(
-      line_ending,
-      parser(
-        item_statements,
+        block_expression,
         Context {
           indent: ctx.indent + INDENT_STEP,
           ..ctx
@@ -231,6 +221,13 @@ fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
       ),
     ),
     parser(flow_expression, ctx),
+  ))(input)
+}
+
+fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((
+    parser(property_statements, ctx),
+    parser(item_statements, ctx),
   ))(input)
 }
 
