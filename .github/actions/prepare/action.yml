@@ -7,7 +7,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@master
+    - uses: actions/setup-node@v3
       with:
         node-version: 16.x
         check-latest: true

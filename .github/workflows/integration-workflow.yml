@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
@@ -149,10 +149,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
@@ -207,10 +207,10 @@ jobs:
     needs: build
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: 'Use Node.js ${{matrix.node}}.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: ${{matrix.node}}.x
 
@@ -244,7 +244,7 @@ jobs:
     needs: build
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - uses: actions/download-artifact@v3
       with:
