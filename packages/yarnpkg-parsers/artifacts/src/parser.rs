@@ -63,17 +63,13 @@ fn start(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((
-    parser(property_statements, ctx),
-    parser(item_statements, ctx),
-    parser(flow_expression, ctx),
-  ))(input)
+  alt((parser(block_expression, ctx), parser(flow_expression, ctx)))(input)
 }
 
-fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
+fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     parse_separated_terminated_res(
-      preceded(comments, parser(property_statement, ctx)),
+      preceded(comments, parser(block_mapping_entry, ctx)),
       eol_any,
       parser(block_terminator, ctx),
       Map::new,
@@ -92,7 +88,7 @@ fn property_statements(input: Input, ctx: Context) -> ParseResult<Value> {
   )(input)
 }
 
-fn property_statement(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
+fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
   preceded(
     parser(indentation, ctx),
     separated_pair(
@@ -103,10 +99,10 @@ fn property_statement(input: Input, ctx: Context) -> ParseResult<(Value, Value)>
   )(input)
 }
 
-fn item_statements(input: Input, ctx: Context) -> ParseResult<Value> {
+fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     collect_separated_terminated(
-      preceded(comments, parser(item_statement, ctx)),
+      preceded(comments, parser(block_sequence_entry, ctx)),
       eol_any,
       parser(block_terminator, ctx),
     ),
@@ -114,12 +110,11 @@ fn item_statements(input: Input, ctx: Context) -> ParseResult<Value> {
   )(input)
 }
 
-fn comments(input: Input) -> ParseResult<usize> {
-  many0_count(comment)(input)
-}
-
-fn comment(input: Input) -> ParseResult<Option<Input>> {
-  delimited(space0, opt(preceded(char('#'), not_line_ending)), eol_any)(input)
+fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
+  preceded(
+    parser(indentation, ctx),
+    preceded(terminated(char('-'), space1), parser(expression, ctx)),
+  )(input)
 }
 
 fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
@@ -130,13 +125,6 @@ fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
       not(parser(indentation, ctx))(input)
     }
   }))(input)
-}
-
-fn item_statement(input: Input, ctx: Context) -> ParseResult<Value> {
-  preceded(
-    parser(indentation, ctx),
-    preceded(terminated(char('-'), space1), parser(expression, ctx)),
-  )(input)
 }
 
 fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
@@ -225,10 +213,7 @@ fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((
-    parser(property_statements, ctx),
-    parser(item_statements, ctx),
-  ))(input)
+  alt((parser(block_mapping, ctx), parser(block_sequence, ctx)))(input)
 }
 
 fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
@@ -309,6 +294,14 @@ fn plain_scalar(input: Input) -> ParseResult<String> {
     )),
     from_utf8_to_owned,
   )(input)
+}
+
+fn comments(input: Input) -> ParseResult<usize> {
+  many0_count(comment)(input)
+}
+
+fn comment(input: Input) -> ParseResult<Option<Input>> {
+  delimited(space0, opt(preceded(char('#'), not_line_ending)), eol_any)(input)
 }
 
 fn eol_any(input: Input) -> ParseResult<Input> {
