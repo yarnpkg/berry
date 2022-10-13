@@ -1010,15 +1010,28 @@ export class Configuration {
     type CoreKeys = keyof typeof coreDefinitions;
     type CoreFields = {[key in CoreKeys]: any};
 
-    const pickCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const excludeCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => rest;
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+      const allCoreFieldKeys = Object.keys(coreDefinitions);
+      const secondaryCoreFields: CoreFields = {};
+      for (const [key, value] of Object.entries(rest))
+        if (allCoreFieldKeys.includes(key)) secondaryCoreFields[key] = value;
+      return secondaryCoreFields;
+    };
+    const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+      const allCoreFieldKeys = Object.keys(coreDefinitions);
+      const pluginFields: any = {};
+      for (const [key, value] of Object.entries(rest))
+        if (!allCoreFieldKeys.includes(key)) pluginFields[key] = value;
+      return pluginFields;
+    };
 
     const configuration = new Configuration(startingCwd);
-    configuration.importSettings(pickCoreFields(coreDefinitions));
+    configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
-    configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
+      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1059,7 +1072,11 @@ export class Configuration {
     configuration.startingCwd = startingCwd;
     configuration.projectCwd = projectCwd;
 
-    configuration.importSettings(excludeCoreFields(coreDefinitions));
+    // load all fields of the core definitions
+    configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1068,12 +1085,7 @@ export class Configuration {
       return `default` in object ? object.default : object;
     };
 
-    // The order is important, otherwise it will be wrong
-    // 1. load the core plugins
-    // 2. completely load the rcfiles
-    // 3. load third-party plugins
-
-    // 1. load the core plugins
+    // load the core plugins
     const corePlugins = new Map<string, Plugin>([
       [`@@core`, CorePlugin],
     ]);
@@ -1083,12 +1095,7 @@ export class Configuration {
     for (const [name, corePlugin] of corePlugins)
       configuration.activatePlugin(name, corePlugin);
 
-    // 2. completely load the rcfiles
-    configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
-
-    // 3. load third-party plugins
+    // load third-party plugins
     const thirdPartyPlugins = new Map<string, Plugin>([]);
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
@@ -1177,6 +1184,11 @@ export class Configuration {
     }
     for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
       configuration.activatePlugin(name, thirdPartyPlugin);
+
+    // load values of all plugin definitions
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
