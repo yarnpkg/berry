@@ -671,15 +671,21 @@ describe(`Shell`, () => {
         await expect(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
         )).resolves.toMatchObject({
-          stdout: ``,
+          stdout: `\n`,
         });
       });
 
       it(`should support alternative arguments via \${N:+...}`, async () => {
         await expect(bufferResult(
-          `echo "\${1:+hello world}"`,
+          `echo "\${0:+hello world}"`, [`goodbye world`],
         )).resolves.toMatchObject({
           stdout: `hello world\n`,
+        });
+
+        await expect(bufferResult(
+          `echo "\${0:+hello world}"`,
+        )).resolves.toMatchObject({
+          stdout: `\n`,
         });
       });
 
