@@ -1062,18 +1062,33 @@ export class Configuration {
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
 
-    const plugins = new Map<string, Plugin>([
-      [`@@core`, CorePlugin],
-    ]);
-
     const getDefault = (object: any) => {
       return `default` in object ? object.default : object;
     };
 
-    if (pluginConfiguration !== null) {
-      for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
+    // The order is important, otherwise it will be wrong
+    // 1. load the core plugins
+    // 2. completely load the rcfiles
+    // 3. load third-party plugins
 
+    // 1. load the core plugins
+    const corePlugins = new Map<string, Plugin>([
+      [`@@core`, CorePlugin],
+    ]);
+    if (pluginConfiguration !== null)
+      for (const request of pluginConfiguration.plugins.keys())
+        corePlugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
+    for (const [name, corePlugin] of corePlugins)
+      configuration.activatePlugin(name, corePlugin);
+
+    // 2. completely load the rcfiles
+    configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
+
+    // 3. load third-party plugins
+    const thirdPartyPlugins = new Map<string, Plugin>([]);
+    if (pluginConfiguration !== null) {
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
         requireEntries.set(request, () => miscUtils.dynamicRequire(request));
@@ -1136,13 +1151,8 @@ export class Configuration {
         }
       }
     }
-
-    for (const [name, plugin] of plugins)
-      configuration.activatePlugin(name, plugin);
-
-    configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
+    for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
+      configuration.activatePlugin(name, thirdPartyPlugin);
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
