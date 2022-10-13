@@ -1,5 +1,35 @@
 import {PortablePath, xfs} from '@yarnpkg/fslib';
 import {stringifySyml}     from '@yarnpkg/parsers';
+import https               from 'https';
+import {AddressInfo}       from 'net';
+import {tests}             from 'pkg-tests-core';
+
+const mockPluginServer: (path: PortablePath) => Promise<{pluginUrl: string, httpsCaFilePath: PortablePath}> = async path => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      const certs = await tests.getHttpsCertificates();
+      const httpsCaFilePath = `${path}/rootCA.crt` as PortablePath;
+      await xfs.writeFilePromise(httpsCaFilePath, certs.ca.certificate);
+
+      const helloWorldPluginPath = require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-world.js`) as PortablePath;
+      const helloWorldPlugin = await xfs.readFilePromise(helloWorldPluginPath);
+      const server = https.createServer({
+        cert: certs.server.certificate,
+        key: certs.server.clientKey,
+        ca: certs.ca.certificate,
+      }, (req, res) => {
+        res.writeHead(200);
+        res.end(helloWorldPlugin);
+      });
+
+      server.unref();
+      server.listen(() => {
+        const {port} = server.address() as AddressInfo;
+        resolve({pluginUrl: `https://localhost:${port}`, httpsCaFilePath});
+      });
+    })();
+  });
+};
 
 const PLUGIN = (name: string, {async = false, printOnBoot = false} = {}) => `
 const factory = ${async ? `async` : ``} r => {
@@ -89,5 +119,23 @@ describe(`Features`, () => {
         stdout: `Booting A\nBooting B\nBooting A\nBooting B\n`,
       });
     }));
+
+    test(`it should fetch missing plugins`, makeTemporaryEnv(
+      {},
+      async ({path, run, source}) => {
+        const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
+        const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
+        await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
+          httpsCaFilePath,
+          plugins: [{
+            path: pluginPath,
+            spec: pluginUrl,
+          }],
+        }));
+        await run(`install`);
+        await expect(await xfs.existsPromise(`${path}/${pluginPath}` as PortablePath)).toEqual(true);
+      },
+    ),
+    );
   });
 });
