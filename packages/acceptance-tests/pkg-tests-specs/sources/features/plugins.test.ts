@@ -90,21 +90,6 @@ describe(`Features`, () => {
       });
     }));
 
-    test(`it should properly load a plugin via the local rc file`, makeTemporaryEnv({
-    }, async ({path, run, source}) => {
-      await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, PLUGIN(`A`, {printOnBoot: true}));
-
-      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
-        plugins: [`./plugin-a.js`],
-      }));
-
-      await run(`install`);
-
-      await expect(run(`node`, `-e`, ``)).resolves.toMatchObject({
-        stdout: `Booting A\nBooting A\n`,
-      });
-    }));
-
     test(`it should properly load multiple plugins via the local rc file, in the right order`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, PLUGIN(`A`, {printOnBoot: true}));
