@@ -20,6 +20,7 @@ import {WorkspaceFetcher}                                                       
 import {WorkspaceResolver}                                                                              from './WorkspaceResolver';
 import * as folderUtils                                                                                 from './folderUtils';
 import * as formatUtils                                                                                 from './formatUtils';
+import * as httpUtils                                                                                   from './httpUtils';
 import * as miscUtils                                                                                   from './miscUtils';
 import * as nodeUtils                                                                                   from './nodeUtils';
 import * as semverUtils                                                                                 from './semverUtils';
@@ -1125,7 +1126,7 @@ export class Configuration {
         requireEntries.set(name, () => plugin);
 
         dynamicPlugins.add(name);
-        plugins.set(name, plugin);
+        thirdPartyPlugins.set(name, plugin);
       };
 
       if (environmentSettings.plugins) {
@@ -1145,8 +1146,22 @@ export class Configuration {
           const userProvidedPath = typeof userPluginEntry !== `string`
             ? userPluginEntry.path
             : userPluginEntry;
+          const userProvidedSpec = userPluginEntry?.spec ?? ``;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
+          if (!await xfs.existsPromise(pluginPath)) {
+            if (!userProvidedSpec.match(/^https?:/)) {
+              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
+              const prettyGitIgnore = formatUtils.pretty(configuration, `.gitignore`, formatUtils.Type.NAME) ;
+              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
+              const prettyUrl = formatUtils.pretty(configuration, `https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored`, formatUtils.Type.URL) ;
+              throw new UsageError(`Failed to get ${prettyPluginName} plugin, please try to delete the plugin from ${prettyYarnrc} and reinstall it, the error usually occurs because ${prettyGitIgnore} is incorrect, please check ${prettyUrl} to set the correct ${prettyGitIgnore}`);
+            }
+
+            const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
+            await xfs.mkdirPromise(ppath.dirname(pluginPath), {recursive: true});
+            await xfs.writeFilePromise(pluginPath, pluginBuffer);
+          }
           await importPlugin(pluginPath, path);
         }
       }
