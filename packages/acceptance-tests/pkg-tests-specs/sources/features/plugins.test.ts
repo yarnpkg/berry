@@ -1,7 +1,7 @@
-import {xfs}           from '@yarnpkg/fslib';
-import {stringifySyml} from '@yarnpkg/parsers';
+import {PortablePath, xfs} from '@yarnpkg/fslib';
+import {stringifySyml}     from '@yarnpkg/parsers';
 
-const PLUGIN = (name, {async = false, printOnBoot = false} = {}) => `
+const PLUGIN = (name: string, {async = false, printOnBoot = false} = {}) => `
 const factory = ${async ? `async` : ``} r => {
   const {Command} = r('clipanion');
 
@@ -31,9 +31,9 @@ describe(`Features`, () => {
   describe(`Plugins`, () => {
     test(`it should properly load a plugin via the local rc file`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.writeFilePromise(`${path}/plugin-a.js`, PLUGIN(`a`, {printOnBoot: true}));
+      await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, PLUGIN(`a`, {printOnBoot: true}));
 
-      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
         plugins: [`./plugin-a.js`],
       }));
 
@@ -46,9 +46,9 @@ describe(`Features`, () => {
 
     test(`it should accept asynchronous plugins`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.writeFilePromise(`${path}/plugin-a.js`, PLUGIN(`a`, {async: true}));
+      await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, PLUGIN(`a`, {async: true}));
 
-      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
         plugins: [`./plugin-a.js`],
       }));
 
@@ -61,9 +61,9 @@ describe(`Features`, () => {
 
     test(`it should properly load a plugin via the local rc file`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.writeFilePromise(`${path}/plugin-a.js`, PLUGIN(`A`, {printOnBoot: true}));
+      await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, PLUGIN(`A`, {printOnBoot: true}));
 
-      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
         plugins: [`./plugin-a.js`],
       }));
 
@@ -76,10 +76,10 @@ describe(`Features`, () => {
 
     test(`it should properly load multiple plugins via the local rc file, in the right order`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.writeFilePromise(`${path}/plugin-a.js`, PLUGIN(`A`, {printOnBoot: true}));
-      await xfs.writeFilePromise(`${path}/plugin-b.js`, PLUGIN(`B`, {printOnBoot: true}));
+      await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, PLUGIN(`A`, {printOnBoot: true}));
+      await xfs.writeFilePromise(`${path}/plugin-b.js` as PortablePath, PLUGIN(`B`, {printOnBoot: true}));
 
-      await xfs.writeFilePromise(`${path}/.yarnrc.yml`, stringifySyml({
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
         plugins: [`./plugin-a.js`, `./plugin-b.js`],
       }));
 
