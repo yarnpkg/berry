@@ -20,6 +20,7 @@ import {WorkspaceFetcher}                                                       
 import {WorkspaceResolver}                                                                              from './WorkspaceResolver';
 import * as folderUtils                                                                                 from './folderUtils';
 import * as formatUtils                                                                                 from './formatUtils';
+import * as hashUtils                                                                                   from './hashUtils';
 import * as httpUtils                                                                                   from './httpUtils';
 import * as miscUtils                                                                                   from './miscUtils';
 import * as nodeUtils                                                                                   from './nodeUtils';
@@ -1322,6 +1323,40 @@ export class Configuration {
 
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
+    });
+  }
+
+  static async addPlugin(cwd: PortablePath, pluginMetaList: Array<{
+    path: PortablePath;
+    spec: string;
+    checksum: string;
+  }>) {
+    if (pluginMetaList.length === 0) return;
+
+    await Configuration.updateConfiguration(cwd, (current: any) => {
+      const currentPluginMetaList = current.plugins || [];
+      if (currentPluginMetaList.length === 0) return {...current, plugins: pluginMetaList};
+
+      const newPluginMetaList = [];
+      let notYetProcessedList = [...pluginMetaList];
+
+      for (const currentPluginMeta of currentPluginMetaList) {
+        const currentPluginPath = typeof currentPluginMeta !== `string`
+          ? currentPluginMeta.path
+          : currentPluginMeta;
+        const updatingPlugin = notYetProcessedList.find(pluginMeta => pluginMeta.path === currentPluginPath);
+
+        if (updatingPlugin) {
+          newPluginMetaList.push(updatingPlugin);
+          notYetProcessedList = notYetProcessedList.filter(p => p !== updatingPlugin);
+        } else {
+          newPluginMetaList.push(currentPluginMeta);
+        }
+      }
+
+      newPluginMetaList.push(...notYetProcessedList);
+
+      return {...current, plugins: newPluginMetaList};
     });
   }
 

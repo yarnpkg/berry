@@ -1,13 +1,13 @@
-import {BaseCommand}                                                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
-import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}                       from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                                            from 'clipanion';
-import semver                                                                              from 'semver';
-import {URL}                                                                               from 'url';
-import {runInNewContext}                                                                   from 'vm';
+import {BaseCommand}                                                            from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Report} from '@yarnpkg/core';
+import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}            from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                                 from 'clipanion';
+import semver                                                                   from 'semver';
+import {URL}                                                                    from 'url';
+import {runInNewContext}                                                        from 'vm';
 
-import {getAvailablePlugins}                                                               from './list';
+import {getAvailablePlugins}                                                    from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginImportCommand extends BaseCommand {
@@ -140,29 +140,5 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
     checksum: await hashUtils.checksumFile(absolutePath),
   };
 
-  await Configuration.updateConfiguration(project.cwd, (current: any) => {
-    const plugins = [];
-    let hasBeenReplaced = false;
-
-    for (const entry of current.plugins || []) {
-      const userProvidedPath = typeof entry !== `string`
-        ? entry.path
-        : entry;
-
-      const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
-      const {name} = miscUtils.dynamicRequire(pluginPath);
-
-      if (name !== pluginName) {
-        plugins.push(entry);
-      } else {
-        plugins.push(pluginMeta);
-        hasBeenReplaced = true;
-      }
-    }
-
-    if (!hasBeenReplaced)
-      plugins.push(pluginMeta);
-
-    return {...current, plugins};
-  });
+  await Configuration.addPlugin(project.cwd, [pluginMeta]);
 }
