@@ -1,3 +1,4 @@
+import {hashUtils}                   from '@yarnpkg/core';
 import {xfs, ppath, Filename, npath} from '@yarnpkg/fslib';
 import {fs, yarn}                    from 'pkg-tests-core';
 
@@ -17,6 +18,7 @@ describe(`Commands`, () => {
           plugins: [{
             path: ppath.relative(path, helloWorldPlugin),
             spec: ppath.relative(path, npath.toPortablePath(helloWorldSource)),
+            checksum: await hashUtils.checksumFile(helloWorldPlugin),
           }],
         });
 

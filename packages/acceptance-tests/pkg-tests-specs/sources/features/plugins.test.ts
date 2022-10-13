@@ -1,8 +1,9 @@
+import {hashUtils}         from '@yarnpkg/core';
 import {PortablePath, xfs} from '@yarnpkg/fslib';
 import {stringifySyml}     from '@yarnpkg/parsers';
 import https               from 'https';
 import {AddressInfo}       from 'net';
-import {tests}             from 'pkg-tests-core';
+import {tests, fs}         from 'pkg-tests-core';
 
 const mockPluginServer: (path: PortablePath) => Promise<{pluginUrl: string, httpsCaFilePath: PortablePath}> = async path => {
   return new Promise((resolve, reject) => {
@@ -134,6 +135,14 @@ describe(`Features`, () => {
         }));
         await run(`install`);
         await expect(await xfs.existsPromise(`${path}/${pluginPath}` as PortablePath)).toEqual(true);
+        await expect(fs.readSyml(`${path}/.yarnrc.yml` as PortablePath)).resolves.toEqual({
+          httpsCaFilePath,
+          plugins: [{
+            path: pluginPath,
+            spec: pluginUrl,
+            checksum: await hashUtils.checksumFile(`${path}/${pluginPath}` as PortablePath),
+          }],
+        });
       },
     ),
     );
