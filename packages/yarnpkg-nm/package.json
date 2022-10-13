@@ -10,9 +10,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/fslib": "workspace:^"
-  },
-  "devDependencies": {
+    "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/pnp": "workspace:^"
   },
   "scripts": {
