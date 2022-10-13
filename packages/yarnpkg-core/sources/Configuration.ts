@@ -11,7 +11,7 @@ import {CorePlugin}                                                             
 import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
 import {MultiFetcher}                                                                                   from './MultiFetcher';
 import {MultiResolver}                                                                                  from './MultiResolver';
-import {Plugin, Hooks}                                                                                  from './Plugin';
+import {Plugin, Hooks, PluginMeta}                                                                      from './Plugin';
 import {Report}                                                                                         from './Report';
 import {TelemetryManager}                                                                               from './TelemetryManager';
 import {VirtualFetcher}                                                                                 from './VirtualFetcher';
@@ -1170,7 +1170,8 @@ export class Configuration {
             const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
             const pluginChecksum = hashUtils.makeHash(pluginBuffer);
 
-            if (userProvidedChecksum !== pluginChecksum) {
+            // if there is no checksum, this means that the user used --no-checksum and does not need to check this plugin
+            if (userProvidedChecksum && userProvidedChecksum !== pluginChecksum) {
               const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
               const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
               const prettyPluginImportCommand = formatUtils.pretty(configuration, `yarn plugin import ${userProvidedSpec}`, formatUtils.Type.CODE) ;
@@ -1348,11 +1349,7 @@ export class Configuration {
     });
   }
 
-  static async addPlugin(cwd: PortablePath, pluginMetaList: Array<{
-    path: PortablePath;
-    spec: string;
-    checksum: string;
-  }>) {
+  static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {
     if (pluginMetaList.length === 0) return;
 
     await Configuration.updateConfiguration(cwd, (current: any) => {
