@@ -1,6 +1,6 @@
 import {BaseCommand}                                                                       from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
-import {YarnVersion, formatUtils, httpUtils, structUtils}                                  from '@yarnpkg/core';
+import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}                       from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                                            from 'clipanion';
 import semver                                                                              from 'semver';
@@ -137,6 +137,7 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
   const pluginMeta = {
     path: relativePath,
     spec: pluginSpec,
+    checksum: await hashUtils.checksumFile(absolutePath),
   };
 
   await Configuration.updateConfiguration(project.cwd, (current: any) => {
