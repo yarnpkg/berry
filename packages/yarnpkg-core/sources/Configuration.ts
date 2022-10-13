@@ -1150,12 +1150,12 @@ export class Configuration {
         if (!Array.isArray(data.plugins))
           continue;
 
-        const missingPluginMetaList = [];
         for (const userPluginEntry of data.plugins) {
           const userProvidedPath = typeof userPluginEntry !== `string`
             ? userPluginEntry.path
             : userPluginEntry;
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
+          const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           if (!await xfs.existsPromise(pluginPath)) {
@@ -1168,18 +1168,20 @@ export class Configuration {
             }
 
             const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
+            const pluginChecksum = hashUtils.makeHash(pluginBuffer);
+
+            if (userProvidedChecksum !== pluginChecksum) {
+              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
+              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
+              const prettyPluginImportCommand = formatUtils.pretty(configuration, `yarn plugin import ${userProvidedSpec}`, formatUtils.Type.CODE) ;
+              throw new UsageError(`Failed to fetch ${prettyPluginName} plugin, Because its checksum has been changed, if you want to update them, please delete the plugin from ${prettyYarnrc} and run ${prettyPluginImportCommand} to update it`);
+            }
+
             await xfs.mkdirPromise(ppath.dirname(pluginPath), {recursive: true});
             await xfs.writeFilePromise(pluginPath, pluginBuffer);
-
-            missingPluginMetaList.push({
-              path: userProvidedPath,
-              spec: userProvidedSpec,
-              checksum: await hashUtils.checksumFile(pluginPath),
-            });
           }
           await importPlugin(pluginPath, path);
         }
-        await Configuration.addPlugin(cwd, missingPluginMetaList);
       }
     }
     for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
