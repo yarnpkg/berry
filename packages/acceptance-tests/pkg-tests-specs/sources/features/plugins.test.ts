@@ -126,6 +126,7 @@ describe(`Features`, () => {
         modules: new Map([[pluginA.name, pluginA]]),
         plugins: new Set([pluginA.name]),
       });
+
       expect(configuration.get(`foo`)).toBe(`string`);
       expect(configuration.get(`bar`)).toBe(123);
       expect(configuration.get(`baz`)).toBe(true);
@@ -149,6 +150,7 @@ describe(`Features`, () => {
         modules: new Map([[pluginA.name, pluginA]]),
         plugins: new Set([pluginA.name]),
       });
+
       expect(configuration.get(`foo`)).toBe(`string`);
       expect(configuration.get(`bar`)).toBe(123);
       expect(configuration.get(`baz`)).toBe(true);
@@ -159,6 +161,7 @@ describe(`Features`, () => {
       async ({path, run, source}) => {
         const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
         const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
+
         await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
           httpsCaFilePath,
           plugins: [{
@@ -166,7 +169,9 @@ describe(`Features`, () => {
             spec: pluginUrl,
           }],
         }));
+
         await run(`install`);
+
         await expect(await xfs.existsPromise(`${path}/${pluginPath}` as PortablePath)).toEqual(true);
         await expect(fs.readSyml(`${path}/.yarnrc.yml` as PortablePath)).resolves.toEqual({
           httpsCaFilePath,
@@ -183,6 +188,7 @@ describe(`Features`, () => {
       async ({path, run}) => {
         const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
         const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
+
         await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
           httpsCaFilePath,
           plugins: [{
@@ -191,6 +197,7 @@ describe(`Features`, () => {
             checksum: `I am wrong checksum 123456`,
           }],
         }));
+
         await expect(run(`install`)).rejects.toThrow();
       },
     ),

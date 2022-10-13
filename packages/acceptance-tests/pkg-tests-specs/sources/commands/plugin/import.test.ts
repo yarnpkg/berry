@@ -34,6 +34,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const mockPluginPath = await createMockPlugin(path);
         const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
+
         await xfs.writeFilePromise(ppath.join(path, Filename.rc), stringifySyml({
           httpsCaFilePath,
           plugins: [{
@@ -62,6 +63,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const mockPluginPath = await createMockPlugin(path);
         const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
+
         await xfs.writeFilePromise(ppath.join(path, Filename.rc), stringifySyml({
           httpsCaFilePath,
           plugins: [{

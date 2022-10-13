@@ -40,25 +40,26 @@ export default class PluginCheckCommand extends BaseCommand {
         if (!rcFile.data?.plugins) continue;
 
         for (const plugin of rcFile.data.plugins) {
-          if (!plugin.checksum) continue;
-          if (!plugin.spec.match(/^https?:/)) continue;
+          if (!plugin.checksum)
+            continue;
+          if (!plugin.spec.match(/^https?:/))
+            continue;
 
           const newBuffer = await httpUtils.get(plugin.spec, {configuration});
           const newChecksum = hashUtils.makeHash(newBuffer);
-          if (plugin.checksum === newChecksum) continue;
+          if (plugin.checksum === newChecksum)
+            continue;
 
           const prettyPath = formatUtils.pretty(configuration, plugin.path, formatUtils.Type.PATH) ;
           const prettySpec = formatUtils.pretty(configuration, plugin.spec, formatUtils.Type.URL) ;
           const prettyMessage =  `${prettyPath} is different from the file provided by ${prettySpec}`;
+
           report.reportJson({...plugin, newChecksum});
-          if (isCI) {
-            report.reportError(MessageName.UNNAMED, prettyMessage);
-          } else {
-            report.reportInfo(MessageName.UNNAMED, prettyMessage);
-          }
+          report.reportError(MessageName.UNNAMED, prettyMessage);
         }
       }
     });
+
     return report.exitCode();
   }
 }

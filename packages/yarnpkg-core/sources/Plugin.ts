@@ -185,7 +185,7 @@ export type Plugin<PluginHooks = any> = {
 };
 
 // for RC file
-export interface PluginMeta{
+export interface PluginMeta {
   path: PortablePath;
   spec: string;
   checksum?: string;

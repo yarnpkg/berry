@@ -1010,19 +1010,24 @@ export class Configuration {
     type CoreKeys = keyof typeof coreDefinitions;
     type CoreFields = {[key in CoreKeys]: any};
 
+    const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
+
     const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
     const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
-      const allCoreFieldKeys = Object.keys(coreDefinitions);
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
-        if (allCoreFieldKeys.includes(key)) secondaryCoreFields[key] = value;
+        if (allCoreFieldKeys.has(key))
+          secondaryCoreFields[key] = value;
+
       return secondaryCoreFields;
     };
+
     const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
-      const allCoreFieldKeys = Object.keys(coreDefinitions);
       const pluginFields: any = {};
       for (const [key, value] of Object.entries(rest))
-        if (!allCoreFieldKeys.includes(key)) pluginFields[key] = value;
+        if (!allCoreFieldKeys.has(key))
+          pluginFields[key] = value;
+
       return pluginFields;
     };
 
@@ -1089,9 +1094,11 @@ export class Configuration {
     const corePlugins = new Map<string, Plugin>([
       [`@@core`, CorePlugin],
     ]);
+
     if (pluginConfiguration !== null)
       for (const request of pluginConfiguration.plugins.keys())
         corePlugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
+
     for (const [name, corePlugin] of corePlugins)
       configuration.activatePlugin(name, corePlugin);
 
@@ -1154,17 +1161,24 @@ export class Configuration {
           const userProvidedPath = typeof userPluginEntry !== `string`
             ? userPluginEntry.path
             : userPluginEntry;
+
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           if (!await xfs.existsPromise(pluginPath)) {
-            if (!userProvidedSpec.match(/^https?:/)) {
+            if (!userProvidedSpec) {
               const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
               const prettyGitIgnore = formatUtils.pretty(configuration, `.gitignore`, formatUtils.Type.NAME) ;
               const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
               const prettyUrl = formatUtils.pretty(configuration, `https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored`, formatUtils.Type.URL) ;
-              throw new UsageError(`Failed to get ${prettyPluginName} plugin, please try to delete the plugin from ${prettyYarnrc} and reinstall it, the error usually occurs because ${prettyGitIgnore} is incorrect, please check ${prettyUrl} to set the correct ${prettyGitIgnore}`);
+              throw new UsageError(`Missing source for the ${prettyPluginName} plugin - please try to remove the plugin from ${prettyYarnrc} then reinstall it manually. This error usually occurs because ${prettyGitIgnore} is incorrect, check ${prettyUrl} to make sure your plugin folder isn't gitignored.`);
+            }
+
+            if (!userProvidedSpec.match(/^https?:/)) {
+              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
+              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
+              throw new UsageError(`Failed to recognize the source for the ${prettyPluginName} plugin - please try to delete the plugin from ${prettyYarnrc} then reinstall it manually.`);
             }
 
             const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
@@ -1175,16 +1189,18 @@ export class Configuration {
               const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
               const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
               const prettyPluginImportCommand = formatUtils.pretty(configuration, `yarn plugin import ${userProvidedSpec}`, formatUtils.Type.CODE) ;
-              throw new UsageError(`Failed to fetch ${prettyPluginName} plugin, Because its checksum has been changed, if you want to update them, please delete the plugin from ${prettyYarnrc} and run ${prettyPluginImportCommand} to update it`);
+              throw new UsageError(`Failed to fetch the ${prettyPluginName} plugin from its remote location: its checksum seems to have changed. If this is expected, please remove the plugin from ${prettyYarnrc} then run ${prettyPluginImportCommand} to reimport it.`);
             }
 
             await xfs.mkdirPromise(ppath.dirname(pluginPath), {recursive: true});
             await xfs.writeFilePromise(pluginPath, pluginBuffer);
           }
+
           await importPlugin(pluginPath, path);
         }
       }
     }
+
     for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
       configuration.activatePlugin(name, thirdPartyPlugin);
 
@@ -1350,11 +1366,13 @@ export class Configuration {
   }
 
   static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {
-    if (pluginMetaList.length === 0) return;
+    if (pluginMetaList.length === 0)
+      return;
 
     await Configuration.updateConfiguration(cwd, (current: any) => {
-      const currentPluginMetaList = current.plugins || [];
-      if (currentPluginMetaList.length === 0) return {...current, plugins: pluginMetaList};
+      const currentPluginMetaList = current.plugins ?? [];
+      if (currentPluginMetaList.length === 0)
+        return {...current, plugins: pluginMetaList};
 
       const newPluginMetaList = [];
       let notYetProcessedList = [...pluginMetaList];
@@ -1363,7 +1381,10 @@ export class Configuration {
         const currentPluginPath = typeof currentPluginMeta !== `string`
           ? currentPluginMeta.path
           : currentPluginMeta;
-        const updatingPlugin = notYetProcessedList.find(pluginMeta => pluginMeta.path === currentPluginPath);
+
+        const updatingPlugin = notYetProcessedList.find(pluginMeta => {
+          return pluginMeta.path === currentPluginPath;
+        });
 
         if (updatingPlugin) {
           newPluginMetaList.push(updatingPlugin);

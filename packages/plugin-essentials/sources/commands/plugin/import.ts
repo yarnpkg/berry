@@ -145,7 +145,9 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {chec
     path: relativePath,
     spec: pluginSpec,
   };
-  if (checksum) pluginMeta.checksum =  hashUtils.makeHash(pluginBuffer);
+
+  if (checksum)
+    pluginMeta.checksum = hashUtils.makeHash(pluginBuffer);
 
   await Configuration.addPlugin(project.cwd, [pluginMeta]);
 }
