@@ -32,28 +32,30 @@ describe(`Commands`, () => {
     test(
       `it should update plugin's checksum, if it's different`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const mockPluginPath = await createMockPlugin(path);
-        const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
+        await mockPluginServer(async mockServer => {
+          const mockPluginPath = await createMockPlugin(path);
+          const {pluginUrl, httpsCaFilePath} = await mockServer;
 
-        await xfs.writeFilePromise(ppath.join(path, Filename.rc), stringifySyml({
-          httpsCaFilePath,
-          plugins: [{
-            path: mockPluginPath,
-            spec: pluginUrl,
-            checksum: `I am wrong checksum 123456`,
-          }],
-        }));
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), stringifySyml({
+            httpsCaFilePath,
+            plugins: [{
+              path: mockPluginPath,
+              spec: pluginUrl,
+              checksum: `I am wrong checksum 123456`,
+            }],
+          }));
 
-        await run(`plugin`, `import`, pluginUrl);
+          await run(`plugin`, `import`, pluginUrl);
 
-        await expect(xfs.existsPromise(ppath.join(path, mockPluginPath))).resolves.toEqual(true);
-        await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
-          httpsCaFilePath,
-          plugins: [{
-            path: mockPluginPath,
-            spec: pluginUrl,
-            checksum: await hashUtils.checksumFile(ppath.join(path, mockPluginPath)),
-          }],
+          await expect(xfs.existsPromise(ppath.join(path, mockPluginPath))).resolves.toEqual(true);
+          await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
+            httpsCaFilePath,
+            plugins: [{
+              path: mockPluginPath,
+              spec: pluginUrl,
+              checksum: await hashUtils.checksumFile(ppath.join(path, mockPluginPath)),
+            }],
+          });
         });
       }),
     );
@@ -61,27 +63,29 @@ describe(`Commands`, () => {
     test(
       `it should clear the plugin's checksum, if it using \`--no-checksum\` option`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const mockPluginPath = await createMockPlugin(path);
-        const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
+        await mockPluginServer(async mockServer => {
+          const mockPluginPath = await createMockPlugin(path);
+          const {pluginUrl, httpsCaFilePath} = await mockServer;
 
-        await xfs.writeFilePromise(ppath.join(path, Filename.rc), stringifySyml({
-          httpsCaFilePath,
-          plugins: [{
-            path: mockPluginPath,
-            spec: pluginUrl,
-            checksum: `I am checksum 123456`,
-          }],
-        }));
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), stringifySyml({
+            httpsCaFilePath,
+            plugins: [{
+              path: mockPluginPath,
+              spec: pluginUrl,
+              checksum: `I am checksum 123456`,
+            }],
+          }));
 
-        await run(`plugin`, `import`, `--no-checksum`, pluginUrl);
+          await run(`plugin`, `import`, `--no-checksum`, pluginUrl);
 
-        await expect(xfs.existsPromise(`${path}/${mockPluginPath}` as PortablePath)).resolves.toEqual(true);
-        await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
-          httpsCaFilePath,
-          plugins: [{
-            path: mockPluginPath,
-            spec: pluginUrl,
-          }],
+          await expect(xfs.existsPromise(`${path}/${mockPluginPath}` as PortablePath)).resolves.toEqual(true);
+          await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
+            httpsCaFilePath,
+            plugins: [{
+              path: mockPluginPath,
+              spec: pluginUrl,
+            }],
+          });
         });
       }),
     );

@@ -14,7 +14,8 @@ export async function createMockPlugin(path: string) {
   return mockPluginPath as PortablePath;
 }
 
-export async function mockPluginServer(path: PortablePath) {
+export async function mockPluginServer(asyncFn: (mockServer: {pluginUrl: string, httpsCaFilePath: PortablePath}) => Promise<void>) {
+  const path = await xfs.mktempPromise();
   const certs = await tests.getHttpsCertificates();
   const httpsCaFilePath = `${path}/rootCA.crt` as PortablePath;
   await xfs.writeFilePromise(httpsCaFilePath, certs.ca.certificate);
@@ -35,7 +36,7 @@ export async function mockPluginServer(path: PortablePath) {
 
   return new Promise<{
     pluginUrl: string;
-    httpsCaFilePath: string;
+    httpsCaFilePath: PortablePath;
   }>((resolve, reject) => {
     server.listen(() => {
       const {port} = server.address() as AddressInfo;
@@ -45,5 +46,5 @@ export async function mockPluginServer(path: PortablePath) {
         httpsCaFilePath,
       });
     });
-  });
+  }).then(asyncFn).finally(() => server.close());
 }

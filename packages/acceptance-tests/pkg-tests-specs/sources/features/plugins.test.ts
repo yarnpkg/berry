@@ -159,26 +159,28 @@ describe(`Features`, () => {
     test(`it should fetch missing plugins`, makeTemporaryEnv(
       {},
       async ({path, run, source}) => {
-        const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
-        const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
+        await mockPluginServer(async mockServer => {
+          const {pluginUrl, httpsCaFilePath} = await mockServer;
+          const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
 
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
-          httpsCaFilePath,
-          plugins: [{
-            path: pluginPath,
-            spec: pluginUrl,
-          }],
-        }));
+          await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
+            httpsCaFilePath,
+            plugins: [{
+              path: pluginPath,
+              spec: pluginUrl,
+            }],
+          }));
 
-        await run(`install`);
+          await run(`install`);
 
-        await expect(await xfs.existsPromise(`${path}/${pluginPath}` as PortablePath)).toEqual(true);
-        await expect(fs.readSyml(`${path}/.yarnrc.yml` as PortablePath)).resolves.toEqual({
-          httpsCaFilePath,
-          plugins: [{
-            path: pluginPath,
-            spec: pluginUrl,
-          }],
+          await expect(await xfs.existsPromise(`${path}/${pluginPath}` as PortablePath)).toEqual(true);
+          await expect(fs.readSyml(`${path}/.yarnrc.yml` as PortablePath)).resolves.toEqual({
+            httpsCaFilePath,
+            plugins: [{
+              path: pluginPath,
+              spec: pluginUrl,
+            }],
+          });
         });
       },
     ));
@@ -186,19 +188,21 @@ describe(`Features`, () => {
     test(`it should throw an error when fetching the plugin but the checksum does not match`, makeTemporaryEnv(
       {},
       async ({path, run}) => {
-        const {pluginUrl, httpsCaFilePath} = await mockPluginServer(path);
-        const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
+        await mockPluginServer(async mockServer => {
+          const {pluginUrl, httpsCaFilePath} = await mockServer;
+          const pluginPath = `.yarn/plugins/@yarnpkg/plugin-mock.cjs`;
 
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
-          httpsCaFilePath,
-          plugins: [{
-            path: pluginPath,
-            spec: pluginUrl,
-            checksum: `I am wrong checksum 123456`,
-          }],
-        }));
+          await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
+            httpsCaFilePath,
+            plugins: [{
+              path: pluginPath,
+              spec: pluginUrl,
+              checksum: `I am wrong checksum 123456`,
+            }],
+          }));
 
-        await expect(run(`install`)).rejects.toThrow();
+          await expect(run(`install`)).rejects.toThrow();
+        });
       },
     ),
     );
