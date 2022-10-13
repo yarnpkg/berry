@@ -16,7 +16,7 @@ jobs:
       NODE_OPTIONS: --max_old_space_size=8192
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
       with:
         ref: master
         token: ${{secrets.YARNBOT_TOKEN}}
@@ -25,7 +25,7 @@ jobs:
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
