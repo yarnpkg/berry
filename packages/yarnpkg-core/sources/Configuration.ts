@@ -1143,6 +1143,7 @@ export class Configuration {
         if (!Array.isArray(data.plugins))
           continue;
 
+        const missingPluginMetaList = [];
         for (const userPluginEntry of data.plugins) {
           const userProvidedPath = typeof userPluginEntry !== `string`
             ? userPluginEntry.path
@@ -1162,9 +1163,16 @@ export class Configuration {
             const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
             await xfs.mkdirPromise(ppath.dirname(pluginPath), {recursive: true});
             await xfs.writeFilePromise(pluginPath, pluginBuffer);
+
+            missingPluginMetaList.push({
+              path: userProvidedPath,
+              spec: userProvidedSpec,
+              checksum: await hashUtils.checksumFile(pluginPath),
+            });
           }
           await importPlugin(pluginPath, path);
         }
+        await Configuration.addPlugin(cwd, missingPluginMetaList);
       }
     }
     for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
