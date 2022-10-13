@@ -1,6 +1,5 @@
 import {BaseCommand}                                                                 from '@yarnpkg/cli';
 import {Configuration, formatUtils, hashUtils, httpUtils, MessageName, StreamReport} from '@yarnpkg/core';
-import {isCI}                                                                        from 'ci-info';
 import {Command, Option, Usage}                                                      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
