@@ -432,30 +432,35 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
       const argIndex = parseInt(segment.name, 10);
 
       let raw;
-      if (Number.isFinite(argIndex)) {
+      const isArgument = Number.isFinite(argIndex);
+      if (isArgument) {
         if (argIndex >= 0 && argIndex < opts.args.length) {
           raw = opts.args[argIndex];
-        } else if (segment.defaultValue) {
-          raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
-        } else if (segment.alternativeValue) {
-          raw = (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `);
-        } else {
-          throw new ShellError(`Unbound argument #${argIndex}`);
         }
       } else {
         if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
           raw = state.variables[segment.name];
         } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
           raw = state.environment[segment.name];
-        } else if (segment.defaultValue) {
-          raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
-        } else {
-          throw new ShellError(`Unbound variable "${segment.name}"`);
         }
       }
 
-      if (typeof raw !== `undefined` && segment.alternativeValue)
+      if (typeof raw !== `undefined` && segment.alternativeValue) {
         raw = (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `);
+      } else if (typeof raw === `undefined`) {
+        if (segment.defaultValue) {
+          raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
+        } else if (segment.alternativeValue) {
+          raw = ``; // if raw === `undefined`, but there is an alternative value, it should not be thrown.
+        }
+      }
+
+      if (typeof raw === `undefined`) {
+        if (isArgument)
+          throw new ShellError(`Unbound argument #${argIndex}`);
+
+        throw new ShellError(`Unbound variable "${segment.name}"`);
+      }
 
       if (segment.quoted) {
         push(raw);
