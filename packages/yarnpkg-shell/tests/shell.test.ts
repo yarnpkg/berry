@@ -720,15 +720,21 @@ describe(`Shell`, () => {
         await expectResult(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
         ), {
-          stdout: ``,
+          stdout: `\n`,
         });
       });
 
       it(`should support alternative arguments via \${N:+...}`, async () => {
         await expectResult(bufferResult(
-          `echo "\${1:+hello world}"`,
+          `echo "\${0:+hello world}"`, [`goodbye world`],
         ), {
           stdout: `hello world\n`,
+        });
+
+        await expectResult(bufferResult(
+          `echo "\${0:+hello world}"`,
+        ), {
+          stdout: `\n`,
         });
       });
 

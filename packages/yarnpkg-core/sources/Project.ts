@@ -531,20 +531,6 @@ export class Project {
     return workspace;
   }
 
-  /**
-   * Import the dependencies of each resolved workspace into their own
-   * `Workspace` instance.
-   */
-  private refreshWorkspaceDependencies() {
-    for (const workspace of this.workspaces) {
-      const pkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.configuration, workspace)} (${formatUtils.pretty(this.configuration, ppath.join(workspace.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
-
-      workspace.dependencies = new Map(pkg.dependencies);
-    }
-  }
-
   forgetResolution(descriptor: Descriptor): void;
   forgetResolution(locator: Locator): void;
   forgetResolution(dataStructure: Descriptor | Locator): void {
@@ -943,11 +929,6 @@ export class Project {
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
     this.peerRequirements = peerRequirements;
-
-    // Now that the internal resolutions have been updated, we can refresh the
-    // dependencies of each resolved workspace's `Workspace` instance.
-
-    this.refreshWorkspaceDependencies();
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
@@ -982,7 +963,7 @@ export class Project {
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
-    report.reportProgress(progress);
+    await report.reportProgress(progress);
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
@@ -1808,7 +1789,6 @@ export class Project {
     if (restoreResolutions) {
       if (installState.lockFileChecksum === this.lockFileChecksum) {
         Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
-        this.refreshWorkspaceDependencies();
       } else {
         await this.applyLightResolution();
       }
@@ -1907,8 +1887,6 @@ function applyVirtualResolutionMutations({
   volatileDescriptors = new Set(),
 
   report,
-
-  tolerateMissingPackages = false,
 }: {
   project: Project;
 
@@ -1922,8 +1900,6 @@ function applyVirtualResolutionMutations({
   volatileDescriptors?: Set<DescriptorHash>;
 
   report: Report | null;
-
-  tolerateMissingPackages?: boolean;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -1948,15 +1924,10 @@ function applyVirtualResolutionMutations({
   // may be overriden during the virtual package resolution - cf Dragon Test #5
   const originalWorkspaceDefinitions = new Map<LocatorHash, Package | null>(project.workspaces.map(workspace => {
     const locatorHash = workspace.anchoredLocator.locatorHash;
-    const pkg = allPackages.get(locatorHash);
 
-    if (typeof pkg === `undefined`) {
-      if (tolerateMissingPackages) {
-        return [locatorHash, null];
-      } else {
-        throw new Error(`Assertion failed: The workspace should have an associated package`);
-      }
-    }
+    const pkg = allPackages.get(locatorHash);
+    if (typeof pkg === `undefined`)
+      throw new Error(`Assertion failed: The workspace should have an associated package`);
 
     return [locatorHash, structUtils.copyPackage(pkg)];
   }));
@@ -2010,13 +1981,8 @@ function applyVirtualResolutionMutations({
       optionalBuilds.delete(parentLocator.locatorHash);
 
     const parentPackage = allPackages.get(parentLocator.locatorHash);
-    if (!parentPackage) {
-      if (tolerateMissingPackages) {
-        return;
-      } else {
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
-      }
-    }
+    if (!parentPackage)
+      throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
 
     const newVirtualInstances: Array<[Locator, Descriptor, Package]> = [];
 
@@ -2058,18 +2024,13 @@ function applyVirtualResolutionMutations({
       }
 
       const resolution = allResolutions.get(descriptor.descriptorHash);
-      if (!resolution) {
+      if (!resolution)
         // Note that we can't use `getPackageFromDescriptor` (defined below,
         // because when doing the initial tree building right after loading the
         // project it's possible that we get some entries that haven't been
         // registered into the lockfile yet - for example when the user has
         // manually changed the package.json dependencies)
-        if (tolerateMissingPackages) {
-          continue;
-        } else {
-          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
-        }
-      }
+        throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       const pkg = originalWorkspaceDefinitions.get(resolution) || allPackages.get(resolution);
       if (!pkg)

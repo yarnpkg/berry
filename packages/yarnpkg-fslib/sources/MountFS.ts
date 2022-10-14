@@ -701,6 +701,22 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
+  async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.lutimesPromise(p, atime, mtime);
+    }, async (mountFs, {subPath}) => {
+      return await mountFs.lutimesPromise(subPath, atime, mtime);
+    });
+  }
+
+  lutimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.lutimesSync(p, atime, mtime);
+    }, (mountFs, {subPath}) => {
+      return mountFs.lutimesSync(subPath, atime, mtime);
+    });
+  }
+
   async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.mkdirPromise(p, opts);

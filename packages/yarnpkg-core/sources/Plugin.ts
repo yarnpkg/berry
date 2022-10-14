@@ -183,3 +183,10 @@ export type Plugin<PluginHooks = any> = {
   resolvers?: Array<ResolverPlugin>;
   hooks?: PluginHooks;
 };
+
+// for RC file
+export interface PluginMeta {
+  path: PortablePath;
+  spec: string;
+  checksum?: string;
+}

@@ -246,6 +246,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
   }
 
+  async lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesPromise(this.mapToBase(p), atime, mtime);
+  }
+
+  lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesSync(this.mapToBase(p), atime, mtime);
+  }
+
   async mkdirPromise(p: P, opts?: MkdirOptions) {
     return this.baseFs.mkdirPromise(this.mapToBase(p), opts);
   }

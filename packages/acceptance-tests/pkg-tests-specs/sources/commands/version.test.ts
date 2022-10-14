@@ -184,7 +184,7 @@ describe(`Commands`, () => {
 
           await run(`install`);
 
-          expect(run(`workspace`, `pkg-primary`, `version`, `patch`)).resolves.toMatchObject({
+          await expect(run(`workspace`, `pkg-primary`, `version`, `patch`)).resolves.toMatchObject({
             code: 0,
             stdout: expect.stringContaining(`Couldn't auto-upgrade range * (in pkg-dependant@workspace:packages/pkg-dependant)`),
           });
