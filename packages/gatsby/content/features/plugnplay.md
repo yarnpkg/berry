@@ -68,7 +68,7 @@ For some remaining edge cases, a small setup may be required:
 yarn node ./server.js
 ```
 
-- If you operate on a system that automatically executes a Node script (for instance on Google Cloud Platform (--reference needed here--)), simply require the PnP file at the top of your init script and call its `setup` function.
+- If you operate on a system that automatically executes a Node script (for instance on [Google Cloud Platform](https://cloud.google.com/)), simply require the PnP file at the top of your init script and call its `setup` function.
 
 ```
 require('./.pnp.cjs').setup();
