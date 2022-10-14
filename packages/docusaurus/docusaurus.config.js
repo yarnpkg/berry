@@ -98,6 +98,11 @@ const config = {
             label: `Advanced`,
           },
           {
+            href: `https://discord.gg/yarnpkg`,
+            label: `Discord`,
+            position: `right`,
+          },
+          {
             href: `https://github.com/yarnpkg/berry`,
             label: `GitHub`,
             position: `right`,
@@ -121,15 +126,15 @@ const config = {
             items: [
               {
                 label: `Stack Overflow`,
-                href: `https://stackoverflow.com/questions/tagged/docusaurus`,
+                href: `https://stackoverflow.com/questions/tagged/yarnpkg`,
               },
               {
                 label: `Discord`,
-                href: `https://discordapp.com/invite/docusaurus`,
+                href: `https://discordapp.com/invite/yarnpkg`,
               },
               {
                 label: `Twitter`,
-                href: `https://twitter.com/docusaurus`,
+                href: `https://twitter.com/yarnpkg`,
               },
             ],
           },
@@ -137,17 +142,17 @@ const config = {
             title: `More`,
             items: [
               {
-                label: `Blog`,
-                to: `/blog`,
+                label: `Discord`,
+                href: `https://discord.gg/yarnpkg`,
               },
               {
                 label: `GitHub`,
-                href: `https://github.com/facebook/docusaurus`,
+                href: `https://github.com/yarnpkg/berry`,
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Yarn Contributors, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

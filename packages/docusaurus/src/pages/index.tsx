@@ -3,40 +3,41 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout               from '@theme/Layout';
 import HomepageFeatures     from '@yarnpkg/docusaurus/src/components/HomepageFeatures';
 import clsx                 from 'clsx';
-import React                from 'react';
+import React, {useEffect}   from 'react';
 
 import styles               from './index.module.css';
-
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx(`hero hero--primary`, styles.heroBanner)}>
-      <div className={`container`}>
-        <h1 className={`hero__title`}>{siteConfig.title}</h1>
-        <p className={`hero__subtitle`}>{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className={`button button--secondary button--lg`}
-            to={`/docs/intro`}>
-            Docusaurus Tutorial - 5min ⏱️
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 // eslint-disable-next-line arca/no-default-export
 export default function Home(): JSX.Element {
   const {siteConfig} = useDocusaurusContext();
+
+  useEffect(() => {
+    document.body.classList.add(styles.body);
+    return () => {
+      document.body.classList.remove(styles.body);
+    };
+  }, []);
+
   return (
     <Layout
       // @ts-expect-error
       title={`Hello from ${siteConfig.title}`}
       description={`Description will go into a meta tag in <head />`}>
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
+      <main className={styles.main}>
+        <div className={styles.reserve}>
+          <div className={styles.hero}>
+            <div>
+              <h1>Safe, stable,<br />reproducible projects</h1>
+              <p>Yarn is a package manager that doubles down as project manager. Whether you work on simple projects or industry monorepos, whether you're an open source developer or an enterprise user, Yarn has your back.</p>
+              <div className={styles.search}>
+                Search packages (i.e. babel, webpack, react, ...)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={styles.followUp}>
+          <HomepageFeatures />
+        </div>
       </main>
     </Layout>
   );

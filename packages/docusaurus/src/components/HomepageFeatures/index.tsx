@@ -5,48 +5,78 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  icon: string;
   description: JSX.Element;
 };
 
 const FeatureList: Array<FeatureItem> = [
   {
-    title: `Easy to Use`,
-    Svg: require(`@site/static/img/undraw_docusaurus_mountain.svg`).default,
+    title: `Workspaces`,
+    icon: `icon-workspaces`,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        First package manager built specifically around workspaces, Yarn lets
+        you split your project into sub-components.
       </>
     ),
   },
   {
-    title: `Focus on What Matters`,
-    Svg: require(`@site/static/img/undraw_docusaurus_tree.svg`).default,
+    title: `Stability`,
+    icon: `icon-stability`,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Yarn guarantees that installs that work today will keep working the
+        same way in the future.
       </>
     ),
   },
   {
-    title: `Powered by React`,
-    Svg: require(`@site/static/img/undraw_docusaurus_react.svg`).default,
+    title: `Documentation`,
+    icon: `icon-documentation`,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Special care is put into our documentation, which we keep improving at
+        every new version.
+      </>
+    ),
+  },
+  {
+    title: `Plugins`,
+    icon: `icon-plugins`,
+    description: (
+      <>
+        Yarn may solve all your problems - but it'll give you the tools to
+        solve the ones you find on your way.
+      </>
+    ),
+  },
+  {
+    title: `Innovation`,
+    icon: `icon-innovation`,
+    description: (
+      <>
+        We believe in challenging the status quo. Yarn will always be to the
+        frontline, brewing new workflows and improving old ones.
+      </>
+    ),
+  },
+  {
+    title: `Openness`,
+    icon: `icon-openness`,
+    description: (
+      <>
+        Yarn is a fully independent open-source project tied to no company. Our
+        contributor community defines the roadmap.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({icon, title, description}: FeatureItem) {
   return (
-    <div className={clsx(`col col--4`)}>
+    <div className={clsx(`col col--4`, styles.feature)}>
       <div className={`text--center`}>
-        <Svg className={styles.featureSvg} role={`img`} />
+        <img className={styles.icon} src={`/img/${icon}.png`} />
       </div>
       <div className={`text--center padding-horiz--md`}>
         <h3>{title}</h3>

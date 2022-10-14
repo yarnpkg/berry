@@ -3,21 +3,58 @@
  * and scoped locally.
  */
 
-.heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+:root {
+  --index-navbar-margin-top: 40px;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.body {
+  background-image: url(/img/yarn-hero-transparent.png), url(/img/yarn-hero-stars.png);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
 }
 
-.buttons {
+.body [class~="navbar"] {
+  margin-top: var(--index-navbar-margin-top);
+}
+
+.reserve {
+  min-height: calc(100vw / (1920 / 1308) - var(--index-navbar-margin-top) - var(--ifm-navbar-height));
+}
+
+.hero {
   display: flex;
   align-items: center;
-  justify-content: center;
+
+  max-width: 800px;
+  min-height: calc(100vh - var(--index-navbar-margin-top) - var(--ifm-navbar-height));
+
+  padding: 100px;
+
+  color: #ffffff;
+}
+
+.hero h1 {
+  font-size: 4rem;
+}
+
+.hero p {
+  margin: 30px 0;
+}
+
+.search {
+  margin-top: 60px;
+
+  border: 1px solid #9555bb;
+  border-radius: 1000px;
+
+  padding: 20px;
+
+  background: #090b1f80;
+
+  font-style: italic;
+}
+
+.followUp {
+  background: #090b1f;
+  color: #ffffff;
 }

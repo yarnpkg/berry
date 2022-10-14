@@ -4,8 +4,31 @@
  * work well for content-centric websites.
  */
 
+@import url("https://fonts.googleapis.com/css?family=PT+Sans:400,700");
+
+/**
+ * We don't want html, body to have height: 100%, because it would break
+ * the body background image, which we need to display the cat on the
+ * front page. So instead, we set min-height: 100vh to the body.
+ *
+ * Ref: https://greggod.medium.com/css-do-not-put-height-100-on-the-body-html-e36bda3551b3
+ */
+html, body {
+  height: auto !important;
+}
+
+body {
+  min-height: 100vh;
+}
+
 html {
   background-image: url('/img/yarn-bg-lossless.webp');
+}
+
+body[x-doc-route="/"] {
+  background-image: url(/img/yarn-hero-transparent.png), url(/img/yarn-hero-transparent.png);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
 }
 
 .theme-doc-sidebar-container {
@@ -33,7 +56,7 @@ html {
 .navbar {
   margin: 0;
 
-  padding: 0 40px;
+  padding: 0 80px;
 }
 
 body:not([x-doc-route="/"]) footer {
@@ -55,14 +78,19 @@ body:not([x-doc-route="/"]) .main-wrapper > :last-child {
   }
 }
 
+.navbar {
+  top: -1px;
+}
+
 body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) {
   --ifm-navbar-link-color: #ffffff;
   --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
 
-  margin-top: 40px;
-
   background: none;
   box-shadow: none;
+}
+
+body[x-doc-route="/"] .navbar.navbar--is-fixed {
 }
 
 .navbar__brand {
@@ -164,8 +192,13 @@ a[target] svg {
   --prism-color: #f6f8fa !important;
 }
 
+.footer {
+  display: none;
+}
+
 /* You can override the default Infima variables here. */
 :root {
+  --ifm-font-family-base: "PT Sans";
   --ifm-color-primary:  #514C87;
   --ifm-color-primary-dark: #29285E;
   --ifm-color-primary-darker: #26265C;
