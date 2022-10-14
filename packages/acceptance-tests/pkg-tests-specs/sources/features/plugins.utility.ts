@@ -45,7 +45,7 @@ export async function mockPluginServer(asyncFn: (mockServer: {pluginUrl: string,
       });
     });
   });
-  
+
   try {
     await asyncFn(mockServer);
   } finally {
