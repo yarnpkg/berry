@@ -32,9 +32,7 @@ export async function mockPluginServer(asyncFn: (mockServer: {pluginUrl: string,
     res.end(helloWorldPlugin);
   });
 
-  server.unref();
-
-  return new Promise<{
+  const mockServer = await new Promise<{
     pluginUrl: string;
     httpsCaFilePath: PortablePath;
   }>((resolve, reject) => {
@@ -46,5 +44,11 @@ export async function mockPluginServer(asyncFn: (mockServer: {pluginUrl: string,
         httpsCaFilePath,
       });
     });
-  }).then(asyncFn).finally(() => server.close());
+  });
+  
+  try {
+    await asyncFn(mockServer);
+  } finally {
+    server.close();
+  }
 }
