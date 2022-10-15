@@ -89,12 +89,10 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
       parser(block_terminator, subsequent_ctx),
       Map::new,
       |mut acc, (key, value)| {
-        if let Value::String(key) = key {
-          let existing = acc.insert(key, value);
-          if existing.is_some() && !ctx.overwrite_duplicate_entries {
-            // TODO: Better error message.
-            return Err("Duplicate key");
-          }
+        let existing = acc.insert(key, value);
+        if existing.is_some() && !ctx.overwrite_duplicate_entries {
+          // TODO: Better error message.
+          return Err("Duplicate key");
         }
         Ok(acc)
       },
@@ -103,7 +101,7 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   )(input)
 }
 
-fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
+fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
   preceded(
     comments,
     preceded(
@@ -208,7 +206,7 @@ fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
     parser(flow_mapping, ctx),
     parser(flow_sequence, ctx),
-    scalar,
+    flow_scalar,
   ))(input)
 }
 
@@ -222,7 +220,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
         preceded(multispace0, char('}')),
         Map::new,
         |mut acc, entry| {
-          if let Some((Value::String(key), value)) = entry {
+          if let Some((key, value)) = entry {
             let existing = acc.insert(key, value);
             if existing.is_some() && !ctx.overwrite_duplicate_entries {
               // TODO: Better error message.
@@ -237,7 +235,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   )(input)
 }
 
-fn flow_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
+fn flow_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
   separated_pair(
     scalar,
     delimited(space0, char(':'), space0),
@@ -272,19 +270,18 @@ fn flow_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(parser(flow_mapping_entry, ctx), |(key, value)| {
     let mut map = Map::new();
-    if let Value::String(key) = key {
-      map.insert(key, value);
-    }
+    map.insert(key, value);
 
     Value::Object(map)
   })(input)
 }
 
-fn scalar(input: Input) -> ParseResult<Value> {
-  map(
-    alt((double_quoted_scalar, single_quoted_scalar, plain_scalar)),
-    Value::String,
-  )(input)
+fn flow_scalar(input: Input) -> ParseResult<Value> {
+  map(scalar, Value::String)(input)
+}
+
+fn scalar(input: Input) -> ParseResult<String> {
+  alt((double_quoted_scalar, single_quoted_scalar, plain_scalar))(input)
 }
 
 fn double_quoted_scalar(input: Input) -> ParseResult<String> {
