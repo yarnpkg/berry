@@ -705,7 +705,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
       throw new Error(`Expected value (${value}) to be a string`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
-      env: Object.assign({}, process.env, env),
+      env,
     });
 
     switch (definition.type) {
@@ -1475,7 +1475,7 @@ export class Configuration {
 
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder);
+        parsed = parseValue(this, key, data[key], definition, folder, process.env);
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
