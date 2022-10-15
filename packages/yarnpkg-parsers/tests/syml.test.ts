@@ -94,6 +94,59 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`''`)).toStrictEqual(``);
   });
 
+  it(`should parse empty flow mappings`, () => {
+    expect(parseSyml(`{}`)).toStrictEqual({});
+  });
+
+  it(`should parse flow mappings with plain scalar entries`, () => {
+    expect(parseSyml(`{foo: bar}`)).toStrictEqual({foo: `bar`});
+    expect(parseSyml(`{foo: bar, baz: qux}`)).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse flow mappings with double quoted scalar entries`, () => {
+    expect(parseSyml(`{"foo": "bar"}`)).toStrictEqual({foo: `bar`});
+    expect(parseSyml(`{"foo": "bar", "baz": "qux"}`)).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse flow mappings with single quoted scalar entries`, () => {
+    expect(parseSyml(`{'foo': 'bar'}`)).toStrictEqual({foo: `bar`});
+    expect(parseSyml(`{'foo': 'bar', 'baz': 'qux'}`)).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should parse flow mappings with flow mapping entries`, () => {
+    expect(parseSyml(`{ foo: { bar: a } }`)).toStrictEqual({foo: {bar: `a`}});
+    expect(parseSyml(`{ foo: { bar: { baz: a } } }`)).toStrictEqual({foo: {bar: {baz: `a`}}});
+    expect(parseSyml(`{ foo: { bar: a }, baz: { qux: b } }`)).toStrictEqual({foo: {bar: `a`}, baz: {qux: `b`}});
+  });
+
+  it(`should parse flow mappings with flow sequence entries`, () => {
+    expect(parseSyml(`{foo: [bar], baz: [qux]}`)).toStrictEqual({foo: [`bar`], baz: [`qux`]});
+  });
+
+  it(`should allow whitespace inside flow mappings`, () => {
+    expect(parseSyml(joinYaml([
+      `{  `,
+      `     }`,
+    ]))).toStrictEqual({});
+
+    expect(parseSyml(joinYaml([
+      `{   \t `,
+      `     foo:  \t  bar  \t  `,
+      ` \t ,  \t `,
+      `   \t  baz: qux  \t `,
+      ` \t }`,
+    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
+  it(`should allow trailing commas inside flow mappings`, () => {
+    expect(parseSyml(joinYaml([
+      `{`,
+      `  foo: bar,`,
+      `  baz: qux,`,
+      `}`,
+    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
+  });
+
   it(`should parse empty flow sequences`, () => {
     expect(parseSyml(`[]`)).toStrictEqual([]);
   });
@@ -157,70 +210,6 @@ describe(`Syml parser`, () => {
     ]))).toStrictEqual([`foo`, `bar`]);
   });
 
-  it(`should parse empty flow mappings`, () => {
-    expect(parseSyml(`{}`)).toStrictEqual({});
-  });
-
-  it(`should parse flow mappings with plain scalar entries`, () => {
-    expect(parseSyml(`{foo: bar}`)).toStrictEqual({foo: `bar`});
-    expect(parseSyml(`{foo: bar, baz: qux}`)).toStrictEqual({foo: `bar`, baz: `qux`});
-  });
-
-  it(`should parse flow mappings with double quoted scalar entries`, () => {
-    expect(parseSyml(`{"foo": "bar"}`)).toStrictEqual({foo: `bar`});
-    expect(parseSyml(`{"foo": "bar", "baz": "qux"}`)).toStrictEqual({foo: `bar`, baz: `qux`});
-  });
-
-  it(`should parse flow mappings with single quoted scalar entries`, () => {
-    expect(parseSyml(`{'foo': 'bar'}`)).toStrictEqual({foo: `bar`});
-    expect(parseSyml(`{'foo': 'bar', 'baz': 'qux'}`)).toStrictEqual({foo: `bar`, baz: `qux`});
-  });
-
-  it(`should parse flow mappings with flow mapping entries`, () => {
-    expect(parseSyml(`{ foo: { bar: a } }`)).toStrictEqual({foo: {bar: `a`}});
-    expect(parseSyml(`{ foo: { bar: { baz: a } } }`)).toStrictEqual({foo: {bar: {baz: `a`}}});
-    expect(parseSyml(`{ foo: { bar: a }, baz: { qux: b } }`)).toStrictEqual({foo: {bar: `a`}, baz: {qux: `b`}});
-  });
-
-  it(`should parse flow mappings with flow sequence entries`, () => {
-    expect(parseSyml(`{foo: [bar], baz: [qux]}`)).toStrictEqual({foo: [`bar`], baz: [`qux`]});
-  });
-
-  it(`should allow whitespace inside flow mappings`, () => {
-    expect(parseSyml(joinYaml([
-      `{  `,
-      `     }`,
-    ]))).toStrictEqual({});
-
-    expect(parseSyml(joinYaml([
-      `{   \t `,
-      `     foo:  \t  bar  \t  `,
-      ` \t ,  \t `,
-      `   \t  baz: qux  \t `,
-      ` \t }`,
-    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
-  });
-
-  it(`should allow trailing commas inside flow mappings`, () => {
-    expect(parseSyml(joinYaml([
-      `{`,
-      `  foo: bar,`,
-      `  baz: qux,`,
-      `}`,
-    ]))).toStrictEqual({foo: `bar`, baz: `qux`});
-  });
-
-  it(`should parse block sequences`, () => {
-    expect(parseSyml(joinYaml([
-      `- foo`,
-    ]))).toStrictEqual([`foo`]);
-
-    expect(parseSyml(joinYaml([
-      `- foo`,
-      `- bar`,
-    ]))).toStrictEqual([`foo`, `bar`]);
-  });
-
   it(`should parse compact block mappings`, () => {
     expect(parseSyml(joinYaml([
       `foo: bar`,
@@ -245,7 +234,7 @@ describe(`Syml parser`, () => {
     ]))).toStrictEqual({foo: {bar: `baz`, a: `b`}});
   });
 
-  it(`should parse block mappings containing block sequences`, () => {
+  it(`should parse block mappings with block sequence entries`, () => {
     expect(parseSyml(joinYaml([
       `foo:`,
       `  - bar`,
@@ -256,5 +245,67 @@ describe(`Syml parser`, () => {
       `  - bar`,
       `  - baz`,
     ]))).toStrictEqual({foo: [`bar`, `baz`]});
+  });
+
+  it(`should parse block sequences`, () => {
+    expect(parseSyml(joinYaml([
+      `- foo`,
+    ]))).toStrictEqual([`foo`]);
+
+    expect(parseSyml(joinYaml([
+      `- foo`,
+      `- bar`,
+    ]))).toStrictEqual([`foo`, `bar`]);
+  });
+
+  it(`should parse block sequences with compact block mapping items`, () => {
+    expect(parseSyml(joinYaml([
+      `- foo: bar`,
+    ]))).toStrictEqual([{foo: `bar`}]);
+
+    expect(parseSyml(joinYaml([
+      `- foo: bar`,
+      `- baz: qux`,
+    ]))).toStrictEqual([{foo: `bar`}, {baz: `qux`}]);
+  });
+
+  it(`should parse block sequences with block mapping items`, () => {
+    expect(parseSyml(joinYaml([
+      `- foo: bar`,
+      `  baz: qux`,
+    ]))).toStrictEqual([{foo: `bar`, baz: `qux`}]);
+
+    expect(parseSyml(joinYaml([
+      `- foo: bar`,
+      `  baz: qux`,
+      `- a: b`,
+      `  c: d`,
+    ]))).toStrictEqual([{foo: `bar`, baz: `qux`}, {a: `b`, c: `d`}]);
+  });
+
+  it(`should parse block sequences with nested block mapping items`, () => {
+    expect(parseSyml(joinYaml([
+      `- foo:`,
+      `    bar:`,
+      `      baz: qux`,
+    ]))).toStrictEqual([{foo: {bar: {baz: `qux`}}}]);
+  });
+
+  it(`should parse block sequences with block sequence items`, () => {
+    expect(parseSyml(joinYaml([
+      `- - foo`,
+    ]))).toStrictEqual([[`foo`]]);
+
+    expect(parseSyml(joinYaml([
+      `- - foo`,
+      `- - bar`,
+    ]))).toStrictEqual([[`foo`], [`bar`]]);
+
+    expect(parseSyml(joinYaml([
+      `- - foo`,
+      `  - bar`,
+      `- - baz`,
+      `  - qux`,
+    ]))).toStrictEqual([[`foo`, `bar`], [`baz`, `qux`]]);
   });
 });

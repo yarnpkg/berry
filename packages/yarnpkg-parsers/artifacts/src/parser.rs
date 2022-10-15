@@ -4,7 +4,7 @@ use nom::{
   character::complete::{char, line_ending, multispace0, not_line_ending, space0, space1},
   combinator::{eof, map, map_opt, map_res, not, opt, peek, recognize, value},
   multi::{count, many0_count},
-  sequence::{delimited, preceded, separated_pair, terminated},
+  sequence::{delimited, pair, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
 use nom_supreme::{
@@ -32,6 +32,7 @@ pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'inp
 #[derive(Clone, Copy)]
 struct Context {
   indent: usize,
+  indent_next: bool,
   overwrite_duplicate_entries: bool,
 }
 
@@ -45,6 +46,7 @@ fn parser<'input, O>(
 pub fn parse(input: Input, overwrite_duplicate_entries: bool) -> Result<Value, ErrorTree<&str>> {
   let ctx = Context {
     indent: 0,
+    indent_next: true,
     overwrite_duplicate_entries,
   };
 
@@ -96,10 +98,36 @@ fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)
       separated_pair(
         scalar,
         delimited(space0, char(':'), space0),
-        parser(expression, ctx),
+        parser(
+          block_mapping_entry_expression,
+          Context {
+            indent_next: true,
+            ..ctx
+          },
+        ),
       ),
     ),
   )(input)
+}
+
+fn block_mapping_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((
+    preceded(
+      line_ending,
+      parser(
+        block_expression,
+        Context {
+          indent: ctx.indent + INDENT_STEP,
+          ..ctx
+        },
+      ),
+    ),
+    parser(flow_expression, ctx),
+  ))(input)
+}
+
+fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((parser(block_mapping, ctx), parser(block_sequence, ctx)))(input)
 }
 
 fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
@@ -118,8 +146,88 @@ fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
     comments,
     preceded(
       parser(indentation, ctx),
-      preceded(terminated(char('-'), space1), parser(expression, ctx)),
+      preceded(
+        terminated(char('-'), space1),
+        parser(
+          block_sequence_entry_expression,
+          Context {
+            indent_next: true,
+            ..ctx
+          },
+        ),
+      ),
     ),
+  )(input)
+}
+
+fn block_sequence_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((
+    parser(
+      block_expression_in_block_sequence,
+      Context {
+        indent: ctx.indent + INDENT_STEP,
+        ..ctx
+      },
+    ),
+    parser(flow_expression, ctx),
+  ))(input)
+}
+
+fn block_expression_in_block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((
+    parser(block_mapping_in_block_sequence, ctx),
+    parser(block_sequence_in_block_sequence, ctx),
+  ))(input)
+}
+
+fn block_mapping_in_block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
+  map(
+    pair(
+      parser(
+        block_mapping_entry,
+        Context {
+          indent_next: false,
+          ..ctx
+        },
+      ),
+      opt(parser(block_mapping, ctx)),
+    ),
+    |((first_key, first_value), mut rest)| {
+      let mut map = Map::new();
+      if let Value::String(first_key) = first_key {
+        map.insert(first_key, first_value);
+      }
+
+      if let Some(Value::Object(rest)) = &mut rest {
+        map.append(rest);
+      }
+
+      Value::Object(map)
+    },
+  )(input)
+}
+
+fn block_sequence_in_block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
+  map(
+    pair(
+      parser(
+        block_sequence_entry,
+        Context {
+          indent_next: false,
+          ..ctx
+        },
+      ),
+      opt(parser(block_sequence, ctx)),
+    ),
+    |(first, mut rest)| {
+      let mut vec = vec![first];
+
+      if let Some(Value::Array(rest)) = &mut rest {
+        vec.append(rest);
+      }
+
+      Value::Array(vec)
+    },
   )(input)
 }
 
@@ -202,36 +310,12 @@ fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   })(input)
 }
 
-fn expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((
-    preceded(
-      line_ending,
-      parser(
-        block_expression,
-        Context {
-          indent: ctx.indent + INDENT_STEP,
-          ..ctx
-        },
-      ),
-    ),
-    parser(flow_expression, ctx),
-  ))(input)
-}
-
-fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((parser(block_mapping, ctx), parser(block_sequence, ctx)))(input)
-}
-
 fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
     parser(flow_mapping, ctx),
     parser(flow_sequence, ctx),
     scalar,
   ))(input)
-}
-
-fn indentation(input: Input, ctx: Context) -> ParseResult<Vec<char>> {
-  count(char(' '), ctx.indent)(input)
 }
 
 fn scalar(input: Input) -> ParseResult<Value> {
@@ -312,4 +396,8 @@ fn comment(input: Input) -> ParseResult<Option<Input>> {
 
 fn eol_any(input: Input) -> ParseResult<Input> {
   terminated(line_ending, many0_count(preceded(space0, line_ending)))(input)
+}
+
+fn indentation(input: Input, ctx: Context) -> ParseResult<Vec<char>> {
+  count(char(' '), if ctx.indent_next { ctx.indent } else { 0 })(input)
 }
