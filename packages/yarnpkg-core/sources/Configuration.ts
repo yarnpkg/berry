@@ -4,6 +4,7 @@ import {parseSyml, stringifySyml}                                               
 import camelcase                                                                                        from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
+import {DotenvParseOutput as Env}                                                                       from 'dotenv';
 import pLimit, {Limit}                                                                                  from 'p-limit';
 import {PassThrough, Writable}                                                                          from 'stream';
 
@@ -662,32 +663,32 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 };
 
-function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, env?: Env) {
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     if (!Array.isArray(value)) {
       return String(value).split(/,/).map(segment => {
-        return parseSingleValue(configuration, path, segment, definition, folder);
+        return parseSingleValue(configuration, path, segment, definition, folder, env);
       });
     } else {
-      return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
+      return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder, env));
     }
   } else {
     if (Array.isArray(value)) {
       throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
     } else {
-      return parseSingleValue(configuration, path, value, definition, folder);
+      return parseSingleValue(configuration, path, value, definition, folder, env);
     }
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, env: Env = {}) {
   switch (definition.type) {
     case SettingsType.ANY:
       return value;
     case SettingsType.SHAPE:
-      return parseShape(configuration, path, value, definition, folder);
+      return parseShape(configuration, path, value, definition, folder, env);
     case SettingsType.MAP:
-      return parseMap(configuration, path, value, definition, folder);
+      return parseMap(configuration, path, value, definition, folder, env);
   }
 
   if (value === null && !definition.isNullable && definition.default !== null)
@@ -704,7 +705,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
       throw new Error(`Expected value (${value}) to be a string`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
-      env: process.env,
+      env: Object.assign({}, process.env, env),
     });
 
     switch (definition.type) {
@@ -731,7 +732,7 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   return interpreted;
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath, env?: Env) {
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
@@ -749,13 +750,13 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
     if (!subDefinition)
       throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
-    result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
+    result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder, env));
   }
 
   return result;
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath, env?: Env) {
   const result = new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
@@ -772,7 +773,7 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
-    result.set(normalizedKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
+    result.set(normalizedKey, parseValue(configuration, subPath, propValue, valueDefinition, folder, env));
   }
 
   return result;
