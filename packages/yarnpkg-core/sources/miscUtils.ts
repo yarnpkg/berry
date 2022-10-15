@@ -1,11 +1,12 @@
-import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
-import {UsageError}               from 'clipanion';
-import isEqual                    from 'lodash/isEqual';
-import mergeWith                  from 'lodash/mergeWith';
-import micromatch                 from 'micromatch';
-import pLimit, {Limit}            from 'p-limit';
-import semver                     from 'semver';
-import {Readable, Transform}      from 'stream';
+import {PortablePath, npath, xfs, Filename, ppath} from '@yarnpkg/fslib';
+import {UsageError}                                from 'clipanion';
+import {parse as parseEnv}                         from 'dotenv';
+import isEqual                                     from 'lodash/isEqual';
+import mergeWith                                   from 'lodash/mergeWith';
+import micromatch                                  from 'micromatch';
+import pLimit, {Limit}                             from 'p-limit';
+import semver                                      from 'semver';
+import {Readable, Transform}                       from 'stream';
 
 /**
  * @internal
@@ -476,6 +477,23 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
+}
+
+export async function findProjectEnv(projectCwd: PortablePath | null) {
+  if (!projectCwd)
+    return {};
+
+  const envAbsolutePath = ppath.resolve(projectCwd, `.env` as Filename);
+
+  try {
+    return parseEnv(await xfs.readFilePromise(envAbsolutePath, `utf8`));
+  } catch (err: any) {
+    if (err.code === `ENOENT`) {
+      return {};
+    } else {
+      throw err;
+    }
+  }
 }
 
 export function parseBoolean(value: unknown): boolean {
