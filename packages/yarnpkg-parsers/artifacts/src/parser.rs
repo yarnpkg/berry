@@ -69,7 +69,7 @@ fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
 fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     parse_separated_terminated_res(
-      preceded(comments, parser(block_mapping_entry, ctx)),
+      parser(block_mapping_entry, ctx),
       eol_any,
       parser(block_terminator, ctx),
       Map::new,
@@ -90,11 +90,14 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)> {
   preceded(
-    parser(indentation, ctx),
-    separated_pair(
-      scalar,
-      delimited(space0, char(':'), space0),
-      parser(expression, ctx),
+    comments,
+    preceded(
+      parser(indentation, ctx),
+      separated_pair(
+        scalar,
+        delimited(space0, char(':'), space0),
+        parser(expression, ctx),
+      ),
     ),
   )(input)
 }
@@ -102,7 +105,7 @@ fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)
 fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     collect_separated_terminated(
-      preceded(comments, parser(block_sequence_entry, ctx)),
+      parser(block_sequence_entry, ctx),
       eol_any,
       parser(block_terminator, ctx),
     ),
@@ -112,8 +115,11 @@ fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
   preceded(
-    parser(indentation, ctx),
-    preceded(terminated(char('-'), space1), parser(expression, ctx)),
+    comments,
+    preceded(
+      parser(indentation, ctx),
+      preceded(terminated(char('-'), space1), parser(expression, ctx)),
+    ),
   )(input)
 }
 
