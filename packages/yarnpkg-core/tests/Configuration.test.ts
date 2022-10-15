@@ -1,7 +1,7 @@
-import {xfs, PortablePath}                 from '@yarnpkg/fslib';
-import NpmPlugin                           from '@yarnpkg/plugin-npm';
+import {ppath, xfs, PortablePath, Filename} from '@yarnpkg/fslib';
+import NpmPlugin                            from '@yarnpkg/plugin-npm';
 
-import {Configuration, SECRET, TAG_REGEXP} from '../sources/Configuration';
+import {Configuration, SECRET, TAG_REGEXP}  from '../sources/Configuration';
 
 async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>, setup?: (dir: PortablePath) => Promise<T>) {
   return await xfs.mktempPromise(async dir => {
@@ -66,6 +66,9 @@ describe(`Configuration`, () => {
           onlyEnv: {
             npmAuthToken: `\${ENV_AUTH_TOKEN}`,
           },
+          fromDotEnvFile: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN_FROM_DOT_ENV_FILE}`,
+          },
           multipleEnvs: {
             npmAuthToken: `\${ENV_AUTH_TOKEN}-separator-\${ENV_AUTH_TOKEN}`,
           },
@@ -100,6 +103,7 @@ describe(`Configuration`, () => {
         const getToken = (scope: string) => configuration.get(`npmScopes`).get(scope)!.get(`npmAuthToken`);
 
         const onlyEnv = getToken(`onlyEnv`);
+        const fromDotEnvFile = getToken(`fromDotEnvFile`);
         const multipleEnvs = getToken(`multipleEnvs`);
         const envInString = getToken(`envInString`);
         const envSetWithFallback = getToken(`envSetWithFallback`);
@@ -110,6 +114,7 @@ describe(`Configuration`, () => {
         const emptyEnvWithEmptyFallback = getToken(`emptyEnvWithEmptyFallback`);
 
         expect(onlyEnv).toEqual(`AAA-BBB-CCC`);
+        expect(fromDotEnvFile).toEqual(`FOO-BAR-BAZ`);
         expect(multipleEnvs).toEqual(`AAA-BBB-CCC-separator-AAA-BBB-CCC`);
         expect(envInString).toEqual(`beforeEnv-AAA-BBB-CCC-after-env`);
         expect(envSetWithFallback).toEqual(`AAA-BBB-CCC`);
@@ -118,6 +123,15 @@ describe(`Configuration`, () => {
         expect(emptyEnvWithStrictFallback).toEqual(``);
         expect(emptyEnvWithFallback).toEqual(`fallback-for-empty-value`);
         expect(emptyEnvWithEmptyFallback).toEqual(``);
+      }, async dir => {
+        // we look for the directory where lockfile is located as the project directory, if there is no lockfile, then look for the outermost package.json
+        const packageAbsolutePath = ppath.resolve(dir, `package.json` as Filename);
+        const envAbsolutePath = ppath.resolve(dir, `.env` as Filename);
+
+        await xfs.appendFilePromise(packageAbsolutePath, ``);
+        await xfs.writeFilePromise(envAbsolutePath, `
+          ENV_AUTH_TOKEN_FROM_DOT_ENV_FILE = FOO-BAR-BAZ \n
+        `);
       });
     });
 
