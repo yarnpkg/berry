@@ -3,8 +3,11 @@ import NpmPlugin                           from '@yarnpkg/plugin-npm';
 
 import {Configuration, SECRET, TAG_REGEXP} from '../sources/Configuration';
 
-async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>) {
+async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>, setup?: (dir: PortablePath) => Promise<T>) {
   return await xfs.mktempPromise(async dir => {
+    if (setup)
+      await setup(dir);
+
     await Configuration.updateConfiguration(dir, value);
 
     return await cb(dir);
