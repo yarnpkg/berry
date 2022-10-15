@@ -1005,6 +1005,9 @@ export class Configuration {
       }
     }
 
+    const rootProjectCwd = await Configuration.findProjectCwd(startingCwd, DEFAULT_LOCK_FILENAME);
+    const projectEnv = await miscUtils.findProjectEnv(rootProjectCwd);
+
     // First we will parse the `yarn-path` settings. Doing this now allows us
     // to not have to load the plugins if there's a `yarn-path` configured.
 
@@ -1035,9 +1038,9 @@ export class Configuration {
     const configuration = new Configuration(startingCwd);
     configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
-    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false, env: projectEnv});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
+      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false, env: projectEnv});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1080,9 +1083,9 @@ export class Configuration {
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
-    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict, env: projectEnv});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
+      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict, env: projectEnv});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1206,9 +1209,9 @@ export class Configuration {
       configuration.activatePlugin(name, thirdPartyPlugin);
 
     // load values of all plugin definitions
-    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict, env: projectEnv});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
+      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict, env: projectEnv});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1431,7 +1434,7 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean, env?: Env}) {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
@@ -1440,7 +1443,7 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false, env: projectEnv}: {strict?: boolean, overwrite?: boolean, env?: Env} = {}) {
     strict = strict && this.get(`enableStrictSettings`);
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
@@ -1475,7 +1478,9 @@ export class Configuration {
 
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder, process.env);
+        // if there is the same key, the weight of projectEnv should be higher
+        const mergedEnv = Object.assign({}, process.env, projectEnv);
+        parsed = parseValue(this, key, data[key], definition, folder, mergedEnv);
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
