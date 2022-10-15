@@ -4,7 +4,7 @@ use nom::{
   character::complete::{char, line_ending, multispace0, not_line_ending, space0, space1},
   combinator::{eof, map, map_opt, map_res, not, opt, peek, recognize, value},
   multi::{count, many0_count},
-  sequence::{delimited, pair, preceded, separated_pair, terminated},
+  sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
 use nom_supreme::{
@@ -18,7 +18,7 @@ use nom_supreme::{
 use serde_json::{Map, Value};
 
 use crate::{
-  combinators::{empty, escaped_transform, final_parser},
+  combinators::{different_first_parser, empty, escaped_transform, final_parser},
   utils::{from_utf8, from_utf8_to_owned},
 };
 
@@ -68,12 +68,25 @@ fn top_level_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((parser(block_expression, ctx), parser(flow_expression, ctx)))(input)
 }
 
+fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((parser(block_mapping, ctx), parser(block_sequence, ctx)))(input)
+}
+
 fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
+  let subsequent_ctx = Context {
+    // Subsequent entries are always indented
+    indent_next: true,
+    ..ctx
+  };
+
   map(
     parse_separated_terminated_res(
-      parser(block_mapping_entry, ctx),
+      different_first_parser(
+        parser(block_mapping_entry, ctx),
+        parser(block_mapping_entry, subsequent_ctx),
+      ),
       eol_any,
-      parser(block_terminator, ctx),
+      parser(block_terminator, subsequent_ctx),
       Map::new,
       |mut acc, (key, value)| {
         if let Value::String(key) = key {
@@ -101,6 +114,7 @@ fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Value, Value)
         parser(
           block_mapping_entry_expression,
           Context {
+            // Child expressions are always indented
             indent_next: true,
             ..ctx
           },
@@ -126,16 +140,21 @@ fn block_mapping_entry_expression(input: Input, ctx: Context) -> ParseResult<Val
   ))(input)
 }
 
-fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((parser(block_mapping, ctx), parser(block_sequence, ctx)))(input)
-}
-
 fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
+  let subsequent_ctx = Context {
+    // Subsequent entries are always indented
+    indent_next: true,
+    ..ctx
+  };
+
   map(
     collect_separated_terminated(
-      parser(block_sequence_entry, ctx),
+      different_first_parser(
+        parser(block_sequence_entry, ctx),
+        parser(block_sequence_entry, subsequent_ctx),
+      ),
       eol_any,
-      parser(block_terminator, ctx),
+      parser(block_terminator, subsequent_ctx),
     ),
     Value::Array,
   )(input)
@@ -151,7 +170,9 @@ fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
         parser(
           block_sequence_entry_expression,
           Context {
-            indent_next: true,
+            // Child expressions are never indented because, according to the YAML 1.2.2 spec:
+            // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
+            indent_next: false,
             ..ctx
           },
         ),
@@ -163,7 +184,7 @@ fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
 fn block_sequence_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
     parser(
-      block_expression_in_block_sequence,
+      block_expression,
       Context {
         indent: ctx.indent + INDENT_STEP,
         ..ctx
@@ -171,64 +192,6 @@ fn block_sequence_entry_expression(input: Input, ctx: Context) -> ParseResult<Va
     ),
     parser(flow_expression, ctx),
   ))(input)
-}
-
-fn block_expression_in_block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((
-    parser(block_mapping_in_block_sequence, ctx),
-    parser(block_sequence_in_block_sequence, ctx),
-  ))(input)
-}
-
-fn block_mapping_in_block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
-  map(
-    pair(
-      parser(
-        block_mapping_entry,
-        Context {
-          indent_next: false,
-          ..ctx
-        },
-      ),
-      opt(parser(block_mapping, ctx)),
-    ),
-    |((first_key, first_value), mut rest)| {
-      let mut map = Map::new();
-      if let Value::String(first_key) = first_key {
-        map.insert(first_key, first_value);
-      }
-
-      if let Some(Value::Object(rest)) = &mut rest {
-        map.append(rest);
-      }
-
-      Value::Object(map)
-    },
-  )(input)
-}
-
-fn block_sequence_in_block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
-  map(
-    pair(
-      parser(
-        block_sequence_entry,
-        Context {
-          indent_next: false,
-          ..ctx
-        },
-      ),
-      opt(parser(block_sequence, ctx)),
-    ),
-    |(first, mut rest)| {
-      let mut vec = vec![first];
-
-      if let Some(Value::Array(rest)) = &mut rest {
-        vec.append(rest);
-      }
-
-      Value::Array(vec)
-    },
-  )(input)
 }
 
 fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
@@ -239,6 +202,14 @@ fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
       not(parser(indentation, ctx))(input)
     }
   }))(input)
+}
+
+fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
+  alt((
+    parser(flow_mapping, ctx),
+    parser(flow_sequence, ctx),
+    scalar,
+  ))(input)
 }
 
 fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
@@ -302,20 +273,11 @@ fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(parser(flow_mapping_entry, ctx), |(key, value)| {
     let mut map = Map::new();
     if let Value::String(key) = key {
-      // It's impossible for an existing entry to exist since we've just created the map.
       map.insert(key, value);
     }
 
     Value::Object(map)
   })(input)
-}
-
-fn flow_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((
-    parser(flow_mapping, ctx),
-    parser(flow_sequence, ctx),
-    scalar,
-  ))(input)
 }
 
 fn scalar(input: Input) -> ParseResult<Value> {

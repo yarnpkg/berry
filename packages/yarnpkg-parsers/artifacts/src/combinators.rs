@@ -17,6 +17,22 @@ pub fn empty<I, O: Default, E: ParseError<I>>(input: I) -> IResult<I, O, E> {
   Ok((input, O::default()))
 }
 
+/// Returns a parser that executes `first` on the first invocation and `rest` on the subsequent ones.
+pub fn different_first_parser<I, O, E>(
+  mut first: impl Parser<I, O, E>,
+  mut rest: impl Parser<I, O, E>,
+) -> impl FnMut(I) -> IResult<I, O, E> {
+  let mut executed_once = false;
+  move |input| {
+    if executed_once {
+      rest.parse(input)
+    } else {
+      executed_once = true;
+      first.parse(input)
+    }
+  }
+}
+
 /// Original implementation: https://docs.rs/nom-supreme/0.8.0/src/nom_supreme/final_parser.rs.html#229-243
 ///
 /// This is a modified version that converts the `ErrorTree<&[u8]>` to `ErrorTree<&str>` so that it can be displayed and so that context can be extracted from it.
