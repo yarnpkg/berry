@@ -5639,6 +5639,7 @@ __metadata:
     comment-json: "npm:^2.2.0"
     cross-spawn: "npm:7.0.3"
     diff: "npm:^5.1.0"
+    dotenv: "npm:^16.0.2"
     esbuild: "npm:esbuild-wasm@^0.15.5"
     globby: "npm:^11.0.1"
     got: "npm:^11.7.0"
@@ -10609,6 +10610,13 @@ __metadata:
   dependencies:
     is-obj: "npm:^2.0.0"
   checksum: 7ae403c147a1428f0774bb02a05b198f40841f530f6085f9579b40a2349a234a509de85752e254f49f2ebd25f149f2dbbc72b6627ea7146087820f6e65833741
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.2":
+  version: 16.0.2
+  resolution: "dotenv@npm:16.0.2"
+  checksum: 5d6641fbee9e169fdea93c4952c9559230418d9de58ce7c9cb49ae8bca5445686fd8222f952a0b916baa1119eaa4be76d096c3db795395bbf3c0bb1c85e33f8c
   languageName: node
   linkType: hard
 
