@@ -5,6 +5,19 @@ import {joinYaml}  from './utils';
 // TODO: Update the terminology used in this file to match the way it's used in the YAML spec.
 
 describe(`Syml parser`, () => {
+  describe(`Errors`, () => {
+    it(`should hide implementation details from the error stack`, () => {
+      try {
+        parseSyml(`@foo`);
+      } catch (error) {
+        // toThrow doesn't seem to work for matching anything but the message (even when specifying the fields)
+        expect(error.stack).not.toMatch(/wasm/);
+      }
+
+      expect.assertions(1);
+    });
+  });
+
   describe(`Lockfile tests`, () => {
     it(`should merge duplicates resulting from merge conflicts`, () => {
       expect(

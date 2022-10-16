@@ -128,6 +128,24 @@ stringifySyml.PreserveOrdering = PreserveOrdering;
 
 const textEncoder = new TextEncoder();
 
+function parseViaNom(source: string, overwriteDuplicateEntries: boolean) {
+  if (!source.endsWith(`\n`))
+    source += `\n`;
+
+  // TODO: Use `encodeInto` to avoid the extra copy overhead.
+  const encodedSource = textEncoder.encode(source);
+
+  try {
+    const json = parse(encodedSource, overwriteDuplicateEntries);
+    return JSON.parse(json);
+  } catch (error) {
+    // It's not useful for references to the WASM file to be present in the error stack
+    Error.captureStackTrace(error, parseViaNom);
+
+    throw error;
+  }
+}
+
 export type ParseSymlOptions = {
   /**
    * If true, the parser will keep the last value when it encounters duplicate keys. Otherwise, it will throw an error.
@@ -136,14 +154,7 @@ export type ParseSymlOptions = {
 };
 
 export function parseSyml(source: string, {overwriteDuplicateEntries = false}: ParseSymlOptions = {}): Record<string, any> {
-  if (!source.endsWith(`\n`))
-    source += `\n`;
-
-  // TODO: Use `encodeInto` to avoid the extra copy overhead.
-  const encodedSource = textEncoder.encode(source);
-
-  const json = parse(encodedSource, overwriteDuplicateEntries);
-  const value = JSON.parse(json);
+  const value = parseViaNom(source, overwriteDuplicateEntries);
 
   // if (typeof value !== `object`)
   //   throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
