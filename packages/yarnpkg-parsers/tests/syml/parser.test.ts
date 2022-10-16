@@ -1,6 +1,6 @@
 import {parseSyml} from '@yarnpkg/parsers';
 
-import {joinYaml}  from './utils';
+import {joinYaml}  from '../utils';
 
 // TODO: Update the terminology used in this file to match the way it's used in the YAML spec.
 
@@ -19,16 +19,38 @@ describe(`Syml parser`, () => {
   });
 
   describe(`Lockfile tests`, () => {
-    it(`should merge duplicates resulting from merge conflicts`, () => {
-      expect(
-        parseSyml(joinYaml([
-          `"lodash@npm:^4.17.20":`,
-          `  version: 4.17.20`,
-          ``,
-          `"lodash@npm:^4.17.20":`,
-          `  version: 4.17.20`,
-        ]), {overwriteDuplicateEntries: true}),
-      ).toEqual({'lodash@npm:^4.17.20': {version: `4.17.20`}});
+    describe(`Modern`, () => {
+      it(`should parse new-style objects`, () => {
+        expect(parseSyml(`foo:\n  bar: true\n  baz: "quux"\n`)).toEqual({
+          foo: {bar: `true`, baz: `quux`},
+        });
+      });
+
+      it(`should merge duplicates resulting from merge conflicts`, () => {
+        expect(
+          parseSyml(joinYaml([
+            `"lodash@npm:^4.17.20":`,
+            `  version: 4.17.20`,
+            ``,
+            `"lodash@npm:^4.17.20":`,
+            `  version: 4.17.20`,
+          ]), {overwriteDuplicateEntries: true}),
+        ).toEqual({'lodash@npm:^4.17.20': {version: `4.17.20`}});
+      });
+    });
+
+    describe(`Legacy`, () => {
+      it(`should parse old-style objects`, () => {
+        expect(parseSyml(`# yarn lockfile v1\nfoo:\n  bar true\n  baz "quux"\n`)).toEqual({
+          foo: {bar: true, baz: `quux`},
+        });
+      });
+
+      it(`shouldn't confuse old-style values with new-style keys`, () => {
+        expect(parseSyml(`# yarn lockfile v1\nfoo "C:\\\\foobar"\n`)).toEqual({
+          foo: `C:\\foobar`,
+        });
+      });
     });
   });
 

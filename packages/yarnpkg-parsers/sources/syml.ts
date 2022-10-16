@@ -1,6 +1,7 @@
 import {TextEncoder} from 'util';
 
 import {parse}       from './grammars/syml';
+import {parseLegacy} from './symlLegacy';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -128,7 +129,7 @@ stringifySyml.PreserveOrdering = PreserveOrdering;
 
 const textEncoder = new TextEncoder();
 
-function parseViaNom(source: string, overwriteDuplicateEntries: boolean) {
+export function parseViaNom(source: string, overwriteDuplicateEntries: boolean) {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
@@ -153,7 +154,12 @@ export type ParseSymlOptions = {
   overwriteDuplicateEntries?: boolean;
 };
 
+const LEGACY_REGEXP = /^(#.*(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
+
 export function parseSyml(source: string, {overwriteDuplicateEntries = false}: ParseSymlOptions = {}): Record<string, any> {
+  if (LEGACY_REGEXP.test(source))
+    return parseLegacy(source);
+
   const value = parseViaNom(source, overwriteDuplicateEntries);
 
   // if (typeof value !== `object`)
