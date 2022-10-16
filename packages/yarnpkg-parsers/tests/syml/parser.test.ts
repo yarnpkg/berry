@@ -129,6 +129,10 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`''`)).toStrictEqual(``);
   });
 
+  it(`should parse single quoted scalars with escaped single quotes`, () => {
+    expect(parseSyml(`'a''b'`)).toStrictEqual(`a'b`);
+  });
+
   it(`should parse empty flow mappings`, () => {
     expect(parseSyml(`{}`)).toStrictEqual({});
   });

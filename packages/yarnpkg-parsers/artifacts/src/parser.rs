@@ -12,6 +12,7 @@ use nom_supreme::{
   multi::{
     collect_separated_terminated, parse_separated_terminated, parse_separated_terminated_res,
   },
+  tag::complete::tag,
 };
 
 // Note: Don't use the `json!` macro - the bundle will be larger and the code will likely be slower.
@@ -332,7 +333,10 @@ fn single_quoted_scalar(input: Input) -> ParseResult<String> {
 }
 
 fn single_quoted_scalar_text(input: Input) -> ParseResult<String> {
-  map(is_not("'"), from_utf8_to_owned)(input)
+  map(
+    recognize(many0_count(alt((is_not("'"), tag("''"))))),
+    |bytes| from_utf8(bytes).replace("''", "'"),
+  )(input)
 }
 
 fn plain_scalar(input: Input) -> ParseResult<String> {
