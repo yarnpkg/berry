@@ -4,6 +4,7 @@
 
   margin: 40px 90px;
   width: calc(100vw - 180px);
+  min-height: calc(100vh - var(--ifm-navbar-height) - 40px);
 
   background: white;
   border-radius: 10px;

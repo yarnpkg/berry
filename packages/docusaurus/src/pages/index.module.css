@@ -7,14 +7,22 @@
   --index-navbar-margin-top: 40px;
 }
 
-.body {
-  background-image: url(/img/yarn-hero-transparent.png), url(/img/yarn-hero-stars.png);
+.html body {
+  background-image: url(/img/yarn-hero-transparent.png);
   background-size: 100% auto;
   background-repeat: no-repeat;
 }
 
-.body [class~="navbar"] {
+.html body [class~="navbar"] {
   margin-top: var(--index-navbar-margin-top);
+}
+
+.html body [class~="navbar"]:not([class~="navbar--is-fixed"]) {
+  --ifm-navbar-link-color: #ffffff;
+  --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
+
+  background: none;
+  box-shadow: none;
 }
 
 .reserve {
@@ -42,15 +50,22 @@
 }
 
 .search {
+  display: flex;
+
   margin-top: 60px;
 
   border: 1px solid #9555bb;
   border-radius: 1000px;
+  outline: none;
 
+  width: 100%;
   padding: 20px;
 
   background: #090b1f80;
+  color: inherit;
 
+  font-family: inherit;
+  font-size: inherit;
   font-style: italic;
 }
 

@@ -7,17 +7,12 @@ const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: `Yarn`,
-  tagline: `Dinosaurs are cool`,
-  url: `https://your-docusaurus-test-site.com`,
+  tagline: `Yarn, the modern JavaScript package manager`,
+  url: `https://yarnpkg.com`,
   baseUrl: `/`,
   onBrokenLinks: `throw`,
   onBrokenMarkdownLinks: `warn`,
   favicon: `img/favicon.ico`,
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: `facebook`, // Usually your GitHub org/user name.
-  projectName: `docusaurus`, // Usually your repo name.
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -39,7 +34,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            `https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/`,
+            `https://github.com/yarnpkg/berry/tree/master/packages/docusaurus/`,
         },
         theme: {
           customCss: require.resolve(`./src/css/custom.css`),
@@ -71,7 +66,7 @@ const config = {
             type: `docSidebar`,
             sidebarId: `gettingStarted`,
             position: `left`,
-            label: `Getting Started`,
+            label: `Get Started`,
           },
           {
             type: `docSidebar`,

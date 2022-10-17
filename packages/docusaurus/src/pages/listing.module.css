@@ -1,0 +1,21 @@
+.html [class~="menu__link--active"]:not(:hover) {
+  background: transparent;
+}
+
+.html [class~="container"] {
+  padding-left: var(--ifm-spacing-horizontal) !important;
+  padding-bottom: var(--ifm-spacing-horizontal) !important;
+}
+
+.fileContent {
+  margin: 0 !important;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+}
+
+.entry svg {
+  margin-right: 10px;
+}
