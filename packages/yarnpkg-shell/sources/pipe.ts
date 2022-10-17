@@ -100,7 +100,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
           }
         });
 
-        child.on(`exit`, code => {
+        child.on(`close`, code => {
           activeChildren.delete(child);
 
           if (activeChildren.size === 0) {

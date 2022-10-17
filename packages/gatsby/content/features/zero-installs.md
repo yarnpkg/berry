@@ -25,7 +25,9 @@ Note that these challenges are not unique to Yarn — you may remember a time wh
 
 In order to make a project zero-install, you must be able to use it as soon as you clone it. This is very easy starting from Yarn 2!
 
-- First, ensure that your project is using [Plug'n'Play](/features/pnp) to resolve dependencies via the cache folder and **not** from `node_modules`.
+- First, check that you are using Yarn 2 or later using `yarn --version`. You can change the version with [`yarn set version <version>`](/cli/set/version/)
+
+- Next, ensure that your project is using [Plug'n'Play](/features/pnp) to resolve dependencies via the cache folder and **not** from `node_modules`.
 
   - While in theory you could check-in your `node_modules` folder rather than the cache, in practice the `node_modules` contains a gigantic amount of files that frequently change location and mess with Git's optimizations. By contrast, the Yarn cache contains exactly one file per package, that only change when the packages themselves change.
 
@@ -46,6 +48,26 @@ And that's it! Push your changes to your repository, checkout a new one somewher
 Yes, very much. To give you an idea, a `node_modules` folder of 135k uncompressed files (for a total of 1.2GB) gives a Yarn cache of 2k binary archives (for a total of 139MB). Git simply cannot support the former, while the latter is perfectly fine.
 
 Another huge difference is the number of changes. Back in Yarn 1, when updating a package, a huge amount of files had to be recreated, or even simply moved. When the same happens in a Yarn 2 install, you get a very predictable result: exactly one changed file for each added/removed package. This in turn has beneficial side effects in terms of performance and security, since you can easily spot the invalid checksums on a per-package basis.
+
+### What does this do to my repository size?
+
+Every time you update a dependency and commit it, the repository will grow, the git history now containing both the new and old versions. This may lead to larger repository sizes, which makes it slower to clone a repository. Still, thanks to Git being fairly efficient at cloning large repositories, and clones being called far less than installs, the tradeoff isn't as damaging as it may seem. In case you still want to mitigate any potential problems, some mitigations are possible:
+
+- [Partial clones](https://docs.gitlab.com/ee/topics/git/partial_clone.html) let you define a set of files that Git will only fetch when required. For instance, by running `git clone --filter=blob:limit=2m`, no outdated file larger than 2MB will be downloaded.
+
+    - Git will lazily download the missing files as needed. For example, if you run `git checkout` on an old commit, Git will fetch whatever files are needed before the command returns, so you won't see any difference.
+
+    - **This feature is supported by both GitHub and Gitlab, and is probably the best option at your disposal** if you can modify the way `git clone` is performed. Note however that the `actions/checkout` GitHub Action doesn't allow it yet (a PR is open [here](https://github.com/actions/checkout/pull/680)).
+
+- [Sparse checkouts](https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/) are the older cousin of partial clones. Instead of retrieving the whole Git history but putting aside the binary data, sparse checkouts instead define a cutoff commit which Git will treat as having no parents.
+
+    - Because sparse checkouts only let you see a slice of the history, some commands like `git log` or `git blame` may return truncated results.
+
+- Branches can be [filtered](https://stackoverflow.com/questions/10067848/remove-folder-and-its-contents-from-git-githubs-history) every couple of years, to remove the cache folder from the history. In case you have audit requirements, you can fork your own repository to a secondary one to make sure the old commits are archived.
+
+- [Git LFS](https://git-lfs.github.com/) is an extension allowing Git to store large files as small pointers, which Git will then dynamically convert into the real file content during clones by downloading them from an external server.
+
+    - While GitLab offers Git LFS storage for free, GitHub is limited to 1GB of storage and bandwidth.
 
 ### Does it have security implications?
 

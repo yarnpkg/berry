@@ -33,9 +33,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - uses: ./.github/actions/prepare
+      with:
+        minify-bundle: true
 
     - name: 'Install Hyperfine'
       run: |

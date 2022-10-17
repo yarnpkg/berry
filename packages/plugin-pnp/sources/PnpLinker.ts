@@ -17,6 +17,9 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `node-addon-api`).identHash,
   // Those ones contain native builds (*.node), and Node loads them through dlopen
   structUtils.makeIdent(null, `fsevents`).identHash,
+  // Contains native binaries
+  structUtils.makeIdent(null, `open`).identHash,
+  structUtils.makeIdent(null, `opn`).identHash,
 ]);
 
 export class PnpLinker implements Linker {
@@ -240,19 +243,14 @@ export class PnpInstaller implements Installer {
 
     const pnpPath = getPnpPath(this.opts.project);
 
-    if (xfs.existsSync(pnpPath.cjsLegacy)) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `Removing the old ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpJs, formatUtils.Type.PATH)} file. You might need to manually update existing references to reference the new ${formatUtils.pretty(this.opts.project.configuration, Filename.pnpCjs, formatUtils.Type.PATH)} file. If you use Editor SDKs, you'll have to rerun ${formatUtils.pretty(this.opts.project.configuration, `yarn sdks`, formatUtils.Type.CODE)}.`);
-
-      await xfs.removePromise(pnpPath.cjsLegacy);
-    }
-
     if (!this.isEsmEnabled())
       await xfs.removePromise(pnpPath.esmLoader);
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
       await xfs.removePromise(pnpPath.cjs);
-      await xfs.removePromise(this.opts.project.configuration.get(`pnpDataPath`));
+      await xfs.removePromise(pnpPath.data);
       await xfs.removePromise(pnpPath.esmLoader);
+      await xfs.removePromise(this.opts.project.configuration.get(`pnpUnpluggedFolder`));
 
       return undefined;
     }
@@ -325,7 +323,6 @@ export class PnpInstaller implements Installer {
 
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     const pnpPath = getPnpPath(this.opts.project);
-    const pnpDataPath = this.opts.project.configuration.get(`pnpDataPath`);
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
@@ -345,17 +342,16 @@ export class PnpInstaller implements Installer {
         mode: 0o755,
       });
 
-      await xfs.removePromise(pnpDataPath);
+      await xfs.removePromise(pnpPath.data);
     } else {
-      const dataLocation = ppath.relative(ppath.dirname(pnpPath.cjs), pnpDataPath);
-      const {dataFile, loaderFile} = generateSplitScript({...pnpSettings, dataLocation});
+      const {dataFile, loaderFile} = generateSplitScript(pnpSettings);
 
       await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {
         automaticNewlines: true,
         mode: 0o755,
       });
 
-      await xfs.changeFilePromise(pnpDataPath, dataFile, {
+      await xfs.changeFilePromise(pnpPath.data, dataFile, {
         automaticNewlines: true,
         mode: 0o644,
       });

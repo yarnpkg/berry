@@ -1,12 +1,15 @@
-import {Plugin} from '@yarnpkg/core';
+import {Plugin}      from '@yarnpkg/core';
 
-import create   from './commands/create';
-import dlx      from './commands/dlx';
+import CreateCommand from './commands/create';
+import DlxCommand    from './commands/dlx';
+
+export {CreateCommand};
+export {DlxCommand};
 
 const plugin: Plugin = {
   commands: [
-    create,
-    dlx,
+    CreateCommand,
+    DlxCommand,
   ],
 };
 

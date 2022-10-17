@@ -1,5 +1,6 @@
 import {npath, ppath, xfs} from '@yarnpkg/fslib';
 import {spawn}             from 'child_process';
+import {tests}             from 'pkg-tests-core';
 
 describe(`Features`, () => {
   describe(`Editor SDK`, () => {
@@ -101,7 +102,7 @@ describe(`Features`, () => {
             const timeout = setTimeout(() => {
               cleanup();
               reject(new Error(`Timeout reached without matching "${marker}"; server answered:\n\n${stdall}`));
-            }, 20000);
+            }, tests.TEST_TIMEOUT);
 
             const cleanup = () => {
               clearTimeout(timeout);
@@ -179,7 +180,6 @@ describe(`Features`, () => {
           child.stdin.end();
         }
       },
-      45000,
     );
   });
 });

@@ -1,14 +1,18 @@
 import * as constants from './constants';
+import * as errors    from './errors';
 import * as statUtils from './statUtils';
 
 export {constants};
-
-export {LinkStrategy} from './algorithms/copyPromise';
-export {opendir}      from './algorithms/opendir';
-
+export {errors};
 export {statUtils};
 
+export type {LinkStrategy} from './algorithms/copyPromise';
+export {setupCopyIndex}    from './algorithms/copyPromise';
+export {opendir}           from './algorithms/opendir';
+export {watchFile, unwatchFile, unwatchAllFiles} from './algorithms/watchFile';
+
 export {normalizeLineEndings}          from './FakeFS';
+export type {BufferEncodingOrBuffer}   from './FakeFS';
 export type {CreateReadStreamOptions}  from './FakeFS';
 export type {CreateWriteStreamOptions} from './FakeFS';
 export type {Dirent, Dir, SymlinkType} from './FakeFS';
@@ -23,30 +27,28 @@ export type {WatchFileOptions}         from './FakeFS';
 export type {WatchFileCallback}        from './FakeFS';
 export type {StatWatcher}              from './FakeFS';
 export type {OpendirOptions}           from './FakeFS';
+export type {StatOptions, StatSyncOptions} from './FakeFS';
 export type {Stats, BigIntStats}       from './FakeFS';
-
-export {DEFAULT_COMPRESSION_LEVEL}     from './ZipFS';
-export type {ZipCompression}           from './ZipFS';
 
 export {PortablePath, Filename}                            from './path';
 export type {FSPath, Path, NativePath}                     from './path';
 export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
 export {npath, ppath, toFilename}                          from './path';
 
-export {AliasFS}                   from './AliasFS';
-export {FakeFS}                    from './FakeFS';
-export {CwdFS}                     from './CwdFS';
-export {JailFS}                    from './JailFS';
-export {LazyFS}                    from './LazyFS';
-export {NoFS}                      from './NoFS';
-export {NodeFS}                    from './NodeFS';
-export {PosixFS}                   from './PosixFS';
-export {ProxiedFS}                 from './ProxiedFS';
-export {VirtualFS}                 from './VirtualFS';
-export {ZipFS}                     from './ZipFS';
-export {ZipOpenFS}                 from './ZipOpenFS';
+export {AliasFS}                                           from './AliasFS';
+export {FakeFS, BasePortableFakeFS}                        from './FakeFS';
+export {CwdFS}                                             from './CwdFS';
+export {JailFS}                                            from './JailFS';
+export {LazyFS}                                            from './LazyFS';
+export {MountFS}                                           from './MountFS';
+export type {GetMountPointFn, MountableFS, MountFSOptions} from './MountFS';
+export {NoFS}                                              from './NoFS';
+export {NodeFS}                                            from './NodeFS';
+export {PosixFS}                                           from './PosixFS';
+export {ProxiedFS}                                         from './ProxiedFS';
+export {VirtualFS}                                         from './VirtualFS';
 
-export {patchFs, extendFs} from './patchFs';
+export {patchFs, extendFs} from './patchFs/patchFs';
 
 export {xfs} from './xfs';
 export type {XFS} from './xfs';

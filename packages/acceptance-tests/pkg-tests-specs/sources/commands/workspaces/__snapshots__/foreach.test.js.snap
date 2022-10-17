@@ -278,23 +278,6 @@ Object {
 }
 `;
 
-exports[`Commands workspace foreach should run set INIT_CWD to each individual workspace cwd even with global scripts 1`] = `
-Object {
-  "code": 0,
-  "stderr": "",
-  "stdout": "➤ YN0000: 
-➤ YN0000: packages/workspace-a
-➤ YN0000: packages/workspace-b
-➤ YN0000: packages/workspace-c
-➤ YN0000: packages/workspace-c/packages/workspace-d
-➤ YN0000: packages/workspace-c/packages/workspace-d/packages/workspace-e
-➤ YN0000: packages/workspace-c/packages/workspace-f
-➤ YN0000: packages/workspace-c/packages/workspace-g
-➤ YN0000: Done
-",
-}
-`;
-
 exports[`Commands workspace foreach should start all the processes at once when --jobs is unlimited 1`] = `
 Object {
   "code": 0,

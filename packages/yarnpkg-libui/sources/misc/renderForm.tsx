@@ -5,18 +5,17 @@ import {Readable, Writable} from 'stream';
 import {Application}        from '../components/Application';
 import {useKeypress}        from '../hooks/useKeypress';
 
-type InferProps<T> = T extends React.ComponentType<infer P> ? P : never;
+type InferProps<T extends React.ComponentType> = T extends React.ComponentType<infer P> ? P : never;
 
-export type SubmitInjectedComponent<T, C = React.ComponentType> = React.ComponentType<InferProps<C> & { useSubmit: (value: T) => void }>;
+export type SubmitInjectedComponent<T, C extends React.ComponentType = React.ComponentType> = React.ComponentType<InferProps<C> & { useSubmit: (value: T) => void }>;
 
-// TODO: make the streams required in the next major so that people don't forget to pass them
 export type RenderFormOptions = {
-  stdin?: Readable;
-  stdout?: Writable;
-  stderr?: Writable;
+  stdin: Readable;
+  stdout: Writable;
+  stderr: Writable;
 };
 
-export async function renderForm<T, C = React.ComponentType>(UserComponent: SubmitInjectedComponent<T, C>, props: InferProps<C>, {stdin, stdout, stderr}: RenderFormOptions = {}) {
+export async function renderForm<T, C extends React.ComponentType = React.ComponentType>(UserComponent: SubmitInjectedComponent<T, C>, props: InferProps<C>, {stdin, stdout, stderr}: RenderFormOptions) {
   let returnedValue: T | undefined;
 
   const useSubmit = (value: T) => {

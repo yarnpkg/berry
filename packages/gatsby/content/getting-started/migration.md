@@ -110,9 +110,9 @@ All of this and more is documented in the following sections. In general, we adv
 
 ## General Advices
 
-### Upgrade to Node.js 12.x or newer
+### Upgrade to Node.js 14.x or newer
 
-Node.js 10.x reached its official End of Life in April 2021 and won't receive any further update. Yarn consequently doesn't support it anymore.
+Node.js 12.x reached its official End of Life in April 2022 and won't receive any further update. Yarn consequently doesn't support it anymore.
 
 ### Fix dependencies with `packageExtensions`
 

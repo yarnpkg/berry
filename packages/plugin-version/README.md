@@ -4,6 +4,4 @@ This plugin adds support for the new [release workflow](https://yarnpkg.com/feat
 
 ## Install
 
-```
-yarn plugin import version
-```
+This plugin is included by default starting from Yarn 4.

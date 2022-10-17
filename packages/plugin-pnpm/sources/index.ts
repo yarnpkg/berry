@@ -2,6 +2,8 @@ import {Plugin}     from '@yarnpkg/core';
 
 import {PnpmLinker} from './PnpmLinker';
 
+export {PnpmLinker};
+
 const plugin: Plugin = {
   linkers: [
     PnpmLinker,

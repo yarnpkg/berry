@@ -7,6 +7,10 @@ import {TarballFileResolver} from './TarballFileResolver';
 import * as fileUtils        from './fileUtils';
 
 export {fileUtils};
+export {FileFetcher};
+export {FileResolver};
+export {TarballFileFetcher};
+export {TarballFileResolver};
 
 const plugin: Plugin = {
   fetchers: [

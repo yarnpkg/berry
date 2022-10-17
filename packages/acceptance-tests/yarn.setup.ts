@@ -3,7 +3,7 @@ import {tests} from 'pkg-tests-core';
 
 const {startPackageServer, getPackageRegistry} = tests;
 
-jest.setTimeout(30000);
+jest.setTimeout(tests.TEST_TIMEOUT);
 
 beforeEach(async () => {
   await startPackageServer();

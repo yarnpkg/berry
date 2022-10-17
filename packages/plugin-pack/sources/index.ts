@@ -1,9 +1,10 @@
 import {Hooks as CoreHooks, Plugin, Workspace, structUtils} from '@yarnpkg/core';
 import {MessageName, ReportError}                           from '@yarnpkg/core';
 
-import pack                                                 from './commands/pack';
+import PackCommand                                          from './commands/pack';
 import * as packUtils                                       from './packUtils';
 
+export {PackCommand};
 export {packUtils};
 
 export interface Hooks {
@@ -91,7 +92,7 @@ const plugin: Plugin<CoreHooks & Hooks> = {
     beforeWorkspacePacking,
   },
   commands: [
-    pack,
+    PackCommand,
   ],
 };
 

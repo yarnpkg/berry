@@ -56,7 +56,7 @@ describe(`Project`, () => {
           report: new ThrowReport(),
         });
 
-        const topLevelPkg = project.storedPackages.get(project.topLevelWorkspace.anchoredLocator.locatorHash)!;
+        const topLevelPkg = project.topLevelWorkspace.anchoredPackage;
 
         const fooIdent = structUtils.makeIdent(null, `foo`);
         const barIdent = structUtils.makeIdent(null, `bar`);
@@ -115,7 +115,7 @@ describe(`Project`, () => {
 
       const xxx = project.getWorkspaceByIdent(structUtils.makeIdent(null, `xxx`));
 
-      const yyyDescriptor = xxx.dependencies.get(structUtils.makeIdent(null, `yyy`).identHash)!;
+      const yyyDescriptor = xxx.anchoredPackage.dependencies.get(structUtils.makeIdent(null, `yyy`).identHash)!;
       const yyyResolution = project.storedResolutions.get(yyyDescriptor.descriptorHash)!;
       const yyy = project.storedPackages.get(yyyResolution)!;
 
@@ -127,7 +127,7 @@ describe(`Project`, () => {
       const expectedDescriptor = structUtils.makeDescriptor(ident, `npm:^1.0.0`);
 
       // This one is a sanity check
-      expect(xxx.dependencies.get(ident.identHash)).toEqual(expectedDescriptor);
+      expect(xxx.anchoredPackage.dependencies.get(ident.identHash)).toEqual(expectedDescriptor);
 
       // This one is the real check
       expect(zzz.dependencies.get(ident.identHash)).toEqual(expectedDescriptor);

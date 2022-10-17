@@ -15,7 +15,7 @@ export async function getAvailablePlugins(configuration: Configuration, version:
 }
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlCommand extends BaseCommand {
+export default class PluginListCommand extends BaseCommand {
   static paths = [
     [`plugin`, `list`],
   ];

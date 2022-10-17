@@ -1,17 +1,23 @@
 {
   "name": "@yarnpkg/pnpify",
-  "version": "4.0.0-rc.9",
+  "version": "4.0.0-rc.25",
+  "stableVersion": "3.1.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
-  "types": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./utils": "./sources/utils.ts",
+    "./cli": "./sources/cli.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/nm": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@yarnpkg/monorepo": "workspace:^",
@@ -26,7 +32,12 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "types": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./utils": "./lib/utils.js",
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*",
@@ -39,6 +50,5 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "3.1.1"
+  }
 }

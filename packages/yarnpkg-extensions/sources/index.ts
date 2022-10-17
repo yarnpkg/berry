@@ -336,6 +336,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       'null-loader': `^3.0.0`,
     },
   }],
+  // https://github.com/vuetifyjs/vue-cli-plugins/pull/324
+  [`vue-cli-plugin-vuetify@>=2.4.3`, {
+    peerDependencies: {
+      vue: `*`,
+    },
+  }],
   // https://github.com/vuetifyjs/vue-cli-plugins/pull/155
   [`@vuetify/cli-plugin-utils@<=0.0.4`, {
     dependencies: {
@@ -775,7 +781,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vuejs/eslint-config-typescript/pull/39
-  [`@vue/eslint-config-typescript@*`, {
+  [`@vue/eslint-config-typescript@<11.0.0`, {
     peerDependenciesMeta: {
       typescript: optionalPeerDep,
     },
@@ -839,6 +845,104 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`focus-trap-react@^8.0.0`, {
     dependencies: {
       tabbable: `^5.3.2`,
+    },
+  }],
+  // https://github.com/bokuweb/react-rnd/pull/864
+  [`react-rnd@<10.3.7`, {
+    peerDependencies: {
+      react: `>=16.3.0`,
+      'react-dom': `>=16.3.0`,
+    },
+  }],
+  // https://github.com/jdesboeufs/connect-mongo/pull/458
+  [`connect-mongo@*`, {
+    peerDependencies: {
+      'express-session': `^1.17.1`,
+    },
+  }],
+  // https://github.com/intlify/vue-i18n-next/commit/ed932b9e575807dc27c30573b280ad8ae48e98c9
+  [`vue-i18n@<9`, {
+    peerDependencies: {
+      vue: `^2`,
+    },
+  }],
+  // https://github.com/vuejs/router/commit/c2305083a8fcb42d1bb1f3f0d92f09930124b530
+  [`vue-router@<4`, {
+    peerDependencies: {
+      vue: `^2`,
+    },
+  }],
+  // https://github.com/unifiedjs/unified/pull/146
+  [`unified@<10`, {
+    dependencies: {
+      '@types/unist': `^2.0.0`,
+    },
+  }],
+  // https://github.com/ntkme/react-github-btn/pull/23
+  [`react-github-btn@<=1.3.0`, {
+    peerDependencies: {
+      react: `>=16.3.0`,
+    },
+  }],
+  // There are two candidates upstream, clean this up when either is merged.
+  // - https://github.com/facebook/create-react-app/pull/11526
+  // - https://github.com/facebook/create-react-app/pull/11716
+  [`react-dev-utils@*`, {
+    peerDependencies: {
+      typescript: `>=2.7`,
+      webpack: `>=4`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/asyncapi/asyncapi-react/pull/614
+  [`@asyncapi/react-component@<=1.0.0-next.39`, {
+    peerDependencies: {
+      react: `>=16.8.0`,
+      'react-dom': `>=16.8.0`,
+    },
+  }],
+  // https://github.com/xojs/xo/pull/678
+  [`xo@*`, {
+    peerDependencies: {
+      webpack: `>=1.11.0`,
+    },
+    peerDependenciesMeta: {
+      webpack: optionalPeerDep,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`babel-plugin-remove-graphql-queries@<=4.20.0-next.0`, {
+    dependencies: {
+      '@babel/types': `^7.15.4`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`gatsby-plugin-page-creator@<=4.20.0-next.1`, {
+    dependencies: {
+      'fs-extra': `^10.1.0`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`gatsby-plugin-utils@<=3.14.0-next.1`, {
+    dependencies: {
+      fastq: `^1.13.0`,
+    },
+    peerDependencies: {
+      graphql: `^15.0.0`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/33724
+  [`gatsby-plugin-mdx@<3.1.0-next.1`, {
+    dependencies: {
+      mkdirp: `^1.0.4`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/33170
+  [`gatsby-plugin-mdx@^2`, {
+    peerDependencies: {
+      gatsby: `^3.0.0-next`,
     },
   }],
 ];

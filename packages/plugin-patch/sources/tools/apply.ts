@@ -11,13 +11,7 @@ async function preserveTime(baseFs: FakeFS<PortablePath>, p: PortablePath, cb: (
   if (typeof result !== `undefined`)
     p = result;
 
-  if (baseFs.lutimesPromise) {
-    await baseFs.lutimesPromise(p, stat.atime, stat.mtime);
-  } else if (!stat.isSymbolicLink()) {
-    await baseFs.utimesPromise(p, stat.atime, stat.mtime);
-  } else {
-    throw new Error(`Cannot preserve the time values of a symlink`);
-  }
+  await baseFs.lutimesPromise(p, stat.atime, stat.mtime);
 }
 
 export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new NodeFS(), dryRun = false, version = null}: {baseFs?: FakeFS<PortablePath>, dryRun?: boolean, version?: string | null} = {}) {
@@ -129,7 +123,7 @@ function linesAreEqual(a: string, b: string) {
  *
  * if you edit a file that had a new line and leave it in:
  *
- *    neither insetion nor deletion have the annoation
+ *    neither insertion nor deletion have the annotation
  *
  */
 

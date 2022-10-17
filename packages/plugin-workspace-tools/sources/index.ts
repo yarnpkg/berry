@@ -1,12 +1,15 @@
-import {Plugin} from '@yarnpkg/core';
+import {Plugin}                 from '@yarnpkg/core';
 
-import focus    from './commands/focus';
-import foreach  from './commands/foreach';
+import WorkspacesFocusCommand   from './commands/focus';
+import WorkspacesForeachCommand from './commands/foreach';
+
+export {WorkspacesFocusCommand};
+export {WorkspacesForeachCommand};
 
 const plugin: Plugin = {
   commands: [
-    focus,
-    foreach,
+    WorkspacesFocusCommand,
+    WorkspacesForeachCommand,
   ],
 };
 

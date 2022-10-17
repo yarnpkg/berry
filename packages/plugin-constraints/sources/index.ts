@@ -1,9 +1,13 @@
-import {Plugin, SettingsType} from '@yarnpkg/core';
-import {PortablePath}         from '@yarnpkg/fslib';
+import {Plugin, SettingsType}   from '@yarnpkg/core';
+import {PortablePath}           from '@yarnpkg/fslib';
 
-import queryConstraints       from './commands/constraints/query';
-import sourceConstraints      from './commands/constraints/source';
-import constraints            from './commands/constraints';
+import ConstraintsQueryCommand  from './commands/constraints/query';
+import ConstraintsSourceCommand from './commands/constraints/source';
+import ConstraintsCheckCommand  from './commands/constraints';
+
+export {ConstraintsQueryCommand};
+export {ConstraintsSourceCommand};
+export {ConstraintsCheckCommand};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -20,9 +24,9 @@ const plugin: Plugin = {
     },
   },
   commands: [
-    queryConstraints,
-    sourceConstraints,
-    constraints,
+    ConstraintsQueryCommand,
+    ConstraintsSourceCommand,
+    ConstraintsCheckCommand,
   ],
 };
 

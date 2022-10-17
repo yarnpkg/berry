@@ -104,7 +104,7 @@ const validateTransform = <T>(spec: {
 const transforms = {
   [Type.NUMBER]: validateTransform({
     pretty: (configuration: Configuration, value: number) => {
-      return `${value}`;
+      return applyColor(configuration, `${value}`, Type.NUMBER);
     },
     json: (value: number) => {
       return value;

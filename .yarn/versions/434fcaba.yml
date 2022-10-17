@@ -30,7 +30,6 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
   - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"

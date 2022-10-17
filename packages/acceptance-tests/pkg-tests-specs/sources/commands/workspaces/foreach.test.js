@@ -397,26 +397,6 @@ describe(`Commands`, () => {
     );
 
     test(
-      `should run set INIT_CWD to each individual workspace cwd even with global scripts`,
-      makeTemporaryEnv(
-        {
-          private: true,
-          workspaces: [`packages/*`],
-          scripts: {
-            [`test:foo`]: `yarn workspaces foreach run test:bar`,
-            [`test:bar`]: `node -p 'require("path").relative(process.cwd(), process.argv[1]).replace(/\\\\/g, "/")' "$INIT_CWD"`,
-          },
-        },
-        async ({path, run}) => {
-          await setupWorkspaces(path);
-          await run(`install`);
-
-          await expect(run(`test:foo`)).resolves.toMatchSnapshot();
-        },
-      ),
-    );
-
-    test(
       `should handle global scripts getting downgraded to a normal script`,
       makeTemporaryEnv(
         {

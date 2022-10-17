@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}     from '@yarnpkg/cli';
-import {Configuration, Project}                  from '@yarnpkg/core';
-import {scriptUtils, structUtils}                from '@yarnpkg/core';
-import {NativePath, Filename, ppath, xfs, npath} from '@yarnpkg/fslib';
-import {Command, Option, Usage}                  from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                  from '@yarnpkg/cli';
+import {Configuration, MessageName, miscUtils, Project, stringifyMessageName} from '@yarnpkg/core';
+import {scriptUtils, structUtils, formatUtils}                                from '@yarnpkg/core';
+import {NativePath, Filename, ppath, xfs, npath}                              from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
@@ -59,6 +59,18 @@ export default class DlxCommand extends BaseCommand {
       // running something like `yarn dlx sb init`
       const enableGlobalCache = !(await Configuration.find(this.context.cwd, null, {strict: false})).get(`enableGlobalCache`);
 
+      const dlxConfiguration = {
+        enableGlobalCache,
+        enableTelemetry: false,
+        logFilters: [
+          // Don't warn if package extensions are unused in dlx projects
+          {
+            code: stringifyMessageName(MessageName.UNUSED_PACKAGE_EXTENSION),
+            level: formatUtils.LogLevel.Discard,
+          },
+        ],
+      };
+
       const sourceYarnrc = projectCwd !== null
         ? ppath.join(projectCwd, `.yarnrc.yml` as Filename)
         : null;
@@ -67,11 +79,7 @@ export default class DlxCommand extends BaseCommand {
         await xfs.copyFilePromise(sourceYarnrc, targetYarnrc);
 
         await Configuration.updateConfiguration(tmpDir, current => {
-          const nextConfiguration: {[key: string]: unknown} = {
-            ...current,
-            enableGlobalCache,
-            enableTelemetry: false,
-          };
+          const nextConfiguration = miscUtils.toMerged(current, dlxConfiguration);
 
           if (Array.isArray(current.plugins)) {
             nextConfiguration.plugins = current.plugins.map((plugin: any) => {
@@ -94,7 +102,7 @@ export default class DlxCommand extends BaseCommand {
           return nextConfiguration;
         });
       } else {
-        await xfs.writeFilePromise(targetYarnrc, `enableGlobalCache: ${enableGlobalCache}\nenableTelemetry: false\n`);
+        await xfs.writeJsonPromise(targetYarnrc, dlxConfiguration);
       }
 
       const pkgs = this.packages ?? [this.command];

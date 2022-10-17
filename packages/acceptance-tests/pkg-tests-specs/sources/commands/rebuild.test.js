@@ -36,7 +36,6 @@ describe(`Commands`, () => {
           `postinstall`,
         ]);
       }),
-      30000,
     );
 
     test(
@@ -72,7 +71,6 @@ describe(`Commands`, () => {
           `postinstall`,
         ]);
       }),
-      30000,
     );
   });
 });

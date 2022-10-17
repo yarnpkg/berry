@@ -1,6 +1,6 @@
 import {LinkOptions, structUtils}                      from '@yarnpkg/core';
-import {VirtualFS, ZipOpenFS, ppath, Filename}         from '@yarnpkg/fslib';
-import {getLibzipPromise}                              from '@yarnpkg/libzip';
+import {VirtualFS, ppath, Filename}                    from '@yarnpkg/fslib';
+import {ZipOpenFS}                                     from '@yarnpkg/libzip';
 import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/nm';
 import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
 import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
@@ -19,7 +19,6 @@ class PnpLooseInstaller extends PnpInstaller {
   async transformPnpSettings(pnpSettings: PnpSettings) {
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({
-        libzip: await getLibzipPromise(),
         maxOpenFiles: 80,
         readOnlyArchives: true,
       }),
