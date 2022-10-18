@@ -7334,7 +7334,7 @@ __metadata:
     remark-parse: "npm:^6.0.3"
     tinycolor2: "npm:^1.4.1"
     tslib: "npm:^2.4.0"
-    typedoc: "npm:0.17.0-3"
+    typedoc: "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch"
     typedoc-neo-theme: "npm:^1.0.7"
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
     typescript: "npm:4.9.1-beta"
@@ -16253,7 +16253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:^4.7.0, handlebars@npm:^4.7.2":
+"handlebars@npm:^4.7.2":
   version: 4.7.3
   resolution: "handlebars@npm:4.7.3"
   dependencies:
@@ -16670,7 +16670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"highlight.js@npm:^9.15.6, highlight.js@npm:^9.15.8, highlight.js@npm:^9.17.1, highlight.js@npm:^9.18.0":
+"highlight.js@npm:^9.15.6, highlight.js@npm:^9.15.8, highlight.js@npm:^9.18.0":
   version: 9.18.1
   resolution: "highlight.js@npm:9.18.1"
   checksum: 4b1de96f1653f211bf24c4bb90145180e6ba79acd0b3ebd5cd6c093c900db5d4b1596592daa9434ea8d8c1535ab5f3f228c7f7a9f607bf84faab8673f47f98d9
@@ -28958,18 +28958,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-default-themes@npm:^0.7.0":
-  version: 0.7.2
-  resolution: "typedoc-default-themes@npm:0.7.2"
-  dependencies:
-    backbone: "npm:^1.4.0"
-    jquery: "npm:^3.4.1"
-    lunr: "npm:^2.3.8"
-    underscore: "npm:^1.9.1"
-  checksum: 14a6e29eb5f43adc37df90b826929002625a8848f6ce952e1934b2e64f543fb92eb5d64f1d24ed079ce746d6e6d613b7f547c305cef77262159e9bcb16e51c96
-  languageName: node
-  linkType: hard
-
 "typedoc-neo-theme@npm:^1.0.7":
   version: 1.0.7
   resolution: "typedoc-neo-theme@npm:1.0.7"
@@ -28987,27 +28975,6 @@ __metadata:
     typescript: "npm:^3.8.3"
   languageName: node
   linkType: soft
-
-"typedoc@npm:0.16.0":
-  version: 0.16.0
-  resolution: "typedoc@npm:0.16.0"
-  dependencies:
-    "@types/minimatch": "npm:3.0.3"
-    fs-extra: "npm:^8.1.0"
-    handlebars: "npm:^4.7.0"
-    highlight.js: "npm:^9.17.1"
-    lodash: "npm:^4.17.15"
-    marked: "npm:^0.8.0"
-    minimatch: "npm:^3.0.0"
-    progress: "npm:^2.0.3"
-    shelljs: "npm:^0.8.3"
-    typedoc-default-themes: "npm:^0.7.0"
-    typescript: "npm:3.7.x"
-  bin:
-    typedoc: bin/typedoc
-  checksum: 39dcbcf72f3267a4151e76febbcc3dc2943e16bf2b3e3dbd795a1d3230bfcb13799190d7ef301bacc175702d010c7a84a2fdc7389a6d4333c406cab742ceda90
-  languageName: node
-  linkType: hard
 
 "typedoc@npm:0.17.0-3":
   version: 0.17.0-3
@@ -29031,13 +28998,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:3.7.x":
-  version: 3.7.7
-  resolution: "typescript@npm:3.7.7"
+"typedoc@patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch":
+  version: 0.17.0-3
+  resolution: "typedoc@patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=77d7ea"
+  dependencies:
+    "@types/minimatch": "npm:3.0.3"
+    fs-extra: "npm:^8.1.0"
+    handlebars: "npm:^4.7.2"
+    highlight.js: "npm:^9.18.0"
+    lodash: "npm:^4.17.15"
+    marked: "npm:^0.8.0"
+    minimatch: "npm:^3.0.0"
+    progress: "npm:^2.0.3"
+    shelljs: "npm:^0.8.3"
+    typedoc-default-themes: "npm:0.8.0-0"
+  peerDependencies:
+    typescript: ">=3.7"
   bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: decea9bcbfe5b9234b9fe3e15758d829031ab5a73237d857973e9d8b127cf4ab411b588a341ad07f789f6af1a9f437ba34d2c3af354e5011b547419caa3af733
+    typedoc: bin/typedoc
+  checksum: b9bb937d6c0d91c14cea99914b5d40c5202f9377ac64251176c3d14d1bc4c72c46ae0e6fb02005ec6ba2e6803539ae3e4a47b91a24c6131423876e6b736d878e
   languageName: node
   linkType: hard
 
@@ -29061,29 +29040,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A3.7.x#optional!builtin<compat/typescript>":
-  version: 3.7.7
-  resolution: "typescript@patch:typescript@npm%3A3.7.7#optional!builtin<compat/typescript>::version=3.7.7&hash=a1c5e5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 3af69ac96e9e79f61d9a5aba4f8bea7a8421b8c4e5d823f49c774469ced515a74f797f3b6c008811ec3d3dbc303b1d62108046de1a51bc690deca42ebec13cb1
-  languageName: node
-  linkType: hard
-
 "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>":
   version: 4.9.1-beta
-  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>::version=4.9.1-beta&hash=a1c5e5"
+  resolution: "typescript@patch:typescript@npm%3A4.9.1-beta#optional!builtin<compat/typescript>::version=4.9.1-beta&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: e1b8503af0da4bb32b92bdb9c391973a30087d50adcc2f7c24a4ed17031ae50f5ab099fa0fcb5d89f190f72c1118b7ed9ddb396a86bf48a59fd6936ceed05611
+  checksum: 54c08d930b680d1c892d5ad9e9fb4ba9d8b2c5e94d6cbbafd22112ba7248c113b0f05a48b07a1b5f6a2f6be904d9ec8ce691fe6cb2fdd864401b6437f0ff36c9
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@npm%3A^3.8.3#optional!builtin<compat/typescript>":
   version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=a1c5e5"
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
