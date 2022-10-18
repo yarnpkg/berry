@@ -14,6 +14,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - The node-modules linker avoids creation of circular symlinks
 - The node-modules linker no longer creates duplicate copies inside of aliased packages
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
 ## 3.2.4
 
