@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands run misc it should print the list of available scripts if no parameters passed to command 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: foo   'echo hello'
