@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands config test (folder with rcfile / as json) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
@@ -11,7 +11,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile / showing explanation) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
@@ -21,7 +21,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile / showing the source) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
@@ -31,7 +31,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile / without flags) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - 'node'
@@ -41,7 +41,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in ancestor parent / as json) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
@@ -51,7 +51,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in ancestor parent / showing explanation) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
@@ -61,7 +61,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in ancestor parent / showing the source) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
@@ -71,7 +71,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in ancestor parent / without flags) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - 'node'
@@ -81,7 +81,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in home folder / as json) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"python\\",\\"source\\":\\"HOME/.spec-yarnrc\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
@@ -91,7 +91,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in home folder / showing explanation) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'python'
@@ -101,7 +101,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in home folder / showing the source) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - HOME/.spec-yarnrc - 'python'
@@ -111,7 +111,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in home folder / without flags) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - 'python'
@@ -121,7 +121,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in parent / as json) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
@@ -131,7 +131,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in parent / showing explanation) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
@@ -141,7 +141,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in parent / showing the source) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
@@ -151,7 +151,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile and rc in parent / without flags) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - 'node'
@@ -161,7 +161,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile without trailing newline / as json) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
@@ -171,7 +171,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile without trailing newline / showing explanation) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
@@ -181,7 +181,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile without trailing newline / showing the source) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
@@ -191,7 +191,7 @@ Object {
 `;
 
 exports[`Commands config test (folder with rcfile without trailing newline / without flags) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - 'node'
@@ -201,7 +201,7 @@ Object {
 `;
 
 exports[`Commands config test (folder without rcfile in ancestry / as json) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "{\\"key\\":\\"defaultLanguageName\\",\\"effective\\":\\"node\\",\\"description\\":\\"Default language mode that should be used when a package doesn't offer any insight\\",\\"type\\":\\"STRING\\",\\"default\\":\\"node\\"}
@@ -211,7 +211,7 @@ Object {
 `;
 
 exports[`Commands config test (folder without rcfile in ancestry / showing explanation) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - Default language mode that should be used when a package doesn't offer any insight - 'node'
@@ -221,7 +221,7 @@ Object {
 `;
 
 exports[`Commands config test (folder without rcfile in ancestry / showing the source) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
@@ -231,7 +231,7 @@ Object {
 `;
 
 exports[`Commands config test (folder without rcfile in ancestry / without flags) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - 'node'

@@ -32,7 +32,7 @@ __metadata:
 `;
 
 exports[`Features Merge Conflict Resolution it should properly fix merge conflicts 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
@@ -82,7 +82,7 @@ no-deps@*:
 `;
 
 exports[`Features Merge Conflict Resolution it should properly fix merge conflicts when old is Yarn 1 and new is Yarn 2 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍

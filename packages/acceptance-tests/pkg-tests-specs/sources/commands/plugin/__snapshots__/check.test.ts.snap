@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands plugin check it should run successfully and do nothing 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done

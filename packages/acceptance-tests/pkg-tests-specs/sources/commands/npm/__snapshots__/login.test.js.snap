@@ -8,7 +8,7 @@ exports[`Commands npm login it should login a user with OTP setup 1`] = `
 `;
 
 exports[`Commands npm login it should login a user with OTP setup 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
@@ -26,7 +26,7 @@ exports[`Commands npm login it should login a user with OTP to a specific scope 
 `;
 
 exports[`Commands npm login it should login a user with OTP to a specific scope 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
@@ -43,7 +43,7 @@ exports[`Commands npm login it should login a user with no OTP setup 1`] = `
 `;
 
 exports[`Commands npm login it should login a user with no OTP setup 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in
@@ -61,7 +61,7 @@ exports[`Commands npm login it should login a user with no OTP setup to a specif
 `;
 
 exports[`Commands npm login it should login a user with no OTP setup to a specific scope 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged in

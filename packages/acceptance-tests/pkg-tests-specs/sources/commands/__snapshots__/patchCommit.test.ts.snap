@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands patch-commit it should generate a patch from a package folder 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "diff --git a/index.js b/index.js
@@ -9,7 +9,7 @@ index bb9c6f6876154493527577cd78279aa6bb686ebb..fa87b36f4ac82fadaebf78bd20958ed4
 --- a/index.js
 +++ b/index.js
 @@ -2,6 +2,6 @@ module.exports = require(\`./package.json\`);
- 
+
  for (const key of [\`dependencies\`, \`devDependencies\`, \`peerDependencies\`]) {
    for (const dep of Object.keys(module.exports[key] || {})) {
 -    module.exports[key][dep] = require(dep);
