@@ -1,6 +1,6 @@
 ---
 category: getting-started
-path: /getting-started/usage
+slug: /getting-started/usage
 title: Usage
 description: A short overview of Yarn's most used commands.
 order: 3

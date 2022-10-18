@@ -1,6 +1,6 @@
 ---
 category: features
-path: /features/offline-cache
+slug: /features/offline-cache
 title: "Offline Cache"
 description: An overview of Yarn's offline cache, a feature that allows Yarn to work just fine even should the network go down for any reason.
 ---

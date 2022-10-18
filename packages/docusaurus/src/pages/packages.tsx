@@ -116,6 +116,7 @@ function SearchBar({refine}: any) {
     <input className={clsx(indexStyles.search, styles.search)} autoFocus={true} placeholder={`Search packages (i.e. babel, webpack, react, ...)`} value={value} onChange={handleChange}/>
   );
 }
+
 function getDownloadBucket(dl: number) {
   if (dl < 1000) {
     return null;

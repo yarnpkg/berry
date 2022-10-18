@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/contributing
+slug: /advanced/contributing
 title: "Contributing"
 description: Yarn's contributing guide.
 ---
@@ -13,7 +13,7 @@ Thanks for being here! Yarn gives a lot of importance to being a community proje
 
 ## Opening an issue
 
-We have some rules regarding our issues. Please check [the following page](/advanced/sherlock) for more details.
+Issues have to follow the issue template. Make sure to follow everything, with a special attention for the reproduction. If we can't reproduce your problem, we won't solve it.
 
 ## How can you help?
 

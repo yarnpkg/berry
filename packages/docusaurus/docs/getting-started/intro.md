@@ -1,6 +1,6 @@
 ---
 category: getting-started
-path: /getting-started
+slug: /getting-started
 title: Introduction
 description: An introduction to Yarn, a package manager for your code.
 order: 1

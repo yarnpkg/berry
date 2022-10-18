@@ -1,6 +1,6 @@
 ---
 category: getting-started
-path: /getting-started/recipes
+slug: /getting-started/recipes
 title: "Recipes"
 description: Various cool things you can do with Yarn 2
 ---

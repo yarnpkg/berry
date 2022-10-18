@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/lifecycle-scripts
+slug: /advanced/lifecycle-scripts
 title: "Lifecycle Scripts"
 description: An overview of Yarn's supported lifecycle scripts.
 ---

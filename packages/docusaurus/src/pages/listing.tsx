@@ -1,3 +1,4 @@
+import BrowserOnly                                                                                                                                            from '@docusaurus/BrowserOnly';
 import {useLocation}                                                                                                                                          from '@docusaurus/router';
 // @ts-expect-error
 import {DocsSidebarProvider}                                                                                                                                  from '@docusaurus/theme-common/internal';
@@ -5,8 +6,6 @@ import {HtmlClassNameProvider}                                                  
 import Editor                                                                                                                                                 from '@monaco-editor/react';
 import {AlertIcon, ArrowLeftIcon, CheckIcon, FileDirectoryFillIcon, FileIcon, HomeIcon, HourglassIcon, LogoGithubIcon, MarkGithubIcon, PackageIcon, PlayIcon} from '@primer/octicons-react';
 import clsx                                                                                                                                                   from 'clsx';
-// @ts-expect-error
-import untar                                                                                                                                                  from 'js-untar';
 import MarkdownIt                                                                                                                                             from 'markdown-it';
 import pako                                                                                                                                                   from 'pako';
 import React, {useEffect, useState}                                                                                                                           from 'react';
@@ -249,6 +248,9 @@ async function getPackageInfo(name: string | null, version: string | null, getUr
   const req = await fetch(`https://registry.yarnpkg.com/${name}/-/${name.replace(/^@[^/]+\//, ``)}-${version}.tgz`);
   const res = await req.arrayBuffer();
 
+  // @ts-expect-error
+  const untar = await import(`js-untar`);
+
   const uncompressed = pako.ungzip(res).buffer;
   const unpacked: Array<File> = await untar(uncompressed);
 
@@ -339,8 +341,7 @@ function FileView({file}: {file: File}) {
   );
 }
 
-// eslint-disable-next-line arca/no-default-export
-export default function Run() {
+function PackageInfoPage() {
   const [packageInfo, setPackageInfo] = useState<{
     filesDict: Map<string, File>;
     sidebar: any;
@@ -403,5 +404,14 @@ export default function Run() {
         </Layout>
       </DocsSidebarProvider>
     </HtmlClassNameProvider>
+  );
+}
+
+// eslint-disable-next-line arca/no-default-export
+export default function PackageInfoPageWrapper() {
+  return (
+    <BrowserOnly>
+      {() => <PackageInfoPage/>}
+    </BrowserOnly>
   );
 }

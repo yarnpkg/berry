@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/error-codes
+slug: /advanced/error-codes
 title: "Error Codes"
 description: A list of Yarn's error codes with detailed explanations.
 ---

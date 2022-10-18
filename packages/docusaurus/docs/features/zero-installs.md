@@ -1,6 +1,6 @@
 ---
 category: features
-path: /features/zero-installs
+slug: /features/zero-installs
 title: 'Zero-Installs'
 description: An overview of Yarn's Zero-Installs, a feature provided by PnP which enables storing all dependencies inside the project's repository.
 ---

@@ -1,6 +1,6 @@
 ---
 category: features
-path: /features/plugins
+slug: /features/plugins
 title: "Plugins"
 description: An overview of Yarn's plugin capabilities.
 ---

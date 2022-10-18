@@ -1,6 +1,6 @@
 ---
 category: features
-path: /features/release-workflow
+slug: /features/release-workflow
 title: "Release Workflow"
 description: An in-depth guide to Yarn's release workflow which helps with managing versions across a monorepo.
 ---

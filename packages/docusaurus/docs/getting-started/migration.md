@@ -1,6 +1,6 @@
 ---
 category: getting-started
-path: /getting-started/migration
+slug: /getting-started/migration
 title: "Migration"
 description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 ---

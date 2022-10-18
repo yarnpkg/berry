@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/telemetry
+slug: /advanced/telemetry
 title: "Telemetry"
 description: An overview of Yarn's telemetry collection.
 ---

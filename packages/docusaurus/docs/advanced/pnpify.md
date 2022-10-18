@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/pnpify
+slug: /advanced/pnpify
 title: "PnPify"
 description: An overview of PnPify, one of the PnP compatibility layers which emulates virtual node_modules directories and provides IDE support.
 ---

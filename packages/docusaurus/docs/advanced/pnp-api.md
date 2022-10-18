@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/pnpapi
+slug: /advanced/pnpapi
 title: "PnP API"
 description: In-depth documentation of the PnP API.
 ---
@@ -266,10 +266,10 @@ This function will return `null` if the request is a builtin module, unless `con
 ### `resolveVirtual(...)`
 
 ```ts
-export function resolveVirtual(path: string): string | null;
+export function resolveVirtual(slug: string): string | null;
 ```
 
-**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnp-api#versions) dictionary contains a valid `resolveVirtual` property.
+**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnpapi#versions) dictionary contains a valid `resolveVirtual` property.
 
 The `resolveVirtual` function will accept any path as parameter and return the same path minus any [virtual component](/advanced/lexicon#virtual-package). This makes it easier to store the location to the files in a portable way as long as you don't care about losing the dependency tree information in the process (requiring files through those paths will prevent them from accessing their peer dependencies).
 

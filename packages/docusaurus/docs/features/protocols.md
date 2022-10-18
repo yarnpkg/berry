@@ -1,6 +1,6 @@
 ---
 category: features
-path: /features/protocols
+slug: /features/protocols
 title: "Protocols"
 description: An in-depth guide to Yarn's various protocols.
 ---

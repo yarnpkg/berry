@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/architecture
+slug: /advanced/architecture
 title: "Architecture"
 description: An overview of Yarn's architecture.
 ---

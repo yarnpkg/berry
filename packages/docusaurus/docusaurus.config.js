@@ -111,47 +111,7 @@ const config = {
       },
       footer: {
         style: `dark`,
-        links: [
-          {
-            title: `Docs`,
-            items: [
-              {
-                label: `Tutorial`,
-                to: `/docs/intro`,
-              },
-            ],
-          },
-          {
-            title: `Community`,
-            items: [
-              {
-                label: `Stack Overflow`,
-                href: `https://stackoverflow.com/questions/tagged/yarnpkg`,
-              },
-              {
-                label: `Discord`,
-                href: `https://discordapp.com/invite/yarnpkg`,
-              },
-              {
-                label: `Twitter`,
-                href: `https://twitter.com/yarnpkg`,
-              },
-            ],
-          },
-          {
-            title: `More`,
-            items: [
-              {
-                label: `Discord`,
-                href: `https://discord.gg/yarnpkg`,
-              },
-              {
-                label: `GitHub`,
-                href: `https://github.com/yarnpkg/berry`,
-              },
-            ],
-          },
-        ],
+        links: [],
         copyright: `Copyright © ${new Date().getFullYear()} Yarn Contributors, Inc. Built with Docusaurus.`,
       },
       prism: {

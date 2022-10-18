@@ -1,6 +1,6 @@
 ---
 category: getting-started
-path: /getting-started/editor-sdks
+slug: /getting-started/editor-sdks
 title: "Editor SDKs"
 description: An overview of the editor SDKs used to bring PnP compatibility to editors.
 ---

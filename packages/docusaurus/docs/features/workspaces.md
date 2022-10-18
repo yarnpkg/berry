@@ -1,6 +1,6 @@
 ---
 category: features
-path: /features/workspaces
+slug: /features/workspaces
 title: "Workspaces"
 description: An in-depth guide to Yarn's workspaces, a feature that provides an easy way to store multiple packages inside the same project.
 ---

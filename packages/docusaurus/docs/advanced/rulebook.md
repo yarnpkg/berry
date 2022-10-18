@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/rulebook
+slug: /advanced/rulebook
 title: "Rulebook"
 description: An in-depth rulebook of best-practices and recommendations regarding dependencies.
 ---

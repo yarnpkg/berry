@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/lexicon
+slug: /advanced/lexicon
 title: "Lexicon"
 description: Definitions of common terms used throughout the documentation.
 ---
@@ -206,7 +206,7 @@ Generally speaking workspaces are a Yarn features used to work on multiple proje
 
 In the context of Yarn's vocabulary, workspaces are local <abbr>packages</abbr> that directly belong to a <abbr>project</abbr>.
 
-See also: [Packages](/features/packages)
+See also: [Packages](#package)
 
 See also: [Workspaces](/features/workspaces)
 
