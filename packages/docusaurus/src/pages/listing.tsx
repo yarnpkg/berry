@@ -249,7 +249,7 @@ async function getPackageInfo(name: string | null, version: string | null, getUr
   const res = await req.arrayBuffer();
 
   // @ts-expect-error
-  const untar = await import(`js-untar`);
+  const {default: untar} = await import(`js-untar`);
 
   const uncompressed = pako.ungzip(res).buffer;
   const unpacked: Array<File> = await untar(uncompressed);
