@@ -47,7 +47,8 @@
     "@types/react-instantsearch-dom": "^6",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "@yarnpkg/monorepo": "workspace:^"
+    "@yarnpkg/monorepo": "workspace:^",
+    "esbuild-loader": "^2.20.0"
   },
   "browserslist": {
     "production": [
