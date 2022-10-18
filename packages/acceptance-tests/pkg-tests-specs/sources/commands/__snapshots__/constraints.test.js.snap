@@ -61,7 +61,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (ambiguou
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -80,7 +80,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (incompat
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["no-deps"] set to "2.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -90,7 +90,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (missing)
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -198,9 +198,9 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (am
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
-➤ YN0053: workspace-a must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
-➤ YN0053: workspace-b must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
+➤ YN0053: workspace-a must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
+➤ YN0053: workspace-b must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -210,8 +210,8 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: workspace-a has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
-➤ YN0039: workspace-b has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+  "stdout": "➤ YN0039: workspace-a has an extraneous field dependencies set to {"no-deps":"1.0.0","no-deps-bin":"1.0.0"}
+➤ YN0039: workspace-b has an extraneous field dependencies set to {"no-deps":"1.0.0","no-deps-bin":"1.0.0"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -221,9 +221,9 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (in
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but doesn't
-➤ YN0038: workspace-a must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but is set to \\"1.0.0\\" instead
-➤ YN0038: workspace-b must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but is set to \\"1.0.0\\" instead
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["no-deps"] set to "2.0.0", but doesn't
+➤ YN0038: workspace-a must have a field dependencies["no-deps"] set to "2.0.0", but is set to "1.0.0" instead
+➤ YN0038: workspace-b must have a field dependencies["no-deps"] set to "2.0.0", but is set to "1.0.0" instead
 ➤ YN0000: Failed with errors
 ",
 }
@@ -233,9 +233,9 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (mi
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
-➤ YN0037: workspace-a must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
-➤ YN0037: workspace-b must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
+➤ YN0037: workspace-a must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
+➤ YN0037: workspace-b must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -263,8 +263,8 @@ exports[`Commands constraints test (multiple workspaces / workspace_field w/ str
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: workspace-a must have a field _name set to \\"workspace-a\\", but doesn't
-➤ YN0037: workspace-b must have a field _name set to \\"workspace-b\\", but doesn't
+  "stdout": "➤ YN0037: workspace-a must have a field _name set to "workspace-a", but doesn't
+➤ YN0037: workspace-b must have a field _name set to "workspace-b", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -332,7 +332,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -342,7 +342,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\"}
+  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {"no-deps":"1.0.0"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -352,7 +352,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0038: root-workspace-0b6124 must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but is set to \\"1.0.0\\" instead
+  "stdout": "➤ YN0038: root-workspace-0b6124 must have a field dependencies["no-deps"] set to "2.0.0", but is set to "1.0.0" instead
 ➤ YN0000: Failed with errors
 ",
 }
@@ -362,7 +362,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -457,7 +457,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -476,7 +476,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["no-deps"] set to "2.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -486,7 +486,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -581,7 +581,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -591,7 +591,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {"no-deps":"1.0.0","no-deps-bin":"1.0.0"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -601,7 +601,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0038: root-workspace-0b6124 must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but is set to \\"1.0.0\\" instead
+  "stdout": "➤ YN0038: root-workspace-0b6124 must have a field dependencies["no-deps"] set to "2.0.0", but is set to "1.0.0" instead
 ➤ YN0000: Failed with errors
 ",
 }
@@ -611,7 +611,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -707,7 +707,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -717,7 +717,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {\\"no-deps\\":\\"1.0.0\\",\\"no-deps-bin\\":\\"1.0.0\\"}
+  "stdout": "➤ YN0039: root-workspace-0b6124 has an extraneous field dependencies set to {"no-deps":"1.0.0","no-deps-bin":"1.0.0"}
 ➤ YN0000: Failed with errors
 ",
 }
@@ -727,7 +727,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0038: root-workspace-0b6124 must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but is set to \\"1.0.0\\" instead
+  "stdout": "➤ YN0038: root-workspace-0b6124 must have a field dependencies["no-deps"] set to "2.0.0", but is set to "1.0.0" instead
 ➤ YN0000: Failed with errors
 ",
 }
@@ -737,7 +737,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: root-workspace-0b6124 must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -831,7 +831,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (am
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0053: foo must have a field dependencies[\\"a-new-dep\\"] set to conflicting values \\"1.0.0\\" or \\"2.0.0\\"
+  "stdout": "➤ YN0053: foo must have a field dependencies["a-new-dep"] set to conflicting values "1.0.0" or "2.0.0"
 ➤ YN0000: Failed with errors
 ",
 }
@@ -850,7 +850,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (in
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: foo must have a field dependencies[\\"no-deps\\"] set to \\"2.0.0\\", but doesn't
+  "stdout": "➤ YN0037: foo must have a field dependencies["no-deps"] set to "2.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -860,7 +860,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (mi
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: foo must have a field dependencies[\\"a-new-dep\\"] set to \\"1.0.0\\", but doesn't
+  "stdout": "➤ YN0037: foo must have a field dependencies["a-new-dep"] set to "1.0.0", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -870,7 +870,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: foo must have a field _files set to [\\"/a\\",\\"/b\\",\\"/c\\"], but doesn't
+  "stdout": "➤ YN0037: foo must have a field _files set to ["/a","/b","/c"], but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -880,7 +880,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: foo must have a field _repository set to {\\"type\\":\\"git\\",\\"url\\":\\"ssh://git@github.com/yarnpkg/berry.git\\",\\"directory\\":\\".\\"}, but doesn't
+  "stdout": "➤ YN0037: foo must have a field _repository set to {"type":"git","url":"ssh://git@github.com/yarnpkg/berry.git","directory":"."}, but doesn't
 ➤ YN0000: Failed with errors
 ",
 }
@@ -890,7 +890,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ str
 {
   "code": 1,
   "stderr": "",
-  "stdout": "➤ YN0037: foo must have a field _name set to \\"foo\\", but doesn't
+  "stdout": "➤ YN0037: foo must have a field _name set to "foo", but doesn't
 ➤ YN0000: Failed with errors
 ",
 }

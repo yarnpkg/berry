@@ -641,7 +641,7 @@ exports[`Commands constraints query test (various field types / workspace_field 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: FieldValue = '[\\"/a\\",\\"/b\\",\\"/c\\"]'
+  "stdout": "➤ YN0000: FieldValue = '["/a","/b","/c"]'
 ➤ YN0000: Done
 ",
 }
@@ -651,7 +651,7 @@ exports[`Commands constraints query test (various field types / workspace_field 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: FieldValue = '{\\"type\\":\\"git\\",\\"url\\":\\"ssh://git@github.com/yarnpkg/berry.git\\",\\"directory\\":\\".\\"}'
+  "stdout": "➤ YN0000: FieldValue = '{"type":"git","url":"ssh://git@github.com/yarnpkg/berry.git","directory":"."}'
 ➤ YN0000: Done
 ",
 }
