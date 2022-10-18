@@ -89,10 +89,10 @@ exports[`gitUtils should properly normalize ssh://git@github.com:yarnpkg/berry.g
 exports[`gitUtils should properly normalize ssh://git@github.com:yarnpkg/berry.git#v2.1.1 ({ git: true }) 1`] = `"git@github.com:yarnpkg/berry.git#v2.1.1"`;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "head",
     "request": "HEAD",
   },
@@ -100,10 +100,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit:hash 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "commit",
     "request": "hash",
   },
@@ -111,10 +111,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit=hash 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "commit",
     "request": "hash",
   },
@@ -122,12 +122,12 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#commit=hash&workspace=foo 1`] = `
-Object {
-  "extra": Object {
+{
+  "extra": {
     "workspace": "foo",
   },
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "commit",
     "request": "hash",
   },
@@ -135,10 +135,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#hash 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "hash",
   },
@@ -146,10 +146,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#tag=hello 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "tag",
     "request": "hello",
   },
@@ -157,12 +157,12 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo-bar.js#workspace=foo 1`] = `
-Object {
-  "extra": Object {
+{
+  "extra": {
     "workspace": "foo",
   },
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "head",
     "request": "HEAD",
   },
@@ -170,10 +170,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split GitHubOrg/foo2bar.js 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo2bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "head",
     "request": "HEAD",
   },
@@ -181,10 +181,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split git+https://github.com/yarnpkg/util-deprecate#v1.0.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v1.0.1",
   },
@@ -192,10 +192,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split git+https://github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v1.0.1",
   },
@@ -203,10 +203,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "git+ssh://git@github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v1.0.1",
   },
@@ -214,10 +214,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split git+ssh://git@github.com:yarnpkg/berry.git#v2.1.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "git+ssh://git@github.com:yarnpkg/berry.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v2.1.1",
   },
@@ -225,10 +225,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split git://github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "git://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v1.0.1",
   },
@@ -236,10 +236,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split github:GitHubOrg/foo-bar.js 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "head",
     "request": "HEAD",
   },
@@ -247,10 +247,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split github:GitHubOrg/foo-bar.js#hash 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/GitHubOrg/foo-bar.js.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "hash",
   },
@@ -258,10 +258,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "b3562c2798507869edb767da869cd7b85487726d",
   },
@@ -269,10 +269,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#master 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "master",
   },
@@ -280,10 +280,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#semver:v1.0.0 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": "semver",
     "request": "v1.0.0",
   },
@@ -291,10 +291,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate.git#v1.0.0 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v1.0.0",
   },
@@ -302,10 +302,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split https://github.com/yarnpkg/util-deprecate/tarball/b3562c2798507869edb767da869cd7b85487726d 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "https://github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "b3562c2798507869edb767da869cd7b85487726d",
   },
@@ -313,10 +313,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "ssh://git@github.com/yarnpkg/util-deprecate.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v1.0.1",
   },
@@ -324,10 +324,10 @@ Object {
 `;
 
 exports[`gitUtils should properly split ssh://git@github.com:yarnpkg/berry.git#v2.1.1 1`] = `
-Object {
-  "extra": Object {},
+{
+  "extra": {},
   "repo": "ssh://git@github.com:yarnpkg/berry.git",
-  "treeish": Object {
+  "treeish": {
     "protocol": null,
     "request": "v2.1.1",
   },
