@@ -8,6 +8,13 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
+## 3.2.5
+
+### Installs
+
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+
 ## 3.2.4
 
 ### Compatibility

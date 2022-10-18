@@ -347,6 +347,25 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should not create duplicate copies of aliased packages`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`no-deps2`]: `npm:no-deps@2.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).toBe(false);
+      },
+    ),
+  );
+
   test(`should not hoist package peer dependent on parent if conflict exists`,
     // . -> dep -> conflict@2 -> unhoistable --> conflict
     //   -> conflict@1
@@ -560,6 +579,27 @@ describe(`Node_Modules`, () => {
 
         expect(await xfs.existsPromise(`${path}/node_modules/ws1` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/ws2` as PortablePath)).toEqual(true);
+      },
+    ),
+  );
+
+  test(`should not create circular self-reference symlinks`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws/package.json`), {
+          name: `ws`,
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/ws/node_modules/ws` as PortablePath)).toEqual(false);
       },
     ),
   );
