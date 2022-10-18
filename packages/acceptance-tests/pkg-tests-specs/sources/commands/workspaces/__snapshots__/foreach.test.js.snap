@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands workspace foreach --since --recursive runs on workspaces changed and their dependents 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace A
@@ -16,7 +16,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach --since runs on no workspaces if there are no staged or unstaged changes on the default branch 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -25,7 +25,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach --since runs on no workspaces if there have been no changes 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -34,7 +34,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach --since runs on workspaces changed since branching from the default branch 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace B
@@ -49,7 +49,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach --since runs on workspaces changed since commit 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace B
@@ -64,7 +64,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach --since runs only on changed workspaces 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace A
@@ -74,7 +74,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach can run on public workspaces only 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace A
@@ -85,9 +85,9 @@ Object {
 `;
 
 exports[`Commands workspace foreach should execute 'node' command 1`] = `
-Object {
+{
   "code": 0,
-  "orderedStdout": Array [
+  "orderedStdout": [
     "➤ YN0000: workspace-c",
     "➤ YN0000: workspace-d",
     "➤ YN0000: workspace-e",
@@ -99,7 +99,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should handle global scripts getting downgraded to a normal script 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: root workspace
@@ -110,7 +110,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should include dependencies if using --recursive 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace A
@@ -122,7 +122,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should include dependencies of workspaces matching the from filter if using --from and --recursive 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace A
@@ -135,7 +135,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should never run the scripts on workspaces that match the --exclude list 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: [workspace-c]: Process started
@@ -163,7 +163,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should not fall into endless loop if foreach cmd is the same as lifecycle script name 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace A
@@ -179,7 +179,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should only run the scripts on workspaces that match the --include list 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: [workspace-a]: Process started
@@ -195,7 +195,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should prefix the output with run with --verbose 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: [workspace-a]: Process started
@@ -231,7 +231,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should run execute global scripts even on workspaces that don't declare them 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: One execution
@@ -248,7 +248,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Test Workspace C
@@ -262,7 +262,7 @@ Object {
 `;
 
 exports[`Commands workspace foreach should run scripts in parallel but following the topological order when run with --parallel --topological 1`] = `
-Array [
+[
   "C",
   "B",
   "D",
@@ -272,14 +272,14 @@ Array [
 `;
 
 exports[`Commands workspace foreach should run scripts in parallel but following the topological order when run with --parallel --topological 2`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
 }
 `;
 
 exports[`Commands workspace foreach should start all the processes at once when --jobs is unlimited 1`] = `
-Object {
+{
   "code": 0,
   "first7Lines": "➤ YN0000: [workspace-a]: Process started
 ➤ YN0000: [workspace-b]: Process started

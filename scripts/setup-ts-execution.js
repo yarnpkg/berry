@@ -13,8 +13,13 @@ if (!process.env.BABEL_CACHE_PATH)
 
 require(`@babel/register`)({
   root,
-  extensions: [`.tsx`, `.ts`],
+  extensions: [`.tsx`, `.ts`, `.js`],
   only: [
-    p => `/`,
+    p => {
+      if (p?.endsWith(`.js`))
+        return /packages(\\|\/)yarnpkg-pnp(\\|\/)sources(\\|\/)node/.test(p);
+
+      return true;
+    },
   ],
 });

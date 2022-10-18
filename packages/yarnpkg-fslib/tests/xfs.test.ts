@@ -26,7 +26,7 @@ describe(`xfs`, () => {
         return t;
       });
 
-      xfs.rmtempPromise();
+      await xfs.rmtempPromise();
 
       await expect(xfs.existsPromise(temp)).resolves.toBe(true);
       await expect(xfs.existsPromise(otherTemp)).resolves.toBe(true);
