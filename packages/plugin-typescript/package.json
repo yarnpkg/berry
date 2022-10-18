@@ -1,14 +1,18 @@
 {
   "name": "@yarnpkg/plugin-typescript",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.25",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-pack": "workspace:^",
     "algoliasearch": "^4.2.0",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
@@ -34,7 +38,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

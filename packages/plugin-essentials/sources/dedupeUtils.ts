@@ -158,7 +158,6 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
     fetcher,
     project,
     report: throwReport,
-    skipIntegrityCheck: true,
     cacheOptions: {
       skipIntegrityCheck: true,
     },
@@ -175,7 +174,7 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
     const dedupePromises = await algorithm(project, patterns, {resolver, resolveOptions, fetcher, fetchOptions});
 
     const progress = Report.progressViaCounter(dedupePromises.length);
-    report.reportProgress(progress);
+    await report.reportProgress(progress);
 
     let dedupedPackageCount = 0;
 

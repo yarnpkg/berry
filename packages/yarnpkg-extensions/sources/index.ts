@@ -893,9 +893,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       webpack: `>=4`,
     },
     peerDependenciesMeta: {
-      typescript: {
-        optional: true,
-      },
+      typescript: optionalPeerDep,
     },
   }],
   // https://github.com/asyncapi/asyncapi-react/pull/614
@@ -903,6 +901,48 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     peerDependencies: {
       react: `>=16.8.0`,
       'react-dom': `>=16.8.0`,
+    },
+  }],
+  // https://github.com/xojs/xo/pull/678
+  [`xo@*`, {
+    peerDependencies: {
+      webpack: `>=1.11.0`,
+    },
+    peerDependenciesMeta: {
+      webpack: optionalPeerDep,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`babel-plugin-remove-graphql-queries@<=4.20.0-next.0`, {
+    dependencies: {
+      '@babel/types': `^7.15.4`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`gatsby-plugin-page-creator@<=4.20.0-next.1`, {
+    dependencies: {
+      'fs-extra': `^10.1.0`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/36230
+  [`gatsby-plugin-utils@<=3.14.0-next.1`, {
+    dependencies: {
+      fastq: `^1.13.0`,
+    },
+    peerDependencies: {
+      graphql: `^15.0.0`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/33724
+  [`gatsby-plugin-mdx@<3.1.0-next.1`, {
+    dependencies: {
+      mkdirp: `^1.0.4`,
+    },
+  }],
+  // https://github.com/gatsbyjs/gatsby/pull/33170
+  [`gatsby-plugin-mdx@^2`, {
+    peerDependencies: {
+      gatsby: `^3.0.0-next`,
     },
   }],
 ];

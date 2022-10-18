@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/libui",
-  "version": "3.0.0-rc.13",
+  "version": "3.0.0-rc.25",
+  "stableVersion": "2.2.2",
   "license": "BSD-2-Clause",
   "sideEffects": false,
   "peerDependencies": {
@@ -18,7 +19,7 @@
     "directory": "packages/yarnpkg-libui"
   },
   "dependencies": {
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "scripts": {
     "postpack": "find sources -name '*.js' -delete",
@@ -26,6 +27,5 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "2.2.1"
+  }
 }

@@ -1,15 +1,19 @@
 {
   "name": "@yarnpkg/plugin-npm-cli",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.25",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
     "enquirer": "^2.3.6",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
-    "tslib": "^1.13.0",
+    "tslib": "^2.4.0",
     "typanion": "^3.3.0"
   },
   "peerDependencies": {
@@ -38,7 +42,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

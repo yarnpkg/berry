@@ -1,4 +1,4 @@
-const {createRequire, createRequireFromPath} = require(`module`);
+const {createRequire} = require(`module`);
 const path = require(`path`);
 const ts = require(`typescript`);
 
@@ -16,26 +16,26 @@ const compilerOptions = ts.parseJsonSourceFileConfigFileContent(
 const compilerHost = ts.createCompilerHost(compilerOptions);
 const program = ts.createProgram(compilerOptions.fileNames, compilerOptions, compilerHost);
 const moduleSpecifierResolutionHost = ts.createModuleSpecifierResolutionHost(program, compilerHost);
-const rootSourceFile = program.getSourceFile(require.resolve(`@yarnpkg/core/sources/Project.ts`));
+
+const yarnCorePkgDir = require.resolve(`@yarnpkg/core/package.json`).replace(`/package.json`, ``);
+const fslibPkgDir = require.resolve(`@yarnpkg/fslib/package.json`).replace(`/package.json`, ``);
+const libzipPkgDir = require.resolve(`@yarnpkg/libzip/package.json`).replace(`/package.json`, ``);
+const rootSourceFile = program.getSourceFile(require.resolve(`${yarnCorePkgDir}/sources/Project.ts`));
 
 const TESTS = [
-  [`@yarnpkg/core/sources/Configuration.ts`, `./Configuration`],
-  [`@yarnpkg/fslib/README.md`, `@yarnpkg/fslib/README.md`],
-  [`@yarnpkg/fslib/package.json`, `@yarnpkg/fslib/package.json`],
-  [`@yarnpkg/fslib/sources/ZipFS.ts`, `@yarnpkg/fslib/sources/ZipFS`],
-  [`@yarnpkg/fslib/sources/index.ts`, `@yarnpkg/fslib`],
+  [`${yarnCorePkgDir}/sources/Configuration.ts`, `./Configuration`],
+  [`${fslibPkgDir}/README.md`, `@yarnpkg/fslib/README.md`],
+  [`${fslibPkgDir}/package.json`, `@yarnpkg/fslib/package.json`],
+  [`${libzipPkgDir}/sources/ZipFS.ts`, `@yarnpkg/libzip/sources/ZipFS`],
+  [`${fslibPkgDir}/sources/index.ts`, `@yarnpkg/fslib`],
 ];
-
-const requireFactory = createRequire
-  ? createRequire
-  : createRequireFromPath;
 
 for (const [test, expected] of TESTS) {
   const actual = ts.moduleSpecifiers.getModuleSpecifier(
     compilerOptions,
     rootSourceFile,
     rootSourceFile.fileName,
-    requireFactory(rootSourceFile.fileName).resolve(test),
+    createRequire(rootSourceFile.fileName).resolve(test),
     moduleSpecifierResolutionHost,
   );
 

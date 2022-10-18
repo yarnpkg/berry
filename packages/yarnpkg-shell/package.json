@@ -1,9 +1,15 @@
 {
   "name": "@yarnpkg/shell",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.25",
+  "stableVersion": "3.2.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./cli": "./sources/boot-cli-dev.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
@@ -12,7 +18,7 @@
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
     "micromatch": "^4.0.2",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/cross-spawn": "6.0.0",
@@ -29,7 +35,11 @@
   "publishConfig": {
     "main": "./lib/index.js",
     "bin": "./lib/cli.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./cli": "./lib/cli.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
@@ -41,6 +51,5 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "3.2.0"
+  }
 }

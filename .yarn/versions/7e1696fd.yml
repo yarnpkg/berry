@@ -6,7 +6,6 @@ releases:
   "@yarnpkg/pnpify": patch
 
 declined:
-  - "@yarnpkg/esbuild-plugin-pnp"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
@@ -32,7 +31,6 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
   - "@yarnpkg/sdks"
   - "@yarnpkg/shell"

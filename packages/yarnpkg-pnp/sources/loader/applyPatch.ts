@@ -27,12 +27,20 @@ declare global {
   }
 }
 
+// https://github.com/nodejs/node/pull/44366
+const shouldReportRequiredModules = process.env.WATCH_REPORT_DEPENDENCIES;
+function reportModuleToWatchMode(filename: NativePath) {
+  if (shouldReportRequiredModules && process.send) {
+    process.send({'watch:require': npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename)))});
+  }
+}
+
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
-  const defaultCache: NodeJS.NodeRequireCache = {};
+  const defaultCache: NodeJS.Dict<NodeModule> = {};
 
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -41,7 +49,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   let enableNativeHooks = true;
 
-  // @ts-expect-error
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
   const moduleExports = require(`module`);
@@ -167,6 +174,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     const module = new Module(modulePath, parent ?? undefined) as PatchedModule;
     module.pnpApiPath = moduleApiPath;
+
+    reportModuleToWatchMode(modulePath);
 
     entry.cache[modulePath] = module;
 
@@ -440,7 +449,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // Since that doesn't provide any value we suppress the warning.
   const originalEmit = process.emit;
   // @ts-expect-error - TS complains about the return type of originalEmit.apply
-  process.emit = function (name, data, ...args) {
+  process.emit = function (name, data: any, ...args) {
     if (
       name === `warning` &&
       typeof data === `object` &&

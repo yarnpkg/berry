@@ -231,7 +231,6 @@ The following packages are generic and can be used in a variety of purposes (inc
 
 - [@yarnpkg/core](packages/yarnpkg-core) allows any application to manipulate a project programmatically.
 - [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.
-- [@yarnpkg/json-proxy](packages/yarnpkg-json-proxy) allows to temporarily convert any POD object to an immutable object.
 - [@yarnpkg/libzip](packages/yarnpkg-libzip) contains zlib+libzip bindings compiled to WebAssembly.
 - [@yarnpkg/nm](packages/yarnpkg-nm) contains the `node_modules` tree builder and hoister.
 - [@yarnpkg/parsers](packages/yarnpkg-parsers) can be used to parse the language used by [@yarnpkg/shell](packages/yarnpkg-shell).

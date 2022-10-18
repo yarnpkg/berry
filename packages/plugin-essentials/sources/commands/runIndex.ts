@@ -4,7 +4,7 @@ import {miscUtils}                            from '@yarnpkg/core';
 import {inspect}                              from 'util';
 
 // eslint-disable-next-line arca/no-default-export
-export default class RunCommand extends BaseCommand {
+export default class RunIndexCommand extends BaseCommand {
   static paths = [
     [`run`],
   ];

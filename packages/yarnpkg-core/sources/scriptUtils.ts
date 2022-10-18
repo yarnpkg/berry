@@ -1,25 +1,25 @@
-import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
-import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
-import {getLibzipPromise}                                     from '@yarnpkg/libzip';
-import {execute}                                              from '@yarnpkg/shell';
-import capitalize                                             from 'lodash/capitalize';
-import pLimit                                                 from 'p-limit';
-import {PassThrough, Readable, Writable}                      from 'stream';
+import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
+import {xfs, npath, ppath, toFilename}             from '@yarnpkg/fslib';
+import {ZipOpenFS}                                 from '@yarnpkg/libzip';
+import {execute}                                   from '@yarnpkg/shell';
+import capitalize                                  from 'lodash/capitalize';
+import pLimit                                      from 'p-limit';
+import {PassThrough, Readable, Writable}           from 'stream';
 
-import {Configuration}                                        from './Configuration';
-import {Manifest}                                             from './Manifest';
-import {MessageName}                                          from './MessageName';
-import {Project}                                              from './Project';
-import {ReportError, Report}                                  from './Report';
-import {StreamReport}                                         from './StreamReport';
-import {Workspace}                                            from './Workspace';
-import {YarnVersion}                                          from './YarnVersion';
-import * as execUtils                                         from './execUtils';
-import * as formatUtils                                       from './formatUtils';
-import * as miscUtils                                         from './miscUtils';
-import * as semverUtils                                       from './semverUtils';
-import * as structUtils                                       from './structUtils';
-import {LocatorHash, Locator}                                 from './types';
+import {Configuration}                             from './Configuration';
+import {Manifest}                                  from './Manifest';
+import {MessageName}                               from './MessageName';
+import {Project}                                   from './Project';
+import {ReportError, Report}                       from './Report';
+import {StreamReport}                              from './StreamReport';
+import {Workspace}                                 from './Workspace';
+import {YarnVersion}                               from './YarnVersion';
+import * as execUtils                              from './execUtils';
+import * as formatUtils                            from './formatUtils';
+import * as miscUtils                              from './miscUtils';
+import * as semverUtils                            from './semverUtils';
+import * as structUtils                            from './structUtils';
+import {LocatorHash, Locator}                      from './types';
 
 /**
  * @internal
@@ -134,7 +134,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
   ]);
 
   if (project) {
-    scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
+    scriptEnv.INIT_CWD = npath.cwd();
     scriptEnv.PROJECT_CWD = npath.fromPortablePath(project.cwd);
   }
 
@@ -250,10 +250,19 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               ? [`workspace`, workspace]
               : [];
 
+            // `set version` will update the Manifest to contain a `packageManager` field with the latest
+            // Yarn version which causes the results to change depending on when this command was run,
+            // therefore we revert any change made to it.
+            const manifestPath = ppath.join(cwd, Filename.manifest);
+            const manifestBuffer = await xfs.readFilePromise(manifestPath);
+
             // Makes sure that we'll be using Yarn 1.x
-            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const version = await execUtils.pipevp(process.execPath, [process.argv[1], `set`, `version`, `classic`, `--only-if-needed`, `--yarn-path`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (version.code !== 0)
               return version.code;
+
+            // Revert any changes made to the Manifest by `set version`.
+            await xfs.writeFilePromise(manifestPath, manifestBuffer);
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
             await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
@@ -423,8 +432,6 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     return manifest.scripts.has(scriptName);
-  }, {
-    libzip: await getLibzipPromise(),
   });
 }
 
@@ -536,8 +543,6 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
       cwd = packageLocation;
 
     return {manifest, binFolder, env, cwd};
-  }, {
-    libzip: await getLibzipPromise(),
   });
 }
 

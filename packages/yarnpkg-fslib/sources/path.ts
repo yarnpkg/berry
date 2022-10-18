@@ -28,6 +28,8 @@ export const Filename = {
    */
   pnpJs: `.pnp.js` as Filename,
   pnpCjs: `.pnp.cjs` as Filename,
+  pnpData: `.pnp.data.json` as Filename,
+  pnpEsmLoader: `.pnp.loader.mjs` as Filename,
   rc: `.yarnrc.yml` as Filename,
 };
 

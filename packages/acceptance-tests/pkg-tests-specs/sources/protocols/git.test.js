@@ -1,9 +1,9 @@
 const {
-  fs: {readFile},
   tests: {startPackageServer},
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
 const {execUtils, semverUtils} = require(`@yarnpkg/core`);
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -40,7 +40,7 @@ describe(`Protocols`, () => {
           async ({path, run, source}) => {
             await run(`install`);
 
-            const content = await readFile(`${path}/yarn.lock`, `utf8`);
+            const content = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
             const lock = parseSyml(content);
 
             const key = `util-deprecate@${url}`;
@@ -183,7 +183,6 @@ describe(`Protocols`, () => {
           await expect(source(`require('npm-has-prepack')`)).resolves.toEqual(42);
         },
       ),
-      45000,
     );
 
     test(
@@ -218,6 +217,46 @@ describe(`Protocols`, () => {
           } else {
             await expect(run(`install`)).rejects.toThrow(`Workspaces aren't supported by npm@${npmVersion}`);
           }
+        },
+      ),
+    );
+
+    test(
+      `it should not use Corepack to fetch Yarn Classic`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          // This checks that the `set version classic` part of `scriptUtils.prepareExternalProject` doesn't use Corepack.
+          // The rest of the install will fail though.
+          await expect(run(`install`, {
+            env: {
+              COREPACK_ROOT: npath.join(npath.fromPortablePath(path), `404`),
+              YARN_ENABLE_INLINE_BUILDS: `true`,
+            },
+          })).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`Saving the new release`),
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should not add a 'packageManager' field to a Yarn classic project`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toBeTruthy();
+
+          await expect(source(`require('yarn-1-project/package.json').packageManager`)).resolves.toBeUndefined();
         },
       ),
     );

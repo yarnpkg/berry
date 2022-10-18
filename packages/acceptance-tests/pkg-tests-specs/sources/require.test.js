@@ -1,8 +1,8 @@
-const {npath} = require(`@yarnpkg/fslib`);
+const {npath, xfs} = require(`@yarnpkg/fslib`);
 const {satisfies} = require(`semver`);
 
 const {
-  fs: {createTemporaryFolder, writeFile, writeJson},
+  fs: {writeFile, writeJson},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -120,7 +120,7 @@ describe(`Require tests`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      const tmp = await createTemporaryFolder();
+      const tmp = await xfs.mktempPromise();
 
       await writeFile(`${tmp}/folder/index.js`, `module.exports = 42;`);
 
@@ -133,7 +133,7 @@ describe(`Require tests`, () => {
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      const tmp = await createTemporaryFolder();
+      const tmp = await xfs.mktempPromise();
 
       await writeFile(`${tmp}/file.js`, `module.exports = 42;`);
 

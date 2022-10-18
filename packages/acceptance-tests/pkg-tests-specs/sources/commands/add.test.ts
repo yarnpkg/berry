@@ -331,6 +331,22 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should add a new peer dependency and a new development dependency to the current project when using --peer and --dev together`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await run(`add`, `no-deps`, `-D`, `-P`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+          devDependencies: {
+            [`no-deps`]: `^2.0.0`,
+          },
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should add a node-gyp dependency to the lockfile if a script uses it`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`add`, `inject-node-gyp`);

@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
@@ -149,10 +149,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
@@ -165,7 +165,7 @@ jobs:
         node ./scripts/run-yarn.js build:cli --no-minify
       shell: bash
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: yarn-artifacts
         path: |
@@ -178,7 +178,7 @@ jobs:
       if: |
         success() || failure()
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: vscode-zipfs
         path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix
@@ -187,58 +187,66 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node:
-        - 14
-        platform:
-        - ubuntu-latest
-        - windows-latest
-        - macos-latest
+        # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
+        node: [14, 16, 18]
+        platform: [ubuntu-latest]
+        shard: ['1/2', '2/2']
+        # We run the rest of the tests on the minimum Node version we support with 3 shards.
         include:
-          - node: 16
-            platform: ubuntu-latest
-          - node: 18
-            platform: ubuntu-latest
+          # Windows tests
+          - {node: 14, platform: windows-latest, shard: 1/3}
+          - {node: 14, platform: windows-latest, shard: 2/3}
+          - {node: 14, platform: windows-latest, shard: 3/3}
+          # macOS tests
+          - {node: 14, platform: macos-latest, shard: 1/3}
+          - {node: 14, platform: macos-latest, shard: 2/3}
+          - {node: 14, platform: macos-latest, shard: 3/3}
 
-    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x'
+    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
     needs: build
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: 'Use Node.js ${{matrix.node}}.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: ${{matrix.node}}.x
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: yarn-artifacts
         path: packages
 
     - name: 'Run the integration tests'
       run: |
-        node ./scripts/run-yarn.js test:integration --runInBand
+        node ./scripts/run-yarn.js test:integration --maxWorkers=100% --shard=${{matrix.shard}}
       shell: bash
 
     - name: 'Run the unit tests'
       run: |
-        node ./scripts/run-yarn.js test:unit
+        node ./scripts/run-yarn.js test:unit --maxWorkers=100% --shard=${{matrix.shard}}
       shell: bash
       if: |
         success() || failure()
 
   big-endian:
-    name: 'Big-endian debian w/ Node.js latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/4', '2/4', '3/4', '4/4']
+
+    name: 'Big-endian debian w/ Node.js latest (${{matrix.shard}})'
     runs-on: ubuntu-latest
     if: |
       github.ref == 'refs/heads/master'
     needs: build
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: yarn-artifacts
         path: packages
@@ -254,12 +262,12 @@ jobs:
 
     - name: 'Run the integration tests'
       run: |
-        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100%'
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:integration --maxWorkers=100% --shard=${{matrix.shard}}'
       shell: bash
 
     - name: 'Run the unit tests'
       run: |
-        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:unit --maxWorkers=100%'
+        docker run --rm --volume "$PWD:/berry" --env GITHUB_ACTIONS --env YARN_IGNORE_PATH=1 --workdir /berry s390x/node /bin/bash -c 'node ./packages/yarnpkg-cli/bundles/yarn.js test:unit --maxWorkers=100% --shard=${{matrix.shard}}'
       shell: bash
       if: |
         success() || failure()

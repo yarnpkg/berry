@@ -1,6 +1,5 @@
-import {PortablePath, xfs}     from '@yarnpkg/fslib';
-import {createTemporaryFolder} from 'pkg-tests-core/sources/utils/fs';
-import {yarn}                  from 'pkg-tests-core';
+import {PortablePath, xfs} from '@yarnpkg/fslib';
+import {yarn}              from 'pkg-tests-core';
 
 describe(`Features`, () => {
   describe(`initFields`, () => {
@@ -9,7 +8,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          const tmp = await createTemporaryFolder();
+          const tmp = await xfs.mktempPromise();
 
           await yarn.writeConfiguration(tmp, {
             initFields: {
@@ -36,7 +35,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          const tmp = await createTemporaryFolder();
+          const tmp = await xfs.mktempPromise();
 
           await yarn.writeConfiguration(tmp, {
             initFields: {
@@ -71,7 +70,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          const tmp = await createTemporaryFolder();
+          const tmp = await xfs.mktempPromise();
 
           await yarn.writeConfiguration(tmp, {
             initFields: {
@@ -98,7 +97,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          const tmp = await createTemporaryFolder();
+          const tmp = await xfs.mktempPromise();
 
           await yarn.writeConfiguration(tmp, {
             initFields: {

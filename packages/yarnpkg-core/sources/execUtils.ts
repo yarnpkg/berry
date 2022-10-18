@@ -1,12 +1,12 @@
-import {PortablePath, npath, ppath} from '@yarnpkg/fslib';
-import {ChildProcess}               from 'child_process';
-import crossSpawn                   from 'cross-spawn';
-import {Readable, Writable}         from 'stream';
+import {PortablePath, npath, ppath, BufferEncodingOrBuffer} from '@yarnpkg/fslib';
+import {ChildProcess}                                       from 'child_process';
+import crossSpawn                                           from 'cross-spawn';
+import {Readable, Writable}                                 from 'stream';
 
-import {Configuration}              from './Configuration';
-import {MessageName}                from './MessageName';
-import {Report, ReportError}        from './Report';
-import * as formatUtils             from './formatUtils';
+import {Configuration}                                      from './Configuration';
+import {MessageName}                                        from './MessageName';
+import {Report, ReportError}                                from './Report';
+import * as formatUtils                                     from './formatUtils';
 
 export enum EndStrategy {
   Never,
@@ -26,7 +26,7 @@ export type PipevpOptions = {
 
 export type PipeErrorOptions = {
   fileName: string;
-  code: number;
+  code: number | null;
   signal: NodeJS.Signals | null;
 };
 
@@ -151,7 +151,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
         process.off(`SIGTERM`, sigtermHandler);
       }
 
-      if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code > 0))
+      if (end === EndStrategy.Always || (end === EndStrategy.ErrorCode && code !== 0))
         closeStreams();
 
       if (code === 0 || !strict) {
@@ -166,7 +166,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
 export type ExecvpOptions = {
   cwd: PortablePath;
   env?: {[key: string]: string | undefined};
-  encoding?: string;
+  encoding?: BufferEncodingOrBuffer;
   strict?: boolean;
 };
 

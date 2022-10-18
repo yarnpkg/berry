@@ -4,6 +4,4 @@ This plugin adds support for the [`yarn stage`](https://yarnpkg.com/cli/stage) c
 
 ## Install
 
-```
-yarn plugin import stage
-```
+This plugin is included by default starting from Yarn 4.

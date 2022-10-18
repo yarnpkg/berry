@@ -550,7 +550,6 @@ describe(`Dragon tests`, () => {
   for (const [nodeLinker, shouldHaveAccessToTheSameInstance] of [
     [`pnp`, true],
     [`pnpm`, true],
-    [`node-modules`, false],
   ]) {
     test(`it should pass the dragon test 11 with "nodeLinker: ${nodeLinker}"`,
       makeTemporaryEnv(
@@ -580,9 +579,10 @@ describe(`Dragon tests`, () => {
           await expect(run(`install`)).resolves.toBeTruthy();
 
           // Make sure that both the root and dragon-test-11-b have access to the same instance.
-          // This is only possible with the PnP and pnpm linkers, because the node-modules linker
-          // can't fulfill the peer dependency promise. For the NM linker we test that it at least
-          // fulfills the require promise (installing dragon-test-11-a both under the aliased and original name).
+          // This is only possible with the PnP and pnpm linkers.
+          // The node-modules linker can't fullfil these requirements for aliased packages,
+          // without resorting to symlinks and a layout resembling pnpm for aliased dependencies,
+          // which will be too different from the classic node_modules layout for all the other dependencies.
           await expect(source(`
             (() => {
               const {createRequire} = require(\`module\`);

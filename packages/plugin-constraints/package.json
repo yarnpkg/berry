@@ -1,6 +1,7 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.25",
+  "stableVersion": "3.1.2",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
@@ -8,12 +9,16 @@
     "directory": "packages/plugin-constraints"
   },
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
     "lodash": "^4.17.15",
     "tau-prolog": "^0.2.66",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
@@ -31,13 +36,15 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
   ],
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "3.1.0"
+  }
 }

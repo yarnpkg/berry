@@ -140,7 +140,7 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
       const peerDescriptor = workspace.manifest.peerDependencies.get(ident.identHash);
 
       if (peerDescriptor !== undefined) {
-        getDescriptorEntry(peerDescriptor).locators.push(workspace.locator);
+        getDescriptorEntry(peerDescriptor).locators.push(workspace.anchoredLocator);
       }
     } else {
       const regularDescriptor = workspace.manifest.dependencies.get(ident.identHash);
@@ -148,15 +148,15 @@ export async function findProjectDescriptors(ident: Ident, {project, target}: {p
 
       if (target === Target.DEVELOPMENT) {
         if (developmentDescriptor !== undefined) {
-          getDescriptorEntry(developmentDescriptor).locators.push(workspace.locator);
+          getDescriptorEntry(developmentDescriptor).locators.push(workspace.anchoredLocator);
         } else if (regularDescriptor !== undefined) {
-          getDescriptorEntry(regularDescriptor).locators.push(workspace.locator);
+          getDescriptorEntry(regularDescriptor).locators.push(workspace.anchoredLocator);
         }
       } else {
         if (regularDescriptor !== undefined) {
-          getDescriptorEntry(regularDescriptor).locators.push(workspace.locator);
+          getDescriptorEntry(regularDescriptor).locators.push(workspace.anchoredLocator);
         } else if (developmentDescriptor !== undefined) {
-          getDescriptorEntry(developmentDescriptor).locators.push(workspace.locator);
+          getDescriptorEntry(developmentDescriptor).locators.push(workspace.anchoredLocator);
         }
       }
     }
@@ -369,7 +369,7 @@ export async function fetchDescriptorFrom(ident: Ident, range: string, {project,
   const fetcher = project.configuration.makeFetcher();
   const resolver = project.configuration.makeResolver();
 
-  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, cacheOptions: {skipIntegrityCheck: true}, skipIntegrityCheck: true};
+  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report, cacheOptions: {skipIntegrityCheck: true}};
   const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
 
   // The descriptor has to be bound for the resolvers that need a parent locator. (e.g. FileResolver)
