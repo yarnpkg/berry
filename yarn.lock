@@ -4616,6 +4616,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@monaco-editor/loader@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@monaco-editor/loader@npm:1.3.2"
+  dependencies:
+    state-local: "npm:^1.0.6"
+  peerDependencies:
+    monaco-editor: ">= 0.21.0 < 1"
+  checksum: 78674f4cdd4fbd5b99b9da76962b0319acd003b7883f3a0205164a22e097be7ff9f07f651242205f982917bc2e6071bbc8b48e8658b3de692dd0202a74a3ceb2
+  languageName: node
+  linkType: hard
+
+"@monaco-editor/react@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "@monaco-editor/react@npm:4.4.6"
+  dependencies:
+    "@monaco-editor/loader": "npm:^1.3.2"
+    prop-types: "npm:^15.7.2"
+  peerDependencies:
+    monaco-editor: ">= 0.25.0 < 1"
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 84fa6b7f0c1c4a5ca077dec29555af1a995a447642ca623bdc9d5fbd1f08d00f60f09160b7bc1d15bb8b2ba662c7f16faa7a14d71f4af41f03eda31231641edf
+  languageName: node
+  linkType: hard
+
 "@nicolo-ribaudo/chokidar-2@npm:2.1.8-no-fsevents.3":
   version: 2.1.8-no-fsevents.3
   resolution: "@nicolo-ribaudo/chokidar-2@npm:2.1.8-no-fsevents.3"
@@ -7122,6 +7147,7 @@ __metadata:
     "@docusaurus/theme-classic": "npm:^2.1.0"
     "@docusaurus/theme-common": "npm:^2.1.0"
     "@mdx-js/react": "npm:^1.6.22"
+    "@monaco-editor/react": "npm:^4.4.6"
     "@primer/octicons-react": "npm:^17.7.0"
     "@tsconfig/docusaurus": "npm:^1.0.5"
     "@types/markdown-it": "npm:^12.2.3"
@@ -7134,6 +7160,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     algoliasearch: "npm:^4.14.2"
     clsx: "npm:^1.2.1"
+    github-markdown-css: "npm:^5.1.0"
     js-untar: "npm:^2.0.0"
     markdown-it: "npm:^13.0.1"
     pako: "npm:^2.0.4"
@@ -15676,6 +15703,13 @@ __metadata:
   version: 0.0.0
   resolution: "github-from-package@npm:0.0.0"
   checksum: 5ef16dcb4ca336ddff2c479227ea252c808d785608f2851826d880e1c63c3e03855ffbf90f2f97f88a1858cba8c23e0687eba094da9b4f9fddde843bb7ca7502
+  languageName: node
+  linkType: hard
+
+"github-markdown-css@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "github-markdown-css@npm:5.1.0"
+  checksum: 4b5ebf631fff6eb76d451e2232d3a720cbb49e20d36651d63e1559c8ce1ffc52c7b40730c831ca8b603691c5d22e0031010fc59c898bbfc5ddb0a9432c5b81d8
   languageName: node
   linkType: hard
 
@@ -27161,6 +27195,13 @@ __metadata:
   version: 1.1.1
   resolution: "stackframe@npm:1.1.1"
   checksum: 52cc20c09624aa1513b071d78ed0fdc77b80d2d975e9731c5b1a19023094c0cc86e5761a562de6b673d7d055e3488e1d00e4cfc05bdd1b948d997922d9b74d0d
+  languageName: node
+  linkType: hard
+
+"state-local@npm:^1.0.6":
+  version: 1.0.7
+  resolution: "state-local@npm:1.0.7"
+  checksum: 9372e34b615f5dd062922ab0130b941606b6034c6cf74ed87dd64f1765bc12de1b9a1510ad2b0a70f0cea81e97b89556c9725eb85b4975fd042d62ff73d5838c
   languageName: node
   linkType: hard
 

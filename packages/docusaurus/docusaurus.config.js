@@ -55,6 +55,11 @@ const config = {
         disableSwitch: true,
         respectPrefersColorScheme: false,
       },
+      algolia: {
+        appId: `BH4D9OD16A`,
+        apiKey: `029f65f2c00301615fd14958b67d6730`,
+        indexName: `yarnpkg_next`,
+      },
       navbar: {
         title: `Yarn`,
         logo: {

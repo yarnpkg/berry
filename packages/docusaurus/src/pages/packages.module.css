@@ -1,5 +1,16 @@
 .searchContainer {
-  margin: calc(var(--ifm-spacing-horizontal) * 2) 60px var(--ifm-spacing-horizontal) 60px;
+  margin-top: calc(var(--ifm-spacing-horizontal) * 2);
+  margin-bottom: var(--ifm-spacing-horizontal);
+
+  margin-left: var(--ifm-spacing-horizontal);
+  margin-right: var(--ifm-spacing-horizontal);
+}
+
+@media (min-width: 996px) {
+  .searchContainer {
+    margin-left: 60px;
+    margin-right: 60px;
+  }
 }
 
 .search {
@@ -21,6 +32,14 @@
 }
 
 .result {
+  position: relative;
+}
+
+.resultLink {
+  display: block;
+
+  position: absolute;
+  inset: 0;
 }
 
 .resultAside {
@@ -34,6 +53,7 @@
 
 .resultBadges {
   display: flex;
+  flex: 1;
 
   padding: 15px;
 }
@@ -43,6 +63,9 @@
 }
 
 .resultTools {
+  position: relative;
+  z-index: 1;
+
   display: flex;
   align-items: stretch;
 
@@ -75,6 +98,8 @@
   margin-left: 5px;
 
   font-size: .8rem;
+
+  white-space: nowrap;
 }
 
 .badges {

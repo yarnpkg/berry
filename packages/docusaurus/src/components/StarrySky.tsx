@@ -5,7 +5,7 @@ import styles                     from './StarrySky.module.css';
 
 const r = 1000;
 const FACTOR = 4;
-const SPEED = .4;
+const SPEED = .2;
 
 // https://karthikkaranth.me/blog/generating-random-points-in-a-sphere/
 function getPoint() {
@@ -121,7 +121,7 @@ function installSky(canvas: HTMLCanvasElement) {
     aggregatedTime += Math.min(time - (lastTime ?? time), 1000 / 60);
     lastTime = time;
 
-    container.rotation.x = -(aggregatedTime / 1000) * Math.PI / 80 * SPEED;
+    container.rotation.x = (aggregatedTime / 1000) * Math.PI / 80 * SPEED;
     container.rotation.y = (aggregatedTime / 1000) * Math.PI / 80 * SPEED;
 
     if (resizeRendererToDisplaySize(renderer)) {

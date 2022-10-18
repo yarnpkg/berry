@@ -21,15 +21,15 @@ export default function Home(): JSX.Element {
       <HtmlClassNameProvider className={styles.html}>
         <main className={styles.main}>
           <div className={styles.reserve}>
-            <div className={styles.hero}>
+            <div className={styles.art}>
               <StarrySky/>
-              <div>
-                <h1>Safe, stable,<br />reproducible projects</h1>
-                <p>Yarn is a package manager that doubles down as project manager. Whether you work on simple projects or industry monorepos, whether you're an open source developer or an enterprise user, Yarn has your back.</p>
-                <button className={styles.search} autoFocus={true}>
-                  Search packages (i.e. babel, webpack, react, ...)
-                </button>
-              </div>
+            </div>
+            <div className={styles.hero}>
+              <h1>Safe, stable,<br />reproducible projects</h1>
+              <p>Yarn is a package manager that doubles down as project manager. Whether you work on simple projects or industry monorepos, whether you're an open source developer or an enterprise user, Yarn has your back.</p>
+              <Link className={styles.search} href={`/packages`}>
+                Search packages (i.e. babel, webpack, react, ...)
+              </Link>
             </div>
           </div>
           <div className={styles.followUp}>
