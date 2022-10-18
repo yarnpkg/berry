@@ -69,6 +69,7 @@ The following changes only affect people writing Yarn plugins:
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
 - The node-modules linker avoids creation of circular symlinks
 - The node-modules linker no longer creates duplicate copies inside of aliased packages
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
 ### Bugfixes
 
