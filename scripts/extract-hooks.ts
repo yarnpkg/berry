@@ -2,7 +2,6 @@ import {Cli, Command, Option, UsageError} from 'clipanion';
 import fs                                 from 'fs';
 import path                               from 'path';
 import ts                                 from 'typescript';
-
 async function parseFile(p: string) {
   const content = await fs.promises.readFile(p, `utf8`);
 
