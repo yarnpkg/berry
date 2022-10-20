@@ -1259,27 +1259,27 @@ describe(`Shell`, () => {
   describe(`Lists`, () => {
     it(`should execute lists with left associativity`, async () => {
       await expectResult(bufferResult(
-        `inexistent && echo yes || echo no`,
+        `false && echo yes || echo no`,
       ), {
         exitCode: 0,
         stdout: `no\n`,
-        stderr: `command not found: inexistent\n`,
+        stderr: ``,
       });
 
       await expectResult(bufferResult(
-        `inexistent || echo no && echo yes`,
+        `false || echo no && echo yes`,
       ), {
         exitCode: 0,
         stdout: `no\nyes\n`,
-        stderr: `command not found: inexistent\n`,
+        stderr: ``,
       });
 
       await expectResult(bufferResult(
-        `inexistent && echo yes || inexistent && echo yes || echo no`,
+        `false && echo yes || false && echo yes || echo no`,
       ), {
         exitCode: 0,
         stdout: `no\n`,
-        stderr: `command not found: inexistent\ncommand not found: inexistent\n`,
+        stderr: ``,
       });
     });
   });
