@@ -1282,8 +1282,6 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const nmFolderLinkModeSetting = project.configuration.get(`nmFolderLinkMode`);
   const nmFolderLinkMode = {value: nmFolderLinkModeSetting};
 
-  console.log(`FOLDER MODE: ${nmFolderLinkModeSetting}`);
-
   try {
     // For the first pass we'll only want to install a single copy for each
     // source directory. We'll later use the resulting install directories for
