@@ -679,7 +679,7 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath, nmFo
     } catch (e) {
     }
 
-    if (process.platform == `win32` && (!stats || stats.isDirectory())) {
+    if (!stats || stats.isDirectory()) {
       await xfs.symlinkPromise(srcPath, dstPath, `junction`);
       return;
     }
