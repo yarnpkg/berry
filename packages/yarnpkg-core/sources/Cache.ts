@@ -248,7 +248,7 @@ export class Cache {
 
       const result = await validateFile(cachePath, refetchPath);
       if (!result.isValid)
-        throw new Error(`Invariant, cache should always be valid when refetchPath is provided`);
+        throw new Error(`Assertion failed: Expected a valid checksum`);
 
       return result.hash;
     };
