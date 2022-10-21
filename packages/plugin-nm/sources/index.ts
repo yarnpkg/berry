@@ -49,7 +49,8 @@ const plugin: Plugin<Hooks> = {
       default: NodeModulesMode.HARDLINKS_LOCAL,
     },
     nmFolderLinkMode: {
-      description: `If set to "classic" (the default), when linking workspaces into "node_modules" directories, Yarn will use symlinks on Linux and MacOS, and Windows Junctions on Windows leading to potentional differences in behavior as Windows Junctions are always absolute. With "symlinks" Yarn will utilize symlinks on all platforms, allowing for relative links on Windows.`,
+      description: `If set to "classic" Yarn will use symlinks on Linux and MacOS and Windows "junctions" on Windows when linking workspaces into "node_modules" directories. This can result in inconsistent behavior on Windows because "junctions" are always absolute paths while "symlinks" may be relative. Set to "symlinks", Yarn will utilize symlinks on all platforms which enables links with relative paths paths on Windows.`,
+
       type: SettingsType.STRING,
       values: [
         NodeModulesFolderLinkMode.CLASSIC,
