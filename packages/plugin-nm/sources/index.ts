@@ -1,19 +1,21 @@
-import {Hooks, Plugin, SettingsType}        from '@yarnpkg/core';
-import {xfs}                                from '@yarnpkg/fslib';
-import {NodeModulesHoistingLimits}          from '@yarnpkg/nm';
+import {Hooks, Plugin, SettingsType}                                   from '@yarnpkg/core';
+import {xfs}                                                           from '@yarnpkg/fslib';
+import {NodeModulesHoistingLimits}                                     from '@yarnpkg/nm';
 
-import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
-import {getGlobalHardlinksStore}            from './NodeModulesLinker';
-import {PnpLooseLinker}                     from './PnpLooseLinker';
+import {NodeModulesLinker, NodeModulesMode, NodeModulesFolderLinkMode} from './NodeModulesLinker';
+import {getGlobalHardlinksStore}                                       from './NodeModulesLinker';
+import {PnpLooseLinker}                                                from './PnpLooseLinker';
 
 export {NodeModulesLinker};
 export {NodeModulesMode};
+export {NodeModulesFolderLinkMode};
 export {PnpLooseLinker};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;
     nmMode: NodeModulesMode;
+    nmFolderLinkMode: NodeModulesFolderLinkMode;
     nmSelfReferences: boolean;
   }
 }
@@ -45,6 +47,15 @@ const plugin: Plugin<Hooks> = {
         NodeModulesMode.HARDLINKS_GLOBAL,
       ],
       default: NodeModulesMode.HARDLINKS_LOCAL,
+    },
+    nmFolderLinkMode: {
+      description: `If set to "classic" (the default), when linking workspaces into "node_modules" directories, Yarn will use symlinks on Linux and MacOS, and Windows Junctions on Windows leading to potentional differences in behavior as Windows Junctions are always absolute. With "symlinks" Yarn will utilize symlinks on all platforms, allowing for relative links on Windows.`,
+      type: SettingsType.STRING,
+      values: [
+        NodeModulesFolderLinkMode.CLASSIC,
+        NodeModulesFolderLinkMode.SYMLINKS,
+      ],
+      default: NodeModulesFolderLinkMode.CLASSIC,
     },
     nmSelfReferences: {
       description: `If set to 'false' the workspace will not be allowed to require itself and corresponding self-referencing symlink will not be created`,
