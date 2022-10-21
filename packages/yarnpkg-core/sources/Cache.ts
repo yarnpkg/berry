@@ -227,7 +227,7 @@ export class Cache {
             return [false, expectedChecksum];
           default:
           case `throw`: {
-            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote2 archive doesn't match the expected checksum`);
+            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the expected checksum`);
           }
         }
       }
@@ -248,7 +248,7 @@ export class Cache {
 
       const result = await validateFile(cachePath, refetchPath);
       if (!result[0])
-        throw new Error(`Not expected`);
+        throw new Error(`Invariant, cache should always be valid when refetchPath is provided`);
 
       return result[1];
     };
@@ -343,9 +343,9 @@ export class Cache {
             if (this.check) {
               checksum = await validateFileAgainstRemote(cachePath);
             } else {
-              const mbChecksum = await validateFile(cachePath);
-              if (mbChecksum[0]) {
-                checksum = mbChecksum[1];
+              const maybeChecksum = await validateFile(cachePath);
+              if (maybeChecksum[0]) {
+                checksum = maybeChecksum[1];
               } else {
                 return loadPackage();
               }

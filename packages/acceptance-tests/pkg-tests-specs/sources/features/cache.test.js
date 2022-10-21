@@ -62,7 +62,7 @@ describe(`Cache`, () => {
 
 
   test(
-    `it should refetch archive when env is CI and the files checksum is incorrect`,
+    `it should refetch archive when YARN_CHECKSUM_BEHAVIOR=reset and the files checksum is incorrect`,
     makeTemporaryEnv({
       dependencies: {
         [`no-deps`]: `1.0.0`,
@@ -77,7 +77,7 @@ describe(`Cache`, () => {
 
       await run(`install`, {
         env: {
-          CI: true,
+          YARN_CHECKSUM_BEHAVIOR: 'reset',
         },
       });
 
