@@ -77,7 +77,7 @@ describe(`Cache`, () => {
 
       await run(`install`, {
         env: {
-          YARN_CHECKSUM_BEHAVIOR: 'reset',
+          YARN_CHECKSUM_BEHAVIOR: `reset`,
         },
       });
 
