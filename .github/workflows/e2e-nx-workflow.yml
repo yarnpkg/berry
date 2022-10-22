@@ -27,6 +27,10 @@ jobs:
 
         yarn dlx create-nx-workspace --name=my-nx --appName=frontend --preset=react --interactive=false --style=css --nxCloud=false && cd my-nx
 
+        # TODO: Remove when NX stops defaulting to node-modules
+        yarn config set nodeLinker pnp
+        yarn
+
         yarn nx lint frontend
         yarn nx test frontend
         yarn nx build frontend
