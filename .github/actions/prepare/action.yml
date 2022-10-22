@@ -29,7 +29,7 @@ runs:
     #region Cache workflow dependencies
     - name: Get global path
       id: global-path
-      run: echo "::set-output name=globalFolder::$(YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js config get globalFolder)"
+      run: echo "globalFolder=$(YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js config get globalFolder)" >> $GITHUB_OUTPUT
       shell: bash
 
     - uses: actions/cache@v3
