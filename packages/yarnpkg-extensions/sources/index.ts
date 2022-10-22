@@ -956,4 +956,14 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       picomatch: optionalPeerDep,
     },
   }],
+  // https://github.com/leonardfactory/babel-plugin-transform-typescript-metadata/pull/61
+  [`babel-plugin-transform-typescript-metadata@<=0.3.2`, {
+    peerDependencies: {
+      "@babel/core": `^7`,
+      "@babel/traverse": `^7`,
+    },
+    peerDependenciesMeta: {
+      "@babel/traverse": optionalPeerDep,
+    },
+  }],
 ];
