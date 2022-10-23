@@ -783,7 +783,7 @@ type DirEntry = {
   symlinkTo: PortablePath;
 };
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, nmFolderLinkMode: {value: NodeModulesFolderLinkMode}, packageChecksum: string | null}) => {
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, nmFolderLinkMode: NodeModulesFolderLinkMode, packageChecksum: string | null}) => {
   await xfs.mkdirPromise(dstDir, {recursive: true});
 
   const getEntriesRecursive = async (relativePath: PortablePath = PortablePath.dot): Promise<Map<PortablePath, DirEntry>> => {
@@ -846,7 +846,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
         mtimesChanged = true;
       }
     } else if (entry.kind === DirEntryKind.SYMLINK) {
-      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath, nmFolderLinkMode.value);
+      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath, nmFolderLinkMode);
     }
   }
 
@@ -1061,12 +1061,12 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Array<Promise<void>> = [];
-  const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode},  nmFolderLinkMode: {value: NodeModulesFolderLinkMode}, packageChecksum: string | null}) => {
+  const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode},  nmFolderLinkMode: NodeModulesFolderLinkMode, packageChecksum: string | null}) => {
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
-          await symlinkPromise(ppath.resolve(srcDir), dstDir, nmFolderLinkMode.value);
+          await symlinkPromise(ppath.resolve(srcDir), dstDir, nmFolderLinkMode);
         } else {
           await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum});
         }
@@ -1279,8 +1279,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const reportedProgress = report.reportProgress(progress);
   const nmModeSetting = project.configuration.get(`nmMode`);
   const nmMode = {value: nmModeSetting};
-  const nmFolderLinkModeSetting = project.configuration.get(`nmFolderLinkMode`);
-  const nmFolderLinkMode = {value: nmFolderLinkModeSetting};
+  const nmFolderLinkMode = project.configuration.get(`nmFolderLinkMode`);
 
   try {
     // For the first pass we'll only want to install a single copy for each
@@ -1319,7 +1318,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
-    await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, nmFolderLinkModeSetting);
+    await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, nmFolderLinkMode);
 
     await writeInstallState(project, installState, binSymlinks, nmMode, {installChangedByUser});
 
