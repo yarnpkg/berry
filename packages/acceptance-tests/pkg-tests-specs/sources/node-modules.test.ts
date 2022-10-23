@@ -1883,7 +1883,7 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform !== `win32`,
-    `'nmFolderLinkMode: classic' not-on WIndows should use symlinks in node_modules directories`,
+    `'nmFolderLinkMode: classic' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
@@ -1899,7 +1899,7 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const ws1 = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules`));
+        const ws1 = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/ws1`));
 
         expect(ws1.isSymbolicLink()).toBeTruthy();
       },
@@ -1907,7 +1907,7 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform !== `win32`,
-    `'nmFolderLinkMode: symlinks' not-on WIndows should use symlinks in node_modules directories`,
+    `'nmFolderLinkMode: symlinks' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
@@ -1923,7 +1923,7 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const ws1 = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules`));
+        const ws1 = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/ws1`));
 
         expect(ws1.isSymbolicLink()).toBeTruthy();
       },
