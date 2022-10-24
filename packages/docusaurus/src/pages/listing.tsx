@@ -372,7 +372,7 @@ function PackageInfoPage() {
   }, [name, version, searchNoFileString]);
 
   const file = filePath
-    ? packageInfo?.filesDict.get(filePath) ?? null
+    ? packageInfo?.filesDict.get(filePath.toLowerCase()) ?? null
     : null;
 
   const children = file

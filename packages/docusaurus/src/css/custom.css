@@ -130,10 +130,6 @@ body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) .navbar__link--active::befo
   padding: 0.5rem;
 }
 
-body[x-doc-route^="/configuration/"] article {
-  padding-right: 1.5rem;
-}
-
 body[x-doc-route^="/configuration/"] .col {
   max-width: 100% !important;
 }
