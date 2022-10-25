@@ -151,13 +151,8 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
     return depends;
   };
 
-  for (const workspace of sortedWorkspaces) {
-    const pkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
-    if (!pkg)
-      throw new Error(`Assertion failed: The package should have been registered`);
-
-    markAllDependents(pkg);
-  }
+  for (const workspace of sortedWorkspaces)
+    markAllDependents(workspace.anchoredPackage);
 
   const printed: Set<LocatorHash> = new Set();
 
@@ -209,13 +204,8 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
     }
   };
 
-  for (const workspace of sortedWorkspaces) {
-    const pkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
-    if (!pkg)
-      throw new Error(`Assertion failed: The package should have been registered`);
-
-    printAllDependents(pkg, rootChildren, null);
-  }
+  for (const workspace of sortedWorkspaces)
+    printAllDependents(workspace.anchoredPackage, rootChildren, null);
 
   return root;
 }

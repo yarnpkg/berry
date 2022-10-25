@@ -400,8 +400,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   if (!verbose)
     return null;
 
-  const ident = structUtils.convertToIdent(workspace.locator);
-  const name = structUtils.stringifyIdent(ident);
+  const name = structUtils.stringifyIdent(workspace.locator);
 
   const prefix = `[${name}]:`;
 

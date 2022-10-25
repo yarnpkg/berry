@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands npm whoami it should print the npm registry username for a given scope 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: bar-user
@@ -11,7 +11,7 @@ Object {
 `;
 
 exports[`Commands npm whoami it should print the npm registry username when config has a valid npmAuthIdent 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: foo-user
@@ -21,7 +21,7 @@ Object {
 `;
 
 exports[`Commands npm whoami it should print the npm registry username when config has a valid npmAuthToken 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: foo-user

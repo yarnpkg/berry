@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
@@ -149,10 +149,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
@@ -165,7 +165,7 @@ jobs:
         node ./scripts/run-yarn.js build:cli --no-minify
       shell: bash
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: yarn-artifacts
         path: |
@@ -178,7 +178,7 @@ jobs:
       if: |
         success() || failure()
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: vscode-zipfs
         path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix
@@ -188,7 +188,7 @@ jobs:
       fail-fast: false
       matrix:
         # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
         platform: [ubuntu-latest]
         shard: ['1/2', '2/2']
         # We run the rest of the tests on the minimum Node version we support with 3 shards.
@@ -207,14 +207,14 @@ jobs:
     needs: build
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
     - name: 'Use Node.js ${{matrix.node}}.x'
-      uses: actions/setup-node@master
+      uses: actions/setup-node@v3
       with:
         node-version: ${{matrix.node}}.x
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: yarn-artifacts
         path: packages
@@ -244,9 +244,9 @@ jobs:
     needs: build
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: yarn-artifacts
         path: packages

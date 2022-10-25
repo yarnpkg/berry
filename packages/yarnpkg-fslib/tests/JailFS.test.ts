@@ -19,7 +19,7 @@ describe(`JailFS`, () => {
     await xfs.mkdirPromise(jailedFolder);
 
     const jailFs = new JailFS(jailedFolder);
-    jailFs.writeFilePromise(ppath.join(PortablePath.root, `text.txt` as Filename), `Hello World`);
+    await jailFs.writeFilePromise(ppath.join(PortablePath.root, `text.txt` as Filename), `Hello World`);
   });
 
   it(`should throw an error when the accessed path is not inside the target folder`, async () => {

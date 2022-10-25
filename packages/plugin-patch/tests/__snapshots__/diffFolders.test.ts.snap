@@ -12,23 +12,23 @@ index 0000000000000000000000000000000000000000..257cc5642cb1a054f08cc83f2d943e56
 `;
 
 exports[`diffFolders Makes and parses diff for 'create' 2`] = `
-Array [
-  Object {
+[
+  {
     "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
-    "hunk": Object {
-      "header": Object {
-        "original": Object {
+    "hunk": {
+      "header": {
+        "original": {
           "length": 0,
           "start": 1,
         },
-        "patched": Object {
+        "patched": {
           "length": 1,
           "start": 1,
         },
       },
-      "parts": Array [
-        Object {
-          "lines": Array [
+      "parts": [
+        {
+          "lines": [
             "foo",
           ],
           "noNewlineAtEndOfFile": false,
@@ -56,23 +56,23 @@ index 257cc5642cb1a054f08cc83f2d943e56fd3ebe99..00000000000000000000000000000000
 `;
 
 exports[`diffFolders Makes and parses diff for 'remove' 2`] = `
-Array [
-  Object {
+[
+  {
     "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
-    "hunk": Object {
-      "header": Object {
-        "original": Object {
+    "hunk": {
+      "header": {
+        "original": {
           "length": 1,
           "start": 1,
         },
-        "patched": Object {
+        "patched": {
           "length": 0,
           "start": 1,
         },
       },
-      "parts": Array [
-        Object {
-          "lines": Array [
+      "parts": [
+        {
+          "lines": [
             "foo",
           ],
           "noNewlineAtEndOfFile": false,
@@ -107,23 +107,23 @@ index 257cc5642cb1a054f08cc83f2d943e56fd3ebe99..00000000000000000000000000000000
 `;
 
 exports[`diffFolders Makes and parses diff for 'rename' 2`] = `
-Array [
-  Object {
+[
+  {
     "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
-    "hunk": Object {
-      "header": Object {
-        "original": Object {
+    "hunk": {
+      "header": {
+        "original": {
           "length": 0,
           "start": 1,
         },
-        "patched": Object {
+        "patched": {
           "length": 1,
           "start": 1,
         },
       },
-      "parts": Array [
-        Object {
-          "lines": Array [
+      "parts": [
+        {
+          "lines": [
             "foo",
           ],
           "noNewlineAtEndOfFile": false,
@@ -136,22 +136,22 @@ Array [
     "semverExclusivity": null,
     "type": "file creation",
   },
-  Object {
+  {
     "hash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
-    "hunk": Object {
-      "header": Object {
-        "original": Object {
+    "hunk": {
+      "header": {
+        "original": {
           "length": 1,
           "start": 1,
         },
-        "patched": Object {
+        "patched": {
           "length": 0,
           "start": 1,
         },
       },
-      "parts": Array [
-        Object {
-          "lines": Array [
+      "parts": [
+        {
+          "lines": [
             "foo",
           ],
           "noNewlineAtEndOfFile": false,
@@ -179,32 +179,32 @@ index 257cc5642cb1a054f08cc83f2d943e56fd3ebe99..5716ca5987cbf97d6bb54920bea6adde
 `;
 
 exports[`diffFolders Makes and parses diff for 'update' 2`] = `
-Array [
-  Object {
+[
+  {
     "afterHash": "5716ca5987cbf97d6bb54920bea6adde242d87e6",
     "beforeHash": "257cc5642cb1a054f08cc83f2d943e56fd3ebe99",
-    "hunks": Array [
-      Object {
-        "header": Object {
-          "original": Object {
+    "hunks": [
+      {
+        "header": {
+          "original": {
             "length": 1,
             "start": 1,
           },
-          "patched": Object {
+          "patched": {
             "length": 1,
             "start": 1,
           },
         },
-        "parts": Array [
-          Object {
-            "lines": Array [
+        "parts": [
+          {
+            "lines": [
               "foo",
             ],
             "noNewlineAtEndOfFile": false,
             "type": "deletion",
           },
-          Object {
-            "lines": Array [
+          {
+            "lines": [
               "bar",
             ],
             "noNewlineAtEndOfFile": false,

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands constraints query test (empty project / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -10,7 +10,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -21,7 +21,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -30,7 +30,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -39,7 +39,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
@@ -49,7 +49,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -61,7 +61,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -70,7 +70,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -79,7 +79,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (empty project / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -88,7 +88,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
@@ -121,7 +121,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -132,7 +132,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceCwd = 'packages/workspace-a'
@@ -142,7 +142,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceCwd = 'packages/workspace-b'
@@ -152,7 +152,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
@@ -164,7 +164,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -176,7 +176,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -185,7 +185,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -194,7 +194,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (multiple workspaces / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -203,7 +203,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
@@ -215,7 +215,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -226,7 +226,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -235,7 +235,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -244,7 +244,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
@@ -254,7 +254,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -266,7 +266,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -275,7 +275,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -284,7 +284,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (one regular dependency / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -293,7 +293,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ DependencyType  = devDependencies
@@ -308,7 +308,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -319,7 +319,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -328,7 +328,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -337,7 +337,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
@@ -347,7 +347,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -359,7 +359,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -368,7 +368,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -377,7 +377,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two development dependencies / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -386,7 +386,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
@@ -401,7 +401,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -412,7 +412,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -421,7 +421,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -430,7 +430,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
@@ -440,7 +440,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -452,7 +452,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -461,7 +461,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -470,7 +470,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -479,7 +479,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ DependencyType  = dependencies
@@ -500,7 +500,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -511,7 +511,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -520,7 +520,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -529,7 +529,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'
@@ -539,7 +539,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -551,7 +551,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -560,7 +560,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -569,7 +569,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (two regular dependencies, two development dependencies / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -578,7 +578,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / combined predicates) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -587,7 +587,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / custom predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = devDependencies
@@ -598,7 +598,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / filter w/ workspace_field_test/3) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -607,7 +607,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / filter w/ workspace_field_test/4) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Done
@@ -616,7 +616,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / single predicate with ignored variable) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = foo
@@ -626,7 +626,7 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / single predicate) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: DependencyType = dependencies
@@ -638,27 +638,27 @@ Object {
 `;
 
 exports[`Commands constraints query test (various field types / workspace_field w/ array FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: FieldValue = '[\\"/a\\",\\"/b\\",\\"/c\\"]'
+  "stdout": "➤ YN0000: FieldValue = '["/a","/b","/c"]'
 ➤ YN0000: Done
 ",
 }
 `;
 
 exports[`Commands constraints query test (various field types / workspace_field w/ object FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: FieldValue = '{\\"type\\":\\"git\\",\\"url\\":\\"ssh://git@github.com/yarnpkg/berry.git\\",\\"directory\\":\\".\\"}'
+  "stdout": "➤ YN0000: FieldValue = '{"type":"git","url":"ssh://git@github.com/yarnpkg/berry.git","directory":"."}'
 ➤ YN0000: Done
 ",
 }
 `;
 
 exports[`Commands constraints query test (various field types / workspace_field w/ string FieldValue) 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: FieldValue = foo
@@ -668,7 +668,7 @@ Object {
 `;
 
 exports[`Commands constraints query test with a syntax error 1`] = `
-Object {
+{
   "code": 1,
   "stderr": "",
   "stdout": "➤ YN0043: Syntax error: . or operator expected at line 1, column 3
@@ -678,7 +678,7 @@ Object {
 `;
 
 exports[`Commands constraints query test with an empty predicate 1`] = `
-Object {
+{
   "code": 1,
   "stderr": "",
   "stdout": "➤ YN0043: Syntax error: argument expected at line 1, column 11
@@ -688,7 +688,7 @@ Object {
 `;
 
 exports[`Commands constraints query test with an unknown predicate 1`] = `
-Object {
+{
   "code": 1,
   "stderr": "",
   "stdout": "➤ YN0044: Existence error: procedure hello_word/1 not found (in top_level/0)
@@ -698,7 +698,7 @@ Object {
 `;
 
 exports[`Commands constraints query test without trailing . 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: WorkspaceName = 'root-workspace-0b6124'

@@ -7,9 +7,7 @@
 
 ## Install
 
-```bash
-yarn plugin import typescript
-```
+This plugin is included by default starting from Yarn 4.
 
 ## Example
 

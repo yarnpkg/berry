@@ -84,7 +84,7 @@ function getTransitiveDevDependencies(project: Project, workspace: Workspace, {a
 
   // Map workspace dependencies to descriptor hashes, filtered by the top-level production and development dependencies
   const workspaceDependencies = workspaces
-    .map(workspace => [...workspace.dependencies.values()])
+    .map(workspace => [...workspace.anchoredPackage.dependencies.values()])
     .flat();
 
   const productionRoots = workspaceDependencies

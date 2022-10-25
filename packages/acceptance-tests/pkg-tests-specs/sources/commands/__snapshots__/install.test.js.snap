@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands install displays validation issues of nested workspaces 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Project validation
@@ -19,7 +19,7 @@ Object {
 `;
 
 exports[`Commands install it should fetch only required packages when using \`--mode=update-lockfile\` 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Resolution step
@@ -67,7 +67,7 @@ exports[`Commands install it should skip build scripts when using --mode=skip-bu
 `;
 
 exports[`Commands install reports warning if published binary field is a path but no package name is set 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Project validation
@@ -85,7 +85,7 @@ Object {
 `;
 
 exports[`Commands install should not build virtual workspaces 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: ┌ Resolution step

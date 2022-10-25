@@ -1,5 +1,5 @@
 import {WorkspaceRequiredError, BaseCommand} from '@yarnpkg/cli';
-import {Configuration, Project, Workspace}   from '@yarnpkg/core';
+import {Configuration, Project}              from '@yarnpkg/core';
 import {structUtils}                         from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}  from 'clipanion';
 
@@ -39,10 +39,7 @@ export default class WorkspaceCommand extends BaseCommand {
     const candidates = project.workspaces;
     const candidatesByName = new Map(
       candidates.map(
-        (workspace): [string, Workspace] => {
-          const ident = structUtils.convertToIdent(workspace.locator);
-          return [structUtils.stringifyIdent(ident), workspace];
-        },
+        workspace => [structUtils.stringifyIdent(workspace.locator), workspace],
       ),
     );
 

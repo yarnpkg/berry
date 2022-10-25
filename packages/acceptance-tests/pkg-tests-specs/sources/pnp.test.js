@@ -1096,7 +1096,7 @@ describe(`Plug'n'Play`, () => {
 
             await run2(`install`);
 
-            expect(xfs.readFilePromise(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await xfs.readFilePromise(`${path}/.pnp.cjs`, `utf8`));
+            await expect(xfs.readFilePromise(`${path2}/.pnp.cjs`, `utf8`)).resolves.toEqual(await xfs.readFilePromise(`${path}/.pnp.cjs`, `utf8`));
           },
         )();
       },

@@ -55,7 +55,7 @@
     "checksumBehavior": {
       "_package": "@yarnpkg/core",
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
-      "enum": ["throw", "update", "ignore"],
+      "enum": ["throw", "update", "ignore", "reset"],
       "default": "throw"
     },
     "cloneConcurrency": {
@@ -401,6 +401,13 @@
       "type": "string",
       "enum": ["workspaces", "dependencies", "none"],
       "default": "none"
+    },
+    "nmFolderLinkMode": {
+      "_package": "@yarnpkg/plugin-nm",
+      "description": "If set to `classic` Yarn will use symlinks on Linux and MacOS and Windows `junctions` on Windows when linking workspaces into `node_modules` directories. This can result in inconsistent behavior on Windows because `junctions` are always absolute paths while `symlinks` may be relative. Set to `symlinks`, Yarn will utilize symlinks on all platforms which enables links with relative paths paths on Windows.",
+      "type": "string",
+      "enum": ["classic", "symlinks"],
+      "default": "classic"
     },
     "nmSelfReferences": {
       "_package": "@yarnpkg/plugin-nm",

@@ -21,6 +21,7 @@ import InfoCommand                                              from './commands
 import YarnCommand                                              from './commands/install';
 import LinkCommand                                              from './commands/link';
 import NodeCommand                                              from './commands/node';
+import PluginCheckCommand                                       from './commands/plugin/check';
 import PluginImportSourcesCommand                               from './commands/plugin/import/sources';
 import PluginImportCommand                                      from './commands/plugin/import';
 import PluginListCommand                                        from './commands/plugin/list';
@@ -61,6 +62,7 @@ export {YarnCommand};
 export {LinkCommand};
 export {NodeCommand};
 export {PluginImportSourcesCommand};
+export {PluginCheckCommand};
 export {PluginImportCommand};
 export {PluginListCommand};
 export {PluginRemoveCommand};
@@ -192,6 +194,7 @@ const plugin: Plugin = {
     LinkCommand,
     UnlinkCommand,
     NodeCommand,
+    PluginCheckCommand,
     PluginImportSourcesCommand,
     PluginImportCommand,
     PluginRemoveCommand,

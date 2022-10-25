@@ -12,7 +12,17 @@ const ifNotWin32It = isNotWin32
   ? it
   : it.skip;
 
-const bufferResult = async (command: string, args: Array<string> = [], options: Partial<UserOptions> & {tty?: boolean} = {}) => {
+type Result = {
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+};
+
+const expectResult = async (promise: Promise<any>, {exitCode = 0, stdout = ``, stderr = ``}: Partial<Result>) => {
+  return await expect(promise).resolves.toMatchObject({exitCode, stdout, stderr});
+};
+
+const bufferResult = async (command: string, args: Array<string> = [], options: Partial<UserOptions> & {tty?: boolean} = {}): Promise<Result> => {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
 
@@ -94,254 +104,258 @@ describe(`Shell`, () => {
       };
 
       it(`should support an empty string`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           ``,
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
       });
 
       it(`should support a whitespace-only string`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           ` `,
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `\t`,
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `  \t   \t   \t  `,
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
       });
 
       it(`should support an empty string when passing arguments`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           ``,
           [`hello`, `world`],
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
       });
 
       it(`should support a whitespace-only string when passing arguments`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           ` `,
           [`hello`, `world`],
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `\t`,
           [`hello`, `world`],
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `  \t   \t   \t  `,
           [`hello`, `world`],
-        )).resolves.toMatchObject(EMPTY_COMMAND_RESULT);
+        ), EMPTY_COMMAND_RESULT);
       });
     });
 
     it(`should support the ":" builtin`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `:`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: ``,
       });
     });
 
     it(`should execute a regular command`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo hello`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `hello\n`,
       });
     });
 
     it(`should support empty string as argument`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `node -pe "process.argv[2]" "" 1`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `1\n`,
       });
     });
 
     it(`should exit with an exit code 0 when everything looks fine`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo hello`,
-      )).resolves.toMatchObject({
+      ), {
+        stdout: `hello\n`,
         exitCode: 0,
       });
     });
 
     ifNotWin32It(`should throw an error when a command doesn't exist`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `this-command-doesnt-exist-sorry`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 127,
         stderr: `command not found: this-command-doesnt-exist-sorry\n`,
       });
     });
 
     it(`should forward the specified exit code when running exit`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `exit 1`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 1,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `exit 42`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 42,
       });
     });
 
     it(`should shortcut the right branch of a '||' when the left branch succeeds`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `true || echo failed`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: ``,
       });
     });
 
     it(`should shortcut the right branch of a '&&' when the left branch fails`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false && echo failed`,
-      )).resolves.toMatchObject({
+      ), {
+        exitCode: 1,
         stdout: ``,
       });
     });
 
     it(`should execute the right branch of a '||' when the left branch fails`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false || echo succeeds`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `succeeds\n`,
       });
     });
 
     it(`should execute the right branch of a '&&' when the left branch succeeds`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `true && echo succeeds`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `succeeds\n`,
       });
     });
 
     it(`should execute both branches regardless of their exit status when using ';'`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo foo; echo bar`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `foo\nbar\n`,
       });
     });
 
     it(`should immediately stop the execution when calling 'exit'`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo hello; exit 1; echo world`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 1,
         stdout: `hello\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo hello && exit 0 && echo world`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `hello\n`,
       });
     });
 
     it(`should execute a subshell when using grouping parentheses (within '||', shortcutted)`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `true || (echo hello; echo world)`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: ``,
       });
     });
 
     it(`should execute a subshell when using grouping parentheses (within '||')`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false || (echo hello; echo world)`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `hello\nworld\n`,
       });
     });
 
     it(`should execute a subshell when using grouping parentheses (within '&&', shortcutted)`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false && (echo hello; echo world)`,
-      )).resolves.toMatchObject({
+      ), {
+        exitCode: 1,
         stdout: ``,
       });
     });
 
     it(`should execute a subshell when using grouping parentheses (within '&&')`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `true && (echo hello; echo world)`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `hello\nworld\n`,
       });
     });
 
     it(`should allow subshells to access the $? from the parent shell`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false; (echo $?)`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `1\n`,
       });
     });
 
     it(`should execute a group when using grouping curly braces (within '||', shortcutted)`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `true || {echo hello; echo world}`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: ``,
       });
     });
 
     it(`should execute a group when using grouping curly braces (within '||')`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false || {echo hello; echo world}`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `hello\nworld\n`,
       });
     });
 
     it(`should execute a group when using grouping curly braces (within '&&', shortcutted)`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false && {echo hello; echo world}`,
-      )).resolves.toMatchObject({
+      ), {
+        exitCode: 1,
         stdout: ``,
       });
     });
 
     it(`should execute a group when using grouping curly braces (within '&&')`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `true && {echo hello; echo world}`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `hello\nworld\n`,
       });
     });
 
     it(`should allow groups to access the $? from the current shell`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `false; {echo $?}`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `1\n`,
       });
     });
 
     it(`should interpolate subshells with the proper split`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(echo foo)bar`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `foobar\n`,
       });
     });
 
     it(`should interpolate subshells with the proper split`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(echo 'foo      bar')bar`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `foo barbar\n`,
       });
     });
@@ -350,9 +364,9 @@ describe(`Shell`, () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file` as Filename);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `(echo "hello world") > "${file}"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: ``,
         });
 
@@ -364,9 +378,9 @@ describe(`Shell`, () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file` as Filename);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `(echo "hello world"; echo "goodbye world") > "${file}"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: ``,
         });
 
@@ -378,9 +392,9 @@ describe(`Shell`, () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file` as Filename);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `{echo "hello world"} > "${file}"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: ``,
         });
 
@@ -392,9 +406,9 @@ describe(`Shell`, () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file` as Filename);
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `{echo "hello world"; echo "goodbye world"} > "${file}"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: ``,
         });
 
@@ -403,17 +417,18 @@ describe(`Shell`, () => {
     });
 
     it(`shouldn't allow subshells to mutate the state of the parent shell`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `(FOO=hello); echo $FOO`,
-      )).resolves.toMatchObject({
+      ), {
+        exitCode: 1,
         stderr: `Unbound variable "FOO"\n`,
       });
     });
 
     it(`should allow groups to mutate the state of the current shell`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `{FOO=hello}; echo $FOO`,
-      )).resolves.toMatchObject({
+      ), {
         stdout: `hello\n`,
       });
     });
@@ -422,72 +437,72 @@ describe(`Shell`, () => {
   describe(`Variables`, () => {
     describe(`Built-in variables`, () => {
       it(`should expose the previous exit code via $?`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `true; echo $?`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `0\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `false; echo $?`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `1\n`,
         });
       });
 
       it(`should expose the number of arguments via $#`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $#`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `0\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $#`,
           [`hello`, `world`],
-        )).resolves.toMatchObject({
+        ), {
           stdout: `2\n`,
         });
       });
 
       it(`should expose individual arguments via $0, $1, ..., $n`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $0`,
           [`hello`, `world`],
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $1`,
           [`hello`, `world`],
-        )).resolves.toMatchObject({
+        ), {
           stdout: `world\n`,
         });
       });
 
       it(`should support argument spread via $@`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `node -p 'JSON.stringify(process.argv.slice(1))' "$@"`,
           [`hello`, `world`],
-        )).resolves.toMatchObject({
+        ), {
           stdout: `["hello","world"]\n`,
         });
       });
 
       it(`should expose the shell pid via $$`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $$`,
-        )).resolves.toMatchObject({
+        ), {
           // The shell runs in the same process as the tests
           stdout: `${process.pid}\n`,
         });
       });
 
       it(`should expose the shell ppid via $PPID`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $PPID`,
-        )).resolves.toMatchObject({
+        ), {
           // The shell runs in the same process as the tests
           stdout: `${process.ppid}\n`,
         });
@@ -525,41 +540,41 @@ describe(`Shell`, () => {
       });
 
       it(`should split variables when referenced outside of quotes`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `FOO="hello world"; echo-arguments $FOO`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `"hello"\n"world"\n`,
         });
       });
 
       it(`shouldn't turn empty variables into arguments when referenced outside of quotes`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `FOO=""; echo-arguments $FOO`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: ``,
         });
       });
 
       it(`should keep variables unified when referenced within double quotes`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `FOO="hello   world"; echo-arguments "$FOO"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `"hello   world"\n`,
         });
       });
 
       it(`should ignore variables when referenced within single quotes`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `FOO="hello   world"; echo-arguments '$FOO'`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `"$FOO"\n`,
         });
       });
 
       it(`should turn empty variables into an empty argument when referenced within double quotes`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `FOO=""; echo-arguments "$FOO"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `""\n`,
         });
       });
@@ -568,56 +583,58 @@ describe(`Shell`, () => {
     describe(`Setting variables`, () => {
       describe(`Assignment prefix`, () => {
         it(`should set environment variables`, async () => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `PORT=1234 node -e 'process.stdout.write(process.env.PORT)'`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `1234`,
           });
         });
 
         it(`should support setting multiple environment variables`, async () => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `HOST="localhost" PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `localhost:1234`,
           });
         });
 
         it(`should support setting environment variables with shell interpolation`, async () => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `HOST="local"$(echo $0) PORT=1234 node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
             [`host`],
-          )).resolves.toMatchObject({
+          ), {
             stdout: `localhost:1234`,
           });
         });
 
         it(`should clear an env variable if value is omitted`, async () => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `HOST="localhost" PORT=1234 HOST= node -e 'process.stdout.write(process.env.HOST + ":" + process.env.PORT)'`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `:1234`,
           });
         });
 
         it(`env assignment prefix syntax shouldn't persist it to the environment`, async () => {
-          await expect(bufferResult([
+          await expectResult(bufferResult([
             `FOO=1`,
             `FOO=2 echo hello`,
             `echo $FOO`,
-          ].join(` ; `))).resolves.toMatchObject({
+          ].join(` ; `)), {
             stdout: `hello\n1\n`,
           });
 
-          await expect(bufferResult([
+          await expectResult(bufferResult([
             `FOO=1`,
             `FOO=2 echo hello`,
             `node -e 'process.stdout.write(process.env.FOO)'`,
-          ].join(` ; `))).resolves.toMatchObject({
+          ].join(` ; `)), {
             stdout: `hello\n1`,
           });
 
-          await expect(bufferResult(`FOO=2 echo hello ; echo $FOO`)).resolves.toMatchObject({
+          await expectResult(bufferResult(`FOO=2 echo hello ; echo $FOO`), {
+            exitCode: 1,
+            stdout: `hello\n`,
             stderr: `Unbound variable "FOO"\n`,
           });
         });
@@ -625,30 +642,30 @@ describe(`Shell`, () => {
 
       describe(`Assignment without command`, () => {
         it(`should support setting env variable without command`, async () => {
-          await expect(bufferResult([
+          await expectResult(bufferResult([
             `FOO=1`,
             `FOO=2`,
             `node -e 'process.stdout.write(process.env.FOO)'`,
-          ].join(` ; `))).resolves.toMatchObject({
+          ].join(` ; `)), {
             stdout: `2`,
           });
         });
 
         it(`should support multiple env assignment without command`, async () => {
-          await expect(bufferResult([
+          await expectResult(bufferResult([
             `FOO=1 BAR=2`,
             `echo hello`,
             `echo $BAR`,
-          ].join(` ; `))).resolves.toMatchObject({
+          ].join(` ; `)), {
             stdout: `hello\n2\n`,
           });
         });
 
         it(`should evaluate variables once before starting execution`, async () => {
-          await expect(bufferResult([
+          await expectResult(bufferResult([
             `FOO=1`,
             `FOO=2 echo $FOO`,
-          ].join(` ; `))).resolves.toMatchObject({
+          ].join(` ; `)), {
             stdout: `1\n`,
           });
         });
@@ -657,79 +674,85 @@ describe(`Shell`, () => {
 
     describe(`Using variables`, () => {
       it(`should support using environment variables`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo $FOOBAR`,
           [],
           {env: {FOOBAR: `hello world`}},
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
       });
 
       it(`should support default arguments via \${ARG:-...}`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "\${DOESNT_EXIST:-hello world}"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
       });
 
       it(`should support default arguments via \${N:-...}`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "\${1:-hello world}"`,
           [],
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
       });
 
       it(`should support empty default arguments`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "foo\${DOESNT_EXIST:-}bar"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `foobar\n`,
         });
       });
 
       it(`should support alternative arguments via \${ARG:+...}`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
           [],
           {env: {FOOBAR: `goodbye world`}},
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
-        )).resolves.toMatchObject({
-          stdout: ``,
+        ), {
+          stdout: `\n`,
         });
       });
 
       it(`should support alternative arguments via \${N:+...}`, async () => {
-        await expect(bufferResult(
-          `echo "\${1:+hello world}"`,
-        )).resolves.toMatchObject({
+        await expectResult(bufferResult(
+          `echo "\${0:+hello world}"`, [`goodbye world`],
+        ), {
           stdout: `hello world\n`,
+        });
+
+        await expectResult(bufferResult(
+          `echo "\${0:+hello world}"`,
+        ), {
+          stdout: `\n`,
         });
       });
 
       it(`should support alternative default arguments`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "foo\${FOOBAR:+}bar"`,
           [],
           {env: {FOOBAR: `goodbye world`}},
-        )).resolves.toMatchObject({
+        ), {
           stdout: `foobar\n`,
         });
       });
 
       describe(`Errors`, () => {
         it(`should throw recoverable errors on unbound variables`, async () => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo $INEXISTENT && echo OK || echo KO`,
-          )).resolves.toMatchObject({
+          ), {
             exitCode: 0,
             stdout: `KO\n`,
             stderr: `Unbound variable "INEXISTENT"\n`,
@@ -737,9 +760,9 @@ describe(`Shell`, () => {
         });
 
         it(`should throw recoverable errors on unbound arguments`, async () => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo $42 && echo OK || echo KO`,
-          )).resolves.toMatchObject({
+          ), {
             exitCode: 0,
             stdout: `KO\n`,
             stderr: `Unbound argument #42\n`,
@@ -756,9 +779,9 @@ describe(`Shell`, () => {
           const file = ppath.join(tmpDir, `file` as Filename);
           await xfs.writeFilePromise(file, `hello world\n`);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `cat < "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `hello world\n`,
           });
         });
@@ -769,9 +792,9 @@ describe(`Shell`, () => {
           const file = ppath.join(tmpDir, `file` as Filename);
           await xfs.writeFilePromise(file, `hello world\n`);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `cat 0< "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `hello world\n`,
           });
         });
@@ -785,9 +808,9 @@ describe(`Shell`, () => {
           const file2 = ppath.join(tmpDir, `file2` as Filename);
           await xfs.writeFilePromise(file2, `hello world\n`);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `cat < "${file1}" < "${file2}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `foo bar baz\nhello world\n`,
           });
         });
@@ -815,17 +838,17 @@ describe(`Shell`, () => {
 
     describe(`<<<`, () => {
       it(`should support input redirections (string)`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `cat <<< "hello world"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
       });
 
       it(`should support input redirections to fd (string)`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `cat 0<<< "hello world"`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
       });
@@ -852,9 +875,9 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" > "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: ``,
           });
 
@@ -866,9 +889,9 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" > "${file}"; echo foo`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `foo\n`,
           });
 
@@ -878,9 +901,9 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" > "${file}" && echo foo`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `foo\n`,
           });
 
@@ -893,9 +916,9 @@ describe(`Shell`, () => {
           const file1 = ppath.join(tmpDir, `file1` as Filename);
           const file2 = ppath.join(tmpDir, `file2` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" > "${file1}" | echo "foo bar" > "${file2}"; echo test`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `test\n`,
           });
 
@@ -906,9 +929,9 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" > "${file}" && echo foo`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `foo\n`,
           });
 
@@ -920,9 +943,9 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `node -e "console.log(\`foo\`), console.error(\`bar\`)" 1> "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stderr: `bar\n`,
           });
 
@@ -934,9 +957,9 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `node -e "console.log(\`foo\`), console.error(\`bar\`)" 2> "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `foo\n`,
           });
 
@@ -949,9 +972,9 @@ describe(`Shell`, () => {
           const file1 = ppath.join(tmpDir, `file1` as Filename);
           const file2 = ppath.join(tmpDir, `file2` as Filename);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" > "${file1}" > "${file2}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: ``,
           });
 
@@ -989,9 +1012,9 @@ describe(`Shell`, () => {
           const file = ppath.join(tmpDir, `file` as Filename);
           await xfs.writeFilePromise(file, `foo bar baz\n`);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" >> "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: ``,
           });
 
@@ -1004,9 +1027,9 @@ describe(`Shell`, () => {
           const file = ppath.join(tmpDir, `file` as Filename);
           await xfs.writeFilePromise(file, `foo bar baz\n`);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `node -e "console.log(\`foo\`), console.error(\`bar\`)" 1>> "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stderr: `bar\n`,
           });
 
@@ -1019,9 +1042,9 @@ describe(`Shell`, () => {
           const file = ppath.join(tmpDir, `file` as Filename);
           await xfs.writeFilePromise(file, `foo bar baz\n`);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `node -e "console.log(\`foo\`), console.error(\`bar\`)" 2>> "${file}"`,
-          )).resolves.toMatchObject({
+          ), {
             stdout: `foo\n`,
           });
 
@@ -1046,51 +1069,51 @@ describe(`Shell`, () => {
 
     describe(`>&`, () => {
       it(`should support implicit stdout redirections (file descriptor)`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "hello world" >& 1`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "hello world" >& 2`,
-        )).resolves.toMatchObject({
+        ), {
           stderr: `hello world\n`,
         });
       });
 
       it(`should support stdout redirections (file descriptor)`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "hello world" 1>& 1`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "hello world" 1>& 2`,
-        )).resolves.toMatchObject({
+        ), {
           stderr: `hello world\n`,
         });
       });
 
       it(`should support stderr redirections (file descriptor)`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `node -e "console.error(\`hello world\`)" 2>& 1`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
         });
 
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `node -e "console.error(\`hello world\`)" 2>& 2`,
-        )).resolves.toMatchObject({
+        ), {
           stderr: `hello world\n`,
         });
       });
 
       it(`should support multiple stdout redirections (file descriptor)`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `echo "hello world" >& 1 >& 2`,
-        )).resolves.toMatchObject({
+        ), {
           stdout: `hello world\n`,
           stderr: `hello world\n`,
         });
@@ -1112,11 +1135,11 @@ describe(`Shell`, () => {
 
       it(`should throw recoverable errors when a bad file descriptor is encountered`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo "hello world" >& 42 && echo OK || echo KO`,
             [],
             {cwd: tmpDir},
-          )).resolves.toMatchObject({
+          ), {
             exitCode: 0,
             stdout: `KO\n`,
             stderr: `Bad file descriptor: "42"\n`,
@@ -1129,87 +1152,88 @@ describe(`Shell`, () => {
   describe(`Pipelines`, () => {
     describe(`|`, () => {
       it(`should pipe the result of a command into another (two commands, builtin into native)`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `echo hello world`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `HELLO WORLD\n`,
         });
       });
 
       it(`should pipe the result of a command into another (two commands, native into pipe)`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `node -e 'process.stdout.write("abcdefgh\\n");'`,
           `test-builtin`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `aceg\n`,
         });
       });
 
       it(`should pipe the result of a command into another (three commands)`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `echo hello world`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
         });
       });
 
       it(`should pipe the result of a command into another (no builtins)`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `node -e 'process.stdout.write("hello world\\n")'`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().toUpperCase()))'`,
           `node -e 'process.stdin.on("data", data => process.stdout.write(data.toString().replace(/./g, $0 => \`{\${$0}}\`)))'`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `{H}{E}{L}{L}{O}{ }{W}{O}{R}{L}{D}\n`,
         });
       });
 
       it(`should pipe the result of a command into another (only builtins)`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `echo abcdefghijkl`,
           `test-builtin`,
           `test-builtin`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `aei\n`,
         });
       });
 
       it(`should pipe the stdout of a command into another`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `node -e 'process.stdout.write("Hello World");'`,
           `echo-stdin`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `Hello World\n`,
         });
       });
 
       it(`shouldn't pipe the stderr of a command into another`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `node -e 'process.stderr.write("Hello World");'`,
           `echo-stdin`,
-        ].join(` | `))).resolves.toMatchObject({
+        ].join(` | `)), {
           stdout: `\n`,
+          stderr: `Hello World`,
         });
       });
     });
 
     describe(`|&`, () => {
       it(`should pipe the stdout of a command into another`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `node -e 'process.stdout.write("Hello World");'`,
           `echo-stdin`,
-        ].join(` |& `))).resolves.toMatchObject({
+        ].join(` |& `)), {
           stdout: `Hello World\n`,
         });
       });
 
       it(`should pipe the stderr of a command into another`, async () => {
-        await expect(bufferResult([
+        await expectResult(bufferResult([
           `node -e 'process.stderr.write("Hello World");'`,
           `echo-stdin`,
-        ].join(` |& `))).resolves.toMatchObject({
+        ].join(` |& `)), {
           stdout: `Hello World\n`,
         });
       });
@@ -1217,7 +1241,7 @@ describe(`Shell`, () => {
 
     describe(`>`, () => {
       it(`should support redirecting to /dev/null`, async () => {
-        await expect(bufferResult(`(echo foo > /dev/null) && echo bar`)).resolves.toMatchObject({
+        await expectResult(bufferResult(`(echo foo > /dev/null) && echo bar`), {
           stdout: `bar\n`,
         });
       });
@@ -1225,7 +1249,7 @@ describe(`Shell`, () => {
 
     describe(`>>`, () => {
       it(`should support redirecting to /dev/null`, async () => {
-        await expect(bufferResult(`(echo foo >> /dev/null) && echo bar`)).resolves.toMatchObject({
+        await expectResult(bufferResult(`(echo foo >> /dev/null) && echo bar`), {
           stdout: `bar\n`,
         });
       });
@@ -1234,25 +1258,28 @@ describe(`Shell`, () => {
 
   describe(`Lists`, () => {
     it(`should execute lists with left associativity`, async () => {
-      await expect(bufferResult(
-        `inexistent && echo yes || echo no`,
-      )).resolves.toMatchObject({
+      await expectResult(bufferResult(
+        `false && echo yes || echo no`,
+      ), {
         exitCode: 0,
         stdout: `no\n`,
+        stderr: ``,
       });
 
-      await expect(bufferResult(
-        `inexistent || echo no && echo yes`,
-      )).resolves.toMatchObject({
+      await expectResult(bufferResult(
+        `false || echo no && echo yes`,
+      ), {
         exitCode: 0,
         stdout: `no\nyes\n`,
+        stderr: ``,
       });
 
-      await expect(bufferResult(
-        `inexistent && echo yes || inexistent && echo yes || echo no`,
-      )).resolves.toMatchObject({
+      await expectResult(bufferResult(
+        `false && echo yes || false && echo yes || echo no`,
+      ), {
         exitCode: 0,
         stdout: `no\n`,
+        stderr: ``,
       });
     });
   });
@@ -1266,19 +1293,19 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo *`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a.txt b.txt c.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo *.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a.txt b.txt c.txt\n`,
             });
           });
@@ -1292,19 +1319,19 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `foo/b.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `foo/bar/c.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo **`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a.txt foo foo/b.txt foo/bar foo/bar/c.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo **/*.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a.txt foo/b.txt foo/bar/c.txt\n`,
             });
           });
@@ -1317,27 +1344,27 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `axxa.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `a.txtx` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo a?.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `ax.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo a??a.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `axxa.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo a.txt?`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a.txtx\n`,
             });
           });
@@ -1353,35 +1380,35 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `foo.cs` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo a[23].txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a2.txt a3.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo foo.[jt]s`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `foo.js foo.ts\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo foo.[!jt]s`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `foo.cs\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo foo.[^jt]s`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `foo.cs\n`,
             });
           });
@@ -1393,27 +1420,27 @@ describe(`Shell`, () => {
 
         //   it(`should support glob patterns with escape characters`, async () => {
         //     await xfs.mktempPromise(async tmpDir => {
-        //       await expect(bufferResult(
+        //       await expectResult(bufferResult(
         //         `echo a\\*b.txt`,
         //         [],
         //         {cwd: tmpDir}
-        //       )).resolves.toMatchObject({
+        //       ), {
         //         stdout: `a*b.txt\n`,
         //       });
 
-        //       await expect(bufferResult(
+        //       await expectResult(bufferResult(
         //         `echo a\\?b.txt`,
         //         [],
         //         {cwd: tmpDir}
-        //       )).resolves.toMatchObject({
+        //       ), {
         //         stdout: `a?b.txt\n`,
         //       });
 
-        //       await expect(bufferResult(
+        //       await expectResult(bufferResult(
         //         `echo a\\{c,d}b.txt`,
         //         [],
         //         {cwd: tmpDir}
-        //       )).resolves.toMatchObject({
+        //       ), {
         //         stdout: `a{c,d}b.txt\n`,
         //       });
         //     });
@@ -1432,67 +1459,67 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:alnum:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `123.txt BAR.txt abc.txt foo.txt foo123.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:alpha:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `BAR.txt abc.txt foo.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:ascii:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `&434)hello.txt 123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:digit:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `123.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:lower:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `abc.txt foo.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:upper:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `BAR.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:word:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `123.txt BAR.txt abc.txt foo.txt foo123.txt hello_world123.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([[:xdigit:]]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `123.txt abc.txt\n`,
             });
           });
@@ -1505,43 +1532,43 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `fooo.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo f@(o).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `fo.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo f*(o).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `f.txt fo.txt foo.txt fooo.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo f+(o).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `fo.txt foo.txt fooo.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo f?(o).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `f.txt fo.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo f!(o).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `f.txt\n`,
             });
           });
@@ -1566,27 +1593,27 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `ade.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `aef.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo {a,b}.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `a.txt b.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo {cb,ft}{ax,st}{bc,wy}.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `cbaxbc.txt cbstbc.txt ftaxwy.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo a{bc,{cd,{de,ef}}}.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `abc.txt acd.txt ade.txt aef.txt\n`,
             });
           });
@@ -1600,27 +1627,27 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `0123456789.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz0123456789.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([a-d]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `abcd.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([1-5]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `12345.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo +([a-d])+([x-z])+([0-9]).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `abcdxyz0123456789.txt\n`,
             });
           });
@@ -1639,19 +1666,19 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `fooya1.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `fooyb1.txt` as Filename), ``);
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo (ab|xy)(12|89).txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `ab12.txt xy89.txt\n`,
             });
 
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo foo(x!(a)|y!(b))1.txt`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               stdout: `foox1.txt fooxb1.txt fooy1.txt fooya1.txt\n`,
             });
           });
@@ -1663,11 +1690,11 @@ describe(`Shell`, () => {
       describe(`Errors`, () => {
         it(`should throw recoverable errors when no matches are found`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo * && echo OK || echo KO`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               exitCode: 0,
               stdout: `KO\n`,
               stderr: `No matches found: "*"\n`,
@@ -1677,11 +1704,11 @@ describe(`Shell`, () => {
 
         it(`should include a brace expansion notice when no matches are found for a brace expansion pattern`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo {foo,bar}`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               exitCode: 1,
               stdout: ``,
               stderr: expect.stringContaining(`Note: Brace expansion of arbitrary strings isn't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/22`),
@@ -1691,11 +1718,11 @@ describe(`Shell`, () => {
 
         it(`should not include a brace expansion notice when no matches are found for a non-brace expansion pattern`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await expect(bufferResult(
+            await expectResult(bufferResult(
               `echo *`,
               [],
               {cwd: tmpDir},
-            )).resolves.toMatchObject({
+            ), {
               exitCode: 1,
               stdout: ``,
               stderr: expect.not.stringContaining(`Note: Brace expansion of arbitrary strings isn't currently supported. For more details, please read this issue: https://github.com/yarnpkg/berry/issues/22`),
@@ -1713,11 +1740,11 @@ describe(`Shell`, () => {
           await xfs.mkdirPromise(ppath.join(tmpDir, `d` as Filename));
           await xfs.mkdirPromise(ppath.join(tmpDir, `e` as Filename));
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo *`,
             [],
             {cwd: tmpDir},
-          )).resolves.toMatchObject({
+          ), {
             stdout: `a.txt b.txt c.txt d e\n`,
           });
         });
@@ -1734,19 +1761,19 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo $DIRNAME/*`,
             [],
             {cwd: tmpDir, env: {DIRNAME: `subdir`}},
-          )).resolves.toMatchObject({
+          ), {
             stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
           });
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo \${DIRNAME}/*`,
             [],
             {cwd: tmpDir, env: {DIRNAME: `subdir`}},
-          )).resolves.toMatchObject({
+          ), {
             stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
           });
         });
@@ -1761,11 +1788,11 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo $(echo subdir)/*`,
             [],
             {cwd: tmpDir, env: {DIRNAME: `subdir`}},
-          )).resolves.toMatchObject({
+          ), {
             stdout: `subdir/a.txt subdir/b.txt subdir/c.txt\n`,
           });
         });
@@ -1780,11 +1807,11 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
           await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `echo $(( 1000 + 234 ))/*`,
             [],
             {cwd: tmpDir},
-          )).resolves.toMatchObject({
+          ), {
             stdout: `1234/a.txt 1234/b.txt 1234/c.txt\n`,
           });
         });
@@ -1794,23 +1821,23 @@ describe(`Shell`, () => {
 
   describe(`Calculations`, () => {
     it(`should support integers`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 1 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `1\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 134 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `134\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 5693 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `5693\n`,
       });
@@ -1821,78 +1848,78 @@ describe(`Shell`, () => {
     });
 
     it(`should support operations`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 1 + 2 -4 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `-1\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 134 / 3 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `44\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( -134 / 3 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `-44\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 4 * (2 + 3) * 5 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `100\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 4 * 2 + 3 * 5 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `23\n`,
       });
     });
 
-    it(`should has left associativity`, async () => {
-      await expect(bufferResult(
+    it(`should have left associativity`, async () => {
+      await expectResult(bufferResult(
         `echo $(( 7 - 2 - 3 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `2\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 32 / 4 / 8 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `1\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( 32 + 64 * 2 / 4 / 8 - 9 ))`,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `27\n`,
       });
     });
 
     it(`should support arguments`, async () => {
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( $0 + 2 ))`,
         [`3`],
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `5\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( $0 / $1 ))`,
         [`9`, `3`],
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `3\n`,
       });
@@ -1912,38 +1939,38 @@ describe(`Shell`, () => {
         },
       };
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( $three + 2 ))`,
         [],
         opts,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `5\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( $four * $two ))`,
         [],
         opts,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `8\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $(( three + one ))`,
         [],
         opts,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `4\n`,
       });
 
-      await expect(bufferResult(
+      await expectResult(bufferResult(
         `echo $((isThisDeepEnough+ one))`,
         [],
         opts,
-      )).resolves.toMatchObject({
+      ), {
         exitCode: 0,
         stdout: `5\n`,
       });
@@ -1986,10 +2013,10 @@ describe(`Shell`, () => {
         setTimeoutPromise(300),
       ])).resolves.toBeUndefined();
 
-      await expect(Promise.race([
+      await expectResult(Promise.race([
         bufferResult(`sleep 0.4 && echo foo`, [], {tty: false}),
         setTimeoutPromise(500),
-      ])).resolves.toMatchObject({
+      ]), {
         stdout: `foo\n`,
         stderr: ``,
         exitCode: 0,
@@ -2000,10 +2027,10 @@ describe(`Shell`, () => {
         setTimeoutPromise(300),
       ])).resolves.toBeUndefined();
 
-      await expect(Promise.race([
+      await expectResult(Promise.race([
         bufferResult(`sleep 0.4 & echo foo`, [], {tty: false}),
         setTimeoutPromise(500),
-      ])).resolves.toMatchObject({
+      ]), {
         stdout: `foo\n`,
         stderr: ``,
         exitCode: 0,
@@ -2017,11 +2044,11 @@ describe(`Shell`, () => {
         await xfs.mktempPromise(async tmpDir => {
           await xfs.writeFilePromise(`${tmpDir}/file` as PortablePath, ``);
 
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `cd file && echo OK || echo KO`,
             [],
             {cwd: tmpDir},
-          )).resolves.toMatchObject({
+          ), {
             exitCode: 0,
             stdout: `KO\n`,
             stderr: `cd: not a directory: file\n`,
@@ -2031,11 +2058,11 @@ describe(`Shell`, () => {
 
       it(`should throw recoverable errors when the target does not exist`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          await expect(bufferResult(
+          await expectResult(bufferResult(
             `cd doesnt-exist && echo OK || echo KO`,
             [],
             {cwd: tmpDir},
-          )).resolves.toMatchObject({
+          ), {
             exitCode: 0,
             stdout: `KO\n`,
             stderr: `cd: no such file or directory: doesnt-exist\n`,
@@ -2046,9 +2073,9 @@ describe(`Shell`, () => {
 
     describe(`sleep`, () => {
       it(`should throw recoverable errors when the operand is missing`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `sleep && echo OK || echo KO`,
-        )).resolves.toMatchObject({
+        ), {
           exitCode: 0,
           stdout: `KO\n`,
           stderr: `sleep: missing operand\n`,
@@ -2056,9 +2083,9 @@ describe(`Shell`, () => {
       });
 
       it(`should throw recoverable errors when the operand is an invalid time interval`, async () => {
-        await expect(bufferResult(
+        await expectResult(bufferResult(
           `sleep invalid && echo OK || echo KO`,
-        )).resolves.toMatchObject({
+        ), {
           exitCode: 0,
           stdout: `KO\n`,
           stderr: `sleep: invalid time interval 'invalid'\n`,

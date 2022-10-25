@@ -4,6 +4,4 @@ This plugin adds support for [constraints](https://yarnpkg.com/features/constrai
 
 ## Install
 
-```
-yarn plugin import constraints
-```
+This plugin is included by default starting from Yarn 4.
