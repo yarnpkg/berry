@@ -29560,7 +29560,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/git-up-npm-4.0.5-ee94e6e390-727625a142.zip/node_modules/git-up/",\
         "packageDependencies": [\
           ["git-up", "npm:4.0.5"],\
-          ["is-ssh", "npm:1.3.1"],\
+          ["is-ssh", "npm:1.4.0"],\
           ["parse-url", "npm:6.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -32080,14 +32080,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["is-ssh", [\
-      ["npm:1.3.1", {\
-        "packageLocation": "./.yarn/cache/is-ssh-npm-1.3.1-a45ec50c50-323999f206.zip/node_modules/is-ssh/",\
-        "packageDependencies": [\
-          ["is-ssh", "npm:1.3.1"],\
-          ["protocols", "npm:1.4.7"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:1.4.0", {\
         "packageLocation": "./.yarn/cache/is-ssh-npm-1.4.0-c6d7eec087-96e063b7a1.zip/node_modules/is-ssh/",\
         "packageDependencies": [\
@@ -36919,7 +36911,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/parse-path-npm-4.0.1-2df1e9ed3e-0736b617b2.zip/node_modules/parse-path/",\
         "packageDependencies": [\
           ["parse-path", "npm:4.0.1"],\
-          ["is-ssh", "npm:1.3.1"],\
+          ["is-ssh", "npm:1.4.0"],\
           ["protocols", "npm:1.4.7"]\
         ],\
         "linkType": "HARD"\
@@ -36967,7 +36959,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/parse-url-npm-6.0.0-046c3c4219-07928ef515.zip/node_modules/parse-url/",\
         "packageDependencies": [\
           ["parse-url", "npm:6.0.0"],\
-          ["is-ssh", "npm:1.3.1"],\
+          ["is-ssh", "npm:1.4.0"],\
           ["normalize-url", "npm:6.1.0"],\
           ["parse-path", "npm:4.0.1"],\
           ["protocols", "npm:1.4.7"]\
