@@ -1,4 +1,9 @@
-import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {PortablePath, ppath, npath, xfs} from '@yarnpkg/fslib';
+
+const {
+  fs: {writeJson, FsLinkType, determineLinkType},
+  tests: {testIf},
+} = require(`pkg-tests-core`);
 
 describe(`Features`, () => {
   describe(`Pnpm Mode `, () => {
@@ -12,7 +17,7 @@ describe(`Features`, () => {
         nodeLinker: `pnpm`,
       }, async ({path, run, source}) => {
         await run(`install`);
-
+        console.log(path);
         let iterationCount = 0;
 
         const getRecursiveDirectoryListing = async (p: PortablePath) => {
@@ -31,6 +36,104 @@ describe(`Features`, () => {
 
         await getRecursiveDirectoryListing(path);
       }),
+    );
+
+    testIf(() => process.platform === `win32`,
+      `'nodeLinkerFolderLinkMode: symlinks' on Windows should use symlinks in node_modules directories`,
+      makeTemporaryEnv(
+        {
+          workspaces: [`ws1`],
+        },
+        {
+          nodeLinker: `node-modules`,
+          nodeLinkerFolderLinkMode: `symlinks`,
+        },
+        async ({path, run}) => {
+          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+            name: `ws1`,
+          });
+
+          await run(`install`);
+
+          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+          expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.SYMBOLIC);
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeFalsy();
+        },
+      ),
+    );
+
+    testIf(() => process.platform === `win32`,
+      `'nodeLinkerFolderLinkMode: classic' on Windows should use junctions in node_modules directories`,
+      makeTemporaryEnv(
+        {
+          workspaces: [`ws1`],
+        },
+        {
+          nodeLinker: `node-modules`,
+          nodeLinkerFolderLinkMode: `classic`,
+        },
+        async ({path, run}) => {
+          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+            name: `ws1`,
+          });
+
+          await run(`install`);
+          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+          expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.NTFS_JUNCTION);
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeTruthy();
+        },
+      ),
+    );
+
+    testIf(() => process.platform !== `win32`,
+      `'nodeLinkerFolderLinkMode: classic' not-on Windows should use symlinks in node_modules directories`,
+      makeTemporaryEnv(
+        {
+          workspaces: [`ws1`],
+        },
+        {
+          nodeLinker: `node-modules`,
+          nodeLinkerFolderLinkMode: `classic`,
+        },
+        async ({path, run}) => {
+          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+            name: `ws1`,
+          });
+
+          await run(`install`);
+          const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
+          const ws1Stats = await xfs.lstatPromise(ws1Path);
+
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
+          expect(ws1Stats.isSymbolicLink()).toBeTruthy();
+        },
+      ),
+    );
+
+    testIf(() => process.platform !== `win32`,
+      `'nodeLinkerFolderLinkMode: symlinks' not-on Windows should use symlinks in node_modules directories`,
+      makeTemporaryEnv(
+        {
+          workspaces: [`ws1`],
+        },
+        {
+          nodeLinker: `node-modules`,
+          nodeLinkerFolderLinkMode: `symlinks`,
+        },
+        async ({path, run}) => {
+          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+            name: `ws1`,
+          });
+
+          await run(`install`);
+
+          const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
+          const ws1Stats = await xfs.lstatPromise(ws1Path);
+
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
+          expect(ws1Stats.isSymbolicLink()).toBeTruthy();
+        },
+      ),
     );
   });
 });
