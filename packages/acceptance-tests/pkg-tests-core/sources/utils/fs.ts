@@ -188,9 +188,10 @@ export const determineLinkType = async function(path: PortablePath) {
 
   // Must spawn a process to determine link type on Windows (or include native code)
   // `dir` the directory, toss lines that start with whitespace (header/footer), check for type of path passed in
-  const {stdout: dirOutput} = (await execPromise(`dir ${ppath.dirname(path)} /al /l`, {shell: `cmd.exe`}));
+  const {stdout: dirOutput} = (await execPromise(`dir /al /l`, {shell: `cmd.exe`, cwd: npath.fromPortablePath(ppath.dirname(path))}));
+  const linkType = new RegExp(`^\\S.*<(?<linkType>.+)>.*\\${ppath.basename(path)}(?:\\s|$)`, `gm`).exec(dirOutput)?.groups?.linkType;
 
-  switch (new RegExp(`^\\S.*<(?<linkType>.+)>.*\\${ppath.basename(path)}(?:\\s|$)`).exec(dirOutput)?.groups?.linkType) {
+  switch (linkType) {
     case `SYMLINK`:
     case `SYMLINKD`:
       return FsLinkType.SYMBOLIC;
