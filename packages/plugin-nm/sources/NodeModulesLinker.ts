@@ -32,6 +32,12 @@ export enum NodeModulesMode {
   HARDLINKS_GLOBAL = `hardlinks-global`,
 }
 
+export enum NodeModulesFolderLinkMode {
+  CLASSIC = `classic`,
+  SYMLINKS = `symlinks`,
+}
+
+
 export class NodeModulesLinker implements Linker {
   private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
 
@@ -664,21 +670,24 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
   return locationTree;
 };
 
-const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath) => {
-  let stats;
-
-  try {
-    if (process.platform === `win32`) {
+const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath, nmFolderLinkMode: NodeModulesFolderLinkMode) => {
+  // use junctions on windows if in classic mode
+  if (process.platform === `win32` && nmFolderLinkMode === NodeModulesFolderLinkMode.CLASSIC) {
+    let stats;
+    try {
       stats = await xfs.lstatPromise(srcPath);
+    } catch (e) {
     }
-  } catch (e) {
+
+    if (!stats || stats.isDirectory()) {
+      await xfs.symlinkPromise(srcPath, dstPath, `junction`);
+      return;
+    }
+    // fall through to symlink
   }
 
-  if (process.platform == `win32` && (!stats || stats.isDirectory())) {
-    await xfs.symlinkPromise(srcPath, dstPath, `junction`);
-  } else {
-    await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
-  }
+  // use symlink if tests for junction case fail
+  await xfs.symlinkPromise(ppath.relative(ppath.dirname(dstPath), srcPath), dstPath);
 };
 
 async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, content: Buffer) {
@@ -774,7 +783,7 @@ type DirEntry = {
   symlinkTo: PortablePath;
 };
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, nmFolderLinkMode: NodeModulesFolderLinkMode, packageChecksum: string | null}) => {
   await xfs.mkdirPromise(dstDir, {recursive: true});
 
   const getEntriesRecursive = async (relativePath: PortablePath = PortablePath.dot): Promise<Map<PortablePath, DirEntry>> => {
@@ -837,7 +846,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
         mtimesChanged = true;
       }
     } else if (entry.kind === DirEntryKind.SYMLINK) {
-      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath);
+      await symlinkPromise(ppath.resolve(ppath.dirname(dstPath), entry.symlinkTo), dstPath, nmFolderLinkMode);
     }
   }
 
@@ -1052,14 +1061,14 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Array<Promise<void>> = [];
-  const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, packageChecksum: string | null}) => {
+  const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode},  nmFolderLinkMode: NodeModulesFolderLinkMode, packageChecksum: string | null}) => {
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
-          await symlinkPromise(ppath.resolve(srcDir), dstDir);
+          await symlinkPromise(ppath.resolve(srcDir), dstDir, nmFolderLinkMode);
         } else {
-          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, packageChecksum});
+          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
@@ -1270,6 +1279,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const reportedProgress = report.reportProgress(progress);
   const nmModeSetting = project.configuration.get(`nmMode`);
   const nmMode = {value: nmModeSetting};
+  const nmFolderLinkMode = project.configuration.get(`nmFolderLinkMode`);
 
   try {
     // For the first pass we'll only want to install a single copy for each
@@ -1288,7 +1298,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
         persistedLocations.set(entry.srcDir, entry.dstDir);
-        await addModule({...entry, globalHardlinksStore, nmMode, packageChecksum: realLocatorChecksums.get(entry.realLocatorHash) || null});
+        await addModule({...entry, globalHardlinksStore, nmMode, nmFolderLinkMode, packageChecksum: realLocatorChecksums.get(entry.realLocatorHash) || null});
       }
     }
 
@@ -1308,7 +1318,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
-    await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd);
+    await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, nmFolderLinkMode);
 
     await writeInstallState(project, installState, binSymlinks, nmMode, {installChangedByUser});
 
@@ -1320,7 +1330,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   }
 }
 
-async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap, projectCwd: PortablePath) {
+async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap, projectCwd: PortablePath, nmFolderLinkMode: NodeModulesFolderLinkMode) {
   // Delete outdated .bin folders
   for (const location of previousBinSymlinks.keys()) {
     if (ppath.contains(projectCwd, location) === null)
@@ -1358,7 +1368,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
         await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
       } else {
         await xfs.removePromise(symlinkPath);
-        await symlinkPromise(target, symlinkPath);
+        await symlinkPromise(target, symlinkPath, nmFolderLinkMode);
         if (ppath.contains(projectCwd, await xfs.realpathPromise(target)) !== null) {
           await xfs.chmodPromise(target, 0o755);
         }
