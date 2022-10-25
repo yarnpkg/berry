@@ -154,7 +154,7 @@ export type ParseSymlOptions = {
   overwriteDuplicateEntries?: boolean;
 };
 
-const LEGACY_REGEXP = /^(#.*(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
+const LEGACY_REGEXP = /^((#.*)?(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
 
 export function parseSyml(source: string, {overwriteDuplicateEntries = false}: ParseSymlOptions = {}): Record<string, any> {
   if (LEGACY_REGEXP.test(source))
