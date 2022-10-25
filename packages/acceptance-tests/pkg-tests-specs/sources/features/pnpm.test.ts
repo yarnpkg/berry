@@ -1,7 +1,7 @@
 import {PortablePath, ppath, npath, xfs} from '@yarnpkg/fslib';
 
 const {
-  fs: {writeJson, FsLinkType, determineLinkType},
+  fs: {FsLinkType, determineLinkType},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -42,22 +42,20 @@ describe(`Features`, () => {
       `'nodeLinkerFolderLinkMode: symlinks' on Windows should use symlinks in node_modules directories`,
       makeTemporaryEnv(
         {
-          workspaces: [`ws1`],
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
         },
         {
-          nodeLinker: `node-modules`,
+          nodeLinker: `pnpm`,
           nodeLinkerFolderLinkMode: `symlinks`,
         },
         async ({path, run}) => {
-          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
-            name: `ws1`,
-          });
-
           await run(`install`);
 
-          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/no-deps`);
           expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.SYMBOLIC);
-          expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeFalsy();
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(packageLinkPath)))).toBeFalsy();
         },
       ),
     );
@@ -66,19 +64,17 @@ describe(`Features`, () => {
       `'nodeLinkerFolderLinkMode: classic' on Windows should use junctions in node_modules directories`,
       makeTemporaryEnv(
         {
-          workspaces: [`ws1`],
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
         },
         {
-          nodeLinker: `node-modules`,
+          nodeLinker: `pnpm`,
           nodeLinkerFolderLinkMode: `classic`,
         },
         async ({path, run}) => {
-          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
-            name: `ws1`,
-          });
-
           await run(`install`);
-          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/no-deps`);
           expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.NTFS_JUNCTION);
           expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeTruthy();
         },
@@ -89,19 +85,17 @@ describe(`Features`, () => {
       `'nodeLinkerFolderLinkMode: classic' not-on Windows should use symlinks in node_modules directories`,
       makeTemporaryEnv(
         {
-          workspaces: [`ws1`],
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
         },
         {
-          nodeLinker: `node-modules`,
+          nodeLinker: `pnpm`,
           nodeLinkerFolderLinkMode: `classic`,
         },
         async ({path, run}) => {
-          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
-            name: `ws1`,
-          });
-
           await run(`install`);
-          const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
+          const ws1Path = npath.toPortablePath(`${path}/node_modules/no-deps`);
           const ws1Stats = await xfs.lstatPromise(ws1Path);
 
           expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
@@ -114,20 +108,18 @@ describe(`Features`, () => {
       `'nodeLinkerFolderLinkMode: symlinks' not-on Windows should use symlinks in node_modules directories`,
       makeTemporaryEnv(
         {
-          workspaces: [`ws1`],
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
         },
         {
-          nodeLinker: `node-modules`,
+          nodeLinker: `pnpm`,
           nodeLinkerFolderLinkMode: `symlinks`,
         },
         async ({path, run}) => {
-          await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
-            name: `ws1`,
-          });
-
           await run(`install`);
 
-          const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
+          const ws1Path = npath.toPortablePath(`${path}/node_modules/no-deps`);
           const ws1Stats = await xfs.lstatPromise(ws1Path);
 
           expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();

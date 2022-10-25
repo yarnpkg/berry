@@ -1848,7 +1848,7 @@ describe(`Node_Modules`, () => {
 
         const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
         expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.SYMBOLIC);
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeFalsy();
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
       },
     ),
   );
@@ -1892,10 +1892,10 @@ describe(`Node_Modules`, () => {
         });
 
         await run(`install`);
-        const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
-        const ws1Stats = await xfs.lstatPromise(ws1Path);
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        const ws1Stats = await xfs.lstatPromise(packageLinkPath);
 
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
         expect(ws1Stats.isSymbolicLink()).toBeTruthy();
       },
     ),
@@ -1918,10 +1918,10 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
-        const ws1Stats = await xfs.lstatPromise(ws1Path);
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        const ws1Stats = await xfs.lstatPromise(packageLinkPath);
 
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
         expect(ws1Stats.isSymbolicLink()).toBeTruthy();
       },
     ),
