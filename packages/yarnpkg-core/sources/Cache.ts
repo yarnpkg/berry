@@ -225,6 +225,7 @@ export class Cache {
 
           case `reset`:
             return {isValid: false, hash: expectedChecksum};
+
           default:
           case `throw`: {
             throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the expected checksum`);
