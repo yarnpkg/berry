@@ -1833,14 +1833,14 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform === `win32`,
-    `'nmFolderLinkMode: symlinks' on Windows should use symlinks in node_modules directories`,
+    `'nodeLinkerFolderLinkMode: symlinks' on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `symlinks`,
+        nodeLinkerFolderLinkMode: `symlinks`,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1859,14 +1859,14 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform === `win32`,
-    `'nmFolderLinkMode: classic' on Windows should use junctions in node_modules directories`,
+    `'nodeLinkerFolderLinkMode: classic' on Windows should use junctions in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `classic`,
+        nodeLinkerFolderLinkMode: `classic`,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1885,14 +1885,14 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform !== `win32`,
-    `'nmFolderLinkMode: classic' not-on Windows should use symlinks in node_modules directories`,
+    `'nodeLinkerFolderLinkMode: classic' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `classic`,
+        nodeLinkerFolderLinkMode: `classic`,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1910,14 +1910,14 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform !== `win32`,
-    `'nmFolderLinkMode: symlinks' not-on Windows should use symlinks in node_modules directories`,
+    `'nodeLinkerFolderLinkMode: symlinks' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `symlinks`,
+        nodeLinkerFolderLinkMode: `symlinks`,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {

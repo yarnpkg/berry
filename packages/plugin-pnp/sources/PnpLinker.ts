@@ -22,6 +22,11 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `opn`).identHash,
 ]);
 
+export enum NodeLinkerFolderLinkMode {
+  CLASSIC = `classic`,
+  SYMLINKS = `symlinks`,
+}
+
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 
