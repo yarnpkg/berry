@@ -82,8 +82,16 @@ export default class SetVersionCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
-      return 0;
+    if (this.onlyIfNeeded && configuration.get(`yarnPath`)) {
+      const yarnPathSource = configuration.sources.get(`yarnPath`) as PortablePath | undefined;
+      if (!yarnPathSource)
+        throw new Error(`Assertion failed: Expected 'yarnPath' to have a source`);
+
+      const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
+      if (ppath.contains(projectCwd, yarnPathSource)) {
+        return 0;
+      }
+    }
 
     const getBundlePath = () => {
       if (typeof YarnVersion === `undefined`)
@@ -226,11 +234,9 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
     await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
 
-    if (!yarnPath || ppath.contains(releaseFolder, yarnPath)) {
-      await Configuration.updateConfiguration(projectCwd, {
-        yarnPath: ppath.relative(projectCwd, absolutePath),
-      });
-    }
+    await Configuration.updateConfiguration(projectCwd, {
+      yarnPath: ppath.relative(projectCwd, absolutePath),
+    });
   } else {
     await xfs.removePromise(ppath.dirname(absolutePath));
 

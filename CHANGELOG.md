@@ -61,25 +61,33 @@ The following changes only affect people writing Yarn plugins:
 
 - `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
 
+- `workspace.dependencies` has been removed. Use `workspace.anchoredPackage.dependencies` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
 ### Bugfixes
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
 
-### Compatibility
-
-- The patched filesystem now supports `fchown`.
-- PnP now handles private import mappings.
-- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
-
 ### Shell
 
 - The builtin shell now supports whitespace-only commands.
+
+## 3.2.4
+
+### Compatibility
+
+- The patched filesystem now supports fchown.
+- PnP now handles private import mappings.
+- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
+- PnP now reports loaded modules when in watch mode.
 
 ## 3.2.3
 

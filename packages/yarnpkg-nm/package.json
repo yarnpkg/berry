@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/nm",
-  "version": "4.0.0-rc.22",
+  "version": "4.0.0-rc.26",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -10,9 +10,7 @@
   "sideEffects": false,
   "dependencies": {
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/fslib": "workspace:^"
-  },
-  "devDependencies": {
+    "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/pnp": "workspace:^"
   },
   "scripts": {

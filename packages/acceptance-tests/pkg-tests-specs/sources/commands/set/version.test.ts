@@ -82,6 +82,57 @@ describe(`Commands`, () => {
         await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
       }),
     );
+
+    test(
+      `it should set yarnPath even if yarnPath is set outside of the project`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `self`);
+        await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
+
+        const projectDir = ppath.join(path, `project` as Filename);
+        await xfs.mkdirPromise(projectDir);
+        await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
+        await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
+
+        await run(`set`, `version`, `self`, {cwd: projectDir});
+        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true});
+      }),
+    );
+
+    test(
+      `it shouldn't set the version when using '--only-if-needed' and a yarnPath is already set`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `self`);
+
+        const before = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
+        await run(`set`, `version`, `3.0.0`, `--only-if-needed`);
+        const after = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
+
+        expect(before).toEqual(after);
+      }),
+    );
+
+    test(
+      `it should set yarnPath when using '--only-if-needed' even if yarnPath is set outside of the project`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `self`);
+        await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
+
+        const projectDir = ppath.join(path, `project` as Filename);
+        await xfs.mkdirPromise(projectDir);
+        await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
+        await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
+
+        await run(`set`, `version`, `self`, `--only-if-needed`, {cwd: projectDir});
+        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true});
+      }),
+    );
   });
 });
 
