@@ -348,10 +348,14 @@ const MERGE_CONFLICT_END = `>>>>>>>`;
 const MERGE_CONFLICT_SEP = `=======`;
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
-function parseVariant(source: string) {
-  // Merge conflicts can sometimes create duplicate fields.
-  // In such cases, we keep the last one.
-  return parseSyml(source, {overwriteDuplicateEntries: true});
+function parseVariant(source: string, variant: string) {
+  try {
+    // Merge conflicts can sometimes create duplicate fields.
+    // In such cases, we keep the last one.
+    return parseSyml(source, {overwriteDuplicateEntries: true});
+  } catch (error) {
+    throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The ${variant} variant of the lockfile failed to parse: ${error.message}`);
+  }
 }
 
 async function autofixMergeConflicts(configuration: Configuration, immutable: boolean) {
@@ -371,14 +375,8 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
 
   const [left, right] = getVariants(file);
 
-  let parsedLeft;
-  let parsedRight;
-  try {
-    parsedLeft = parseVariant(left);
-    parsedRight = parseVariant(right);
-  } catch (error) {
-    throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
-  }
+  const parsedLeft = parseVariant(left, `current`);
+  const parsedRight = parseVariant(right, `incoming`);
 
   const merged = {
     ...parsedLeft,
