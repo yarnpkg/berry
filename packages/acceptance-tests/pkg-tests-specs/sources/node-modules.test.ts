@@ -1,11 +1,8 @@
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
-import {exec}                                      from 'node:child_process';
-import {promisify}                                 from 'node:util';
 
-const execPromise = promisify(exec);
 
 const {
-  fs: {writeFile, writeJson},
+  fs: {writeFile, writeJson, FsLinkType, determineLinkType},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -1849,10 +1846,8 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const {stdout: reparsePoints} = await execPromise(`dir ${npath.fromPortablePath(`${path}/node_modules`)} /al /l | findstr "<SYMLINKD>"`, {shell: `cmd.exe`});
-
-        expect(reparsePoints).toMatch(`ws1`);
-        expect(reparsePoints).toMatch(`<SYMLINKD>`);
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        expect(determineLinkType(packageLinkPath)).toBe(FsLinkType.SYMBOLIC);
         expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeFalsy();
       },
     ),
@@ -1874,12 +1869,9 @@ describe(`Node_Modules`, () => {
         });
 
         await run(`install`);
-
-        const {stdout: reparsePoints} = await execPromise(`dir ${npath.fromPortablePath(`${path}/node_modules`)} /al /l | findstr "<JUNCTION>"`, {shell: `cmd.exe`});
-
-        expect(reparsePoints).toMatch(`ws1`);
-        expect(reparsePoints).toMatch(`<JUNCTION>`);
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeTruthy();
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        expect(determineLinkType(packageLinkPath)).toBe(FsLinkType.NTFS_JUNCTION);
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeTruthy();
       },
     ),
   );
