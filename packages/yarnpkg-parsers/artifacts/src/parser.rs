@@ -1,6 +1,6 @@
 use nom::{
   branch::alt,
-  bytes::complete::{is_not, take_while_m_n},
+  bytes::complete::{is_a, is_not, take_while_m_n},
   character::complete::{char, line_ending, multispace0, not_line_ending, one_of, space0},
   combinator::{eof, map, map_opt, map_res, not, opt, peek, recognize, value},
   multi::{count, many0_count, many1_count},
@@ -322,10 +322,12 @@ fn plain_scalar(input: Input) -> ParseResult<String> {
     recognize(preceded(
       alt((
         is_not("\r\n\t ?:,][{}#&*!|>'\"%@`-"),
-        // TODO: Support leading ":" too.
-        preceded(one_of("-?"), is_not("\r\n\t ,][{}:#")),
+        preceded(one_of("-?:"), peek(is_not("\r\n\t ,][{}#"))),
       )),
-      many0_count(preceded(space0, is_not("\r\n\t ,][{}:#"))),
+      many0_count(alt((
+        preceded(space0, is_not("\r\n\t ,][{}:#")),
+        preceded(is_a(":"), is_not("\r\n\t ,][{}:#")),
+      ))),
     )),
     from_utf8_to_owned,
   )(input)

@@ -125,6 +125,8 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`-foo`)).toStrictEqual(`-foo`);
     expect(parseSyml(`--foo`)).toStrictEqual(`--foo`);
     expect(parseSyml(`---foo`)).toStrictEqual(`---foo`);
+    expect(parseSyml(`--foo--bar`)).toStrictEqual(`--foo--bar`);
+    expect(parseSyml(`--foo--bar--`)).toStrictEqual(`--foo--bar--`);
     expect(parseSyml(`-- foo -- bar --`)).toStrictEqual(`-- foo -- bar --`);
   });
 
@@ -132,7 +134,16 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`?foo`)).toStrictEqual(`?foo`);
     expect(parseSyml(`??foo`)).toStrictEqual(`??foo`);
     expect(parseSyml(`???foo`)).toStrictEqual(`???foo`);
+    expect(parseSyml(`??foo??bar`)).toStrictEqual(`??foo??bar`);
+    expect(parseSyml(`??foo??bar??`)).toStrictEqual(`??foo??bar??`);
     expect(parseSyml(`?? foo ?? bar ??`)).toStrictEqual(`?? foo ?? bar ??`);
+  });
+
+  it(`should parse plain scalars starting with :`, () => {
+    expect(parseSyml(`:foo`)).toStrictEqual(`:foo`);
+    expect(parseSyml(`::foo`)).toStrictEqual(`::foo`);
+    expect(parseSyml(`:::foo`)).toStrictEqual(`:::foo`);
+    expect(parseSyml(`::foo::bar`)).toStrictEqual(`::foo::bar`);
   });
 
   it(`should parse double quoted scalars`, () => {
