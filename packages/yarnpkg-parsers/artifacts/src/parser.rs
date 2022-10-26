@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use nom::{
   branch::alt,
   bytes::complete::{is_a, is_not, take_while_m_n},
@@ -21,15 +23,15 @@ use serde::Serialize;
 
 use crate::{
   combinators::{different_first_parser, empty, escaped_transform, final_parser},
-  utils::{from_utf8, from_utf8_to_owned},
+  utils::from_utf8,
 };
 
 #[derive(Serialize)]
 #[serde(untagged)]
-pub enum Value {
-  String(String),
-  Array(Vec<Value>),
-  Object(IndexMap<String, Value>),
+pub enum Value<'a> {
+  String(Cow<'a, str>),
+  Array(Vec<Value<'a>>),
+  Object(IndexMap<String, Value<'a>>),
 }
 
 pub type Input<'a> = &'a [u8];
@@ -119,7 +121,7 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
   separated_pair(
-    scalar,
+    map(scalar, Cow::into_owned),
     delimited(space0, char(':'), space0),
     parser(block_mapping_entry_expression, ctx),
   )(input)
@@ -225,7 +227,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn flow_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
   separated_pair(
-    scalar,
+    map(scalar, Cow::into_owned),
     delimited(space0, char(':'), space0),
     parser(flow_expression, ctx),
   )(input)
@@ -268,11 +270,11 @@ fn flow_scalar(input: Input) -> ParseResult<Value> {
   map(scalar, Value::String)(input)
 }
 
-fn scalar(input: Input) -> ParseResult<String> {
+fn scalar(input: Input) -> ParseResult<Cow<str>> {
   alt((double_quoted_scalar, single_quoted_scalar, plain_scalar))(input)
 }
 
-fn double_quoted_scalar(input: Input) -> ParseResult<String> {
+fn double_quoted_scalar(input: Input) -> ParseResult<Cow<str>> {
   delimited(
     char('"'),
     alt((double_quoted_scalar_text, empty)),
@@ -280,24 +282,27 @@ fn double_quoted_scalar(input: Input) -> ParseResult<String> {
   )(input)
 }
 
-fn double_quoted_scalar_text(input: Input) -> ParseResult<String> {
-  escaped_transform(
-    // TODO: "\0-\x1F" was part of the original regexp
-    map(is_not("\"\\\x7f"), from_utf8),
-    '\\',
-    alt((
-      value('"', char('"')),
-      value('\\', char('\\')),
-      value('/', char('/')),
-      value('\n', char('n')),
-      value('\r', char('r')),
-      value('\t', char('t')),
-      // Rust doesn't support the following ascii escape sequences in string literals.
-      value('\x08', char('b')),
-      value('\x0c', char('f')),
-      // Unicode escape sequences
-      preceded(char('u'), unicode_escape_digits),
-    )),
+fn double_quoted_scalar_text(input: Input) -> ParseResult<Cow<str>> {
+  map(
+    escaped_transform(
+      // TODO: "\0-\x1F" was part of the original regexp
+      map(is_not("\"\\\x7f"), from_utf8),
+      '\\',
+      alt((
+        value('"', char('"')),
+        value('\\', char('\\')),
+        value('/', char('/')),
+        value('\n', char('n')),
+        value('\r', char('r')),
+        value('\t', char('t')),
+        // Rust doesn't support the following ascii escape sequences in string literals.
+        value('\x08', char('b')),
+        value('\x0c', char('f')),
+        // Unicode escape sequences
+        preceded(char('u'), unicode_escape_digits),
+      )),
+    ),
+    Cow::from,
   )(input)
 }
 
@@ -311,7 +316,7 @@ fn unicode_escape_digits(input: Input) -> ParseResult<char> {
   )(input)
 }
 
-fn single_quoted_scalar(input: Input) -> ParseResult<String> {
+fn single_quoted_scalar(input: Input) -> ParseResult<Cow<str>> {
   delimited(
     char('\''),
     alt((single_quoted_scalar_text, empty)),
@@ -319,14 +324,14 @@ fn single_quoted_scalar(input: Input) -> ParseResult<String> {
   )(input)
 }
 
-fn single_quoted_scalar_text(input: Input) -> ParseResult<String> {
+fn single_quoted_scalar_text(input: Input) -> ParseResult<Cow<str>> {
   map(
     recognize(many0_count(alt((is_not("'"), tag("''"))))),
-    |bytes| from_utf8(bytes).replace("''", "'"),
+    |bytes| Cow::from(from_utf8(bytes).replace("''", "'")),
   )(input)
 }
 
-fn plain_scalar(input: Input) -> ParseResult<String> {
+fn plain_scalar(input: Input) -> ParseResult<Cow<str>> {
   map(
     recognize(preceded(
       alt((
@@ -344,7 +349,7 @@ fn plain_scalar(input: Input) -> ParseResult<String> {
         )),
       ),
     )),
-    from_utf8_to_owned,
+    |bytes| Cow::from(from_utf8(bytes)),
   )(input)
 }
 
