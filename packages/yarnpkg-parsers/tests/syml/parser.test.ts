@@ -487,9 +487,8 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`a : b`)).toStrictEqual({a: `b`});
     expect(parseSyml(`a :b`)).toStrictEqual(`a :b`);
     expect(parseSyml(`a: :b`)).toStrictEqual({a: `:b`});
-    // TODO: Support the following cases:
-    // expect(parseSyml(`a:: b`)).toStrictEqual({[`a:`]: `b`});
-    // expect(parseSyml(`a :: b`)).toStrictEqual({[`a :`]: `b`});
+    expect(parseSyml(`a:: b`)).toStrictEqual({[`a:`]: `b`});
+    expect(parseSyml(`a :: b`)).toStrictEqual({[`a :`]: `b`});
     expect(parseSyml(`a ::b`)).toStrictEqual(`a ::b`);
     expect(() => parseSyml(`a : : b`)).toThrow();
   });
