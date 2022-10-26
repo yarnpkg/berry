@@ -259,10 +259,7 @@ fn flow_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(parser(flow_mapping_entry, ctx), |(key, value)| {
-    let mut map = IndexMap::new();
-    map.insert(key, value);
-
-    Value::Object(map)
+    Value::Object(IndexMap::from([(key, value)]))
   })(input)
 }
 
