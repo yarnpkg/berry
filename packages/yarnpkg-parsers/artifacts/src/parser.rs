@@ -86,8 +86,11 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     parse_separated_terminated_res(
       different_first_parser(
-        parser(block_mapping_entry, Context { indent: 0, ..ctx }),
         parser(block_mapping_entry, ctx),
+        preceded(
+          parser(block_entry_prefix, ctx),
+          parser(block_mapping_entry, ctx),
+        ),
       ),
       eol_any,
       parser(block_terminator, ctx),
@@ -106,13 +109,10 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
-  preceded(
-    parser(block_entry_prefix, ctx),
-    separated_pair(
-      scalar,
-      delimited(space0, char(':'), space0),
-      parser(block_mapping_entry_expression, ctx),
-    ),
+  separated_pair(
+    scalar,
+    delimited(space0, char(':'), space0),
+    parser(block_mapping_entry_expression, ctx),
   )(input)
 }
 
@@ -136,8 +136,11 @@ fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
   map(
     collect_separated_terminated(
       different_first_parser(
-        parser(block_sequence_entry, Context { indent: 0, ..ctx }),
         parser(block_sequence_entry, ctx),
+        preceded(
+          parser(block_entry_prefix, ctx),
+          parser(block_sequence_entry, ctx),
+        ),
       ),
       eol_any,
       parser(block_terminator, ctx),
@@ -147,19 +150,17 @@ fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
-  preceded(parser(block_entry_prefix, ctx), |input| {
-    let (input, after) = preceded(char('-'), many1_count(char(' ')))(input)?;
+  let (input, after) = preceded(char('-'), many1_count(char(' ')))(input)?;
 
-    parser(
-      block_sequence_entry_expression,
-      Context {
-        // According to the YAML 1.2.2 spec:
-        // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
-        indent_overwrite: ctx.indent_overwrite.map(|before| before + 1 + after),
-        ..ctx
-      },
-    )(input)
-  })(input)
+  parser(
+    block_sequence_entry_expression,
+    Context {
+      // According to the YAML 1.2.2 spec:
+      // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
+      indent_overwrite: ctx.indent_overwrite.map(|before| before + 1 + after),
+      ..ctx
+    },
+  )(input)
 }
 
 fn block_sequence_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
