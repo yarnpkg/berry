@@ -107,14 +107,11 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
   preceded(
-    comments,
-    preceded(
-      parser(fixed_indent, ctx),
-      separated_pair(
-        scalar,
-        delimited(space0, char(':'), space0),
-        parser(block_mapping_entry_expression, ctx),
-      ),
+    parser(block_entry_prefix, ctx),
+    separated_pair(
+      scalar,
+      delimited(space0, char(':'), space0),
+      parser(block_mapping_entry_expression, ctx),
     ),
   )(input)
 }
@@ -150,26 +147,27 @@ fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
-  preceded(
-    comments,
-    preceded(parser(fixed_indent, ctx), |input| {
-      let (input, after) = preceded(char('-'), many1_count(char(' ')))(input)?;
+  preceded(parser(block_entry_prefix, ctx), |input| {
+    let (input, after) = preceded(char('-'), many1_count(char(' ')))(input)?;
 
-      parser(
-        block_sequence_entry_expression,
-        Context {
-          // According to the YAML 1.2.2 spec:
-          // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
-          indent_overwrite: ctx.indent_overwrite.map(|before| before + 1 + after),
-          ..ctx
-        },
-      )(input)
-    }),
-  )(input)
+    parser(
+      block_sequence_entry_expression,
+      Context {
+        // According to the YAML 1.2.2 spec:
+        // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
+        indent_overwrite: ctx.indent_overwrite.map(|before| before + 1 + after),
+        ..ctx
+      },
+    )(input)
+  })(input)
 }
 
 fn block_sequence_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((parser(block_expression, ctx), parser(flow_expression, ctx)))(input)
+}
+
+fn block_entry_prefix(input: Input, ctx: Context) -> ParseResult<Vec<char>> {
+  preceded(comments, parser(fixed_indent, ctx))(input)
 }
 
 fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
