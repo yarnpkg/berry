@@ -113,6 +113,10 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`foo`)).toStrictEqual(`foo`);
   });
 
+  it(`should parse plain scalars containing single quotes`, () => {
+    expect(parseSyml(`foo'bar'baz''qux'`)).toStrictEqual(`foo'bar'baz''qux'`);
+  });
+
   it(`should parse double quoted scalars`, () => {
     expect(parseSyml(`"foo"`)).toStrictEqual(`foo`);
   });
