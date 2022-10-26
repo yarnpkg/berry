@@ -57,7 +57,7 @@ fn start(input: Input, ctx: Context) -> ParseResult<Value> {
     map(opt(parser(top_level_expression, ctx)), |value| {
       value.unwrap_or_else(|| Value::Object(Map::new()))
     }),
-    opt(comments),
+    comments,
   )(input)
 }
 
