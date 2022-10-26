@@ -1,9 +1,9 @@
 use nom::{
   branch::alt,
   bytes::complete::{is_not, take_while_m_n},
-  character::complete::{char, line_ending, multispace0, not_line_ending, space0, space1},
+  character::complete::{char, line_ending, multispace0, not_line_ending, space0},
   combinator::{eof, map, map_opt, map_res, not, opt, peek, recognize, value},
-  multi::{count, many0_count},
+  multi::{count, many0_count, many1_count},
   sequence::{delimited, preceded, separated_pair, terminated},
   AsChar, IResult,
 };
@@ -15,16 +15,12 @@ use nom_supreme::{
   tag::complete::tag,
 };
 
-// Note: Don't use the `json!` macro - the bundle will be larger and the code will likely be slower.
 use serde_json::{Map, Value};
 
 use crate::{
   combinators::{different_first_parser, empty, escaped_transform, final_parser},
   utils::{from_utf8, from_utf8_to_owned},
 };
-
-// TODO: Automatically detect indentation from input.
-const INDENT_STEP: usize = 2;
 
 pub type Input<'a> = &'a [u8];
 
@@ -33,7 +29,7 @@ pub type ParseResult<'input, O> = IResult<Input<'input>, O, ErrorTree<Input<'inp
 #[derive(Clone, Copy)]
 struct Context {
   indent: usize,
-  indent_next: bool,
+  indent_overwrite: Option<usize>,
   overwrite_duplicate_entries: bool,
 }
 
@@ -47,7 +43,7 @@ fn parser<'input, O>(
 pub fn parse(input: Input, overwrite_duplicate_entries: bool) -> Result<Value, ErrorTree<&str>> {
   let ctx = Context {
     indent: 0,
-    indent_next: true,
+    indent_overwrite: None,
     overwrite_duplicate_entries,
   };
 
@@ -74,22 +70,24 @@ fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
-  let subsequent_ctx = Context {
-    // Subsequent entries are always indented
-    indent_next: true,
+  let (input, indent) = detect_indent(input, ctx)?;
+
+  let ctx = Context {
+    indent,
+    indent_overwrite: None,
     ..ctx
   };
 
   map(
     parse_separated_terminated_res(
       different_first_parser(
+        parser(block_mapping_entry, Context { indent: 0, ..ctx }),
         parser(block_mapping_entry, ctx),
-        parser(block_mapping_entry, subsequent_ctx),
       ),
       eol_any,
-      parser(block_terminator, subsequent_ctx),
+      parser(block_terminator, ctx),
       Map::new,
-      |mut acc, (key, value)| {
+      move |mut acc, (key, value)| {
         let existing = acc.insert(key, value);
         if existing.is_some() && !ctx.overwrite_duplicate_entries {
           // TODO: Better error message.
@@ -106,18 +104,11 @@ fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value
   preceded(
     comments,
     preceded(
-      parser(indentation, ctx),
+      parser(fixed_indent, ctx),
       separated_pair(
         scalar,
         delimited(space0, char(':'), space0),
-        parser(
-          block_mapping_entry_expression,
-          Context {
-            // Child expressions are always indented
-            indent_next: true,
-            ..ctx
-          },
-        ),
+        parser(block_mapping_entry_expression, ctx),
       ),
     ),
   )(input)
@@ -125,35 +116,28 @@ fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value
 
 fn block_mapping_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
   alt((
-    preceded(
-      line_ending,
-      parser(
-        block_expression,
-        Context {
-          indent: ctx.indent + INDENT_STEP,
-          ..ctx
-        },
-      ),
-    ),
+    preceded(line_ending, parser(block_expression, ctx)),
     parser(flow_expression, ctx),
   ))(input)
 }
 
 fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
-  let subsequent_ctx = Context {
-    // Subsequent entries are always indented
-    indent_next: true,
+  let (input, indent) = detect_indent(input, ctx)?;
+
+  let ctx = Context {
+    indent,
+    indent_overwrite: Some(indent),
     ..ctx
   };
 
   map(
     collect_separated_terminated(
       different_first_parser(
+        parser(block_sequence_entry, Context { indent: 0, ..ctx }),
         parser(block_sequence_entry, ctx),
-        parser(block_sequence_entry, subsequent_ctx),
       ),
       eol_any,
-      parser(block_terminator, subsequent_ctx),
+      parser(block_terminator, ctx),
     ),
     Value::Array,
   )(input)
@@ -162,35 +146,24 @@ fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 fn block_sequence_entry(input: Input, ctx: Context) -> ParseResult<Value> {
   preceded(
     comments,
-    preceded(
-      parser(indentation, ctx),
-      preceded(
-        terminated(char('-'), space1),
-        parser(
-          block_sequence_entry_expression,
-          Context {
-            // Child expressions are never indented because, according to the YAML 1.2.2 spec:
-            // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
-            indent_next: false,
-            ..ctx
-          },
-        ),
-      ),
-    ),
+    preceded(parser(fixed_indent, ctx), |input| {
+      let (input, after) = preceded(char('-'), many1_count(char(' ')))(input)?;
+
+      parser(
+        block_sequence_entry_expression,
+        Context {
+          // According to the YAML 1.2.2 spec:
+          // "both the “-” indicator and the following spaces are considered to be part of the indentation of the nested collection"
+          indent_overwrite: ctx.indent_overwrite.map(|before| before + 1 + after),
+          ..ctx
+        },
+      )(input)
+    }),
   )(input)
 }
 
 fn block_sequence_entry_expression(input: Input, ctx: Context) -> ParseResult<Value> {
-  alt((
-    parser(
-      block_expression,
-      Context {
-        indent: ctx.indent + INDENT_STEP,
-        ..ctx
-      },
-    ),
-    parser(flow_expression, ctx),
-  ))(input)
+  alt((parser(block_expression, ctx), parser(flow_expression, ctx)))(input)
 }
 
 fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
@@ -198,7 +171,7 @@ fn block_terminator(input: Input, ctx: Context) -> ParseResult<Input> {
     if ctx.indent == 0 {
       value((), eof)(input)
     } else {
-      not(parser(indentation, ctx))(input)
+      not(parser(fixed_indent, ctx))(input)
     }
   }))(input)
 }
@@ -361,6 +334,13 @@ fn eol_any(input: Input) -> ParseResult<Input> {
   terminated(line_ending, many0_count(preceded(space0, line_ending)))(input)
 }
 
-fn indentation(input: Input, ctx: Context) -> ParseResult<Vec<char>> {
-  count(char(' '), if ctx.indent_next { ctx.indent } else { 0 })(input)
+fn detect_indent(input: Input, ctx: Context) -> ParseResult<usize> {
+  match ctx.indent_overwrite {
+    Some(indent) => Ok((input, indent)),
+    None => many0_count(char(' '))(input),
+  }
+}
+
+fn fixed_indent(input: Input, ctx: Context) -> ParseResult<Vec<char>> {
+  count(char(' '), ctx.indent)(input)
 }
