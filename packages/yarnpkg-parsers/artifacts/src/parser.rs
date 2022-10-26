@@ -324,7 +324,10 @@ fn plain_scalar(input: Input) -> ParseResult<String> {
         is_not("\r\n\t ?:,][{}#&*!|>'\"%@`-"),
         preceded(one_of("-?:"), peek(is_not("\r\n\t "))),
       )),
-      many0_count(preceded(alt((is_a(":"), space0)), is_not("\r\n\t ,][{}:#"))),
+      many0_count(preceded(
+        preceded(space0, opt(is_a(":"))),
+        is_not("\r\n\t ,][{}:#"),
+      )),
     )),
     from_utf8_to_owned,
   )(input)

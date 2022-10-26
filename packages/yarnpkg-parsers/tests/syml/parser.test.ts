@@ -480,4 +480,17 @@ describe(`Syml parser`, () => {
       ``,
     ]))).toStrictEqual([`foo`]);
   });
+
+  it(`should handle colons correctly`, () => {
+    expect(parseSyml(`a:b`)).toStrictEqual(`a:b`);
+    expect(parseSyml(`a: b`)).toStrictEqual({a: `b`});
+    expect(parseSyml(`a : b`)).toStrictEqual({a: `b`});
+    expect(parseSyml(`a :b`)).toStrictEqual(`a :b`);
+    expect(parseSyml(`a: :b`)).toStrictEqual({a: `:b`});
+    // TODO: Support the following cases:
+    // expect(parseSyml(`a:: b`)).toStrictEqual({[`a:`]: `b`});
+    // expect(parseSyml(`a :: b`)).toStrictEqual({[`a :`]: `b`});
+    expect(parseSyml(`a ::b`)).toStrictEqual(`a ::b`);
+    expect(() => parseSyml(`a : : b`)).toThrow();
+  });
 });
