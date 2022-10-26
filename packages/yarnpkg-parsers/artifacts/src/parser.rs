@@ -1,7 +1,7 @@
 use nom::{
   branch::alt,
   bytes::complete::{is_not, take_while_m_n},
-  character::complete::{char, line_ending, multispace0, not_line_ending, space0},
+  character::complete::{char, line_ending, multispace0, not_line_ending, one_of, space0},
   combinator::{eof, map, map_opt, map_res, not, opt, peek, recognize, value},
   multi::{count, many0_count, many1_count},
   sequence::{delimited, preceded, separated_pair, terminated},
@@ -320,7 +320,11 @@ fn single_quoted_scalar_text(input: Input) -> ParseResult<String> {
 fn plain_scalar(input: Input) -> ParseResult<String> {
   map(
     recognize(preceded(
-      is_not("\r\n\t ?:,][{}#&*!|>'\"%@`-"),
+      alt((
+        is_not("\r\n\t ?:,][{}#&*!|>'\"%@`-"),
+        // TODO: Support leading ":" too.
+        preceded(one_of("-?"), is_not("\r\n\t ,][{}:#")),
+      )),
       many0_count(preceded(space0, is_not("\r\n\t ,][{}:#"))),
     )),
     from_utf8_to_owned,

@@ -121,6 +121,20 @@ describe(`Syml parser`, () => {
     expect(parseSyml(`foo'bar'baz''qux'`)).toStrictEqual(`foo'bar'baz''qux'`);
   });
 
+  it(`should parse plain scalars starting with -`, () => {
+    expect(parseSyml(`-foo`)).toStrictEqual(`-foo`);
+    expect(parseSyml(`--foo`)).toStrictEqual(`--foo`);
+    expect(parseSyml(`---foo`)).toStrictEqual(`---foo`);
+    expect(parseSyml(`-- foo -- bar --`)).toStrictEqual(`-- foo -- bar --`);
+  });
+
+  it(`should parse plain scalars starting with ?`, () => {
+    expect(parseSyml(`?foo`)).toStrictEqual(`?foo`);
+    expect(parseSyml(`??foo`)).toStrictEqual(`??foo`);
+    expect(parseSyml(`???foo`)).toStrictEqual(`???foo`);
+    expect(parseSyml(`?? foo ?? bar ??`)).toStrictEqual(`?? foo ?? bar ??`);
+  });
+
   it(`should parse double quoted scalars`, () => {
     expect(parseSyml(`"foo"`)).toStrictEqual(`foo`);
   });
