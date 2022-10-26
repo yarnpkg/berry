@@ -74,6 +74,7 @@ fn block_expression(input: Input, ctx: Context) -> ParseResult<Value> {
 }
 
 fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
+  let (input, _) = comments(input)?;
   let (input, indent) = detect_indent(input, ctx)?;
 
   let ctx = Context {
@@ -126,6 +127,7 @@ fn block_mapping_entry_expression(input: Input, ctx: Context) -> ParseResult<Val
 }
 
 fn block_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
+  let (input, _) = comments(input)?;
   let (input, indent) = detect_indent(input, ctx)?;
 
   let ctx = Context {

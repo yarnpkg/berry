@@ -348,7 +348,7 @@ describe(`Syml parser`, () => {
     ]))).toStrictEqual([[`foo`, `bar`], [`baz`, `qux`]]);
   });
 
-  it(`should parse weirdly intended block expressions`, () => {
+  it(`should parse weirdly indented block expressions`, () => {
     expect(parseSyml(joinYaml([
       `  a:`,
       `      b:`,
@@ -416,5 +416,35 @@ describe(`Syml parser`, () => {
         }],
       }],
     });
+  });
+
+  it(`should parse weirdly indented block expressions with leading and trailing comments and line endings`, () => {
+    expect(parseSyml(joinYaml([
+      ``,
+      `# 1`,
+      `  # 2`,
+      `    # 3`,
+      ``,
+      `  foo: bar`,
+      ``,
+      `# 4`,
+      `  # 5`,
+      `    # 6`,
+      ``,
+    ]))).toStrictEqual({foo: `bar`});
+
+    expect(parseSyml(joinYaml([
+      ``,
+      `# 1`,
+      `  # 2`,
+      `    # 3`,
+      ``,
+      `  - foo`,
+      ``,
+      `# 4`,
+      `  # 5`,
+      `    # 6`,
+      ``,
+    ]))).toStrictEqual([`foo`]);
   });
 });
