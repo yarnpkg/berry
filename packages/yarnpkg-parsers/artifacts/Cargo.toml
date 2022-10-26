@@ -11,6 +11,8 @@ crate-type = ["cdylib", "rlib"]
 nom = "7.1.1"
 nom-supreme = "0.8.0"
 wasm-bindgen = "0.2.83"
+indexmap = { version = "1.9.1", features = ["serde"] }
+serde = { version = "1.0.147", features = ["derive"] }
 # We need to preserve key order even though it's slower
 serde_json = { version = "1.0.86", features = ["preserve_order"] }
 

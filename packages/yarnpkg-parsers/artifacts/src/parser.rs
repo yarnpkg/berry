@@ -16,12 +16,21 @@ use nom_supreme::{
   tag::complete::tag,
 };
 
-use serde_json::{Map, Value};
+use indexmap::IndexMap;
+use serde::Serialize;
 
 use crate::{
   combinators::{different_first_parser, empty, escaped_transform, final_parser},
   utils::{from_utf8, from_utf8_to_owned},
 };
+
+#[derive(Serialize)]
+#[serde(untagged)]
+pub enum Value {
+  String(String),
+  Array(Vec<Value>),
+  Object(IndexMap<String, Value>),
+}
 
 pub type Input<'a> = &'a [u8];
 
@@ -59,7 +68,7 @@ pub fn parse(
 fn start(input: Input, ctx: Context) -> ParseResult<Value> {
   terminated(
     map(opt(parser(top_level_expression, ctx)), |value| {
-      value.unwrap_or_else(|| Value::Object(Map::new()))
+      value.unwrap_or_else(|| Value::Object(IndexMap::new()))
     }),
     comments,
   )(input)
@@ -94,7 +103,7 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
       ),
       eol_any,
       parser(block_terminator, ctx),
-      Map::new,
+      IndexMap::new,
       move |mut acc, (key, value)| {
         let existing = acc.insert(key, value);
         if existing.is_some() && !ctx.overwrite_duplicate_entries {
@@ -197,7 +206,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
         opt(parser(flow_mapping_entry, ctx)),
         delimited(multispace0, char(','), multispace0),
         preceded(multispace0, char('}')),
-        Map::new,
+        IndexMap::new,
         |mut acc, entry| {
           if let Some((key, value)) = entry {
             let existing = acc.insert(key, value);
@@ -248,7 +257,7 @@ fn flow_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(parser(flow_mapping_entry, ctx), |(key, value)| {
-    let mut map = Map::new();
+    let mut map = IndexMap::new();
     map.insert(key, value);
 
     Value::Object(map)
