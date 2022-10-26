@@ -63,7 +63,7 @@ async function populateYarnPaths(project: Project, definePath: (path: PortablePa
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nodeLinker: string;
-    nodeLinkerFolderLinkMode: NodeLinkerFolderLinkMode;
+    nodeLinkerFolderLinkMode: string;
     pnpMode: string;
     pnpShebang: string;
     pnpIgnorePatterns: Array<string>;

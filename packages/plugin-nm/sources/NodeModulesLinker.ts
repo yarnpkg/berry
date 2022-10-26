@@ -16,7 +16,6 @@ import {UsageError}                                                        from 
 import crypto                                                              from 'crypto';
 import fs                                                                  from 'fs';
 
-export {NodeLinkerFolderLinkMode};
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
@@ -1274,7 +1273,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const reportedProgress = report.reportProgress(progress);
   const nmModeSetting = project.configuration.get(`nmMode`);
   const nmMode = {value: nmModeSetting};
-  const nodeLinkerFolderLinkMode = project.configuration.get(`nodeLinkerFolderLinkMode`);
+  const nodeLinkerFolderLinkMode = project.configuration.get(`nodeLinkerFolderLinkMode`) as NodeLinkerFolderLinkMode;
 
   try {
     // For the first pass we'll only want to install a single copy for each

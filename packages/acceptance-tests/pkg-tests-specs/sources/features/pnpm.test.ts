@@ -17,7 +17,7 @@ describe(`Features`, () => {
         nodeLinker: `pnpm`,
       }, async ({path, run, source}) => {
         await run(`install`);
-        console.log(path);
+
         let iterationCount = 0;
 
         const getRecursiveDirectoryListing = async (p: PortablePath) => {
@@ -95,11 +95,11 @@ describe(`Features`, () => {
         },
         async ({path, run}) => {
           await run(`install`);
-          const ws1Path = npath.toPortablePath(`${path}/node_modules/no-deps`);
-          const ws1Stats = await xfs.lstatPromise(ws1Path);
+          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/no-deps`);
+          const packageLinkStat = await xfs.lstatPromise(packageLinkPath);
 
-          expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
-          expect(ws1Stats.isSymbolicLink()).toBeTruthy();
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
+          expect(packageLinkStat.isSymbolicLink()).toBeTruthy();
         },
       ),
     );
@@ -119,11 +119,11 @@ describe(`Features`, () => {
         async ({path, run}) => {
           await run(`install`);
 
-          const ws1Path = npath.toPortablePath(`${path}/node_modules/no-deps`);
-          const ws1Stats = await xfs.lstatPromise(ws1Path);
+          const packageLinkPath = npath.toPortablePath(`${path}/node_modules/no-deps`);
+          const packageLinkStat = await xfs.lstatPromise(packageLinkPath);
 
-          expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
-          expect(ws1Stats.isSymbolicLink()).toBeTruthy();
+          expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
+          expect(packageLinkStat.isSymbolicLink()).toBeTruthy();
         },
       ),
     );
