@@ -231,6 +231,7 @@ class PnpmInstaller implements Installer {
 
           await xfs.mkdirpPromise(ppath.dirname(depDstPath));
 
+
           if (process.platform == `win32` && this.opts.project.configuration.get(`nodeLinkerFolderLinkMode`) === NodeLinkerFolderLinkMode.CLASSIC) {
             await xfs.symlinkPromise(depSrcPaths.packageLocation, depDstPath, `junction`);
           } else {
