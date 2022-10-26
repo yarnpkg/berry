@@ -31,7 +31,7 @@ use crate::{
 pub enum Value<'a> {
   String(Cow<'a, str>),
   Array(Vec<Value<'a>>),
-  Object(IndexMap<String, Value<'a>>),
+  Object(IndexMap<Cow<'a, str>, Value<'a>>),
 }
 
 pub type Input<'a> = &'a [u8];
@@ -119,9 +119,9 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   )(input)
 }
 
-fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
+fn block_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Cow<str>, Value)> {
   separated_pair(
-    map(scalar, Cow::into_owned),
+    scalar,
     delimited(space0, char(':'), space0),
     parser(block_mapping_entry_expression, ctx),
   )(input)
@@ -225,9 +225,9 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   )(input)
 }
 
-fn flow_mapping_entry(input: Input, ctx: Context) -> ParseResult<(String, Value)> {
+fn flow_mapping_entry(input: Input, ctx: Context) -> ParseResult<(Cow<str>, Value)> {
   separated_pair(
-    map(scalar, Cow::into_owned),
+    scalar,
     delimited(space0, char(':'), space0),
     parser(flow_expression, ctx),
   )(input)
