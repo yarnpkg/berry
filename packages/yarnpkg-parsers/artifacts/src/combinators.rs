@@ -7,7 +7,11 @@ use nom::{
   AsChar, Err, ExtendInto, IResult, InputIter, InputLength, InputTake, InputTakeAtPosition, Offset,
   Parser, Slice,
 };
-use nom_supreme::{error::ErrorTree, final_parser::ExtractContext, ParserExt};
+use nom_supreme::{
+  error::ErrorTree,
+  final_parser::{ExtractContext, Location},
+  ParserExt,
+};
 
 use crate::utils::{convert_error_tree, from_utf8};
 
@@ -38,7 +42,7 @@ pub fn different_first_parser<I, O, E>(
 /// This is a modified version that converts the `ErrorTree<&[u8]>` to `ErrorTree<&str>` so that it can be displayed and so that context can be extracted from it.
 pub fn final_parser<'input, O>(
   parser: impl Parser<&'input [u8], O, ErrorTree<&'input [u8]>>,
-) -> impl FnMut(&'input [u8]) -> Result<O, ErrorTree<&'input str>> {
+) -> impl FnMut(&'input [u8]) -> Result<O, ErrorTree<Location>> {
   let mut parser = parser.complete().all_consuming();
 
   move |input| match parser.parse(input) {

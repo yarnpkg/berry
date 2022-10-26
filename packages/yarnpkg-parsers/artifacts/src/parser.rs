@@ -9,6 +9,7 @@ use nom::{
 };
 use nom_supreme::{
   error::ErrorTree,
+  final_parser::Location,
   multi::{
     collect_separated_terminated, parse_separated_terminated, parse_separated_terminated_res,
   },
@@ -40,7 +41,10 @@ fn parser<'input, O>(
   move |input| parser(input, ctx)
 }
 
-pub fn parse(input: Input, overwrite_duplicate_entries: bool) -> Result<Value, ErrorTree<&str>> {
+pub fn parse(
+  input: Input,
+  overwrite_duplicate_entries: bool,
+) -> Result<Value, ErrorTree<Location>> {
   let ctx = Context {
     indent: 0,
     indent_overwrite: None,
