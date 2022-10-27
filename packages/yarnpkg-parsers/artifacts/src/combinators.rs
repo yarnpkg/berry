@@ -1,11 +1,10 @@
 //! Various reusable generic combinators.
 
-use std::ops::RangeFrom;
+use std::{borrow::Cow, ops::RangeFrom};
 
 use nom::{
   error::{ErrorKind, ParseError},
-  AsChar, Err, ExtendInto, IResult, InputIter, InputLength, InputTake, InputTakeAtPosition, Offset,
-  Parser, Slice,
+  AsChar, Err, IResult, InputIter, InputLength, Offset, Parser, Slice,
 };
 use nom_supreme::{
   error::ErrorTree,
@@ -58,31 +57,24 @@ pub fn final_parser<'input, O>(
 
 /// Original implementation: https://docs.rs/nom/7.1.1/src/nom/bytes/complete.rs.html#623-705
 ///
-/// Issue: https://github.com/Geal/nom/issues/1522
-pub fn escaped_transform<Input, Error, F, G, O1, O2, ExtendItem, Output>(
+/// Issues:
+/// - https://github.com/Geal/nom/issues/1522
+/// - https://github.com/Geal/nom/issues/1069
+pub fn escaped_transform<'input, Input, Error, F, G>(
   mut normal: F,
   control_char: char,
   mut transform: G,
-) -> impl FnMut(Input) -> IResult<Input, Output, Error>
+) -> impl FnMut(Input) -> IResult<Input, Cow<'input, str>, Error>
 where
-  Input: Clone
-    + Offset
-    + InputLength
-    + InputTake
-    + InputTakeAtPosition
-    + Slice<RangeFrom<usize>>
-    + InputIter,
-  Output: Default,
-  O1: ExtendInto<Item = ExtendItem, Extender = Output>,
-  O2: ExtendInto<Item = ExtendItem, Extender = Output>,
+  Input: Clone + Offset + InputLength + Slice<RangeFrom<usize>> + InputIter,
   <Input as InputIter>::Item: AsChar,
-  F: Parser<Input, O1, Error>,
-  G: Parser<Input, O2, Error>,
+  F: Parser<Input, &'input str, Error>,
+  G: Parser<Input, char, Error>,
   Error: ParseError<Input>,
 {
   move |input: Input| {
     let mut index = 0;
-    let mut res = Output::default();
+    let mut res = Cow::default();
 
     let i = input.clone();
 
@@ -91,7 +83,7 @@ where
       let remainder = i.slice(index..);
       match normal.parse(remainder.clone()) {
         Ok((i2, o)) => {
-          o.extend_into(&mut res);
+          res += o;
           if i2.input_len() == 0 {
             return Ok((i.slice(i.input_len()..), res));
           } else if i2.input_len() == current_len {
@@ -114,7 +106,7 @@ where
             } else {
               match transform.parse(i.slice(next..)) {
                 Ok((i2, o)) => {
-                  o.extend_into(&mut res);
+                  res.to_mut().push(o);
                   if i2.input_len() == 0 {
                     return Ok((i.slice(i.input_len()..), res));
                   } else {
