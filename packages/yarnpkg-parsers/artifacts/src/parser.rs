@@ -18,6 +18,7 @@ use nom_supreme::{
   tag::complete::tag,
 };
 
+use cow_utils::CowUtils;
 use indexmap::IndexMap;
 use rustc_hash::FxHasher;
 use serde::Serialize;
@@ -331,7 +332,7 @@ fn single_quoted_scalar(input: Input) -> ParseResult<Cow<str>> {
 fn single_quoted_scalar_text(input: Input) -> ParseResult<Cow<str>> {
   map(
     recognize(many0_count(alt((is_not("'"), tag("''"))))),
-    |bytes| Cow::from(from_utf8(bytes).replace("''", "'")),
+    |bytes| from_utf8(bytes).cow_replace("''", "'"),
   )(input)
 }
 
