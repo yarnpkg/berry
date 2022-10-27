@@ -27,6 +27,7 @@ use crate::{
   utils::from_utf8,
 };
 
+/// An IndexMap that uses the FNV hasher which is faster for small keys.
 type FnvIndexMap<K, V> = IndexMap<K, V, FnvBuildHasher>;
 
 #[derive(Serialize)]
