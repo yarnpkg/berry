@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, hash::BuildHasherDefault};
 
 use nom::{
   branch::alt,
@@ -18,8 +18,8 @@ use nom_supreme::{
   tag::complete::tag,
 };
 
-use fnv::FnvBuildHasher;
 use indexmap::IndexMap;
+use rustc_hash::FxHasher;
 use serde::Serialize;
 
 use crate::{
@@ -27,15 +27,15 @@ use crate::{
   utils::from_utf8,
 };
 
-/// An IndexMap that uses the FNV hasher which is faster for small keys.
-type FnvIndexMap<K, V> = IndexMap<K, V, FnvBuildHasher>;
+/// An IndexMap that uses the Fx hasher which is faster for small keys.
+type FxIndexMap<K, V> = IndexMap<K, V, BuildHasherDefault<FxHasher>>;
 
 #[derive(Serialize)]
 #[serde(untagged)]
 pub enum Value<'a> {
   String(Cow<'a, str>),
   Array(Vec<Value<'a>>),
-  Object(FnvIndexMap<Cow<'a, str>, Value<'a>>),
+  Object(FxIndexMap<Cow<'a, str>, Value<'a>>),
 }
 
 pub type Input<'a> = &'a [u8];
@@ -74,7 +74,7 @@ pub fn parse(
 fn start(input: Input, ctx: Context) -> ParseResult<Value> {
   terminated(
     map(opt(parser(top_level_expression, ctx)), |value| {
-      value.unwrap_or_else(|| Value::Object(FnvIndexMap::default()))
+      value.unwrap_or_else(|| Value::Object(FxIndexMap::default()))
     }),
     comments,
   )(input)
@@ -109,7 +109,7 @@ fn block_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
       ),
       eol_any,
       parser(block_terminator, ctx),
-      FnvIndexMap::default,
+      FxIndexMap::default,
       move |mut acc, (key, value)| {
         let existing = acc.insert(key, value);
         if existing.is_some() && !ctx.overwrite_duplicate_entries {
@@ -212,7 +212,7 @@ fn flow_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
         opt(parser(flow_mapping_entry, ctx)),
         delimited(multispace0, char(','), multispace0),
         preceded(multispace0, char('}')),
-        FnvIndexMap::default,
+        FxIndexMap::default,
         |mut acc, entry| {
           if let Some((key, value)) = entry {
             let existing = acc.insert(key, value);
@@ -263,7 +263,7 @@ fn flow_sequence(input: Input, ctx: Context) -> ParseResult<Value> {
 
 fn flow_compact_mapping(input: Input, ctx: Context) -> ParseResult<Value> {
   map(parser(flow_mapping_entry, ctx), |(key, value)| {
-    let mut map = FnvIndexMap::with_capacity_and_hasher(1, Default::default());
+    let mut map = FxIndexMap::with_capacity_and_hasher(1, Default::default());
     map.insert(key, value);
 
     Value::Object(map)

@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 nom = "7.1.1"
 nom-supreme = "0.8.0"
-fnv = "1.0.7"
+rustc-hash = "1.1.0"
 indexmap = { version = "1.9.1", features = ["serde"] }
 serde = { version = "1.0.147", features = ["derive"] }
 serde_json = { version = "1.0.87", features = ["preserve_order"] }
