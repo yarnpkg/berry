@@ -330,8 +330,12 @@ export function makePatchHash(
 
     for (const effect of effects) {
       const {semverExclusivity, ...effectWithoutRange} = effect;
-      if (semverExclusivity !== null && sourceVersion !== null)
-        if (!semverUtils.satisfiesWithPrereleases(sourceVersion, semverExclusivity)) continue;
+      if (
+        semverExclusivity !== null &&
+        sourceVersion !== null &&
+        !semverUtils.satisfiesWithPrereleases(sourceVersion, semverExclusivity)
+      )
+        continue;
 
       parts.push(JSON.stringify(effectWithoutRange));
     }
