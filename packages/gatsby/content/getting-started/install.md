@@ -36,6 +36,12 @@ Corepack won't always have the latest Yarn release. You can make sure it does wi
 corepack prepare yarn@stable --activate
 ```
 
+You can also use Corepack to install the most recent canary (release candidate) release globally:
+
+```bash
+corepack prepare yarn@canary --activate
+```
+
 ### Node.js <16.17 or <18.6
 
 Take a look at the [latest Yarn release](https://github.com/yarnpkg/berry/releases/latest), note the version number, and run:
@@ -43,6 +49,7 @@ Take a look at the [latest Yarn release](https://github.com/yarnpkg/berry/releas
 ```bash
 corepack prepare yarn@<version> --activate
 ```
+
 ## Initializing your project
 
 Just run the following command. It will generate some files inside your current directory; add them all to your next commit, and you'll be done!
