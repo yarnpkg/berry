@@ -736,13 +736,13 @@
           "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
-          "description": "The list of CPUs to cover.",
+          "description": "The list of CPUs to cover. Values of `node:process.arch` are valid options.",
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x86", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32"]
         },
         "libc": {
           "description": "The list of standard C libraries to cover.",
