@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-pack",
-  "version": "4.0.0-rc.26",
+  "version": "4.0.0-rc.27",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
