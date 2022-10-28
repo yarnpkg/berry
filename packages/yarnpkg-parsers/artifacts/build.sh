@@ -1,5 +1,19 @@
 WORKSPACE_DIR="$(dirname "$PWD")"
 
+# TODO: Open a feature request for wasm-pack to support specifying the binaryen version.
+BINARYEN_VERSION="version_110"
+BINARYEN_PATH="$PWD/binaryen-$BINARYEN_VERSION"
+
+if ! [[ -e "$BINARYEN_PATH" ]]; then
+  if ! [[ -e "$BINARYEN_PATH.tar.gz" ]]; then
+    wget -O "$BINARYEN_PATH.tar.gz" "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN_VERSION/binaryen-$BINARYEN_VERSION-x86_64-linux.tar.gz"
+  fi
+
+  tar xvf "$BINARYEN_PATH.tar.gz"
+fi
+
+export PATH="$BINARYEN_PATH/bin:$PATH"
+
 # TODO: Pass "--weak-refs" once https://github.com/rustwasm/wasm-pack/pull/937 is merged.
 # TODO: Enable simd after dropping support for Node 14.
 # TODO: Enable support for WASM reference types after it stabilizes.
