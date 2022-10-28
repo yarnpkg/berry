@@ -18,4 +18,4 @@ serde_json = { version = "1.0.87", features = ["preserve_order"] }
 wasm-bindgen = "0.2.83"
 
 [package.metadata.wasm-pack.profile.release]
-wasm-opt = ['-O4']
+wasm-opt = ["-O4"]
