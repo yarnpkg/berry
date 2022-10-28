@@ -36,12 +36,6 @@ Corepack won't always have the latest Yarn release. You can make sure it does wi
 corepack prepare yarn@stable --activate
 ```
 
-You can also use Corepack to install the most recent canary (release candidate) release globally:
-
-```bash
-corepack prepare yarn@canary --activate
-```
-
 ### Node.js <16.17 or <18.6
 
 Take a look at the [latest Yarn release](https://github.com/yarnpkg/berry/releases/latest), note the version number, and run:
