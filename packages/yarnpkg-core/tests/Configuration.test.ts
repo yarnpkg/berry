@@ -1,8 +1,35 @@
-import {xfs, PortablePath}                 from '@yarnpkg/fslib';
+import {structUtils}                       from '@yarnpkg/core';
+import {npath, xfs, PortablePath}          from '@yarnpkg/fslib';
+import {stringifySyml}                     from '@yarnpkg/parsers';
 import NpmPlugin                           from '@yarnpkg/plugin-npm';
 
 import {Configuration, SECRET, TAG_REGEXP} from '../sources/Configuration';
 
+const initConfigurationPlugin = async (configuration: string) => {
+  const CONFIGURATION_PLUGIN = `
+    const factory = r => {
+      return {
+        default: {
+          configuration: ${configuration},
+        },
+      };
+    };
+
+    const name = '@yarnpkg/plugin-temp';
+    module.exports = {factory, name};
+  `;
+  const path = await xfs.mktempPromise();
+  const tempPluginPath = `${path}/plugin-temp.js` as PortablePath;
+  await xfs.writeFilePromise(tempPluginPath, CONFIGURATION_PLUGIN);
+  const plugin = require(npath.fromPortablePath(tempPluginPath));
+  return {
+    plugins: [tempPluginPath],
+    pluginConfiguration: {
+      modules: new Map([[plugin.name, plugin]]),
+      plugins: new Set([plugin.name]),
+    },
+  };
+};
 async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>) {
   return await xfs.mktempPromise(async dir => {
     await Configuration.updateConfiguration(dir, value);
@@ -214,7 +241,7 @@ describe(`Configuration`, () => {
 
         const scopeConfiguration = configuration.get(`npmScopes`);
         expect(scopeConfiguration.get(`foo`)?.get(`npmAuthToken`)).toBe(`token for foo`);
-        expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(false);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(true);
 
         expect(scopeConfiguration.get(`bar`)?.get(`npmAlwaysAuth`)).toBe(true);
       });
@@ -249,7 +276,7 @@ describe(`Configuration`, () => {
         expect(configuration.get(`npmRegistryServer`)).toBe(`http://bar.server`);
 
         const scopeConfiguration = configuration.get(`npmScopes`);
-        expect(scopeConfiguration.get(`foo`)?.get(`npmAuthToken`)).toBe(null);
+        expect(scopeConfiguration.get(`foo`)?.get(`npmAuthToken`)).toBe(`token for foo`);
         expect(scopeConfiguration.get(`foo`)?.get(`npmAlwaysAuth`)).toBe(true);
 
         expect(scopeConfiguration.get(`bar`)?.get(`npmAlwaysAuth`)).toBe(true);
@@ -297,6 +324,7 @@ describe(`Configuration`, () => {
 
         expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
           `example.com`,
+          `evil.com`,
         ]);
 
         configuration.useWithSource(`override file`, {
@@ -332,8 +360,482 @@ describe(`Configuration`, () => {
         ]);
 
         expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
+          `example.com`,
+          `evil.com`,
           `yarnpkg.com`,
         ]);
+      });
+    });
+  });
+
+  it(`it should get the default value, if there is no set value`, async () => {
+    // yarn don‘t support LOCATOR, LOCATOR_LOOSE has a default value
+    const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
+      any: {
+        description: "",
+        type: "ANY",
+        default: "any",
+      },
+      boolean: {
+        description: "",
+        type: "BOOLEAN",
+        default: false,
+      },
+      absolutePath: {
+        description: "",
+        type: "ABSOLUTE_PATH",
+        default: "/absolutePath",
+      },
+      number: {
+        description: "",
+        type: "NUMBER",
+        default: 0,
+      },
+      string: {
+        description: "",
+        type: "STRING",
+        default: "string",
+      },
+      secret: {
+        description: "",
+        type: "SECRET",
+        default: "secret",
+      },
+      shape: {
+        description: "",
+        type: "SHAPE",
+        properties: {
+          number: {
+            description: "",
+            type: "NUMBER",
+            default: 0,
+          },
+          string: {
+            description: "",
+            type: "STRING",
+            default: "string",
+          },
+        },
+      },
+      map: {
+        description: "",
+        type: "MAP",
+        valueDefinition: {
+          description: "",
+          type: "SHAPE",
+          properties: {
+            number: {
+              description: "",
+              type: "NUMBER",
+              default: 0,
+            },
+            string: {
+              description: "",
+              type: "STRING",
+              default: "string",
+            },
+          },
+        },
+      },
+      array: {
+        description: "",
+        type: "STRING",
+        isArray: true,
+        default: ["1", "2"],
+      },
+    }`);
+    await initializeConfiguration({
+      plugins,
+      map: {
+        foo: { // empty objects are discarded by `stringifySyml`.
+          string: `Not important`,
+        },
+      },
+    }, async dir => {
+      const configuration = await Configuration.find(dir, pluginConfiguration);
+
+      expect(configuration.get(`any`)).toBe(`any`);
+      expect(configuration.get(`boolean`)).toBe(false);
+      expect(configuration.get(`absolutePath`)).toBe(`/absolutePath`);
+      expect(configuration.get(`number`)).toBe(0);
+      expect(configuration.get(`string`)).toBe(`string`);
+      expect(configuration.get(`secret`)).toBe(`secret`);
+
+      const shape = configuration.get(`shape`) as Map<string, any>;
+      expect(shape.get(`number`)).toBe(0);
+      expect(shape.get(`string`)).toBe(`string`);
+
+      const map = configuration.get(`map`) as Map<string, any>;
+      const mapShape = map.get(`foo`) as Map<string, any>;
+      expect(mapShape.get(`number`)).toBe(0);
+
+      const array = configuration.get(`array`) as Array<string>;
+      expect(array[0]).toBe(`1`);
+      expect(array[1]).toBe(`2`);
+    });
+  });
+
+  describe(`useWithSource`, () => {
+    it(`it should set the correct value according to the options (single value)`, async() => {
+      const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
+        any: {
+          description: "",
+          type: "ANY",
+          default: "",
+        },
+        boolean: {
+          description: "",
+          type: "BOOLEAN",
+          default: false,
+        },
+        absolutePath: {
+          description: "",
+          type: "ABSOLUTE_PATH",
+          default: ".",
+        },
+        locator: {
+          description: "",
+          type: "LOCATOR",
+          default: "",
+        },
+        locatorLoose: {
+          description: "",
+          type: "LOCATOR_LOOSE",
+          default: "",
+        },
+        number: {
+          description: "",
+          type: "NUMBER",
+          default: 0,
+        },
+        string: {
+          description: "",
+          type: "STRING",
+          default: "",
+        },
+        secret: {
+          description: "",
+          type: "SECRET",
+          default: "",
+        },
+      }`);
+      await initializeConfiguration({
+        plugins,
+        any: `any`,
+        boolean: true,
+        absolutePath: `/absolutePath`,
+        locator: `locator`,
+        locatorLoose: `locatorLoose`,
+        number: 1,
+        string: `string`,
+        secret: `secret`,
+      }, async dir => {
+        const configuration = await Configuration.find(dir, pluginConfiguration);
+
+        configuration.useWithSource(`second file`, {
+          any: `any2`,
+          boolean: false,
+          absolutePath: `/absolutePath2`,
+          locator: `locator2`,
+          locatorLoose: `locatorLoose2`,
+          number: 2,
+          string: `string2`,
+          secret: `secret2`,
+        }, dir);
+        expect(configuration.get(`any`)).toBe(`any`);
+        expect(configuration.get(`boolean`)).toBe(true);
+        expect(configuration.get(`absolutePath`)).toBe(`/absolutePath`);
+        expect(configuration.get(`locator`)).toStrictEqual(structUtils.parseLocator(`locator`));
+        expect(configuration.get(`locatorLoose`)).toStrictEqual(structUtils.parseLocator(`locatorLoose`, false));
+        expect(configuration.get(`number`)).toBe(1);
+        expect(configuration.get(`string`)).toBe(`string`);
+        expect(configuration.get(`secret`)).toBe(`secret`);
+
+        configuration.useWithSource(`third file`, {
+          any: `any2`,
+          boolean: true,
+          absolutePath: `/absolutePath2`,
+          locator: `locator2`,
+          locatorLoose: `locatorLoose2`,
+          number: 2,
+          string: `string2`,
+          secret: `secret2`,
+        }, dir, {overwrite: true});
+        expect(configuration.get(`any`)).toBe(`any2`);
+        expect(configuration.get(`boolean`)).toBe(true);
+        expect(configuration.get(`absolutePath`)).toBe(`/absolutePath2`);
+        expect(configuration.get(`locator`)).toStrictEqual(structUtils.parseLocator(`locator2`));
+        expect(configuration.get(`locatorLoose`)).toStrictEqual(structUtils.parseLocator(`locatorLoose2`, false));
+        expect(configuration.get(`number`)).toBe(2);
+        expect(configuration.get(`string`)).toBe(`string2`);
+        expect(configuration.get(`secret`)).toBe(`secret2`);
+
+        configuration.useWithSource(`fourth file`, {
+          any: `any3`,
+          boolean: false,
+          absolutePath: `/absolutePath3`,
+          locator: `locator3`,
+          locatorLoose: `locatorLoose3`,
+          number: 3,
+          string: `string3`,
+          secret: `secret3`,
+        }, dir, {reset: true});
+        expect(configuration.get(`any`)).toBe(`any3`);
+        expect(configuration.get(`boolean`)).toBe(false);
+        expect(configuration.get(`absolutePath`)).toBe(`/absolutePath3`);
+        expect(configuration.get(`locator`)).toEqual(structUtils.parseLocator(`locator3`));
+        expect(configuration.get(`locatorLoose`)).toEqual(structUtils.parseLocator(`locatorLoose3`, false));
+        expect(configuration.get(`number`)).toBe(3);
+        expect(configuration.get(`string`)).toBe(`string3`);
+        expect(configuration.get(`secret`)).toBe(`secret3`);
+      });
+    });
+
+    it(`it should set the correct value according to the options (complex value)`, async() => {
+      const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
+        stringArray: {
+          description: "",
+          type: "STRING",
+          isArray: true,
+          default: [],
+        },
+        stringConcatenateArray: {
+          description: "",
+          type: "STRING",
+          isArray: true,
+          concatenateValues: true,
+          default: [],
+        },
+        shape: {
+          description: "",
+          type: "SHAPE",
+          properties: {
+            number: {
+              description: "",
+              type: "NUMBER",
+              default: 0,
+            },
+            string: {
+              description: "",
+              type: "STRING",
+              default: "default",
+            },
+          },
+        },
+        map: {
+          description: "",
+          type: "MAP",
+          valueDefinition: {
+            description: "",
+            type: "SHAPE",
+            properties: {
+              number: {
+                description: "",
+                type: "NUMBER",
+                default: 0,
+              },
+              string: {
+                description: "",
+                type: "STRING",
+                default: "default",
+              },
+            },
+          },
+        },
+      }`);
+      await initializeConfiguration({
+        plugins,
+        stringArray: [`foo`],
+        stringConcatenateArray: [`foo`],
+        shape: {
+          number: 1, string: `foo`,
+        },
+        map: {
+          foo: {number: 1, string: `foo`},
+          bar: {number: 1, string: `foo`},
+        },
+      }, async dir => {
+        const configuration = await Configuration.find(dir, pluginConfiguration);
+
+        configuration.useWithSource(`second file`, {
+          stringArray: [`bar`],
+          stringConcatenateArray: [`bar`],
+          shape: {
+            number: 2, string: `bar`,
+          },
+          map: {
+            foo: {number: 2, string: `bar`},
+            bar: {number: 2, string: `bar`},
+          },
+        }, dir);
+        expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`]);
+        expect(configuration.get(`stringConcatenateArray`)).toEqual([`bar`, `foo`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `foo`]]));
+        expect(configuration.get(`map`)).toEqual(new Map([
+          [
+            `foo`, new Map<string, any>([[`number`, 1], [`string`, `foo`]]),
+          ], [
+            `bar`, new Map<string, any>([[`number`, 1], [`string`, `foo`]]),
+          ],
+        ]));
+
+        configuration.useWithSource(`third file`, {
+          stringArray: [`baz`],
+          stringConcatenateArray: [`baz`],
+          shape: {
+            number: 2, string: `bar`,
+          },
+          map: {
+            foo: {number: 2, string: `bar`},
+            bar: {number: 2, string: `bar`},
+          },
+        }, dir, {overwrite: true});
+        expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`, `baz`]);
+        expect(configuration.get(`stringConcatenateArray`)).toEqual([`bar`, `foo`, `baz`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `bar`]]));
+        expect(configuration.get(`map`)).toEqual(new Map([
+          [
+            `foo`, new Map<string, any>([[`number`, 2], [`string`, `bar`]]),
+          ], [
+            `bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]]),
+          ],
+        ]));
+
+        configuration.useWithSource(`fourth file`, {
+          stringArray: [`qux`],
+          stringConcatenateArray: [`qux`],
+          shape: {
+            string: `bar`,
+          },
+          map: {
+            bar: {number: 3},
+            baz: {},
+          },
+        }, dir, {reset: true});
+        expect(configuration.get(`stringArray`)).toEqual([`qux`]);
+        expect(configuration.get(`stringConcatenateArray`)).toEqual([`qux`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 0], [`string`, `bar`]]));
+        expect(configuration.get(`map`)).toEqual(new Map([
+          [
+            `bar`, new Map<string, any>([[`number`, 3], [`string`, `default`]]),
+          ],
+          [
+            `baz`, new Map<string, any>([[`number`, 0], [`string`, `default`]]),
+          ],
+        ]));
+      });
+    });
+  });
+
+  describe(`multiple RC files`, () => {
+    it(`it should correctly merge or override the values`, async() => {
+      const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
+        string: {
+          description: "",
+          type: "STRING",
+          default: "",
+        },
+        stringArray: {
+          description: "",
+          type: "STRING",
+          isArray: true,
+          default: [],
+        },
+        shape: {
+          description: "",
+          type: "SHAPE",
+          properties: {
+            number: {
+              description: "",
+              type: "NUMBER",
+              default: 0,
+            },
+            string: {
+              description: "",
+              type: "STRING",
+              default: "default",
+            },
+          },
+        },
+        map: {
+          description: "",
+          type: "MAP",
+          valueDefinition: {
+            description: "",
+            type: "SHAPE",
+            properties: {
+              number: {
+                description: "",
+                type: "NUMBER",
+                default: 0,
+              },
+              string: {
+                description: "",
+                type: "STRING",
+                default: "default",
+              },
+            },
+          },
+        },
+      }`);
+      await initializeConfiguration({
+        plugins,
+        string: `foo`,
+        stringArray: [`foo`],
+        shape: {
+          number: 1, string: `foo`,
+        },
+        map: {
+          foo: {number: 1, string: `foo`},
+          bar: {number: 1, string: `foo`},
+          baz: {number: 2, string: `bar`},
+        },
+      }, async dir => {
+        const workspaceDirectory = `${dir}/workspace` as PortablePath;
+
+        await xfs.mkdirPromise(workspaceDirectory);
+        await xfs.writeFilePromise(`${workspaceDirectory}/.yarnrc.yml` as PortablePath, stringifySyml({
+          string: `bar`,
+          stringArray: [`bar`],
+          shape: {
+            string: `bar`,
+          },
+          map: {
+            foo: {},
+            bar: {string: `bar`},
+          },
+        }));
+
+        const configuration = await Configuration.find(workspaceDirectory, pluginConfiguration);
+
+        expect(configuration.get(`string`)).toBe(`bar`);
+        expect(configuration.get(`stringArray`)).toEqual([`bar`, `foo`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `bar`]])); // the number is default value
+        expect(configuration.get(`map`)).toEqual(
+          new Map([
+            [
+              `foo`,
+              new Map<string, any>([
+                [`number`, 1],
+                [`string`, `foo`],
+              ]),
+            ],
+            [
+              `bar`,
+              new Map<string, any>([
+                [`number`, 1],
+                [`string`, `bar`],
+              ]),
+            ],
+            [
+              `baz`,
+              new Map<string, any>([
+                [`number`, 2],
+                [`string`, `bar`],
+              ]),
+            ],
+          ]),
+        );
       });
     });
   });
