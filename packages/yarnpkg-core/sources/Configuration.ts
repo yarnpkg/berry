@@ -669,7 +669,7 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
         return parseSingleValue(configuration, path, segment, definition, folder);
       });
     } else {
-      return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
+      return value.map((sub, i) => parseSingleValue(configuration, `${path}.${i}`, sub, definition, folder));
     }
   } else {
     if (Array.isArray(value)) {
@@ -766,7 +766,7 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
 
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
-    const subPath = `${path}['${normalizedKey}']`;
+    const subPath = `${path}.${normalizedKey}`;
 
     // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
     // that's fine because we're guaranteed it's not undefined.
@@ -826,6 +826,18 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       return definition.default;
     } break;
   }
+}
+
+function getCurrentValue(configuration: Configuration, path: string): unknown {
+  const keys = path.split(`.`);
+  const currentValue = keys.reduce((prev, currentKey) => {
+    if (prev instanceof Map)
+      return prev?.get(currentKey);
+
+    return prev?.[currentKey];
+  }, configuration.values);
+
+  return currentValue;
 }
 
 type SettingTransforms = {
