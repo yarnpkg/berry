@@ -226,7 +226,10 @@ describe(`Configuration`, () => {
         });
 
         configuration.useWithSource(`second file`, {
-          npmRegistryServer: `http://bar.server`,
+          npmRegistryServer: {
+            onConflict: `skip`,
+            value: `http://bar.server`,
+          },
           npmScopes: {
             foo: {
               npmAlwaysAuth: true,
@@ -271,7 +274,7 @@ describe(`Configuration`, () => {
               npmAlwaysAuth: true,
             },
           },
-        }, dir, {overwrite: true});
+        }, dir);
 
         expect(configuration.get(`npmRegistryServer`)).toBe(`http://bar.server`);
 
@@ -309,16 +312,16 @@ describe(`Configuration`, () => {
 
         expect(configuration.get(`logFilters`)).toEqual([
           new Map(Object.entries({
-            code: `YN0027`,
-            text: undefined,
-            pattern: undefined,
-            level: `error`,
-          })),
-          new Map(Object.entries({
             code: `YN0005`,
             text: undefined,
             pattern: undefined,
             level: `info`,
+          })),
+          new Map(Object.entries({
+            code: `YN0027`,
+            text: undefined,
+            pattern: undefined,
+            level: `error`,
           })),
         ]);
 
@@ -336,20 +339,20 @@ describe(`Configuration`, () => {
           unsafeHttpWhitelist: [
             `yarnpkg.com`,
           ],
-        }, dir, {overwrite: true});
+        }, dir);
 
         expect(configuration.get(`logFilters`)).toEqual([
-          new Map(Object.entries({
-            code: `YN0027`,
-            text: undefined,
-            pattern: undefined,
-            level: `error`,
-          })),
           new Map(Object.entries({
             code: `YN0005`,
             text: undefined,
             pattern: undefined,
             level: `info`,
+          })),
+          new Map(Object.entries({
+            code: `YN0027`,
+            text: undefined,
+            pattern: undefined,
+            level: `error`,
           })),
           new Map(Object.entries({
             code: `YN0066`,
@@ -532,7 +535,8 @@ describe(`Configuration`, () => {
       }, async dir => {
         const configuration = await Configuration.find(dir, pluginConfiguration);
 
-        configuration.useWithSource(`second file`, {
+        configuration.useWithSource(`skip file`, {
+          onConflict: `skip`,
           any: `any2`,
           boolean: false,
           absolutePath: `/absolutePath2`,
@@ -545,43 +549,45 @@ describe(`Configuration`, () => {
         expect(configuration.get(`any`)).toBe(`any`);
         expect(configuration.get(`boolean`)).toBe(true);
         expect(configuration.get(`absolutePath`)).toBe(`/absolutePath`);
-        expect(configuration.get(`locator`)).toStrictEqual(structUtils.parseLocator(`locator`));
-        expect(configuration.get(`locatorLoose`)).toStrictEqual(structUtils.parseLocator(`locatorLoose`, false));
+        expect(configuration.get(`locator`)).toEqual(structUtils.parseLocator(`locator`));
+        expect(configuration.get(`locatorLoose`)).toEqual(structUtils.parseLocator(`locatorLoose`, false));
         expect(configuration.get(`number`)).toBe(1);
         expect(configuration.get(`string`)).toBe(`string`);
         expect(configuration.get(`secret`)).toBe(`secret`);
 
-        configuration.useWithSource(`third file`, {
+        configuration.useWithSource(`extend file`, {
+          onConflict: `extend`,
           any: `any2`,
-          boolean: true,
+          boolean: false,
           absolutePath: `/absolutePath2`,
           locator: `locator2`,
           locatorLoose: `locatorLoose2`,
           number: 2,
           string: `string2`,
           secret: `secret2`,
-        }, dir, {overwrite: true});
+        }, dir);
         expect(configuration.get(`any`)).toBe(`any2`);
-        expect(configuration.get(`boolean`)).toBe(true);
+        expect(configuration.get(`boolean`)).toBe(false);
         expect(configuration.get(`absolutePath`)).toBe(`/absolutePath2`);
-        expect(configuration.get(`locator`)).toStrictEqual(structUtils.parseLocator(`locator2`));
-        expect(configuration.get(`locatorLoose`)).toStrictEqual(structUtils.parseLocator(`locatorLoose2`, false));
+        expect(configuration.get(`locator`)).toEqual(structUtils.parseLocator(`locator2`));
+        expect(configuration.get(`locatorLoose`)).toEqual(structUtils.parseLocator(`locatorLoose2`, false));
         expect(configuration.get(`number`)).toBe(2);
         expect(configuration.get(`string`)).toBe(`string2`);
         expect(configuration.get(`secret`)).toBe(`secret2`);
 
-        configuration.useWithSource(`fourth file`, {
+        configuration.useWithSource(`reset file`, {
+          onConflict: `reset`,
           any: `any3`,
-          boolean: false,
+          boolean: true,
           absolutePath: `/absolutePath3`,
           locator: `locator3`,
           locatorLoose: `locatorLoose3`,
           number: 3,
           string: `string3`,
           secret: `secret3`,
-        }, dir, {reset: true});
+        }, dir);
         expect(configuration.get(`any`)).toBe(`any3`);
-        expect(configuration.get(`boolean`)).toBe(false);
+        expect(configuration.get(`boolean`)).toBe(true);
         expect(configuration.get(`absolutePath`)).toBe(`/absolutePath3`);
         expect(configuration.get(`locator`)).toEqual(structUtils.parseLocator(`locator3`));
         expect(configuration.get(`locatorLoose`)).toEqual(structUtils.parseLocator(`locatorLoose3`, false));
@@ -597,13 +603,6 @@ describe(`Configuration`, () => {
           description: "",
           type: "STRING",
           isArray: true,
-          default: [],
-        },
-        stringConcatenateArray: {
-          description: "",
-          type: "STRING",
-          isArray: true,
-          concatenateValues: true,
           default: [],
         },
         shape: {
@@ -646,81 +645,73 @@ describe(`Configuration`, () => {
       await initializeConfiguration({
         plugins,
         stringArray: [`foo`],
-        stringConcatenateArray: [`foo`],
         shape: {
-          number: 1, string: `foo`,
+          number: 1,
         },
         map: {
-          foo: {number: 1, string: `foo`},
-          bar: {number: 1, string: `foo`},
+          foo: {number: 1},
+          bar: {number: 1},
         },
       }, async dir => {
         const configuration = await Configuration.find(dir, pluginConfiguration);
 
-        configuration.useWithSource(`second file`, {
+        configuration.useWithSource(`skip file`, {
+          onConflict: `skip`,
           stringArray: [`bar`],
-          stringConcatenateArray: [`bar`],
-          shape: {
-            number: 2, string: `bar`,
-          },
-          map: {
-            foo: {number: 2, string: `bar`},
-            bar: {number: 2, string: `bar`},
-          },
-        }, dir);
-        expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`]);
-        expect(configuration.get(`stringConcatenateArray`)).toEqual([`bar`, `foo`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `foo`]]));
-        expect(configuration.get(`map`)).toEqual(new Map([
-          [
-            `foo`, new Map<string, any>([[`number`, 1], [`string`, `foo`]]),
-          ], [
-            `bar`, new Map<string, any>([[`number`, 1], [`string`, `foo`]]),
-          ],
-        ]));
-
-        configuration.useWithSource(`third file`, {
-          stringArray: [`baz`],
-          stringConcatenateArray: [`baz`],
-          shape: {
-            number: 2, string: `bar`,
-          },
-          map: {
-            foo: {number: 2, string: `bar`},
-            bar: {number: 2, string: `bar`},
-          },
-        }, dir, {overwrite: true});
-        expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`, `baz`]);
-        expect(configuration.get(`stringConcatenateArray`)).toEqual([`bar`, `foo`, `baz`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `bar`]]));
-        expect(configuration.get(`map`)).toEqual(new Map([
-          [
-            `foo`, new Map<string, any>([[`number`, 2], [`string`, `bar`]]),
-          ], [
-            `bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]]),
-          ],
-        ]));
-
-        configuration.useWithSource(`fourth file`, {
-          stringArray: [`qux`],
-          stringConcatenateArray: [`qux`],
           shape: {
             string: `bar`,
           },
           map: {
-            bar: {number: 3},
-            baz: {},
+            foo: {string: `bar`},
+            bar: {string: `bar`},
           },
-        }, dir, {reset: true});
-        expect(configuration.get(`stringArray`)).toEqual([`qux`]);
-        expect(configuration.get(`stringConcatenateArray`)).toEqual([`qux`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 0], [`string`, `bar`]]));
+        }, dir);
+        expect(configuration.get(`stringArray`)).toEqual([`foo`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `default`]]));
         expect(configuration.get(`map`)).toEqual(new Map([
           [
-            `bar`, new Map<string, any>([[`number`, 3], [`string`, `default`]]),
+            `foo`, new Map<string, any>([[`number`, 1], [`string`, `default`]]),
+          ], [
+            `bar`, new Map<string, any>([[`number`, 1], [`string`, `default`]]),
           ],
+        ]));
+
+        configuration.useWithSource(`extend file`, {
+          onConflict: `extend`,
+          stringArray: [`bar`],
+          shape: {
+            string: `bar`,
+          },
+          map: {
+            foo: {string: `bar`},
+            bar: {string: `bar`},
+          },
+        }, dir);
+        expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `bar`]]));
+        expect(configuration.get(`map`)).toEqual(new Map([
           [
-            `baz`, new Map<string, any>([[`number`, 0], [`string`, `default`]]),
+            `foo`, new Map<string, any>([[`number`, 1], [`string`, `bar`]]),
+          ], [
+            `bar`, new Map<string, any>([[`number`, 1], [`string`, `bar`]]),
+          ],
+        ]));
+
+        configuration.useWithSource(`reset file`, {
+          onConflict: `reset`,
+          stringArray: [`bar`],
+          shape: {
+            number: 2,
+          },
+          map: {
+            bar: {number: 2, string: `bar`},
+          },
+        }, dir);
+        expect(configuration.get(`stringArray`)).toEqual([`bar`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `default`]]));
+        expect(configuration.get(`map`)).toEqual(new Map([
+          [
+            `bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]]),
           ],
         ]));
       });
@@ -728,14 +719,36 @@ describe(`Configuration`, () => {
   });
 
   describe(`multiple RC files`, () => {
-    it(`it should correctly merge or override the values`, async() => {
+    it(`it should correctly extend or reset or skip the values`, async() => {
       const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
         string: {
           description: "",
           type: "STRING",
           default: "",
         },
+        stringReset: {
+          description: "",
+          type: "STRING",
+          default: "",
+        },
+        stringSkip: {
+          description: "",
+          type: "STRING",
+          default: "",
+        },
         stringArray: {
+          description: "",
+          type: "STRING",
+          isArray: true,
+          default: [],
+        },
+        stringArrayReset: {
+          description: "",
+          type: "STRING",
+          isArray: true,
+          default: [],
+        },
+        stringArraySkip: {
           description: "",
           type: "STRING",
           isArray: true,
@@ -757,7 +770,79 @@ describe(`Configuration`, () => {
             },
           },
         },
+        shapeReset: {
+          description: "",
+          type: "SHAPE",
+          properties: {
+            number: {
+              description: "",
+              type: "NUMBER",
+              default: 0,
+            },
+            string: {
+              description: "",
+              type: "STRING",
+              default: "default",
+            },
+          },
+        },
+        shapeSkip: {
+          description: "",
+          type: "SHAPE",
+          properties: {
+            number: {
+              description: "",
+              type: "NUMBER",
+              default: 0,
+            },
+            string: {
+              description: "",
+              type: "STRING",
+              default: "default",
+            },
+          },
+        },
         map: {
+          description: "",
+          type: "MAP",
+          valueDefinition: {
+            description: "",
+            type: "SHAPE",
+            properties: {
+              number: {
+                description: "",
+                type: "NUMBER",
+                default: 0,
+              },
+              string: {
+                description: "",
+                type: "STRING",
+                default: "default",
+              },
+            },
+          },
+        },
+        mapReset: {
+          description: "",
+          type: "MAP",
+          valueDefinition: {
+            description: "",
+            type: "SHAPE",
+            properties: {
+              number: {
+                description: "",
+                type: "NUMBER",
+                default: 0,
+              },
+              string: {
+                description: "",
+                type: "STRING",
+                default: "default",
+              },
+            },
+          },
+        },
+        mapSkip: {
           description: "",
           type: "MAP",
           valueDefinition: {
@@ -781,14 +866,28 @@ describe(`Configuration`, () => {
       await initializeConfiguration({
         plugins,
         string: `foo`,
+        stringReset: `foo`,
+        stringSkip: `foo`,
         stringArray: [`foo`],
+        stringArrayReset: [`foo`],
+        stringArraySkip: [`foo`],
         shape: {
-          number: 1, string: `foo`,
+          string: `foo`,
+        },
+        shapeReset: {
+          string: `foo`,
+        },
+        shapeSkip: {
+          string: `foo`,
         },
         map: {
-          foo: {number: 1, string: `foo`},
-          bar: {number: 1, string: `foo`},
-          baz: {number: 2, string: `bar`},
+          foo: {string: `foo`},
+        },
+        mapReset: {
+          foo: {string: `foo`},
+        },
+        mapSkip: {
+          foo: {string: `foo`},
         },
       }, async dir => {
         const workspaceDirectory = `${dir}/workspace` as PortablePath;
@@ -796,42 +895,90 @@ describe(`Configuration`, () => {
         await xfs.mkdirPromise(workspaceDirectory);
         await xfs.writeFilePromise(`${workspaceDirectory}/.yarnrc.yml` as PortablePath, stringifySyml({
           string: `bar`,
+          stringReset: {value: `bar`, onConflict: `reset`},
+          stringSkip: {value: `bar`, onConflict: `skip`},
           stringArray: [`bar`],
+          stringArrayReset: {value: [`bar`], onConflict: `reset`},
+          stringArraySkip: {value: [`bar`], onConflict: `skip`},
           shape: {
-            string: `bar`,
+            number: 2,
+          },
+          shapeReset: {
+            value: {
+              number: 2,
+            },
+            onConflict: `reset`,
+          },
+          shapeSkip: {
+            value: {
+              number: 2,
+            },
+            onConflict: `skip`,
           },
           map: {
-            foo: {},
-            bar: {string: `bar`},
+            bar: {number: 2, string: `bar`},
+          },
+          mapReset: {
+            value: {
+              bar: {number: 2, string: `bar`},
+            },
+            onConflict: `reset`,
+          },
+          mapSkip: {
+            value: {
+              bar: {number: 2, string: `bar`},
+            },
+            onConflict: `skip`,
           },
         }));
 
         const configuration = await Configuration.find(workspaceDirectory, pluginConfiguration);
 
         expect(configuration.get(`string`)).toBe(`bar`);
-        expect(configuration.get(`stringArray`)).toEqual([`bar`, `foo`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `bar`]])); // the number is default value
+        expect(configuration.get(`stringReset`)).toBe(`bar`);
+        expect(configuration.get(`stringSkip`)).toBe(`foo`);
+        expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`]);
+        expect(configuration.get(`stringArrayReset`)).toEqual([`bar`]);
+        expect(configuration.get(`stringArraySkip`)).toEqual([`foo`]);
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `foo`]]));
+        expect(configuration.get(`shapeReset`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `default`]]));
+        expect(configuration.get(`shapeSkip`)).toEqual(new Map<string, any>([[`number`, 0], [`string`, `foo`]]));
         expect(configuration.get(`map`)).toEqual(
           new Map([
             [
               `foo`,
               new Map<string, any>([
-                [`number`, 1],
+                [`number`, 0],
                 [`string`, `foo`],
               ]),
             ],
             [
               `bar`,
               new Map<string, any>([
-                [`number`, 1],
+                [`number`, 2],
                 [`string`, `bar`],
               ]),
             ],
+          ]),
+        );
+        expect(configuration.get(`mapReset`)).toEqual(
+          new Map([
             [
-              `baz`,
+              `bar`,
               new Map<string, any>([
                 [`number`, 2],
                 [`string`, `bar`],
+              ]),
+            ],
+          ]),
+        );
+        expect(configuration.get(`mapSkip`)).toEqual(
+          new Map([
+            [
+              `foo`,
+              new Map<string, any>([
+                [`number`, 0],
+                [`string`, `foo`],
               ]),
             ],
           ]),
