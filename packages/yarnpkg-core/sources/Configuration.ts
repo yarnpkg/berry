@@ -682,6 +682,8 @@ function parseValue(configuration: Configuration, path: string, valueBase: any, 
   }
 
   if (value === undefined) {
+    // XXX: `enableStrictSettings` is a very special setting, it should only be used by default when importSettings
+    if (path === `enableStrictSettings`) return undefined;
     if (reset || current === undefined)
       return defaultValue;
     return current;
