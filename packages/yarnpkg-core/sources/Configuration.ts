@@ -1507,6 +1507,14 @@ export class Configuration {
 
   use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true}: {strict?: boolean} = {}) {
     strict = strict && this.get(`enableStrictSettings`);
+    const onConflict = (data?.onConflict ?? `extend`) as string;
+
+    if (onConflict !== undefined && !onConflictList.includes(onConflict))
+      throw new UsageError(`the onConflict is invalid, it should be one of 'extend' | 'skip' | 'reset', but received ${onConflict}`);
+
+    const extend = onConflict === `extend`;
+    const skip = onConflict === `skip`;
+    const reset = onConflict === `reset`;
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
       // The plugins have already been loaded at this point
@@ -1524,6 +1532,7 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         if (key === `enableStrictSettings`) continue;
+        if (key === `onConflict`) continue;
 
         if (strict) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
@@ -1535,7 +1544,7 @@ export class Configuration {
 
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder);
+        parsed = parseValue(this, key, data[key], definition, folder, {extend, skip, reset});
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
