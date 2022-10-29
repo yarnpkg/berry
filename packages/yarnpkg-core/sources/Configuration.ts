@@ -101,7 +101,8 @@ export const FormatType = formatUtils.Type;
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string;
   type: T;
-} & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
+  isArray?: boolean;
+};
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
   properties: {[propertyName: string]: SettingsDefinition};
@@ -438,7 +439,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Overrides for log levels`,
     type: SettingsType.SHAPE,
     isArray: true,
-    concatenateValues: true,
     properties: {
       code: {
         description: `Code of the messages covered by this override`,
@@ -662,54 +662,76 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 };
 
-function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
+const onConflictList = [`extend`, `skip`, `reset`];
+
+type ParseValueOptions = {extend: boolean, skip: boolean, reset: boolean};
+
+function parseValue(configuration: Configuration, path: string, valueBase: any, definition: SettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions = {extend: true, skip: false, reset: false}) {
   const current = getCurrentValue(configuration, path);
   const defaultValue = getDefaultValue(configuration, definition);
 
-  if (current === undefined && value === undefined)
-    return defaultValue;
+  let value = valueBase;
+  if (valueBase?.onConflict !== undefined) {
+    if (!onConflictList.includes(valueBase.onConflict))
+      throw new UsageError(`the onConflict in the ${path} is invalid, it should be one of 'extend' | 'skip' | 'reset', but received ${valueBase.onConflict}`);
+
+    extend = valueBase.onConflict === `extend`;
+    skip = valueBase.onConflict === `skip`;
+    reset = valueBase.onConflict === `reset`;
+    value = valueBase?.value;
+  }
+
+  if (value === undefined) {
+    if (reset || current === undefined)
+      return defaultValue;
+    return current;
+  }
 
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
-    const currentValue =  reset
-      ? []
-      : (current as Array<any>) ?? [];
+    const currentValue = (current as Array<any>) ?? [];
+
+    if (skip && currentValue.length !== 0)
+      return currentValue;
+
     const result = Array.isArray(value)
-      ? value.map((sub, i) => parseSingleValue(configuration, `${path}.${i}`, sub, definition, folder, {overwrite, reset: true}))
-      : String(value).split(/,/).map(segment => parseSingleValue(configuration, path, segment, definition, folder, {overwrite, reset: true}));
+      ? value.map((sub, i) => parseSingleValue(configuration, `${path}.${i}`, sub, definition, folder, {extend, skip, reset}))
+      : String(value).split(/,/).map(segment => parseSingleValue(configuration, path, segment, definition, folder, {extend, skip, reset}));
 
     if (currentValue === defaultValue)
       return result;
 
-    if (definition.isArray && definition.concatenateValues)
-      return overwrite
-        ? [...currentValue, ...result]
-        : [...result, ...currentValue];
+    if (reset)
+      return result;
 
     return [...currentValue, ...result];
   } else {
     if (Array.isArray(value))
       throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
 
-    const currentValue = reset
-      ? undefined
-      : current;
+    if (reset || extend)
+      return parseSingleValue(configuration, path, value, definition, folder, {extend, skip, reset});
+    if (current === undefined || current === defaultValue)
+      return parseSingleValue(configuration, path, value, definition, folder, {extend, skip, reset});
+    if (skip)
+      return undefined;
 
-    if ((definition.type === SettingsType.MAP || definition.type === SettingsType.SHAPE) || overwrite || currentValue === undefined || currentValue === defaultValue)
-      return parseSingleValue(configuration, path, value, definition, folder, {overwrite, reset});
+    // MAP and SHAPE are more complex and need further processing
+    if (definition.type === SettingsType.MAP || definition.type === SettingsType.SHAPE)
+      return parseSingleValue(configuration, path, value, definition, folder, {extend, skip, reset});
 
     // returning undefined will not modify the existing value.
     return undefined;
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions) {
   switch (definition.type) {
     case SettingsType.ANY:
       return value;
     case SettingsType.SHAPE:
-      return parseShape(configuration, path, value, definition, folder, {overwrite, reset});
+      return parseShape(configuration, path, value, definition, folder, {extend, skip, reset});
     case SettingsType.MAP:
-      return parseMap(configuration, path, value, definition, folder, {overwrite, reset});
+      return parseMap(configuration, path, value, definition, folder, {extend, skip, reset});
   }
 
   if (value === null && !definition.isNullable && definition.default !== null)
@@ -719,8 +741,6 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     return value;
 
   const interpretValue = () => {
-    if (value === undefined)
-      return undefined;
     if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
       return miscUtils.parseBoolean(value);
     if (definition.type === SettingsType.NUMBER && typeof value === `number`)
@@ -757,45 +777,29 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   return interpreted;
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
-  const currentValue = reset
-    ? new Map<string, any>()
-    : (getCurrentValue(configuration, path) as Map<string, any>) ?? new Map<string, any>();
-
-  if (currentValue === undefined && value === undefined)
-    return getDefaultValue(configuration, definition);
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions) {
+  const currentValue = (getCurrentValue(configuration, path) as Map<string, any>) ?? new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  const result = currentValue.size > 0
-    ? currentValue
-    : getDefaultValue(configuration, definition, {ignoreArrays: true});
+  const result = new Map<string, any>();
 
   if (value === null)
-    return result;
+    return currentValue;
 
-  for (const [propKey, propValue] of Object.entries(value)) {
+  for (const [propKey, subDefinition] of Object.entries(definition.properties)) {
     const subPath = `${path}.${propKey}`;
-    const subDefinition = definition.properties[propKey];
+    const propValue = (value as any)[propKey];
+    const parsed = parseValue(configuration, subPath, propValue, subDefinition, folder, {extend, skip, reset});
 
-    if (!subDefinition)
-      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
-
-    const newValue = parseValue(configuration, subPath, propValue, definition.properties[propKey], folder, {overwrite, reset});
-
-    if (newValue !== undefined) {
-      result.set(propKey, newValue);
-    }
+    result.set(propKey, parsed);
   }
 
-  return new Map(overwrite
-    ? [...currentValue, ...result]
-    : [...result, ...currentValue],
-  );
+  return result;
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions) {
   const currentValue = reset ? new Map<string, any>() : getCurrentValue(configuration, path) as Map<string, any> ?? new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
@@ -806,6 +810,9 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   if (value === null)
     return currentValue;
 
+  if (skip)
+    return currentValue;
+
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
     const subPath = `${path}.${normalizedKey}`;
@@ -814,14 +821,15 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
-    const parsed = parseValue(configuration, subPath, propValue, valueDefinition, folder, {overwrite, reset});
+    const parsed = parseValue(configuration, subPath, propValue, valueDefinition, folder, {extend, skip, reset});
     result.set(normalizedKey, parsed);
   }
 
-  return new Map(overwrite
-    ? [...currentValue, ...result]
-    : [...result, ...currentValue],
-  );
+  if (reset)
+    return result;
+
+  // extend
+  return new Map([...currentValue, ...result]);
 }
 
 function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
@@ -1092,9 +1100,9 @@ export class Configuration {
     const configuration = new Configuration(startingCwd);
     configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
-    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false, overwrite: true});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false, overwrite: true});
+      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1137,9 +1145,9 @@ export class Configuration {
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
-    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict, overwrite: true});
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict, overwrite: true});
+      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1263,9 +1271,9 @@ export class Configuration {
       configuration.activatePlugin(name, thirdPartyPlugin);
 
     // load values of all plugin definitions
-    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict, overwrite: true});
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict, overwrite: true});
+      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1488,7 +1496,7 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean, reset?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean}) {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
@@ -1497,7 +1505,7 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false, reset = false}: {strict?: boolean, overwrite?: boolean, reset?: boolean} = {}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true}: {strict?: boolean} = {}) {
     strict = strict && this.get(`enableStrictSettings`);
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
@@ -1527,9 +1535,7 @@ export class Configuration {
 
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder, {
-          overwrite, reset,
-        });
+        parsed = parseValue(this, key, data[key], definition, folder);
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
