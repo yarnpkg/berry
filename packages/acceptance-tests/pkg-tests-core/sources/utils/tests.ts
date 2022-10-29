@@ -680,6 +680,14 @@ export const generatePkgDriver = ({
           if (args.length > 0 && typeof args[args.length - 1] === `object`)
             callDefinition = args.pop();
 
+          // We want users to be aware of the security implications of zero-install, but we don't want it to affect yarn own testing.
+          if (args[0] === `install`) {
+            const hasCheckCacheOption = args.includes(`--check-cache`) || args.includes(`--no-check-cache`);
+            if (!hasCheckCacheOption) {
+              args.push(`--no-check-cache`);
+            }
+          }
+
           return runDriver(path, args, {
             registryUrl,
             ...definition,
