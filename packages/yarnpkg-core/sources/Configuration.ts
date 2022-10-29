@@ -1058,7 +1058,7 @@ export class Configuration {
       if (rcFile) {
         rcFile.strict = false;
       } else {
-        rcFiles.push({...homeRcFile, strict: false});
+        rcFiles.unshift({...homeRcFile, strict: false});
       }
     }
 
@@ -1092,9 +1092,9 @@ export class Configuration {
     const configuration = new Configuration(startingCwd);
     configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
-    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false, overwrite: true});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
+      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false, overwrite: true});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1137,9 +1137,9 @@ export class Configuration {
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
-    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict, overwrite: true});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
+      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict, overwrite: true});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1263,9 +1263,9 @@ export class Configuration {
       configuration.activatePlugin(name, thirdPartyPlugin);
 
     // load values of all plugin definitions
-    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict, overwrite: true});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
+      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict, overwrite: true});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1309,7 +1309,7 @@ export class Configuration {
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }
 
-        rcFiles.push({path: rcPath, cwd: currentCwd, data});
+        rcFiles.unshift({path: rcPath, cwd: currentCwd, data});
       }
 
       nextCwd = ppath.dirname(currentCwd);
