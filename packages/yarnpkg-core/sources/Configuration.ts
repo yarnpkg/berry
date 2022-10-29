@@ -662,32 +662,54 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 };
 
-function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
+  const current = getCurrentValue(configuration, path);
+  const defaultValue = getDefaultValue(configuration, definition);
+
+  if (current === undefined && value === undefined)
+    return defaultValue;
+
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
-    if (!Array.isArray(value)) {
-      return String(value).split(/,/).map(segment => {
-        return parseSingleValue(configuration, path, segment, definition, folder);
-      });
-    } else {
-      return value.map((sub, i) => parseSingleValue(configuration, `${path}.${i}`, sub, definition, folder));
-    }
+    const currentValue =  reset
+      ? []
+      : (current as Array<any>) ?? [];
+    const result = Array.isArray(value)
+      ? value.map((sub, i) => parseSingleValue(configuration, `${path}.${i}`, sub, definition, folder, {overwrite, reset: true}))
+      : String(value).split(/,/).map(segment => parseSingleValue(configuration, path, segment, definition, folder, {overwrite, reset: true}));
+
+    if (currentValue === defaultValue)
+      return result;
+
+    if (definition.isArray && definition.concatenateValues)
+      return overwrite
+        ? [...currentValue, ...result]
+        : [...result, ...currentValue];
+
+    return [...currentValue, ...result];
   } else {
-    if (Array.isArray(value)) {
+    if (Array.isArray(value))
       throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
-    } else {
-      return parseSingleValue(configuration, path, value, definition, folder);
-    }
+
+    const currentValue = reset
+      ? undefined
+      : current;
+
+    if ((definition.type === SettingsType.MAP || definition.type === SettingsType.SHAPE) || overwrite || currentValue === undefined || currentValue === defaultValue)
+      return parseSingleValue(configuration, path, value, definition, folder, {overwrite, reset});
+
+    // returning undefined will not modify the existing value.
+    return undefined;
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
   switch (definition.type) {
     case SettingsType.ANY:
       return value;
     case SettingsType.SHAPE:
-      return parseShape(configuration, path, value, definition, folder);
+      return parseShape(configuration, path, value, definition, folder, {overwrite, reset});
     case SettingsType.MAP:
-      return parseMap(configuration, path, value, definition, folder);
+      return parseMap(configuration, path, value, definition, folder, {overwrite, reset});
   }
 
   if (value === null && !definition.isNullable && definition.default !== null)
@@ -697,8 +719,12 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
     return value;
 
   const interpretValue = () => {
+    if (value === undefined)
+      return undefined;
     if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
       return miscUtils.parseBoolean(value);
+    if (definition.type === SettingsType.NUMBER && typeof value === `number`)
+      return value;
 
     if (typeof value !== `string`)
       throw new Error(`Expected value (${value}) to be a string`);
@@ -731,13 +757,20 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   return interpreted;
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
+  const currentValue = reset
+    ? new Map<string, any>()
+    : (getCurrentValue(configuration, path) as Map<string, any>) ?? new Map<string, any>();
+
+  if (currentValue === undefined && value === undefined)
+    return getDefaultValue(configuration, definition);
+
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  const result: Map<string, any> = getDefaultValue(configuration, definition, {
-    ignoreArrays: true,
-  });
+  const result = currentValue.size > 0
+    ? currentValue
+    : getDefaultValue(configuration, definition, {ignoreArrays: true});
 
   if (value === null)
     return result;
@@ -749,20 +782,29 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
     if (!subDefinition)
       throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
 
-    result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
+    const newValue = parseValue(configuration, subPath, propValue, definition.properties[propKey], folder, {overwrite, reset});
+
+    if (newValue !== undefined) {
+      result.set(propKey, newValue);
+    }
   }
 
-  return result;
+  return new Map(overwrite
+    ? [...currentValue, ...result]
+    : [...result, ...currentValue],
+  );
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
-  const result = new Map<string, any>();
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath, {overwrite, reset}:  {overwrite: boolean, reset: boolean}) {
+  const currentValue = reset ? new Map<string, any>() : getCurrentValue(configuration, path) as Map<string, any> ?? new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
+  const result = new Map<string, any>();
+
   if (value === null)
-    return result;
+    return currentValue;
 
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
@@ -772,10 +814,14 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
-    result.set(normalizedKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
+    const parsed = parseValue(configuration, subPath, propValue, valueDefinition, folder, {overwrite, reset});
+    result.set(normalizedKey, parsed);
   }
 
-  return result;
+  return new Map(overwrite
+    ? [...currentValue, ...result]
+    : [...result, ...currentValue],
+  );
 }
 
 function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
@@ -1442,7 +1488,7 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean, reset?: boolean}) {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
@@ -1451,14 +1497,10 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false, reset = false}: {strict?: boolean, overwrite?: boolean, reset?: boolean} = {}) {
     strict = strict && this.get(`enableStrictSettings`);
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
-      const value = data[key];
-      if (typeof value === `undefined`)
-        continue;
-
       // The plugins have already been loaded at this point
       if (key === `plugins`)
         continue;
@@ -1473,6 +1515,8 @@ export class Configuration {
 
       const definition = this.settings.get(key);
       if (!definition) {
+        if (key === `enableStrictSettings`) continue;
+
         if (strict) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
@@ -1481,40 +1525,26 @@ export class Configuration {
         }
       }
 
-      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP || definition.isArray && definition.concatenateValues))
-        continue;
-
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder);
+        parsed = parseValue(this, key, data[key], definition, folder, {
+          overwrite, reset,
+        });
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
       }
+
+      if (parsed === undefined)
+        continue;
 
       if (key === `enableStrictSettings` && source !== `<environment>`) {
         strict = parsed as boolean;
         continue;
       }
 
-      if (definition.type === SettingsType.MAP) {
-        const previousValue = this.values.get(key) as Map<string, any>;
-        this.values.set(key, new Map(overwrite
-          ? [...previousValue, ...parsed as Map<string, any>]
-          : [...parsed as Map<string, any>, ...previousValue],
-        ));
-        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
-      } else if (definition.isArray && definition.concatenateValues) {
-        const previousValue = this.values.get(key) as Array<unknown>;
-        this.values.set(key, overwrite
-          ? [...previousValue, ...parsed as Array<unknown>]
-          : [...parsed as Array<unknown>, ...previousValue],
-        );
-        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
-      } else {
-        this.values.set(key, parsed);
-        this.sources.set(key, source);
-      }
+      this.values.set(key, parsed);
+      this.sources.set(key, source);
     }
   }
 
