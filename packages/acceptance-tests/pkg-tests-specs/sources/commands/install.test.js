@@ -579,7 +579,7 @@ describe(`Commands`, () => {
         // mock zero-install environment
         await xfs.mkdirPromise(ppath.join(path, `.yarn`));
         await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`));
-        await expect(run(`install`, {env: {CI: true}})).rejects.toMatchObject({
+        await expect(run(`install`, `--check-cache-test`, {env: {CI: true}})).rejects.toMatchObject({
           code: 1,
           stdout: expect.stringMatching(`you need to explicitly define --check-cache or --no-check-cache option`),
         });
