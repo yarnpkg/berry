@@ -52,16 +52,17 @@ jobs:
       if: |
         success() || failure()
 
-    - name: 'Running the integration test (preact-ts)'
-      run: |
-        source scripts/e2e-setup-ci.sh
+    # TODO: Enable when the template is PnP compatible
+    # - name: 'Running the integration test (preact-ts)'
+    #   run: |
+    #     source scripts/e2e-setup-ci.sh
 
-        yarn create vite preact-ts --template preact-ts
-        cd preact-ts
-        yarn
-        yarn build
-      if: |
-        success() || failure()
+    #     yarn create vite preact-ts --template preact-ts
+    #     cd preact-ts
+    #     yarn
+    #     yarn build
+    #   if: |
+    #     success() || failure()
 
     - name: 'Running the integration test (lit-ts)'
       run: |
