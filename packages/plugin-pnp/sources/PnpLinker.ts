@@ -22,11 +22,6 @@ const FORCED_UNPLUG_PACKAGES = new Set([
   structUtils.makeIdent(null, `opn`).identHash,
 ]);
 
-export enum WindowsLinkType {
-  JUNCTIONS = `junctions`,
-  SYMLINKS = `symlinks`,
-}
-
 export class PnpLinker implements Linker {
   protected mode = `strict`;
 

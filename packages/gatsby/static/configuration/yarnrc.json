@@ -426,7 +426,7 @@
       "default": "pnp"
     },
     "winLinkType": {
-      "_package": "@yarnpkg/plugin-pnp",
+      "_package": "@yarnpkg/core",
       "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths,and is consistent with Yarn's behavior on non-Windows platforms.",
       "type": "string",
       "enum": ["junctions", "symlinks"],

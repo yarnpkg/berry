@@ -134,6 +134,11 @@ export type PluginConfiguration = {
   plugins: Set<string>;
 };
 
+export enum WindowsLinkType {
+  JUNCTIONS = `junctions`,
+  SYMLINKS = `symlinks`,
+}
+
 // General rules:
 //
 // - filenames that don't accept actual paths must end with the "Filename" suffix

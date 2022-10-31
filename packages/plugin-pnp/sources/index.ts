@@ -1,18 +1,17 @@
-import {Hooks as CoreHooks, Plugin, Project, SettingsType} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}         from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                               from '@yarnpkg/plugin-stage';
-import semver                                              from 'semver';
-import {pathToFileURL}                                     from 'url';
+import {Hooks as CoreHooks, Plugin, Project, SettingsType, WindowsLinkType} from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs}                          from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                                from '@yarnpkg/plugin-stage';
+import semver                                                               from 'semver';
+import {pathToFileURL}                                                      from 'url';
 
-import {PnpLinker, WindowsLinkType}                        from './PnpLinker';
-import UnplugCommand                                       from './commands/unplug';
-import * as jsInstallUtils                                 from './jsInstallUtils';
-import * as pnpUtils                                       from './pnpUtils';
+import {PnpLinker}                                                          from './PnpLinker';
+import UnplugCommand                                                        from './commands/unplug';
+import * as jsInstallUtils                                                  from './jsInstallUtils';
+import * as pnpUtils                                                        from './pnpUtils';
 
 export {UnplugCommand};
 export {jsInstallUtils};
 export {pnpUtils};
-export {WindowsLinkType};
 
 export const getPnpPath = (project: Project) => {
   return {
