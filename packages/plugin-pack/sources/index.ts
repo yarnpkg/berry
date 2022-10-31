@@ -35,7 +35,7 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
 
     if (rawManifest.publishConfig.module)
       rawManifest.module = rawManifest.publishConfig.module;
-    
+
     if (rawManifest.publishConfig.exports)
       rawManifest.exports = rawManifest.publishConfig.exports;
 
