@@ -30,6 +30,7 @@ const initConfigurationPlugin = async (configuration: string) => {
     },
   };
 };
+
 async function initializeConfiguration<T>(value: {[key: string]: any}, cb: (dir: PortablePath) => Promise<T>) {
   return await xfs.mktempPromise(async dir => {
     await Configuration.updateConfiguration(dir, value);
@@ -331,29 +332,23 @@ describe(`Configuration`, () => {
         ]);
 
         configuration.useWithSource(`override file`, {
-          logFilters: [{
-            code: `YN0066`,
-            level: `warning`,
-          }],
+          logFilters: {
+            onConflict: `reset`,
+            value: [{
+              code: `YN0066`,
+              level: `warning`,
+            }],
+          },
 
-          unsafeHttpWhitelist: [
-            `yarnpkg.com`,
-          ],
+          unsafeHttpWhitelist: {
+            onConflict: `reset`,
+            value: [
+              `yarnpkg.com`,
+            ],
+          },
         }, dir);
 
         expect(configuration.get(`logFilters`)).toEqual([
-          new Map(Object.entries({
-            code: `YN0005`,
-            text: undefined,
-            pattern: undefined,
-            level: `info`,
-          })),
-          new Map(Object.entries({
-            code: `YN0027`,
-            text: undefined,
-            pattern: undefined,
-            level: `error`,
-          })),
           new Map(Object.entries({
             code: `YN0066`,
             text: undefined,
@@ -363,8 +358,6 @@ describe(`Configuration`, () => {
         ]);
 
         expect(configuration.get(`unsafeHttpWhitelist`)).toEqual([
-          `example.com`,
-          `evil.com`,
           `yarnpkg.com`,
         ]);
       });
@@ -447,6 +440,7 @@ describe(`Configuration`, () => {
         default: ["1", "2"],
       },
     }`);
+
     await initializeConfiguration({
       plugins,
       map: {
@@ -522,6 +516,7 @@ describe(`Configuration`, () => {
           default: "",
         },
       }`);
+
       await initializeConfiguration({
         plugins,
         any: `any`,
@@ -546,6 +541,7 @@ describe(`Configuration`, () => {
           string: `string2`,
           secret: `secret2`,
         }, dir);
+
         expect(configuration.get(`any`)).toBe(`any`);
         expect(configuration.get(`boolean`)).toBe(true);
         expect(configuration.get(`absolutePath`)).toBe(`/absolutePath`);
@@ -566,6 +562,7 @@ describe(`Configuration`, () => {
           string: `string2`,
           secret: `secret2`,
         }, dir);
+
         expect(configuration.get(`any`)).toBe(`any2`);
         expect(configuration.get(`boolean`)).toBe(false);
         expect(configuration.get(`absolutePath`)).toBe(`/absolutePath2`);
@@ -586,6 +583,7 @@ describe(`Configuration`, () => {
           string: `string3`,
           secret: `secret3`,
         }, dir);
+
         expect(configuration.get(`any`)).toBe(`any3`);
         expect(configuration.get(`boolean`)).toBe(true);
         expect(configuration.get(`absolutePath`)).toBe(`/absolutePath3`);
@@ -666,14 +664,17 @@ describe(`Configuration`, () => {
             bar: {string: `bar`},
           },
         }, dir);
+
         expect(configuration.get(`stringArray`)).toEqual([`foo`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `default`]]));
+
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([
+          [`number`, 1],
+          [`string`, `default`],
+        ]));
+
         expect(configuration.get(`map`)).toEqual(new Map([
-          [
-            `foo`, new Map<string, any>([[`number`, 1], [`string`, `default`]]),
-          ], [
-            `bar`, new Map<string, any>([[`number`, 1], [`string`, `default`]]),
-          ],
+          [`foo`, new Map<string, any>([[`number`, 1], [`string`, `default`]])],
+          [`bar`, new Map<string, any>([[`number`, 1], [`string`, `default`]])],
         ]));
 
         configuration.useWithSource(`extend file`, {
@@ -687,14 +688,17 @@ describe(`Configuration`, () => {
             bar: {string: `bar`},
           },
         }, dir);
+
         expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 1], [`string`, `bar`]]));
+
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([
+          [`number`, 1],
+          [`string`, `bar`],
+        ]));
+
         expect(configuration.get(`map`)).toEqual(new Map([
-          [
-            `foo`, new Map<string, any>([[`number`, 1], [`string`, `bar`]]),
-          ], [
-            `bar`, new Map<string, any>([[`number`, 1], [`string`, `bar`]]),
-          ],
+          [`foo`, new Map<string, any>([[`number`, 1], [`string`, `bar`]])],
+          [`bar`, new Map<string, any>([[`number`, 1], [`string`, `bar`]])],
         ]));
 
         configuration.useWithSource(`reset file`, {
@@ -707,12 +711,16 @@ describe(`Configuration`, () => {
             bar: {number: 2, string: `bar`},
           },
         }, dir);
+
         expect(configuration.get(`stringArray`)).toEqual([`bar`]);
-        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `default`]]));
+
+        expect(configuration.get(`shape`)).toEqual(new Map<string, any>([
+          [`number`, 2],
+          [`string`, `default`],
+        ]));
+
         expect(configuration.get(`map`)).toEqual(new Map([
-          [
-            `bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]]),
-          ],
+          [`bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]])],
         ]));
       });
     });
@@ -863,6 +871,7 @@ describe(`Configuration`, () => {
           },
         },
       }`);
+
       await initializeConfiguration({
         plugins,
         string: `foo`,
@@ -895,40 +904,52 @@ describe(`Configuration`, () => {
         await xfs.mkdirPromise(workspaceDirectory);
         await xfs.writeFilePromise(`${workspaceDirectory}/.yarnrc.yml` as PortablePath, stringifySyml({
           string: `bar`,
-          stringReset: {value: `bar`, onConflict: `reset`},
-          stringSkip: {value: `bar`, onConflict: `skip`},
+          stringReset: {
+            onConflict: `reset`,
+            value: `bar`,
+          },
+          stringSkip: {
+            onConflict: `skip`,
+            value: `bar`,
+          },
           stringArray: [`bar`],
-          stringArrayReset: {value: [`bar`], onConflict: `reset`},
-          stringArraySkip: {value: [`bar`], onConflict: `skip`},
+          stringArrayReset: {
+            onConflict: `reset`,
+            value: [`bar`],
+          },
+          stringArraySkip: {
+            onConflict: `skip`,
+            value: [`bar`],
+          },
           shape: {
             number: 2,
           },
           shapeReset: {
+            onConflict: `reset`,
             value: {
               number: 2,
             },
-            onConflict: `reset`,
           },
           shapeSkip: {
+            onConflict: `skip`,
             value: {
               number: 2,
             },
-            onConflict: `skip`,
           },
           map: {
             bar: {number: 2, string: `bar`},
           },
           mapReset: {
+            onConflict: `reset`,
             value: {
               bar: {number: 2, string: `bar`},
             },
-            onConflict: `reset`,
           },
           mapSkip: {
+            onConflict: `skip`,
             value: {
               bar: {number: 2, string: `bar`},
             },
-            onConflict: `skip`,
           },
         }));
 
@@ -943,46 +964,19 @@ describe(`Configuration`, () => {
         expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `foo`]]));
         expect(configuration.get(`shapeReset`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `default`]]));
         expect(configuration.get(`shapeSkip`)).toEqual(new Map<string, any>([[`number`, 0], [`string`, `foo`]]));
-        expect(configuration.get(`map`)).toEqual(
-          new Map([
-            [
-              `foo`,
-              new Map<string, any>([
-                [`number`, 0],
-                [`string`, `foo`],
-              ]),
-            ],
-            [
-              `bar`,
-              new Map<string, any>([
-                [`number`, 2],
-                [`string`, `bar`],
-              ]),
-            ],
-          ]),
-        );
-        expect(configuration.get(`mapReset`)).toEqual(
-          new Map([
-            [
-              `bar`,
-              new Map<string, any>([
-                [`number`, 2],
-                [`string`, `bar`],
-              ]),
-            ],
-          ]),
-        );
-        expect(configuration.get(`mapSkip`)).toEqual(
-          new Map([
-            [
-              `foo`,
-              new Map<string, any>([
-                [`number`, 0],
-                [`string`, `foo`],
-              ]),
-            ],
-          ]),
-        );
+
+        expect(configuration.get(`map`)).toEqual(new Map([
+          [`foo`, new Map<string, any>([[`number`, 0], [`string`, `foo`]])],
+          [`bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]])],
+        ]));
+
+        expect(configuration.get(`mapReset`)).toEqual(new Map([
+          [`bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]])],
+        ]));
+
+        expect(configuration.get(`mapSkip`)).toEqual(new Map([
+          [`foo`, new Map<string, any>([[`number`, 0], [`string`, `foo`]])],
+        ]));
       });
     });
   });

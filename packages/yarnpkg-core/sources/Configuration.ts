@@ -662,7 +662,7 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 };
 
-const onConflictList = [`extend`, `skip`, `reset`];
+const onConflictValues = new Set([`extend`, `skip`, `reset`]);
 
 type ParseValueOptions = {extend: boolean, skip: boolean, reset: boolean};
 
@@ -672,8 +672,8 @@ function parseValue(configuration: Configuration, path: string, valueBase: any, 
 
   let value = valueBase;
   if (valueBase?.onConflict !== undefined) {
-    if (!onConflictList.includes(valueBase.onConflict))
-      throw new UsageError(`the onConflict in the ${path} is invalid, it should be one of 'extend' | 'skip' | 'reset', but received ${valueBase.onConflict}`);
+    if (!onConflictValues.has(valueBase.onConflict))
+      throw new UsageError(`Invalid onConflict value in ${path}; it should be one of 'extend' | 'skip' | 'reset', but received ${valueBase.onConflict}`);
 
     extend = valueBase.onConflict === `extend`;
     skip = valueBase.onConflict === `skip`;
@@ -683,15 +683,17 @@ function parseValue(configuration: Configuration, path: string, valueBase: any, 
 
   if (value === undefined) {
     // XXX: `enableStrictSettings` is a very special setting, it should only be used by default when importSettings
-    if (path === `enableStrictSettings`) return undefined;
+    if (path === `enableStrictSettings`)
+      return undefined;
+
     if (reset || current === undefined)
       return defaultValue;
+
     return current;
   }
 
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     const currentValue = (current as Array<any>) ?? [];
-
     if (skip && currentValue.length !== 0)
       return currentValue;
 
@@ -786,7 +788,6 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
   const result = new Map<string, any>();
-
   if (value === null)
     return currentValue;
 
@@ -807,14 +808,13 @@ function parseMap(configuration: Configuration, path: string, value: unknown, de
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
-  const result = new Map<string, any>();
-
   if (value === null)
     return currentValue;
 
   if (skip)
     return currentValue;
 
+  const result = new Map<string, any>();
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
     const subPath = `${path}.${normalizedKey}`;
@@ -841,7 +841,6 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return [];
 
       const result = new Map<string, any>();
-
       for (const [propKey, propDefinition] of Object.entries(definition.properties))
         result.set(propKey, getDefaultValue(configuration, propDefinition));
 
@@ -944,12 +943,10 @@ function getEnvironmentSettings() {
 
   for (let [key, value] of Object.entries(process.env)) {
     key = key.toLowerCase();
-
     if (!key.startsWith(ENVIRONMENT_PREFIX))
       continue;
 
     key = camelcase(key.slice(ENVIRONMENT_PREFIX.length));
-
     environmentSettings[key] = value;
   }
 
@@ -1511,7 +1508,7 @@ export class Configuration {
     strict = strict && this.get(`enableStrictSettings`);
     const onConflict = (data?.onConflict ?? `extend`) as string;
 
-    if (onConflict !== undefined && !onConflictList.includes(onConflict))
+    if (onConflict !== undefined && !onConflictValues.has(onConflict))
       throw new UsageError(`the onConflict is invalid, it should be one of 'extend' | 'skip' | 'reset', but received ${onConflict}`);
 
     const extend = onConflict === `extend`;
@@ -1533,8 +1530,10 @@ export class Configuration {
 
       const definition = this.settings.get(key);
       if (!definition) {
-        if (key === `enableStrictSettings`) continue;
-        if (key === `onConflict`) continue;
+        if (key === `enableStrictSettings`)
+          continue;
+        if (key === `onConflict`)
+          continue;
 
         if (strict) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);

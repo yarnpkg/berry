@@ -273,7 +273,7 @@ export default class YarnCommand extends BaseCommand {
           report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
           report.reportSeparator();
 
-          configuration.use(`<compat>`, {onConflict: `reset`, nodeLinker: `node-modules`}, projectCwd);
+          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd);
 
           await Configuration.updateConfiguration(projectCwd, {
             nodeLinker: `node-modules`,
