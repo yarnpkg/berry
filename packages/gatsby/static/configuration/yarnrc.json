@@ -425,12 +425,12 @@
       "type": "string",
       "default": "pnp"
     },
-    "nodeLinkerFolderLinkMode": {
+    "winLinkType": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "If set to `classic` Yarn will use symlinks on Linux and MacOS and Windows `junctions` on Windows when linking workspaces into `node_modules` directories. This can result in inconsistent behavior on Windows because `junctions` are always absolute paths while `symlinks` may be relative. Set to `symlinks`, Yarn will utilize symlinks on all platforms which enables links with relative paths paths on Windows.",
+      "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths,and is consistent with Yarn's behavior on non-Windows platforms.",
       "type": "string",
-      "enum": ["classic", "symlinks"],
-      "default": "classic"
+      "enum": ["junctions", "symlinks"],
+      "default": "junctions"
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",

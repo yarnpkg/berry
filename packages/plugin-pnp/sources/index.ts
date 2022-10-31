@@ -4,7 +4,7 @@ import {Hooks as StageHooks}                               from '@yarnpkg/plugin
 import semver                                              from 'semver';
 import {pathToFileURL}                                     from 'url';
 
-import {PnpLinker, NodeLinkerFolderLinkMode}               from './PnpLinker';
+import {PnpLinker, WindowsLinkType}                        from './PnpLinker';
 import UnplugCommand                                       from './commands/unplug';
 import * as jsInstallUtils                                 from './jsInstallUtils';
 import * as pnpUtils                                       from './pnpUtils';
@@ -12,7 +12,7 @@ import * as pnpUtils                                       from './pnpUtils';
 export {UnplugCommand};
 export {jsInstallUtils};
 export {pnpUtils};
-export {NodeLinkerFolderLinkMode};
+export {WindowsLinkType};
 
 export const getPnpPath = (project: Project) => {
   return {
@@ -63,7 +63,7 @@ async function populateYarnPaths(project: Project, definePath: (path: PortablePa
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nodeLinker: string;
-    nodeLinkerFolderLinkMode: string;
+    winLinkType: string;
     pnpMode: string;
     pnpShebang: string;
     pnpIgnorePatterns: Array<string>;
@@ -85,14 +85,14 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       type: SettingsType.STRING,
       default: `pnp`,
     },
-    nodeLinkerFolderLinkMode: {
-      description: `If set to "classic" Yarn will use symlinks on Linux and MacOS and Windows "junctions" on Windows when linking workspaces into "node_modules" directories. This can result in inconsistent behavior on Windows because "junctions" are always absolute paths while "symlinks" may be relative. Set to "symlinks", Yarn will utilize symlinks on all platforms which enables links with relative paths paths on Windows.`,
+    winLinkType: {
+      description: `Whether Yarn should use Windows Junctions or symlinks when creating links on Windows.`,
       type: SettingsType.STRING,
       values: [
-        NodeLinkerFolderLinkMode.CLASSIC,
-        NodeLinkerFolderLinkMode.SYMLINKS,
+        WindowsLinkType.JUNCTIONS,
+        WindowsLinkType.SYMLINKS,
       ],
-      default: NodeLinkerFolderLinkMode.CLASSIC,
+      default: WindowsLinkType.JUNCTIONS,
     },
     pnpMode: {
       description: `If 'strict', generates standard PnP maps. If 'loose', merges them with the n_m resolution.`,
