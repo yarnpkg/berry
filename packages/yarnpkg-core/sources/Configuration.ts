@@ -1526,8 +1526,8 @@ export class Configuration {
     strict = strict && this.get(`enableStrictSettings`);
     const onConflict = (data?.onConflict ?? `extend`) as string;
 
-    if (onConflict !== undefined && (!onConflictValues.has(onConflict) || onConflict === `skip`))
-      throw new UsageError(`Invalid onConflict value at the top-level; it should be one of 'extend' | 'reset', but received ${onConflict}`);
+    if (onConflict !== undefined && !onConflictValues.has(onConflict))
+      throw new UsageError(`Invalid onConflict value at the top-level; it should be one of 'extend' | 'skip' | 'reset', but received ${onConflict}`);
 
     const extend = onConflict === `extend`;
     const skip = onConflict === `skip`;
