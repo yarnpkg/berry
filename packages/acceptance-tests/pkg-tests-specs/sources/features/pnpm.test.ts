@@ -1,3 +1,4 @@
+import {WindowsLinkType}                 from '@yarnpkg/core';
 import {PortablePath, ppath, npath, xfs} from '@yarnpkg/fslib';
 
 const {
@@ -48,7 +49,7 @@ describe(`Features`, () => {
         },
         {
           nodeLinker: `pnpm`,
-          winLinkType: `symlinks`,
+          winLinkType: WindowsLinkType.SYMLINKS,
         },
         async ({path, run}) => {
           await run(`install`);
@@ -70,7 +71,7 @@ describe(`Features`, () => {
         },
         {
           nodeLinker: `pnpm`,
-          winLinkType: `junctions`,
+          winLinkType: WindowsLinkType.JUNCTIONS,
         },
         async ({path, run}) => {
           await run(`install`);
@@ -91,7 +92,7 @@ describe(`Features`, () => {
         },
         {
           nodeLinker: `pnpm`,
-          winLinkType: `junctions`,
+          winLinkType: WindowsLinkType.JUNCTIONS,
         },
         async ({path, run}) => {
           await run(`install`);
@@ -114,7 +115,7 @@ describe(`Features`, () => {
         },
         {
           nodeLinker: `pnpm`,
-          winLinkType: `symlinks`,
+          winLinkType: WindowsLinkType.SYMLINKS,
         },
         async ({path, run}) => {
           await run(`install`);

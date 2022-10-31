@@ -1,3 +1,4 @@
+import {WindowsLinkType}                           from '@yarnpkg/core';
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
 
 
@@ -1837,7 +1838,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        winLinkType: `symlinks`,
+        winLinkType: WindowsLinkType.SYMLINKS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1861,7 +1862,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        winLinkType: `junctions`,
+        winLinkType: WindowsLinkType.JUNCTIONS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1884,7 +1885,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        winLinkType: `junctions`,
+        winLinkType: WindowsLinkType.JUNCTIONS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1909,7 +1910,7 @@ describe(`Node_Modules`, () => {
       },
       {
         nodeLinker: `node-modules`,
-        winLinkType: `symlinks`,
+        winLinkType: WindowsLinkType.SYMLINKS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
