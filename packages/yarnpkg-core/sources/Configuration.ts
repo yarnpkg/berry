@@ -1057,15 +1057,17 @@ export class Configuration {
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
 
-    const homeRcFile = await Configuration.findHomeRcFile();
-    if (homeRcFile) {
-      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
-      // The home configuration is never strict because it improves support for
-      // multiple projects using different Yarn versions on the same machine
-      if (rcFile) {
-        rcFile.strict = false;
-      } else {
-        rcFiles.unshift({...homeRcFile, strict: false});
+    if (rcFiles.length === 0 || rcFiles[0]!.data?.onConflict !== `reset`) {
+      const homeRcFile = await Configuration.findHomeRcFile();
+      if (homeRcFile) {
+        const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+        // The home configuration is never strict because it improves support for
+        // multiple projects using different Yarn versions on the same machine
+        if (rcFile) {
+          rcFile.strict = false;
+        } else {
+          rcFiles.unshift({...homeRcFile, strict: false});
+        }
       }
     }
 
@@ -1317,6 +1319,9 @@ export class Configuration {
         }
 
         rcFiles.unshift({path: rcPath, cwd: currentCwd, data});
+        if (data?.onConflict === `reset`) {
+          break;
+        }
       }
 
       nextCwd = ppath.dirname(currentCwd);

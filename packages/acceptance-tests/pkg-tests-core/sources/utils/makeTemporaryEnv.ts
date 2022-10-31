@@ -22,7 +22,6 @@ const mte = generatePkgDriver({
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`;`) : value;
 
     const nativePath = npath.fromPortablePath(path);
-    const tempHomeFolder = npath.fromPortablePath(await xfs.mktempPromise());
 
     const cwdArgs = typeof projectFolder !== `undefined`
       ? [projectFolder]
@@ -32,8 +31,8 @@ const mte = generatePkgDriver({
     const res = await execFile(process.execPath, [yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
       env: {
-        [`HOME`]: tempHomeFolder,
-        [`USERPROFILE`]: tempHomeFolder,
+        [`HOME`]: `${nativePath}/.yarn/home`,
+        [`USERPROFILE`]: `${nativePath}/.yarn/home`,
         [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
         [`TEST_ENV`]: `true`,
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
