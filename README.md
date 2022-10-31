@@ -146,6 +146,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-next-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-preact-cli-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vite/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vite-workflow.yml)<br/>
 </td><td valign="top">
 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml)<br/>
@@ -249,4 +250,3 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 
 - [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
 - [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).
-
