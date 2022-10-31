@@ -697,13 +697,13 @@
           "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
-          "description": "The list of CPUs to cover.",
+          "description": "The list of CPU architectures to cover. See https://nodejs.org/docs/latest/api/process.html#processarch for the architectures supported by Node.js",
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x86", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32"]
         },
         "libc": {
           "description": "The list of standard libraries to cover.",
