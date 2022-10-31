@@ -736,7 +736,7 @@
           "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
-          "description": "The list of CPUs to cover. Values of `node:process.arch` are valid options.",
+          "description": "The list of CPU architectures to cover. See https://nodejs.org/docs/latest/api/process.html#processarch for the architectures supported by Node.js",
           "type": "array",
           "items": {
             "type": "string"
