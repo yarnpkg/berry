@@ -1,9 +1,9 @@
-import {npath, xfs} from '@yarnpkg/fslib';
-import {delimiter}  from 'path';
-import {URL}        from 'url';
+import {npath}     from '@yarnpkg/fslib';
+import {delimiter} from 'path';
+import {URL}       from 'url';
 
-import * as exec    from './exec';
-import * as tests   from './tests';
+import * as exec   from './exec';
+import * as tests  from './tests';
 
 const {generatePkgDriver} = tests;
 const {execFile} = exec;
