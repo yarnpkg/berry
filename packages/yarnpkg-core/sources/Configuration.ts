@@ -4,6 +4,7 @@ import {parseSyml, stringifySyml}                                               
 import camelcase                                                                                        from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
+import pick                                                                                             from 'lodash/pick';
 import pLimit, {Limit}                                                                                  from 'p-limit';
 import {PassThrough, Writable}                                                                          from 'stream';
 
@@ -1057,18 +1058,33 @@ export class Configuration {
 
     const rcFiles = await Configuration.findRcFiles(startingCwd);
 
-    if (rcFiles.length === 0 || rcFiles[0]!.data?.onConflict !== `reset`) {
-      const homeRcFile = await Configuration.findHomeRcFile();
-      if (homeRcFile) {
-        const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
-        // The home configuration is never strict because it improves support for
-        // multiple projects using different Yarn versions on the same machine
-        if (rcFile) {
-          rcFile.strict = false;
-        } else {
-          rcFiles.unshift({...homeRcFile, strict: false});
-        }
+    const homeRcFile = await Configuration.findHomeRcFile();
+    if (homeRcFile) {
+      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+      // The home configuration is never strict because it improves support for
+      // multiple projects using different Yarn versions on the same machine
+      if (rcFile) {
+        rcFile.strict = false;
+      } else {
+        rcFiles.unshift({...homeRcFile, strict: false});
       }
+    }
+
+    // If one of the yarnrc files has a `onConflict: reset` directive, we
+    // remove all the overriden settings from any anterior yarnrc file. This
+    // avoids having us to reset the fields to their default values.
+
+    for (let u = rcFiles.length - 1; u >= 0; --u) {
+      if (rcFiles[u].data?.onConflict !== `reset`)
+        continue;
+
+      const keys = Object.keys(rcFiles[u].data);
+      for (let v = u - 1; v >= 0; --v)
+        rcFiles[v].data = pick(rcFiles[v].data, keys);
+
+      // Only the last yarnrc with `onConflict: reset` matters, since any
+      // other one will be reset anyway.
+      break;
     }
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
@@ -1079,9 +1095,9 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
-      const secondaryCoreFields: CoreFields = {};
+    const pickPrimaryCoreFields = ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const pickSecondaryCoreFields = ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+      const secondaryCoreFields: CoreFields = {onConflict};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
           secondaryCoreFields[key] = value;
@@ -1089,7 +1105,7 @@ export class Configuration {
       return secondaryCoreFields;
     };
 
-    const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPluginFields = ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
       const pluginFields: any = {};
       for (const [key, value] of Object.entries(rest))
         if (!allCoreFieldKeys.has(key))
@@ -1319,9 +1335,6 @@ export class Configuration {
         }
 
         rcFiles.unshift({path: rcPath, cwd: currentCwd, data});
-        if (data?.onConflict === `reset`) {
-          break;
-        }
       }
 
       nextCwd = ppath.dirname(currentCwd);
@@ -1513,8 +1526,8 @@ export class Configuration {
     strict = strict && this.get(`enableStrictSettings`);
     const onConflict = (data?.onConflict ?? `extend`) as string;
 
-    if (onConflict !== undefined && !onConflictValues.has(onConflict))
-      throw new UsageError(`the onConflict is invalid, it should be one of 'extend' | 'skip' | 'reset', but received ${onConflict}`);
+    if (onConflict !== undefined && (!onConflictValues.has(onConflict) || onConflict === `skip`))
+      throw new UsageError(`Invalid onConflict value at the top-level; it should be one of 'extend' | 'reset', but received ${onConflict}`);
 
     const extend = onConflict === `extend`;
     const skip = onConflict === `skip`;

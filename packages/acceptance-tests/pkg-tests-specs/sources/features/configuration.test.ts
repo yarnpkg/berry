@@ -24,7 +24,25 @@ describe(`Features`, () => {
       });
     }));
 
-    test(`it should completely ignore the home configuration if onConflict: reset is set in the project configuration`, makeTemporaryEnv({
+    test(`it should let the env configuration override the project configuration`, makeTemporaryEnv({
+    }, async ({path, run, source}) => {
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        preferInteractive: true,
+      });
+
+      // Sanity check
+      await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({
+        stdout: `true\n`,
+      });
+
+      await expect(run(`config`, `get`, `--json`, `preferInteractive`, {
+        env: {YARN_PREFER_INTERACTIVE: `0`},
+      })).resolves.toMatchObject({
+        stdout: `false\n`,
+      });
+    }));
+
+    test(`it should skip the home configuration if onConflict: reset is set in the project configuration`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
       await xfs.mkdirPromise(ppath.join(path, `.yarn/home` as PortablePath), {recursive: true});
 
@@ -56,22 +74,40 @@ describe(`Features`, () => {
       await expect(run(`config`, `get`, `--json`, `preferTruncatedLines`)).resolves.toMatchObject({stdout: `false\n`});
     }));
 
-    test(`it should let the env configuration override the project configuration`, makeTemporaryEnv({
+    test(`it should allow extending values from the home configuration if explicitly requested`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+      await xfs.mkdirPromise(ppath.join(path, `.yarn/home` as PortablePath), {recursive: true});
+
+      // Sanity checks
+      await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
+      await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `[]\n`});
+
+      await xfs.writeJsonPromise(ppath.join(path, `.yarn/home` as PortablePath, Filename.rc), {
         preferInteractive: true,
+        immutablePatterns: [`foo`],
       });
 
-      // Sanity check
-      await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({
-        stdout: `true\n`,
+      await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `true\n`});
+      await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `["foo"]\n`});
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        onConflict: `reset`,
+        immutablePatterns: [`bar`],
       });
 
-      await expect(run(`config`, `get`, `--json`, `preferInteractive`, {
-        env: {YARN_PREFER_INTERACTIVE: `0`},
-      })).resolves.toMatchObject({
-        stdout: `false\n`,
+      await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
+      await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `["bar"]\n`});
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        onConflict: `reset`,
+        immutablePatterns: {
+          onConflict: `extend`,
+          value: [`bar`],
+        },
       });
+
+      await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
+      await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `["foo","bar"]\n`});
     }));
   });
 });
