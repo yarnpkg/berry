@@ -1097,11 +1097,11 @@ export class Configuration {
     };
 
     const configuration = new Configuration(startingCwd);
-    configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
-    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
+    configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1144,9 +1144,9 @@ export class Configuration {
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
-    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
       configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1270,9 +1270,9 @@ export class Configuration {
       configuration.activatePlugin(name, thirdPartyPlugin);
 
     // load values of all plugin definitions
-    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
       configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);

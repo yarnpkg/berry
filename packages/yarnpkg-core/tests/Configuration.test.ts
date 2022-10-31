@@ -81,7 +81,7 @@ describe(`Configuration`, () => {
     });
   });
 
-  describe(`Environment variables`, () => {
+  describe(`Environment interpolation`, () => {
     it(`should replace env variables`, async () => {
       process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
       process.env.EMPTY_VARIABLE = ``;
@@ -211,7 +211,7 @@ describe(`Configuration`, () => {
     });
   });
 
-  describe(`merging properties`, () => {
+  describe(`Configuration merging`, () => {
     it(`should merge map properties`, async () => {
       await initializeConfiguration({
         npmRegistryServer: `https://foo.server`,
@@ -726,7 +726,7 @@ describe(`Configuration`, () => {
     });
   });
 
-  describe(`multiple RC files`, () => {
+  describe(`Multiple RC files`, () => {
     it(`it should correctly extend or reset or skip the values`, async() => {
       const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
         string: {
