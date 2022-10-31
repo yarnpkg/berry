@@ -427,7 +427,7 @@
     },
     "winLinkType": {
       "_package": "@yarnpkg/core",
-      "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths,and is consistent with Yarn's behavior on non-Windows platforms.",
+      "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths, and is consistent with Yarn's behavior on non-Windows platforms. To create symlinks the Windows user running Yarn must have the `create symbolic links` privilege. For this reason Yarn defaults to using junctions.",
       "type": "string",
       "enum": ["junctions", "symlinks"],
       "default": "junctions"
