@@ -60,6 +60,33 @@ describe(`Cache`, () => {
     }),
   );
 
+
+  test(
+    `it should refetch archive when YARN_CHECKSUM_BEHAVIOR=reset and the files checksum is incorrect`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      const cacheFiles = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
+      const cacheFile = ppath.join(path, `.yarn/cache`, cacheFiles.find(name => name.startsWith(`no-deps-`)));
+      const contentWas = await xfs.readFilePromise(cacheFile);
+      await xfs.writeFilePromise(cacheFile, `corrupted archive`);
+
+      await run(`install`, {
+        env: {
+          YARN_CHECKSUM_BEHAVIOR: `reset`,
+        },
+      });
+
+      const contentNow = await xfs.readFilePromise(cacheFile);
+      expect(contentNow).toEqual(contentWas);
+    }),
+  );
+
+
   test(
     `it should ignore mismatches when the cache key changes`,
     makeTemporaryEnv({
