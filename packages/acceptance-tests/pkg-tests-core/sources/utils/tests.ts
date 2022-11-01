@@ -1,22 +1,22 @@
-import {PortablePath, npath, toFilename, xfs} from '@yarnpkg/fslib';
-import assert                                 from 'assert';
-import crypto                                 from 'crypto';
-import finalhandler                           from 'finalhandler';
-import https                                  from 'https';
-import {IncomingMessage, ServerResponse}      from 'http';
-import http                                   from 'http';
-import invariant                              from 'invariant';
-import {AddressInfo}                          from 'net';
-import os                                     from 'os';
-import pem                                    from 'pem';
-import semver                                 from 'semver';
-import serveStatic                            from 'serve-static';
-import {promisify}                            from 'util';
-import {v5 as uuidv5}                         from 'uuid';
-import {Gzip}                                 from 'zlib';
+import {PortablePath, npath, toFilename, xfs, ppath, Filename} from '@yarnpkg/fslib';
+import assert                                                  from 'assert';
+import crypto                                                  from 'crypto';
+import finalhandler                                            from 'finalhandler';
+import https                                                   from 'https';
+import {IncomingMessage, ServerResponse}                       from 'http';
+import http                                                    from 'http';
+import invariant                                               from 'invariant';
+import {AddressInfo}                                           from 'net';
+import os                                                      from 'os';
+import pem                                                     from 'pem';
+import semver                                                  from 'semver';
+import serveStatic                                             from 'serve-static';
+import {promisify}                                             from 'util';
+import {v5 as uuidv5}                                          from 'uuid';
+import {Gzip}                                                  from 'zlib';
 
-import {ExecResult}                           from './exec';
-import * as fsUtils                           from './fs';
+import {ExecResult}                                            from './exec';
+import * as fsUtils                                            from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
@@ -673,7 +673,10 @@ export const generatePkgDriver = ({
       }
 
       return Object.assign(async (): Promise<void> => {
-        const path = await xfs.mktempPromise();
+        const homePath = await xfs.mktempPromise();
+
+        const path = ppath.join(homePath, `test` as Filename);
+        await xfs.mkdirPromise(path);
 
         const registryUrl = await startPackageServer();
 
