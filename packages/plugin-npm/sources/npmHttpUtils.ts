@@ -299,7 +299,7 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
     process.stdout.write(`\n`);
   }
 
-  if (process.env.YARN_INJECT_NPM_2FA_TOKEN)
+  if (process.env.YARN_IS_TEST_ENV)
     return process.env.YARN_INJECT_NPM_2FA_TOKEN || ``;
 
   const {otp} = await prompt<{otp: string}>({
