@@ -36,8 +36,7 @@ const EditLink = styled.a`
 
 const Content = styled.div`
   blockquote {
-    margin-left: 0;
-    margin-right: 0;
+    margin: 1.5em 0;
 
     border-left: 5px solid #859daf;
 
@@ -55,6 +54,10 @@ const Content = styled.div`
 
   blockquote > p {
     margin: 0;
+  }
+
+  blockquote > p + p {
+    margin-top: 1.5em;
   }
 
   a:not(.anchor) {
@@ -162,7 +165,7 @@ const Content = styled.div`
 
     color: #007aa2;
 
-    font-family: "PT Mono";
+    font-family: "PT Mono", monospace;
   }
 
   pre code {

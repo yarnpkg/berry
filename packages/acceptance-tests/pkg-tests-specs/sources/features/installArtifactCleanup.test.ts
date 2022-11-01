@@ -5,6 +5,72 @@ const lsStore = async (path: PortablePath) => {
 };
 
 describe(`Install Artifact Cleanup`, () => {
+  describe(`PnP linker`, () => {
+    describe(`Migration`, () => {
+      for (const linker of [`node-modules`, `pnpm`]) {
+        describe(`to the ${linker} linker`, () => {
+          it(`should remove the .pnp.cjs file after switching to the ${linker} linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
+            await run(`install`);
+
+            // Sanity check
+            await expect(xfs.existsPromise(`${path}/${Filename.pnpCjs}` as PortablePath)).resolves.toStrictEqual(true);
+
+            await run(`config`, `set`, `nodeLinker`, linker);
+
+            await run(`install`);
+
+            await expect(xfs.existsPromise(`${path}/${Filename.pnpCjs}` as PortablePath)).resolves.toStrictEqual(false);
+          }));
+
+          it(`should remove the .pnp.data.json file after switching to the ${linker} linker`, makeTemporaryEnv({}, {
+            pnpEnableInlining: false,
+          }, async ({path, run, source}) => {
+            await run(`install`);
+
+            // Sanity check
+            await expect(xfs.existsPromise(`${path}/.pnp.data.json` as PortablePath)).resolves.toStrictEqual(true);
+
+            await run(`config`, `set`, `nodeLinker`, linker);
+
+            await run(`install`);
+
+            await expect(xfs.existsPromise(`${path}/.pnp.data.json` as PortablePath)).resolves.toStrictEqual(false);
+          }));
+
+          it(`should remove the .pnp.loader.mjs file after switching to the ${linker} linker`, makeTemporaryEnv({}, {
+            pnpEnableEsmLoader: true,
+          }, async ({path, run, source}) => {
+            await run(`install`);
+
+            // Sanity check
+            await expect(xfs.existsPromise(`${path}/.pnp.loader.mjs` as PortablePath)).resolves.toStrictEqual(true);
+
+            await run(`config`, `set`, `nodeLinker`, linker);
+
+            await run(`install`);
+
+            await expect(xfs.existsPromise(`${path}/.pnp.loader.mjs` as PortablePath)).resolves.toStrictEqual(false);
+          }));
+
+          it(`should remove the .yarn/unplugged folder after switching to the ${linker} linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
+            await run(`add`, `no-deps@1.0.0`);
+
+            await run(`unplug`, `no-deps`);
+
+            // Sanity check
+            await expect(xfs.existsPromise(`${path}/.yarn/unplugged` as PortablePath)).resolves.toStrictEqual(true);
+
+            await run(`config`, `set`, `nodeLinker`, linker);
+
+            await run(`install`);
+
+            await expect(xfs.existsPromise(`${path}/.yarn/unplugged` as PortablePath)).resolves.toStrictEqual(false);
+          }));
+        });
+      }
+    });
+  });
+
   // These tests randomly fail on the CI and until we figure out why they're just noise
   describe.skip(`pnpm linker`, () => {
     it(`should not generate a node_modules folder if it has nothing to put inside it`, makeTemporaryEnv({}, {
@@ -457,35 +523,37 @@ describe(`Install Artifact Cleanup`, () => {
       await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store/${typesNoDepsEntry}/node_modules/@types/foo` as PortablePath)).resolves.toStrictEqual(false);
     }));
 
-    it(`should remove the node_modules folder after switching to the pnp linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
-      await run(`config`, `set`, `nodeLinker`, `pnpm`);
+    describe(`Migration`, () => {
+      it(`should remove the node_modules folder after switching to the pnp linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
+        await run(`config`, `set`, `nodeLinker`, `pnpm`);
 
-      await run(`add`, `no-deps@1.0.0`);
+        await run(`add`, `no-deps@1.0.0`);
 
-      // Sanity check
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
+        // Sanity check
+        await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
 
-      await run(`config`, `set`, `nodeLinker`, `pnp`);
+        await run(`config`, `set`, `nodeLinker`, `pnp`);
 
-      await run(`install`);
+        await run(`install`);
 
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}` as PortablePath)).resolves.toStrictEqual(false);
-    }));
+        await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}` as PortablePath)).resolves.toStrictEqual(false);
+      }));
 
-    it(`should remove the .store after switching to the node-modules linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
-      await run(`config`, `set`, `nodeLinker`, `pnpm`);
+      it(`should remove the .store after switching to the node-modules linker`, makeTemporaryEnv({}, {}, async ({path, run, source}) => {
+        await run(`config`, `set`, `nodeLinker`, `pnpm`);
 
-      await run(`add`, `no-deps@1.0.0`);
+        await run(`add`, `no-deps@1.0.0`);
 
-      // Sanity check
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
+        // Sanity check
+        await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(true);
 
-      await run(`config`, `set`, `nodeLinker`, `node-modules`);
+        await run(`config`, `set`, `nodeLinker`, `node-modules`);
 
-      await run(`install`);
+        await run(`install`);
 
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}` as PortablePath)).resolves.toStrictEqual(true);
-      await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(false);
-    }));
+        await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}` as PortablePath)).resolves.toStrictEqual(true);
+        await expect(xfs.existsPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath)).resolves.toStrictEqual(false);
+      }));
+    });
   });
 });

@@ -1,9 +1,10 @@
 import {Hooks as CoreHooks, Plugin, Workspace, structUtils} from '@yarnpkg/core';
 import {MessageName, ReportError}                           from '@yarnpkg/core';
 
-import pack                                                 from './commands/pack';
+import PackCommand                                          from './commands/pack';
 import * as packUtils                                       from './packUtils';
 
+export {PackCommand};
 export {packUtils};
 
 export interface Hooks {
@@ -34,9 +35,6 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
 
     if (rawManifest.publishConfig.module)
       rawManifest.module = rawManifest.publishConfig.module;
-
-    if (rawManifest.publishConfig.browser)
-      rawManifest.browser = rawManifest.publishConfig.browser;
 
     if (rawManifest.publishConfig.exports)
       rawManifest.exports = rawManifest.publishConfig.exports;
@@ -91,7 +89,7 @@ const plugin: Plugin<CoreHooks & Hooks> = {
     beforeWorkspacePacking,
   },
   commands: [
-    pack,
+    PackCommand,
   ],
 };
 

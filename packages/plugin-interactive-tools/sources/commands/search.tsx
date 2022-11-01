@@ -1,5 +1,6 @@
 import {BaseCommand}                  from '@yarnpkg/cli';
 import {Configuration, structUtils}   from '@yarnpkg/core';
+import * as libuiUtils                from '@yarnpkg/libui/sources/libuiUtils';
 import type {SubmitInjectedComponent} from '@yarnpkg/libui/sources/misc/renderForm';
 import {Command, Usage}               from 'clipanion';
 
@@ -26,6 +27,8 @@ export default class SearchCommand extends BaseCommand {
   });
 
   async execute() {
+    libuiUtils.checkRequirements(this.context);
+
     const {Gem} = await import(`@yarnpkg/libui/sources/components/Gem`);
     const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
     const {useKeypress} = await import(`@yarnpkg/libui/sources/hooks/useKeypress`);

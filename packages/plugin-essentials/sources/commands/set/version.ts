@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                                      from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, FormatType, YarnVersion, ReportError} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                                        from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                               from 'clipanion';
-import semver                                                                                             from 'semver';
+import {BaseCommand}                                                                          from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs, npath}                                            from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
+import semver                                                                                 from 'semver';
 
 export type Tags = {
   latest: Record<string, string>;
@@ -82,8 +82,16 @@ export default class SetVersionCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    if (configuration.get(`yarnPath`) && this.onlyIfNeeded)
-      return 0;
+    if (this.onlyIfNeeded && configuration.get(`yarnPath`)) {
+      const yarnPathSource = configuration.sources.get(`yarnPath`) as PortablePath | undefined;
+      if (!yarnPathSource)
+        throw new Error(`Assertion failed: Expected 'yarnPath' to have a source`);
+
+      const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
+      if (ppath.contains(projectCwd, yarnPathSource)) {
+        return 0;
+      }
+    }
 
     const getBundlePath = () => {
       if (typeof YarnVersion === `undefined`)
@@ -108,7 +116,7 @@ export default class SetVersionCommand extends BaseCommand {
     else if (this.version === `canary`)
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `canary`));
     else if (this.version === `classic`)
-      bundleRef = {url: `https://nightly.yarnpkg.com/latest.js`, version: `classic`};
+      bundleRef = {url: `https://classic.yarnpkg.com/latest.js`, version: `classic`};
     else if (this.version.match(/^https?:/))
       bundleRef = {url: this.version, version: `remote`};
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
@@ -131,10 +139,10 @@ export default class SetVersionCommand extends BaseCommand {
         const filePrefix = `file://`;
 
         if (bundleRef.url.startsWith(filePrefix)) {
-          report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, FormatType.PATH)}`);
+          report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.PATH)}`);
           return await xfs.readFilePromise(bundleRef.url.slice(filePrefix.length) as PortablePath);
         } else {
-          report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, FormatType.URL)}`);
+          report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.URL)}`);
           return await httpUtils.get(bundleRef.url, {configuration});
         }
       };
@@ -165,7 +173,35 @@ export async function resolveTag(configuration: Configuration, request: `stable`
   return data.latest[request];
 }
 
-export async function setVersion(configuration: Configuration, bundleVersion: string, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
+export async function setVersion(configuration: Configuration, bundleVersion: string | null, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
+  let bundleBuffer: Buffer;
+
+  const ensureBuffer = async () => {
+    if (typeof bundleBuffer === `undefined`)
+      bundleBuffer = await fetchBuffer();
+
+    return bundleBuffer;
+  };
+
+  if (bundleVersion === null) {
+    const bundleBuffer = await ensureBuffer();
+
+    await xfs.mktempPromise(async tmpDir => {
+      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
+      await xfs.writeFilePromise(temporaryPath, bundleBuffer!);
+
+      const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
+        cwd: tmpDir,
+        env: {...process.env, YARN_IGNORE_PATH: `1`},
+      });
+
+      bundleVersion = stdout.trim();
+      if (!semver.valid(bundleVersion)) {
+        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
+      }
+    });
+  }
+
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
   const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
@@ -189,24 +225,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   }
 
   if (probablyShouldUseYarnPath) {
-    const bundleBuffer = await fetchBuffer();
-
-    if (bundleVersion === null) {
-      await xfs.mktempPromise(async tmpDir => {
-        const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
-        await xfs.writeFilePromise(temporaryPath, bundleBuffer);
-
-        const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
-          cwd: tmpDir,
-          env: {...process.env, YARN_IGNORE_PATH: `1`},
-        });
-
-        bundleVersion = stdout.trim();
-        if (!semver.valid(bundleVersion)) {
-          throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
-        }
-      });
-    }
+    const bundleBuffer = await ensureBuffer();
 
     report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`);
 
@@ -215,11 +234,9 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
     await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
 
-    if (!yarnPath || ppath.contains(releaseFolder, yarnPath)) {
-      await Configuration.updateConfiguration(projectCwd, {
-        yarnPath: ppath.relative(projectCwd, absolutePath),
-      });
-    }
+    await Configuration.updateConfiguration(projectCwd, {
+      yarnPath: ppath.relative(projectCwd, absolutePath),
+    });
   } else {
     await xfs.removePromise(ppath.dirname(absolutePath));
 
@@ -231,8 +248,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   const manifest = (await Manifest.tryFind(projectCwd)) || new Manifest();
 
   manifest.packageManager = `yarn@${
-    bundleVersion && isTaggedYarnVersion
-      ? bundleVersion
+    isTaggedYarnVersion
+      ? bundleVersion!
       // If the version isn't tagged, we use the latest stable version as the wrapper
       : await resolveTag(configuration, `stable`)
   }`;
@@ -246,4 +263,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   await xfs.changeFilePromise(path, content, {
     automaticNewlines: true,
   });
+
+  return {
+    bundleVersion: bundleVersion!,
+  };
 }

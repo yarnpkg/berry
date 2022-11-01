@@ -3,10 +3,8 @@ releases:
   "@yarnpkg/cli": major
   "@yarnpkg/core": major
   "@yarnpkg/doctor": major
-  "@yarnpkg/esbuild-plugin-pnp": major
   "@yarnpkg/eslint-config": major
   "@yarnpkg/fslib": major
-  "@yarnpkg/json-proxy": major
   "@yarnpkg/libui": major
   "@yarnpkg/libzip": major
   "@yarnpkg/nm": major
@@ -38,4 +36,3 @@ releases:
   "@yarnpkg/pnpify": major
   "@yarnpkg/sdks": major
   "@yarnpkg/shell": major
-  vscode-zipfs: major

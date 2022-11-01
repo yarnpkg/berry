@@ -1,0 +1,87 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-vite-workflow.yml
+    - scripts/e2e-setup-ci.sh
+
+name: 'E2E Vite'
+jobs:
+  chore:
+    name: 'Validating Vite'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test (vanilla-ts)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn create vite vanilla-ts --template vanilla-ts
+        cd vanilla-ts
+        yarn
+        yarn build
+
+    - name: 'Running the integration test (vue-ts)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn create vite vue-ts --template vue-ts
+        cd vue-ts
+        yarn
+        yarn build
+      if: |
+        success() || failure()
+
+    - name: 'Running the integration test (react-ts)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn create vite react-ts --template react-ts
+        cd react-ts
+        yarn
+        yarn build
+      if: |
+        success() || failure()
+
+    # TODO: Enable when the template is PnP compatible
+    # - name: 'Running the integration test (preact-ts)'
+    #   run: |
+    #     source scripts/e2e-setup-ci.sh
+
+    #     yarn create vite preact-ts --template preact-ts
+    #     cd preact-ts
+    #     yarn
+    #     yarn build
+    #   if: |
+    #     success() || failure()
+
+    - name: 'Running the integration test (lit-ts)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn create vite lit-ts --template lit-ts
+        cd lit-ts
+        yarn
+        yarn build
+      if: |
+        success() || failure()
+
+    - name: 'Running the integration test (svelte-ts)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn create vite svelte-ts --template svelte-ts
+        cd svelte-ts
+        yarn
+        yarn build
+      if: |
+        success() || failure()

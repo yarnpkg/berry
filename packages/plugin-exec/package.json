@@ -1,11 +1,15 @@
 {
   "name": "@yarnpkg/plugin-exec",
-  "version": "2.3.0",
+  "version": "3.0.0-rc.27",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"
@@ -25,12 +29,16 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "2.3.0"
 }

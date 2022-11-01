@@ -1,6 +1,5 @@
 import {getDynamicLibs}                                                     from '@yarnpkg/cli';
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
-import {pnpPlugin}                                                          from '@yarnpkg/esbuild-plugin-pnp';
 import {npath}                                                              from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
@@ -120,12 +119,26 @@ export default class BuildBundleCommand extends Command {
           },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
-          define: {YARN_VERSION: JSON.stringify(version)},
+          define: {
+            YARN_VERSION: JSON.stringify(version),
+            ...(this.noMinify ? {} : {
+              // For React
+              'process.env.NODE_ENV': JSON.stringify(`production`),
+              // For ink
+              'process.env.DEV': JSON.stringify(`false`),
+              // For ourselves
+              'process.env.TEST_ENV': `false`,
+              // mkdirp
+              'process.env.__TESTING_MKDIRP_PLATFORM__': `false`,
+              'process.env.__TESTING_MKDIRP_NODE_VERSION__': `false`,
+              'process.env.__FAKE_PLATFORM__': `false`,
+            }),
+          },
           outfile: output,
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,
-          plugins: [valLoader, pnpPlugin()],
+          plugins: [valLoader],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node14`,

@@ -12,7 +12,7 @@ import v8                                                               from 'v8
 import zlib                                                             from 'zlib';
 
 import {Cache, CacheOptions}                                            from './Cache';
-import {Configuration, FormatType}                                      from './Configuration';
+import {Configuration}                                                  from './Configuration';
 import {Fetcher, FetchOptions}                                          from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
@@ -47,7 +47,7 @@ const LOCKFILE_VERSION = 7;
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
 // between patch or minor releases).
-const INSTALL_STATE_VERSION = 1;
+const INSTALL_STATE_VERSION = 2;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
@@ -130,16 +130,11 @@ export type InstallOptions = {
    * install has completed.
    */
   persistProject?: boolean;
-
-  /**
-   * @deprecated Use `mode=skip-build`
-   */
-  skipBuild?: never;
 };
 
 const INSTALL_STATE_FIELDS = {
-  restoreInstallersCustomData: [
-    `installersCustomData`,
+  restoreLinkersCustomData: [
+    `linkersCustomData`,
   ] as const,
 
   restoreResolutions: [
@@ -223,10 +218,10 @@ export class Project {
   public peerRequirements: Map<string, PeerRequirement> = new Map();
 
   /**
-   * Contains whatever data the installers (cf `Linker.ts`) want to persist
+   * Contains whatever data the linkers (cf `Linker.ts`) want to persist
    * from an install to another.
    */
-  public installersCustomData: Map<string, unknown> = new Map();
+  public linkersCustomData: Map<string, unknown> = new Map();
 
   /**
    * Those checksums are used to detect whether the relevant files actually
@@ -395,10 +390,6 @@ export class Project {
 
         const workspace = await this.addWorkspace(workspaceCwd);
 
-        const workspacePkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
-        if (workspacePkg)
-          workspace.dependencies = workspacePkg.dependencies;
-
         for (const workspaceCwd of workspace.workspacesCwds) {
           workspaceCwds.push(workspaceCwd);
         }
@@ -538,20 +529,6 @@ export class Project {
       throw new Error(`Workspace not found (${structUtils.prettyLocator(this.configuration, locator)})`);
 
     return workspace;
-  }
-
-  /**
-   * Import the dependencies of each resolved workspace into their own
-   * `Workspace` instance.
-   */
-  private refreshWorkspaceDependencies() {
-    for (const workspace of this.workspaces) {
-      const pkg = this.storedPackages.get(workspace.anchoredLocator.locatorHash);
-      if (!pkg)
-        throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.configuration, workspace)} (${formatUtils.pretty(this.configuration, ppath.join(workspace.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
-
-      workspace.dependencies = new Map(pkg.dependencies);
-    }
   }
 
   forgetResolution(descriptor: Descriptor): void;
@@ -836,7 +813,7 @@ export class Project {
 
         const finalResolution = candidateResolutions[0];
         if (typeof finalResolution === `undefined`)
-          throw new Error(`${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
+          throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(this.configuration, descriptor)}: No candidates found`);
 
         if (opts.checkResolutions) {
           const {locators} = await noLockfileResolver.getSatisfying(descriptor, resolvedDependencies, [finalResolution], {...resolveOptions, resolver: noLockfileResolver});
@@ -929,7 +906,7 @@ export class Project {
           }-${
             process.arch
           }) is supported by this package, but is missing from the ${
-            formatUtils.pretty(this.configuration, `supportedArchitectures`, FormatType.SETTING)
+            formatUtils.pretty(this.configuration, `supportedArchitectures`, formatUtils.Type.SETTING)
           } setting`);
         }
 
@@ -952,11 +929,6 @@ export class Project {
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
     this.peerRequirements = peerRequirements;
-
-    // Now that the internal resolutions have been updated, we can refresh the
-    // dependencies of each resolved workspace's `Workspace` instance.
-
-    this.refreshWorkspaceDependencies();
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
@@ -991,7 +963,7 @@ export class Project {
     let firstError = false;
 
     const progress = Report.progressViaCounter(locatorHashes.length);
-    report.reportProgress(progress);
+    await report.reportProgress(progress);
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
@@ -1040,7 +1012,7 @@ export class Project {
     };
 
     const fetcher = optFetcher || this.configuration.makeFetcher();
-    const fetcherOptions: FetchOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, skipIntegrityCheck: true, cacheOptions};
+    const fetcherOptions: FetchOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
 
     const linkers = this.configuration.getLinkers();
     const linkerOptions: LinkOptions = {project: this, report};
@@ -1048,8 +1020,8 @@ export class Project {
     const installers = new Map(linkers.map(linker => {
       const installer = linker.makeInstaller(linkerOptions);
 
-      const customDataKey = installer.getCustomDataKey();
-      const customData = this.installersCustomData.get(customDataKey);
+      const customDataKey = linker.getCustomDataKey();
+      const customData = this.linkersCustomData.get(customDataKey);
       if (typeof customData !== `undefined`)
         installer.attachCustomData(customData);
 
@@ -1246,9 +1218,9 @@ export class Project {
 
     // Step 3: Inform our linkers that they should have all the info needed
 
-    const installersCustomData = new Map();
+    const linkersCustomData = new Map();
 
-    for (const installer of installers.values()) {
+    for (const [linker, installer] of installers) {
       const finalizeInstallData = await installer.finalizeInstall();
 
       for (const installStatus of finalizeInstallData?.records ?? []) {
@@ -1259,11 +1231,11 @@ export class Project {
       }
 
       if (typeof finalizeInstallData?.customData !== `undefined`) {
-        installersCustomData.set(installer.getCustomDataKey(), finalizeInstallData.customData);
+        linkersCustomData.set(linker.getCustomDataKey(), finalizeInstallData.customData);
       }
     }
 
-    this.installersCustomData = installersCustomData;
+    this.linkersCustomData = linkersCustomData;
 
     await miscUtils.allSettledSafe(pendingPromises);
 
@@ -1568,24 +1540,27 @@ export class Project {
         const newLockfile = normalizeLineEndings(initialLockfile, this.generateLockfile());
 
         if (newLockfile !== initialLockfile) {
-          const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile);
+          // @ts-expect-error 2345 need to upgrade to diff 5.0.1 or apply patch in yarn's monorepo
+          const diff = structuredPatch(lockfilePath, lockfilePath, initialLockfile, newLockfile, undefined, undefined, {maxEditLength: 100});
 
-          opts.report.reportSeparator();
+          if (diff) {
+            opts.report.reportSeparator();
 
-          for (const hunk of diff.hunks) {
-            opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
-            for (const line of hunk.lines) {
-              if (line.startsWith(`+`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.ADDED));
-              } else if (line.startsWith(`-`)) {
-                opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.REMOVED));
-              } else {
-                opts.report.reportInfo(null, formatUtils.pretty(this.configuration, line, `grey`));
+            for (const hunk of diff.hunks) {
+              opts.report.reportInfo(null, `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`);
+              for (const line of hunk.lines) {
+                if (line.startsWith(`+`)) {
+                  opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.ADDED));
+                } else if (line.startsWith(`-`)) {
+                  opts.report.reportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, formatUtils.pretty(this.configuration, line, formatUtils.Type.REMOVED));
+                } else {
+                  opts.report.reportInfo(null, formatUtils.pretty(this.configuration, line, `grey`));
+                }
               }
             }
-          }
 
-          opts.report.reportSeparator();
+            opts.report.reportSeparator();
+          }
 
           throw new ReportError(MessageName.FROZEN_LOCKFILE_EXCEPTION, `The lockfile would have been modified by this install, which is explicitly forbidden.`);
         }
@@ -1786,7 +1761,7 @@ export class Project {
     this.installStateChecksum = newInstallStateChecksum;
   }
 
-  async restoreInstallState({restoreInstallersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
+  async restoreInstallState({restoreLinkersCustomData = true, restoreResolutions = true, restoreBuildState = true}: RestoreInstallStateOpts = {}) {
     const installStatePath = this.configuration.get(`installStatePath`);
 
     let installState: InstallState;
@@ -1802,9 +1777,9 @@ export class Project {
       return;
     }
 
-    if (restoreInstallersCustomData)
-      if (typeof installState.installersCustomData !== `undefined`)
-        this.installersCustomData = installState.installersCustomData;
+    if (restoreLinkersCustomData)
+      if (typeof installState.linkersCustomData !== `undefined`)
+        this.linkersCustomData = installState.linkersCustomData;
 
     if (restoreBuildState)
       Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
@@ -1814,7 +1789,6 @@ export class Project {
     if (restoreResolutions) {
       if (installState.lockFileChecksum === this.lockFileChecksum) {
         Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
-        this.refreshWorkspaceDependencies();
       } else {
         await this.applyLightResolution();
       }
@@ -1839,6 +1813,9 @@ export class Project {
   }
 
   async cacheCleanup({cache, report}: InstallOptions)  {
+    if (this.configuration.get(`enableGlobalCache`))
+      return;
+
     const PRESERVED_FILES = new Set([
       `.gitignore`,
     ]);
@@ -1884,8 +1861,6 @@ export class Project {
           : `${lastEntryRemoved} appeared to be unused and was removed`,
       );
     }
-
-    cache.markedFiles.clear();
   }
 }
 
@@ -1912,8 +1887,6 @@ function applyVirtualResolutionMutations({
   volatileDescriptors = new Set(),
 
   report,
-
-  tolerateMissingPackages = false,
 }: {
   project: Project;
 
@@ -1927,8 +1900,6 @@ function applyVirtualResolutionMutations({
   volatileDescriptors?: Set<DescriptorHash>;
 
   report: Report | null;
-
-  tolerateMissingPackages?: boolean;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -1953,15 +1924,10 @@ function applyVirtualResolutionMutations({
   // may be overriden during the virtual package resolution - cf Dragon Test #5
   const originalWorkspaceDefinitions = new Map<LocatorHash, Package | null>(project.workspaces.map(workspace => {
     const locatorHash = workspace.anchoredLocator.locatorHash;
-    const pkg = allPackages.get(locatorHash);
 
-    if (typeof pkg === `undefined`) {
-      if (tolerateMissingPackages) {
-        return [locatorHash, null];
-      } else {
-        throw new Error(`Assertion failed: The workspace should have an associated package`);
-      }
-    }
+    const pkg = allPackages.get(locatorHash);
+    if (typeof pkg === `undefined`)
+      throw new Error(`Assertion failed: The workspace should have an associated package`);
 
     return [locatorHash, structUtils.copyPackage(pkg)];
   }));
@@ -2015,13 +1981,8 @@ function applyVirtualResolutionMutations({
       optionalBuilds.delete(parentLocator.locatorHash);
 
     const parentPackage = allPackages.get(parentLocator.locatorHash);
-    if (!parentPackage) {
-      if (tolerateMissingPackages) {
-        return;
-      } else {
-        throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
-      }
-    }
+    if (!parentPackage)
+      throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
 
     const newVirtualInstances: Array<[Locator, Descriptor, Package]> = [];
 
@@ -2063,18 +2024,13 @@ function applyVirtualResolutionMutations({
       }
 
       const resolution = allResolutions.get(descriptor.descriptorHash);
-      if (!resolution) {
+      if (!resolution)
         // Note that we can't use `getPackageFromDescriptor` (defined below,
         // because when doing the initial tree building right after loading the
         // project it's possible that we get some entries that haven't been
         // registered into the lockfile yet - for example when the user has
         // manually changed the package.json dependencies)
-        if (tolerateMissingPackages) {
-          continue;
-        } else {
-          throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
-        }
-      }
+        throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       const pkg = originalWorkspaceDefinitions.get(resolution) || allPackages.get(resolution);
       if (!pkg)

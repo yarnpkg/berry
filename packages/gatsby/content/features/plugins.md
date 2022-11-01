@@ -63,7 +63,7 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn.build**](https://yarn.build/) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - monorepo tooling that leverages Yarn's dependency graph to run `build` and `test` on whats changed in parallel as fast as possible. It also includes a command to `bundle` them up into deployable apps for Docker, AWS Lambda, or any other server. Each command is also available as an individual plugin.
 
-- [**package-yaml**](https://github.com/ojkelly/yarn.build#plugin-package-yaml) by [**yarn.build**](https://github.com/ojkelly/yarn.build) - per package opt-in to transparently using `package.yml` instead of `package.json`
+- [**package-yaml**](https://github.com/ojkelly/yarn.build#plugin-package-yaml) by [**Owen Kelly**](https://github.com/ojkelly/yarn.build) - per package opt-in to transparently using `package.yml` instead of `package.json`
 
 - [**licenses**](https://github.com/tophat/yarn-plugin-licenses) by [**Noah Negin-Ulster**](https://noahnu.com/) - audit direct and indirect dependency licenses to ensure compliance
 
@@ -92,5 +92,17 @@ This is just a centralized list of third-party plugins to make discovery easier.
 - [**publishconfig**](https://github.com/alizeait/yarn-plugin-publishconfig) by [**Ali Zeaiter**](https://github.com/alizeait) - Allows extending `publishConfig` to support any property on top of the default ones supported by yarn.
 
 - [**http-proxy**](https://github.com/arontsang/yarn-plugin-http-proxy) by [**Aron Tsang**](https://github.com/arontsang) - yarn plugin that loads a default http Proxy Agent based on the HTTP_PROXY or HTTPS_PROXY environmental variable when running lifecycle script such as `postinstall`. This is useful for allowing postinstall scripts to run in corporate environments where internet access requires an explicit HTTP Connect Proxy.
+
+- [**changed**](https://github.com/Dcard/yarn-plugins/tree/master/packages/changed) by [**Dcard Holdings Ltd.**](https://github.com/Dcard) - List and run a command on changed workspaces and their dependents.
+
+- [**docker-build**](https://github.com/Dcard/yarn-plugins/tree/master/packages/docker-build) by [**Dcard Holdings Ltd.**](https://github.com/Dcard) - Build a Docker image for a workspace.
+
+- [**tsconfig-references**](https://github.com/Dcard/yarn-plugins/tree/master/packages/tsconfig-references) by [**Dcard Holdings Ltd.**](https://github.com/Dcard) - Update `references` in `tsconfig.json` when adding or removing workspaces.
+
+- [**yarn-plugin-version-tools**](https://github.com/indooorsman/yarn-plugins#yarn-plugin-version-tools) by [**indooorsman**](https://github.com/indooorsman) - yarn plugin that is almost same with `@yarnpkg/plugin-version` but add a **`--preid`** option for bumping **prerelease** version.
+
+- [**yarn-plugin-pin-deps**](https://github.com/splitgraph/yarn-plugin-pin-deps) by [**Splitgraph**](https://github.com/splitgraph) - Pin dependencies to their currently resolved exact version. This plugin will find any dependencies referenced with a semver identifier, and will update `package.json` to replace that identifier with the exact version of the package currently resolved in the lockfile for that reference.
+
+- [**yarn-plugin-scripts**](https://github.com/jgttech/yarn-plugin-scripts) by [**jgttech**](https://github.com/jgttech) - Add capability to define customized scripts within the `.yarnrc.yml` file, similar to `package.json`, but more robost and similar to something like GitHub Actions. Each script can be invoked by its name, such as `yarn scripts <name_of_script>`. Each script is an array of one or more commands to execute.
 
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!

@@ -72,18 +72,6 @@ export type InstallPackageExtraApi = {
 
 export interface Installer {
   /**
-   * Return an arbitrary key.
-   *
-   * This key will be used to save and restore the installer's custom data. You
-   * typically will want to return the installer's name, but you can be fancy
-   * and send a stringified JSON payload that include the cache version, etc.
-   *
-   * TODO (Yarn 4): Move this method into `Linker` so that linkers can use it
-   * to save some state useful to findPackageLocator (cf PnpmLinker).
-   */
-  getCustomDataKey(): string;
-
-  /**
    * Only called if the installer has a custom data key matching one currently
    * stored. Will be called with whatever `finalizeInstall` returned in its
    * `customData` field.

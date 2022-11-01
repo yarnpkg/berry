@@ -1,7 +1,7 @@
 import {Stats, BigIntStats}                                                                                                                                   from 'fs';
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions} from './FakeFS';
-import {Dirent, SymlinkType}                                                                                                                                  from './FakeFS';
+import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                    from './FakeFS';
 import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                   from './FakeFS';
 import {FSPath, Filename, Path}                                                                                                                               from './path';
 
@@ -114,17 +114,22 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.accessPromise(this.mapToBase(p), mode);
   }
 
-  async statPromise(p: P): Promise<Stats>
-  async statPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>
-  async statPromise(p: P, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
-  async statPromise(p: P, opts?: {bigint: boolean}) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  async statPromise(p: P): Promise<Stats>;
+  async statPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  async statPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return this.baseFs.statPromise(this.mapToBase(p), opts);
   }
 
-  statSync(p: P): Stats
-  statSync(p: P, opts: {bigint: true}): BigIntStats
-  statSync(p: P, opts?: {bigint: boolean}): BigIntStats | Stats
-  statSync(p: P, opts?: {bigint: boolean}) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
+  statSync(p: P): Stats;
+  statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  statSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  statSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  statSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  statSync(p: P, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  statSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.baseFs.statSync(this.mapToBase(p), opts);
   }
 
@@ -142,18 +147,31 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.fstatSync(fd, opts);
   }
 
-  async lstatPromise(p: P): Promise<Stats>
-  async lstatPromise(p: P, opts: {bigint: true}): Promise<BigIntStats>
-  async lstatPromise(p: P, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
-  async lstatPromise(p: P, opts?: { bigint: boolean }) {
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
+  lstatPromise(p: P): Promise<Stats>;
+  lstatPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
+  lstatPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  lstatPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return this.baseFs.lstatPromise(this.mapToBase(p), opts);
   }
 
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   lstatSync(p: P): Stats;
-  lstatSync(p: P, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: P, opts?: { bigint: boolean }): BigIntStats | Stats
-  lstatSync(p: P, opts?: { bigint: boolean }): BigIntStats | Stats {
+  lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
+  lstatSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
+  lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
+  lstatSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  lstatSync(p: P, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.baseFs.lstatSync(this.mapToBase(p), opts);
+  }
+
+  async fchmodPromise(fd: number, mask: number): Promise<void> {
+    return this.baseFs.fchmodPromise(fd, mask);
+  }
+
+  fchmodSync(fd: number, mask: number): void {
+    return this.baseFs.fchmodSync(fd, mask);
   }
 
   async chmodPromise(p: P, mask: number) {
@@ -162,6 +180,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   chmodSync(p: P, mask: number) {
     return this.baseFs.chmodSync(this.mapToBase(p), mask);
+  }
+
+  async fchownPromise(fd: number, uid: number, gid: number): Promise<void> {
+    return this.baseFs.fchownPromise(fd, uid, gid);
+  }
+
+  fchownSync(fd: number, uid: number, gid: number): void {
+    return this.baseFs.fchownSync(fd, uid, gid);
   }
 
   async chownPromise(p: P, uid: number, gid: number) {
@@ -188,19 +214,19 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.copyFileSync(this.mapToBase(sourceP), this.mapToBase(destP), flags);
   }
 
-  async appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async appendFilePromise(p: FSPath<P>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return this.baseFs.appendFilePromise(this.fsMapToBase(p), content, opts);
   }
 
-  appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  appendFileSync(p: FSPath<P>, content: string | Uint8Array, opts?: WriteFileOptions) {
     return this.baseFs.appendFileSync(this.fsMapToBase(p), content, opts);
   }
 
-  async writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  async writeFilePromise(p: FSPath<P>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return this.baseFs.writeFilePromise(this.fsMapToBase(p), content, opts);
   }
 
-  writeFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions) {
+  writeFileSync(p: FSPath<P>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions) {
     return this.baseFs.writeFileSync(this.fsMapToBase(p), content, opts);
   }
 
@@ -218,6 +244,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number) {
     return this.baseFs.utimesSync(this.mapToBase(p), atime, mtime);
+  }
+
+  async lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesPromise(this.mapToBase(p), atime, mtime);
+  }
+
+  lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number) {
+    return this.baseFs.lutimesSync(this.mapToBase(p), atime, mtime);
   }
 
   async mkdirPromise(p: P, opts?: MkdirOptions) {
@@ -268,26 +302,18 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
   }
 
-  async readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
-  async readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
-  async readFilePromise(p: FSPath<P>, encoding?: string) {
-    // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === `utf8`) {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    } else {
-      return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
-    }
+  async readFilePromise(p: FSPath<P>, encoding?: null): Promise<Buffer>;
+  async readFilePromise(p: FSPath<P>, encoding: BufferEncoding): Promise<string>;
+  async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null) {
+    return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
   }
 
-  readFileSync(p: FSPath<P>, encoding: 'utf8'): string;
-  readFileSync(p: FSPath<P>, encoding?: string): Buffer;
-  readFileSync(p: FSPath<P>, encoding?: string) {
-    // This weird condition is required to tell TypeScript that the signatures are proper (otherwise it thinks that only the generic one is covered)
-    if (encoding === `utf8`) {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    } else  {
-      return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
-    }
+  readFileSync(p: FSPath<P>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<P>, encoding: BufferEncoding): string;
+  readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null) {
+    return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
 
   async readdirPromise(p: P): Promise<Array<Filename>>;
@@ -320,6 +346,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   truncateSync(p: P, len?: number) {
     return this.baseFs.truncateSync(this.mapToBase(p), len);
+  }
+
+  async ftruncatePromise(fd: number, len?: number): Promise<void> {
+    return this.baseFs.ftruncatePromise(fd, len);
+  }
+
+  ftruncateSync(fd: number, len?: number): void {
+    return this.baseFs.ftruncateSync(fd, len);
   }
 
   watch(p: P, cb?: WatchCallback): Watcher;

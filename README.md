@@ -98,7 +98,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
       </a>
     </td>
     <td>
-      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been an historical partner. While we don't directly mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
+      <b><a href="https://www.cloudflare.com/">Cloudflare</a></b> has also been a historical partner. While we don't directly mirror the npm registry anymore, they still power our website to make its delivery as fast as possible.
     </td>
   </tr>
   <tr>
@@ -137,33 +137,32 @@ On top of our classic integration tests, we also run Yarn every day against the 
 <tr><th>Toolchains</th><th>Tooling</th></tr>
 <tr><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nm-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20PnP%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-pnp-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-cra-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Create-Vue/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-create-vue-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gatsby-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-gulp-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-next-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-preact-cli-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-svelte-kit-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-vue-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NM%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20PnP%20Angular/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20CRA/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-cra-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Create-Vue/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-create-vue-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gatsby/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gatsby-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Gulp/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gulp-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Next/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-next-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-preact-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vite/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vite-workflow.yml)<br/>
 </td><td valign="top">
 
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-esbuild-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Docusaurus/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-docusaurus-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-eslint-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20FSEvents/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-fsevents-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-husky-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-jest-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-mocha-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-nyc-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-parcel-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-prettier-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-rollup-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Snowpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-snowpack-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-storybook-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-typescript-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/blob/master/.github/workflows/e2e-webpack-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Docusaurus/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-docusaurus-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20ESLint/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-eslint-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20FSEvents/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-fsevents-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Husky/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-husky-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Jest/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-jest-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Mocha/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-mocha-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20NYC/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nyc-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-parcel-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-prettier-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>
 </td></tr>
 
 </table>
@@ -231,7 +230,6 @@ The following packages are generic and can be used in a variety of purposes (inc
 
 - [@yarnpkg/core](packages/yarnpkg-core) allows any application to manipulate a project programmatically.
 - [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.
-- [@yarnpkg/json-proxy](packages/yarnpkg-json-proxy) allows to temporarily convert any POD object to an immutable object.
 - [@yarnpkg/libzip](packages/yarnpkg-libzip) contains zlib+libzip bindings compiled to WebAssembly.
 - [@yarnpkg/nm](packages/yarnpkg-nm) contains the `node_modules` tree builder and hoister.
 - [@yarnpkg/parsers](packages/yarnpkg-parsers) can be used to parse the language used by [@yarnpkg/shell](packages/yarnpkg-shell).
@@ -246,4 +244,3 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 
 - [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
 - [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).
-

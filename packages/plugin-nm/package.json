@@ -2,6 +2,10 @@
   "name": "@yarnpkg/plugin-nm",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
@@ -10,8 +14,8 @@
     "@yarnpkg/plugin-pnp": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
     "@zkochan/cmd-shim": "^5.1.0",
-    "clipanion": "^3.2.0-rc.4",
-    "tslib": "^1.13.0"
+    "clipanion": "^3.2.0-rc.10",
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
@@ -21,7 +25,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^"
   },
-  "version": "3.1.1",
+  "version": "4.0.0-rc.27",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"
@@ -37,12 +41,16 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "typings": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
   ],
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "3.1.1"
 }

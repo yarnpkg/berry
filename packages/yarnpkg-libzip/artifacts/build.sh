@@ -105,6 +105,8 @@ build() {
     -s EXPORTED_FUNCTIONS="$(cat ./exported.json)" \
     -s EXPORTED_RUNTIME_METHODS='["cwrap", "getValue"]' \
     -s ALLOW_MEMORY_GROWTH=1 \
+    -s SUPPORT_BIG_ENDIAN=1 \
+    -s TEXTDECODER=2 \
     -s ENVIRONMENT=node \
     -s NODERAWFS=1 \
     -s SINGLE_FILE=1 \

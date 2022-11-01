@@ -143,6 +143,25 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should support excluding patterns in included parent directory from the "files" field`,
+      makeTemporaryEnv({
+        files: [
+          `/lib`,
+          `!/lib/b.js`,
+        ],
+      }, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/lib/a.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/lib/b.js`, `module.exports = 42;\n`);
+
+        await run(`install`);
+
+        const {stdout} = await run(`pack`, `--dry-run`);
+        expect(stdout).toContain(`lib/a.js`);
+        expect(stdout).not.toContain(`lib/b.js`);
+      }),
+    );
+
+    test(
       `it should support excluding patterns from the "files" field`,
       makeTemporaryEnv({
         files: [
@@ -270,7 +289,7 @@ describe(`Commands`, () => {
     test(
       `it should ignore the folders covered by the local npmignore file`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await fsUtils.mkdirp(`${path}/__tests__/`);
+        await xfs.mkdirPromise(`${path}/__tests__`);
         await fsUtils.writeFile(`${path}/__tests__/index.js`, `module.exports = 42;\n`);
         await fsUtils.writeFile(`${path}/.npmignore`, `__tests__\n`);
 
@@ -318,7 +337,7 @@ describe(`Commands`, () => {
 
         await fsUtils.unpackToDirectory(path, `${path}/package.tgz`);
 
-        const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
+        const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json`);
 
         expect(packedManifest.type).toBe(`module`);
         expect(packedManifest.main).toBe(`./published.js`);
@@ -326,7 +345,7 @@ describe(`Commands`, () => {
         expect(packedManifest.browser).toBe(`./published.umd.js`);
         expect(packedManifest.exports).toBe(`./published.modern.js`);
 
-        const originalManifest = await fsUtils.readJson(`${path}/package.json`);
+        const originalManifest = await xfs.readJsonPromise(`${path}/package.json`);
 
         expect(originalManifest.type).toBe(`commonjs`);
         expect(originalManifest.main).toBe(`./index.js`);
@@ -395,7 +414,7 @@ describe(`Commands`, () => {
 
         await fsUtils.unpackToDirectory(path, `${path}/dependant/package.tgz`);
 
-        const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
+        const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json`);
 
         expect(packedManifest.dependencies[dependency]).toBe(`1.0.0`);
         expect(packedManifest.devDependencies[dependency]).toBe(`^1.0.0`);
@@ -406,7 +425,7 @@ describe(`Commands`, () => {
         expect(packedManifest.peerDependencies[bar]).toBe(`~3.0.0`);
         expect(packedManifest.optionalDependencies[optional]).toBe(`4.0.0`);
 
-        const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
+        const originalManifest = await xfs.readJsonPromise(`${path}/dependant/package.json`);
 
         expect(originalManifest.dependencies[dependency]).toBe(`workspace:*`);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:^1.0.0`);
@@ -703,12 +722,12 @@ describe(`Commands`, () => {
 
         await fsUtils.unpackToDirectory(path, `${path}/dependant/package.tgz`);
 
-        const packedManifest = await fsUtils.readJson(`${path}/package/package.json`);
+        const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json`);
 
         expect(packedManifest.dependencies[dependency]).toBe(`^1.0.0`);
         expect(packedManifest.devDependencies[dependency]).toBe(`1.0.0`);
 
-        const originalManifest = await fsUtils.readJson(`${path}/dependant/package.json`);
+        const originalManifest = await xfs.readJsonPromise(`${path}/dependant/package.json`);
 
         expect(originalManifest.dependencies).toBe(undefined);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:*`);

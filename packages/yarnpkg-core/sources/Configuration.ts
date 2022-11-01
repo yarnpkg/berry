@@ -1,5 +1,5 @@
 import {Filename, PortablePath, npath, ppath, xfs}                                                      from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/libzip';
 import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
 import camelcase                                                                                        from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
@@ -11,7 +11,7 @@ import {CorePlugin}                                                             
 import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
 import {MultiFetcher}                                                                                   from './MultiFetcher';
 import {MultiResolver}                                                                                  from './MultiResolver';
-import {Plugin, Hooks}                                                                                  from './Plugin';
+import {Plugin, Hooks, PluginMeta}                                                                      from './Plugin';
 import {Report}                                                                                         from './Report';
 import {TelemetryManager}                                                                               from './TelemetryManager';
 import {VirtualFetcher}                                                                                 from './VirtualFetcher';
@@ -20,6 +20,8 @@ import {WorkspaceFetcher}                                                       
 import {WorkspaceResolver}                                                                              from './WorkspaceResolver';
 import * as folderUtils                                                                                 from './folderUtils';
 import * as formatUtils                                                                                 from './formatUtils';
+import * as hashUtils                                                                                   from './hashUtils';
+import * as httpUtils                                                                                   from './httpUtils';
 import * as miscUtils                                                                                   from './miscUtils';
 import * as nodeUtils                                                                                   from './nodeUtils';
 import * as semverUtils                                                                                 from './semverUtils';
@@ -87,7 +89,13 @@ export type SupportedArchitectures = {
   libc: Array<string> | null;
 };
 
+/**
+ * @deprecated Use {@link formatUtils.Type}
+ */
 export type FormatType = formatUtils.Type;
+/**
+ * @deprecated Use {@link formatUtils.Type}
+ */
 export const FormatType = formatUtils.Type;
 
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
@@ -125,6 +133,11 @@ export type PluginConfiguration = {
   modules: Map<string, any>;
   plugins: Set<string>;
 };
+
+export enum WindowsLinkType {
+  JUNCTIONS = `junctions`,
+  SYMLINKS = `symlinks`,
+}
 
 // General rules:
 //
@@ -372,7 +385,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       description: ``,
       type: SettingsType.SHAPE,
       properties: {
-        caFilePath: {
+        httpsCaFilePath: {
           description: `Path to file containing one or multiple Certificate Authority signing certificates`,
           type: SettingsType.ABSOLUTE_PATH,
           default: null,
@@ -405,7 +418,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
       },
     },
   },
-  caFilePath: {
+  httpsCaFilePath: {
     description: `A path to a file containing one or multiple Certificate Authority signing certificates`,
     type: SettingsType.ABSOLUTE_PATH,
     default: null,
@@ -546,11 +559,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 };
 
-/**
- * @deprecated Use miscUtils.ToMapValue
- */
-export type MapConfigurationValue<T extends object> = miscUtils.ToMapValue<T>;
-
 export interface ConfigurationValueMap {
   lastUpdateCheck: string | null;
 
@@ -593,14 +601,14 @@ export interface ConfigurationValueMap {
   httpRetry: number;
   networkConcurrency: number;
   networkSettings: Map<string, miscUtils.ToMapValue<{
-    caFilePath: PortablePath | null;
+    httpsCaFilePath: PortablePath | null;
     enableNetwork: boolean | null;
     httpProxy: string | null;
     httpsProxy: string | null;
     httpsKeyFilePath: PortablePath | null;
     httpsCertFilePath: PortablePath | null;
   }>>;
-  caFilePath: PortablePath | null;
+  httpsCaFilePath: PortablePath | null;
   httpsKeyFilePath: PortablePath | null;
   httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;
@@ -1007,15 +1015,33 @@ export class Configuration {
     type CoreKeys = keyof typeof coreDefinitions;
     type CoreFields = {[key in CoreKeys]: any};
 
-    const pickCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const excludeCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => rest;
+    const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
+
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+      const secondaryCoreFields: CoreFields = {};
+      for (const [key, value] of Object.entries(rest))
+        if (allCoreFieldKeys.has(key))
+          secondaryCoreFields[key] = value;
+
+      return secondaryCoreFields;
+    };
+
+    const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+      const pluginFields: any = {};
+      for (const [key, value] of Object.entries(rest))
+        if (!allCoreFieldKeys.has(key))
+          pluginFields[key] = value;
+
+      return pluginFields;
+    };
 
     const configuration = new Configuration(startingCwd);
-    configuration.importSettings(pickCoreFields(coreDefinitions));
+    configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
-    configuration.useWithSource(`<environment>`, pickCoreFields(environmentSettings), startingCwd, {strict: false});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, pickCoreFields(data), cwd, {strict: false});
+      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1056,23 +1082,34 @@ export class Configuration {
     configuration.startingCwd = startingCwd;
     configuration.projectCwd = projectCwd;
 
-    configuration.importSettings(excludeCoreFields(coreDefinitions));
+    // load all fields of the core definitions
+    configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
+    for (const {path, cwd, data, strict: isStrict} of rcFiles)
+      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
-
-    const plugins = new Map<string, Plugin>([
-      [`@@core`, CorePlugin],
-    ]);
 
     const getDefault = (object: any) => {
       return `default` in object ? object.default : object;
     };
 
-    if (pluginConfiguration !== null) {
-      for (const request of pluginConfiguration.plugins.keys())
-        plugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
+    // load the core plugins
+    const corePlugins = new Map<string, Plugin>([
+      [`@@core`, CorePlugin],
+    ]);
 
+    if (pluginConfiguration !== null)
+      for (const request of pluginConfiguration.plugins.keys())
+        corePlugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
+
+    for (const [name, corePlugin] of corePlugins)
+      configuration.activatePlugin(name, corePlugin);
+
+    // load third-party plugins
+    const thirdPartyPlugins = new Map<string, Plugin>([]);
+    if (pluginConfiguration !== null) {
       const requireEntries = new Map();
       for (const request of nodeUtils.builtinModules())
         requireEntries.set(request, () => miscUtils.dynamicRequire(request));
@@ -1083,6 +1120,8 @@ export class Configuration {
 
       const importPlugin = async (pluginPath: PortablePath, source: string) => {
         const {factory, name} = miscUtils.dynamicRequire(pluginPath);
+        if (!factory)
+          return;
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
@@ -1107,7 +1146,7 @@ export class Configuration {
         requireEntries.set(name, () => plugin);
 
         dynamicPlugins.add(name);
-        plugins.set(name, plugin);
+        thirdPartyPlugins.set(name, plugin);
       };
 
       if (environmentSettings.plugins) {
@@ -1128,18 +1167,52 @@ export class Configuration {
             ? userPluginEntry.path
             : userPluginEntry;
 
+          const userProvidedSpec = userPluginEntry?.spec ?? ``;
+          const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
+
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
+          if (!await xfs.existsPromise(pluginPath)) {
+            if (!userProvidedSpec) {
+              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
+              const prettyGitIgnore = formatUtils.pretty(configuration, `.gitignore`, formatUtils.Type.NAME) ;
+              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
+              const prettyUrl = formatUtils.pretty(configuration, `https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored`, formatUtils.Type.URL) ;
+              throw new UsageError(`Missing source for the ${prettyPluginName} plugin - please try to remove the plugin from ${prettyYarnrc} then reinstall it manually. This error usually occurs because ${prettyGitIgnore} is incorrect, check ${prettyUrl} to make sure your plugin folder isn't gitignored.`);
+            }
+
+            if (!userProvidedSpec.match(/^https?:/)) {
+              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
+              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
+              throw new UsageError(`Failed to recognize the source for the ${prettyPluginName} plugin - please try to delete the plugin from ${prettyYarnrc} then reinstall it manually.`);
+            }
+
+            const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
+            const pluginChecksum = hashUtils.makeHash(pluginBuffer);
+
+            // if there is no checksum, this means that the user used --no-checksum and does not need to check this plugin
+            if (userProvidedChecksum && userProvidedChecksum !== pluginChecksum) {
+              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
+              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
+              const prettyPluginImportCommand = formatUtils.pretty(configuration, `yarn plugin import ${userProvidedSpec}`, formatUtils.Type.CODE) ;
+              throw new UsageError(`Failed to fetch the ${prettyPluginName} plugin from its remote location: its checksum seems to have changed. If this is expected, please remove the plugin from ${prettyYarnrc} then run ${prettyPluginImportCommand} to reimport it.`);
+            }
+
+            await xfs.mkdirPromise(ppath.dirname(pluginPath), {recursive: true});
+            await xfs.writeFilePromise(pluginPath, pluginBuffer);
+          }
+
           await importPlugin(pluginPath, path);
         }
       }
     }
 
-    for (const [name, plugin] of plugins)
-      configuration.activatePlugin(name, plugin);
+    for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
+      configuration.activatePlugin(name, thirdPartyPlugin);
 
-    configuration.useWithSource(`<environment>`, excludeCoreFields(environmentSettings), startingCwd, {strict});
+    // load values of all plugin definitions
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, excludeCoreFields(data), cwd, {strict: isStrict ?? strict});
+      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1294,6 +1367,41 @@ export class Configuration {
 
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
+    });
+  }
+
+  static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {
+    if (pluginMetaList.length === 0)
+      return;
+
+    await Configuration.updateConfiguration(cwd, (current: any) => {
+      const currentPluginMetaList = current.plugins ?? [];
+      if (currentPluginMetaList.length === 0)
+        return {...current, plugins: pluginMetaList};
+
+      const newPluginMetaList = [];
+      let notYetProcessedList = [...pluginMetaList];
+
+      for (const currentPluginMeta of currentPluginMetaList) {
+        const currentPluginPath = typeof currentPluginMeta !== `string`
+          ? currentPluginMeta.path
+          : currentPluginMeta;
+
+        const updatingPlugin = notYetProcessedList.find(pluginMeta => {
+          return pluginMeta.path === currentPluginPath;
+        });
+
+        if (updatingPlugin) {
+          newPluginMetaList.push(updatingPlugin);
+          notYetProcessedList = notYetProcessedList.filter(p => p !== updatingPlugin);
+        } else {
+          newPluginMetaList.push(currentPluginMeta);
+        }
+      }
+
+      newPluginMetaList.push(...notYetProcessedList);
+
+      return {...current, plugins: newPluginMetaList};
     });
   }
 
@@ -1611,7 +1719,7 @@ export class Configuration {
                 const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
                 if (typeof currentPeerDependency === `undefined`) {
                   extension.status = PackageExtensionStatus.Active;
-                  pkg.peerDependencies.set(extension.descriptor.identHash, this.normalizeDependency(extension.descriptor));
+                  pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
                 }
               } break;
 

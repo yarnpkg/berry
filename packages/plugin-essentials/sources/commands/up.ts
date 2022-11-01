@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
-import {IdentHash, structUtils}                                                                                     from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, InstallMode}                                                              from '@yarnpkg/core';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils, FormatType} from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                                                                         from 'clipanion';
-import {prompt}                                                                                                     from 'enquirer';
-import micromatch                                                                                                   from 'micromatch';
-import * as t                                                                                                       from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
+import {IdentHash, structUtils}                                                                         from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, InstallMode}                                                  from '@yarnpkg/core';
+import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                                                             from 'clipanion';
+import {prompt}                                                                                         from 'enquirer';
+import micromatch                                                                                       from 'micromatch';
+import * as t                                                                                           from 'typanion';
 
-import * as suggestUtils                                                                                            from '../suggestUtils';
-import {Hooks}                                                                                                      from '..';
+import * as suggestUtils                                                                                from '../suggestUtils';
+import {Hooks}                                                                                          from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
@@ -29,7 +29,7 @@ export default class UpCommand extends BaseCommand {
 
       If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
 
-      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the latter will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
 
       - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
 
@@ -223,9 +223,9 @@ export default class UpCommand extends BaseCommand {
     }
 
     if (unreferencedPatterns.length > 1)
-      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} don't match any packages referenced by any workspace`);
+      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by any workspace`);
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, FormatType.CODE)} doesn't match any packages referenced by any workspace`);
+      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by any workspace`);
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 
@@ -270,7 +270,7 @@ export default class UpCommand extends BaseCommand {
     ]> = [];
 
     for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {
-      let selected;
+      let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
         return suggestion.descriptor !== null;
@@ -283,10 +283,10 @@ export default class UpCommand extends BaseCommand {
         selected = firstSuggestedDescriptor;
       } else {
         askedQuestions = true;
-        ({answer: selected} = await prompt({
+        ({answer: selected} = await prompt<{answer: Descriptor}>({
           type: `select`,
           name: `answer`,
-          message: `Which range to you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
+          message: `Which range do you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
           choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
             name,
             hint: reason,
@@ -326,7 +326,9 @@ export default class UpCommand extends BaseCommand {
       } else {
         const resolver = configuration.makeResolver();
         const resolveOptions: MinimalResolveOptions = {project, resolver};
-        const bound = resolver.bindDescriptor(current, workspace.anchoredLocator, resolveOptions);
+
+        const normalizedDependency = configuration.normalizeDependency(current);
+        const bound = resolver.bindDescriptor(normalizedDependency, workspace.anchoredLocator, resolveOptions);
 
         project.forgetResolution(bound);
       }

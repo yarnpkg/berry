@@ -1,8 +1,8 @@
-const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
+const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require(`path`);
 
 const {
-  fs: {createTemporaryFolder, makeFakeBinary, walk, readFile, writeJson, writeFile},
+  fs: {makeFakeBinary, walk, writeJson, writeFile},
 } = require(`pkg-tests-core`);
 
 const globalName = makeTemporaryEnv.getPackageManagerName();
@@ -157,6 +157,7 @@ describe(`Scripts tests`, () => {
       expect(env).toMatchObject({
         npm_package_name: `helloworld`,
         npm_package_version: `1.2.3`,
+        npm_package_json: npath.join(npath.fromPortablePath(path), Filename.manifest),
       });
     }),
   );
@@ -292,7 +293,7 @@ describe(`Scripts tests`, () => {
           async ({path, run, source}) => {
             await run(`install`);
 
-            const tmp = await createTemporaryFolder();
+            const tmp = await xfs.mktempPromise();
 
             const {stdout} = await run(`bin`, `has-bin-entries`, {
               projectFolder: path,
@@ -525,7 +526,7 @@ describe(`Scripts tests`, () => {
 
             expect(itemPath).toBeDefined();
 
-            const content = await readFile(itemPath, `utf8`);
+            const content = await xfs.readFilePromise(itemPath, `utf8`);
             await expect(content).toEqual(npath.fromPortablePath(itemPath));
           },
         ),

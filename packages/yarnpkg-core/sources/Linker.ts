@@ -70,6 +70,15 @@ export interface Linker {
   findPackageLocator(location: PortablePath, opts: LinkOptions): Promise<Locator | null>;
 
   /**
+   * Return an arbitrary key.
+   *
+   * This key will be used to save and restore the installer's custom data. You
+   * typically will want to return the installer's name, but you can be fancy
+   * and send a stringified JSON payload that include the cache version, etc.
+   */
+  getCustomDataKey(): string;
+
+  /**
    * This function must instantiate an Installer object that describes how to
    * install the packages on the disk. Check the Installer file for more
    * details on the installer design.

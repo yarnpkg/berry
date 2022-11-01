@@ -517,9 +517,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
     seenNodes.add(pkg);
 
+    const pkgReferences = Array.from(pkg.references).sort().join(`#`);
     for (const dep of pkg.dependencies) {
+      const depReferences = Array.from(dep.references).sort().join(`#`);
       // We do not want self-references in node_modules, since they confuse existing tools
-      if (dep === pkg)
+      if (dep.identName === pkg.identName && depReferences === pkgReferences)
         continue;
       const references = Array.from(dep.references).sort();
       const locator = {name: dep.identName, reference: references[0]};
@@ -542,7 +544,9 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         isAnonymousWorkspace = !!(workspace && !workspace.manifest.name);
       }
 
-      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isAnonymousWorkspace) {
+      const isCircularSymlink = leafNode.linkType === LinkType.SOFT && nodeModulesLocation.startsWith(leafNode.target);
+
+      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isAnonymousWorkspace && !isCircularSymlink) {
         const prevNode = tree.get(nodeModulesLocation);
         if (prevNode) {
           if (prevNode.dirList) {

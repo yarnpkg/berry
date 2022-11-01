@@ -12,6 +12,13 @@ const TMP_DIR = `/tmp/ts-builds`;
 
 const IGNORED_VERSIONS = new Set([
   `3.3.3333`,
+  `3.7.0-beta`,
+  `3.9.0-beta`,
+  `4.0.0-beta`,
+  `4.3.0-beta`,
+  `4.4.0-beta`,
+  // Broken publish - missing files
+  `4.9.0-beta`,
 ]);
 
 const SLICES = [
@@ -90,7 +97,42 @@ const SLICES = [
     from: `fbec717ef33fc2db5791f2a1d5f9a315e293a50a`,
     to: `fbec717ef33fc2db5791f2a1d5f9a315e293a50a`,
     onto: `83efc9f0d646bf86a3469e00c5ef5e4f7ab7cb95`,
-    range: `>=4.6.1-rc`,
+    range: `>=4.6.1-rc <4.7`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.7
+  {
+    from: `cd8d000510ed2d2910e0ebaa903a51adda546a0a`,
+    to: `cd8d000510ed2d2910e0ebaa903a51adda546a0a`,
+    onto: `6e62273fa1e7469b89b589667c2c233789c62176`,
+    range: `>=4.7.0-beta <4.8`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8.0-beta
+  {
+    from: `3287098f4785fd652112beadf3b33a960fcd19aa`,
+    to: `3287098f4785fd652112beadf3b33a960fcd19aa`,
+    onto: `9a09c37878a45b06994485fdb510eb4d24587dcb`,
+    range: `>=4.8.0-beta <4.8.1-rc`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8-stable
+  {
+    from: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
+    to: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
+    onto: `60b5167a2a7015759d048cdd4655d1f66a8416a2`,
+    range: `>=4.8.1-rc <4.8.4`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8
+  {
+    from: `d3747e92c3cd2d1f98739382c14226a725df38fd`,
+    to: `d3747e92c3cd2d1f98739382c14226a725df38fd`,
+    onto: `a614119c1921ca61d549a7eee65c0b8c69c28752`,
+    range: `>=4.8.4 <4.9.1-beta`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9
+  {
+    from: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
+    to: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
+    onto: `549b5429d4837344e8c99657109bb6538fd2dbb5`,
+    range: `>=4.9.1-beta`,
   },
 ];
 
@@ -163,26 +205,15 @@ async function fetchVersions(range) {
 
     relevantVersions = [];
 
-    let highestPre;
     for (const version of allVersions) {
       if (IGNORED_VERSIONS.has(version))
         continue;
 
       const pre = semver.prerelease(version);
-      if (pre) {
-        if (pre[0] !== `beta` && pre[0] !== `rc`)
-          continue;
+      if (pre && pre[0] !== `beta` && pre[0] !== `rc`)
+        continue;
 
-        if (!highestPre || semver.gt(version, highestPre)) {
-          highestPre = version;
-        }
-      } else {
-        relevantVersions.push(version);
-      }
-    }
-
-    if (highestPre) {
-      relevantVersions.push(highestPre);
+      relevantVersions.push(version);
     }
   }
 
@@ -274,13 +305,21 @@ async function buildRepository({from, to, onto}) {
 async function run({from, to, onto, range}) {
   const hash = crypto
     .createHash(`md5`)
-    .update(JSON.stringify({from, to, onto, range}))
+    .update(JSON.stringify({from, to, onto}))
     .digest(`hex`);
 
   const patchFile = path.join(__dirname, `patch-${hash}.diff`);
   if (fs.existsSync(patchFile)) {
-    console.log(`Skipping; file ${path.basename(patchFile)} already exists`);
-    return patchFile;
+    const originalContent = await fs.promises.readFile(patchFile, `utf8`);
+    const updatedContent = originalContent.replace(/^semver exclusivity .*\n/gm, `semver exclusivity ${range}\n`);
+    if (originalContent !== updatedContent) {
+      console.log(`Updating range for ${path.basename(patchFile)}`);
+      await fs.promises.writeFile(patchFile, updatedContent);
+      return {patchFile, content: updatedContent};
+    } else {
+      console.log(`Skipping; patch ${path.basename(patchFile)} already exists`);
+      return {patchFile, content: originalContent};
+    }
   }
 
   await cloneRepository();
@@ -298,10 +337,10 @@ async function run({from, to, onto, range}) {
 
   await fs.promises.writeFile(patchFile, patch);
 
-  return patchFile;
+  return {patchFile, content: patch};
 }
 
-async function validate(version, patchFile) {
+async function validate(version, patch) {
   const tmpDir = path.join(TMP_DIR, `v${version}`);
   const tarball = path.join(tmpDir, `package.tgz`);
 
@@ -315,15 +354,14 @@ async function validate(version, patchFile) {
   if (!fs.existsSync(path.join(tmpDir, `package`)))
     await execFile(`tar`, [`xvf`, tarball], {cwd: tmpDir});
 
-  let patch = await fs.promises.readFile(patchFile, `utf8`);
-  patch = patch.replace(/^semver .*\n/gm, ``);
-  await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patch);
+  const patchContent = patch.content.replace(/^semver exclusivity .*\n/gm, ``);
+  await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patchContent);
 
   await execFile(`git`, [`apply`, `--check`, `../patch.diff`], {cwd: path.join(tmpDir, `package`)});
 }
 
 async function main() {
-  const patchFiles = [];
+  const patches = [];
   let isFirst = true;
 
   for (const slice of SLICES) {
@@ -335,29 +373,25 @@ async function main() {
     console.log(`## Slice: ${JSON.stringify(slice)}`);
     console.log();
 
-    const patchFile = await run(slice);
+    const patch = await run(slice);
     const versions = await fetchVersions(slice.range);
 
     for (const version of versions) {
       console.log(`Validating ${version}...`);
-      await validate(version, patchFile);
+      await validate(version, patch);
     }
 
-    patchFiles.push(patchFile);
+    patches.push(patch);
   }
 
-  const patches = await Promise.all(patchFiles.map(patchFile => {
-    return fs.promises.readFile(patchFile, `utf8`);
-  }));
-
   const aggregatePatchFile = path.join(TMP_DIR, `patch.diff`);
-  await fs.promises.writeFile(aggregatePatchFile, patches.join(``));
+  await fs.promises.writeFile(aggregatePatchFile, patches.map(patch => patch.content).join(``));
 
   const jsPatchFile = path.join(__dirname, `../../sources/patches/typescript.patch.ts`);
   await execFile(`node`, [path.join(__dirname, `../createPatch.js`), aggregatePatchFile, jsPatchFile]);
 
   // Remove old patches
-  const patchFilesSet = new Set(patchFiles);
+  const patchFilesSet = new Set(patches.map(patch => patch.patchFile));
   for await (const {name: patchName} of await fs.promises.opendir(__dirname)) {
     if (patchName.endsWith(`.diff`) && !patchFilesSet.has(path.join(__dirname, patchName))) {
       console.log(`Cleanup; file ${patchName} not in use`);

@@ -11,7 +11,7 @@ function makeGitEnvironment() {
   return {
     ...process.env,
     // An option passed to SSH by Git to prevent SSH from asking for data (which would cause installs to hang when the SSH keys are missing)
-    GIT_SSH_COMMAND: `ssh -o BatchMode=yes`,
+    GIT_SSH_COMMAND: process.env.GIT_SSH_COMMAND || `${process.env.GIT_SSH || `ssh`} -o BatchMode=yes`,
   };
 }
 
@@ -156,12 +156,17 @@ export function normalizeLocator(locator: Locator) {
   return structUtils.makeLocator(locator, normalizeRepoUrl(locator.reference));
 }
 
-export async function lsRemote(repo: string, configuration: Configuration) {
-  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
-
+export function validateRepoUrl(url: string, {configuration}: {configuration: Configuration}) {
+  const normalizedRepoUrl = normalizeRepoUrl(url, {git: true});
   const networkSettings = httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration});
   if (!networkSettings.enableNetwork)
-    throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+    throw new ReportError(MessageName.NETWORK_DISABLED, `Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+
+  return normalizedRepoUrl;
+}
+
+export async function lsRemote(repo: string, configuration: Configuration) {
+  const normalizedRepoUrl = validateRepoUrl(repo, {configuration});
 
   const res = await git(`listing refs`, [`ls-remote`, normalizedRepoUrl], {
     cwd: configuration.startingCwd,
@@ -283,9 +288,7 @@ export async function clone(url: string, configuration: Configuration) {
     if (protocol !== `commit`)
       throw new Error(`Invalid treeish protocol when cloning`);
 
-    const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
-    if (httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration}).enableNetwork === false)
-      throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+    const normalizedRepoUrl = validateRepoUrl(repo, {configuration});
 
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment()};

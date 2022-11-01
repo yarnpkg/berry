@@ -1,16 +1,17 @@
-import {BaseCommand}                                                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
-import {YarnVersion, formatUtils, httpUtils, structUtils}                                  from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                                            from 'clipanion';
-import semver                                                                              from 'semver';
-import {URL}                                                                               from 'url';
-import {runInNewContext}                                                                   from 'vm';
+import {BaseCommand}                                                            from '@yarnpkg/cli';
+import {PluginMeta}                                                             from '@yarnpkg/core/sources/Plugin';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Report} from '@yarnpkg/core';
+import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}            from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                                 from 'clipanion';
+import semver                                                                   from 'semver';
+import {URL}                                                                    from 'url';
+import {runInNewContext}                                                        from 'vm';
 
-import {getAvailablePlugins}                                                               from './list';
+import {getAvailablePlugins}                                                    from './list';
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginDlCommand extends BaseCommand {
+export default class PluginImportCommand extends BaseCommand {
   static paths = [
     [`plugin`, `import`],
   ];
@@ -26,6 +27,8 @@ export default class PluginDlCommand extends BaseCommand {
       - If the plugin is stored within the Yarn repository, it can be referenced by name.
       - Third-party plugins can be referenced directly through their public urls.
       - Local plugins can be referenced by their path on the disk.
+
+      If the \`--no-checksum\` option is set, Yarn will no longer care if the plugin is modified.
 
       Plugins cannot be downloaded from the npm registry, and aren't allowed to have dependencies (they need to be bundled into a single file, possibly thanks to the \`@yarnpkg/builder\` package).
     `,
@@ -45,6 +48,10 @@ export default class PluginDlCommand extends BaseCommand {
   });
 
   name = Option.String();
+
+  checksum = Option.Boolean(`--checksum`, true, {
+    description: `Whether to care if this plugin is modified`,
+  });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -81,10 +88,17 @@ export default class PluginDlCommand extends BaseCommand {
             throw new ReportError(MessageName.UNNAMED, `Official plugins only accept strict version references. Use an explicit URL if you wish to download them from another location.`);
 
           const identStr = structUtils.stringifyIdent(locator);
-          const data = await getAvailablePlugins(configuration);
+          const data = await getAvailablePlugins(configuration, YarnVersion);
 
-          if (!Object.prototype.hasOwnProperty.call(data, identStr))
-            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be referenced by their name; any other plugin will have to be referenced through its public url (for example https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js).`);
+          if (!Object.prototype.hasOwnProperty.call(data, identStr)) {
+            let message = `Couldn't find a plugin named ${structUtils.prettyIdent(configuration, locator)} on the remote registry.\n`;
+            if (configuration.plugins.has(identStr))
+              message += `A plugin named ${structUtils.prettyIdent(configuration, locator)} is already installed; possibly attempting to import a built-in plugin.`;
+            else
+              message += `Note that only the plugins referenced on our website (${formatUtils.pretty(configuration, `https://github.com/yarnpkg/berry/blob/master/plugins.yml`, formatUtils.Type.URL)}) can be referenced by their name; any other plugin will have to be referenced through its public url (for example ${formatUtils.pretty(configuration, `https://github.com/yarnpkg/berry/raw/master/packages/plugin-typescript/bin/%40yarnpkg/plugin-typescript.js`, formatUtils.Type.URL)}).`;
+
+            throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, message);
+          }
 
           pluginSpec = identStr;
           pluginUrl = data[identStr].url;
@@ -100,14 +114,14 @@ export default class PluginDlCommand extends BaseCommand {
         pluginBuffer = await httpUtils.get(pluginUrl, {configuration});
       }
 
-      await savePlugin(pluginSpec, pluginBuffer, {project, report});
+      await savePlugin(pluginSpec, pluginBuffer, {checksum: this.checksum, project, report});
     });
 
     return report.exitCode();
   }
 }
 
-export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {project, report}: {project: Project, report: Report}) {
+export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {checksum = true, project, report}: {checksum?: boolean, project: Project, report: Report}) {
   const {configuration} = project;
 
   const vmExports = {} as any;
@@ -127,34 +141,13 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
   await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
   await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
-  const pluginMeta = {
+  const pluginMeta: PluginMeta = {
     path: relativePath,
     spec: pluginSpec,
   };
 
-  await Configuration.updateConfiguration(project.cwd, (current: any) => {
-    const plugins = [];
-    let hasBeenReplaced = false;
+  if (checksum)
+    pluginMeta.checksum = hashUtils.makeHash(pluginBuffer);
 
-    for (const entry of current.plugins || []) {
-      const userProvidedPath = typeof entry !== `string`
-        ? entry.path
-        : entry;
-
-      const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
-      const {name} = miscUtils.dynamicRequire(pluginPath);
-
-      if (name !== pluginName) {
-        plugins.push(entry);
-      } else {
-        plugins.push(pluginMeta);
-        hasBeenReplaced = true;
-      }
-    }
-
-    if (!hasBeenReplaced)
-      plugins.push(pluginMeta);
-
-    return {...current, plugins};
-  });
+  await Configuration.addPlugin(project.cwd, [pluginMeta]);
 }

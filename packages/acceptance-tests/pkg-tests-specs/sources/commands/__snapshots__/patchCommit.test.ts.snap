@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Commands patch-commit it should generate a patch from a package folder 1`] = `
-Object {
+{
   "code": 0,
   "stderr": "",
   "stdout": "diff --git a/index.js b/index.js

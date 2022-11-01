@@ -1,8 +1,13 @@
 {
   "name": "@yarnpkg/core",
-  "version": "3.2.0",
+  "version": "4.0.0-rc.27",
+  "stableVersion": "3.2.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@arcanis/slice-ansi": "^1.1.1",
@@ -15,9 +20,9 @@
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "ci-info": "^3.2.0",
-    "clipanion": "^3.2.0-rc.4",
+    "clipanion": "^3.2.0-rc.10",
     "cross-spawn": "7.0.3",
-    "diff": "^4.0.1",
+    "diff": "^5.1.0",
     "globby": "^11.0.1",
     "got": "^11.7.0",
     "lodash": "^4.17.15",
@@ -28,24 +33,26 @@
     "tar": "^6.0.5",
     "tinylogic": "^2.0.0",
     "treeify": "^1.1.0",
-    "tslib": "^1.13.0",
+    "tslib": "^2.4.0",
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
+    "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
-    "@types/diff": "^4.0.2",
+    "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^13.7.0",
+    "@types/node": "^18.7.6",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/plugin-link": "workspace:^",
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
-    "esbuild": "npm:esbuild-wasm@^0.11.20",
+    "comment-json": "^2.2.0",
+    "esbuild": "npm:esbuild-wasm@^0.15.5",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2"
@@ -58,7 +65,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"

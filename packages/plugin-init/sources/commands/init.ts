@@ -3,7 +3,6 @@ import {Configuration, Manifest, miscUtils, Project, YarnVersion} from '@yarnpkg
 import {execUtils, scriptUtils, structUtils}                      from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                     from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                       from 'clipanion';
-import merge                                                      from 'lodash/merge';
 import {inspect}                                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -56,11 +55,6 @@ export default class InitCommand extends BaseCommand {
   // Options that only mattered on v1
   usev2 = Option.Boolean(`-2`, false, {hidden: true});
   yes = Option.Boolean(`-y,--yes`, {hidden: true});
-
-  // Deprecated; doesn't have any effect anymore, but we can't remove it for
-  // some time as it has some risks of breaking a few special setups.
-  // TODO: Remove it in 4.x.
-  assumeFreshProject = Option.Boolean(`--assume-fresh-project`, false, {hidden: true});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -181,10 +175,12 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/sdks`,
         `!.yarn/versions`,
         ``,
-        `# Swap the comments on the following lines if you don't wish to use zero-installs`,
+        `# Swap the comments on the following lines if you wish to use zero-installs`,
+        `# Also don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/zero-installs`,
-        `!.yarn/cache`,
-        `#.pnp.*`,
+        ``,
+        `#!.yarn/cache`,
+        `.pnp.*`,
       ];
 
       const gitignoreBody = gitignoreLines.map(line => {
@@ -207,7 +203,7 @@ export default class InitCommand extends BaseCommand {
         },
       };
 
-      merge(editorConfigProperties, configuration.get(`initEditorConfig`));
+      miscUtils.mergeIntoTarget(editorConfigProperties, configuration.get(`initEditorConfig`));
 
       let editorConfigBody = `root = true\n`;
       for (const [selector, props] of Object.entries(editorConfigProperties)) {

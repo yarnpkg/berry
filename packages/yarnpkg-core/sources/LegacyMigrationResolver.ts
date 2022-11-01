@@ -24,8 +24,8 @@ export const IMPORTED_PATTERNS: Array<[RegExp, (version: string, ...args: Array<
   [/^https:\/\/npm\.pkg\.github\.com\/download\/(?:@[^/]+)\/(?:[^/]+)\/(?:[^/]+)\/(?:[0-9a-f]+)(?:#|$)/, version => `npm:${version}`],
   // FontAwesome too; what is it with these registries that made them think using a different url pattern was a good idea?
   [/^https:\/\/npm\.fontawesome\.com\/(?:@[^/]+)\/([^/]+)\/-\/([^/]+)\/\1-\2.tgz(?:#|$)/, version => `npm:${version}`],
-  // JFrog
-  [/^https?:\/\/(?:[^\\.]+)\.jfrog\.io\/.*\/(@[^/]+)\/([^/]+)\/-\/\1\/\2-(?:[.\d\w-]+)\.tgz(?:#|$)/, (version, $0) => structUtils.makeRange({protocol: `npm:`, source: null, selector: version, params: {__archiveUrl: $0}})],
+  // JFrog, or Artifactory deployments at arbitrary domain names
+  [/^https?:\/\/[^/]+\/.*\/(@[^/]+)\/([^/]+)\/-\/\1\/\2-(?:[.\d\w-]+)\.tgz(?:#|$)/, (version, $0) => structUtils.makeRange({protocol: `npm:`, source: null, selector: version, params: {__archiveUrl: $0}})],
 
   // These ones come from the old Yarn offline mirror - we assume they came from npm
   [/^[^/]+\.tgz#[0-9a-f]+$/, version => `npm:${version}`],
@@ -53,15 +53,16 @@ export class LegacyMigrationResolver implements Resolver {
     const resolutions = this.resolutions = new Map();
 
     for (const key of Object.keys(parsed)) {
-      let descriptor = structUtils.tryParseDescriptor(key);
+      const parsedDescriptor = structUtils.tryParseDescriptor(key);
 
-      if (!descriptor) {
+      if (!parsedDescriptor) {
         report.reportWarning(MessageName.YARN_IMPORT_FAILED, `Failed to parse the string "${key}" into a proper descriptor`);
         continue;
       }
 
-      if (semverUtils.validRange(descriptor.range))
-        descriptor = structUtils.makeDescriptor(descriptor, `npm:${descriptor.range}`);
+      const descriptor = semverUtils.validRange(parsedDescriptor.range)
+        ? structUtils.makeDescriptor(parsedDescriptor, `npm:${parsedDescriptor.range}`)
+        : parsedDescriptor;
 
       const {version, resolved} = (parsed as any)[key];
 

@@ -1,13 +1,13 @@
-import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath} from '@yarnpkg/fslib';
-import fs                                                          from 'fs';
-import {Module}                                                    from 'module';
-import {URL, fileURLToPath}                                        from 'url';
+import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath, VirtualFS} from '@yarnpkg/fslib';
+import fs                                                                     from 'fs';
+import {Module}                                                               from 'module';
+import {URL, fileURLToPath}                                                   from 'url';
 
-import {PnpApi}                                                    from '../types';
+import {PnpApi}                                                               from '../types';
 
-import {ErrorCode, makeError, getIssuerModule}                     from './internalTools';
-import {Manager}                                                   from './makeManager';
-import * as nodeUtils                                              from './nodeUtils';
+import {ErrorCode, makeError, getIssuerModule}                                from './internalTools';
+import {Manager}                                                              from './makeManager';
+import * as nodeUtils                                                         from './nodeUtils';
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>;
@@ -19,12 +19,28 @@ type PatchedModule = Module & {
   isLoading?: boolean;
 };
 
+declare global {
+  module NodeJS {
+    interface Process {
+      dlopen: (module: Object, filename: string, flags?: number) => void;
+    }
+  }
+}
+
+// https://github.com/nodejs/node/pull/44366
+const shouldReportRequiredModules = process.env.WATCH_REPORT_DEPENDENCIES;
+function reportModuleToWatchMode(filename: NativePath) {
+  if (shouldReportRequiredModules && process.send) {
+    process.send({'watch:require': npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename)))});
+  }
+}
+
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   /**
    * The cache that will be used for all accesses occurring outside of a PnP context.
    */
 
-  const defaultCache: NodeJS.NodeRequireCache = {};
+  const defaultCache: NodeJS.Dict<NodeModule> = {};
 
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
@@ -33,7 +49,6 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   let enableNativeHooks = true;
 
-  // @ts-expect-error
   process.versions.pnp = String(pnpapi.VERSIONS.std);
 
   const moduleExports = require(`module`);
@@ -159,6 +174,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     const module = new Module(modulePath, parent ?? undefined) as PatchedModule;
     module.pnpApiPath = moduleApiPath;
+
+    reportModuleToWatchMode(modulePath);
 
     entry.cache[modulePath] = module;
 
@@ -411,20 +428,38 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     originalExtensionJSFunction.call(this, module, filename);
   };
 
-  // When using the ESM loader Node.js prints the following warning
+  const originalDlopen = process.dlopen;
+  process.dlopen = function (...args) {
+    const [module, filename, ...rest] = args;
+    return originalDlopen.call(
+      this,
+      module,
+      npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename))),
+      ...rest,
+    );
+  };
+
+  // When using the ESM loader Node.js prints either of the following warnings
   //
-  // (node:14632) ExperimentalWarning: --experimental-loader is an experimental feature. This feature could change at any time
-  // (Use `node --trace-warnings ...` to show where the warning was created)
+  // - ExperimentalWarning: --experimental-loader is an experimental feature. This feature could change at any time
+  // - ExperimentalWarning: Custom ESM Loaders is an experimental feature. This feature could change at any time
   //
   // Having this warning show up once is "fine" but it's also printed
   // for each Worker that is created so it ends up spamming stderr.
   // Since that doesn't provide any value we suppress the warning.
-  const originalEmitWarning = process.emitWarning;
-  process.emitWarning = function (warning: string | Error, name?: string | undefined, ctor?: Function | undefined) {
-    if (name === `ExperimentalWarning` && typeof warning === `string` && warning.includes(`--experimental-loader`))
-      return;
+  const originalEmit = process.emit;
+  // @ts-expect-error - TS complains about the return type of originalEmit.apply
+  process.emit = function (name, data: any, ...args) {
+    if (
+      name === `warning` &&
+      typeof data === `object` &&
+      data.name === `ExperimentalWarning` &&
+      (data.message.includes(`--experimental-loader`) ||
+        data.message.includes(`Custom ESM Loaders is an experimental feature`))
+    )
+      return false;
 
-    originalEmitWarning.apply(process, arguments as any);
+    return originalEmit.apply(process, arguments as unknown as Parameters<typeof process.emit>);
   };
 
   patchFs(fs, new PosixFS(opts.fakeFs));

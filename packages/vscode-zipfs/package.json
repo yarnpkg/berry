@@ -7,7 +7,8 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "homepage": "https://github.com/yarnpkg/berry/blob/master/packages/vscode-zipfs",
   "icon": "icon.png",
-  "version": "2.5.0",
+  "version": "2.6.0-rc.16",
+  "stableVersion": "2.5.1",
   "engines": {
     "vscode": "^1.54.0",
     "node": ">=14.15.0"
@@ -15,6 +16,9 @@
   "categories": [
     "Other"
   ],
+  "sponsor": {
+    "url": "https://opencollective.com/yarnpkg"
+  },
   "activationEvents": [
     "workspaceContains:**/*.zip",
     "onLanguage:zip",
@@ -90,14 +94,14 @@
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "esbuild": "npm:esbuild-wasm@^0.11.20",
+    "esbuild": "npm:esbuild-wasm@^0.15.5",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "vsce": "^1.85.1"
+    "vsce": "^2.9.2"
   },
   "scripts": {
-    "vscode:prepublish": "run build",
+    "vscode:prepublish": "run build && cp ../../LICENSE.md ./LICENSE.md",
     "package:vscode-zipfs": "run package",
     "package": "run vsce package --yarn",
     "build:vscode-zipfs": "run build",
@@ -111,6 +115,6 @@
     "directory": "packages/vscode-zipfs"
   },
   "dependencies": {
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   }
 }

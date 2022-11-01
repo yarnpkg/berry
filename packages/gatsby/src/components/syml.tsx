@@ -35,6 +35,8 @@ const theme: Theme = {
     return JSON.stringify(value);
   },
 
+  delimiter: ``,
+
   keys: {
     suffix: `: `,
   },
@@ -42,14 +44,12 @@ const theme: Theme = {
   dictionaries: {
     leading: ``,
     trailing: ``,
-    suffix: ``,
   },
 
   arrays: {
     leading: ``,
     trailing: ``,
     prefix: `-\u00a0`,
-    suffix: ``,
   },
 };
 

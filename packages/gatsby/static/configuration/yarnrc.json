@@ -26,7 +26,7 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
-    "caFilePath": {
+    "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
       "description": "Path to file containing one or multiple Certificate Authority signing certificates",
       "type": "string",
@@ -55,7 +55,7 @@
     "checksumBehavior": {
       "_package": "@yarnpkg/core",
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
-      "enum": ["throw", "update", "ignore"],
+      "enum": ["throw", "update", "ignore", "reset"],
       "default": "throw"
     },
     "cloneConcurrency": {
@@ -139,6 +139,12 @@
       "type": "boolean",
       "examples": [false]
     },
+    "enableInlineHunks": {
+      "_package": "@yarnpkg/plugin-patch",
+      "description": "If true, Yarn will print any patch sections (hunks) that could not be applied successfully to the terminal. Defaults to false.",
+      "type": "boolean",
+      "examples": [true]
+    },
     "enableMessageNames": {
       "_package": "@yarnpkg/core",
       "description": "If true, Yarn will prefix most messages with codes suitable for search engines.",
@@ -165,7 +171,7 @@
     },
     "enableScripts": {
       "_package": "@yarnpkg/core",
-      "description": "If false, Yarn will not execute the `postInstall` scripts when installing the project. Note that you can now also disable scripts on a per-package basis thanks to `dependenciesMeta`.",
+      "description": "If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them). Note that you can now also disable scripts on a per-package basis thanks to `dependenciesMeta`.",
       "type": "boolean",
       "default": true
     },
@@ -365,8 +371,8 @@
           "description": "The hostname to override settings for (glob patterns are supported)",
           "type": "object",
           "properties": {
-            "caFilePath": {
-              "$ref": "#/properties/caFilePath"
+            "httpsCaFilePath": {
+              "$ref": "#/properties/httpsCaFilePath"
             },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
@@ -384,7 +390,7 @@
               "$ref": "#/properties/httpsProxy"
             }
           },
-          "_exampleKeys": ["caFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
+          "_exampleKeys": ["httpsCaFilePath", "enableNetwork", "httpProxy", "httpsCertFilePath", "httpsKeyFilePath", "httpsProxy"]
         }
       },
       "_exampleKeys": ["*.example.com"]
@@ -407,7 +413,7 @@
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
       "type": "string",
       "enum": ["classic", "hardlinks-local", "hardlinks-global"],
-      "default": "classic"
+      "default": "hardlinks-local"
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -418,6 +424,13 @@
       ],
       "type": "string",
       "default": "pnp"
+    },
+    "winLinkType": {
+      "_package": "@yarnpkg/core",
+      "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths, and is consistent with Yarn's behavior on non-Windows platforms. To create symlinks the Windows user running Yarn must have the `create symbolic links` privilege. For this reason Yarn defaults to using junctions.",
+      "type": "string",
+      "enum": ["junctions", "symlinks"],
+      "default": "junctions"
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
@@ -449,6 +462,26 @@
       "description": "Defines the default access to use when publishing packages to the npm registry. Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
       "enum": ["public", "restricted"],
       "examples": ["public"]
+    },
+    "npmAuditExcludePackages": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "description": "Array of glob patterns of packages to exclude from `yarn npm audit`. Doesn't need to be defined, in which case no packages will be excluded. Can also be augmented by the `--exclude` flag.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["known_insecure_package"]
+    },
+    "npmAuditIgnoreAdvisories": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "description": "Array of glob patterns of advisory ID's to ignore from `yarn npm audit` results. Doesn't need to be defined, in which case no advisories will be ignored. Can also be augmented by the `--ignore` flag.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["1234567"]
     },
     "npmPublishRegistry": {
       "_package": "@yarnpkg/plugin-npm",
@@ -529,7 +562,7 @@
     },
     "packageExtensions": {
       "_package": "@yarnpkg/core",
-      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
+      "description": "Some packages may have been specified incorrectly with regard to their dependencies - for example with one dependency being missing, causing Yarn to refuse it the access. The `packageExtensions` fields offer a way to extend the existing package definitions with additional information. If you use it, consider sending a PR upstream and contributing your extension to the [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/extensions/sources/index.ts).\nNote: This field is made to add dependencies; if you need to rewrite existing ones, prefer the [`resolutions`](/configuration/manifest#resolutions) field.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)(?:@(.+))$": {
@@ -585,12 +618,12 @@
       "additionalProperties": false,
       "_exampleKeys": ["webpack@*"]
     },
-    "pnpDataPath": {
-      "_package": "@yarnpkg/plugin-pnp",
-      "description": "The location where Yarn will read and write the `.pnp.meta.json` file.",
+    "patchFolder": {
+      "_package": "@yarnpkg/plugin-patch",
+      "description": "Folder where patch files will be written to.",
       "type": "string",
       "format": "uri-reference",
-      "default": "./.pnp.data.json"
+      "default": "./.yarn/patches"
     },
     "pnpEnableEsmLoader": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -662,6 +695,12 @@
       "type": "boolean",
       "default": false
     },
+    "preferReuse": {
+      "_package": "@yarnpkg/plugin-essentials",
+      "description": "If true, `yarn add` will attempt to reuse the most common dependency range in other workspaces.",
+      "type": "boolean",
+      "default": false
+    },
     "preferTruncatedLines": {
       "_package": "@yarnpkg/core",
       "description": "If true, Yarn will truncate lines that would go beyond the size of the terminal. If progress bars are disabled, lines will never be truncated. Forgettable lines (e.g. the fetch step logs) are always truncated.",
@@ -697,16 +736,16 @@
           "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
-          "description": "The list of CPUs to cover.",
+          "description": "The list of CPU architectures to cover. See https://nodejs.org/docs/latest/api/process.html#processarch for the architectures supported by Node.js",
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x86", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32"]
         },
         "libc": {
-          "description": "The list of standard libraries to cover.",
+          "description": "The list of standard C libraries to cover.",
           "type": "array",
           "items": {
             "type": "string"

@@ -1,9 +1,16 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "2.2.4",
+  "version": "3.0.0-rc.27",
   "license": "BSD-2-Clause",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
+  "exports": {
+    ".": {
+      "browser": "./sources/async.ts",
+      "default": "./sources/sync.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
@@ -12,7 +19,14 @@
   },
   "publishConfig": {
     "main": "./lib/sync.js",
-    "browser": "./lib/async.js"
+    "browser": "./lib/async.js",
+    "exports": {
+      ".": {
+        "browser": "./lib/async.js",
+        "default": "./lib/sync.js"
+      },
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
@@ -27,10 +41,15 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "@types/emscripten": "^1.38.0",
-    "tslib": "^1.13.0"
+    "@types/emscripten": "^1.39.6",
+    "@yarnpkg/fslib": "workspace:^",
+    "tslib": "^2.4.0"
+  },
+  "peerDependencies": {
+    "@yarnpkg/fslib": "workspace:^"
   },
   "engines": {
     "node": ">=14.15.0"
-  }
+  },
+  "stableVersion": "2.2.4"
 }

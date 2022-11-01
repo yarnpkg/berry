@@ -17,6 +17,7 @@ type ProcessEnvironment = {[key: string]: string};
 
 export type CommandContext = {
   cwd: PortablePath;
+  env: Record<string, string | undefined>;
   plugins: PluginConfiguration;
   quiet: boolean;
   stdin: Readable;
@@ -182,3 +183,10 @@ export type Plugin<PluginHooks = any> = {
   resolvers?: Array<ResolverPlugin>;
   hooks?: PluginHooks;
 };
+
+// for RC file
+export interface PluginMeta {
+  path: PortablePath;
+  spec: string;
+  checksum?: string;
+}

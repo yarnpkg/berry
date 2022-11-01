@@ -1,5 +1,5 @@
 import styled                                              from '@emotion/styled';
-import discordIcon                                         from '@iconify/icons-logos/discord';
+import discordIcon                                         from '@iconify/icons-logos/discord-icon';
 import githubIcon                                          from '@iconify/icons-logos/github-icon';
 import {InlineIcon}                                        from '@iconify/react';
 import {Link, graphql, useStaticQuery, withPrefix}         from 'gatsby';
