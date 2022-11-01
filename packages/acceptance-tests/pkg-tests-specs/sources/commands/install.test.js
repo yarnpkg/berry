@@ -572,5 +572,18 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `It should throw a proper error, if run in a CI environment and zero-install mode is enabled without explicitly defining --check-cache or --no-check-cache`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        // mock zero-install environment
+        await xfs.mkdirPromise(ppath.join(path, `.yarn`));
+        await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`));
+        await expect(run(`install`, `--check-cache-test`, {env: {CI: true}})).rejects.toMatchObject({
+          code: 1,
+          stdout: expect.stringMatching(`you need to explicitly define --check-cache or --no-check-cache option`),
+        });
+      }),
+    );
   });
 });

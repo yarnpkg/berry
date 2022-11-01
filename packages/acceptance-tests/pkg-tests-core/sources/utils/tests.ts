@@ -680,6 +680,20 @@ export const generatePkgDriver = ({
           if (args.length > 0 && typeof args[args.length - 1] === `object`)
             callDefinition = args.pop();
 
+          // We want users to be aware of the security implications of zero-install, but we don't want it to affect yarn own testing.
+          if (args[0] === `install`) {
+            // escape hatch for test use only
+            const escapeHatchIndex = args.indexOf(`--check-cache-test`);
+            const hasEscapeHatch = args.indexOf(`--check-cache-test`) !== -1;
+            if (hasEscapeHatch)
+              args.splice(escapeHatchIndex, 1);
+
+            const hasCheckCacheOption = args.includes(`--check-cache`) || args.includes(`--no-check-cache`);
+            if (!hasCheckCacheOption && !hasEscapeHatch) {
+              args.push(`--no-check-cache`);
+            }
+          }
+
           return runDriver(path, args, {
             registryUrl,
             ...definition,

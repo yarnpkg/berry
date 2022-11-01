@@ -305,6 +305,26 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
+    if (CI.isCI) {
+      const isPnpEnabled = configuration.get(`nodeLinker`) === `pnp` && configuration.get(`pnpMode`) === `strict`;
+      const hasCache = await xfs.existsPromise(configuration.get(`cacheFolder`));
+      const isZeroInstallMode = isPnpEnabled && hasCache;
+      if (this.checkCache === undefined && isZeroInstallMode) {
+        const zeroInstallReport = await StreamReport.start({
+          configuration,
+          stdout: this.context.stdout,
+          includeFooter: false,
+        }, async report => {
+          const prettyInstall = formatUtils.pretty(configuration, `yarn install`, formatUtils.Type.CODE);
+          const prettyCheckCache = formatUtils.pretty(configuration, `--check-cache`, formatUtils.Type.CODE);
+          const prettyNoCheckCache = formatUtils.pretty(configuration, `--no-check-cache`, formatUtils.Type.CODE);
+          const prettyInstallUrl = formatUtils.pretty(configuration, `https://yarnpkg.com/cli/install`, formatUtils.Type.URL);
+          report.reportError(MessageName.IMPLIED_CHECK_CACHE_OPTION, `When ${prettyInstall} command is run in CI environment and zero-install mode is enable, you need to explicitly define ${prettyCheckCache} or ${prettyNoCheckCache} option, for more information see ${prettyInstallUrl}`);
+        });
+        return zeroInstallReport.exitCode();
+      }
+    }
+
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 

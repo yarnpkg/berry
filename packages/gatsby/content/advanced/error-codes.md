@@ -404,3 +404,7 @@ Yarn failed to locate a package version that could satisfy the requested range. 
 - The registry may not have been set properly (so Yarn is querying the public npm registry instead of your internal one)
 
 - The version may have been unpublished (although this shouldn't be possible for the public registry)
+
+## YN0083 - `IMPLIED_CHECK_CACHE_OPTION`
+
+When repository zero-install mode is enable, and yarn is run in CI environment, you need to explicitly define `--check-cache` or `--no-check-cache` option, for more information see the [install part](https://yarnpkg.com/cli/install).
