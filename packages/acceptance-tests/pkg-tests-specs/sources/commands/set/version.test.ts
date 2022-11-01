@@ -27,7 +27,10 @@ describe(`Commands`, () => {
     test(
       `it should always set yarnPath if one already exists`,
       makeTemporaryEnv({}, {
-        env: {COREPACK_ROOT: `/path/to/corepack`},
+        env: {
+          COREPACK_ROOT: `/path/to/corepack`,
+          YARN_IS_TEST_ENV: undefined,
+        },
       }, async ({path, run, source}) => {
         // To force yarnPath to be set; followed by a sanity check
         await run(`set`, `version`, `3.0.0`, {env: {COREPACK_ROOT: undefined}});
