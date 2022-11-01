@@ -138,8 +138,6 @@ describe(`Commands`, () => {
     test(
       `it should login a user with no OTP setup to a specific scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        console.log(path);
-
         const url = await startPackageServer();
 
         const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
@@ -166,8 +164,6 @@ describe(`Commands`, () => {
         } catch (error) {
           ({code, stdout, stderr} = error);
         }
-
-        console.log(stdout);
 
         const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
         const cleanFileContent = cleanupFileContent(finalRcFileContent);

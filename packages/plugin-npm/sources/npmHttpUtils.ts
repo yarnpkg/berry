@@ -272,14 +272,16 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
       report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
     });
 
-    const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
-    if (autoOpen) {
-      try {
-        await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
-      } catch {
+    if (!process.env.TEST_ENV) {
+      const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
+      if (autoOpen) {
         try {
-          await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
-        } catch {}
+          await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
+        } catch {
+          try {
+            await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
+          } catch {}
+        }
       }
     }
 
