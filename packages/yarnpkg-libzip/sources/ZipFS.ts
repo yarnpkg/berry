@@ -108,6 +108,8 @@ export class ZipFS extends BasePortableFakeFS {
   constructor(source?: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions = {}) {
     super();
 
+    console.log(source);
+
     const pathOptions = opts as ZipPathOptions;
     this.level = typeof pathOptions.level !== `undefined`
       ? pathOptions.level

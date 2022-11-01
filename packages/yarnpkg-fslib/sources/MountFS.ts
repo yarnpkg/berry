@@ -80,7 +80,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   private notMount: Set<PortablePath> = new Set();
   private realPaths: Map<PortablePath, PortablePath> = new Map();
 
-  constructor({baseFs = new NodeFS(), filter = null, magicByte = 0x2a, maxOpenFiles = Infinity, useCache = true, maxAge = 5000, typeCheck = null, getMountPoint, factoryPromise, factorySync}: MountFSOptions<MountedFS>) {
+  constructor({baseFs = new NodeFS(), filter = null, magicByte = 0x2a, maxOpenFiles = Infinity, useCache = true, maxAge = 5000, typeCheck = constants.S_IFREG, getMountPoint, factoryPromise, factorySync}: MountFSOptions<MountedFS>) {
     if (Math.floor(magicByte) !== magicByte || !(magicByte > 1 && magicByte <= 127))
       throw new Error(`The magic byte must be set to a round value between 1 and 127 included`);
 
@@ -985,7 +985,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
           continue;
 
         try {
-          if (this.typeCheck !== null && !this.baseFs.lstatSync(filePath).mode === this.typeCheck) {
+          if (this.typeCheck !== null && (this.baseFs.lstatSync(filePath).mode & constants.S_IFMT) !== this.typeCheck) {
             this.notMount.add(filePath);
             continue;
           }
