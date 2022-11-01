@@ -1,11 +1,9 @@
+import {WindowsLinkType}                           from '@yarnpkg/core';
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
-import {exec}                                      from 'node:child_process';
-import {promisify}                                 from 'node:util';
 
-const execPromise = promisify(exec);
 
 const {
-  fs: {writeFile, writeJson},
+  fs: {writeFile, writeJson, FsLinkType, determineLinkType},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -1833,14 +1831,14 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform === `win32`,
-    `'nmFolderLinkMode: symlinks' on Windows should use symlinks in node_modules directories`,
+    `'winLinkType: symlinks' on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `symlinks`,
+        winLinkType: WindowsLinkType.SYMLINKS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1849,24 +1847,23 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const {stdout: reparsePoints} = await execPromise(`dir ${npath.fromPortablePath(`${path}/node_modules`)} /al /l | findstr "<SYMLINKD>"`, {shell: `cmd.exe`});
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
 
-        expect(reparsePoints).toMatch(`ws1`);
-        expect(reparsePoints).toMatch(`<SYMLINKD>`);
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeFalsy();
+        expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.SYMBOLIC);
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
       },
     ),
   );
 
   testIf(() => process.platform === `win32`,
-    `'nmFolderLinkMode: classic' on Windows should use junctions in node_modules directories`,
+    `'winLinkType: junctions' on Windows should use junctions in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `classic`,
+        winLinkType: WindowsLinkType.JUNCTIONS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1875,24 +1872,23 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const {stdout: reparsePoints} = await execPromise(`dir ${npath.fromPortablePath(`${path}/node_modules`)} /al /l | findstr "<JUNCTION>"`, {shell: `cmd.exe`});
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
 
-        expect(reparsePoints).toMatch(`ws1`);
-        expect(reparsePoints).toMatch(`<JUNCTION>`);
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(npath.toPortablePath(`${path}/node_modules/ws1`)))).toBeTruthy();
+        expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.NTFS_JUNCTION);
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeTruthy();
       },
     ),
   );
 
   testIf(() => process.platform !== `win32`,
-    `'nmFolderLinkMode: classic' not-on Windows should use symlinks in node_modules directories`,
+    `'winLinkType: junctions' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `classic`,
+        winLinkType: WindowsLinkType.JUNCTIONS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1900,24 +1896,25 @@ describe(`Node_Modules`, () => {
         });
 
         await run(`install`);
-        const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
-        const ws1Stats = await xfs.lstatPromise(ws1Path);
 
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        const ws1Stats = await xfs.lstatPromise(packageLinkPath);
+
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
         expect(ws1Stats.isSymbolicLink()).toBeTruthy();
       },
     ),
   );
 
   testIf(() => process.platform !== `win32`,
-    `'nmFolderLinkMode: symlinks' not-on Windows should use symlinks in node_modules directories`,
+    `'winLinkType: symlinks' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`],
       },
       {
         nodeLinker: `node-modules`,
-        nmFolderLinkMode: `symlinks`,
+        winLinkType: WindowsLinkType.SYMLINKS,
       },
       async ({path, run}) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
@@ -1926,10 +1923,10 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const ws1Path = npath.toPortablePath(`${path}/node_modules/ws1`);
-        const ws1Stats = await xfs.lstatPromise(ws1Path);
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        const ws1Stats = await xfs.lstatPromise(packageLinkPath);
 
-        expect(ppath.isAbsolute(await xfs.readlinkPromise(ws1Path))).toBeFalsy();
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
         expect(ws1Stats.isSymbolicLink()).toBeTruthy();
       },
     ),
