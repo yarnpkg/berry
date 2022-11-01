@@ -1,4 +1,4 @@
-/* global window, document, IntersectionObserver */
+/* global document, IntersectionObserver */
 
 const observer = new IntersectionObserver(
   ([e]) => e.target.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),

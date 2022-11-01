@@ -1,6 +1,5 @@
 {
   "name": "@yarnpkg/docusaurus",
-  "version": "0.0.0",
   "private": true,
   "scripts": {
     "docusaurus": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus",
@@ -43,7 +42,7 @@
     "@tsconfig/docusaurus": "^1.0.5",
     "@types/markdown-it": "^12.2.3",
     "@types/pako": "^2",
-    "@types/react": "^18.0.20",
+    "@types/react": "^16.8.0",
     "@types/react-instantsearch-dom": "^6",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
@@ -63,6 +62,12 @@
     ]
   },
   "engines": {
-    "node": ">=16.14"
+    "node": ">=14.15.0"
+  },
+  "license": "BSD-2-Clause",
+  "repository": {
+    "directory": "packages/docusaurus",
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

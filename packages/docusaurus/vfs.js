@@ -39,8 +39,6 @@ for (const [position, {binary, package}] of binaries.entries()) {
     ? `/cli`
     : `/${name}/cli`;
 
-  let categoryIndex;
-
   const output = execFileSync(`yarn`, [`node`, binary, `--clipanion=definitions`], {
     env: {...process.env, NODE_OPTIONS: undefined},
   });
@@ -68,9 +66,6 @@ for (const [position, {binary, package}] of binaries.entries()) {
     const description = `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`;
 
     const id = `cli-${command.path.replace(/ /g, `-`)}`;
-
-    if (typeof index === `undefined` || id === `cli-yarn-install`)
-      categoryIndex = id;
 
     sections.push([
       `---\n`,

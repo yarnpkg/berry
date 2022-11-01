@@ -4471,7 +4471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/resolve-uri@npm:3.1.0, @jridgewell/resolve-uri@npm:^3.0.3":
+"@jridgewell/resolve-uri@npm:3.1.0":
   version: 3.1.0
   resolution: "@jridgewell/resolve-uri@npm:3.1.0"
   checksum: 6b641bb7e25bc92a9848898cc91a77a390f393f086297ec2336d911387bdd708919c418e74a22732cfc21d0e7300b94306f437d2e9de5ab58b33ebc6c39d6f9d
@@ -4495,37 +4495,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:1.4.14":
+"@jridgewell/sourcemap-codec@npm:1.4.14, @jridgewell/sourcemap-codec@npm:^1.4.10":
   version: 1.4.14
   resolution: "@jridgewell/sourcemap-codec@npm:1.4.14"
   checksum: 2147ea75c966fed8a7d9ed6679b7e8c380fa790a9bea5a64f4ec1c26d24e44b461aa60fc3b228cea03a46708d9d1bcf19508035bf27ad5e8f63d0998ed1d1117
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:^1.4.10":
-  version: 1.4.11
-  resolution: "@jridgewell/sourcemap-codec@npm:1.4.11"
-  checksum: 5bd15cc6458188c73426e1262d0042891e99c212d9e7eab93c0b5bed77bef9fb0ace12cf854e53acac80c1d7df034f4739e960ebd167559e0d3635d374b99b60
-  languageName: node
-  linkType: hard
-
-"@jridgewell/trace-mapping@npm:^0.3.0, @jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.15, @jridgewell/trace-mapping@npm:^0.3.8, @jridgewell/trace-mapping@npm:^0.3.9":
+"@jridgewell/trace-mapping@npm:^0.3.0, @jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.14, @jridgewell/trace-mapping@npm:^0.3.15, @jridgewell/trace-mapping@npm:^0.3.8, @jridgewell/trace-mapping@npm:^0.3.9":
   version: 0.3.17
   resolution: "@jridgewell/trace-mapping@npm:0.3.17"
   dependencies:
     "@jridgewell/resolve-uri": "npm:3.1.0"
     "@jridgewell/sourcemap-codec": "npm:1.4.14"
   checksum: 388a2f604c1159dd29fdf3077c2a21fd2d322145f24cade868c0a7c55cfc993f3af82dd2e979438d9f06148c38af780abc7c0aa2eddbb34fab41698bb86d82e1
-  languageName: node
-  linkType: hard
-
-"@jridgewell/trace-mapping@npm:^0.3.14":
-  version: 0.3.15
-  resolution: "@jridgewell/trace-mapping@npm:0.3.15"
-  dependencies:
-    "@jridgewell/resolve-uri": "npm:^3.0.3"
-    "@jridgewell/sourcemap-codec": "npm:^1.4.10"
-  checksum: a11b95f877537f116c1a2297ad712df69a8928f33076cfc95702cfbb53854e370a6e62447f12f9c495b40ba92b0c0eed6ab18eaf2e7cae7e62d30ffb7975d30b
   languageName: node
   linkType: hard
 
@@ -6153,18 +6136,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.20":
-  version: 18.0.20
-  resolution: "@types/react@npm:18.0.20"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    "@types/scheduler": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: fe7d9b466cbfeacf426a2a28c3def31e149f9496aa661315bdc1f406036c37b6a2d3dcbcdc9bbd29ee27dd02be3385174cf71b2a0c27ed38419354e44675f135
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^16.8.0, @types/react@npm:^16.x":
+"@types/react@npm:*, @types/react@npm:^16.8.0, @types/react@npm:^16.x":
   version: 16.9.2
   resolution: "@types/react@npm:16.9.2"
   dependencies:
@@ -6225,13 +6197,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: cb00928f54fc85b7fa1ca8456ce67d49e8da48299d25f945599cf5c5ec5ee6ec971196c4d5380fa0970fea0359978cb38181cddd27202e3614053ec18e17d7e5
-  languageName: node
-  linkType: hard
-
-"@types/scheduler@npm:*":
-  version: 0.16.2
-  resolution: "@types/scheduler@npm:0.16.2"
-  checksum: 223d9b12d1eff3fe857e7eb967d640707c2a76ba1126633bae88dce7693301ea8edcce83586a17134a1822f01265f715809860085547b01db8de6a90f5165706
   languageName: node
   linkType: hard
 
@@ -7191,7 +7156,7 @@ __metadata:
     "@tsconfig/docusaurus": "npm:^1.0.5"
     "@types/markdown-it": "npm:^12.2.3"
     "@types/pako": "npm:^2"
-    "@types/react": "npm:^18.0.20"
+    "@types/react": "npm:^16.8.0"
     "@types/react-instantsearch-dom": "npm:^6"
     "@types/three": "npm:^0.144.0"
     "@yarnpkg/fslib": "workspace:^"
@@ -7399,8 +7364,6 @@ __metadata:
     "@babel/preset-react": "npm:^7.18.6"
     "@babel/preset-typescript": "npm:^7.18.6"
     "@babel/register": "npm:^7.18.9"
-    "@docusaurus/module-type-aliases": "npm:2.1.0"
-    "@docusaurus/theme-classic": "npm:2.1.0"
     "@types/jest": "npm:^28.1.6"
     "@types/node": "npm:^18.7.6"
     "@yarnpkg/cli": "workspace:^"
@@ -8186,7 +8149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algoliasearch-helper@npm:>=3, algoliasearch-helper@npm:^3.1.0, algoliasearch-helper@npm:^3.10.0, algoliasearch-helper@npm:^3.11.1":
+"algoliasearch-helper@npm:>=3, algoliasearch-helper@npm:^3.10.0, algoliasearch-helper@npm:^3.11.1":
   version: 3.11.1
   resolution: "algoliasearch-helper@npm:3.11.1"
   dependencies:
@@ -25008,21 +24971,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-instantsearch-core@npm:^6.6.0":
-  version: 6.6.0
-  resolution: "react-instantsearch-core@npm:6.6.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.1.2"
-    algoliasearch-helper: "npm:^3.1.0"
-    prop-types: "npm:^15.5.10"
-    react-fast-compare: "npm:^3.0.0"
-  peerDependencies:
-    react: ">= 16.3.0 < 17"
-  checksum: 93cd4398029a788276bb4f970cbb2fe220cbe876adadc3e78167414a136354147b2cd6b37f809f58b2bd56bf80a6921e3e29d29f9ff3f991802dec4dabf3fc63
-  languageName: node
-  linkType: hard
-
-"react-instantsearch-dom@npm:^6.36.0":
+"react-instantsearch-dom@npm:^6.36.0, react-instantsearch-dom@npm:^6.6.0":
   version: 6.36.0
   resolution: "react-instantsearch-dom@npm:6.36.0"
   dependencies:
@@ -25037,22 +24986,6 @@ __metadata:
     react: ">= 16.3.0 < 19"
     react-dom: ">= 16.3.0 < 19"
   checksum: 1c3d332b0697a0d8a8cd3dba79ed6b86b249a5a619647f6ab99c1ee64d24337e3c0a55bcd8f6f0d852d0c97ee9b412760e7b1cca24ed6f7a655e569fc83a1f37
-  languageName: node
-  linkType: hard
-
-"react-instantsearch-dom@npm:^6.6.0":
-  version: 6.6.0
-  resolution: "react-instantsearch-dom@npm:6.6.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.1.2"
-    algoliasearch-helper: "npm:^3.1.0"
-    classnames: "npm:^2.2.5"
-    prop-types: "npm:^15.5.10"
-    react-instantsearch-core: "npm:^6.6.0"
-  peerDependencies:
-    react: ">= 16.3.0 < 17"
-    react-dom: ">= 16.3.0 < 17"
-  checksum: d2fe74baa3c93ac211f954e75fad2f03cc7ec45684d46eeb10bedc054dd13b138e13cbade0756e1c841e6e23bfc7c7f3e2240ad982a67c9322a4c0d4004ed358
   languageName: node
   linkType: hard
 

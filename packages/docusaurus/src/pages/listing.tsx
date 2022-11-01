@@ -1,18 +1,18 @@
-import BrowserOnly                                                                                                                                            from '@docusaurus/BrowserOnly';
-import {useLocation}                                                                                                                                          from '@docusaurus/router';
+import BrowserOnly                                                                                                               from '@docusaurus/BrowserOnly';
+import {useLocation}                                                                                                             from '@docusaurus/router';
 // @ts-expect-error
-import {DocsSidebarProvider}                                                                                                                                  from '@docusaurus/theme-common/internal';
-import {HtmlClassNameProvider}                                                                                                                                from '@docusaurus/theme-common';
-import Editor                                                                                                                                                 from '@monaco-editor/react';
-import {AlertIcon, ArrowLeftIcon, CheckIcon, FileDirectoryFillIcon, FileIcon, HomeIcon, HourglassIcon, LogoGithubIcon, MarkGithubIcon, PackageIcon, PlayIcon} from '@primer/octicons-react';
-import clsx                                                                                                                                                   from 'clsx';
-import MarkdownIt                                                                                                                                             from 'markdown-it';
-import pako                                                                                                                                                   from 'pako';
-import React, {useEffect, useState}                                                                                                                           from 'react';
+import {DocsSidebarProvider}                                                                                                     from '@docusaurus/theme-common/internal';
+import {HtmlClassNameProvider}                                                                                                   from '@docusaurus/theme-common';
+import Editor                                                                                                                    from '@monaco-editor/react';
+import {AlertIcon, ArrowLeftIcon, CheckIcon, FileDirectoryFillIcon, FileIcon, HomeIcon, HourglassIcon, MarkGithubIcon, PlayIcon} from '@primer/octicons-react';
+import clsx                                                                                                                      from 'clsx';
+import MarkdownIt                                                                                                                from 'markdown-it';
+import pako                                                                                                                      from 'pako';
+import React, {useEffect, useState}                                                                                              from 'react';
 
-import Layout                                                                                                                                                 from '../theme/DocPage/Layout/index.js';
+import Layout                                                                                                                    from '../theme/DocPage/Layout/index.js';
 
-import styles                                                                                                                                                 from './listing.module.css';
+import styles                                                                                                                    from './listing.module.css';
 
 type CheckResult = {
   ok: true;
@@ -129,7 +129,7 @@ const checks: Array<Check> = [{
 
     const typesEntryPoint = pkgJson.types ?? pkgJson.typings ?? Object.values(exportsConfiguration[`.`])[0];
     const typesEntryPointNoExt = typesEntryPoint.replace(/(\.[mc]?(js|ts)x?|\.d\.ts)$/, ``);
-    const resolvedEntryPoint = normalizeModulePath(typesEntryPointNoExt, filesDict, [`.mtsx`, `.mts`, `.tsx`, `ts`, `.d.ts`]);
+    normalizeModulePath(typesEntryPointNoExt, filesDict, [`.mtsx`, `.mts`, `.tsx`, `ts`, `.d.ts`]);
 
     return {ok: true};
   },
