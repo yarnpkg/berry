@@ -1,0 +1,107 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+:root {
+  --index-navbar-margin-top: 0px;
+
+  --art-width: 1920;
+  --art-height: 1308;
+}
+
+@media (min-width: 996px) {
+  :root {
+    --index-navbar-margin-top: 40px;
+  }
+
+  .html body [class~="navbar"] {
+    margin-top: var(--index-navbar-margin-top);
+  }
+
+  .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) {
+    --ifm-navbar-link-color: #ffffff;
+    --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
+
+    background: none;
+    box-shadow: none;
+  }
+
+  .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) [class~="navbar__logo"] {
+    filter: none;
+  }
+}
+
+.reserve {
+  display: flex;
+  align-items: flex-start;
+
+  min-height: calc(100vh - var(--ifm-navbar-height));
+
+  padding: 20px;
+
+  background-image: url(/img/yarn-hero-transparent.png);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+
+  color: #ffffff;
+}
+
+@media (min-width: 996px) {
+  .reserve {
+    align-items: center;
+
+    margin-top: calc((var(--index-navbar-margin-top) + var(--ifm-navbar-height)) * -1);
+
+    min-height: 100vh;
+
+    padding: 100px;
+
+    background-position: bottom calc(var(--art-height) / var(--art-width) * 100vw * -0.1) left;
+  }
+}
+
+@media (min-width: 996px) {
+  .hero {
+    max-width: 800px;
+  }
+}
+
+.hero h1 {
+  font-size: 4rem;
+}
+
+.hero p {
+  margin: 30px 0;
+}
+
+.search {
+  display: flex;
+
+  margin-top: 60px;
+
+  border: 1px solid #9555bb;
+  border-radius: 20px;
+  outline: none;
+
+  width: 100%;
+  padding: 20px;
+
+  background: #090b1f80;
+
+  font-family: inherit;
+  font-size: inherit;
+  font-style: italic;
+}
+
+.search, .search:hover {
+  color: #ffffff;
+
+  text-decoration: none;
+}
+
+.followUp {
+  background: #090b1f;
+  color: #ffffff;
+}

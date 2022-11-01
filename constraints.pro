@@ -5,11 +5,14 @@ constraints_min_version(1).
 % In order to see them in action, run `yarn constraints source`
 
 % This rule will enforce that a workspace MUST depend on the same version of a dependency as the one used by the other workspaces
+% We allow Docusaurus to have different dependencies for now; will be addressed later (when we remove Gatsby)
 gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType) :-
   % Iterates over all dependencies from all workspaces
     workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
+    WorkspaceCwd \= 'packages/docusaurus',
   % Iterates over similarly-named dependencies from all workspaces (again)
     workspace_has_dependency(OtherWorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType2),
+    OtherWorkspaceCwd \= 'packages/docusaurus',
   % Ignore peer dependencies
     DependencyType \= 'peerDependencies',
     DependencyType2 \= 'peerDependencies',
