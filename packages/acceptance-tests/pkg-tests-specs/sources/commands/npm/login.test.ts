@@ -27,8 +27,8 @@ describe(`Commands`, () => {
         try {
           ({code, stdout, stderr} = await run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: validLogins.fooUser.username,
-              TEST_NPM_PASSWORD: validLogins.fooUser.password,
+              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -57,9 +57,9 @@ describe(`Commands`, () => {
         try {
           ({code, stdout, stderr} = await run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: validLogins.otpUser.username,
-              TEST_NPM_PASSWORD: validLogins.otpUser.password,
-              TEST_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
+              YARN_INJECT_NPM_USER: validLogins.otpUser.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
+              YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -88,9 +88,9 @@ describe(`Commands`, () => {
         try {
           ({code, stdout, stderr} = await run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: validLogins.otpUserWithNotice.username,
-              TEST_NPM_PASSWORD: validLogins.otpUserWithNotice.password,
-              TEST_NPM_2FA_TOKEN: validLogins.otpUserWithNotice.npmOtpToken,
+              YARN_INJECT_NPM_USER: validLogins.otpUserWithNotice.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.otpUserWithNotice.password,
+              YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUserWithNotice.npmOtpToken,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -112,8 +112,8 @@ describe(`Commands`, () => {
         await expect(
           run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: validLogins.fooUser.username,
-              TEST_NPM_PASSWORD: `incorrect password`,
+              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+              YARN_INJECT_NPM_PASSWORD: `incorrect password`,
             },
           }),
         ).rejects.toThrowError(/Invalid authentication \(attempted as foo-user\)/);
@@ -126,9 +126,9 @@ describe(`Commands`, () => {
         await expect(
           run(`npm`, `login`, {
             env: {
-              TEST_NPM_USER: validLogins.otpUser.username,
-              TEST_NPM_PASSWORD: validLogins.otpUser.password,
-              TEST_NPM_2FA_TOKEN: `incorrect OTP`,
+              YARN_INJECT_NPM_USER: validLogins.otpUser.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
+              YARN_INJECT_NPM_2FA_TOKEN: `incorrect OTP`,
             },
           }),
         ).rejects.toThrowError(/Invalid OTP token/);
@@ -156,8 +156,8 @@ describe(`Commands`, () => {
         try {
           ({code, stdout, stderr} = await run(`npm`, `login`, `--scope`, `testScope`, {
             env: {
-              TEST_NPM_USER: validLogins.fooUser.username,
-              TEST_NPM_PASSWORD: validLogins.fooUser.password,
+              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));
@@ -194,9 +194,9 @@ describe(`Commands`, () => {
         try {
           ({code, stdout, stderr} = await run(`npm`, `login`, `--scope`, `testScope`, {
             env: {
-              TEST_NPM_USER: validLogins.otpUser.username,
-              TEST_NPM_PASSWORD: validLogins.otpUser.password,
-              TEST_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
+              YARN_INJECT_NPM_USER: validLogins.otpUser.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
+              YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
               YARN_RC_FILENAME: SPEC_RC_FILENAME,
             },
           }));

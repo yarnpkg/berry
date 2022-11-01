@@ -271,7 +271,7 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
     }, async report => {
       report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
 
-      if (!process.env.TEST_ENV) {
+      if (!process.env.YARN_IS_TEST_ENV) {
         const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
         if (autoOpen) {
           const {openNow} = await prompt<{openNow: boolean}>({
@@ -299,8 +299,8 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
     process.stdout.write(`\n`);
   }
 
-  if (process.env.TEST_ENV)
-    return process.env.TEST_NPM_2FA_TOKEN || ``;
+  if (process.env.YARN_INJECT_NPM_2FA_TOKEN)
+    return process.env.YARN_INJECT_NPM_2FA_TOKEN || ``;
 
   const {otp} = await prompt<{otp: string}>({
     type: `password`,

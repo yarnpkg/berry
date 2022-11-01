@@ -35,7 +35,7 @@ const mte = generatePkgDriver({
         [`HOME`]: nativeHomePath,
         [`USERPROFILE`]: nativeHomePath,
         [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
-        [`TEST_ENV`]: `true`,
+        [`YARN_IS_TEST_ENV`]: `true`,
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
         [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
         [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
