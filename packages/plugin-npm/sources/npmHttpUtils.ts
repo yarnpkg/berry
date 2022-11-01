@@ -270,20 +270,31 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
       includeFooter: false,
     }, async report => {
       report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
-    });
 
-    if (!process.env.TEST_ENV) {
-      const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
-      if (autoOpen) {
-        try {
-          await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
-        } catch {
-          try {
-            await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
-          } catch {}
+      if (!process.env.TEST_ENV) {
+        const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
+        if (autoOpen) {
+          const {openNow} = await prompt<{openNow: boolean}>({
+            type: `confirm`,
+            name: `openNow`,
+            message: `Do you want to try to open this url now?`,
+            required: true,
+            initial: true,
+            onCancel: () => process.exit(130),
+          });
+
+          if (openNow) {
+            try {
+              await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
+            } catch {
+              try {
+                await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
+              } catch {}
+            }
+          }
         }
       }
-    }
+    });
 
     process.stdout.write(`\n`);
   }
