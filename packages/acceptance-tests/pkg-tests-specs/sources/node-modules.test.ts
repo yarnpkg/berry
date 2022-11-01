@@ -1848,6 +1848,7 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+
         expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.SYMBOLIC);
         expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
       },
@@ -1870,7 +1871,9 @@ describe(`Node_Modules`, () => {
         });
 
         await run(`install`);
+
         const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+
         expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.NTFS_JUNCTION);
         expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeTruthy();
       },
@@ -1893,6 +1896,7 @@ describe(`Node_Modules`, () => {
         });
 
         await run(`install`);
+
         const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
         const ws1Stats = await xfs.lstatPromise(packageLinkPath);
 

@@ -183,8 +183,10 @@ export enum FsLinkType {
 export const determineLinkType = async function(path: PortablePath) {
   const stats = await xfs.lstatPromise(path);
 
-  if (!stats.isSymbolicLink()) return FsLinkType.UNKNOWN;
-  if (!IS_WIN32) return FsLinkType.SYMBOLIC;
+  if (!stats.isSymbolicLink())
+    return FsLinkType.UNKNOWN;
+  if (!IS_WIN32)
+    return FsLinkType.SYMBOLIC;
 
   // Must spawn a process to determine link type on Windows (or include native code)
   // `dir` the directory, toss lines that start with whitespace (header/footer), check for type of path passed in
