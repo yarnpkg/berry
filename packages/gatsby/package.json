@@ -97,7 +97,7 @@
   },
   "scripts": {
     "build:doc": "rm -rf .cache public static/api && yarn build:api && gatsby build --prefix-paths \"$@\" && rsync -rtuc --delete public/ ../../docs/",
-    "build:api": "typedoc",
+    "build:api": "typedoc --exclude '**/docusaurus/**'",
     "develop:doc": "run develop",
     "develop": "gatsby develop",
     "serve": "gatsby serve",
