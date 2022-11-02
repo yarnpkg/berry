@@ -80,6 +80,10 @@ The following changes only affect people writing Yarn plugins:
 
 - The builtin shell now supports whitespace-only commands.
 
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
+
 ## 3.2.4
 
 ### Compatibility
