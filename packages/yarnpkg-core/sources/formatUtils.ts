@@ -4,6 +4,7 @@ import CI                                                                   from
 import {ColorFormat, formatMarkdownish}                                     from 'clipanion';
 import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
+import {inspect}                                                            from 'util';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
@@ -34,6 +35,7 @@ export const Type = {
   ADDED: `ADDED`,
   REMOVED: `REMOVED`,
   CODE: `CODE`,
+  INSPECT: `INSPECT`,
 
   DURATION: `DURATION`,
   SIZE: `SIZE`,
@@ -102,6 +104,15 @@ const validateTransform = <T>(spec: {
 } => spec;
 
 const transforms = {
+  [Type.INSPECT]: validateTransform({
+    pretty: (configuration: Configuration, value: any) => {
+      return inspect(value, {depth: Infinity, colors: configuration.get(`enableColors`), compact: true, breakLength: Infinity});
+    },
+    json: (value: any) => {
+      return value;
+    },
+  }),
+
   [Type.NUMBER]: validateTransform({
     pretty: (configuration: Configuration, value: number) => {
       return applyColor(configuration, `${value}`, Type.NUMBER);

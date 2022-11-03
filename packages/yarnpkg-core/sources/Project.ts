@@ -643,6 +643,14 @@ export class Project {
     return null;
   }
 
+  async loadUserConfig() {
+    const configPath = ppath.join(this.cwd, `yarn.config.js` as Filename);
+    if (!await xfs.existsPromise(configPath))
+      return null;
+
+    return import(npath.fromPortablePath(configPath));
+  }
+
   async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
     const pkg = this.configuration.normalizePackage(originalPkg);
 
