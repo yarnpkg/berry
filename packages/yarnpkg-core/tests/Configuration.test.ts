@@ -474,7 +474,7 @@ describe(`Configuration`, () => {
   });
 
   describe(`Multiple RC files`, () => {
-    it(`it should correctly extend or reset or skip the values`, async() => {
+    it(`it should correctly resolve the rc files`, async() => {
       const {plugins, pluginConfiguration} = await initConfigurationPlugin(`{
         string: {
           description: "",
@@ -486,7 +486,12 @@ describe(`Configuration`, () => {
           type: "STRING",
           default: "",
         },
-        stringSkip: {
+        stringExtend: {
+          description: "",
+          type: "STRING",
+          default: "",
+        },
+        stringHardReset: {
           description: "",
           type: "STRING",
           default: "",
@@ -503,7 +508,13 @@ describe(`Configuration`, () => {
           isArray: true,
           default: [],
         },
-        stringArraySkip: {
+        stringArrayExtend: {
+          description: "",
+          type: "STRING",
+          isArray: true,
+          default: [],
+        },
+        stringArrayHardReset: {
           description: "",
           type: "STRING",
           isArray: true,
@@ -541,7 +552,23 @@ describe(`Configuration`, () => {
             },
           },
         },
-        shapeSkip: {
+        shapeExtend: {
+          description: "",
+          type: "SHAPE",
+          properties: {
+            number: {
+              description: "",
+              type: "NUMBER",
+              default: 0,
+            },
+            string: {
+              description: "",
+              type: "STRING",
+              default: "default",
+            },
+          },
+        },
+        shapeHardReset: {
           description: "",
           type: "SHAPE",
           properties: {
@@ -597,7 +624,27 @@ describe(`Configuration`, () => {
             },
           },
         },
-        mapSkip: {
+        mapExtend: {
+          description: "",
+          type: "MAP",
+          valueDefinition: {
+            description: "",
+            type: "SHAPE",
+            properties: {
+              number: {
+                description: "",
+                type: "NUMBER",
+                default: 0,
+              },
+              string: {
+                description: "",
+                type: "STRING",
+                default: "default",
+              },
+            },
+          },
+        },
+        mapHardReset: {
           description: "",
           type: "MAP",
           valueDefinition: {
@@ -623,17 +670,22 @@ describe(`Configuration`, () => {
         plugins,
         string: `foo`,
         stringReset: `foo`,
-        stringSkip: `foo`,
+        stringExtend: `foo`,
+        stringHardReset: `foo`,
         stringArray: [`foo`],
         stringArrayReset: [`foo`],
-        stringArraySkip: [`foo`],
+        stringArrayExtend: [`foo`],
+        stringArrayHardReset: [`foo`],
         shape: {
           string: `foo`,
         },
         shapeReset: {
           string: `foo`,
         },
-        shapeSkip: {
+        shapeExtend: {
+          string: `foo`,
+        },
+        shapeHardReset: {
           string: `foo`,
         },
         map: {
@@ -642,12 +694,14 @@ describe(`Configuration`, () => {
         mapReset: {
           foo: {string: `foo`},
         },
-        mapSkip: {
+        mapExtend: {
+          foo: {string: `foo`},
+        },
+        mapHardReset: {
           foo: {string: `foo`},
         },
       }, async dir => {
         const workspaceDirectory = `${dir}/workspace` as PortablePath;
-
         await xfs.mkdirPromise(workspaceDirectory);
         await xfs.writeFilePromise(`${workspaceDirectory}/.yarnrc.yml` as PortablePath, stringifySyml({
           string: `bar`,
@@ -655,8 +709,12 @@ describe(`Configuration`, () => {
             onConflict: `reset`,
             value: `bar`,
           },
-          stringSkip: {
-            onConflict: `skip`,
+          stringExtend: {
+            onConflict: `extend`,
+            value: `bar`,
+          },
+          stringHardReset: {
+            onConflict: `reset`,
             value: `bar`,
           },
           stringArray: [`bar`],
@@ -664,8 +722,12 @@ describe(`Configuration`, () => {
             onConflict: `reset`,
             value: [`bar`],
           },
-          stringArraySkip: {
-            onConflict: `skip`,
+          stringArrayExtend: {
+            onConflict: `extend`,
+            value: [`bar`],
+          },
+          stringArrayHardReset: {
+            onConflict: `hardReset`,
             value: [`bar`],
           },
           shape: {
@@ -677,8 +739,14 @@ describe(`Configuration`, () => {
               number: 2,
             },
           },
-          shapeSkip: {
-            onConflict: `skip`,
+          shapeExtend: {
+            onConflict: `extend`,
+            value: {
+              number: 2,
+            },
+          },
+          shapeHardReset: {
+            onConflict: `hardReset`,
             value: {
               number: 2,
             },
@@ -692,37 +760,63 @@ describe(`Configuration`, () => {
               bar: {number: 2, string: `bar`},
             },
           },
-          mapSkip: {
-            onConflict: `skip`,
+          mapExtend: {
+            onConflict: `extend`,
+            value: {
+              bar: {number: 2, string: `bar`},
+            },
+          },
+          mapHardReset: {
+            onConflict: `hardReset`,
             value: {
               bar: {number: 2, string: `bar`},
             },
           },
         }));
 
-        const configuration = await Configuration.find(workspaceDirectory, pluginConfiguration);
+        const workspaceDirectory2 = `${dir}/workspace/workspace` as PortablePath;
+        await xfs.mkdirPromise(workspaceDirectory2);
+        await xfs.writeFilePromise(`${workspaceDirectory2}/.yarnrc.yml` as PortablePath, stringifySyml({
+          stringHardReset: `baz`,
+          stringArrayHardReset: [`baz`],
+          shapeHardReset: {
+            string: `baz`,
+          },
+          mapHardReset: {
+            baz: {string: `baz`},
+          },
+        }));
+
+        const configuration = await Configuration.find(workspaceDirectory2, pluginConfiguration);
 
         expect(configuration.get(`string`)).toBe(`bar`);
         expect(configuration.get(`stringReset`)).toBe(`bar`);
-        expect(configuration.get(`stringSkip`)).toBe(`foo`);
+        expect(configuration.get(`stringExtend`)).toBe(`bar`);
+        expect(configuration.get(`stringHardReset`)).toBe(`baz`);
+
         expect(configuration.get(`stringArray`)).toEqual([`foo`, `bar`]);
         expect(configuration.get(`stringArrayReset`)).toEqual([`bar`]);
-        expect(configuration.get(`stringArraySkip`)).toEqual([`foo`]);
+        expect(configuration.get(`stringArrayExtend`)).toEqual([`foo`, `bar`]);
+        expect(configuration.get(`stringArrayHardReset`)).toEqual([`baz`]);
+
         expect(configuration.get(`shape`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `foo`]]));
         expect(configuration.get(`shapeReset`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `default`]]));
-        expect(configuration.get(`shapeSkip`)).toEqual(new Map<string, any>([[`number`, 0], [`string`, `foo`]]));
+        expect(configuration.get(`shapeExtend`)).toEqual(new Map<string, any>([[`number`, 2], [`string`, `foo`]]));
+        expect(configuration.get(`shapeHardReset`)).toEqual(new Map<string, any>([[`number`, 0], [`string`, `baz`]]));
 
         expect(configuration.get(`map`)).toEqual(new Map([
           [`foo`, new Map<string, any>([[`number`, 0], [`string`, `foo`]])],
           [`bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]])],
         ]));
-
         expect(configuration.get(`mapReset`)).toEqual(new Map([
           [`bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]])],
         ]));
-
-        expect(configuration.get(`mapSkip`)).toEqual(new Map([
+        expect(configuration.get(`mapExtend`)).toEqual(new Map([
           [`foo`, new Map<string, any>([[`number`, 0], [`string`, `foo`]])],
+          [`bar`, new Map<string, any>([[`number`, 2], [`string`, `bar`]])],
+        ]));
+        expect(configuration.get(`mapHardReset`)).toEqual(new Map([
+          [`baz`, new Map<string, any>([[`number`, 0], [`string`, `baz`]])],
         ]));
       });
     });
