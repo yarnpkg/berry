@@ -16,6 +16,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The node-modules linker no longer creates duplicate copies inside of aliased packages
 - Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
+
 ## 3.2.4
 
 ### Compatibility
