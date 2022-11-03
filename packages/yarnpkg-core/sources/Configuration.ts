@@ -28,6 +28,12 @@ import * as structUtils                                                         
 import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus} from './types';
 
 const IGNORED_ENV_VARIABLES = new Set([
+  // Used by our test environment
+  `isTestEnv`,
+  `injectNpmUser`,
+  `injectNpmPassword`,
+  `injectNpm2FaToken`,
+
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
   `binFolder`,
