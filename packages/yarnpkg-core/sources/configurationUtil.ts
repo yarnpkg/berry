@@ -1,11 +1,9 @@
-declare global {
-  interface Array<T> {
-    findLastIndex(
-      predicate: (value: T, index: number, obj: Array<T>) => unknown,
-      thisArg?: any,
-    ): number;
-  }
-}
+// waiting for Typescript support: https://github.com/microsoft/TypeScript/issues/48829
+const findLastIndex = <T>(array: Array<T>, predicate: (value: T, index: number, obj: Array<T>) => unknown, thisArg?: any) => {
+  const reversedArray = [...array];
+  reversedArray.reverse();
+  return reversedArray.findIndex(predicate, thisArg);
+};
 
 type ConflictMarker = {
   onConflict: string;
@@ -71,27 +69,38 @@ function getNormalized(data: unknown, key: string): ConflictMarkerWithValue {
   return normalizeValue(rawValue);
 }
 
-function attachIdToTree(data: unknown, id: string): [string, unknown] {
+// symbol is used in runtime to identify this as a tuple type
+export const RESOLVED_RC_FILE = Symbol();
+
+type ResolvedRcFile = [string /* Source */, unknown, symbol];
+
+function resolvedRcFile(id: string, value: unknown): ResolvedRcFile {
+  return [id, value, RESOLVED_RC_FILE];
+}
+
+function isResolvedRcFile(value: unknown): value is ResolvedRcFile {
+  if (!Array.isArray(value)) return false;
+
+  return value[2] === RESOLVED_RC_FILE;
+}
+
+function attachIdToTree(data: unknown, id: string): ResolvedRcFile {
   if (isObject(data)) {
     const result: Record<string, any> = {};
 
     for (const key of Object.keys(data))
       result[key] = attachIdToTree(data[key], id);
 
-    return [id, result];
+    return resolvedRcFile(id, result);
   }
 
   if (Array.isArray(data))
-    return [id, data.map(item => attachIdToTree(item, id))];
+    return resolvedRcFile(id, data.map(item => attachIdToTree(item, id)));
 
-  return [id, data];
+  return resolvedRcFile(id, data);
 }
 
-function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, key: string, firstVisiblePosition: number, resolveAtPosition: number): [string, unknown] | null {
-  const nextIterationValues = rcFiles.map<[string, unknown]>(([id, data]) => {
-    return [id, getNormalized(data, key).value];
-  });
-
+function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, key: string, firstVisiblePosition: number, resolveAtPosition: number): ResolvedRcFile | null {
   let expectedValueType: ValueType | undefined;
 
   const relevantValues: Array<[string, unknown]> = [];
@@ -102,8 +111,8 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
   for (let t = resolveAtPosition - 1; t >= firstVisiblePosition; --t) {
     const [id, data] = rcFiles[t];
     const {onConflict, value} = getNormalized(data, key);
-
     const valueType = getValueType(value);
+
     if (valueType === ValueType.Undefined)
       continue;
 
@@ -115,7 +124,7 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
     }
 
     if (valueType === ValueType.Literal)
-      return [id, value];
+      return resolvedRcFile(id, value);
 
     relevantValues.unshift([id, value]);
 
@@ -133,17 +142,21 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
   if (typeof expectedValueType === `undefined`)
     return null;
 
-  const id = relevantValues[relevantValues.length - 1][0];
+  const source = relevantValues.map(([relevantId]) => relevantId).join(`, `);
   switch (expectedValueType) {
     case ValueType.Array:
-      return [id, new Array<unknown>().concat(...relevantValues.map(([id, value]) => (value as Array<unknown>).map(item => attachIdToTree(item, id))))];
+      return resolvedRcFile(source, new Array<unknown>().concat(...relevantValues.map(([id, value]) => (value as Array<unknown>).map(item => attachIdToTree(item, id)))));
 
-    case ValueType.Object:
+    case ValueType.Object:{
       const conglomerate = Object.assign({}, ...relevantValues.map(([, value]) => value));
       const keys = Object.keys(conglomerate);
       const result: Record<string, unknown> = {};
 
-      const hardResetLocation = nextIterationValues.findLastIndex(([id, value]) => {
+      const nextIterationValues = rcFiles.map<[string, unknown]>(([id, data]) => {
+        return [id, getNormalized(data, key).value];
+      });
+
+      const hardResetLocation = findLastIndex(nextIterationValues, ([_, value]) => {
         const valueType = getValueType(value);
         return valueType !== ValueType.Object && valueType !== ValueType.Undefined;
       });
@@ -159,8 +172,8 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
         }
       }
 
-      return [id, result];
-
+      return resolvedRcFile(source, result);
+    }
     default:
       throw new Error(`Assertion failed: Non-extendable value type`);
   }
@@ -176,5 +189,16 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
 // entry to the value and the final value.
 //
 export function resolveRcFiles(rcFiles: Array<[string, unknown]>) {
-  return resolveValueAt(rcFiles.map(([id, data]) => [id, {[`.`]: data}]), [], `.`, 0, rcFiles.length);
+  return resolveValueAt(rcFiles.map(([source, data]) => [source, {[`.`]: data}]), [], `.`, 0, rcFiles.length) as [string, Record<string, unknown>, symbol] | null;
+}
+
+export function getValue (value: unknown) {
+  if (isResolvedRcFile(value)) return value[1];
+
+  return value;
+}
+export function getSource (value: unknown) {
+  if (isResolvedRcFile(value)) return value[0];
+
+  return null;
 }
