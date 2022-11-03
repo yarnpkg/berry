@@ -126,8 +126,6 @@ export default class BuildBundleCommand extends Command {
               'process.env.NODE_ENV': JSON.stringify(`production`),
               // For ink
               'process.env.DEV': JSON.stringify(`false`),
-              // For ourselves
-              'process.env.TEST_ENV': `false`,
               // mkdirp
               'process.env.__TESTING_MKDIRP_PLATFORM__': `false`,
               'process.env.__TESTING_MKDIRP_NODE_VERSION__': `false`,

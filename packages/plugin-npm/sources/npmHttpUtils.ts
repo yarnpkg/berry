@@ -1,11 +1,12 @@
-import {Configuration, Ident, formatUtils, httpUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                     from '@yarnpkg/core';
-import {prompt}                                       from 'enquirer';
-import {URL}                                          from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, StreamReport, execUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                              from '@yarnpkg/core';
+import {ppath}                                                                 from '@yarnpkg/fslib';
+import {prompt}                                                                from 'enquirer';
+import {URL}                                                                   from 'url';
 
-import {Hooks}                                        from './index';
-import * as npmConfigUtils                            from './npmConfigUtils';
-import {MapLike}                                      from './npmConfigUtils';
+import {Hooks}                                                                 from './index';
+import * as npmConfigUtils                                                     from './npmConfigUtils';
+import {MapLike}                                                               from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -108,7 +109,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
       throw error;
     }
 
-    otp = await askForOtp();
+    otp = await askForOtp(error, {configuration});
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
@@ -144,7 +145,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
       throw error;
     }
 
-    otp = await askForOtp();
+    otp = await askForOtp(error, {configuration});
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
@@ -180,7 +181,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
       throw error;
     }
 
-    otp = await askForOtp();
+    otp = await askForOtp(error, {configuration});
     const headersWithOtp = {...headers, ...getOtpHeaders(otp)};
 
     // Retrying request with OTP
@@ -259,9 +260,47 @@ async function whoami(registry: string, headers: {[key: string]: string} | undef
   }
 }
 
-async function askForOtp() {
-  if (process.env.TEST_ENV)
-    return process.env.TEST_NPM_2FA_TOKEN || ``;
+async function askForOtp(error: any, {configuration}: {configuration: Configuration}) {
+  const notice = error.originalError?.response.headers[`npm-notice`];
+
+  if (notice) {
+    await StreamReport.start({
+      configuration,
+      stdout: process.stdout,
+      includeFooter: false,
+    }, async report => {
+      report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
+
+      if (!process.env.YARN_IS_TEST_ENV) {
+        const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
+        if (autoOpen) {
+          const {openNow} = await prompt<{openNow: boolean}>({
+            type: `confirm`,
+            name: `openNow`,
+            message: `Do you want to try to open this url now?`,
+            required: true,
+            initial: true,
+            onCancel: () => process.exit(130),
+          });
+
+          if (openNow) {
+            try {
+              await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
+            } catch {
+              try {
+                await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
+              } catch {}
+            }
+          }
+        }
+      }
+    });
+
+    process.stdout.write(`\n`);
+  }
+
+  if (process.env.YARN_IS_TEST_ENV)
+    return process.env.YARN_INJECT_NPM_2FA_TOKEN || ``;
 
   const {otp} = await prompt<{otp: string}>({
     type: `password`,
@@ -270,6 +309,8 @@ async function askForOtp() {
     required: true,
     onCancel: () => process.exit(130),
   });
+
+  process.stdout.write(`\n`);
 
   return otp;
 }
