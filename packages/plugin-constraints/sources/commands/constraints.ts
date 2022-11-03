@@ -31,7 +31,7 @@ function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller)
     parts.push(`(${fileParts.join(formatUtils.pretty(configuration, `:`, `grey`))})`);
   }
 
-  return parts.join(``);
+  return parts.join(` `);
 }
 
 // eslint-disable-next-line arca/no-default-export

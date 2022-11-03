@@ -45,7 +45,7 @@ gen_enforced_dependency(WorkspaceCwd, 'tslib', 'range', 'dependencies') :-
     \+ workspace_has_dependency(WorkspaceCwd, 'tslib', _, _).
 
 % This rule will enforce that all packages must have a "BSD-2-Clause" license field
-gen_enforced_field(WorkspaceCwd, 'license', 'xBSD-2-Clause').
+gen_enforced_field(WorkspaceCwd, 'license', 'BSD-2-Clause').
 
 % This rule will enforce that all packages must have an correct engines.node field
 % Keep in sync with the range inside packages/yarnpkg-cli/sources/main.ts
