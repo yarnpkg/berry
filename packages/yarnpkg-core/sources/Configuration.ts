@@ -4,7 +4,6 @@ import {parseSyml, stringifySyml}                                               
 import camelcase                                                                                        from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
 import {UsageError}                                                                                     from 'clipanion';
-import pick                                                                                             from 'lodash/pick';
 import pLimit, {Limit}                                                                                  from 'p-limit';
 import {PassThrough, Writable}                                                                          from 'stream';
 
@@ -102,8 +101,7 @@ export const FormatType = formatUtils.Type;
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string;
   type: T;
-  isArray?: boolean;
-};
+} & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
   properties: {[propertyName: string]: SettingsDefinition};
@@ -440,6 +438,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Overrides for log levels`,
     type: SettingsType.SHAPE,
     isArray: true,
+    concatenateValues: true,
     properties: {
       code: {
         description: `Code of the messages covered by this override`,
@@ -663,80 +662,32 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 };
 
-const onConflictValues = new Set([`extend`, `skip`, `reset`]);
-
-type ParseValueOptions = {extend: boolean, skip: boolean, reset: boolean};
-
-function parseValue(configuration: Configuration, path: string, valueBase: any, definition: SettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions = {extend: true, skip: false, reset: false}) {
-  const current = getCurrentValue(configuration, path);
-  const defaultValue = getDefaultValue(configuration, definition);
-
-  let value = valueBase;
-  if (valueBase?.onConflict !== undefined) {
-    if (!onConflictValues.has(valueBase.onConflict))
-      throw new UsageError(`Invalid onConflict value in ${path}; it should be one of 'extend' | 'skip' | 'reset', but received ${valueBase.onConflict}`);
-
-    extend = valueBase.onConflict === `extend`;
-    skip = valueBase.onConflict === `skip`;
-    reset = valueBase.onConflict === `reset`;
-    value = valueBase?.value;
-  }
-
-  if (value === undefined) {
-    // XXX: `enableStrictSettings` is a very special setting, it should only be used by default when importSettings
-    if (path === `enableStrictSettings`)
-      return undefined;
-
-    if (reset || current === undefined)
-      return defaultValue;
-
-    return current;
-  }
-
+function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
-    const currentValue = (current as Array<any>) ?? [];
-    if (skip && currentValue.length !== 0)
-      return currentValue;
-
-    const result = Array.isArray(value)
-      ? value.map((sub, i) => parseSingleValue(configuration, `${path}.${i}`, sub, definition, folder, {extend, skip, reset}))
-      : String(value).split(/,/).map(segment => parseSingleValue(configuration, path, segment, definition, folder, {extend, skip, reset}));
-
-    if (currentValue === defaultValue)
-      return result;
-
-    if (reset)
-      return result;
-
-    return [...currentValue, ...result];
+    if (!Array.isArray(value)) {
+      return String(value).split(/,/).map(segment => {
+        return parseSingleValue(configuration, path, segment, definition, folder);
+      });
+    } else {
+      return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
+    }
   } else {
-    if (Array.isArray(value))
+    if (Array.isArray(value)) {
       throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
-
-    if (reset || extend)
-      return parseSingleValue(configuration, path, value, definition, folder, {extend, skip, reset});
-    if (current === undefined || current === defaultValue)
-      return parseSingleValue(configuration, path, value, definition, folder, {extend, skip, reset});
-    if (skip)
-      return undefined;
-
-    // MAP and SHAPE are more complex and need further processing
-    if (definition.type === SettingsType.MAP || definition.type === SettingsType.SHAPE)
-      return parseSingleValue(configuration, path, value, definition, folder, {extend, skip, reset});
-
-    // returning undefined will not modify the existing value.
-    return undefined;
+    } else {
+      return parseSingleValue(configuration, path, value, definition, folder);
+    }
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions) {
+function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
   switch (definition.type) {
     case SettingsType.ANY:
       return value;
     case SettingsType.SHAPE:
-      return parseShape(configuration, path, value, definition, folder, {extend, skip, reset});
+      return parseShape(configuration, path, value, definition, folder);
     case SettingsType.MAP:
-      return parseMap(configuration, path, value, definition, folder, {extend, skip, reset});
+      return parseMap(configuration, path, value, definition, folder);
   }
 
   if (value === null && !definition.isNullable && definition.default !== null)
@@ -748,8 +699,6 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   const interpretValue = () => {
     if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
       return miscUtils.parseBoolean(value);
-    if (definition.type === SettingsType.NUMBER && typeof value === `number`)
-      return value;
 
     if (typeof value !== `string`)
       throw new Error(`Expected value (${value}) to be a string`);
@@ -782,57 +731,51 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   return interpreted;
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions) {
-  const currentValue = (getCurrentValue(configuration, path) as Map<string, any>) ?? new Map<string, any>();
-
+function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
-  const result = new Map<string, any>();
+  const result: Map<string, any> = getDefaultValue(configuration, definition, {
+    ignoreArrays: true,
+  });
+
   if (value === null)
-    return currentValue;
+    return result;
 
-  for (const [propKey, subDefinition] of Object.entries(definition.properties)) {
+  for (const [propKey, propValue] of Object.entries(value)) {
     const subPath = `${path}.${propKey}`;
-    const propValue = (value as any)[propKey];
-    const parsed = parseValue(configuration, subPath, propValue, subDefinition, folder, {extend, skip, reset});
+    const subDefinition = definition.properties[propKey];
 
-    result.set(propKey, parsed);
+    if (!subDefinition)
+      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
+
+    result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
   }
 
   return result;
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath, {extend, skip, reset}: ParseValueOptions) {
-  const currentValue = reset ? new Map<string, any>() : getCurrentValue(configuration, path) as Map<string, any> ?? new Map<string, any>();
+function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
+  const result = new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
   if (value === null)
-    return currentValue;
+    return result;
 
-  if (skip)
-    return currentValue;
-
-  const result = new Map<string, any>();
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
-    const subPath = `${path}.${normalizedKey}`;
+    const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
     // that's fine because we're guaranteed it's not undefined.
     const valueDefinition: SettingsDefinition = definition.valueDefinition;
 
-    const parsed = parseValue(configuration, subPath, propValue, valueDefinition, folder, {extend, skip, reset});
-    result.set(normalizedKey, parsed);
+    result.set(normalizedKey, parseValue(configuration, subPath, propValue, valueDefinition, folder));
   }
 
-  if (reset)
-    return result;
-
-  // extend
-  return new Map([...currentValue, ...result]);
+  return result;
 }
 
 function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
@@ -842,6 +785,7 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return [];
 
       const result = new Map<string, any>();
+
       for (const [propKey, propDefinition] of Object.entries(definition.properties))
         result.set(propKey, getDefaultValue(configuration, propDefinition));
 
@@ -882,18 +826,6 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       return definition.default;
     } break;
   }
-}
-
-function getCurrentValue(configuration: Configuration, path: string): unknown {
-  const keys = path.split(`.`);
-  const currentValue = keys.reduce((prev, currentKey) => {
-    if (prev instanceof Map)
-      return prev?.get(currentKey);
-
-    return prev?.[currentKey];
-  }, configuration.values);
-
-  return currentValue;
 }
 
 type SettingTransforms = {
@@ -944,10 +876,12 @@ function getEnvironmentSettings() {
 
   for (let [key, value] of Object.entries(process.env)) {
     key = key.toLowerCase();
+
     if (!key.startsWith(ENVIRONMENT_PREFIX))
       continue;
 
     key = camelcase(key.slice(ENVIRONMENT_PREFIX.length));
+
     environmentSettings[key] = value;
   }
 
@@ -1066,25 +1000,8 @@ export class Configuration {
       if (rcFile) {
         rcFile.strict = false;
       } else {
-        rcFiles.unshift({...homeRcFile, strict: false});
+        rcFiles.push({...homeRcFile, strict: false});
       }
-    }
-
-    // If one of the yarnrc files has a `onConflict: reset` directive, we
-    // remove all the overriden settings from any anterior yarnrc file. This
-    // avoids having us to reset the fields to their default values.
-
-    for (let u = rcFiles.length - 1; u >= 0; --u) {
-      if (rcFiles[u].data?.onConflict !== `reset`)
-        continue;
-
-      const keys = Object.keys(rcFiles[u].data);
-      for (let v = u - 1; v >= 0; --v)
-        rcFiles[v].data = pick(rcFiles[v].data, keys);
-
-      // Only the last yarnrc with `onConflict: reset` matters, since any
-      // other one will be reset anyway.
-      break;
     }
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
@@ -1095,9 +1012,9 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const pickSecondaryCoreFields = ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
-      const secondaryCoreFields: CoreFields = {onConflict};
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+      const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
           secondaryCoreFields[key] = value;
@@ -1105,7 +1022,7 @@ export class Configuration {
       return secondaryCoreFields;
     };
 
-    const pickPluginFields = ({onConflict, ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
       const pluginFields: any = {};
       for (const [key, value] of Object.entries(rest))
         if (!allCoreFieldKeys.has(key))
@@ -1115,11 +1032,11 @@ export class Configuration {
     };
 
     const configuration = new Configuration(startingCwd);
-
     configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
+
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
     for (const {path, cwd, data} of rcFiles)
       configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
-    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1162,9 +1079,9 @@ export class Configuration {
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
       configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
-    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1288,9 +1205,9 @@ export class Configuration {
       configuration.activatePlugin(name, thirdPartyPlugin);
 
     // load values of all plugin definitions
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
     for (const {path, cwd, data, strict: isStrict} of rcFiles)
       configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
-    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1334,7 +1251,7 @@ export class Configuration {
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }
 
-        rcFiles.unshift({path: rcPath, cwd: currentCwd, data});
+        rcFiles.push({path: rcPath, cwd: currentCwd, data});
       }
 
       nextCwd = ppath.dirname(currentCwd);
@@ -1513,7 +1430,7 @@ export class Configuration {
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean}) {
+  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean}) {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
@@ -1522,18 +1439,14 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true}: {strict?: boolean} = {}) {
+  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
     strict = strict && this.get(`enableStrictSettings`);
-    const onConflict = (data?.onConflict ?? `extend`) as string;
-
-    if (onConflict !== undefined && !onConflictValues.has(onConflict))
-      throw new UsageError(`Invalid onConflict value at the top-level; it should be one of 'extend' | 'skip' | 'reset', but received ${onConflict}`);
-
-    const extend = onConflict === `extend`;
-    const skip = onConflict === `skip`;
-    const reset = onConflict === `reset`;
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
+      const value = data[key];
+      if (typeof value === `undefined`)
+        continue;
+
       // The plugins have already been loaded at this point
       if (key === `plugins`)
         continue;
@@ -1548,11 +1461,6 @@ export class Configuration {
 
       const definition = this.settings.get(key);
       if (!definition) {
-        if (key === `enableStrictSettings`)
-          continue;
-        if (key === `onConflict`)
-          continue;
-
         if (strict) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
@@ -1561,24 +1469,40 @@ export class Configuration {
         }
       }
 
+      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP || definition.isArray && definition.concatenateValues))
+        continue;
+
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder, {extend, skip, reset});
+        parsed = parseValue(this, key, data[key], definition, folder);
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;
       }
-
-      if (parsed === undefined)
-        continue;
 
       if (key === `enableStrictSettings` && source !== `<environment>`) {
         strict = parsed as boolean;
         continue;
       }
 
-      this.values.set(key, parsed);
-      this.sources.set(key, source);
+      if (definition.type === SettingsType.MAP) {
+        const previousValue = this.values.get(key) as Map<string, any>;
+        this.values.set(key, new Map(overwrite
+          ? [...previousValue, ...parsed as Map<string, any>]
+          : [...parsed as Map<string, any>, ...previousValue],
+        ));
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
+      } else if (definition.isArray && definition.concatenateValues) {
+        const previousValue = this.values.get(key) as Array<unknown>;
+        this.values.set(key, overwrite
+          ? [...previousValue, ...parsed as Array<unknown>]
+          : [...parsed as Array<unknown>, ...previousValue],
+        );
+        this.sources.set(key, `${this.sources.get(key)}, ${source}`);
+      } else {
+        this.values.set(key, parsed);
+        this.sources.set(key, source);
+      }
     }
   }
 
