@@ -430,7 +430,7 @@ async function makeTemporaryCache<T>(cb: (cache: Cache) => Promise<T>) {
       enableMirror: false,
       // Don't spend time compressing what gets deleted later
       compressionLevel: 0,
-    }, cacheDir);
+    }, cacheDir, {overwrite: true});
 
     return await cb(new Cache(cacheDir, {configuration, check: false, immutable: false}));
   });

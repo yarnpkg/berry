@@ -104,7 +104,7 @@ export default class YarnCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     if (typeof this.inlineBuilds !== `undefined`)
-      configuration.useWithSource(`<cli>`, {enableInlineBuilds: this.inlineBuilds}, configuration.startingCwd);
+      configuration.useWithSource(`<cli>`, {enableInlineBuilds: this.inlineBuilds}, configuration.startingCwd, {overwrite: true});
 
     // These variables are used in Google Cloud Platform environment
     // in process of deploying Google Cloud Functions and
@@ -273,7 +273,7 @@ export default class YarnCommand extends BaseCommand {
           report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
           report.reportSeparator();
 
-          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd);
+          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
 
           await Configuration.updateConfiguration(projectCwd, {
             nodeLinker: `node-modules`,
