@@ -111,7 +111,7 @@ describe(`Commands`, () => {
               }
 
               stdout = stdout.replace(/[^( ]+[\\/](yarn\.config)/g, `/path/to/$1`);
-              stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$1`);
+              stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
 
               expect({code, stdout, stderr}).toMatchSnapshot();
             }),
