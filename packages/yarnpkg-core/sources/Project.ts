@@ -7,6 +7,7 @@ import {structuredPatch}                                                from 'di
 import pick                                                             from 'lodash/pick';
 import pLimit                                                           from 'p-limit';
 import semver                                                           from 'semver';
+import {pathToFileURL}                                                  from 'url';
 import {promisify}                                                      from 'util';
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
@@ -648,7 +649,7 @@ export class Project {
     if (!await xfs.existsPromise(configPath))
       return null;
 
-    return import(npath.fromPortablePath(configPath));
+    return miscUtils.dynamicRequire(configPath);
   }
 
   async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
