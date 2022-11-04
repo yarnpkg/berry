@@ -1,12 +1,12 @@
-import {Configuration, Ident, formatUtils, httpUtils, StreamReport, execUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                                              from '@yarnpkg/core';
-import {ppath}                                                                 from '@yarnpkg/fslib';
-import {prompt}                                                                from 'enquirer';
-import {URL}                                                                   from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, execUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                         from '@yarnpkg/core';
+import {ppath}                                                                            from '@yarnpkg/fslib';
+import {prompt}                                                                           from 'enquirer';
+import {URL}                                                                              from 'url';
 
-import {Hooks}                                                                 from './index';
-import * as npmConfigUtils                                                     from './npmConfigUtils';
-import {MapLike}                                                               from './npmConfigUtils';
+import {Hooks}                                                                            from './index';
+import * as npmConfigUtils                                                                from './npmConfigUtils';
+import {MapLike}                                                                          from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -273,7 +273,7 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
 
       if (!process.env.YARN_IS_TEST_ENV) {
         const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
-        if (autoOpen) {
+        if (autoOpen && nodeUtils.openUrl) {
           const {openNow} = await prompt<{openNow: boolean}>({
             type: `confirm`,
             name: `openNow`,
@@ -284,12 +284,8 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
           });
 
           if (openNow) {
-            try {
-              await execUtils.execvp(`open`, [autoOpen[1]], {cwd: ppath.cwd()});
-            } catch {
-              try {
-                await execUtils.execvp(`xdg-open`, [autoOpen[1]], {cwd: ppath.cwd()});
-              } catch {}
+            if (!await nodeUtils.openUrl(autoOpen[1])) {
+              report.reportWarning(MessageName.UNNAMED, `We failed to automatically open the url; you'll have to open it yourself in your browser of choice.`);
             }
           }
         }
