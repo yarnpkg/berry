@@ -52,9 +52,6 @@ function cleanupPlainOutput(output, path, homePath) {
   // replace the generated home folder with a constant
   output = output.replace(new RegExp(homePath, `g`), FAKE_HOME);
 
-  // replace the generated registry server URL with a constant
-  output = output.replace(/http:\/\/localhost:\d+/g, FAKE_REGISTRY_URL);
-
   // replace the default global folder with a constant
   output = output.replace(/[^"]+\/\.?yarn\/berry/ig, FAKE_LOCAL_APP_DATA);
 
