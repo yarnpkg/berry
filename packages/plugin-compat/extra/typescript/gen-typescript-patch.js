@@ -116,37 +116,44 @@ const SLICES = [
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8-stable
   {
     from: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
-    to: `623a7ac5aa49250155d39e604b09b4d015468a9c`,
+    to: `30840e0c2ad8e115c518f87379b7cb55fdf77f03`,
     onto: `60b5167a2a7015759d048cdd4655d1f66a8416a2`,
     range: `>=4.8.1-rc <4.8.4`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8
   {
     from: `d3747e92c3cd2d1f98739382c14226a725df38fd`,
-    to: `d3747e92c3cd2d1f98739382c14226a725df38fd`,
+    to: `5b9a74243e47db6113e857eabe5d26589fa0b64f`,
     onto: `a614119c1921ca61d549a7eee65c0b8c69c28752`,
     range: `>=4.8.4 <4.9.1-beta`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9-beta
   {
     from: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
-    to: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
+    to: `18b67922d3dcc5215541a38bf6417972270bf60f`,
     onto: `549b5429d4837344e8c99657109bb6538fd2dbb5`,
     range: `>=4.9.1-beta <4.9.2-rc`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9-rc
   {
     from: `5613f8d8e30dfa9fb3da15e2b8432ed7e2347a12`,
-    to: `5613f8d8e30dfa9fb3da15e2b8432ed7e2347a12`,
+    to: `d3a8a86ce4774d607c5a4a225cc5b59b1f96f42f`,
     onto: `107f832b80df2dc97748021cb00af2b6813db75b`,
     range: `>=4.9.2-rc <4.9.4`,
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9
   {
     from: `a0859a75a408ec95222a3f0175ba0644d60396f1`,
-    to: `a0859a75a408ec95222a3f0175ba0644d60396f1`,
+    to: `2b8a9b1c21a6d2c0aa26437c2636414be950aa79`,
     onto: `e2868216f637e875a74c675845625eb15dcfe9a2`,
-    range: `>=4.9.4`,
+    range: `>=4.9.4 <5.0.0-beta`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-5.0
+  {
+    from: `65bff6fadce4736bb9a77213ba8016f1ac7d25e5`,
+    to: `65bff6fadce4736bb9a77213ba8016f1ac7d25e5`,
+    onto: `dcad07ffd29854e2b93a86da0ba197f6eec21698`,
+    range: `>=5.0.0-beta`,
   },
 ];
 
@@ -181,7 +188,13 @@ async function execFile(binary, args, {checkExitCode = true, ...opts} = {}) {
   console.log(`${binary} ${args.join(` `)}`);
 
   return new Promise((resolve, reject) => {
-    const child = cp.spawn(binary, args, opts);
+    const child = cp.spawn(binary, args, {
+      ...opts,
+      env: {
+        ...process.env,
+        NODE_OPTIONS: undefined,
+      },
+    });
 
     const outChunks = [];
     const allChunks = [];
@@ -299,7 +312,7 @@ async function buildRepository({from, to, onto}) {
     }
   }
 
-  await execFile(`./node_modules/.bin/gulp`, [`local`, `LKG`], TS_REPO_SPAWN);
+  await execFile(fs.existsSync(`${TS_REPO}/node_modules/.bin/hereby`) ? `./node_modules/.bin/hereby` : `./node_modules/.bin/gulp`, [`local`, `LKG`], TS_REPO_SPAWN);
 
   // It seems that in some circumstances the build can produce incorrect artifacts. When
   // that happens, the final binary is very small. We try to detect that.
