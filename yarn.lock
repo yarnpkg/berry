@@ -18388,16 +18388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-ssh@npm:^1.3.0":
-  version: 1.3.1
-  resolution: "is-ssh@npm:1.3.1"
-  dependencies:
-    protocols: "npm:^1.1.0"
-  checksum: 323999f206800fe0ad444086c01a59c55e1517facf973715bff4757b197140292b726d5cb1b548dadc8c9436e1623785c381aaca116f615e6449d28af449c924
-  languageName: node
-  linkType: hard
-
-"is-ssh@npm:^1.4.0":
+"is-ssh@npm:^1.3.0, is-ssh@npm:^1.4.0":
   version: 1.4.0
   resolution: "is-ssh@npm:1.4.0"
   dependencies:
@@ -24383,7 +24374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protocols@npm:^1.1.0, protocols@npm:^1.4.0":
+"protocols@npm:^1.4.0":
   version: 1.4.7
   resolution: "protocols@npm:1.4.7"
   checksum: c73e9c31153e2d22c6917ffeb730361309b2fd8097f5439a321b274b937f931856a161114915de14ee6f62f7461dac71b6e32ac13eb722507bb7830798c8e575
