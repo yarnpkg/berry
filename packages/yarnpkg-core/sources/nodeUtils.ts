@@ -13,7 +13,7 @@ const openUrlBinary = new Map([
 export const openUrl = typeof openUrlBinary !== `undefined`
   ? async (url: string) => {
     try {
-      await execUtils.execvp(`open`, [url], {cwd: ppath.cwd()});
+      await execUtils.execvp(openUrlBinary, [url], {cwd: ppath.cwd()});
       return true;
     } catch {
       return false;
