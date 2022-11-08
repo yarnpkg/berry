@@ -404,3 +404,14 @@ Yarn failed to locate a package version that could satisfy the requested range. 
 - The registry may not have been set properly (so Yarn is querying the public npm registry instead of your internal one)
 
 - The version may have been unpublished (although this shouldn't be possible for the public registry)
+
+## YN0083 - `AUTOMERGE_LOCKFILE_VERSION_MISMATCH`
+
+Each lockfile in Yarn has a version, independent from Yarn's version itself. From time to time, and especially during major releases, we may find that new information need to be stored inside the lockfile. When that happens, we bump the lockfile version, and Yarn knows it needs to re-fetch the packages' metadata (while keeping versions the same).
+
+While Yarn tries to automerge lockfiles the best it can, in some cases the lockfile changes may be too severe to allow merging an "old" branch into a "new" one. Should that happen, Yarn will throw an error and ask you to fix the conflict yourself. In most cases it should be possible to fix the issue by running:
+
+```
+git checkout --theirs yarn.lock
+yarn install
+```

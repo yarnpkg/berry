@@ -374,20 +374,44 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
   }
 
-  const merged = {
-    ...parsedLeft,
-    ...parsedRight,
-  };
+  if (!parsedLeft.__metadata && !parsedRight.__metadata)
+    throw new Error(`Assertion failed: Neither lockfile variants seem compatible with Yarn Modern`);
 
-  // Old-style lockfiles should be filtered out (for example when switching
-  // from a Yarn 2 branch to a Yarn 1 branch). Fortunately (?), they actually
-  // parse as valid YAML except that the objects become strings. We can use
-  // that to detect them. Damn, it's really ugly though.
-  for (const [key, value] of Object.entries(merged))
-    if (typeof value === `string`)
-      delete merged[key];
+  let result: any = undefined;
 
-  await xfs.changeFilePromise(lockfilePath, stringifySyml(merged), {
+  if (!result && !parsedLeft.__metadata && parsedRight.__metadata)
+    result = parsedRight.__metadata;
+
+  if (!result && !parsedRight.__metadata && parsedLeft.__metadata)
+    result = parsedLeft.__metadata;
+
+  if (!result) {
+    const checkpoints = [0, 7];
+    const findCheckpoint = (version: number) => {
+      return checkpoints.find((checkpoint, index) => {
+        return checkpoints[index + 1] > version;
+      }) ?? version;
+    };
+
+    const leftCheckpoint = findCheckpoint(parsedLeft.__metadata.version);
+    const rightCheckpoint = findCheckpoint(parsedRight.__metadata.version);
+
+    if (leftCheckpoint !== rightCheckpoint)
+      throw new ReportError(MessageName.AUTOMERGE_LOCKFILE_VERSION_MISMATCH, `Cannot autofix a lockfile containing bits from incompatible lockfile versions`);
+
+    const merged = result = {
+      ...parsedLeft,
+      ...parsedRight,
+    };
+
+    merged.__metadata.version = Math.min(
+      parsedLeft.__metadata.version,
+      parsedRight.__metadata.version,
+    );
+  }
+
+
+  await xfs.changeFilePromise(lockfilePath, stringifySyml(result), {
     automaticNewlines: true,
   });
 
