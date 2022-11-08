@@ -94,10 +94,6 @@ export class ExecFetcher implements Fetcher {
       return await xfs.mktempPromise(async logDir => {
         const logFile = ppath.join(logDir, `buildfile.log` as Filename);
 
-        const stdin = null;
-        const stdout = xfs.createWriteStream(logFile);
-        const stderr = stdout;
-
         const tempDir = ppath.join(cwd, `generator` as PortablePath);
         const buildDir = ppath.join(cwd, `build` as PortablePath);
 
@@ -148,10 +144,13 @@ export class ExecFetcher implements Fetcher {
 
         env.NODE_OPTIONS = nodeOptions;
 
-        stdout.write(`# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`);
-        stdout.write(`\n`);
+        const {stdout, stderr} = opts.project.configuration.getSubprocessStreams(logFile, {
+          header: `# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`,
+          prefix: structUtils.prettyLocator(opts.project.configuration, locator),
+          report: opts.report,
+        });
 
-        const {code} = await execUtils.pipevp(process.execPath, [`--require`, npath.fromPortablePath(runtimeFile), npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin, stdout, stderr});
+        const {code} = await execUtils.pipevp(process.execPath, [`--require`, npath.fromPortablePath(runtimeFile), npath.fromPortablePath(generatorPath), structUtils.stringifyIdent(locator)], {cwd, env, stdin: null, stdout, stderr});
         if (code !== 0) {
           xfs.detachTemp(logDir);
           throw new Error(`Package generation failed (exit code ${code}, logs can be found here: ${formatUtils.pretty(opts.project.configuration, logFile, formatUtils.Type.PATH)})`);
