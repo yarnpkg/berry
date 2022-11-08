@@ -192,13 +192,10 @@ export function resolveRcFiles(rcFiles: Array<[string, unknown]>) {
   return resolveValueAt(rcFiles.map(([source, data]) => [source, {[`.`]: data}]), [], `.`, 0, rcFiles.length) as [string, Record<string, unknown>, symbol] | null;
 }
 
-export function getValue (value: unknown) {
-  if (isResolvedRcFile(value)) return value[1];
-
-  return value;
+export function getValue(value: unknown) {
+  return isResolvedRcFile(value) ? value[1] : value;
 }
-export function getSource (value: unknown) {
-  if (isResolvedRcFile(value)) return value[0];
 
-  return null;
+export function getSource(value: unknown) {
+  return isResolvedRcFile(value) ? value[0] : null;
 }
