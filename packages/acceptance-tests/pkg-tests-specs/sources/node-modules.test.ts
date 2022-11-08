@@ -1230,16 +1230,17 @@ describe(`Node_Modules`, () => {
       {
         workspaces: [`workspace-a`, `workspace-b`, `workspace-c`],
         dependencies: {
-          [`node-modules-path`]: `1.0.0`,
+          [`node-modules-path`]: `2.0.0`,
         },
         scripts: {
+          w: `yarn get-node-modules-path`,
           wa: `yarn ./workspace-a get-node-modules-path`,
           wb: `yarn ./workspace-b get-node-modules-path`,
-          wc: `yarn ./workspace-c get-node-modules-path`,
         },
       },
       {
         nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
       },
       async ({path, run}) => {
         await writeJson(`${path}/workspace-a/package.json`, {
@@ -1255,23 +1256,18 @@ describe(`Node_Modules`, () => {
             [`node-modules-path`]: `2.0.0`,
           },
         });
-        await writeJson(`${path}/workspace-c/package.json`, {
-          name: `workspace-c`,
-          dependencies: {
-            [`node-modules-path`]: `2.0.0`,
-          },
-        });
 
         await run(`install`);
 
         await expect(xfs.existsPromise(`${path}/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-b/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
-        await expect(xfs.existsPromise(`${path}/workspace-c/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
 
+        const rootBinLocation = (await run(`run`, `w`)).stdout.trim();
+        expect(rootBinLocation).not.toContain(`workspace-a`);
+        expect(rootBinLocation).not.toContain(`workspace-b`);
         expect((await run(`run`, `wb`)).stdout.trim()).toContain(`workspace-b`);
         expect((await run(`run`, `wa`)).stdout.trim()).toContain(`workspace-a`);
-        expect((await run(`run`, `wc`)).stdout.trim()).toContain(`workspace-c`);
       },
     ),
   );
