@@ -1,6 +1,25 @@
+import {ppath}        from '@yarnpkg/fslib';
 import Module         from 'module';
 
+import * as execUtils from './execUtils';
 import * as miscUtils from './miscUtils';
+
+const openUrlBinary = new Map([
+  [`darwin`, `open`],
+  [`linux`, `xdg-open`],
+  [`win32`, `explorer.exe`],
+]).get(process.platform);
+
+export const openUrl = typeof openUrlBinary !== `undefined`
+  ? async (url: string) => {
+    try {
+      await execUtils.execvp(openUrlBinary, [url], {cwd: ppath.cwd()});
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  : undefined;
 
 export function builtinModules(): Set<string> {
   // @ts-expect-error
