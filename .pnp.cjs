@@ -11905,7 +11905,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
-            ["git-url-parse", "npm:11.1.2"],\
+            ["git-url-parse", "npm:13.1.0"],\
             ["lodash", "npm:4.17.21"],\
             ["semver", "npm:7.3.5"],\
             ["tslib", "npm:1.13.0"]\
@@ -11926,7 +11926,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
             ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
-            ["git-url-parse", "npm:11.1.2"],\
+            ["git-url-parse", "npm:13.1.0"],\
             ["lodash", "npm:4.17.21"],\
             ["semver", "npm:7.3.5"],\
             ["tslib", "npm:1.13.0"]\
@@ -24545,6 +24545,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["parse-url", "npm:6.0.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:7.0.0", {\
+          "packageLocation": "./.yarn/cache/git-up-npm-7.0.0-5e37fa590f-2faadbab51.zip/node_modules/git-up/",\
+          "packageDependencies": [\
+            ["git-up", "npm:7.0.0"],\
+            ["is-ssh", "npm:1.4.0"],\
+            ["parse-url", "npm:8.1.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["git-url-parse", [\
@@ -24553,6 +24562,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["git-url-parse", "npm:11.1.2"],\
             ["git-up", "npm:4.0.5"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:13.1.0", {\
+          "packageLocation": "./.yarn/cache/git-url-parse-npm-13.1.0-724765d793-212a9b0343.zip/node_modules/git-url-parse/",\
+          "packageDependencies": [\
+            ["git-url-parse", "npm:13.1.0"],\
+            ["git-up", "npm:7.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -27082,6 +27099,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["is-ssh", "npm:1.3.1"],\
             ["protocols", "npm:1.4.7"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:1.4.0", {\
+          "packageLocation": "./.yarn/cache/is-ssh-npm-1.4.0-c6d7eec087-75eaa17b53.zip/node_modules/is-ssh/",\
+          "packageDependencies": [\
+            ["is-ssh", "npm:1.4.0"],\
+            ["protocols", "npm:2.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -31999,6 +32024,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["protocols", "npm:1.4.7"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:7.0.0", {\
+          "packageLocation": "./.yarn/cache/parse-path-npm-7.0.0-ceda41e594-244b46523a.zip/node_modules/parse-path/",\
+          "packageDependencies": [\
+            ["parse-path", "npm:7.0.0"],\
+            ["protocols", "npm:2.0.1"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["parse-png", [\
@@ -32039,6 +32072,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["normalize-url", "npm:6.1.0"],\
             ["parse-path", "npm:4.0.1"],\
             ["protocols", "npm:1.4.7"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:8.1.0", {\
+          "packageLocation": "./.yarn/cache/parse-url-npm-8.1.0-0995f15c34-b93e21ab4c.zip/node_modules/parse-url/",\
+          "packageDependencies": [\
+            ["parse-url", "npm:8.1.0"],\
+            ["parse-path", "npm:7.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -33804,6 +33845,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/protocols-npm-1.4.7-490c536d90-e4be48f930.zip/node_modules/protocols/",\
           "packageDependencies": [\
             ["protocols", "npm:1.4.7"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:2.0.1", {\
+          "packageLocation": "./.yarn/cache/protocols-npm-2.0.1-e2bc74d1c1-4a9bef6aa0.zip/node_modules/protocols/",\
+          "packageDependencies": [\
+            ["protocols", "npm:2.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
