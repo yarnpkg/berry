@@ -68,11 +68,8 @@ export class NodeModulesLinker implements Linker {
       throw err;
     }
 
-    const startingCwd = opts.project.configuration.startingCwd;
-    // Sort locations from shallowest to deepest in terms of directory nesting
-    const sortedLocations = locatorInfo.locations.sort((loc1, loc2) => loc1.split(ppath.sep).length - loc2.split(ppath.sep).length);
-    // Find the location with shallowest directory nesting that starts with cwd
-    return sortedLocations.find(location => ppath.contains(startingCwd, location)) || locatorInfo.locations[0];
+    const startingCwdModules = ppath.join(opts.project.configuration.startingCwd, NODE_MODULES);
+    return locatorInfo.locations.find(location => ppath.contains(startingCwdModules, location)) || locatorInfo.locations[0];
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
