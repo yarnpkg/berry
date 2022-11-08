@@ -284,6 +284,7 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
 
           if (openNow) {
             if (!await nodeUtils.openUrl(autoOpen[1])) {
+              report.reportSeparator();
               report.reportWarning(MessageName.UNNAMED, `We failed to automatically open the url; you'll have to open it yourself in your browser of choice.`);
             }
           }
