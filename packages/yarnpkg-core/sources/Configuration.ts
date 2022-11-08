@@ -33,6 +33,12 @@ const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
   : false;
 
 const IGNORED_ENV_VARIABLES = new Set([
+  // Used by our test environment
+  `isTestEnv`,
+  `injectNpmUser`,
+  `injectNpmPassword`,
+  `injectNpm2FaToken`,
+
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
   `binFolder`,
@@ -133,6 +139,11 @@ export type PluginConfiguration = {
   modules: Map<string, any>;
   plugins: Set<string>;
 };
+
+export enum WindowsLinkType {
+  JUNCTIONS = `junctions`,
+  SYMLINKS = `symlinks`,
+}
 
 // General rules:
 //

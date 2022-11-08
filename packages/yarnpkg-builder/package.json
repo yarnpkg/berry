@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.0.0-rc.26",
+  "version": "4.0.0-rc.27",
   "stableVersion": "3.2.5",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/monorepo": "workspace:^",
-    "typescript": "4.9.1-beta"
+    "typescript": "4.9.2-rc"
   },
   "scripts": {
     "postpack": "rm -rf lib",

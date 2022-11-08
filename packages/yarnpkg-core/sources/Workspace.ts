@@ -26,10 +26,10 @@ export class Workspace {
   // @ts-expect-error: This variable is set during the setup process
   public readonly locator: Locator;
 
-  // @ts-expect-error: This variable is set during the setup process
-  public readonly manifest: Manifest;
-
   public readonly workspacesCwds: Set<PortablePath> = new Set();
+
+  // @ts-expect-error: This variable is set during the setup process
+  public manifest: Manifest;
 
   constructor(workspaceCwd: PortablePath, {project}: {project: Project}) {
     this.project = project;
@@ -37,7 +37,6 @@ export class Workspace {
   }
 
   async setup() {
-    // @ts-expect-error: It's ok to initialize it now
     this.manifest = await Manifest.tryFind(this.cwd) ?? new Manifest();
 
     // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path

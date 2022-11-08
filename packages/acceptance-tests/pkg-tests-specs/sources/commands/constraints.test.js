@@ -4,50 +4,119 @@ const {
 
 const {environments} = require(`./constraints/environments`);
 
+const scriptNames = {
+  prolog: `constraints.pro`,
+  js: `yarn.config.js`,
+};
+
 const constraints = {
-  [`empty constraints`]: ``,
-  [`gen_enforced_dependency (missing)`]: `gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).`,
-  [`gen_enforced_dependency (incompatible)`]: `gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).`,
-  [`gen_enforced_dependency (extraneous)`]: `gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).`,
-  [`gen_enforced_dependency (extraneous2)`]:
-    `
-    gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _) :-
-      WorkspaceCwd \\= '.'.
-    gen_enforced_dependency(WorkspaceCwd, 'no-deps', '1.0.0', DependencyType) :-
-      workspace_has_dependency(WorkspaceCwd, 'no-deps', '1.0.0', DependencyType).
+  [`empty constraints`]: {
+    prolog: ``,
+    js: ``,
+  },
+  [`gen_enforced_dependency (missing)`]: {
+    prolog: `gen_enforced_dependency(WorkspaceCwd, 'one-fixed-dep', '1.0.0', peerDependencies).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set(['peerDependencies', 'one-fixed-dep'], '1.0.0'); };`,
+  },
+  [`gen_enforced_dependency (incompatible)`]: {
+    prolog: `gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set(['dependencies', 'no-deps'], '2.0.0'); };`,
+  },
+  [`gen_enforced_dependency (extraneous)`]: {
+    prolog: `gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set(['dependencies', 'no-deps'], undefined); };`,
+  },
+  [`gen_enforced_dependency (extraneous2)`]: {
+    prolog: `
+      gen_enforced_dependency(WorkspaceCwd, 'no-deps', null, _) :-
+        WorkspaceCwd \\= '.'.
+      gen_enforced_dependency(WorkspaceCwd, 'no-deps', '1.0.0', DependencyType) :-
+        workspace_has_dependency(WorkspaceCwd, 'no-deps', '1.0.0', DependencyType).
     `,
-  [`gen_enforced_dependency (ambiguous)`]: `gen_enforced_dependency(WorkspaceCwd, 'no-deps', '1.0.0', dependencies). gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).`,
-  [`gen_enforced_field (missing)`]: `gen_enforced_field(WorkspaceCwd, 'dependencies["a-new-dep"]', '1.0.0').`,
-  [`gen_enforced_field (incompatible)`]: `gen_enforced_field(WorkspaceCwd, 'dependencies["no-deps"]', '2.0.0').`,
-  [`gen_enforced_field (extraneous)`]: `gen_enforced_field(WorkspaceCwd, 'dependencies', null).`,
-  [`gen_enforced_field (ambiguous)`]: `gen_enforced_field(WorkspaceCwd, 'dependencies["a-new-dep"]', '1.0.0'). gen_enforced_field(WorkspaceCwd, 'dependencies["a-new-dep"]', '2.0.0').`,
-  [`workspace_field w/ string FieldValue`]: `gen_enforced_field(WorkspaceCwd, '_name', FieldValue) :- workspace_field(WorkspaceCwd, 'name', FieldValue).`,
-  [`workspace_field w/ object FieldValue`]: `gen_enforced_field(WorkspaceCwd, '_repository', FieldValue) :- workspace_field(WorkspaceCwd, 'repository', FieldValue).`,
-  [`workspace_field w/ array FieldValue`]: `gen_enforced_field(WorkspaceCwd, '_files', FieldValue) :- workspace_field(WorkspaceCwd, 'files', FieldValue).`,
+    js: `
+      exports.constraints = ({Yarn}) => {
+        for (const d of Yarn.dependencies({ident: 'no-deps'})) d.delete();
+        for (const d of Yarn.dependencies({ident: 'no-deps', range: '1.0.0'})) d.update('1.0.0');
+      };
+    `,
+  },
+  [`gen_enforced_dependency (ambiguous)`]: {
+    prolog: `
+      gen_enforced_dependency(WorkspaceCwd, 'no-deps', '1.0.0', dependencies).
+      gen_enforced_dependency(WorkspaceCwd, 'no-deps', '2.0.0', dependencies).
+    `,
+    js: `
+      exports.constraints = ({Yarn}) => {
+        for (const w of Yarn.workspaces()) w.set(['dependencies', 'no-deps'], '1.0.0');
+        for (const w of Yarn.workspaces()) w.set(['dependencies', 'no-deps'], '2.0.0');
+      };
+    `,
+  },
+  [`gen_enforced_field (missing)`]: {
+    prolog: `gen_enforced_field(WorkspaceCwd, 'dependencies["a-new-dep"]', '1.0.0').`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set(['dependencies', 'a-new-deps'], '1.0.0'); };`,
+  },
+  [`gen_enforced_field (incompatible)`]: {
+    prolog: `gen_enforced_field(WorkspaceCwd, 'dependencies["no-deps"]', '2.0.0').`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set(['dependencies', 'no-deps'], '2.0.0'); };`,
+  },
+  [`gen_enforced_field (extraneous)`]: {
+    prolog: `gen_enforced_field(WorkspaceCwd, 'dependencies', null).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.unset(['dependencies']); };`,
+  },
+  [`gen_enforced_field (ambiguous)`]: {
+    prolog: `
+      gen_enforced_field(WorkspaceCwd, 'dependencies["a-new-dep"]', '1.0.0').
+      gen_enforced_field(WorkspaceCwd, 'dependencies["a-new-dep"]', '2.0.0').
+    `,
+    js: `
+      exports.constraints = ({Yarn}) => {
+        for (const w of Yarn.workspaces()) w.set(['dependencies', 'a-new-dep'], '1.0.0');
+        for (const w of Yarn.workspaces()) w.set(['dependencies', 'a-new-dep'], '2.0.0');
+      };
+    `,
+  },
+  [`workspace_field w/ string FieldValue`]: {
+    prolog: `gen_enforced_field(WorkspaceCwd, '_name', FieldValue) :- workspace_field(WorkspaceCwd, 'name', FieldValue).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set('_name', w.manifest.name); };`,
+  },
+  [`workspace_field w/ object FieldValue`]: {
+    prolog: `gen_enforced_field(WorkspaceCwd, '_repository', FieldValue) :- workspace_field(WorkspaceCwd, 'repository', FieldValue).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set('_repository', w.manifest.repository); };`,
+  },
+  [`workspace_field w/ array FieldValue`]: {
+    prolog: `gen_enforced_field(WorkspaceCwd, '_files', FieldValue) :- workspace_field(WorkspaceCwd, 'files', FieldValue).`,
+    js: `exports.constraints = ({Yarn}) => { for (const w of Yarn.workspaces()) w.set('_files', w.manifest.files); };`,
+  },
 };
 
 describe(`Commands`, () => {
   describe(`constraints`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
-      for (const [scriptDescription, script] of Object.entries(constraints)) {
-        test(`test (${environmentDescription} / ${scriptDescription})`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
-            await environment(path);
-            await writeFile(`${path}/constraints.pro`, script);
+      for (const [scriptDescription, scripts] of Object.entries(constraints)) {
+        for (const [scriptType, script] of Object.entries(scripts)) {
+          test(`test (${environmentDescription} / ${scriptDescription} / ${scriptType})`,
+            makeTemporaryEnv({}, async ({path, run, source}) => {
+              await environment(path);
+              await writeFile(`${path}/${scriptNames[scriptType]}`, script);
 
-            let code;
-            let stdout;
-            let stderr;
+              let code;
+              let stdout;
+              let stderr;
 
-            try {
-              ({code, stdout, stderr} = await run(`constraints`));
-            } catch (error) {
-              ({code, stdout, stderr} = error);
-            }
+              try {
+                ({code, stdout, stderr} = await run(`constraints`));
+              } catch (error) {
+                ({code, stdout, stderr} = error);
+              }
 
-            expect({code, stdout, stderr}).toMatchSnapshot();
-          }),
-        );
+              stdout = stdout.replace(/[^( ]+[\\/](yarn\.config)/g, `/path/to/$1`);
+              stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
+
+              expect({code, stdout, stderr}).toMatchSnapshot();
+            }),
+          );
+        }
       }
     }
   });
