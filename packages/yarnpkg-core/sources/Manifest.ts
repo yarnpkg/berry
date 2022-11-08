@@ -820,7 +820,6 @@ export class Manifest {
       delete data.browser;
     }
 
-
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;
     } else if (this.bin.size > 0) {
