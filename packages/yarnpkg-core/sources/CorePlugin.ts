@@ -11,9 +11,12 @@ export const CorePlugin: Plugin = {
     reduceDependency: (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
         if (pattern.from) {
+          if (pattern.from.fullName !== structUtils.stringifyIdent(locator))
+            continue;
+
           const normalizedFrom = project.configuration.normalizeLocator(
             structUtils.makeLocator(
-              structUtils.parseLocator(pattern.from.fullName),
+              structUtils.parseIdent(pattern.from.fullName),
               pattern.from.description ?? locator.reference,
             ),
           );
@@ -23,11 +26,14 @@ export const CorePlugin: Plugin = {
           }
         }
 
-        /* The `resolutions` entries always have an attached descriptor */ {
+        /* All `resolutions` field entries have a descriptor*/ {
+          if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
+            continue;
+
           const normalizedDescriptor = project.configuration.normalizeDependency(
             structUtils.makeDescriptor(
               structUtils.parseLocator(pattern.descriptor.fullName),
-              pattern.descriptor.description ?? locator.reference,
+              pattern.descriptor.description ?? dependency.range,
             ),
           );
 
