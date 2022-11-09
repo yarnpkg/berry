@@ -1,32 +1,32 @@
-import {Filename, PortablePath, npath, ppath, xfs}                                                      from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/libzip';
-import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
-import camelcase                                                                                        from 'camelcase';
-import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
-import {UsageError}                                                                                     from 'clipanion';
-import pLimit, {Limit}                                                                                  from 'p-limit';
-import {PassThrough, Writable}                                                                          from 'stream';
+import {Filename, PortablePath, npath, ppath, xfs}                                                               from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                                                               from '@yarnpkg/libzip';
+import {parseSyml, stringifySyml}                                                                                from '@yarnpkg/parsers';
+import camelcase                                                                                                 from 'camelcase';
+import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
+import {UsageError}                                                                                              from 'clipanion';
+import pLimit, {Limit}                                                                                           from 'p-limit';
+import {PassThrough, Writable}                                                                                   from 'stream';
 
-import {CorePlugin}                                                                                     from './CorePlugin';
-import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
-import {MultiFetcher}                                                                                   from './MultiFetcher';
-import {MultiResolver}                                                                                  from './MultiResolver';
-import {Plugin, Hooks, PluginMeta}                                                                      from './Plugin';
-import {Report}                                                                                         from './Report';
-import {TelemetryManager}                                                                               from './TelemetryManager';
-import {VirtualFetcher}                                                                                 from './VirtualFetcher';
-import {VirtualResolver}                                                                                from './VirtualResolver';
-import {WorkspaceFetcher}                                                                               from './WorkspaceFetcher';
-import {WorkspaceResolver}                                                                              from './WorkspaceResolver';
-import * as folderUtils                                                                                 from './folderUtils';
-import * as formatUtils                                                                                 from './formatUtils';
-import * as hashUtils                                                                                   from './hashUtils';
-import * as httpUtils                                                                                   from './httpUtils';
-import * as miscUtils                                                                                   from './miscUtils';
-import * as nodeUtils                                                                                   from './nodeUtils';
-import * as semverUtils                                                                                 from './semverUtils';
-import * as structUtils                                                                                 from './structUtils';
-import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus} from './types';
+import {CorePlugin}                                                                                              from './CorePlugin';
+import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
+import {MultiFetcher}                                                                                            from './MultiFetcher';
+import {MultiResolver}                                                                                           from './MultiResolver';
+import {Plugin, Hooks, PluginMeta}                                                                               from './Plugin';
+import {Report}                                                                                                  from './Report';
+import {TelemetryManager}                                                                                        from './TelemetryManager';
+import {VirtualFetcher}                                                                                          from './VirtualFetcher';
+import {VirtualResolver}                                                                                         from './VirtualResolver';
+import {WorkspaceFetcher}                                                                                        from './WorkspaceFetcher';
+import {WorkspaceResolver}                                                                                       from './WorkspaceResolver';
+import * as folderUtils                                                                                          from './folderUtils';
+import * as formatUtils                                                                                          from './formatUtils';
+import * as hashUtils                                                                                            from './hashUtils';
+import * as httpUtils                                                                                            from './httpUtils';
+import * as miscUtils                                                                                            from './miscUtils';
+import * as nodeUtils                                                                                            from './nodeUtils';
+import * as semverUtils                                                                                          from './semverUtils';
+import * as structUtils                                                                                          from './structUtils';
+import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
 
 const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
   ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
@@ -1672,6 +1672,18 @@ export class Configuration {
     }
   }
 
+  normalizeLocator(locator: Locator) {
+    if (semverUtils.validRange(locator.reference))
+      return structUtils.makeLocator(locator, `${this.get(`defaultProtocol`)}${locator.reference}`);
+
+    if (TAG_REGEXP.test(locator.reference))
+      return structUtils.makeLocator(locator, `${this.get(`defaultProtocol`)}${locator.reference}`);
+
+    return locator;
+  }
+
+  // TODO: Rename into `normalizeLocator`?
+  // TODO: Move into `structUtils`, and remove references to `defaultProtocol` (we can make it a constant, same as the lockfile name)
   normalizeDependency(dependency: Descriptor) {
     if (semverUtils.validRange(dependency.range))
       return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);

@@ -10,15 +10,31 @@ export const CorePlugin: Plugin = {
   hooks: {
     reduceDependency: (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
-        if (pattern.from && pattern.from.fullName !== structUtils.stringifyIdent(locator))
-          continue;
-        if (pattern.from && pattern.from.description && pattern.from.description !== locator.reference)
-          continue;
+        if (pattern.from) {
+          const normalizedFrom = project.configuration.normalizeLocator(
+            structUtils.makeLocator(
+              structUtils.parseLocator(pattern.from.fullName),
+              pattern.from.description ?? locator.reference,
+            ),
+          );
 
-        if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
-          continue;
-        if (pattern.descriptor.description && pattern.descriptor.description !== dependency.range)
-          continue;
+          if (normalizedFrom.locatorHash !== locator.locatorHash) {
+            continue;
+          }
+        }
+
+        /* The `resolutions` entries always have an attached descriptor */ {
+          const normalizedDescriptor = project.configuration.normalizeDependency(
+            structUtils.makeDescriptor(
+              structUtils.parseLocator(pattern.descriptor.fullName),
+              pattern.descriptor.description ?? locator.reference,
+            ),
+          );
+
+          if (normalizedDescriptor.descriptorHash !== dependency.descriptorHash) {
+            continue;
+          }
+        }
 
         const alias = resolver.bindDescriptor(
           project.configuration.normalizeDependency(structUtils.makeDescriptor(dependency, reference)),
