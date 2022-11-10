@@ -107,7 +107,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, ignoreCorepack?: boolean, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -121,7 +121,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   // Otherwise we'd override the Corepack binaries, and thus break the detection
   // of the `packageManager` field when running Yarn in other directories.
-  const yarnBin = process.env.COREPACK_ROOT
+  const yarnBin = process.env.COREPACK_ROOT && !ignoreCorepack
     ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
     : process.argv[1];
 
@@ -245,8 +245,13 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         effectivePackageManager = PackageManager.Yarn2;
       }
 
+      // If we're inside Corepack and there isn't a packageManager field,
+      // we must use ourselves to run the `pack` command. If we don't, Corepack
+      // will default to the global Yarn version, which is supposed to be 1.x.
+      const ignoreCorepack = !packageManagerSelection?.packageManagerField;
+
       await xfs.mktempPromise(async binFolder => {
-        const env = await makeScriptEnv({binFolder});
+        const env = await makeScriptEnv({binFolder, ignoreCorepack});
 
         const workflows = new Map([
           [PackageManager.Yarn1, async () => {
@@ -309,18 +314,11 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             if (!(await xfs.existsPromise(lockfilePath)))
               await xfs.writeFilePromise(lockfilePath, ``);
 
-            // If we're inside Corepack and there isn't a packageManager field,
-            // we must use ourselves to run the `pack` command otherwise Corepack
-            // will default to the global Yarn version, which is supposed to be 1.x
-            const yarnBinary: [string, Array<string>] = env.COREPACK_ROOT && !packageManagerSelection?.packageManagerField
-              ? [process.execPath, [process.argv[1]]]
-              : [`yarn`, []];
-
             // Yarn 2 supports doing the install and the pack in a single command,
             // so we leverage that. We also don't need the "set version" call since
             // we're already operating within a Yarn 2 context (plus people should
             // really check-in their Yarn versions anyway).
-            const pack = await execUtils.pipevp(yarnBinary[0], [...yarnBinary[1], ...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
             if (pack.code !== 0)
               return pack.code;
 
