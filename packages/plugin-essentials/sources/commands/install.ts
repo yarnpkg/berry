@@ -416,7 +416,7 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     return variant.__metadata.version ?? Infinity;
   }));
 
-  merged.__metadata.cacheKey = Math.max(0, ...variants.map(variant => {
+  merged.__metadata.cacheKey = Math.min(0, ...variants.map(variant => {
     return variant.__metadata.cacheKey ?? 0;
   }));
 
