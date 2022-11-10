@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                                             from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode} from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                                                            from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                        from '@yarnpkg/parsers';
-import CI                                                                                                from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                              from 'clipanion';
-import * as t                                                                                            from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils} from '@yarnpkg/core';
+import {xfs, ppath, Filename}                                                                                                    from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                from '@yarnpkg/parsers';
+import CI                                                                                                                        from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                      from 'clipanion';
+import * as t                                                                                                                    from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -343,9 +343,6 @@ export default class YarnCommand extends BaseCommand {
   }
 }
 
-const MERGE_CONFLICT_ANCESTOR = `|||||||`;
-const MERGE_CONFLICT_END = `>>>>>>>`;
-const MERGE_CONFLICT_SEP = `=======`;
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
 async function autofixMergeConflicts(configuration: Configuration, immutable: boolean) {
@@ -363,24 +360,63 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (immutable)
     throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
 
-  const [left, right] = getVariants(file);
+  const commits = await execUtils.execvp(`git`, [`rev-parse`, `MERGE_HEAD`, `HEAD`], {
+    cwd: configuration.projectCwd,
+  });
 
-  let parsedLeft;
-  let parsedRight;
-  try {
-    parsedLeft = parseSyml(left);
-    parsedRight = parseSyml(right);
-  } catch (error) {
-    throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `The individual variants of the lockfile failed to parse`);
-  }
+  if (commits.code !== 0)
+    throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to find the commits pertaining to the merge conflict`);
 
-  const merged = {
-    ...parsedLeft,
-    ...parsedRight,
-  };
+  let variants = await Promise.all(commits.stdout.trim().split(/\n/).map(async hash => {
+    const content = await execUtils.execvp(`git`, [`show`, `${hash}:./${Filename.lockfile}`], {
+      cwd: configuration.projectCwd!,
+    });
+
+    if (content.code !== 0)
+      throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to access the lockfile content in ${hash}`);
+
+    try {
+      return parseSyml(content.stdout);
+    } catch {
+      throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `A variant of the conflicting lockfile failed to parse`);
+    }
+  }));
 
   // Old-style lockfiles should be filtered out (for example when switching
-  // from a Yarn 2 branch to a Yarn 1 branch). Fortunately (?), they actually
+  // from a Yarn 2 branch to a Yarn 1 branch).
+  variants = variants.filter(variant => {
+    return !!variant.__metadata;
+  });
+
+  for (const variant of variants) {
+    // Pre-lockfile v7, the entries weren't normalized (ie we had "foo@x.y.z"
+    // in the lockfile rather than "foo@npm:x.y.z")
+    if (variant.__metadata.version < 7) {
+      for (const key of Object.keys(variant)) {
+        const descriptor = structUtils.parseDescriptor(key, true);
+        const normalizedDescriptor = configuration.normalizeDependency(descriptor);
+        const newKey = structUtils.stringifyDescriptor(normalizedDescriptor);
+
+        if (newKey !== key) {
+          variant[newKey] = variant[key];
+          delete variant[key];
+        }
+      }
+    }
+  }
+
+  const merged = Object.assign({}, ...variants);
+
+  // We must keep the lockfile version as small as necessary to force Yarn to
+  // refresh the merged-in lockfile metadata that may be missing.
+  merged.__metadata.version = Math.min(0, ...variants.map(variant => {
+    return variant.__metadata.version ?? Infinity;
+  }));
+
+  merged.__metadata.cacheKey = Math.max(0, ...variants.map(variant => {
+    return variant.__metadata.cacheKey ?? 0;
+  }));
+
   // parse as valid YAML except that the objects become strings. We can use
   // that to detect them. Damn, it's really ugly though.
   for (const [key, value] of Object.entries(merged))
@@ -392,57 +428,4 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   });
 
   return true;
-}
-
-function getVariants(file: string) {
-  const variants: [Array<string>, Array<string>] = [[], []];
-  const lines = file.split(/\r?\n/g);
-
-  let skip = false;
-
-  while (lines.length > 0) {
-    const line = lines.shift();
-    if (typeof line === `undefined`)
-      throw new Error(`Assertion failed: Some lines should remain`);
-
-    if (line.startsWith(MERGE_CONFLICT_START)) {
-      // get the first variant
-      while (lines.length > 0) {
-        const conflictLine = lines.shift();
-        if (typeof conflictLine === `undefined`)
-          throw new Error(`Assertion failed: Some lines should remain`);
-
-        if (conflictLine === MERGE_CONFLICT_SEP) {
-          skip = false;
-          break;
-        } else if (skip || conflictLine.startsWith(MERGE_CONFLICT_ANCESTOR)) {
-          skip = true;
-          continue;
-        } else {
-          variants[0].push(conflictLine);
-        }
-      }
-
-      // get the second variant
-      while (lines.length > 0) {
-        const conflictLine = lines.shift();
-        if (typeof conflictLine === `undefined`)
-          throw new Error(`Assertion failed: Some lines should remain`);
-
-        if (conflictLine.startsWith(MERGE_CONFLICT_END)) {
-          break;
-        } else {
-          variants[1].push(conflictLine);
-        }
-      }
-    } else {
-      variants[0].push(line);
-      variants[1].push(line);
-    }
-  }
-
-  return [
-    variants[0].join(`\n`),
-    variants[1].join(`\n`),
-  ];
 }
