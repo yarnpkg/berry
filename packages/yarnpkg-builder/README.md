@@ -17,8 +17,8 @@ A CLI tool designed for creating, building, and managing complex plugins.
 
 ## Commands
 
-- [`builder build plugin`](https://yarnpkg.com/builder/cli/build/plugin) - Build a local plugin.
-
 - [`builder new plugin`](https://yarnpkg.com/builder/cli/new/plugin) - Create a new plugin.
+
+- [`builder build plugin`](https://yarnpkg.com/builder/cli/build/plugin) - Build a local plugin.
 
 - [`builder build bundle`](https://yarnpkg.com/builder/cli/build/bundle) - Build a yarn.js bundle from our repository **(internal)**.
