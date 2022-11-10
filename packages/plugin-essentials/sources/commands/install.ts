@@ -393,6 +393,9 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     // in the lockfile rather than "foo@npm:x.y.z")
     if (variant.__metadata.version < 7) {
       for (const key of Object.keys(variant)) {
+        if (key === `__metadata`)
+          continue;
+
         const descriptor = structUtils.parseDescriptor(key, true);
         const normalizedDescriptor = configuration.normalizeDependency(descriptor);
         const newKey = structUtils.stringifyDescriptor(normalizedDescriptor);
