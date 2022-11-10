@@ -97,6 +97,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     return false;
   }
 
+  const entries: Array<[PortablePath, tar.ReadEntry, Buffer | null]> = [];
   for await (const entry of parseTar(tgz)) {
     if (ignore(entry))
       continue;
@@ -106,8 +107,19 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       continue;
 
     const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
-    const mappedPath = ppath.join(prefixPath, slicePath);
 
+    let mappedPath = ppath.join(prefixPath, slicePath);
+    if (entry.type === `Directory`)
+      mappedPath = mappedPath.replace(/\/$/, `/`) as PortablePath;
+
+    const buffer = entry.type === `File` || entry.type === `OldFile`
+      ? await miscUtils.bufferStream(entry as unknown as Readable)
+      : null;
+
+    entries.push([mappedPath, entry, buffer]);
+  }
+
+  for (const [mappedPath, entry, buffer] of miscUtils.sortMap(entries, ([path]) => path)) {
     let mode = 0o644;
 
     // If a single executable bit is set, normalize so that all are
@@ -126,7 +138,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
       case `File`: {
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
 
-        targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable), {mode});
+        targetFs.writeFileSync(mappedPath, buffer!, {mode});
         targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
       } break;
 

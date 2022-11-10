@@ -12,7 +12,7 @@ import * as miscUtils                                            from './miscUti
 import * as structUtils                                          from './structUtils';
 import {LocatorHash, Locator}                                    from './types';
 
-const CACHE_VERSION = 9;
+const CACHE_VERSION = 10;
 
 export type CacheOptions = {
   mockedPackages?: Set<LocatorHash>;
