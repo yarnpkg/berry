@@ -32,6 +32,7 @@ export enum PackageManager {
 }
 
 interface PackageManagerSelection {
+  packageManagerField?: boolean;
   packageManager: PackageManager;
   reason: string;
 }
@@ -64,15 +65,15 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
       switch (locator.name) {
         case `yarn`: {
           const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
-          return {packageManager, reason};
+          return {packageManagerField: true, packageManager, reason};
         } break;
 
         case `npm`: {
-          return {packageManager: PackageManager.Npm, reason};
+          return {packageManagerField: true, packageManager: PackageManager.Npm, reason};
         } break;
 
         case `pnpm`: {
-          return {packageManager: PackageManager.Pnpm, reason};
+          return {packageManagerField: true, packageManager: PackageManager.Pnpm, reason};
         } break;
       }
     }
@@ -85,7 +86,10 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (yarnLock !== undefined) {
     if (yarnLock.match(/^__metadata:$/m)) {
-      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
+      return {
+        packageManager: PackageManager.Yarn2,
+        reason: `"__metadata" key found in yarn.lock`,
+      };
     } else {
       return {
         packageManager: PackageManager.Yarn1,
@@ -305,11 +309,18 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             if (!(await xfs.existsPromise(lockfilePath)))
               await xfs.writeFilePromise(lockfilePath, ``);
 
+            // If we're inside Corepack and there isn't a packageManager field,
+            // we must use ourselves to run the `pack` command otherwise Corepack
+            // will default to the global Yarn version, which is supposed to be 1.x
+            const yarnBinary: [string, Array<string>] = env.COREPACK_ROOT && !packageManagerSelection?.packageManagerField
+              ? [process.execPath, [process.argv[1]]]
+              : [`yarn`, []];
+
             // Yarn 2 supports doing the install and the pack in a single command,
             // so we leverage that. We also don't need the "set version" call since
             // we're already operating within a Yarn 2 context (plus people should
             // really check-in their Yarn versions anyway).
-            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            const pack = await execUtils.pipevp(yarnBinary[0], [...yarnBinary[1], ...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
             if (pack.code !== 0)
               return pack.code;
 
