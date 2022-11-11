@@ -32,6 +32,7 @@ export enum PackageManager {
 }
 
 interface PackageManagerSelection {
+  packageManagerField?: boolean;
   packageManager: PackageManager;
   reason: string;
 }
@@ -64,15 +65,15 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
       switch (locator.name) {
         case `yarn`: {
           const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
-          return {packageManager, reason};
+          return {packageManagerField: true, packageManager, reason};
         } break;
 
         case `npm`: {
-          return {packageManager: PackageManager.Npm, reason};
+          return {packageManagerField: true, packageManager: PackageManager.Npm, reason};
         } break;
 
         case `pnpm`: {
-          return {packageManager: PackageManager.Pnpm, reason};
+          return {packageManagerField: true, packageManager: PackageManager.Pnpm, reason};
         } break;
       }
     }
@@ -85,7 +86,10 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (yarnLock !== undefined) {
     if (yarnLock.match(/^__metadata:$/m)) {
-      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
+      return {
+        packageManager: PackageManager.Yarn2,
+        reason: `"__metadata" key found in yarn.lock`,
+      };
     } else {
       return {
         packageManager: PackageManager.Yarn1,
@@ -103,7 +107,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, ignoreCorepack?: boolean, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -117,7 +121,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   // Otherwise we'd override the Corepack binaries, and thus break the detection
   // of the `packageManager` field when running Yarn in other directories.
-  const yarnBin = process.env.COREPACK_ROOT
+  const yarnBin = process.env.COREPACK_ROOT && !ignoreCorepack
     ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
     : process.argv[1];
 
@@ -241,8 +245,16 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         effectivePackageManager = PackageManager.Yarn2;
       }
 
+      // If we're inside Corepack, there isn't a packageManager field, and we
+      // want to run Yarn 2, then we must use ourselves to run the `pack` command.
+      // If we don't, Corepack will default to the global Yarn version, which
+      // is supposed to be 1.x.
+      const ignoreCorepack =
+        effectivePackageManager === PackageManager.Yarn2 &&
+        !packageManagerSelection?.packageManagerField;
+
       await xfs.mktempPromise(async binFolder => {
-        const env = await makeScriptEnv({binFolder});
+        const env = await makeScriptEnv({binFolder, ignoreCorepack});
 
         const workflows = new Map([
           [PackageManager.Yarn1, async () => {
