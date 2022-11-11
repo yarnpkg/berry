@@ -112,10 +112,12 @@ describe(`Commands`, () => {
         await run(`set`, `version`, `self`);
 
         const before = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
-        await run(`set`, `version`, `3.0.0`, `--only-if-needed`);
-        const after = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
+        expect(before).not.toEqual(`.yarn/releases/yarn-3.0.0.cjs`);
 
-        expect(before).toEqual(after);
+        await run(`set`, `version`, `3.0.0`, `--only-if-needed`);
+
+        const after = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
+        expect(after).toEqual(before);
       }),
     );
 
