@@ -51354,7 +51354,8 @@ function areStatsEqual(a, b) {
 
 const PortablePath = {
   root: `/`,
-  dot: `.`
+  dot: `.`,
+  parent: `..`
 };
 const Filename = {
   home: `~`,
@@ -52849,7 +52850,7 @@ class NodeFS extends BasePortableFakeFS {
 
 const MOUNT_MASK = 4278190080;
 class MountFS extends BasePortableFakeFS {
-  constructor({ baseFs = new NodeFS(), filter = null, magicByte = 42, maxOpenFiles = Infinity, useCache = true, maxAge = 5e3, getMountPoint, factoryPromise, factorySync }) {
+  constructor({ baseFs = new NodeFS(), filter = null, magicByte = 42, maxOpenFiles = Infinity, useCache = true, maxAge = 5e3, typeCheck = fs.constants.S_IFREG, getMountPoint, factoryPromise, factorySync }) {
     if (Math.floor(magicByte) !== magicByte || !(magicByte > 1 && magicByte <= 127))
       throw new Error(`The magic byte must be set to a round value between 1 and 127 included`);
     super();
@@ -52868,6 +52869,7 @@ class MountFS extends BasePortableFakeFS {
     this.magic = magicByte << 24;
     this.maxAge = maxAge;
     this.maxOpenFiles = maxOpenFiles;
+    this.typeCheck = typeCheck;
   }
   getExtractHint(hints) {
     return this.baseFs.getExtractHint(hints);
@@ -53566,7 +53568,7 @@ class MountFS extends BasePortableFakeFS {
         if (this.notMount.has(filePath))
           continue;
         try {
-          if (!this.baseFs.lstatSync(filePath).isFile()) {
+          if (this.typeCheck !== null && (this.baseFs.lstatSync(filePath).mode & fs.constants.S_IFMT) !== this.typeCheck) {
             this.notMount.add(filePath);
             continue;
           }
