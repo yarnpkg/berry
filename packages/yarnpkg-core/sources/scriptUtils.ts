@@ -245,10 +245,13 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         effectivePackageManager = PackageManager.Yarn2;
       }
 
-      // If we're inside Corepack and there isn't a packageManager field,
-      // we must use ourselves to run the `pack` command. If we don't, Corepack
-      // will default to the global Yarn version, which is supposed to be 1.x.
-      const ignoreCorepack = !packageManagerSelection?.packageManagerField;
+      // If we're inside Corepack, there isn't a packageManager field, and we
+      // want to run Yarn 2, then we must use ourselves to run the `pack` command.
+      // If we don't, Corepack will default to the global Yarn version, which
+      // is supposed to be 1.x.
+      const ignoreCorepack =
+        effectivePackageManager === PackageManager.Yarn2 &&
+        !packageManagerSelection?.packageManagerField;
 
       await xfs.mktempPromise(async binFolder => {
         const env = await makeScriptEnv({binFolder, ignoreCorepack});

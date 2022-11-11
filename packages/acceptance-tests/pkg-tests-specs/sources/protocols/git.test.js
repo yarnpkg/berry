@@ -246,6 +246,25 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it should not use Corepack to install repositories that are installed via Yarn 2+`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-lockfile-project`]: startPackageServer().then(url => `${url}/repositories/no-lockfile-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, {
+            env: {
+              COREPACK_ROOT: npath.join(npath.fromPortablePath(path), `404`),
+              YARN_ENABLE_INLINE_BUILDS: `true`,
+            },
+          })).resolves.toBeDefined();
+        },
+      ),
+    );
+
+    test(
       `it should not add a 'packageManager' field to a Yarn classic project`,
       makeTemporaryEnv(
         {
