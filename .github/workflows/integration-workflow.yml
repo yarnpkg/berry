@@ -23,10 +23,9 @@ jobs:
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
-    - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18.x
 
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
@@ -151,10 +150,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18.x
 
     - name: 'Build bundle & plugins'
       run: |
