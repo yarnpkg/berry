@@ -1,33 +1,33 @@
-import {Filename, PortablePath, npath, ppath, xfs}                                                      from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                                                      from '@yarnpkg/libzip';
-import {parseSyml, stringifySyml}                                                                       from '@yarnpkg/parsers';
-import camelcase                                                                                        from 'camelcase';
-import {isCI, isPR, GITHUB_ACTIONS}                                                                     from 'ci-info';
-import {UsageError}                                                                                     from 'clipanion';
-import pLimit, {Limit}                                                                                  from 'p-limit';
-import {PassThrough, Writable}                                                                          from 'stream';
+import {Filename, PortablePath, npath, ppath, xfs}                                                               from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL}                                                                               from '@yarnpkg/libzip';
+import {parseSyml, stringifySyml}                                                                                from '@yarnpkg/parsers';
+import camelcase                                                                                                 from 'camelcase';
+import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
+import {UsageError}                                                                                              from 'clipanion';
+import pLimit, {Limit}                                                                                           from 'p-limit';
+import {PassThrough, Writable}                                                                                   from 'stream';
 
-import {CorePlugin}                                                                                     from './CorePlugin';
-import {Manifest, PeerDependencyMeta}                                                                   from './Manifest';
-import {MultiFetcher}                                                                                   from './MultiFetcher';
-import {MultiResolver}                                                                                  from './MultiResolver';
-import {Plugin, Hooks, PluginMeta}                                                                      from './Plugin';
-import {Report}                                                                                         from './Report';
-import {TelemetryManager}                                                                               from './TelemetryManager';
-import {VirtualFetcher}                                                                                 from './VirtualFetcher';
-import {VirtualResolver}                                                                                from './VirtualResolver';
-import {WorkspaceFetcher}                                                                               from './WorkspaceFetcher';
-import {WorkspaceResolver}                                                                              from './WorkspaceResolver';
-import * as configurationUtils                                                                          from './configurationUtil';
-import * as folderUtils                                                                                 from './folderUtils';
-import * as formatUtils                                                                                 from './formatUtils';
-import * as hashUtils                                                                                   from './hashUtils';
-import * as httpUtils                                                                                   from './httpUtils';
-import * as miscUtils                                                                                   from './miscUtils';
-import * as nodeUtils                                                                                   from './nodeUtils';
-import * as semverUtils                                                                                 from './semverUtils';
-import * as structUtils                                                                                 from './structUtils';
-import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus} from './types';
+import {CorePlugin}                                                                                              from './CorePlugin';
+import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
+import {MultiFetcher}                                                                                            from './MultiFetcher';
+import {MultiResolver}                                                                                           from './MultiResolver';
+import {Plugin, Hooks, PluginMeta}                                                                               from './Plugin';
+import {Report}                                                                                                  from './Report';
+import {TelemetryManager}                                                                                        from './TelemetryManager';
+import {VirtualFetcher}                                                                                          from './VirtualFetcher';
+import {VirtualResolver}                                                                                         from './VirtualResolver';
+import {WorkspaceFetcher}                                                                                        from './WorkspaceFetcher';
+import {WorkspaceResolver}                                                                                       from './WorkspaceResolver';
+import * as configUtils                                                                                          from './configUtils';
+import * as folderUtils                                                                                          from './folderUtils';
+import * as formatUtils                                                                                          from './formatUtils';
+import * as hashUtils                                                                                            from './hashUtils';
+import * as httpUtils                                                                                            from './httpUtils';
+import * as miscUtils                                                                                            from './miscUtils';
+import * as nodeUtils                                                                                            from './nodeUtils';
+import * as semverUtils                                                                                          from './semverUtils';
+import * as structUtils                                                                                          from './structUtils';
+import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
 
 const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
   ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
@@ -675,10 +675,10 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
 };
 
 // There are two types of values
-// 1. ResolvedRcFile from `configurationUtils.resolveRcFiles`
+// 1. ResolvedRcFile from `configUtils.resolveRcFiles`
 // 2. objects passed directly via `configuration.useWithSource` or `configuration.use`
 function parseValue(configuration: Configuration, path: string, valueBase: unknown, definition: SettingsDefinition, folder: PortablePath) {
-  const value = configurationUtils.getValue(valueBase);
+  const value = configUtils.getValue(valueBase);
 
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     if (!Array.isArray(value)) {
@@ -698,7 +698,7 @@ function parseValue(configuration: Configuration, path: string, valueBase: unkno
 }
 
 function parseSingleValue(configuration: Configuration, path: string, valueBase: unknown, definition: SettingsDefinition, folder: PortablePath) {
-  const value = configurationUtils.getValue(valueBase);
+  const value = configUtils.getValue(valueBase);
 
   switch (definition.type) {
     case SettingsType.ANY:
@@ -731,7 +731,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
         let cwd = folder;
 
         // singleValue's source should be a single file path, if it exists
-        const source = configurationUtils.getSource(valueBase);
+        const source = configUtils.getSource(valueBase);
         if (source)
           cwd = ppath.resolve(source as PortablePath, `..` as PortablePath);
 
@@ -759,7 +759,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
 }
 
 function parseShape(configuration: Configuration, path: string, valueBase: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
-  const value = configurationUtils.getValue(valueBase);
+  const value = configUtils.getValue(valueBase);
 
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
@@ -785,7 +785,7 @@ function parseShape(configuration: Configuration, path: string, valueBase: unkno
 }
 
 function parseMap(configuration: Configuration, path: string, valueBase: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
-  const value = configurationUtils.getValue(valueBase);
+  const value = configUtils.getValue(valueBase);
 
   const result = new Map<string, any>();
 
@@ -1031,7 +1031,7 @@ export class Configuration {
       }
     }
 
-    const resolvedRcFile = configurationUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
+    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
 
     // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
     const resolvedRcFileCwd = `.` as PortablePath;
@@ -1485,7 +1485,7 @@ export class Configuration {
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
       const value = data[key];
 
-      const fieldSource = configurationUtils.getSource(value);
+      const fieldSource = configUtils.getSource(value);
       if (fieldSource)
         source = fieldSource;
 
@@ -1710,6 +1710,18 @@ export class Configuration {
     }
   }
 
+  normalizeLocator(locator: Locator) {
+    if (semverUtils.validRange(locator.reference))
+      return structUtils.makeLocator(locator, `${this.get(`defaultProtocol`)}${locator.reference}`);
+
+    if (TAG_REGEXP.test(locator.reference))
+      return structUtils.makeLocator(locator, `${this.get(`defaultProtocol`)}${locator.reference}`);
+
+    return locator;
+  }
+
+  // TODO: Rename into `normalizeLocator`?
+  // TODO: Move into `structUtils`, and remove references to `defaultProtocol` (we can make it a constant, same as the lockfile name)
   normalizeDependency(dependency: Descriptor) {
     if (semverUtils.validRange(dependency.range))
       return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);

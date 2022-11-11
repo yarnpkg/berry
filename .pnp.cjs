@@ -15631,7 +15631,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
-          ["git-url-parse", "npm:11.1.2"],\
+          ["git-url-parse", "npm:13.1.0"],\
           ["lodash", "npm:4.17.21"],\
           ["semver", "npm:7.3.7"],\
           ["tslib", "npm:2.4.0"]\
@@ -15652,7 +15652,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
-          ["git-url-parse", "npm:11.1.2"],\
+          ["git-url-parse", "npm:13.1.0"],\
           ["lodash", "npm:4.17.21"],\
           ["semver", "npm:7.3.7"],\
           ["tslib", "npm:2.4.0"]\
@@ -32742,8 +32742,17 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/git-up-npm-4.0.5-ee94e6e390-727625a142.zip/node_modules/git-up/",\
         "packageDependencies": [\
           ["git-up", "npm:4.0.5"],\
-          ["is-ssh", "npm:1.3.1"],\
+          ["is-ssh", "npm:1.4.0"],\
           ["parse-url", "npm:6.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:7.0.0", {\
+        "packageLocation": "./.yarn/cache/git-up-npm-7.0.0-5e37fa590f-6764098412.zip/node_modules/git-up/",\
+        "packageDependencies": [\
+          ["git-up", "npm:7.0.0"],\
+          ["is-ssh", "npm:1.4.0"],\
+          ["parse-url", "npm:8.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -32754,6 +32763,14 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["git-url-parse", "npm:11.1.2"],\
           ["git-up", "npm:4.0.5"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:13.1.0", {\
+        "packageLocation": "./.yarn/cache/git-url-parse-npm-13.1.0-724765d793-7538f108d4.zip/node_modules/git-url-parse/",\
+        "packageDependencies": [\
+          ["git-url-parse", "npm:13.1.0"],\
+          ["git-up", "npm:7.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -35458,11 +35475,11 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["is-ssh", [\
-      ["npm:1.3.1", {\
-        "packageLocation": "./.yarn/cache/is-ssh-npm-1.3.1-a45ec50c50-323999f206.zip/node_modules/is-ssh/",\
+      ["npm:1.4.0", {\
+        "packageLocation": "./.yarn/cache/is-ssh-npm-1.4.0-c6d7eec087-96e063b7a1.zip/node_modules/is-ssh/",\
         "packageDependencies": [\
-          ["is-ssh", "npm:1.3.1"],\
-          ["protocols", "npm:1.4.7"]\
+          ["is-ssh", "npm:1.4.0"],\
+          ["protocols", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -40606,8 +40623,16 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/parse-path-npm-4.0.1-2df1e9ed3e-0736b617b2.zip/node_modules/parse-path/",\
         "packageDependencies": [\
           ["parse-path", "npm:4.0.1"],\
-          ["is-ssh", "npm:1.3.1"],\
+          ["is-ssh", "npm:1.4.0"],\
           ["protocols", "npm:1.4.7"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:7.0.0", {\
+        "packageLocation": "./.yarn/cache/parse-path-npm-7.0.0-ceda41e594-7e20c2a3a6.zip/node_modules/parse-path/",\
+        "packageDependencies": [\
+          ["parse-path", "npm:7.0.0"],\
+          ["protocols", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -40646,10 +40671,18 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/parse-url-npm-6.0.0-046c3c4219-07928ef515.zip/node_modules/parse-url/",\
         "packageDependencies": [\
           ["parse-url", "npm:6.0.0"],\
-          ["is-ssh", "npm:1.3.1"],\
+          ["is-ssh", "npm:1.4.0"],\
           ["normalize-url", "npm:6.1.0"],\
           ["parse-path", "npm:4.0.1"],\
           ["protocols", "npm:1.4.7"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:8.1.0", {\
+        "packageLocation": "./.yarn/cache/parse-url-npm-8.1.0-0995f15c34-a8dd22cf55.zip/node_modules/parse-url/",\
+        "packageDependencies": [\
+          ["parse-url", "npm:8.1.0"],\
+          ["parse-path", "npm:7.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -42616,6 +42649,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/protocols-npm-1.4.7-490c536d90-c73e9c3115.zip/node_modules/protocols/",\
         "packageDependencies": [\
           ["protocols", "npm:1.4.7"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:2.0.1", {\
+        "packageLocation": "./.yarn/cache/protocols-npm-2.0.1-e2bc74d1c1-351d1ff30f.zip/node_modules/protocols/",\
+        "packageDependencies": [\
+          ["protocols", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\

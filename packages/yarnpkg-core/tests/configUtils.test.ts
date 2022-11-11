@@ -1,12 +1,12 @@
-import * as configurationUtils from '../sources/configurationUtil';
+import * as configUtils from '../sources/configUtils';
 
-const s = configurationUtils.RESOLVED_RC_FILE;
+const s = configUtils.RESOLVED_RC_FILE;
 
 describe(`configurationUtils`, () => {
   describe(`resolveRcFiles`, () => {
     it(`it should resolve all RcFile according to the \`onConflict\` option`, () => {
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, [`foo`]],
           [`b`, [`bar`]],
           [`c`, [`baz`]],
@@ -20,7 +20,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, [`foo`]],
           [`b`, {onConflict: `reset`, value: [`bar`]}],
           [`c`, [`baz`]],
@@ -33,7 +33,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([[`a`, [{foo: `bar`}]]]),
+        configUtils.resolveRcFiles([[`a`, [{foo: `bar`}]]]),
       ).toEqual(
         [`a`, [
           [`a`, {foo: [`a`, `bar`, s]}, s],
@@ -41,7 +41,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, [`foo`]],
           [`b`, 42],
         ]),
@@ -50,7 +50,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, {foo: `foo`}],
           [`b`, {bar: `bar`}],
           [`c`, {baz: `baz`}],
@@ -64,7 +64,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, {foo: `foo`}],
           [`b`, {onConflict: `reset`, bar: `bar`}],
           [`c`, {baz: `baz`}],
@@ -77,7 +77,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, {foo: `foo`}],
           [`b`, {onConflict: `reset`, value: {bar: `bar`}}],
           [`c`, {baz: `baz`}],
@@ -90,7 +90,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, {foo: {hello: `hello`}, bar: 42}],
           [`b`, {onConflict: `reset`, foo: {onConflict: `extend`, world: `world`}}],
         ]),
@@ -105,7 +105,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, {foo: {hello: `hello`}, bar: 42}],
           [`b`, 42],
           [`c`, {onConflict: `reset`, foo: {onConflict: `extend`, world: `world`}}],
@@ -117,7 +117,7 @@ describe(`configurationUtils`, () => {
       );
 
       expect(
-        configurationUtils.resolveRcFiles([
+        configUtils.resolveRcFiles([
           [`a`, {foo: {hello: `hello`}, bar: 42}],
           [`b`, undefined],
           [`c`, {onConflict: `reset`, foo: {onConflict: `extend`, world: `world`}}],
