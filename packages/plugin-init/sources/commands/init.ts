@@ -3,7 +3,6 @@ import {Configuration, Manifest, miscUtils, Project, YarnVersion} from '@yarnpkg
 import {execUtils, scriptUtils, structUtils}                      from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                     from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                       from 'clipanion';
-import {inspect}                                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
