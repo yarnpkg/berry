@@ -1,12 +1,17 @@
-import {BaseCommand, WorkspaceRequiredError}                                                              from '@yarnpkg/cli';
-import {Configuration, execUtils, formatName, formatUtils, MessageName, Project, StreamReport, Workspace} from '@yarnpkg/core';
-import {gitUtils}                                                                                         from '@yarnpkg/plugin-git';
-import {Command, Option, Usage, UsageError}                                                               from 'clipanion';
-import {prompt}                                                                                           from 'enquirer';
-import semver                                                                                             from 'semver';
-import {setTimeout}                                                                                       from 'timers/promises';
+import {BaseCommand, WorkspaceRequiredError}                                                  from '@yarnpkg/cli';
+import {Configuration, execUtils, formatUtils, MessageName, Project, StreamReport, Workspace} from '@yarnpkg/core';
+import {gitUtils}                                                                             from '@yarnpkg/plugin-git';
+import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
+import {prompt}                                                                               from 'enquirer';
+import semver                                                                                 from 'semver';
 
-import * as versionUtils                                                                                  from '../versionUtils';
+import * as versionUtils                                                                      from '../versionUtils';
+
+const setTimeoutP = (n: number) => {
+  return new Promise(resolve => {
+    setTimeout(resolve, n);
+  });
+};
 
 const semverColors: Record<versionUtils.ReleaseType, string> = {
   [versionUtils.ReleaseType.Patch]: `green`,
@@ -68,12 +73,6 @@ export default class VersionCommand extends BaseCommand {
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     return await this.executeImmediate({configuration, project, workspace});
-    const deferred = configuration.get(`preferDeferredVersions`);
-    if (deferred) {
-      return await this.executeImmediate({configuration, project, workspace});
-    } else {
-      return await this.executeDeferred({configuration, project, workspace});
-    }
   }
 
   async executeImmediate({configuration, project, workspace}: {configuration: Configuration, project: Project, workspace: Workspace}) {
@@ -141,6 +140,7 @@ export default class VersionCommand extends BaseCommand {
             required: true,
             choices: deployablePullRequests,
             initial: deployablePullRequests.map((_, index) => index) as any as number,
+            // @ts-expect-error-next-line
             result(this: any, names: Array<string>) {
               return names.map(name => this.find(name).value);
             },
@@ -217,7 +217,7 @@ export default class VersionCommand extends BaseCommand {
 
       stream.reportInfo(MessageName.UNNAMED, `Publish requested; we'll run ${formatUtils.pretty(configuration, newPublishCommand, formatUtils.Type.CODE)} in a couple of seconds`);
 
-      await setTimeout(3000);
+      await setTimeoutP(3000);
 
       stream.reportSeparator();
       runPublish = true;
@@ -233,71 +233,6 @@ export default class VersionCommand extends BaseCommand {
         return await this.cli.run([`npm`, `publish`]);
       }
     }
-
-    return 0;
-  }
-
-  async executeDeferred({configuration, project, workspace}: {configuration: Configuration, project: Project, workspace: Workspace}) {
-  }
-
-  async executeXXX() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
-
-    const deferred = configuration.get(`preferDeferredVersions`);
-
-    const isSemver = semver.valid(this.strategy);
-    const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
-
-    let releaseStrategy: string | null;
-    if (isSemver) {
-      if (workspace.manifest.version !== null) {
-        const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
-
-        if (suggestedStrategy !== null) {
-          releaseStrategy = suggestedStrategy;
-        } else {
-          releaseStrategy = this.strategy;
-        }
-      } else {
-        releaseStrategy = this.strategy;
-      }
-    } else {
-      const currentVersion = workspace.manifest.version;
-
-      if (!isDeclined) {
-        if (currentVersion === null)
-          throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
-
-        if (typeof currentVersion !== `string` || !semver.valid(currentVersion)) {
-          throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
-        }
-      }
-
-      releaseStrategy = versionUtils.validateReleaseDecision(this.strategy);
-    }
-
-    if (!deferred) {
-      const releases = await versionUtils.resolveVersionFiles(project);
-      const storedVersion = releases.get(workspace);
-
-      if (typeof storedVersion !== `undefined` && releaseStrategy !== versionUtils.Decision.DECLINE) {
-        const thisVersion = versionUtils.applyStrategy(workspace.manifest.version, releaseStrategy);
-        if (semver.lt(thisVersion, storedVersion)) {
-          throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
-        }
-      }
-    }
-
-    const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
-    versionFile.releases.set(workspace, releaseStrategy as any);
-    await versionFile.saveAll();
-
-    if (!deferred)
-      return await this.cli.run([`version`, `apply`]);
 
     return 0;
   }
