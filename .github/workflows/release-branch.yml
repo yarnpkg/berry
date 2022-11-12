@@ -42,7 +42,6 @@ jobs:
         git update-index --skip-worktree -- .yarnrc.yml
 
     - name: 'Generate the release commits'
-      if: ${{fromJSON(github.event.inputs.apply_versions)}}
       run: |
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
@@ -58,10 +57,11 @@ jobs:
 
     - name: 'Updates the stableVersion field'
       run: |
+        RELEASE_COMMIT=$(git rev-parse HEAD)
         node ./scripts/stable-versions-store.js
         git checkout master
         node ./scripts/stable-versions-restore.js
-        git checkout - -- 'packages/*/bin'
-        git checkout
+        git format-patch -k --stdout HEAD...$RELEASE_COMMIT -- .yarn/versions | git am -3 -k
+        git checkout $RELEASE_COMMIT -- 'packages/*/bin'
         git add .
-        git commit -m 'Updates the stableVersion fields'
+        git commit -m 'Sync master with the changes from ${{github.event.inputs.branch}}'
