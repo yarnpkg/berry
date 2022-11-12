@@ -145,13 +145,8 @@ export default class UnplugCommand extends BaseCommand {
         }
       };
 
-      for (const workspace of roots) {
-        const pkg = project.storedPackages.get(workspace.anchoredLocator.locatorHash);
-        if (!pkg)
-          throw new Error(`Assertion failed: The package should have been registered`);
-
-        traverse(pkg, 0);
-      }
+      for (const workspace of roots)
+        traverse(workspace.anchoredPackage, 0);
 
       return selection;
     };

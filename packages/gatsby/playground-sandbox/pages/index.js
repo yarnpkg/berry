@@ -1,7 +1,7 @@
 import Head                from 'next/head';
 import {useRef, useEffect} from 'react';
 
-const WEBSITE_URL = `https://yarnpkg.com`;
+import {WEBSITE_URL}       from '../constants';
 
 const Home = () => {
   const iframeEl = useRef(null);

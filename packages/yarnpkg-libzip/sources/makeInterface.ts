@@ -42,13 +42,13 @@ export enum Errors {
   ZIP_ER_COMPRESSED_DATA = 31,
 }
 
-export const makeInterface = (libzip: LibzipEmscriptenModule) => ({
+export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
   // Those are getters because they can change after memory growth
   get HEAP8() {
-    return libzip.HEAP8;
+    return emZip.HEAP8;
   },
   get HEAPU8() {
-    return libzip.HEAPU8;
+    return emZip.HEAPU8;
   },
 
   errors: Errors,
@@ -91,89 +91,89 @@ export const makeInterface = (libzip: LibzipEmscriptenModule) => ({
   ZIP_CM_STORE: 0,
   ZIP_CM_DEFLATE: 8,
 
-  uint08S: libzip._malloc(1),
-  uint16S: libzip._malloc(2),
-  uint32S: libzip._malloc(4),
-  uint64S: libzip._malloc(8),
+  uint08S: emZip._malloc(1),
+  uint16S: emZip._malloc(2),
+  uint32S: emZip._malloc(4),
+  uint64S: emZip._malloc(8),
 
-  malloc: libzip._malloc,
-  free: libzip._free,
+  malloc: emZip._malloc,
+  free: emZip._free,
 
-  getValue: libzip.getValue,
+  getValue: emZip.getValue,
 
-  open: libzip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
-  openFromSource: libzip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
-  close: libzip.cwrap(`zip_close`, `number`, [`number`]),
-  discard: libzip.cwrap(`zip_discard`, null, [`number`]),
+  open: emZip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
+  openFromSource: emZip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
+  close: emZip.cwrap(`zip_close`, `number`, [`number`]),
+  discard: emZip.cwrap(`zip_discard`, null, [`number`]),
 
-  getError: libzip.cwrap(`zip_get_error`, `number`, [`number`]),
-  getName: libzip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
-  getNumEntries: libzip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
+  getError: emZip.cwrap(`zip_get_error`, `number`, [`number`]),
+  getName: emZip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
+  getNumEntries: emZip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
 
-  delete: libzip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
+  delete: emZip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
 
-  stat: libzip.cwrap(`zip_stat`, `number`, [`number`, `string`, `number`, `number`]),
-  statIndex: libzip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
+  stat: emZip.cwrap(`zip_stat`, `number`, [`number`, `string`, `number`, `number`]),
+  statIndex: emZip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
 
-  fopen: libzip.cwrap(`zip_fopen`, `number`, [`number`, `string`, `number`]),
-  fopenIndex: libzip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
+  fopen: emZip.cwrap(`zip_fopen`, `number`, [`number`, `string`, `number`]),
+  fopenIndex: emZip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
 
-  fread: libzip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
-  fclose: libzip.cwrap(`zip_fclose`, `number`, [`number`]),
+  fread: emZip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
+  fclose: emZip.cwrap(`zip_fclose`, `number`, [`number`]),
 
   dir: {
-    add: libzip.cwrap(`zip_dir_add`, `number`, [`number`, `string`]),
+    add: emZip.cwrap(`zip_dir_add`, `number`, [`number`, `string`]),
   },
 
   file: {
-    add: libzip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
-    getError: libzip.cwrap(`zip_file_get_error`, `number`, [`number`]),
-    getExternalAttributes: libzip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setExternalAttributes: libzip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setMtime: libzip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
-    setCompression: libzip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
+    add: emZip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
+    getError: emZip.cwrap(`zip_file_get_error`, `number`, [`number`]),
+    getExternalAttributes: emZip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
+    setExternalAttributes: emZip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
+    setMtime: emZip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
+    setCompression: emZip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
   },
 
   ext: {
-    countSymlinks: libzip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`]),
+    countSymlinks: emZip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`]),
   },
 
   error: {
-    initWithCode: libzip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
-    strerror: libzip.cwrap(`zip_error_strerror`, `string`, [`number`]),
+    initWithCode: emZip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
+    strerror: emZip.cwrap(`zip_error_strerror`, `string`, [`number`]),
   },
 
   name: {
-    locate: libzip.cwrap(`zip_name_locate`, `number`, [`number`, `string`, `number`]),
+    locate: emZip.cwrap(`zip_name_locate`, `number`, [`number`, `string`, `number`]),
   },
 
   source: {
-    fromUnattachedBuffer: libzip.cwrap(`zip_source_buffer_create`, `number`, [`number`, ...number64, `number`, `number`]),
-    fromBuffer: libzip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
-    free: libzip.cwrap(`zip_source_free`, null, [`number`]),
-    keep: libzip.cwrap(`zip_source_keep`, null, [`number`]),
-    open: libzip.cwrap(`zip_source_open`, `number`, [`number`]),
-    close: libzip.cwrap(`zip_source_close`, `number`, [`number`]),
-    seek: libzip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
-    tell: libzip.cwrap(`zip_source_tell`, `number`, [`number`]),
-    read: libzip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
-    error: libzip.cwrap(`zip_source_error`, `number`, [`number`]),
-    setMtime: libzip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`]),
+    fromUnattachedBuffer: emZip.cwrap(`zip_source_buffer_create`, `number`, [`number`, ...number64, `number`, `number`]),
+    fromBuffer: emZip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
+    free: emZip.cwrap(`zip_source_free`, null, [`number`]),
+    keep: emZip.cwrap(`zip_source_keep`, null, [`number`]),
+    open: emZip.cwrap(`zip_source_open`, `number`, [`number`]),
+    close: emZip.cwrap(`zip_source_close`, `number`, [`number`]),
+    seek: emZip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
+    tell: emZip.cwrap(`zip_source_tell`, `number`, [`number`]),
+    read: emZip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
+    error: emZip.cwrap(`zip_source_error`, `number`, [`number`]),
+    setMtime: emZip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`]),
   },
 
   struct: {
-    stat: libzip.cwrap(`zipstruct_stat`, `number`, []),
-    statS: libzip.cwrap(`zipstruct_statS`, `number`, []),
-    statName: libzip.cwrap(`zipstruct_stat_name`, `string`, [`number`]),
-    statIndex: libzip.cwrap(`zipstruct_stat_index`, `number`, [`number`]),
-    statSize: libzip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
-    statCompSize: libzip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
-    statCompMethod: libzip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
-    statMtime: libzip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
-    statCrc: libzip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
+    stat: emZip.cwrap(`zipstruct_stat`, `number`, []),
+    statS: emZip.cwrap(`zipstruct_statS`, `number`, []),
+    statName: emZip.cwrap(`zipstruct_stat_name`, `string`, [`number`]),
+    statIndex: emZip.cwrap(`zipstruct_stat_index`, `number`, [`number`]),
+    statSize: emZip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
+    statCompSize: emZip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
+    statCompMethod: emZip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
+    statMtime: emZip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
+    statCrc: emZip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
 
-    error: libzip.cwrap(`zipstruct_error`, `number`, []),
-    errorS: libzip.cwrap(`zipstruct_errorS`, `number`, []),
-    errorCodeZip: libzip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`]),
+    error: emZip.cwrap(`zipstruct_error`, `number`, []),
+    errorS: emZip.cwrap(`zipstruct_errorS`, `number`, []),
+    errorCodeZip: emZip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`]),
   },
 } as const);

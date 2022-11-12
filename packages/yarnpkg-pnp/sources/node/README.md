@@ -1,0 +1,3 @@
+- The contents of this folder is copied from various parts of Node.js v18.9.0, run through Prettier, and slightly modified to fit our needs.
+- Linting has been disabled to minimize the diff with upstream
+- The license is embedded in `./resolve`

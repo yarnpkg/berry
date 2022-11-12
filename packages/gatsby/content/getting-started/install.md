@@ -26,10 +26,20 @@ Corepack isn't included with Node.js in versions before the 16.10; to address th
 npm i -g corepack
 ```
 
-## Activate Yarn
+## Updating the global Yarn version
+
+### Node.js ^16.17 or >=18.6
 
 ```bash
 corepack prepare yarn@stable --activate
+```
+
+### Node.js <16.17 or <18.6
+
+Take a look at the [latest Yarn release](https://github.com/yarnpkg/berry/releases/latest), note the version number, and run:
+
+```bash
+corepack prepare yarn@<version> --activate
 ```
 
 ## Initializing your project

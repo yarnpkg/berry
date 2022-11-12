@@ -255,8 +255,8 @@ export abstract class FakeFS<P extends Path> {
   abstract utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
-  lutimesPromise?(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
-  lutimesSync?(p: P, atime: Date | string | number, mtime: Date | string | number): void;
+  abstract lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  abstract lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
   abstract readFilePromise(p: FSPath<P>, encoding?: null): Promise<Buffer>;
   abstract readFilePromise(p: FSPath<P>, encoding: BufferEncoding): Promise<string>;
@@ -731,11 +731,7 @@ export abstract class FakeFS<P extends Path> {
     if (typeof result !== `undefined`)
       p = result;
 
-    if (this.lutimesPromise) {
-      await this.lutimesPromise(p, stat.atime, stat.mtime);
-    } else if (!stat.isSymbolicLink()) {
-      await this.utimesPromise(p, stat.atime, stat.mtime);
-    }
+    await this.lutimesPromise(p, stat.atime, stat.mtime);
   }
 
   async preserveTimeSync(p: P, cb: () => P | void) {
@@ -745,11 +741,7 @@ export abstract class FakeFS<P extends Path> {
     if (typeof result !== `undefined`)
       p = result;
 
-    if (this.lutimesSync) {
-      this.lutimesSync(p, stat.atime, stat.mtime);
-    } else if (!stat.isSymbolicLink()) {
-      this.utimesSync(p, stat.atime, stat.mtime);
-    }
+    this.lutimesSync(p, stat.atime, stat.mtime);
   }
 }
 

@@ -1,0 +1,16 @@
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.feature {
+  padding: 40px 0;
+}
+
+.icon {
+  margin-bottom: 40px;
+
+  width: 200px;
+}

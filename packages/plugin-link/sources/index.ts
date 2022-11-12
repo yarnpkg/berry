@@ -1,23 +1,23 @@
-import {Plugin}          from '@yarnpkg/core';
+import {Plugin}         from '@yarnpkg/core';
 
-import {LinkFetcher}     from './LinkFetcher';
-import {LinkResolver}    from './LinkResolver';
-import {RawLinkFetcher}  from './RawLinkFetcher';
-import {RawLinkResolver} from './RawLinkResolver';
+import {LinkFetcher}    from './LinkFetcher';
+import {LinkResolver}   from './LinkResolver';
+import {PortalFetcher}  from './PortalFetcher';
+import {PortalResolver} from './PortalResolver';
 
+export {PortalFetcher};
+export {PortalResolver};
 export {LinkFetcher};
 export {LinkResolver};
-export {RawLinkFetcher};
-export {RawLinkResolver};
 
 const plugin: Plugin = {
   fetchers: [
-    RawLinkFetcher,
     LinkFetcher,
+    PortalFetcher,
   ],
   resolvers: [
-    RawLinkResolver,
     LinkResolver,
+    PortalResolver,
   ],
 };
 

@@ -1,16 +1,15 @@
-import {getLibzipPromise, getLibzipSync} from '@yarnpkg/libzip';
-import fs                                from 'fs';
-import {pathToFileURL}                   from 'url';
-import {promisify}                       from 'util';
+import {ZipFS, ZipOpenFS}              from '@yarnpkg/libzip';
+import fs                              from 'fs';
+import {pathToFileURL}                 from 'url';
+import {promisify}                     from 'util';
 
-import {NodeFS}                          from '../sources/NodeFS';
-import {PosixFS}                         from '../sources/PosixFS';
-import {extendFs}                        from '../sources/patchFs/patchFs';
-import {Filename, npath, PortablePath}   from '../sources/path';
-import {xfs}                             from '../sources/xfs';
-import {statUtils, ZipFS, ZipOpenFS}     from '../sources';
-
-import {ZIP_FILE1, ZIP_DIR1}             from './ZipOpenFS.test';
+import {ZIP_FILE1, ZIP_DIR1}           from '../../yarnpkg-libzip/tests/ZipOpenFS.test';
+import {NodeFS}                        from '../sources/NodeFS';
+import {PosixFS}                       from '../sources/PosixFS';
+import {extendFs}                      from '../sources/patchFs/patchFs';
+import {Filename, npath, PortablePath} from '../sources/path';
+import {xfs}                           from '../sources/xfs';
+import {statUtils}                     from '../sources';
 
 const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
@@ -109,8 +108,46 @@ describe(`patchedFs`, () => {
     expect(patchedFs.existsSync(renamedUrl)).toStrictEqual(false);
   });
 
+  it(`should support Buffer instances`, () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const tmpdir = npath.fromPortablePath(xfs.mktempSync());
+    const tmpdirBuffer = Buffer.from(tmpdir);
+
+    const file = `${tmpdir}/file.txt`;
+    const fileBuffer = Buffer.from(file);
+
+    patchedFs.writeFileSync(fileBuffer, `Hello World`);
+
+    expect(patchedFs.readdirSync(tmpdirBuffer)).toStrictEqual(patchedFs.readdirSync(tmpdir));
+
+    expect(patchedFs.readFileSync(fileBuffer, {encoding: `utf8`})).toStrictEqual(patchedFs.readFileSync(file, {encoding: `utf8`}));
+    expect(patchedFs.statSync(fileBuffer)).toStrictEqual(patchedFs.statSync(file));
+
+    const copyBuffer = Buffer.from(`${tmpdir}/copy.txt`);
+    const renamedBuffer = Buffer.from(`${tmpdir}/renamed.txt`);
+
+    patchedFs.copyFileSync(fileBuffer, copyBuffer);
+    patchedFs.renameSync(copyBuffer, renamedBuffer);
+    patchedFs.unlinkSync(renamedBuffer);
+
+    expect(patchedFs.existsSync(renamedBuffer)).toStrictEqual(false);
+  });
+
+  it(`should throw on non-utf8 Buffer instances`, () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    const tmpdir = Buffer.from(npath.fromPortablePath(xfs.mktempSync()));
+    const sep = Buffer.from(npath.sep);
+    const basename = Buffer.from([0xca, 0xc5, 0x0e]);
+
+    const fileBuffer = Buffer.concat([tmpdir, sep, basename]);
+
+    expect(() => patchedFs.writeFileSync(fileBuffer, `Hello World`)).toThrow(`Non-utf8 buffers are not supported at the moment`);
+  });
+
   it(`should support fstat`, async () => {
-    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({baseFs: new NodeFS()})));
 
     const fd = patchedFs.openSync(__filename, `r`);
     try {
@@ -143,7 +180,7 @@ describe(`patchedFs`, () => {
   });
 
   it(`should support passing null as the second argument to readdir`, async () => {
-    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({baseFs: new NodeFS()})));
 
     const tmpdir = npath.fromPortablePath(xfs.mktempSync());
 
@@ -168,12 +205,12 @@ describe(`patchedFs`, () => {
     const tmpdir = xfs.mktempSync();
     const nativeTmpdir = npath.fromPortablePath(tmpdir);
 
-    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {libzip: getLibzipSync(), create: true});
+    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {create: true});
     await zipFs.writeFilePromise(`/a.txt` as PortablePath, `foo`);
 
     zipFs.saveAndClose();
 
-    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({baseFs: new NodeFS()})));
 
     const readStream = patchedFs.createReadStream(`${nativeTmpdir}/archive.zip/a.txt`);
 
@@ -197,12 +234,12 @@ describe(`patchedFs`, () => {
     const tmpdir = xfs.mktempSync();
     const nativeTmpdir = npath.fromPortablePath(tmpdir);
 
-    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {libzip: getLibzipSync(), create: true});
+    const zipFs = new ZipFS(`${tmpdir}/archive.zip` as PortablePath, {create: true});
     await zipFs.writeFilePromise(`/a.txt` as PortablePath, ``);
 
     zipFs.saveAndClose();
 
-    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({libzip: await getLibzipPromise(), baseFs: new NodeFS()})));
+    const patchedFs = extendFs(fs, new PosixFS(new ZipOpenFS({baseFs: new NodeFS()})));
 
     const writeStream = patchedFs.createWriteStream(`${nativeTmpdir}/archive.zip/a.txt`);
 

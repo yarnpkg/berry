@@ -52,9 +52,9 @@ export class LinkFetcher implements Fetcher {
     );
 
     if (parentFetch.localPath) {
-      return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, localPath: sourcePath};
+      return {packageFs: new CwdFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, discardFromLookup: true, localPath: sourcePath};
     } else {
-      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot};
+      return {packageFs: new JailFS(sourcePath, {baseFs: sourceFs}), releaseFs: effectiveParentFetch.releaseFs, prefixPath: PortablePath.dot, discardFromLookup: true};
     }
   }
 }

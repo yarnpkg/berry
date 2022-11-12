@@ -4,9 +4,7 @@ This plugin adds support for various interactive commands.
 
 ## Install
 
-```
-yarn plugin import interactive-tools
-```
+This plugin is included by default starting from Yarn 4.
 
 ## Commands
 

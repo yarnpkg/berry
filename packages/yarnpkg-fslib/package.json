@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/fslib",
-  "version": "3.0.0-rc.18",
-  "stableVersion": "2.7.0",
+  "version": "3.0.0-rc.28",
+  "stableVersion": "2.8.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -10,8 +10,10 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/libzip": "workspace:^",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@yarnpkg/libzip": "workspace:^"
   },
   "scripts": {
     "postpack": "rm -rf lib",

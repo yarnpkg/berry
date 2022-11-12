@@ -1,20 +1,33 @@
-import {Libzip, makeInterface} from './makeInterface';
+import {setFactory, getInstance, tryInstance} from './instance';
+import {Libzip, makeInterface}                from './makeInterface';
 
-let promise: Promise<Libzip> | null = null;
+export * from './common';
+
+let promise: Promise<Libzip> | undefined;
+
+setFactory(() => {
+  throw new Error(`Zip methods must be called within the context of getLibzipPromise when operating under async-only environments`);
+});
 
 export function getLibzipSync() {
-  throw new Error(`Cannot use getLibzipSync when using the async version of the libzip`);
+  return getInstance();
 }
 
 export async function getLibzipPromise() {
-  if (promise === null) {
-    promise = import(`./libzipAsync`).then(async ({default: createModule}) => {
-      const libzip = await createModule();
-      return makeInterface(libzip);
-    });
-  }
+  const instance = tryInstance();
+  if (typeof instance !== `undefined`)
+    return instance;
 
-  return promise;
+  if (typeof promise !== `undefined`)
+    return promise;
+
+  return promise = import(`./libzipAsync`).then(async ({default: createModule}) => {
+    const emZip = await createModule();
+    const libzip = makeInterface(emZip);
+
+    promise = undefined;
+
+    setFactory(() => libzip);
+    return getInstance();
+  });
 }
-
-export type {Libzip} from './makeInterface';

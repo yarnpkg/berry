@@ -1,6 +1,6 @@
 import {Descriptor, Fetcher, FetchOptions, LinkType, Locator, MinimalResolveOptions, Package, Plugin, ResolveOptions, Resolver, structUtils} from '@yarnpkg/core';
-import {PortablePath, xfs, ZipFS}                                                                                                            from '@yarnpkg/fslib';
-import {getLibzipPromise}                                                                                                                    from '@yarnpkg/libzip';
+import {PortablePath, xfs}                                                                                                                   from '@yarnpkg/fslib';
+import {ZipFS}                                                                                                                               from '@yarnpkg/libzip';
 
 export class UnboundDescriptorResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -148,7 +148,7 @@ class NoopFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const tempDir = await xfs.mktempPromise();
-    return {packageFs: new ZipFS(`${tempDir}/archive.zip` as PortablePath, {libzip: await getLibzipPromise(), create: true}), prefixPath: PortablePath.dot};
+    return {packageFs: new ZipFS(`${tempDir}/archive.zip` as PortablePath, {create: true}), prefixPath: PortablePath.dot};
   }
 }
 

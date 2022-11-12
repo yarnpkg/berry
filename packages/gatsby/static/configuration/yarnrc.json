@@ -55,7 +55,7 @@
     "checksumBehavior": {
       "_package": "@yarnpkg/core",
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
-      "enum": ["throw", "update", "ignore"],
+      "enum": ["throw", "update", "ignore", "reset"],
       "default": "throw"
     },
     "cloneConcurrency": {
@@ -425,6 +425,13 @@
       "type": "string",
       "default": "pnp"
     },
+    "winLinkType": {
+      "_package": "@yarnpkg/core",
+      "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths, and is consistent with Yarn's behavior on non-Windows platforms. To create symlinks the Windows user running Yarn must have the `create symbolic links` privilege. For this reason Yarn defaults to using junctions.",
+      "type": "string",
+      "enum": ["junctions", "symlinks"],
+      "default": "junctions"
+    },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
       "description": "If true, Yarn will always send the authentication credentials when making a request to the registries. This typically shouldn't be needed.",
@@ -729,13 +736,13 @@
           "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
-          "description": "The list of CPUs to cover.",
+          "description": "The list of CPU architectures to cover. See https://nodejs.org/docs/latest/api/process.html#processarch for the architectures supported by Node.js",
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x86", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32"]
         },
         "libc": {
           "description": "The list of standard C libraries to cover.",

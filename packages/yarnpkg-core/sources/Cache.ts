@@ -1,16 +1,16 @@
-import {FakeFS, LazyFS, NodeFS, ZipFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
-import {ppath, xfs, DEFAULT_COMPRESSION_LEVEL}                          from '@yarnpkg/fslib';
-import {getLibzipPromise}                                               from '@yarnpkg/libzip';
-import {randomBytes}                                                    from 'crypto';
-import fs                                                               from 'fs';
+import {FakeFS, LazyFS, NodeFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
+import {ppath, xfs}                                              from '@yarnpkg/fslib';
+import {DEFAULT_COMPRESSION_LEVEL, ZipFS}                        from '@yarnpkg/libzip';
+import {randomBytes}                                             from 'crypto';
+import fs                                                        from 'fs';
 
-import {Configuration}                                                  from './Configuration';
-import {MessageName}                                                    from './MessageName';
-import {ReportError}                                                    from './Report';
-import * as hashUtils                                                   from './hashUtils';
-import * as miscUtils                                                   from './miscUtils';
-import * as structUtils                                                 from './structUtils';
-import {LocatorHash, Locator}                                           from './types';
+import {Configuration}                                           from './Configuration';
+import {MessageName}                                             from './MessageName';
+import {ReportError}                                             from './Report';
+import * as hashUtils                                            from './hashUtils';
+import * as miscUtils                                            from './miscUtils';
+import * as structUtils                                          from './structUtils';
+import {LocatorHash, Locator}                                    from './types';
 
 const CACHE_VERSION = 9;
 
@@ -172,7 +172,7 @@ export class Cache {
     // it seem like it actually exist on the disk, at the location of the
     // cache the package would fill if it was normally fetched.
     const makeMockPackage = () => {
-      const zipFs = new ZipFS(null, {libzip});
+      const zipFs = new ZipFS();
 
       const rootPackageDir = ppath.join(PortablePath.root, structUtils.getIdentVendorPath(locator));
       zipFs.mkdirSync(rootPackageDir, {recursive: true});
@@ -184,11 +184,11 @@ export class Cache {
       return zipFs;
     };
 
-    const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null) => {
+    const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null): Promise<{isValid: boolean, hash: string | null}> => {
       // We hide the checksum if the package presence is conditional, because it becomes unreliable
       // so there is no point in computing it unless we're checking the cache
       if (refetchPath === null && opts.unstablePackages?.has(locator.locatorHash))
-        return null;
+        return {isValid: true, hash: null};
 
       const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
         ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}`
@@ -218,10 +218,13 @@ export class Cache {
 
         switch (checksumBehavior) {
           case `ignore`:
-            return expectedChecksum;
+            return {isValid: true, hash: expectedChecksum};
 
           case `update`:
-            return actualChecksum;
+            return {isValid: true, hash: actualChecksum};
+
+          case `reset`:
+            return {isValid: false, hash: expectedChecksum};
 
           default:
           case `throw`: {
@@ -230,7 +233,7 @@ export class Cache {
         }
       }
 
-      return actualChecksum;
+      return {isValid: true, hash: actualChecksum};
     };
 
     const validateFileAgainstRemote = async (cachePath: PortablePath) => {
@@ -244,7 +247,11 @@ export class Cache {
 
       await xfs.chmodPromise(refetchPath, 0o644);
 
-      return await validateFile(cachePath, refetchPath);
+      const result = await validateFile(cachePath, refetchPath);
+      if (!result.isValid)
+        throw new Error(`Assertion failed: Expected a valid checksum`);
+
+      return result.hash;
     };
 
     const loadPackageThroughMirror = async () => {
@@ -268,7 +275,7 @@ export class Cache {
       const {path: packagePath, source: packageSource} = await loadPackageThroughMirror();
 
       // Do this before moving the file so that we don't pollute the cache with corrupted archives
-      const checksum = await validateFile(packagePath);
+      const checksum = (await validateFile(packagePath)).hash;
 
       const cachePath = this.getLocatorPath(locator, checksum, opts);
       if (!cachePath)
@@ -333,11 +340,18 @@ export class Cache {
         } else {
           let checksum: string | null = null;
           const cachePath = tentativeCachePath!;
-
-          if (!shouldMock)
-            checksum = this.check
-              ? await validateFileAgainstRemote(cachePath)
-              : await validateFile(cachePath);
+          if (!shouldMock) {
+            if (this.check) {
+              checksum = await validateFileAgainstRemote(cachePath);
+            } else {
+              const maybeChecksum = await validateFile(cachePath);
+              if (maybeChecksum.isValid) {
+                checksum = maybeChecksum.hash;
+              } else {
+                return loadPackage();
+              }
+            }
+          }
 
           return [shouldMock, cachePath, checksum] as const;
         }
@@ -363,11 +377,9 @@ export class Cache {
 
     let zipFs: ZipFS | undefined;
 
-    const libzip = await getLibzipPromise();
-
     const zipFsBuilder = shouldMock
       ? () => makeMockPackage()
-      : () => new ZipFS(cachePath, {baseFs, libzip, readOnly: true});
+      : () => new ZipFS(cachePath, {baseFs, readOnly: true});
 
     const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
       return zipFs = zipFsBuilder();

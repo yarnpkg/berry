@@ -183,7 +183,6 @@ describe(`Protocols`, () => {
           await expect(source(`require('npm-has-prepack')`)).resolves.toEqual(42);
         },
       ),
-      45000,
     );
 
     test(
@@ -242,6 +241,25 @@ describe(`Protocols`, () => {
             code: 1,
             stdout: expect.stringContaining(`Saving the new release`),
           });
+        },
+      ),
+    );
+
+    test(
+      `it should not use Corepack to install repositories that are installed via Yarn 2+`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-lockfile-project`]: startPackageServer().then(url => `${url}/repositories/no-lockfile-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, {
+            env: {
+              COREPACK_ROOT: npath.join(npath.fromPortablePath(path), `404`),
+              YARN_ENABLE_INLINE_BUILDS: `true`,
+            },
+          })).resolves.toBeDefined();
         },
       ),
     );

@@ -24,6 +24,8 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - `yarn init` no longer enables zero-installs by default.
 - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
 - The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
+- The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
+- Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
 
 ### **API Changes**
 
@@ -53,19 +55,44 @@ The following changes only affect people writing Yarn plugins:
 
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
+- For consistency reasons:
+  - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
+  - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
+
+- `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
+
+- `workspace.dependencies` has been removed. Use `workspace.anchoredPackage.dependencies` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+- The node-modules linker locates binaries correctly when the same version of the package is duplicated inside root workspace and another workspace
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
 ### Bugfixes
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
 
+### Shell
+
+- The builtin shell now supports whitespace-only commands.
+
 ### Compatibility
 
-- The patched filesystem now supports `fchown`.
+- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
+
+## 3.2.4
+
+### Compatibility
+
+- The patched filesystem now supports fchown.
+- PnP now handles private import mappings.
+- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
+- PnP now reports loaded modules when in watch mode.
 
 ## 3.2.3
 

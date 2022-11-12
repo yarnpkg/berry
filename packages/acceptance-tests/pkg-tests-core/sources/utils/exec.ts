@@ -1,5 +1,9 @@
 import {PortablePath, npath} from '@yarnpkg/fslib';
 import cp                    from 'child_process';
+import {exec}                from 'node:child_process';
+import {promisify}           from 'node:util';
+
+export const execPromise = promisify(exec);
 
 interface Options {
   cwd: PortablePath;

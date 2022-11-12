@@ -4,7 +4,6 @@ export const S_IFDIR = 0o040000;
 export const S_IFREG = 0o100000;
 export const S_IFLNK = 0o120000;
 
-
 /**
  * Unix timestamp for `1984-06-22T21:50:00.000Z`
  *
