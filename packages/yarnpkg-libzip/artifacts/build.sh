@@ -25,6 +25,8 @@ LIBZIP_ROOT="$THIS_DIR/libzip-$LIBZIP_VERSION"
     unzip ./zlib-"$ZLIB_VERSION".zip
   fi
 
+  mkdir -p "$ZLIB_ROOT/build"
+
   docker run --rm \
     -v "$ZLIB_ROOT:/zlib" \
     -u $(id -u):$(id -g) \
@@ -68,6 +70,8 @@ LIBZIP_ROOT="$THIS_DIR/libzip-$LIBZIP_VERSION"
       tar xvf ./libzip-"$LIBZIP_VERSION".tar.gz
     fi
   fi
+
+  mkdir -p "$LIBZIP_ROOT/build"
 
   docker run --rm \
     -v "$LIBZIP_ROOT:/libzip" \
