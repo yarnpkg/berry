@@ -9,6 +9,7 @@ var createModule = (function() {
   return function(createModule) {
     createModule = createModule || {};
 
+    null;
     var Module = typeof createModule !== "undefined" ? createModule : {};
     var readyPromiseResolve, readyPromiseReject;
     Module["ready"] = new Promise(function(resolve, reject) {
