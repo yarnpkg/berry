@@ -4,7 +4,7 @@ import {Writable, Readable}                                                     
 import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
-import {Fetcher}                                                                              from './Fetcher';
+import {Fetcher, FetchResult}                                                                 from './Fetcher';
 import {Linker}                                                                               from './Linker';
 import {MessageName}                                                                          from './MessageName';
 import {Project, InstallOptions}                                                              from './Project';
@@ -172,6 +172,17 @@ export interface Hooks {
    */
   cleanGlobalArtifacts?: (
     configuration: Configuration,
+  ) => Promise<void>;
+
+  /**
+   * Called when the Dependency fetched. Plugins can
+   * use this hook to perform some verification of each dependency change,
+   * for example: verify the license.
+   */
+  afterDependencyFetched?: (
+    configuration: Configuration,
+    fetchResult: FetchResult & {target: PortablePath},
+    change: boolean
   ) => Promise<void>;
 }
 

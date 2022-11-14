@@ -13,7 +13,7 @@ import zlib                                                             from 'zl
 
 import {Cache, CacheOptions}                                            from './Cache';
 import {Configuration}                                                  from './Configuration';
-import {Fetcher, FetchOptions}                                          from './Fetcher';
+import {Fetcher, FetchOptions, FetchResult}                             from './Fetcher';
 import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
 import {Linker, LinkOptions}                                            from './Linker';
@@ -986,7 +986,12 @@ export class Project {
 
         let fetchResult;
         try {
-          fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+          fetchResult = await fetcher.fetch(pkg, fetcherOptions) as (FetchResult & {target: PortablePath});
+
+          const isChecksumChange = fetchResult.checksum !== this.storedChecksums.get(pkg.locatorHash);
+          await this.configuration.triggerHook(hooks => {
+            return hooks.afterDependencyFetched;
+          }, this.configuration, fetchResult, isChecksumChange);
         } catch (error) {
           error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
           report.reportExceptionOnce(error);
