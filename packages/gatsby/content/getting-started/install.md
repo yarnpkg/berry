@@ -18,6 +18,12 @@ Corepack is included by default with all Node.js installs, but is currently opt-
 corepack enable
 ```
 
+Some package managers do not include corepack with nodejs and the above command will fail. In this case, you may install corepack with npm:
+
+```bash
+npm i -g corepack
+```
+
 ### Node.js <16.10
 
 Corepack isn't included with Node.js in versions before the 16.10; to address that, run:
