@@ -132,7 +132,9 @@ export class StreamReport extends Report {
     try {
       await cb(report);
     } catch (error) {
+      report.reportSeparator();
       report.reportExceptionOnce(error);
+      report.reportSeparator();
     } finally {
       await report.finalize();
       process.emitWarning = emitWarning;

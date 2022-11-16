@@ -90,9 +90,37 @@ export default class VersionCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
-    }, async stream => {
-      let prefix = stream.formatNameWithHyperlink(MessageName.UNNAMED);
+      includeFooter: false,
+    }, async report => {
+      let prefix = report.formatNameWithHyperlink(MessageName.UNNAMED);
       prefix = `\x1b[0m${prefix}${prefix ? `: ` : ``}`;
+
+      const porcelainCheck = await execUtils.execvp(`git`, [`status`, `--porcelain`], {
+        cwd: workspace.cwd,
+      });
+
+      if (porcelainCheck.stdout !== ``) {
+        report.reportWarning(MessageName.UNNAMED, `Your repository seems to contain the following uncommitted changes:`);
+        report.reportSeparator();
+
+        for (const line of porcelainCheck.stdout.trim().split(/\n/))
+          report.reportInfo(null, line.trim());
+
+        report.reportSeparator();
+
+        const {ignoreModified} = await prompt<{ignoreModified: boolean}>({
+          type: `confirm`,
+          name: `ignoreModified`,
+          message: `${prefix}Do you want to proceed nonetheless?`,
+          initial: false,
+          required: true,
+          onCancel: () => process.exit(130),
+        });
+
+        if (!ignoreModified) {
+          return;
+        }
+      }
 
       const patchBlockers: Array<number> = [];
       const minorBlockers: Array<number> = [];
@@ -207,7 +235,7 @@ export default class VersionCommand extends BaseCommand {
       });
 
       if (!shouldPublish) {
-        stream.reportInfo(MessageName.UNNAMED, `Publish step skipped`);
+        report.reportInfo(MessageName.UNNAMED, `Publish step skipped`);
         return;
       }
 
@@ -215,11 +243,11 @@ export default class VersionCommand extends BaseCommand {
         ? `yarn run publish`
         : `yarn npm publish`;
 
-      stream.reportInfo(MessageName.UNNAMED, `Publish requested; we'll run ${formatUtils.pretty(configuration, newPublishCommand, formatUtils.Type.CODE)} in a couple of seconds`);
+      report.reportInfo(MessageName.UNNAMED, `Publish requested; we'll run ${formatUtils.pretty(configuration, newPublishCommand, formatUtils.Type.CODE)} in a couple of seconds`);
 
       await setTimeoutP(3000);
 
-      stream.reportSeparator();
+      report.reportSeparator();
       runPublish = true;
     });
 
