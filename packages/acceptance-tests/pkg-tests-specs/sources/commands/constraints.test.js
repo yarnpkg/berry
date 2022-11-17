@@ -111,7 +111,8 @@ describe(`Commands`, () => {
                 ({code, stdout, stderr} = error);
               }
 
-              stdout = stdout.replace(new RegExp(npath.join(npath.fromPortablePath(path), `yarn.config.js`).replace(/\\/g, `\\\\`), `g`), `/path/to/yarn.config.js`);
+              // TODO: Use .replaceAll when we drop support for Node.js v14
+              stdout = stdout.split(npath.join(npath.fromPortablePath(path), `yarn.config.js`)).join(`/path/to/yarn.config.js`);
               stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
 
               expect({code, stdout, stderr}).toMatchSnapshot();
