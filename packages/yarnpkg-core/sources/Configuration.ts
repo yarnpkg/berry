@@ -90,6 +90,12 @@ export enum SettingsType {
   MAP = `MAP`,
 }
 
+export enum NodeLinker {
+  NODE_MODULES = `node-modules`,
+  PNP = `pnp`,
+  PNPM = `pnpm`,
+}
+
 export type SupportedArchitectures = {
   os: Array<string> | null;
   cpu: Array<string> | null;
