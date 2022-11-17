@@ -1,3 +1,4 @@
+const {npath} = require(`@yarnpkg/fslib`);
 const {
   fs: {writeFile},
 } = require(`pkg-tests-core`);
@@ -110,7 +111,7 @@ describe(`Commands`, () => {
                 ({code, stdout, stderr} = error);
               }
 
-              stdout = stdout.replace(/[^( ]+[\\/](yarn\.config)/g, `/path/to/$1`);
+              stdout = stdout.replace(new RegExp(npath.join(npath.fromPortablePath(path), `yarn.config.js`).replace(/\\/g, `\\\\`), `g`), `/path/to/yarn.config.js`);
               stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
 
               expect({code, stdout, stderr}).toMatchSnapshot();
