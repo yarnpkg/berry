@@ -1,10 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                                                                                    from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                from '@yarnpkg/parsers';
-import CI                                                                                                                        from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                      from 'clipanion';
-import * as t                                                                                                                    from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}            from '@yarnpkg/cli';
+import {Cache, Configuration, InstallMode, MessageName} from '@yarnpkg/core';
+import {NodeLinker, Project, ReportError, StreamReport} from '@yarnpkg/core';
+import {formatUtils, execUtils, structUtils}            from '@yarnpkg/core';
+import {xfs, ppath, Filename}                           from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                       from '@yarnpkg/parsers';
+import CI                                               from 'ci-info';
+import {Command, Option, Usage, UsageError}             from 'clipanion';
+import * as t                                           from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -273,10 +275,10 @@ export default class YarnCommand extends BaseCommand {
           report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
           report.reportSeparator();
 
-          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
+          configuration.use(`<compat>`, {nodeLinker: NodeLinker.NODE_MODULES}, projectCwd, {overwrite: true});
 
           await Configuration.updateConfiguration(projectCwd, {
-            nodeLinker: `node-modules`,
+            nodeLinker: NodeLinker.NODE_MODULES,
           });
         });
 
