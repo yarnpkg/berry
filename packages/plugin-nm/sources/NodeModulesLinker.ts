@@ -1,4 +1,4 @@
-import {structUtils, Report, Manifest, miscUtils, formatUtils}              from '@yarnpkg/core';
+import {structUtils, Report, Manifest, miscUtils, formatUtils, NodeLinker}  from '@yarnpkg/core';
 import {Locator, Package, FinalizeInstallStatus, hashUtils}                 from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType, WindowsLinkType} from '@yarnpkg/core';
 import {LocatorHash, Descriptor, DependencyMeta, Configuration}             from '@yarnpkg/core';
@@ -108,7 +108,7 @@ export class NodeModulesLinker implements Linker {
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
-    return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
+    return opts.project.configuration.get(`nodeLinker`) === NodeLinker.NODE_MODULES;
   }
 }
 
@@ -218,7 +218,7 @@ class NodeModulesInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.NODE_MODULES)
       return undefined;
 
     const defaultFsLayer = new VirtualFS({
