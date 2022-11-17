@@ -1,4 +1,4 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
+import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi, NodeLinker}       from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
 import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
@@ -83,7 +83,7 @@ export class PnpLinker implements Linker {
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
-    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
+    if (opts.project.configuration.get(`nodeLinker`) !== NodeLinker.PNP)
       return false;
 
     if (opts.project.configuration.get(`pnpMode`) !== this.mode)
@@ -246,7 +246,7 @@ export class PnpInstaller implements Installer {
     if (!this.isEsmEnabled())
       await xfs.removePromise(pnpPath.esmLoader);
 
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.PNP) {
       await xfs.removePromise(pnpPath.cjs);
       await xfs.removePromise(pnpPath.data);
       await xfs.removePromise(pnpPath.esmLoader);
