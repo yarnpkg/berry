@@ -31,8 +31,7 @@ LIBZIP_ROOT="$THIS_DIR/libzip-$LIBZIP_VERSION"
     -v "$ZLIB_ROOT:/zlib" \
     -u $(id -u):$(id -g) \
     --env CHOST="wasm32" \
-    --env CFLAGS="-static" \
-    --env LDFLAGS="-static" \
+    --env CFLAGS="-O3" \
     -w "/zlib/build" \
     emscripten/emsdk:$EMSDK_VERSION \
     emconfigure ../configure --warn --zlib-compat --static
@@ -78,6 +77,7 @@ LIBZIP_ROOT="$THIS_DIR/libzip-$LIBZIP_VERSION"
     -v "$ZLIB_ROOT:/zlib" \
     -u $(id -u):$(id -g) \
     -w "/libzip/build" \
+    --env CFLAGS="-O3" \
     emscripten/emsdk:$EMSDK_VERSION \
     emcmake cmake -Wno-dev \
     -DBUILD_SHARED_LIBS=OFF \
