@@ -34,7 +34,7 @@ jobs:
 
     - name: 'Check that the cache files are consistent with their remote sources'
       run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- .yarn/cache | wc -l) -gt 0 ]]; then
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- '.yarn/cache' 'packages/yarnpkg-libzip' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js --immutable --immutable-cache --check-cache
         fi
       shell: bash
