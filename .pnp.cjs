@@ -12072,7 +12072,7 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.5"\
+            "npm:0.15.15"\
           ]],\
           ["semver", "npm:7.3.7"],\
           ["tslib", "npm:2.4.0"],\
@@ -13063,7 +13063,7 @@ const RAW_RUNTIME_STATE =
           ["diff", "npm:5.1.0"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.5"\
+            "npm:0.15.15"\
           ]],\
           ["globby", "npm:11.1.0"],\
           ["got", "npm:11.8.2"],\
@@ -22670,7 +22670,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.5"\
+            "npm:0.15.15"\
           ]],\
           ["resolve.exports", "npm:1.1.0"],\
           ["rollup", "npm:2.59.0"],\
@@ -29072,10 +29072,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["esbuild-wasm", [\
-      ["npm:0.15.5", {\
-        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.5-bc4c954bca-149219c551.zip/node_modules/esbuild-wasm/",\
+      ["npm:0.15.15", {\
+        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.15-ddeb55310e-965efb09e7.zip/node_modules/esbuild-wasm/",\
         "packageDependencies": [\
-          ["esbuild-wasm", "npm:0.15.5"]\
+          ["esbuild-wasm", "npm:0.15.15"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -45332,7 +45332,7 @@ const RAW_RUNTIME_STATE =
           ["@types/rollup", null],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.5"\
+            "npm:0.15.15"\
           ]],\
           ["joycon", "npm:3.0.1"],\
           ["jsonc-parser", "npm:3.0.0"],\
@@ -49767,7 +49767,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.5"\
+            "npm:0.15.15"\
           ]],\
           ["rollup", "npm:2.59.0"],\
           ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],\
