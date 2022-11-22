@@ -1488,10 +1488,6 @@ export class Project {
     await opts.report.startTimerPromise(`Project validation`, {
       skipIfEmpty: true,
     }, async () => {
-      for (const workspace of this.workspaces)
-        for (const error of workspace.manifest.errors)
-          opts.report.reportError(MessageName.UNNAMED, `${structUtils.stringifyIdent(workspace.anchoredLocator)}: ${error.message}`);
-
       await this.configuration.triggerHook(hooks => {
         return hooks.validateProject;
       }, this, {
