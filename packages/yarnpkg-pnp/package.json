@@ -12,7 +12,7 @@
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@yarnpkg/libzip": "workspace:^",
     "arg": "^5.0.2",
-    "esbuild": "npm:esbuild-wasm@^0.15.5",
+    "esbuild": "npm:esbuild-wasm@^0.15.15",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "tslib": "^1.13.0"

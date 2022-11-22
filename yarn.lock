@@ -5463,7 +5463,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     chalk: ^3.0.0
     clipanion: 3.2.0-rc.4
-    esbuild: "npm:esbuild-wasm@^0.15.5"
+    esbuild: "npm:esbuild-wasm@^0.15.15"
     semver: ^7.1.2
     tslib: ^1.13.0
     typescript: 5.1.0-beta
@@ -5548,7 +5548,7 @@ __metadata:
     clipanion: 3.2.0-rc.4
     cross-spawn: 7.0.3
     diff: ^5.1.0
-    esbuild: "npm:esbuild-wasm@^0.15.5"
+    esbuild: "npm:esbuild-wasm@^0.15.15"
     globby: ^11.0.1
     got: ^11.7.0
     json-file-plus: ^3.3.1
@@ -6303,7 +6303,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     arg: ^5.0.2
-    esbuild: "npm:esbuild-wasm@^0.15.5"
+    esbuild: "npm:esbuild-wasm@^0.15.15"
     rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     tslib: ^1.13.0
@@ -11114,12 +11114,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:esbuild-wasm@^0.15.5":
-  version: 0.15.6
-  resolution: "esbuild-wasm@npm:0.15.6"
+"esbuild@npm:esbuild-wasm@^0.15.15":
+  version: 0.15.15
+  resolution: "esbuild-wasm@npm:0.15.15"
   bin:
     esbuild: bin/esbuild
-  checksum: 7ce157ae3568e5a68df0a38423c9fc5b6cf807e4d429f0133496d3a45728d0db0f93f14cc03931d5d3e48a61a4220244e89d92af9ae93d09ee280bc8831db0ef
+  checksum: 4926ba2eed0ac1883543d18f1ed7868d915f2c03c122390d7869eab28ec37bf662f7709e215ed52a1eeff92ac7db75f600fddcc9ad87b2072b899f687f7f04b4
   languageName: node
   linkType: hard
 
@@ -27102,7 +27102,7 @@ typescript@^3.8.3:
     "@types/vscode": ^1.54.0
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
-    esbuild: "npm:esbuild-wasm@^0.15.5"
+    esbuild: "npm:esbuild-wasm@^0.15.15"
     rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     rollup-plugin-terser: ^7.0.2

@@ -9724,7 +9724,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
             ["esbuild", [\
               "esbuild-wasm",\
-              "npm:0.15.6"\
+              "npm:0.15.15"\
             ]],\
             ["semver", "npm:7.3.5"],\
             ["tslib", "npm:1.13.0"],\
@@ -10364,7 +10364,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["diff", "npm:5.1.0"],\
             ["esbuild", [\
               "esbuild-wasm",\
-              "npm:0.15.6"\
+              "npm:0.15.15"\
             ]],\
             ["globby", "npm:11.0.4"],\
             ["got", "npm:11.8.2"],\
@@ -15350,7 +15350,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["arg", "npm:5.0.2"],\
             ["esbuild", [\
               "esbuild-wasm",\
-              "npm:0.15.6"\
+              "npm:0.15.15"\
             ]],\
             ["rollup", "npm:2.59.0"],\
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],\
@@ -21060,10 +21060,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["esbuild-wasm", [\
-        ["npm:0.15.6", {\
-          "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.6-c7b2c4a7b9-7ce157ae35.zip/node_modules/esbuild-wasm/",\
+        ["npm:0.15.15", {\
+          "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.15-ddeb55310e-4926ba2eed.zip/node_modules/esbuild-wasm/",\
           "packageDependencies": [\
-            ["esbuild-wasm", "npm:0.15.6"]\
+            ["esbuild-wasm", "npm:0.15.15"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -36058,7 +36058,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/rollup", null],\
             ["esbuild", [\
               "esbuild-wasm",\
-              "npm:0.15.6"\
+              "npm:0.15.15"\
             ]],\
             ["joycon", "npm:3.0.1"],\
             ["jsonc-parser", "npm:3.0.0"],\
@@ -40226,7 +40226,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/libzip", "workspace:packages/yarnpkg-libzip"],\
             ["esbuild", [\
               "esbuild-wasm",\
-              "npm:0.15.6"\
+              "npm:0.15.15"\
             ]],\
             ["rollup", "npm:2.59.0"],\
             ["rollup-plugin-esbuild", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#npm:3.0.4"],\
