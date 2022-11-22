@@ -81,7 +81,7 @@ export const CorePlugin: Plugin = {
         manifest.errors.push(new Error(`Resolutions field will be ignored`));
 
       for (const manifestError of manifest.errors) {
-        report.reportError(MessageName.INVALID_MANIFEST, manifestError.message);
+        report.reportWarning(MessageName.INVALID_MANIFEST, manifestError.message);
       }
     },
   },
