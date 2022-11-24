@@ -196,6 +196,22 @@ export function getValue(value: unknown) {
   return isResolvedRcFile(value) ? value[1] : value;
 }
 
+export function getValueByTree(valueBase: unknown): unknown {
+  const value = isResolvedRcFile(valueBase) ? valueBase[1] : valueBase;
+
+  if (Array.isArray(value))
+    return value.map(v => getValueByTree(v));
+
+  if (isObject(value)) {
+    const result: {[key: string]: unknown} = {};
+    for (const [propKey, propValue] of Object.entries(value))
+      result[propKey] = getValueByTree(propValue);
+    return result;
+  }
+
+  return value;
+}
+
 export function getSource(value: unknown) {
   return isResolvedRcFile(value) ? value[0] : null;
 }

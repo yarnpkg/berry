@@ -702,7 +702,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
 
   switch (definition.type) {
     case SettingsType.ANY:
-      return value;
+      return configUtils.getValueByTree(value);
     case SettingsType.SHAPE:
       return parseShape(configuration, path, valueBase, definition, folder);
     case SettingsType.MAP:

@@ -664,6 +664,26 @@ describe(`Configuration`, () => {
             },
           },
         },
+        any: {
+          description: "",
+          type: "ANY",
+          default: "",
+        },
+        anyReset: {
+          description: "",
+          type: "ANY",
+          default: "",
+        },
+        anyExtend: {
+          description: "",
+          type: "ANY",
+          default: "",
+        },
+        anyHardReset: {
+          description: "",
+          type: "ANY",
+          default: "",
+        },
       }`);
 
       await initializeConfiguration({
@@ -698,6 +718,18 @@ describe(`Configuration`, () => {
           foo: {string: `foo`},
         },
         mapHardReset: {
+          foo: {string: `foo`},
+        },
+        any: {
+          foo: {string: `foo`},
+        },
+        anyReset: {
+          foo: {string: `foo`},
+        },
+        anyExtend: {
+          foo: {string: `foo`},
+        },
+        anyHardReset: {
           foo: {string: `foo`},
         },
       }, async dir => {
@@ -772,6 +804,27 @@ describe(`Configuration`, () => {
               bar: {number: 2, string: `bar`},
             },
           },
+          any: {
+            bar: {number: 2, string: `bar`},
+          },
+          anyReset: {
+            onConflict: `reset`,
+            value: {
+              bar: {number: 2, string: `bar`},
+            },
+          },
+          anyExtend: {
+            onConflict: `extend`,
+            value: {
+              bar: {number: 2, string: `bar`},
+            },
+          },
+          anyHardReset: {
+            onConflict: `hardReset`,
+            value: {
+              bar: {number: 2, string: `bar`},
+            },
+          },
         }));
 
         const workspaceDirectory2 = `${dir}/workspace/workspace` as PortablePath;
@@ -783,6 +836,9 @@ describe(`Configuration`, () => {
             string: `baz`,
           },
           mapHardReset: {
+            baz: {string: `baz`},
+          },
+          anyHardReset: {
             baz: {string: `baz`},
           },
         }));
@@ -818,6 +874,11 @@ describe(`Configuration`, () => {
         expect(configuration.get(`mapHardReset`)).toEqual(new Map([
           [`baz`, new Map<string, any>([[`number`, 0], [`string`, `baz`]])],
         ]));
+
+        expect(configuration.get(`any`)).toEqual({bar: {number: `2`, string: `bar`}, foo: {string: `foo`}});
+        expect(configuration.get(`anyReset`)).toEqual({bar: {number: `2`, string: `bar`}});
+        expect(configuration.get(`anyExtend`)).toEqual({bar: {number: `2`, string: `bar`}, foo: {string: `foo`}});
+        expect(configuration.get(`anyHardReset`)).toEqual({baz: {string: `baz`}});
       });
     });
   });
