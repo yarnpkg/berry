@@ -966,4 +966,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       "@babel/traverse": optionalPeerDep,
     },
   }],
+  // https://github.com/graphql-compose/graphql-compose/pull/398
+  [`graphql-compose@>=9.0.10`, {
+    peerDependencies: {
+      graphql: `^14.2.0 || ^15.0.0 || ^16.0.0`,
+    },
+  }],
 ];
