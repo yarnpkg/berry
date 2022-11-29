@@ -411,5 +411,3 @@ When autofixing merge conflicts, Yarn needs to know what are the two lockfile ve
 
 This may happen if someone accidentally committed the lockfile without first resolving the merge conflicts - should that happen, you'll need to revert the lockfile to an earlier working version and run `yarn install`.
 
-## YN0084 - `AUTOMERGE_LOCKFILE_VERSION_MISMATCH`
-
