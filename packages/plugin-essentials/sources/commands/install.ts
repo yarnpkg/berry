@@ -360,12 +360,24 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (immutable)
     throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
 
-  const commits = await execUtils.execvp(`git`, [`rev-parse`, `MERGE_HEAD`, `HEAD`], {
+  let commits = await execUtils.execvp(`git`, [`rev-parse`, `MERGE_HEAD`, `HEAD`], {
     cwd: configuration.projectCwd,
   });
 
+  if (commits.code !== 0) {
+    commits = await execUtils.execvp(`git`, [`rev-parse`, `REBASE_HEAD`, `HEAD`], {
+      cwd: configuration.projectCwd,
+    });
+  }
+
+  if (commits.code !== 0) {
+    commits = await execUtils.execvp(`git`, [`rev-parse`, `CHERRY_PICK_HEAD`, `HEAD`], {
+      cwd: configuration.projectCwd,
+    });
+  }
+
   if (commits.code !== 0)
-    throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to find the commits pertaining to the merge conflict`);
+    throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to find the commits pertaining to the conflict`);
 
   let variants = await Promise.all(commits.stdout.trim().split(/\n/).map(async hash => {
     const content = await execUtils.execvp(`git`, [`show`, `${hash}:./${Filename.lockfile}`], {
