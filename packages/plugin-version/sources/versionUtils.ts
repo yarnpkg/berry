@@ -9,6 +9,12 @@ import semver                                                                   
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
+export enum ReleaseType {
+  Major = `MAJOR`,
+  Minor = `MINOR`,
+  Patch = `PATCH`,
+}
+
 export enum Decision {
   UNDECIDED = `undecided`,
   DECLINE = `decline`,
@@ -51,6 +57,21 @@ export type VersionFile = {
   baseHash: null;
   baseTitle: null;
 });
+
+export async function findPullRequestReleaseType(pullRequest: {number: number, message: string}, {project}: {project: Project}) {
+  const patterns = project.configuration.get(`releaseTypePatterns`);
+
+  const patternMatchers: Array<[ReleaseType, Array<string>]> = [];
+  patternMatchers.push([ReleaseType.Major, patterns.get(`major`)]);
+  patternMatchers.push([ReleaseType.Minor, patterns.get(`minor`)]);
+  patternMatchers.push([ReleaseType.Patch, patterns.get(`patch`)]);
+
+  for (const [strategy, patterns] of patternMatchers)
+    if (patterns.some(pattern => pullRequest.message.match(pattern)))
+      return strategy;
+
+  return null;
+}
 
 export async function resolveVersionFiles(project: Project, {prerelease = null}: {prerelease?: string | null} = {}) {
   let candidateReleases = new Map<Workspace, string>();

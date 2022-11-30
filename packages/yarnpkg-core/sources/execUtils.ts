@@ -62,6 +62,8 @@ export class ExecError extends PipeError {
 
     this.stdout = stdout;
     this.stderr = stderr;
+
+    console.log(this.stderr);
   }
 }
 

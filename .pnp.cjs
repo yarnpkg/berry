@@ -21435,6 +21435,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21469,6 +21470,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21503,6 +21505,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21537,6 +21540,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21571,6 +21575,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21605,6 +21610,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21639,6 +21645,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21673,6 +21680,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21707,6 +21715,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21741,6 +21750,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21775,6 +21785,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21809,6 +21820,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21843,6 +21855,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21877,6 +21890,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21911,6 +21925,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21945,6 +21960,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -21979,6 +21995,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -22013,6 +22030,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -22047,6 +22065,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
@@ -22078,6 +22097,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["enquirer", "npm:2.3.6"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:16.13.1"],\
