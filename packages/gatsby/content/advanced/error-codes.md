@@ -122,7 +122,7 @@ To see the actual error message, read the file linked in the report. It will con
 
 A resolver cannot be found for the given package.
 
-Resolvers are the components tasked from converting ranges (`^1.0.0`) into references (`1.2.3`). They each contain their own logic to do so - the semver resolver is the most famous one but far from being the only one. The GitHub resolver transforms GitHub repositories into tarball urls, the Git resolver normalizes the paths sent to git, ... each resolver takes care of a different resolution strategy. A missing resolver means that one of those strategies is missing.
+Resolvers are the components tasked from converting ranges (`^1.0.0`) into references (`1.2.3`). They each contain their own logic to do so - the [semver](/advanced/semver) resolver is the most famous one but far from being the only one. The GitHub resolver transforms GitHub repositories into tarball urls, the Git resolver normalizes the paths sent to git, ... each resolver takes care of a different resolution strategy. A missing resolver means that one of those strategies is missing.
 
 This error is usually caused by a Yarn plugin being missing.
 
@@ -302,7 +302,7 @@ Starting from the v2, this isn't supported anymore. The reason for this is that 
 
 ## YN0059 - `INVALID_RANGE_PEER_DEPENDENCY`
 
-A package requests a peer dependency, but the range provided is not a valid semver range. It is not possible to ensure the provided package meets the peer dependency request. The range must be fixed in order for the warning to go away. This will not prevent resolution, but may leave the system in an incorrect state.
+A package requests a peer dependency, but the range provided is not a valid [semver range](/advanced/semver). It is not possible to ensure the provided package meets the peer dependency request. The range must be fixed in order for the warning to go away. This will not prevent resolution, but may leave the system in an incorrect state.
 
 ## YN0060 - `INCOMPATIBLE_PEER_DEPENDENCY`
 

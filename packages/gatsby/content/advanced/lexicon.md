@@ -152,12 +152,14 @@ See also: [Protocols](/features/protocols)
 A reference is a string that, when combined with a package name, can be used to select one single version of a single package. References typically follow <abbr>semver</abbr>, but can use any of the supported Yarn protocols.
 
 See also: [Protocols](/features/protocols)
+See also: [Semver](/advanced/semver)
 
 ### Resolver
 
 Resolvers are the components tasked from converting <abbr>descriptors</abbr> into <abbr>locators</abbr>, and extracting the package <abbr>manifests</abbr> from the package <abbr>locators</abbr>. For example, the npm resolver would check what versions are available on the npm registry and return all the candidates that satisfy the <abbr>semver</abbr> requirements, then would query the npm registry to fetch the full metadata associated with the selected resolution.
 
 See also: [Architecture](/advanced/architecture)
+See also: [Semver](/advanced/semver)
 See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Resolver.ts#L45)
 
 ### Scope
