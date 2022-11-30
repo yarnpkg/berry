@@ -17,7 +17,6 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
 - The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
-- Set `nmMode` to `hardlinks-local` by default.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 - `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
 - The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
