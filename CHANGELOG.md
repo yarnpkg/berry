@@ -25,6 +25,9 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
 - The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
 - Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
+- Some libzip bindings are no longer needed for `ZipFS` and have been removed:
+  - `open`
+  - `ZIP_CREATE` & `ZIP_TRUNCATE`
 
 ### **API Changes**
 
