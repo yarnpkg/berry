@@ -134,7 +134,7 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
         targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
 
         targetFs.symlinkSync((entry as any).linkpath, mappedPath);
-        targetFs.lutimesSync?.(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
+        targetFs.lutimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
       } break;
     }
   }

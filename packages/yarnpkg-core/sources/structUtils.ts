@@ -46,7 +46,7 @@ export function makeDescriptor(ident: Ident, range: string): Descriptor {
  * Creates a package locator.
  *
  * @param ident The base ident (see `makeIdent`)
- * @param range The reference to attach (eg. `1.0.0`)
+ * @param reference The reference to attach (eg. `1.0.0`)
  */
 export function makeLocator(ident: Ident, reference: string): Locator {
   return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference};
@@ -345,7 +345,7 @@ export function parseIdent(string: string): Ident {
  * @param string The ident string (eg. `@types/lodash`)
  */
 export function tryParseIdent(string: string): Ident | null {
-  const match = string.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
+  const match = string.match(/^(?:@([^/]+?)\/)?([^@/]+)$/);
   if (!match)
     return null;
 
@@ -384,8 +384,8 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
  */
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
   const match = strict
-    ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))?$/);
+    ? string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;
@@ -431,8 +431,8 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
  */
 export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
   const match = strict
-    ? string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^/]+?)\/)?([^/]+?)(?:@(.+))?$/);
+    ? string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/)
+    : string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/);
 
   if (!match)
     return null;

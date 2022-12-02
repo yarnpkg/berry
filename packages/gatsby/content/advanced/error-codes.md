@@ -404,3 +404,10 @@ Yarn failed to locate a package version that could satisfy the requested range. 
 - The registry may not have been set properly (so Yarn is querying the public npm registry instead of your internal one)
 
 - The version may have been unpublished (although this shouldn't be possible for the public registry)
+
+## YN0083 - `AUTOMERGE_GIT_ERROR`
+
+When autofixing merge conflicts, Yarn needs to know what are the two lockfile versions it must merge together. To do that, it'll run `git rev-parse MERGE_HEAD HEAD` and/or `git rev-parse REBASE_HEAD HEAD`, depending on the situation. If both of those commands fail, the merge cannot succeed.
+
+This may happen if someone accidentally committed the lockfile without first resolving the merge conflicts - should that happen, you'll need to revert the lockfile to an earlier working version and run `yarn install`.
+

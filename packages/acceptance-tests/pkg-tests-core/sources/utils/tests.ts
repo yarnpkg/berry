@@ -1,22 +1,22 @@
-import {PortablePath, npath, toFilename, xfs} from '@yarnpkg/fslib';
-import assert                                 from 'assert';
-import crypto                                 from 'crypto';
-import finalhandler                           from 'finalhandler';
-import https                                  from 'https';
-import {IncomingMessage, ServerResponse}      from 'http';
-import http                                   from 'http';
-import invariant                              from 'invariant';
-import {AddressInfo}                          from 'net';
-import os                                     from 'os';
-import pem                                    from 'pem';
-import semver                                 from 'semver';
-import serveStatic                            from 'serve-static';
-import {promisify}                            from 'util';
-import {v5 as uuidv5}                         from 'uuid';
-import {Gzip}                                 from 'zlib';
+import {PortablePath, npath, toFilename, xfs, ppath, Filename} from '@yarnpkg/fslib';
+import assert                                                  from 'assert';
+import crypto                                                  from 'crypto';
+import finalhandler                                            from 'finalhandler';
+import https                                                   from 'https';
+import {IncomingMessage, ServerResponse}                       from 'http';
+import http                                                    from 'http';
+import invariant                                               from 'invariant';
+import {AddressInfo}                                           from 'net';
+import os                                                      from 'os';
+import pem                                                     from 'pem';
+import semver                                                  from 'semver';
+import serveStatic                                             from 'serve-static';
+import {promisify}                                             from 'util';
+import {v5 as uuidv5}                                          from 'uuid';
+import {Gzip}                                                  from 'zlib';
 
-import {ExecResult}                           from './exec';
-import * as fsUtils                           from './fs';
+import {ExecResult}                                            from './exec';
+import * as fsUtils                                            from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
@@ -79,6 +79,7 @@ export class Login {
   password: string;
 
   npmOtpToken: string | null;
+  npmOtpNotice: string | null;
   npmAuthToken: string | null;
 
   npmAuthIdent: {
@@ -86,12 +87,13 @@ export class Login {
     encoded: string;
   };
 
-  constructor(username: string, {otp}: {otp?: boolean} = {}) {
+  constructor(username: string, {otp, notice}: {otp?: boolean, notice?: boolean} = {}) {
     this.username = username;
     this.password = crypto.createHash(`sha1`).update(username).digest(`hex`);
 
     this.npmOtpToken = otp ? Buffer.from(this.password, `hex`).slice(0, 4).join(``) : null;
     this.npmAuthToken = uuidv5(this.password, `06030d6c-8c43-412a-ad0a-787f1fb9e31e`);
+    this.npmOtpNotice = otp && notice ? `You're looking handsome today` : null;
 
     const authIdent = `${this.username}:${this.password}`;
 
@@ -106,6 +108,7 @@ export const validLogins = {
   fooUser: new Login(`foo-user`),
   barUser: new Login(`bar-user`),
   otpUser: new Login(`otp-user`, {otp: true}),
+  otpUserWithNotice: new Login(`otp-user-with-notice`, {otp: true, notice: true}),
 } as const;
 
 let whitelist = new Map();
@@ -281,6 +284,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     res.writeHead(401, {
       [`Content-Type`]: `application/json`,
       [`www-authenticate`]: `OTP`,
+      ...user.npmOtpNotice && {
+        [`npm-notice`]: user.npmOtpNotice,
+      },
     });
 
     res.end();
@@ -667,25 +673,38 @@ export const generatePkgDriver = ({
       }
 
       return Object.assign(async (): Promise<void> => {
-        const path = await xfs.mktempPromise();
+        const homePath = await xfs.mktempPromise();
+
+        const path = ppath.join(homePath, `test` as Filename);
+        await xfs.mkdirPromise(path);
 
         const registryUrl = await startPackageServer();
+
+        function cleanup(content: string) {
+          return content.replace(/(https?):\/\/localhost:\d+/g, `$1://registry.example.org`);
+        }
 
         // Writes a new package.json file into our temporary directory
         await xfs.writeJsonPromise(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
 
-        const run = (...args: Array<any>) => {
+        const run = async (...args: Array<any>) => {
           let callDefinition = {};
 
           if (args.length > 0 && typeof args[args.length - 1] === `object`)
             callDefinition = args.pop();
 
-          return runDriver(path, args, {
+          const {stdout, stderr, ...rest} = await runDriver(path, args, {
             registryUrl,
             ...definition,
             ...subDefinition,
             ...callDefinition,
           });
+
+          return {
+            stdout: cleanup(stdout),
+            stderr: cleanup(stderr),
+            ...rest,
+          };
         };
 
         const source = async (script: string, callDefinition: Record<string, any> = {}): Promise<Record<string, any>> => {

@@ -1,13 +1,14 @@
-import {BaseCommand}                                                                       from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, miscUtils, Report} from '@yarnpkg/core';
-import {YarnVersion, formatUtils, httpUtils, structUtils}                                  from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                                   from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                                            from 'clipanion';
-import semver                                                                              from 'semver';
-import {URL}                                                                               from 'url';
-import {runInNewContext}                                                                   from 'vm';
+import {BaseCommand}                                                            from '@yarnpkg/cli';
+import {PluginMeta}                                                             from '@yarnpkg/core/sources/Plugin';
+import {Configuration, MessageName, Project, ReportError, StreamReport, Report} from '@yarnpkg/core';
+import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}            from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                        from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                                 from 'clipanion';
+import semver                                                                   from 'semver';
+import {URL}                                                                    from 'url';
+import {runInNewContext}                                                        from 'vm';
 
-import {getAvailablePlugins}                                                               from './list';
+import {getAvailablePlugins}                                                    from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginImportCommand extends BaseCommand {
@@ -27,6 +28,8 @@ export default class PluginImportCommand extends BaseCommand {
       - Third-party plugins can be referenced directly through their public urls.
       - Local plugins can be referenced by their path on the disk.
 
+      If the \`--no-checksum\` option is set, Yarn will no longer care if the plugin is modified.
+
       Plugins cannot be downloaded from the npm registry, and aren't allowed to have dependencies (they need to be bundled into a single file, possibly thanks to the \`@yarnpkg/builder\` package).
     `,
     examples: [[
@@ -45,6 +48,10 @@ export default class PluginImportCommand extends BaseCommand {
   });
 
   name = Option.String();
+
+  checksum = Option.Boolean(`--checksum`, true, {
+    description: `Whether to care if this plugin is modified`,
+  });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -107,14 +114,14 @@ export default class PluginImportCommand extends BaseCommand {
         pluginBuffer = await httpUtils.get(pluginUrl, {configuration});
       }
 
-      await savePlugin(pluginSpec, pluginBuffer, {project, report});
+      await savePlugin(pluginSpec, pluginBuffer, {checksum: this.checksum, project, report});
     });
 
     return report.exitCode();
   }
 }
 
-export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {project, report}: {project: Project, report: Report}) {
+export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {checksum = true, project, report}: {checksum?: boolean, project: Project, report: Report}) {
   const {configuration} = project;
 
   const vmExports = {} as any;
@@ -134,34 +141,13 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {proj
   await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
   await xfs.writeFilePromise(absolutePath, pluginBuffer);
 
-  const pluginMeta = {
+  const pluginMeta: PluginMeta = {
     path: relativePath,
     spec: pluginSpec,
   };
 
-  await Configuration.updateConfiguration(project.cwd, (current: any) => {
-    const plugins = [];
-    let hasBeenReplaced = false;
+  if (checksum)
+    pluginMeta.checksum = hashUtils.makeHash(pluginBuffer);
 
-    for (const entry of current.plugins || []) {
-      const userProvidedPath = typeof entry !== `string`
-        ? entry.path
-        : entry;
-
-      const pluginPath = ppath.resolve(project.cwd, npath.toPortablePath(userProvidedPath));
-      const {name} = miscUtils.dynamicRequire(pluginPath);
-
-      if (name !== pluginName) {
-        plugins.push(entry);
-      } else {
-        plugins.push(pluginMeta);
-        hasBeenReplaced = true;
-      }
-    }
-
-    if (!hasBeenReplaced)
-      plugins.push(pluginMeta);
-
-    return {...current, plugins};
-  });
+  await Configuration.addPlugin(project.cwd, [pluginMeta]);
 }

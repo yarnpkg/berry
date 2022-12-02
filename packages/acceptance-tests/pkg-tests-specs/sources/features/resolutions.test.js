@@ -8,6 +8,108 @@ const {
 describe(`Features`, () => {
   describe(`Resolutions`, () => {
     test(
+      `it should support overriding a packages with another`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+          resolutions: {
+            [`no-deps`]: `2.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `2.0.0`,
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support overriding a packages with another, but only if it's the dependency of a specific other package`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+            [`one-range-dep`]: `1.0.0`,
+          },
+          resolutions: {
+            [`one-range-dep/no-deps`]: `2.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `1.0.0`,
+              },
+            },
+          });
+
+          await expect(source(`require('one-range-dep')`)).resolves.toMatchObject({
+            name: `one-range-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `2.0.0`,
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support overriding a packages with another, but only if it originally resolved to a specific reference`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+            [`no-deps`]: `1.1.0`,
+          },
+          resolutions: {
+            [`no-deps@1.0.0`]: `2.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.1.0`,
+          });
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `2.0.0`,
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    test(
       `it should support overriding packages with portals`,
       makeTemporaryEnv(
         {

@@ -62,7 +62,7 @@ describe(`Features`, () => {
           let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
           lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
 
-          await expect(lockfile).toMatchSnapshot();
+          expect(lockfile).toMatchSnapshot();
           await expect(run(`install`)).resolves.toMatchSnapshot();
         },
       ),
@@ -103,7 +103,93 @@ describe(`Features`, () => {
           let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
           lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
 
-          await expect(lockfile).toMatchSnapshot();
+          expect(lockfile).toMatchSnapshot();
+          await expect(run(`install`)).resolves.toMatchSnapshot();
+        },
+      ),
+    );
+
+    test(
+      `it should support fixing rebase conflicts`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await execFile(`git`, [`init`], {cwd: path});
+          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
+          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
+          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+
+          await run(`install`);
+          await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
+
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `my-commit`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`checkout`, `-b`, `1.0.0`], {cwd: path});
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:1.0.0`);
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `commit-1.0.0`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`checkout`, `-b`, `2.0.0`], {cwd: path});
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:2.0.0`);
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `commit-2.0.0`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`merge`, `1.0.0`], {cwd: path});
+
+          await expect(execFile(`git`, [`rebase`, `2.0.0`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
+
+          let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+          lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
+          lockfile = lockfile.replace(/(>>>>>>>).*(\(commit-1.0.0\))/g, `$1 0000000 $2`);
+
+          expect(lockfile).toMatchSnapshot();
+          await expect(run(`install`)).resolves.toMatchSnapshot();
+        },
+      ),
+    );
+
+    test(
+      `it should support fixing cherry-pick conflicts`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await execFile(`git`, [`init`], {cwd: path});
+          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
+          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
+          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+
+          await run(`install`);
+          await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
+
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `my-commit`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`checkout`, `-b`, `1.0.0`], {cwd: path});
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:1.0.0`);
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `commit-1.0.0`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`checkout`, `-b`, `2.0.0`], {cwd: path});
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:2.0.0`);
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `commit-2.0.0`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`merge`, `1.0.0`], {cwd: path});
+
+          await expect(execFile(`git`, [`cherry-pick`, `2.0.0`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
+
+          let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+          lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
+          lockfile = lockfile.replace(/(>>>>>>>).*(\(commit-)/g, `$1 0000000 $2`);
+
+          expect(lockfile).toMatchSnapshot();
           await expect(run(`install`)).resolves.toMatchSnapshot();
         },
       ),

@@ -4,7 +4,6 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, Wat
 import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                        from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                     from './FakeFS';
 import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                         from './FakeFS';
-import {ENOSYS}                                                                                                                   from './errors';
 import {FSPath, PortablePath, Filename, ppath, npath}                                                                             from './path';
 
 export class NodeFS extends BasePortableFakeFS {
@@ -14,11 +13,6 @@ export class NodeFS extends BasePortableFakeFS {
     super();
 
     this.realFs = realFs;
-
-    if (typeof this.realFs.lutimes !== `undefined`) {
-      this.lutimesPromise = this.lutimesPromiseImpl;
-      this.lutimesSync = this.lutimesSyncImpl;
-    }
   }
 
   getExtractHint() {
@@ -355,22 +349,14 @@ export class NodeFS extends BasePortableFakeFS {
     this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
   }
 
-  private async lutimesPromiseImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
-    const lutimes = this.realFs.lutimes;
-    if (typeof lutimes === `undefined`)
-      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
-
+  async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     return await new Promise<void>((resolve, reject) => {
-      lutimes.call(this.realFs, npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
+      this.realFs.lutimes(npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
     });
   }
 
-  private lutimesSyncImpl(this: NodeFS, p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
-    const lutimesSync = this.realFs.lutimesSync;
-    if (typeof lutimesSync === `undefined`)
-      throw ENOSYS(`unavailable Node binding`, `lutimes '${p}'`);
-
-    lutimesSync.call(this.realFs, npath.fromPortablePath(p), atime, mtime);
+  lutimesSync(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
+    this.realFs.lutimesSync(npath.fromPortablePath(p), atime, mtime);
   }
 
   async mkdirPromise(p: PortablePath, opts?: MkdirOptions) {

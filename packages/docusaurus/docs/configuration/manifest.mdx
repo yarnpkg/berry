@@ -1,0 +1,18 @@
+---
+title: "Manifest (package.json)"
+description: Allowed fields in package.json files
+---
+
+import manifestSchema        from '@yarnpkg/docusaurus/static/configuration/manifest.json';
+import theme                 from 'prism-react-renderer/themes/vsDark';
+import {JsonDoc}             from 'react-json-doc';
+import {descriptionRenderer} from '@yarnpkg/docusaurus/src/lib/descriptionRenderer';
+
+<JsonDoc theme={theme} descriptionRenderer={descriptionRenderer} extraTheme={{
+  container: {borderRadius: `var(--ifm-code-border-radius)`},
+  inactiveHeader: {},
+  activeHeader: {borderRadius: `var(--ifm-code-border-radius)`, background: `#3d437c`},
+  annotation: {borderRadius: `var(--ifm-code-border-radius)`, background: `#383944`, color: `#ffffff`},
+  anchor: {scrollMarginTop: 60},
+  section: {fontFamily: `var(--ifm-font-family-monospace)`},
+}} data={manifestSchema}/>
