@@ -1304,9 +1304,14 @@ export class Configuration {
     const rcFilename = getRcFilename();
 
     const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = ppath.join(homeFolder, rcFilename);
+    const xdgConfigHome = process.env.XDG_CONFIG_HOME;
+    const configBaseDir = !xdgConfigHome || xdgConfigHome === `` || xdgConfigHome.charAt(0) != `/` ? ppath.join(homeFolder, `.config` as Filename) : xdgConfigHome;
+    const configDirRcFilePath = ppath.join(configBaseDir as Filename, `yarn` as Filename, rcFilename);
 
-    if (xfs.existsSync(homeRcFilePath)) {
+    const oldHomeRcFilePath = ppath.join(homeFolder, rcFilename);
+    const homeRcFilePath = xfs.existsSync(oldHomeRcFilePath) ? oldHomeRcFilePath : xfs.existsSync(configDirRcFilePath) ? configDirRcFilePath : undefined;
+
+    if (homeRcFilePath) {
       const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
       const data = parseSyml(content) as any;
 
