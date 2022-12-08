@@ -7016,7 +7016,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.15"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:4.9.2-rc"
+    typescript: "npm:4.9.4"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -7134,7 +7134,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:4.9.2-rc"
+    typescript: "npm:4.9.4"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -7317,7 +7317,7 @@ __metadata:
     typedoc: "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch"
     typedoc-neo-theme: "npm:^1.0.7"
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
-    typescript: "npm:4.9.2-rc"
+    typescript: "npm:4.9.4"
     unescape-html: "npm:^1.1.0"
     unfetch: "npm:^4.1.0"
     unified: "npm:^7.1.0"
@@ -7376,7 +7376,7 @@ __metadata:
     eslint: "npm:^8.2.0"
     jest: "npm:^29.2.1"
     tslib: "npm:^2.4.0"
-    typescript: "npm:4.9.2-rc"
+    typescript: "npm:4.9.4"
   dependenciesMeta:
     core-js:
       built: false
@@ -29245,13 +29245,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.2-rc":
-  version: 4.9.2-rc
-  resolution: "typescript@npm:4.9.2-rc"
+"typescript@npm:4.9.4":
+  version: 4.9.4
+  resolution: "typescript@npm:4.9.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 4b469f029e38f6f41f9ee5506bc8565cf5eeb489bc2ebcb706c19c2977131b199f4520ae636b6902cf674ce8a4bd9209173ff560555e0ef8c501a94c660a6ae6
+  checksum: b142d5e50785d0e5055771e4d9e712b01be58985ff29be3d3acc64f0fddd5fd8ade8b28583ba502f2565783c23bd5b509c5abcc1a93a2d7d4f05b8e4ee731fc9
   languageName: node
   linkType: hard
 
@@ -29265,13 +29265,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A4.9.2-rc#optional!builtin<compat/typescript>":
-  version: 4.9.2-rc
-  resolution: "typescript@patch:typescript@npm%3A4.9.2-rc#optional!builtin<compat/typescript>::version=4.9.2-rc&hash=d73830"
+"typescript@patch:typescript@npm%3A4.9.4#optional!builtin<compat/typescript>":
+  version: 4.9.4
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#optional!builtin<compat/typescript>::version=4.9.4&hash=ad5954"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 8011da62baf5dc3f6b4bdd5e7a3321190308704ede2911405dd4b2af47ba93324d366ac4f0dcfc46a70dd0e60a46f129eeb9fd0d1281bd06fe56b30dccb82434
+  checksum: e7321aeb1e2c0e3c19599808707208e2b730de8d17a5624f0a7297b9a1ffa39974edd4a819108b3b635bc00171476ddfa339e04d928a03ce8d8c6944cb8ec008
   languageName: node
   linkType: hard
 

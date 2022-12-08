@@ -83,6 +83,7 @@ The following changes only affect people writing Yarn plugins:
 ### Compatibility
 
 - Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
+- Updates the PnP compatibility layer for TypeScript v4.9.4.
 
 ## 3.2.4
 
