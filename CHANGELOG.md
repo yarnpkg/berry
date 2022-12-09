@@ -84,6 +84,7 @@ The following changes only affect people writing Yarn plugins:
 
 - Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
 - Updates the PnP compatibility layer for TypeScript v4.9.4.
+- PnP now reports missing files when in watch mode.
 
 ## 3.2.4
 
