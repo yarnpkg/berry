@@ -537,7 +537,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/salesforce-ux/scss-parser/pull/43
-  [`scss-parser@*`, {
+  [`scss-parser@<=1.0.5`, {
     dependencies: {
       lodash: `^4.17.21`,
     },
