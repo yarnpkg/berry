@@ -5429,7 +5429,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.5"
     semver: ^7.1.2
     tslib: ^1.13.0
-    typescript: 4.9.2-rc
+    typescript: 4.9.4
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5548,7 +5548,7 @@ __metadata:
     micromatch: ^4.0.2
     p-limit: ^2.2.0
     tslib: ^1.13.0
-    typescript: 4.9.2-rc
+    typescript: 4.9.4
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5689,7 +5689,7 @@ __metadata:
     typedoc: next
     typedoc-neo-theme: ^1.0.7
     typedoc-plugin-yarn: "portal:./typedoc-plugin-yarn"
-    typescript: 4.9.2-rc
+    typescript: 4.9.4
     unescape-html: ^1.1.0
     unfetch: ^4.1.0
     unified: ^7.1.0
@@ -5767,7 +5767,7 @@ __metadata:
     jest-junit: ^10.0.0
     micromatch: ^4.0.2
     tslib: ^1.13.0
-    typescript: 4.9.2-rc
+    typescript: 4.9.4
   dependenciesMeta:
     core-js:
       built: false
@@ -26213,13 +26213,13 @@ typescript@^3.8.3:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.2-rc":
-  version: 4.9.2-rc
-  resolution: "typescript@npm:4.9.2-rc"
+"typescript@npm:4.9.4":
+  version: 4.9.4
+  resolution: "typescript@npm:4.9.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 0652e08b396d597a021d53c40f0827f4877e05cf5766670884967589bddc35b85a1be24c5d244e65f68bfca9a625615148ae81975791d99f368fde91bf7a653b
+  checksum: e782fb9e0031cb258a80000f6c13530288c6d63f1177ed43f770533fdc15740d271554cdae86701c1dd2c83b082cea808b07e97fd68b38a172a83dbf9e0d0ef9
   languageName: node
   linkType: hard
 
@@ -26233,13 +26233,13 @@ typescript@^3.8.3:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.2-rc#~builtin<compat/typescript>":
-  version: 4.9.2-rc
-  resolution: "typescript@patch:typescript@npm%3A4.9.2-rc#~builtin<compat/typescript>::version=4.9.2-rc&hash=d73830"
+"typescript@patch:typescript@4.9.4#~builtin<compat/typescript>":
+  version: 4.9.4
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 4116739056f6869a28753454f9d6480eb611ef640cc67b0ef82242bf972b1f72b8f441362a54bca3ba72daacbbfa7d91408109db4c70d26f407cbd7ef0408509
+  checksum: 1caaea6cb7f813e64345190fddc4e6c924d0b698ab81189b503763c4a18f7f5501c69362979d36e19c042d89d936443e768a78b0675690b35eb663d19e0eae71
   languageName: node
   linkType: hard
 

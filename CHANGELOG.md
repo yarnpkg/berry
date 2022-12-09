@@ -14,6 +14,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
 
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.4.
+
 ## 3.3.0
 
 ### Installs
