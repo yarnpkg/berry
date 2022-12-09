@@ -10122,7 +10122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"charenc@npm:~0.0.1":
+"charenc@npm:0.0.2, charenc@npm:~0.0.1":
   version: 0.0.2
   resolution: "charenc@npm:0.0.2"
   checksum: f823489c8dee45b979f011c2f90b433b5497249fccd6dcda57e7b892ba07ea7772ebd5f65b595596c16a8b1aa5c01bbc194f10c7c14593211adadc7f0d999f9d
@@ -11344,7 +11344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypt@npm:~0.0.1":
+"crypt@npm:0.0.2, crypt@npm:~0.0.1":
   version: 0.0.2
   resolution: "crypt@npm:0.0.2"
   checksum: 241cef46f6ea8512c79ab35812fcc9ee45cd433b516271c1ff8321cd1f1e4d8cfd1b5b68bc9271cc66c8a948e1808ba6aed25c4d2bdefa3a9142ba88b48703fe
@@ -12999,10 +12999,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es6-promisify@npm:^6.0.0":
-  version: 6.1.1
-  resolution: "es6-promisify@npm:6.1.1"
-  checksum: 945d91cf71d723b1c1f796a66d6a0fadb7a6458d18f5a9f8ef05e76fb737950b680db77f35979353de478a82a03ff75b8696726682bb5e4d786af727eb4e29f6
+"es6-promisify@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "es6-promisify@npm:7.0.0"
+  checksum: e206d3fbcf8cc56efe94f4ae1719bcc57459f8502d9c3d2ad17596aa86974a7855465a1c45d330aa399834ebc37b93e5c20b1b98321b2b37679f55cddbc86991
   languageName: node
   linkType: hard
 
@@ -17917,7 +17917,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-buffer@npm:^1.1.5, is-buffer@npm:~1.1.1":
+"is-buffer@npm:^1.1.5, is-buffer@npm:~1.1.1, is-buffer@npm:~1.1.6":
   version: 1.1.6
   resolution: "is-buffer@npm:1.1.6"
   checksum: a3857c313fad2bc168a0e0af61d9e8149fe1aa251bc1bb717cf309f8fc3266c2701f82cdf8b224f24e916e32c248da4ead85151ad43c2787090c57b3469f9af7
@@ -20561,7 +20561,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"md5@npm:^2.2.1, md5@npm:~2.2.0":
+"md5@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "md5@npm:2.3.0"
+  dependencies:
+    charenc: "npm:0.0.2"
+    crypt: "npm:0.0.2"
+    is-buffer: "npm:~1.1.6"
+  checksum: 9c439bada6744e9f1dd3f3fe4bf996b4382b49acb193f2014c30887213ba9e68a8370bcd077a211ee843310fb9cc5ba5463c0c3a53408c4760ba10e894f19276
+  languageName: node
+  linkType: hard
+
+"md5@npm:~2.2.0":
   version: 2.2.1
   resolution: "md5@npm:2.2.1"
   dependencies:
@@ -22497,7 +22508,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"os-tmpdir@npm:^1.0.1, os-tmpdir@npm:~1.0.2":
+"os-tmpdir@npm:^1.0.2, os-tmpdir@npm:~1.0.2":
   version: 1.0.2
   resolution: "os-tmpdir@npm:1.0.2"
   checksum: c69d1cc11e9da80f1e2b21a08566fec9a690e4b5bc47b3ac996cfe8d24f4e9e6857779a39a326bf322f2e8bc936ada1a92d48aa10c6dda99c13c551c23bdadfb
@@ -23287,15 +23298,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pem@npm:^1.14.4":
-  version: 1.14.4
-  resolution: "pem@npm:1.14.4"
+pem@dexus/pem:
+  version: 1.14.5
+  resolution: "pem@https://github.com/dexus/pem.git#commit=71dae3346801dafb5a8bcebcd4c7267fd182666f"
   dependencies:
-    es6-promisify: "npm:^6.0.0"
-    md5: "npm:^2.2.1"
-    os-tmpdir: "npm:^1.0.1"
+    es6-promisify: "npm:^7.0.0"
+    md5: "npm:^2.3.0"
+    os-tmpdir: "npm:^1.0.2"
     which: "npm:^2.0.2"
-  checksum: d5213e6abb065fc72b923f4b6e48fe342d992fc427d54bf5bfeb3ad44ed6f14ed8ee6bdb9d36e2e37311315d73040f54eb04bcaf436609621891debc13da4dd7
+  checksum: d47bef66fd22d970b9d9c22ca6effe2aae3f28032f71e9ca67d112dbbcca2b30ebaa0eebcdd294dd766324fe79c7121a5261ecf31dbdcbf9bc6f6a48f2d59914
   languageName: node
   linkType: hard
 
@@ -23462,7 +23473,7 @@ __metadata:
     invariant: "npm:^2.2.4"
     klaw: "npm:^2.1.1"
     minimatch: "npm:^3.0.4"
-    pem: "npm:^1.14.4"
+    pem: dexus/pem
     pkg-tests-fixtures: "workspace:^"
     semver: "npm:^7.1.2"
     serve-static: "npm:^1.14.1"
