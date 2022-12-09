@@ -1,6 +1,6 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
 index c2c5c03f3..e0fe07b55 100644
-semver exclusivity >=4.9.2-rc
+semver exclusivity >=4.9.2-rc <4.9.4
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
 @@ -4691,6 +4691,9 @@ var ts;
@@ -306,7 +306,7 @@ semver exclusivity >=4.9.2-rc
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
 index fc48171a6..cf705f299 100644
-semver exclusivity >=4.9.2-rc
+semver exclusivity >=4.9.2-rc <4.9.4
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -7303,6 +7303,11 @@ var ts;
@@ -977,7 +977,7 @@ semver exclusivity >=4.9.2-rc
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
 index ec521e9cc..aed501c4c 100644
-semver exclusivity >=4.9.2-rc
+semver exclusivity >=4.9.2-rc <4.9.4
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
 @@ -7302,6 +7302,11 @@ var ts;
@@ -1624,7 +1624,7 @@ semver exclusivity >=4.9.2-rc
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.js b/lib/typescript.js
 index 530b87683..78b127f0a 100644
-semver exclusivity >=4.9.2-rc
+semver exclusivity >=4.9.2-rc <4.9.4
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
 @@ -7293,6 +7293,11 @@ var ts;
@@ -2167,7 +2167,7 @@ semver exclusivity >=4.9.2-rc
              });
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
 index 59e716a7b..86a522796 100644
-semver exclusivity >=4.9.2-rc
+semver exclusivity >=4.9.2-rc <4.9.4
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
 @@ -7293,6 +7293,11 @@ var ts;
@@ -2710,7 +2710,7 @@ semver exclusivity >=4.9.2-rc
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
 index ed96b5050..8d8200f20 100644
-semver exclusivity >=4.9.2-rc
+semver exclusivity >=4.9.2-rc <4.9.4
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
 @@ -7283,6 +7283,11 @@ var ts;
