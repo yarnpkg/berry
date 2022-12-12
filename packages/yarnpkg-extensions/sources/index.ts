@@ -543,7 +543,7 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/salesforce-ux/query-ast/pull/25
-  [`query-ast@*`, {
+  [`query-ast@<1.0.5`, {
     dependencies: {
       lodash: `^4.17.21`,
     },
