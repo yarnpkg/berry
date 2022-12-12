@@ -41411,6 +41411,7 @@ const StringDecoder = require('string_decoder');
 const url = require('url');
 const os = require('os');
 const nodeUtils = require('util');
+const readline = require('readline');
 const assert = require('assert');
 const stream = require('stream');
 const zlib = require('zlib');
@@ -45323,6 +45324,12 @@ class FileHandle {
     } finally {
       this[kUnref]();
     }
+  }
+  readLines(options) {
+    return readline.createInterface({
+      input: this.createReadStream(options),
+      crlfDelay: Infinity
+    });
   }
   async stat(opts) {
     try {

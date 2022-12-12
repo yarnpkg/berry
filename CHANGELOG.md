@@ -17,6 +17,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 ### Compatibility
 
 - Updates the PnP compatibility layer for TypeScript v4.9.4.
+- The patched filesystem now supports `FileHandle.readLines`.
 
 ## 3.3.0
 
