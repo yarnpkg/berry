@@ -66,10 +66,6 @@ The following changes only affect people writing Yarn plugins:
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
-- The node-modules linker avoids creation of circular symlinks
-- The node-modules linker no longer creates duplicate copies inside of aliased packages
-- The node-modules linker locates binaries correctly when the same version of the package is duplicated inside root workspace and another workspace
-- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
 ### Bugfixes
 
@@ -82,8 +78,20 @@ The following changes only affect people writing Yarn plugins:
 
 ### Compatibility
 
-- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
 - Updates the PnP compatibility layer for TypeScript v4.9.4.
+
+## 3.3.0
+
+### Installs
+
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+- The node-modules linker locates binaries correctly when the same version of the package is duplicated inside root workspace and another workspace
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
 
 ## 3.2.4
 
