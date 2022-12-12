@@ -18,6 +18,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 - Updates the PnP compatibility layer for TypeScript v4.9.4.
 - The patched filesystem now supports `FileHandle.readLines`.
+- PnP now reports missing files when in watch mode.
 
 ## 3.3.0
 

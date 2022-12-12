@@ -830,6 +830,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     if (qualifiedPath) {
       return ppath.normalize(qualifiedPath);
     } else {
+      nodeUtils.reportRequiredFilesToWatchMode(candidates.map(candidate => npath.fromPortablePath(candidate)));
+
       const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
 
       const containingPackage = findPackageLocator(unqualifiedPath);

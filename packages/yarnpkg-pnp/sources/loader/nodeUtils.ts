@@ -1,7 +1,9 @@
-import {NativePath, npath} from '@yarnpkg/fslib';
-import fs                  from 'fs';
-import {Module}            from 'module';
-import path                from 'path';
+import {NativePath, npath, VirtualFS}   from '@yarnpkg/fslib';
+import fs                               from 'fs';
+import {Module}                         from 'module';
+import path                             from 'path';
+
+import {WATCH_MODE_MESSAGE_USES_ARRAYS} from '../esm-loader/loaderFlags';
 
 // @ts-expect-error
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
@@ -54,4 +56,19 @@ Instead change the require of ${basename} in ${parentPath} to a dynamic import()
   const err = new Error(msg) as Error & { code: string };
   err.code = `ERR_REQUIRE_ESM`;
   return err;
+}
+
+// https://github.com/nodejs/node/pull/44366
+// https://github.com/nodejs/node/pull/45348
+export function reportRequiredFilesToWatchMode(files: Array<NativePath>) {
+  if (process.env.WATCH_REPORT_DEPENDENCIES && process.send) {
+    files = files.map(filename => npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename))));
+    if (WATCH_MODE_MESSAGE_USES_ARRAYS) {
+      process.send({'watch:require': files});
+    } else {
+      for (const filename of files) {
+        process.send({'watch:require': filename});
+      }
+    }
+  }
 }
