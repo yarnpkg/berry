@@ -79,6 +79,7 @@ The following changes only affect people writing Yarn plugins:
 ### Compatibility
 
 - Updates the PnP compatibility layer for TypeScript v4.9.4.
+- The patched filesystem now supports `FileHandle.readLines`.
 
 ## 3.3.0
 
