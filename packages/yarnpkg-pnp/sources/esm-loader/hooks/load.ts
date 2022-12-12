@@ -1,9 +1,9 @@
-import {VirtualFS, npath}                      from '@yarnpkg/fslib';
-import fs                                      from 'fs';
-import {fileURLToPath, pathToFileURL}          from 'url';
+import {VirtualFS, npath}                                                      from '@yarnpkg/fslib';
+import fs                                                                      from 'fs';
+import {fileURLToPath, pathToFileURL}                                          from 'url';
 
-import {HAS_JSON_IMPORT_ASSERTION_REQUIREMENT} from '../loaderFlags';
-import * as loaderUtils                        from '../loaderUtils';
+import {HAS_JSON_IMPORT_ASSERTION_REQUIREMENT, WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
+import * as loaderUtils                                                        from '../loaderUtils';
 
 // The default `load` doesn't support reading from zip files
 export async function load(
@@ -37,12 +37,13 @@ export async function load(
     // At the time of writing Node.js reports all loaded URLs itself so
     // we technically only need to do this for virtual files but in the
     // event that ever changes we report everything.
+    const pathToSend = pathToFileURL(
+      npath.fromPortablePath(
+        VirtualFS.resolveVirtual(npath.toPortablePath(filePath)),
+      ),
+    ).href;
     process.send({
-      'watch:import': pathToFileURL(
-        npath.fromPortablePath(
-          VirtualFS.resolveVirtual(npath.toPortablePath(filePath)),
-        ),
-      ).href,
+      'watch:import': WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend,
     });
   }
 

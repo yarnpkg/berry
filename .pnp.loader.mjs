@@ -1358,6 +1358,12 @@ class VirtualFS extends ProxiedFS {
   }
 }
 
+const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
+const HAS_CONSOLIDATED_HOOKS = major > 16 || major === 16 && minor >= 12;
+const HAS_UNFLAGGED_JSON_MODULES = major > 17 || major === 17 && minor >= 5 || major === 16 && minor >= 15;
+const HAS_JSON_IMPORT_ASSERTION_REQUIREMENT = major > 17 || major === 17 && minor >= 1 || major === 16 && minor > 14;
+const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2;
+
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
 function readPackageScope(checkPath) {
@@ -1384,11 +1390,6 @@ function readPackage(requestPath) {
     return null;
   return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
 }
-
-const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
-const HAS_CONSOLIDATED_HOOKS = major > 16 || major === 16 && minor >= 12;
-const HAS_UNFLAGGED_JSON_MODULES = major > 17 || major === 17 && minor >= 5 || major === 16 && minor >= 15;
-const HAS_JSON_IMPORT_ASSERTION_REQUIREMENT = major > 17 || major === 17 && minor >= 1 || major === 16 && minor > 14;
 
 async function tryReadFile$1(path2) {
   try {
@@ -1487,12 +1488,13 @@ async function load$1(urlString, context, nextLoad) {
     throw err;
   }
   if (process.env.WATCH_REPORT_DEPENDENCIES && process.send) {
+    const pathToSend = pathToFileURL(
+      npath.fromPortablePath(
+        VirtualFS.resolveVirtual(npath.toPortablePath(filePath))
+      )
+    ).href;
     process.send({
-      "watch:import": pathToFileURL(
-        npath.fromPortablePath(
-          VirtualFS.resolveVirtual(npath.toPortablePath(filePath))
-        )
-      ).href
+      "watch:import": WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend
     });
   }
   return {
