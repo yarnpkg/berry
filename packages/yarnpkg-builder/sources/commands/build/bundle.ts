@@ -138,6 +138,7 @@ export default class BuildBundleCommand extends Command {
           platform: `node`,
           plugins: [valLoader],
           minify: !this.noMinify,
+          external: [`archive`],
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node14`,
         });

@@ -1,7 +1,6 @@
 import {GetMountPointFn, MountFS, MountFSOptions, NodeFS, patchFs, PortablePath, PosixFS} from '@yarnpkg/fslib';
+import {ZipFS}                                                                            from '@yarnpkg/libzip';
 import fs                                                                                 from 'fs';
-
-import {ZipFS}                                                                            from './ZipFS';
 
 export type MemoryDriveOpts = {
   typeCheck?: number | null;
