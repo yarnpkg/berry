@@ -71,7 +71,6 @@ export class ZipFS extends BasePortableFakeFS {
 
   private readonly stats: Stats;
   private readonly zip: ZipArchive;
-  private readonly lzSource: number | null = null;
   private readonly level: ZipCompression;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
@@ -191,20 +190,12 @@ export class ZipFS extends BasePortableFakeFS {
     return this.path;
   }
 
-  getBufferAndClose(): Buffer {
-    this.prepareClose();
-
-    if (!this.lzSource)
-      throw new Error(`ZipFS was not created from a Buffer`);
-
-    return this.zip.digest();
-  }
-
   private prepareClose() {
     if (!this.ready)
       throw errors.EBUSY(`archive closed, close`);
 
     unwatchAllFiles(this);
+    this.ready = false;
   }
 
   saveAndClose() {
@@ -222,14 +213,16 @@ export class ZipFS extends BasePortableFakeFS {
 
     const buf = this.zip.digest();
     this.baseFs.writeFileSync(this.path, buf, {mode: newMode});
+  }
 
-    this.ready = false;
+  getBufferAndClose(): Buffer {
+    this.prepareClose();
+
+    return this.zip.digest();
   }
 
   discardAndClose() {
     this.prepareClose();
-
-    this.ready = false;
   }
 
   resolve(p: PortablePath) {
@@ -770,11 +763,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.symlinkCount === 0)
       return false;
 
-    const {opsys, attributes} = this.zip.statEntry(index);
-    if (opsys !== archiveConstants.ZIP_OPSYS_UNIX)
-      return false;
-
-    return (attributes & constants.S_IFMT) === constants.S_IFLNK;
+    return (this.getUnixMode(index) & constants.S_IFMT) === constants.S_IFLNK;
   }
 
   private getFileSource(index: number): Buffer

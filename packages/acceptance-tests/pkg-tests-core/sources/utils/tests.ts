@@ -715,7 +715,7 @@ export const generatePkgDriver = ({
               if (!(err instanceof Error))
                 return err;
 
-              const copy = {message: err.message};
+              const copy = {message: err.message, stack: err.stack};
               if (err.code)
                 copy.code = err.code;
               if (err.pnpCode)
