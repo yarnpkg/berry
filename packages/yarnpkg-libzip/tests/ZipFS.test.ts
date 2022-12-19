@@ -89,7 +89,6 @@ describe(`ZipFS`, () => {
     };
 
     const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip` as Filename);
-    console.log(tmpfile);
     const zipFs = new ZipFS(tmpfile, {create: true});
 
     zipFs.mkdirSync(`/dir` as PortablePath);
@@ -104,9 +103,7 @@ describe(`ZipFS`, () => {
     // asserts(zipFs);
     zipFs.saveAndClose();
 
-    console.log(tmpfile);
     const zipFs2 = new ZipFS(tmpfile);
-    console.log(zipFs2.zip.getEntries());
     asserts(zipFs2);
     zipFs2.discardAndClose();
   });

@@ -867,6 +867,7 @@ export class ZipFS extends BasePortableFakeFS {
 
         throw errors.ENOENT(reason);
       }
+
       if (!isDir)
         throw errors.ENOTDIR(reason);
 

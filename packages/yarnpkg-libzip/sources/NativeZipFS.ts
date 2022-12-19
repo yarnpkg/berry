@@ -756,8 +756,8 @@ export class ZipFS extends BasePortableFakeFS {
       if (!resolveLastComponent || this.symlinkCount === 0)
         break;
 
-      const index = -1;//this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
-      if (index === -1)
+      const index = this.entries.get(resolvedP);
+      if (typeof index === `undefined`)
         break;
 
       if (this.isSymbolicLink(index)) {
@@ -769,6 +769,16 @@ export class ZipFS extends BasePortableFakeFS {
     }
 
     return resolvedP;
+  }
+
+  private setFileSource(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView) {
+    const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content as any);
+    const target = ppath.relative(PortablePath.root, p);
+
+    const newIndex = this.zip.addFile(target, buffer);
+    this.fileSources.set(newIndex, buffer);
+
+    return newIndex;
   }
 
   private isSymbolicLink(index: number) {
@@ -859,8 +869,9 @@ export class ZipFS extends BasePortableFakeFS {
 
   async copyFilePromise(sourceP: PortablePath, destP: PortablePath, flags?: number) {
     const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+
     const source = await this.getFileSource(indexSource, {asyncDecompress: true});
-    const newIndex = this.zip.addFile(resolvedDestP, source);
+    const newIndex = this.setFileSource(resolvedDestP, source);
 
     if (newIndex !== indexDest) {
       this.registerEntry(resolvedDestP, newIndex);
@@ -869,8 +880,9 @@ export class ZipFS extends BasePortableFakeFS {
 
   copyFileSync(sourceP: PortablePath, destP: PortablePath, flags: number = 0) {
     const {indexSource, indexDest, resolvedDestP} = this.prepareCopyFile(sourceP, destP, flags);
+
     const source = this.getFileSource(indexSource);
-    const newIndex = this.zip.addFile(resolvedDestP, source);
+    const newIndex = this.setFileSource(resolvedDestP, source);
 
     if (newIndex !== indexDest) {
       this.registerEntry(resolvedDestP, newIndex);
@@ -949,7 +961,7 @@ export class ZipFS extends BasePortableFakeFS {
       // @ts-expect-error: toString ignores unneeded arguments
       content = content.toString(encoding);
 
-    const newIndex = this.zip.addFile(resolvedP, content);
+    const newIndex = this.setFileSource(resolvedP, content);
     if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
 
@@ -968,7 +980,7 @@ export class ZipFS extends BasePortableFakeFS {
       // @ts-expect-error: toString ignores unneeded arguments
       content = content.toString(encoding);
 
-    const newIndex = this.zip.addFile(resolvedP, content);
+    const newIndex = this.setFileSource(resolvedP, content);
     if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
 
@@ -1152,7 +1164,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.entries.has(resolvedP))
       throw errors.EEXIST(`symlink '${target}' -> '${p}'`);
 
-    const index = this.zip.addFile(resolvedP, target);
+    const index = this.setFileSource(resolvedP, target);
     this.registerEntry(resolvedP, index);
 
     this.zip.restatEntry(index, {
