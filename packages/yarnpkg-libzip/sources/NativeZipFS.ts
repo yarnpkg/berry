@@ -595,7 +595,7 @@ export class ZipFS extends BasePortableFakeFS {
       const blksize = 512;
       const blocks = Math.ceil(size / blksize);
 
-      const mtimeMs = stat.mttime;
+      const mtimeMs = stat.mtimeMs;
       const atimeMs = mtimeMs;
       const birthtimeMs = mtimeMs;
       const ctimeMs = mtimeMs;
