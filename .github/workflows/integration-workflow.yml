@@ -29,6 +29,7 @@ jobs:
 
     - run: |
         echo "${PWD}/scripts/node" >> $GITHUB_PATH
+        node ./scripts/run-yarn.js
 
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
@@ -171,6 +172,7 @@ jobs:
 
     - run: |
         echo "${PWD}/scripts/node" >> $GITHUB_PATH
+        node ./scripts/run-yarn.js
 
     - name: 'Build bundle & plugins'
       run: |
@@ -222,6 +224,7 @@ jobs:
 
     - run: |
         echo "${PWD}/scripts/node" >> $GITHUB_PATH
+        node ./scripts/run-yarn.js
 
     - uses: actions/download-artifact@v3
       with:
