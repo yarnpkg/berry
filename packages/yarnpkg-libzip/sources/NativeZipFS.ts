@@ -139,8 +139,20 @@ export class ZipFS extends BasePortableFakeFS {
     if (opts.readOnly)
       this.readOnly = true;
 
+    const getFileContent = (p: PortablePath) => {
+      try {
+        return this.baseFs!.readFileSync(source);
+      } catch (err) {
+        if (err.code === `ENOENT` && opts.create) {
+          return null;
+        } else {
+          throw err;
+        }
+      }
+    };
+
     this.zip = typeof source === `string`
-      ? new ZipArchive(this.baseFs!.readFileSync(source))
+      ? new ZipArchive(getFileContent(source))
       : new ZipArchive(source);
 
     this.listings.set(PortablePath.root, new Set<Filename>());
