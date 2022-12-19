@@ -51094,12 +51094,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 
 const fs = require('fs');
 const path = require('path');
+const archive = require('archive');
+const stream = require('stream');
+const nodeUtils = require('util');
 const crypto = require('crypto');
 const os = require('os');
 const events = require('events');
-const nodeUtils = require('util');
-const stream = require('stream');
-const zlib = require('zlib');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
@@ -51129,7 +51129,6 @@ function _interopNamespace(e) {
 const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
-const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
 const assert__default = /*#__PURE__*/_interopDefaultLegacy(assert);
@@ -54231,19 +54230,6 @@ function patchFs(patchedFs, fakeFs) {
       return { bytesWritten: await res, buffer };
     };
   }
-}
-
-let cachedInstance;
-let registeredFactory = () => {
-  throw new Error(`Assertion failed: No libzip instance is available, and no factory was configured`);
-};
-function setFactory(factory) {
-  registeredFactory = factory;
-}
-function getInstance() {
-  if (typeof cachedInstance === `undefined`)
-    cachedInstance = registeredFactory();
-  return cachedInstance;
 }
 
 var libzipSync = {exports: {}};
@@ -58395,159 +58381,6 @@ var createModule = function() {
 module.exports = createModule;
 }(libzipSync));
 
-const createModule = libzipSync.exports;
-
-const number64 = [
-  `number`,
-  `number`
-];
-var Errors = /* @__PURE__ */ ((Errors2) => {
-  Errors2[Errors2["ZIP_ER_OK"] = 0] = "ZIP_ER_OK";
-  Errors2[Errors2["ZIP_ER_MULTIDISK"] = 1] = "ZIP_ER_MULTIDISK";
-  Errors2[Errors2["ZIP_ER_RENAME"] = 2] = "ZIP_ER_RENAME";
-  Errors2[Errors2["ZIP_ER_CLOSE"] = 3] = "ZIP_ER_CLOSE";
-  Errors2[Errors2["ZIP_ER_SEEK"] = 4] = "ZIP_ER_SEEK";
-  Errors2[Errors2["ZIP_ER_READ"] = 5] = "ZIP_ER_READ";
-  Errors2[Errors2["ZIP_ER_WRITE"] = 6] = "ZIP_ER_WRITE";
-  Errors2[Errors2["ZIP_ER_CRC"] = 7] = "ZIP_ER_CRC";
-  Errors2[Errors2["ZIP_ER_ZIPCLOSED"] = 8] = "ZIP_ER_ZIPCLOSED";
-  Errors2[Errors2["ZIP_ER_NOENT"] = 9] = "ZIP_ER_NOENT";
-  Errors2[Errors2["ZIP_ER_EXISTS"] = 10] = "ZIP_ER_EXISTS";
-  Errors2[Errors2["ZIP_ER_OPEN"] = 11] = "ZIP_ER_OPEN";
-  Errors2[Errors2["ZIP_ER_TMPOPEN"] = 12] = "ZIP_ER_TMPOPEN";
-  Errors2[Errors2["ZIP_ER_ZLIB"] = 13] = "ZIP_ER_ZLIB";
-  Errors2[Errors2["ZIP_ER_MEMORY"] = 14] = "ZIP_ER_MEMORY";
-  Errors2[Errors2["ZIP_ER_CHANGED"] = 15] = "ZIP_ER_CHANGED";
-  Errors2[Errors2["ZIP_ER_COMPNOTSUPP"] = 16] = "ZIP_ER_COMPNOTSUPP";
-  Errors2[Errors2["ZIP_ER_EOF"] = 17] = "ZIP_ER_EOF";
-  Errors2[Errors2["ZIP_ER_INVAL"] = 18] = "ZIP_ER_INVAL";
-  Errors2[Errors2["ZIP_ER_NOZIP"] = 19] = "ZIP_ER_NOZIP";
-  Errors2[Errors2["ZIP_ER_INTERNAL"] = 20] = "ZIP_ER_INTERNAL";
-  Errors2[Errors2["ZIP_ER_INCONS"] = 21] = "ZIP_ER_INCONS";
-  Errors2[Errors2["ZIP_ER_REMOVE"] = 22] = "ZIP_ER_REMOVE";
-  Errors2[Errors2["ZIP_ER_DELETED"] = 23] = "ZIP_ER_DELETED";
-  Errors2[Errors2["ZIP_ER_ENCRNOTSUPP"] = 24] = "ZIP_ER_ENCRNOTSUPP";
-  Errors2[Errors2["ZIP_ER_RDONLY"] = 25] = "ZIP_ER_RDONLY";
-  Errors2[Errors2["ZIP_ER_NOPASSWD"] = 26] = "ZIP_ER_NOPASSWD";
-  Errors2[Errors2["ZIP_ER_WRONGPASSWD"] = 27] = "ZIP_ER_WRONGPASSWD";
-  Errors2[Errors2["ZIP_ER_OPNOTSUPP"] = 28] = "ZIP_ER_OPNOTSUPP";
-  Errors2[Errors2["ZIP_ER_INUSE"] = 29] = "ZIP_ER_INUSE";
-  Errors2[Errors2["ZIP_ER_TELL"] = 30] = "ZIP_ER_TELL";
-  Errors2[Errors2["ZIP_ER_COMPRESSED_DATA"] = 31] = "ZIP_ER_COMPRESSED_DATA";
-  return Errors2;
-})(Errors || {});
-const makeInterface = (emZip) => ({
-  get HEAP8() {
-    return emZip.HEAP8;
-  },
-  get HEAPU8() {
-    return emZip.HEAPU8;
-  },
-  errors: Errors,
-  SEEK_SET: 0,
-  SEEK_CUR: 1,
-  SEEK_END: 2,
-  ZIP_CHECKCONS: 4,
-  ZIP_CREATE: 1,
-  ZIP_EXCL: 2,
-  ZIP_TRUNCATE: 8,
-  ZIP_RDONLY: 16,
-  ZIP_FL_OVERWRITE: 8192,
-  ZIP_FL_COMPRESSED: 4,
-  ZIP_OPSYS_DOS: 0,
-  ZIP_OPSYS_AMIGA: 1,
-  ZIP_OPSYS_OPENVMS: 2,
-  ZIP_OPSYS_UNIX: 3,
-  ZIP_OPSYS_VM_CMS: 4,
-  ZIP_OPSYS_ATARI_ST: 5,
-  ZIP_OPSYS_OS_2: 6,
-  ZIP_OPSYS_MACINTOSH: 7,
-  ZIP_OPSYS_Z_SYSTEM: 8,
-  ZIP_OPSYS_CPM: 9,
-  ZIP_OPSYS_WINDOWS_NTFS: 10,
-  ZIP_OPSYS_MVS: 11,
-  ZIP_OPSYS_VSE: 12,
-  ZIP_OPSYS_ACORN_RISC: 13,
-  ZIP_OPSYS_VFAT: 14,
-  ZIP_OPSYS_ALTERNATE_MVS: 15,
-  ZIP_OPSYS_BEOS: 16,
-  ZIP_OPSYS_TANDEM: 17,
-  ZIP_OPSYS_OS_400: 18,
-  ZIP_OPSYS_OS_X: 19,
-  ZIP_CM_DEFAULT: -1,
-  ZIP_CM_STORE: 0,
-  ZIP_CM_DEFLATE: 8,
-  uint08S: emZip._malloc(1),
-  uint16S: emZip._malloc(2),
-  uint32S: emZip._malloc(4),
-  uint64S: emZip._malloc(8),
-  malloc: emZip._malloc,
-  free: emZip._free,
-  getValue: emZip.getValue,
-  open: emZip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
-  openFromSource: emZip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
-  close: emZip.cwrap(`zip_close`, `number`, [`number`]),
-  discard: emZip.cwrap(`zip_discard`, null, [`number`]),
-  getError: emZip.cwrap(`zip_get_error`, `number`, [`number`]),
-  getName: emZip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
-  getNumEntries: emZip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
-  delete: emZip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
-  stat: emZip.cwrap(`zip_stat`, `number`, [`number`, `string`, `number`, `number`]),
-  statIndex: emZip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
-  fopen: emZip.cwrap(`zip_fopen`, `number`, [`number`, `string`, `number`]),
-  fopenIndex: emZip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
-  fread: emZip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
-  fclose: emZip.cwrap(`zip_fclose`, `number`, [`number`]),
-  dir: {
-    add: emZip.cwrap(`zip_dir_add`, `number`, [`number`, `string`])
-  },
-  file: {
-    add: emZip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
-    getError: emZip.cwrap(`zip_file_get_error`, `number`, [`number`]),
-    getExternalAttributes: emZip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setExternalAttributes: emZip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setMtime: emZip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
-    setCompression: emZip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`])
-  },
-  ext: {
-    countSymlinks: emZip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`])
-  },
-  error: {
-    initWithCode: emZip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
-    strerror: emZip.cwrap(`zip_error_strerror`, `string`, [`number`])
-  },
-  name: {
-    locate: emZip.cwrap(`zip_name_locate`, `number`, [`number`, `string`, `number`])
-  },
-  source: {
-    fromUnattachedBuffer: emZip.cwrap(`zip_source_buffer_create`, `number`, [`number`, ...number64, `number`, `number`]),
-    fromBuffer: emZip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
-    free: emZip.cwrap(`zip_source_free`, null, [`number`]),
-    keep: emZip.cwrap(`zip_source_keep`, null, [`number`]),
-    open: emZip.cwrap(`zip_source_open`, `number`, [`number`]),
-    close: emZip.cwrap(`zip_source_close`, `number`, [`number`]),
-    seek: emZip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
-    tell: emZip.cwrap(`zip_source_tell`, `number`, [`number`]),
-    read: emZip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
-    error: emZip.cwrap(`zip_source_error`, `number`, [`number`]),
-    setMtime: emZip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`])
-  },
-  struct: {
-    stat: emZip.cwrap(`zipstruct_stat`, `number`, []),
-    statS: emZip.cwrap(`zipstruct_statS`, `number`, []),
-    statName: emZip.cwrap(`zipstruct_stat_name`, `string`, [`number`]),
-    statIndex: emZip.cwrap(`zipstruct_stat_index`, `number`, [`number`]),
-    statSize: emZip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
-    statCompSize: emZip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
-    statCompMethod: emZip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
-    statMtime: emZip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
-    statCrc: emZip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
-    error: emZip.cwrap(`zipstruct_error`, `number`, []),
-    errorS: emZip.cwrap(`zipstruct_errorS`, `number`, []),
-    errorCodeZip: emZip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`])
-  }
-});
-
 function getArchivePart(path, extension) {
   let idx = path.indexOf(extension);
   if (idx <= 0)
@@ -58653,13 +58486,6 @@ function makeEmptyArchive() {
     0
   ]);
 }
-class LibzipError extends Error {
-  constructor(message, code) {
-    super(message);
-    this.name = `Libzip Error`;
-    this.code = code;
-  }
-}
 class ZipFS extends BasePortableFakeFS {
   constructor(source, opts = {}) {
     super();
@@ -58699,60 +58525,24 @@ class ZipFS extends BasePortableFakeFS {
         this.stats = makeDefaultStats();
       }
     }
-    this.libzip = getInstance();
-    const errPtr = this.libzip.malloc(4);
-    try {
-      let flags = 0;
-      if (typeof source === `string` && pathOptions.create)
-        flags |= this.libzip.ZIP_CREATE | this.libzip.ZIP_TRUNCATE;
-      if (opts.readOnly) {
-        flags |= this.libzip.ZIP_RDONLY;
-        this.readOnly = true;
-      }
-      if (typeof source === `string`) {
-        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
-      } else {
-        const lzSource = this.allocateUnattachedSource(source);
-        try {
-          this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
-          this.lzSource = lzSource;
-        } catch (error) {
-          this.libzip.source.free(lzSource);
-          throw error;
-        }
-      }
-      if (this.zip === 0) {
-        const error = this.libzip.struct.errorS();
-        this.libzip.error.initWithCode(error, this.libzip.getValue(errPtr, `i32`));
-        throw this.makeLibzipError(error);
-      }
-    } finally {
-      this.libzip.free(errPtr);
-    }
+    if (opts.readOnly)
+      this.readOnly = true;
+    this.zip = typeof source === `string` ? new archive.ZipArchive(this.baseFs.readFileSync(source)) : new archive.ZipArchive(source);
     this.listings.set(PortablePath.root, /* @__PURE__ */ new Set());
-    const entryCount = this.libzip.getNumEntries(this.zip, 0);
-    for (let t = 0; t < entryCount; ++t) {
-      const raw = this.libzip.getName(this.zip, t, 0);
+    this.symlinkCount = 0;
+    const entries = this.zip.getEntries({ withFileTypes: true });
+    for (const [raw, entry] of entries) {
       if (ppath.isAbsolute(raw))
         continue;
+      if (entry.isSymbolicLink())
+        this.symlinkCount += 1;
       const p = ppath.resolve(PortablePath.root, raw);
-      this.registerEntry(p, t);
+      this.registerEntry(p, entry.entry);
       if (raw.endsWith(`/`)) {
         this.registerListing(p);
       }
     }
-    this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
-    if (this.symlinkCount === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
     this.ready = true;
-  }
-  makeLibzipError(error) {
-    const errorCode = this.libzip.struct.errorCodeZip(error);
-    const strerror = this.libzip.error.strerror(error);
-    const libzipError = new LibzipError(strerror, this.libzip.errors[errorCode]);
-    if (errorCode === this.libzip.errors.ZIP_ER_CHANGED)
-      throw new Error(`Assertion failed: Unexpected libzip error: ${libzipError.message}`);
-    return libzipError;
   }
   getExtractHint(hints) {
     for (const fileName of this.entries.keys()) {
@@ -58775,40 +58565,7 @@ class ZipFS extends BasePortableFakeFS {
     this.prepareClose();
     if (!this.lzSource)
       throw new Error(`ZipFS was not created from a Buffer`);
-    try {
-      this.libzip.source.keep(this.lzSource);
-      if (this.libzip.close(this.zip) === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      if (this.libzip.source.open(this.lzSource) === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_END) === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      const size = this.libzip.source.tell(this.lzSource);
-      if (size === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_SET) === -1)
-        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-      const buffer = this.libzip.malloc(size);
-      if (!buffer)
-        throw new Error(`Couldn't allocate enough memory`);
-      try {
-        const rc = this.libzip.source.read(this.lzSource, buffer, size);
-        if (rc === -1)
-          throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
-        else if (rc < size)
-          throw new Error(`Incomplete read`);
-        else if (rc > size)
-          throw new Error(`Overread`);
-        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
-        return Buffer.from(memory);
-      } finally {
-        this.libzip.free(buffer);
-      }
-    } finally {
-      this.libzip.source.close(this.lzSource);
-      this.libzip.source.free(this.lzSource);
-      this.ready = false;
-    }
+    return this.zip.digest();
   }
   prepareClose() {
     if (!this.ready)
@@ -58819,27 +58576,15 @@ class ZipFS extends BasePortableFakeFS {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
     this.prepareClose();
-    if (this.readOnly) {
-      this.discardAndClose();
+    if (this.readOnly)
       return;
-    }
     const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === DEFAULT_MODE ? void 0 : this.stats.mode;
-    if (this.entries.size === 0) {
-      this.discardAndClose();
-      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), { mode: newMode });
-    } else {
-      const rc = this.libzip.close(this.zip);
-      if (rc === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      if (typeof newMode !== `undefined`) {
-        this.baseFs.chmodSync(this.path, newMode);
-      }
-    }
+    const buf = this.zip.digest();
+    this.baseFs.writeFileSync(this.path, buf, { mode: newMode });
     this.ready = false;
   }
   discardAndClose() {
     this.prepareClose();
-    this.libzip.discard(this.zip);
     this.ready = false;
   }
   resolve(p) {
@@ -59080,16 +58825,13 @@ class ZipFS extends BasePortableFakeFS {
   statImpl(reason, p, opts = {}) {
     const entry = this.entries.get(p);
     if (typeof entry !== `undefined`) {
-      const stat = this.libzip.struct.statS();
-      const rc = this.libzip.statIndex(this.zip, entry, 0, 0, stat);
-      if (rc === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      const stat = this.zip.statEntry(entry);
       const uid = this.stats.uid;
       const gid = this.stats.gid;
-      const size = this.libzip.struct.statSize(stat) >>> 0;
+      const size = stat.size;
       const blksize = 512;
       const blocks = Math.ceil(size / blksize);
-      const mtimeMs = (this.libzip.struct.statMtime(stat) >>> 0) * 1e3;
+      const mtimeMs = stat.mttime;
       const atimeMs = mtimeMs;
       const birthtimeMs = mtimeMs;
       const ctimeMs = mtimeMs;
@@ -59100,7 +58842,7 @@ class ZipFS extends BasePortableFakeFS {
       const type = this.listings.has(p) ? fs.constants.S_IFDIR : this.isSymbolicLink(entry) ? fs.constants.S_IFLNK : fs.constants.S_IFREG;
       const defaultMode = type === fs.constants.S_IFDIR ? 493 : 420;
       const mode = type | this.getUnixMode(entry, defaultMode) & 511;
-      const crc = this.libzip.struct.statCrc(stat);
+      const crc = stat.crc;
       const statInstance = Object.assign(new StatEntry(), { uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc });
       return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
     }
@@ -59126,13 +58868,10 @@ class ZipFS extends BasePortableFakeFS {
     throw new Error(`Unreachable`);
   }
   getUnixMode(index, defaultMode) {
-    const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+    const { opsys, attributes } = this.zip.statEntry(index);
+    if (opsys !== archive.constants.ZIP_OPSYS_UNIX)
       return defaultMode;
-    return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+    return attributes >>> 16;
   }
   registerListing(p) {
     const existingListing = this.listings.get(p);
@@ -59167,10 +58906,7 @@ class ZipFS extends BasePortableFakeFS {
   }
   deleteEntry(p, index) {
     this.unregisterEntry(p);
-    const rc = this.libzip.delete(this.zip, index);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.zip.deleteEntry(index);
   }
   resolveFilename(reason, p, resolveLastComponent = true, throwIfNoEntry = true) {
     if (!this.ready)
@@ -59203,130 +58939,31 @@ class ZipFS extends BasePortableFakeFS {
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
       if (!resolveLastComponent || this.symlinkCount === 0)
         break;
-      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
-      if (index === -1)
-        break;
-      if (this.isSymbolicLink(index)) {
-        const target = this.getFileSource(index).toString();
-        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
-      } else {
-        break;
-      }
+      break;
     }
     return resolvedP;
-  }
-  allocateBuffer(content) {
-    if (!Buffer.isBuffer(content))
-      content = Buffer.from(content);
-    const buffer = this.libzip.malloc(content.byteLength);
-    if (!buffer)
-      throw new Error(`Couldn't allocate enough memory`);
-    const heap = new Uint8Array(this.libzip.HEAPU8.buffer, buffer, content.byteLength);
-    heap.set(content);
-    return { buffer, byteLength: content.byteLength };
-  }
-  allocateUnattachedSource(content) {
-    const error = this.libzip.struct.errorS();
-    const { buffer, byteLength } = this.allocateBuffer(content);
-    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, 1, error);
-    if (source === 0) {
-      this.libzip.free(error);
-      throw this.makeLibzipError(error);
-    }
-    return source;
-  }
-  allocateSource(content) {
-    const { buffer, byteLength } = this.allocateBuffer(content);
-    const source = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, 1);
-    if (source === 0) {
-      this.libzip.free(buffer);
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
-    return source;
-  }
-  setFileSource(p, content) {
-    const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content);
-    const target = ppath.relative(PortablePath.root, p);
-    const lzSource = this.allocateSource(content);
-    try {
-      const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
-      if (newIndex === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      if (this.level !== `mixed`) {
-        const method = this.level === 0 ? this.libzip.ZIP_CM_STORE : this.libzip.ZIP_CM_DEFLATE;
-        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
-        if (rc === -1) {
-          throw this.makeLibzipError(this.libzip.getError(this.zip));
-        }
-      }
-      this.fileSources.set(newIndex, buffer);
-      return newIndex;
-    } catch (error) {
-      this.libzip.source.free(lzSource);
-      throw error;
-    }
   }
   isSymbolicLink(index) {
     if (this.symlinkCount === 0)
       return false;
-    const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (attrs === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+    const { opsys, attributes } = this.zip.statEntry(index);
+    if (opsys !== archive.constants.ZIP_OPSYS_UNIX)
       return false;
-    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
     return (attributes & fs.constants.S_IFMT) === fs.constants.S_IFLNK;
   }
   getFileSource(index, opts = { asyncDecompress: false }) {
     const cachedFileSource = this.fileSources.get(index);
     if (typeof cachedFileSource !== `undefined`)
       return cachedFileSource;
-    const stat = this.libzip.struct.statS();
-    const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    const size = this.libzip.struct.statCompSize(stat);
-    const compressionMethod = this.libzip.struct.statCompMethod(stat);
-    const buffer = this.libzip.malloc(size);
-    try {
-      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
-      if (file === 0)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-      try {
-        const rc2 = this.libzip.fread(file, buffer, size, 0);
-        if (rc2 === -1)
-          throw this.makeLibzipError(this.libzip.file.getError(file));
-        else if (rc2 < size)
-          throw new Error(`Incomplete read`);
-        else if (rc2 > size)
-          throw new Error(`Overread`);
-        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
-        const data = Buffer.from(memory);
-        if (compressionMethod === 0) {
-          this.fileSources.set(index, data);
-          return data;
-        } else if (opts.asyncDecompress) {
-          return new Promise((resolve, reject) => {
-            zlib__default.default.inflateRaw(data, (error, result) => {
-              if (error) {
-                reject(error);
-              } else {
-                this.fileSources.set(index, result);
-                resolve(result);
-              }
-            });
-          });
-        } else {
-          const decompressedData = zlib__default.default.inflateRawSync(data);
-          this.fileSources.set(index, decompressedData);
-          return decompressedData;
-        }
-      } finally {
-        this.libzip.fclose(file);
-      }
-    } finally {
-      this.libzip.free(buffer);
+    if (opts.asyncDecompress) {
+      return this.zip.readEntryPromise(index).then((data) => {
+        this.fileSources.set(index, data);
+        return data;
+      });
+    } else {
+      const data = this.zip.readEntry(index);
+      this.fileSources.set(index, data);
+      return data;
     }
   }
   async fchmodPromise(fd, mask) {
@@ -59348,10 +58985,10 @@ class ZipFS extends BasePortableFakeFS {
       throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
     const oldMod = this.getUnixMode(entry, fs.constants.S_IFREG | 0);
     const newMod = oldMod & ~511 | mask;
-    const rc = this.libzip.file.setExternalAttributes(this.zip, entry, 0, 0, this.libzip.ZIP_OPSYS_UNIX, newMod << 16);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.zip.restatEntry(entry, {
+      opsys: archive.constants.ZIP_OPSYS_UNIX,
+      attributes: newMod << 16
+    });
   }
   async fchownPromise(fd, uid, gid) {
     return this.chownPromise(this.fdToPath(fd, `fchown`), uid, gid);
@@ -59374,7 +59011,7 @@ class ZipFS extends BasePortableFakeFS {
   async copyFilePromise(sourceP, destP, flags) {
     const { indexSource, indexDest, resolvedDestP } = this.prepareCopyFile(sourceP, destP, flags);
     const source = await this.getFileSource(indexSource, { asyncDecompress: true });
-    const newIndex = this.setFileSource(resolvedDestP, source);
+    const newIndex = this.zip.addFile(resolvedDestP, source);
     if (newIndex !== indexDest) {
       this.registerEntry(resolvedDestP, newIndex);
     }
@@ -59382,7 +59019,7 @@ class ZipFS extends BasePortableFakeFS {
   copyFileSync(sourceP, destP, flags = 0) {
     const { indexSource, indexDest, resolvedDestP } = this.prepareCopyFile(sourceP, destP, flags);
     const source = this.getFileSource(indexSource);
-    const newIndex = this.setFileSource(resolvedDestP, source);
+    const newIndex = this.zip.addFile(resolvedDestP, source);
     if (newIndex !== indexDest) {
       this.registerEntry(resolvedDestP, newIndex);
     }
@@ -59441,7 +59078,7 @@ class ZipFS extends BasePortableFakeFS {
       content = Buffer.concat([await this.getFileSource(index, { asyncDecompress: true }), Buffer.from(content)]);
     if (encoding !== null)
       content = content.toString(encoding);
-    const newIndex = this.setFileSource(resolvedP, content);
+    const newIndex = this.zip.addFile(resolvedP, content);
     if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
     if (mode !== null) {
@@ -59454,7 +59091,7 @@ class ZipFS extends BasePortableFakeFS {
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
     if (encoding !== null)
       content = content.toString(encoding);
-    const newIndex = this.setFileSource(resolvedP, content);
+    const newIndex = this.zip.addFile(resolvedP, content);
     if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
     if (mode !== null) {
@@ -59526,10 +59163,9 @@ class ZipFS extends BasePortableFakeFS {
     const entry = this.entries.get(resolvedP);
     if (entry === void 0)
       throw new Error(`Unreachable`);
-    const rc = this.libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
-    if (rc === -1) {
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-    }
+    this.zip.restatEntry(entry, {
+      mtime: toUnixTimestamp(mtime)
+    });
   }
   async mkdirPromise(p, opts) {
     return this.mkdirSync(p, opts);
@@ -59568,9 +59204,7 @@ class ZipFS extends BasePortableFakeFS {
     this.deleteEntry(p, index);
   }
   hydrateDirectory(resolvedP) {
-    const index = this.libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
-    if (index === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const index = this.zip.addDirectory(ppath.relative(PortablePath.root, resolvedP));
     this.registerListing(resolvedP);
     this.registerEntry(resolvedP, index);
     return index;
@@ -59592,11 +59226,12 @@ class ZipFS extends BasePortableFakeFS {
       throw EISDIR(`symlink '${target}' -> '${p}'`);
     if (this.entries.has(resolvedP))
       throw EEXIST(`symlink '${target}' -> '${p}'`);
-    const index = this.setFileSource(resolvedP, target);
+    const index = this.zip.addFile(resolvedP, target);
     this.registerEntry(resolvedP, index);
-    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (fs.constants.S_IFLNK | 511) << 16);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.zip.restatEntry(index, {
+      opsys: archive.constants.ZIP_OPSYS_UNIX,
+      attributes: (fs.constants.S_IFLNK | 511) << 16
+    });
     this.symlinkCount += 1;
   }
   async readFilePromise(p, encoding) {
@@ -59730,11 +59365,6 @@ class ZipFS extends BasePortableFakeFS {
     return unwatchFile(this, resolvedP, cb);
   }
 }
-
-setFactory(() => {
-  const emZip = createModule();
-  return makeInterface(emZip);
-});
 
 var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
   ErrorCode2["API_ERROR"] = `API_ERROR`;
