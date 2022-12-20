@@ -7266,35 +7266,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/bmp", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-bmp-npm-0.14.0-6ebce13d2e-3f0dc45e85.zip/node_modules/@jimp/bmp/",\
-        "packageDependencies": [\
-          ["@jimp/bmp", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-bmp-npm-0.5.4-edb1ee6215-c630fb5bd1.zip/node_modules/@jimp/bmp/",\
         "packageDependencies": [\
           ["@jimp/bmp", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-bmp-virtual-7bd01cda91/0/cache/@jimp-bmp-npm-0.14.0-6ebce13d2e-3f0dc45e85.zip/node_modules/@jimp/bmp/",\
-        "packageDependencies": [\
-          ["@jimp/bmp", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["bmp-js", "npm:0.1.0"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:fdf35f3a0f42601fdbc6fb4ea58b332c493c34a958a60e0d77e60fd8caa0eb9886ea3b8b988063469697404a29319cbdd02546c69acc77d0246c36a506733473#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-bmp-virtual-2c330c9738/0/cache/@jimp-bmp-npm-0.5.4-edb1ee6215-c630fb5bd1.zip/node_modules/@jimp/bmp/",\
@@ -7314,24 +7291,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/core", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-core-npm-0.14.0-148811f265-8e12d6fbeb.zip/node_modules/@jimp/core/",\
-        "packageDependencies": [\
-          ["@jimp/core", "npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["any-base", "npm:1.1.0"],\
-          ["buffer", "npm:5.7.1"],\
-          ["exif-parser", "npm:0.1.12"],\
-          ["file-type", "npm:9.0.0"],\
-          ["load-bmfont", "npm:1.4.0"],\
-          ["mkdirp", "npm:0.5.5"],\
-          ["phin", "npm:2.9.3"],\
-          ["pixelmatch", "npm:4.0.2"],\
-          ["tinycolor2", "npm:1.4.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-core-npm-0.5.4-1874301c0a-847c4ca4c3.zip/node_modules/@jimp/core/",\
         "packageDependencies": [\
@@ -7352,15 +7311,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/custom", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-custom-npm-0.14.0-57313c7085-d77238230d.zip/node_modules/@jimp/custom/",\
-        "packageDependencies": [\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/core", "npm:0.14.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-custom-npm-0.5.4-bccabd39d5-727a219046.zip/node_modules/@jimp/custom/",\
         "packageDependencies": [\
@@ -7372,36 +7322,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/gif", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-gif-npm-0.14.0-1f4facf253-03eedec0ca.zip/node_modules/@jimp/gif/",\
-        "packageDependencies": [\
-          ["@jimp/gif", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-gif-npm-0.5.0-05319af912-1ff95969d8.zip/node_modules/@jimp/gif/",\
         "packageDependencies": [\
           ["@jimp/gif", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-gif-virtual-89a564065b/0/cache/@jimp-gif-npm-0.14.0-1f4facf253-03eedec0ca.zip/node_modules/@jimp/gif/",\
-        "packageDependencies": [\
-          ["@jimp/gif", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["gifwrap", "npm:0.9.2"],\
-          ["omggif", "npm:1.0.10"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:fdf35f3a0f42601fdbc6fb4ea58b332c493c34a958a60e0d77e60fd8caa0eb9886ea3b8b988063469697404a29319cbdd02546c69acc77d0246c36a506733473#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-gif-virtual-c1e3d366aa/0/cache/@jimp-gif-npm-0.5.0-05319af912-1ff95969d8.zip/node_modules/@jimp/gif/",\
@@ -7421,35 +7347,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/jpeg", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-jpeg-npm-0.14.0-29e87ef677-afc266c0e6.zip/node_modules/@jimp/jpeg/",\
-        "packageDependencies": [\
-          ["@jimp/jpeg", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-jpeg-npm-0.5.4-93b566a50a-8b8f722d0e.zip/node_modules/@jimp/jpeg/",\
         "packageDependencies": [\
           ["@jimp/jpeg", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-jpeg-virtual-2faaccd200/0/cache/@jimp-jpeg-npm-0.14.0-29e87ef677-afc266c0e6.zip/node_modules/@jimp/jpeg/",\
-        "packageDependencies": [\
-          ["@jimp/jpeg", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["jpeg-js", "npm:0.4.3"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:fdf35f3a0f42601fdbc6fb4ea58b332c493c34a958a60e0d77e60fd8caa0eb9886ea3b8b988063469697404a29319cbdd02546c69acc77d0246c36a506733473#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-jpeg-virtual-96f31c9f02/0/cache/@jimp-jpeg-npm-0.5.4-93b566a50a-8b8f722d0e.zip/node_modules/@jimp/jpeg/",\
@@ -7469,34 +7372,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-blit", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-blit-npm-0.14.0-434e095822-f9d2cc8cd7.zip/node_modules/@jimp/plugin-blit/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-blit", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-blit-npm-0.5.4-e0db90fa22-d781203005.zip/node_modules/@jimp/plugin-blit/",\
         "packageDependencies": [\
           ["@jimp/plugin-blit", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-blit-virtual-2a4fa08f37/0/cache/@jimp-plugin-blit-npm-0.14.0-434e095822-f9d2cc8cd7.zip/node_modules/@jimp/plugin-blit/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-blit", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-blit-virtual-861f01cebe/0/cache/@jimp-plugin-blit-npm-0.5.4-e0db90fa22-d781203005.zip/node_modules/@jimp/plugin-blit/",\
@@ -7515,34 +7396,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-blur", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-blur-npm-0.14.0-f91b72fbc8-fc5115c9f6.zip/node_modules/@jimp/plugin-blur/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-blur", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-blur-npm-0.5.0-e4b2366623-216565fa5e.zip/node_modules/@jimp/plugin-blur/",\
         "packageDependencies": [\
           ["@jimp/plugin-blur", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-blur-virtual-4c977b19b8/0/cache/@jimp-plugin-blur-npm-0.14.0-f91b72fbc8-fc5115c9f6.zip/node_modules/@jimp/plugin-blur/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-blur", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-blur-virtual-1bfaf23e28/0/cache/@jimp-plugin-blur-npm-0.5.0-e4b2366623-216565fa5e.zip/node_modules/@jimp/plugin-blur/",\
@@ -7560,60 +7419,13 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@jimp/plugin-circle", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-circle-npm-0.14.0-1a14e2c49b-a52ec0d4cd.zip/node_modules/@jimp/plugin-circle/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-circle", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-circle-virtual-a52a01da29/0/cache/@jimp-plugin-circle-npm-0.14.0-1a14e2c49b-a52ec0d4cd.zip/node_modules/@jimp/plugin-circle/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-circle", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@jimp/plugin-color", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-color-npm-0.14.0-e6a0a0695f-c5259a2367.zip/node_modules/@jimp/plugin-color/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-color", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.5", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-color-npm-0.5.5-0eacbe4e58-bdc3326361.zip/node_modules/@jimp/plugin-color/",\
         "packageDependencies": [\
           ["@jimp/plugin-color", "npm:0.5.5"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-color-virtual-bb83edce80/0/cache/@jimp-plugin-color-npm-0.14.0-e6a0a0695f-c5259a2367.zip/node_modules/@jimp/plugin-color/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-color", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["tinycolor2", "npm:1.4.1"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.5", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-color-virtual-b4a33c7f5d/0/cache/@jimp-plugin-color-npm-0.5.5-0eacbe4e58-bdc3326361.zip/node_modules/@jimp/plugin-color/",\
@@ -7633,46 +7445,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-contain", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-contain-npm-0.14.0-803a8c535f-a2140e3005.zip/node_modules/@jimp/plugin-contain/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-contain", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-contain-npm-0.5.4-6538a32747-01c73dfa64.zip/node_modules/@jimp/plugin-contain/",\
         "packageDependencies": [\
           ["@jimp/plugin-contain", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-contain-virtual-93be5b633e/0/cache/@jimp-plugin-contain-npm-0.14.0-803a8c535f-a2140e3005.zip/node_modules/@jimp/plugin-contain/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-contain", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-blit", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-scale", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-blit", null],\
-          ["@types/jimp__plugin-resize", null],\
-          ["@types/jimp__plugin-scale", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-blit",\
-          "@jimp/plugin-resize",\
-          "@jimp/plugin-scale",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-blit",\
-          "@types/jimp__plugin-resize",\
-          "@types/jimp__plugin-scale"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-contain-virtual-fd65513734/0/cache/@jimp-plugin-contain-npm-0.5.4-6538a32747-01c73dfa64.zip/node_modules/@jimp/plugin-contain/",\
@@ -7703,46 +7481,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-cover", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-cover-npm-0.14.0-65d5d4190b-a9175a673f.zip/node_modules/@jimp/plugin-cover/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-cover", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-cover-npm-0.5.4-8ec63442f3-e483052c26.zip/node_modules/@jimp/plugin-cover/",\
         "packageDependencies": [\
           ["@jimp/plugin-cover", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-cover-virtual-74f61f2c52/0/cache/@jimp-plugin-cover-npm-0.14.0-65d5d4190b-a9175a673f.zip/node_modules/@jimp/plugin-cover/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-cover", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-crop", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-scale", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-crop", null],\
-          ["@types/jimp__plugin-resize", null],\
-          ["@types/jimp__plugin-scale", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-crop",\
-          "@jimp/plugin-resize",\
-          "@jimp/plugin-scale",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-crop",\
-          "@types/jimp__plugin-resize",\
-          "@types/jimp__plugin-scale"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-cover-virtual-0e5bd17727/0/cache/@jimp-plugin-cover-npm-0.5.4-8ec63442f3-e483052c26.zip/node_modules/@jimp/plugin-cover/",\
@@ -7773,34 +7517,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-crop", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-crop-npm-0.14.0-e22344e9f5-08e1df2f59.zip/node_modules/@jimp/plugin-crop/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-crop", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-crop-npm-0.5.4-31d26ecccf-3b72f3a3dd.zip/node_modules/@jimp/plugin-crop/",\
         "packageDependencies": [\
           ["@jimp/plugin-crop", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-crop-virtual-46b3e47545/0/cache/@jimp-plugin-crop-npm-0.14.0-e22344e9f5-08e1df2f59.zip/node_modules/@jimp/plugin-crop/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-crop", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-crop-virtual-52dc15cb47/0/cache/@jimp-plugin-crop-npm-0.5.4-31d26ecccf-3b72f3a3dd.zip/node_modules/@jimp/plugin-crop/",\
@@ -7819,34 +7541,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-displace", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-displace-npm-0.14.0-0d2beb3bb6-35007fc732.zip/node_modules/@jimp/plugin-displace/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-displace", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-displace-npm-0.5.0-f09a17e0a1-a2be547636.zip/node_modules/@jimp/plugin-displace/",\
         "packageDependencies": [\
           ["@jimp/plugin-displace", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-displace-virtual-6d991c94ea/0/cache/@jimp-plugin-displace-npm-0.14.0-0d2beb3bb6-35007fc732.zip/node_modules/@jimp/plugin-displace/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-displace", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-displace-virtual-afcdb78ba5/0/cache/@jimp-plugin-displace-npm-0.5.0-f09a17e0a1-a2be547636.zip/node_modules/@jimp/plugin-displace/",\
@@ -7865,34 +7565,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-dither", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-dither-npm-0.14.0-8f19be30fb-0a4c57b60e.zip/node_modules/@jimp/plugin-dither/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-dither", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-dither-npm-0.5.0-2aca6f6a4f-c7b4ee9d5f.zip/node_modules/@jimp/plugin-dither/",\
         "packageDependencies": [\
           ["@jimp/plugin-dither", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-dither-virtual-631d7f65fa/0/cache/@jimp-plugin-dither-npm-0.14.0-8f19be30fb-0a4c57b60e.zip/node_modules/@jimp/plugin-dither/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-dither", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-dither-virtual-08d298e8a5/0/cache/@jimp-plugin-dither-npm-0.5.0-2aca6f6a4f-c7b4ee9d5f.zip/node_modules/@jimp/plugin-dither/",\
@@ -7910,63 +7588,13 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@jimp/plugin-fisheye", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-fisheye-npm-0.14.0-24cbfa4702-5ee46a2187.zip/node_modules/@jimp/plugin-fisheye/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-fisheye", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-fisheye-virtual-e7b0f5be12/0/cache/@jimp-plugin-fisheye-npm-0.14.0-24cbfa4702-5ee46a2187.zip/node_modules/@jimp/plugin-fisheye/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-fisheye", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@jimp/plugin-flip", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-flip-npm-0.14.0-ab8dd9327e-46456593ff.zip/node_modules/@jimp/plugin-flip/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-flip", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-flip-npm-0.5.0-97f39a3b1b-c9c48751cd.zip/node_modules/@jimp/plugin-flip/",\
         "packageDependencies": [\
           ["@jimp/plugin-flip", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-flip-virtual-b4bbaee3bd/0/cache/@jimp-plugin-flip-npm-0.14.0-ab8dd9327e-46456593ff.zip/node_modules/@jimp/plugin-flip/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-flip", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-rotate", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-rotate", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-rotate",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-rotate"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-flip-virtual-97b9f9d033/0/cache/@jimp-plugin-flip-npm-0.5.0-97f39a3b1b-c9c48751cd.zip/node_modules/@jimp/plugin-flip/",\
@@ -7989,34 +7617,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-gaussian", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-gaussian-npm-0.14.0-d309731909-524eb61f29.zip/node_modules/@jimp/plugin-gaussian/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-gaussian", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-gaussian-npm-0.5.0-0b651fff55-4015f1d7e8.zip/node_modules/@jimp/plugin-gaussian/",\
         "packageDependencies": [\
           ["@jimp/plugin-gaussian", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-gaussian-virtual-84ab5ede43/0/cache/@jimp-plugin-gaussian-npm-0.14.0-d309731909-524eb61f29.zip/node_modules/@jimp/plugin-gaussian/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-gaussian", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-gaussian-virtual-26bab6ed34/0/cache/@jimp-plugin-gaussian-npm-0.5.0-0b651fff55-4015f1d7e8.zip/node_modules/@jimp/plugin-gaussian/",\
@@ -8035,34 +7641,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-invert", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-invert-npm-0.14.0-35eb3f91b5-12db799f98.zip/node_modules/@jimp/plugin-invert/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-invert", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-invert-npm-0.5.0-2c6fb1a938-be0b1f191b.zip/node_modules/@jimp/plugin-invert/",\
         "packageDependencies": [\
           ["@jimp/plugin-invert", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-invert-virtual-badb0b97c7/0/cache/@jimp-plugin-invert-npm-0.14.0-35eb3f91b5-12db799f98.zip/node_modules/@jimp/plugin-invert/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-invert", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-invert-virtual-951bfbdb74/0/cache/@jimp-plugin-invert-npm-0.5.0-2c6fb1a938-be0b1f191b.zip/node_modules/@jimp/plugin-invert/",\
@@ -8081,34 +7665,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-mask", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-mask-npm-0.14.0-0288f20a5d-f30923014a.zip/node_modules/@jimp/plugin-mask/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-mask", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-mask-npm-0.5.4-d6e2e54c0b-abc93b0a23.zip/node_modules/@jimp/plugin-mask/",\
         "packageDependencies": [\
           ["@jimp/plugin-mask", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-mask-virtual-6fcca52db5/0/cache/@jimp-plugin-mask-npm-0.14.0-0288f20a5d-f30923014a.zip/node_modules/@jimp/plugin-mask/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-mask", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-mask-virtual-7d616f86a6/0/cache/@jimp-plugin-mask-npm-0.5.4-d6e2e54c0b-abc93b0a23.zip/node_modules/@jimp/plugin-mask/",\
@@ -8127,34 +7689,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-normalize", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-normalize-npm-0.14.0-9e84c5e6eb-5670df39b1.zip/node_modules/@jimp/plugin-normalize/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-normalize", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-normalize-npm-0.5.4-2a968b410f-8a6fe092eb.zip/node_modules/@jimp/plugin-normalize/",\
         "packageDependencies": [\
           ["@jimp/plugin-normalize", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-normalize-virtual-0d518a39d0/0/cache/@jimp-plugin-normalize-npm-0.14.0-9e84c5e6eb-5670df39b1.zip/node_modules/@jimp/plugin-normalize/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-normalize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-normalize-virtual-68861fdbf2/0/cache/@jimp-plugin-normalize-npm-0.5.4-2a968b410f-8a6fe092eb.zip/node_modules/@jimp/plugin-normalize/",\
@@ -8173,39 +7713,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-print", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-print-npm-0.14.0-1e9074092d-cc48e427e1.zip/node_modules/@jimp/plugin-print/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-print", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-print-npm-0.5.4-6b7cf549d2-20128b9345.zip/node_modules/@jimp/plugin-print/",\
         "packageDependencies": [\
           ["@jimp/plugin-print", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-print-virtual-f1d472baf9/0/cache/@jimp-plugin-print-npm-0.14.0-1e9074092d-cc48e427e1.zip/node_modules/@jimp/plugin-print/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-print", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-blit", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-blit", null],\
-          ["load-bmfont", "npm:1.4.0"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-blit",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-blit"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-print-virtual-77e100d614/0/cache/@jimp-plugin-print-npm-0.5.4-6b7cf549d2-20128b9345.zip/node_modules/@jimp/plugin-print/",\
@@ -8229,34 +7742,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-resize", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-resize-npm-0.14.0-40a194f553-2c527e579e.zip/node_modules/@jimp/plugin-resize/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-resize", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-resize-npm-0.5.4-e602d4764d-af9320d4f7.zip/node_modules/@jimp/plugin-resize/",\
         "packageDependencies": [\
           ["@jimp/plugin-resize", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-resize-virtual-3495e4b7dd/0/cache/@jimp-plugin-resize-npm-0.14.0-40a194f553-2c527e579e.zip/node_modules/@jimp/plugin-resize/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-resize-virtual-72f10fa1b4/0/cache/@jimp-plugin-resize-npm-0.5.4-e602d4764d-af9320d4f7.zip/node_modules/@jimp/plugin-resize/",\
@@ -8275,46 +7766,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-rotate", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-rotate-npm-0.14.0-7c1b301f83-613fd95609.zip/node_modules/@jimp/plugin-rotate/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-rotate", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-rotate-npm-0.5.4-08fcb505b8-67d0d48c34.zip/node_modules/@jimp/plugin-rotate/",\
         "packageDependencies": [\
           ["@jimp/plugin-rotate", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-rotate-virtual-e86b3ff25b/0/cache/@jimp-plugin-rotate-npm-0.14.0-7c1b301f83-613fd95609.zip/node_modules/@jimp/plugin-rotate/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-rotate", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-blit", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-crop", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-blit", null],\
-          ["@types/jimp__plugin-crop", null],\
-          ["@types/jimp__plugin-resize", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-blit",\
-          "@jimp/plugin-crop",\
-          "@jimp/plugin-resize",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-blit",\
-          "@types/jimp__plugin-crop",\
-          "@types/jimp__plugin-resize"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-rotate-virtual-5fc86197ef/0/cache/@jimp-plugin-rotate-npm-0.5.4-08fcb505b8-67d0d48c34.zip/node_modules/@jimp/plugin-rotate/",\
@@ -8345,38 +7802,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/plugin-scale", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-scale-npm-0.14.0-b455735174-86a4b60cfb.zip/node_modules/@jimp/plugin-scale/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-scale", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-plugin-scale-npm-0.5.0-c096df28d2-600a87ef22.zip/node_modules/@jimp/plugin-scale/",\
         "packageDependencies": [\
           ["@jimp/plugin-scale", "npm:0.5.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-scale-virtual-c296debfa9/0/cache/@jimp-plugin-scale-npm-0.14.0-b455735174-86a4b60cfb.zip/node_modules/@jimp/plugin-scale/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-scale", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-resize", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-resize",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-resize"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:c44d9f0db2c912e830f6de716e6762bd7515c9456ae1d5789a8285345a44093a348b0fa2c90b0a4bb421e5a6889f338583ee53510db49a2994a113b85c87ab68#npm:0.5.0", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugin-scale-virtual-90549b820f/0/cache/@jimp-plugin-scale-npm-0.5.0-c096df28d2-600a87ef22.zip/node_modules/@jimp/plugin-scale/",\
@@ -8398,120 +7829,13 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@jimp/plugin-shadow", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-shadow-npm-0.14.0-722052cff2-92bb43cb62.zip/node_modules/@jimp/plugin-shadow/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-shadow", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-shadow-virtual-ae18a286a7/0/cache/@jimp-plugin-shadow-npm-0.14.0-722052cff2-92bb43cb62.zip/node_modules/@jimp/plugin-shadow/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-shadow", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-blur", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-blur", null],\
-          ["@types/jimp__plugin-resize", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-blur",\
-          "@jimp/plugin-resize",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-blur",\
-          "@types/jimp__plugin-resize"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@jimp/plugin-threshold", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugin-threshold-npm-0.14.0-c6e7f2d9db-e69ecceda4.zip/node_modules/@jimp/plugin-threshold/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-threshold", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugin-threshold-virtual-db42c92b49/0/cache/@jimp-plugin-threshold-npm-0.14.0-c6e7f2d9db-e69ecceda4.zip/node_modules/@jimp/plugin-threshold/",\
-        "packageDependencies": [\
-          ["@jimp/plugin-threshold", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-color", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["@types/jimp__plugin-color", null],\
-          ["@types/jimp__plugin-resize", null]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@jimp/plugin-color",\
-          "@jimp/plugin-resize",\
-          "@types/jimp__custom",\
-          "@types/jimp__plugin-color",\
-          "@types/jimp__plugin-resize"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@jimp/plugins", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-plugins-npm-0.14.0-1f09939e06-e47561119f.zip/node_modules/@jimp/plugins/",\
-        "packageDependencies": [\
-          ["@jimp/plugins", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.5", {\
         "packageLocation": "./.yarn/cache/@jimp-plugins-npm-0.5.5-e8d0cbc01b-9bd224d248.zip/node_modules/@jimp/plugins/",\
         "packageDependencies": [\
           ["@jimp/plugins", "npm:0.5.5"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:a454978bc4961772a918710a4b5758468c4153c31d5ae8c58fbd61e239032a5a6e3893acabe9053a83e0aa2867d3a6add5c4dd5aebc2ca79b0f2dceb608d8721#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-plugins-virtual-966437f6fe/0/cache/@jimp-plugins-npm-0.14.0-1f09939e06-e47561119f.zip/node_modules/@jimp/plugins/",\
-        "packageDependencies": [\
-          ["@jimp/plugins", "virtual:a454978bc4961772a918710a4b5758468c4153c31d5ae8c58fbd61e239032a5a6e3893acabe9053a83e0aa2867d3a6add5c4dd5aebc2ca79b0f2dceb608d8721#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugin-blit", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-blur", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-circle", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-color", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-contain", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-cover", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-crop", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-displace", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-dither", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-fisheye", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-flip", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-gaussian", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-invert", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-mask", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-normalize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-print", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-resize", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-rotate", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-scale", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-shadow", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@jimp/plugin-threshold", "virtual:966437f6fe1e03f4b7fe630d91cb0056fc76dcb9209b9889ab8a5811b448fa83ca2f5756fbe6d93c929ef1738a20a2897bcedf50a30cf130cb9f8d12bd2f86df#npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["timm", "npm:1.6.1"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:b908f1f7fb6775fab95580cb30f6761ce06c6dd7873a6739d5b587771032059f2ccdaaf64427e5d958aea3291e7d08fd0bca5b17747743d295e649ca79c54056#npm:0.5.5", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-plugins-virtual-c44d9f0db2/0/cache/@jimp-plugins-npm-0.5.5-e8d0cbc01b-9bd224d248.zip/node_modules/@jimp/plugins/",\
@@ -8547,35 +7871,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/png", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-png-npm-0.14.0-86c705cf35-e2227d5cfb.zip/node_modules/@jimp/png/",\
-        "packageDependencies": [\
-          ["@jimp/png", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-png-npm-0.5.4-0b0582d3d9-c96d6be255.zip/node_modules/@jimp/png/",\
         "packageDependencies": [\
           ["@jimp/png", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-png-virtual-9ef2a3a088/0/cache/@jimp-png-npm-0.14.0-86c705cf35-e2227d5cfb.zip/node_modules/@jimp/png/",\
-        "packageDependencies": [\
-          ["@jimp/png", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["pngjs", "npm:3.3.3"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:fdf35f3a0f42601fdbc6fb4ea58b332c493c34a958a60e0d77e60fd8caa0eb9886ea3b8b988063469697404a29319cbdd02546c69acc77d0246c36a506733473#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-png-virtual-d0c7db1490/0/cache/@jimp-png-npm-0.5.4-0b0582d3d9-c96d6be255.zip/node_modules/@jimp/png/",\
@@ -8595,34 +7896,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/tiff", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-tiff-npm-0.14.0-648047d9ab-f99d252254.zip/node_modules/@jimp/tiff/",\
-        "packageDependencies": [\
-          ["@jimp/tiff", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-tiff-npm-0.5.4-690970abae-c91bfe1e73.zip/node_modules/@jimp/tiff/",\
         "packageDependencies": [\
           ["@jimp/tiff", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-tiff-virtual-bf322fce5e/0/cache/@jimp-tiff-npm-0.14.0-648047d9ab-f99d252254.zip/node_modules/@jimp/tiff/",\
-        "packageDependencies": [\
-          ["@jimp/tiff", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["utif", "npm:2.0.1"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:fdf35f3a0f42601fdbc6fb4ea58b332c493c34a958a60e0d77e60fd8caa0eb9886ea3b8b988063469697404a29319cbdd02546c69acc77d0246c36a506733473#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-tiff-virtual-f57d11b2cd/0/cache/@jimp-tiff-npm-0.5.4-690970abae-c91bfe1e73.zip/node_modules/@jimp/tiff/",\
@@ -8641,39 +7920,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/types", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-types-npm-0.14.0-e8a3d534b2-899e499aa7.zip/node_modules/@jimp/types/",\
-        "packageDependencies": [\
-          ["@jimp/types", "npm:0.14.0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:0.5.4", {\
         "packageLocation": "./.yarn/cache/@jimp-types-npm-0.5.4-7cf42d381b-5ce7a81cfd.zip/node_modules/@jimp/types/",\
         "packageDependencies": [\
           ["@jimp/types", "npm:0.5.4"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:a454978bc4961772a918710a4b5758468c4153c31d5ae8c58fbd61e239032a5a6e3893acabe9053a83e0aa2867d3a6add5c4dd5aebc2ca79b0f2dceb608d8721#npm:0.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/@jimp-types-virtual-9c4a04686b/0/cache/@jimp-types-npm-0.14.0-e8a3d534b2-899e499aa7.zip/node_modules/@jimp/types/",\
-        "packageDependencies": [\
-          ["@jimp/types", "virtual:a454978bc4961772a918710a4b5758468c4153c31d5ae8c58fbd61e239032a5a6e3893acabe9053a83e0aa2867d3a6add5c4dd5aebc2ca79b0f2dceb608d8721#npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/bmp", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/gif", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@jimp/jpeg", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@jimp/png", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@jimp/tiff", "virtual:9c4a04686b1331d021d5d6eeeb30809acdd6af8d87cbafdefe1c2457838ed671db2e278e5c7c3c3d4db7f2684d8be70639fc69455b492d59643ecbb394c62bde#npm:0.14.0"],\
-          ["@types/jimp__custom", null],\
-          ["timm", "npm:1.6.1"]\
-        ],\
-        "packagePeers": [\
-          "@jimp/custom",\
-          "@types/jimp__custom"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:b908f1f7fb6775fab95580cb30f6761ce06c6dd7873a6739d5b587771032059f2ccdaaf64427e5d958aea3291e7d08fd0bca5b17747743d295e649ca79c54056#npm:0.5.4", {\
         "packageLocation": "./.yarn/__virtual__/@jimp-types-virtual-fdf35f3a0f/0/cache/@jimp-types-npm-0.5.4-7cf42d381b-5ce7a81cfd.zip/node_modules/@jimp/types/",\
@@ -8697,15 +7949,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@jimp/utils", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/@jimp-utils-npm-0.14.0-2421db8117-78336f0319.zip/node_modules/@jimp/utils/",\
-        "packageDependencies": [\
-          ["@jimp/utils", "npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["regenerator-runtime", "npm:0.13.5"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:0.5.0", {\
         "packageLocation": "./.yarn/cache/@jimp-utils-npm-0.5.0-8e08e24b50-07d2f6f26f.zip/node_modules/@jimp/utils/",\
         "packageDependencies": [\
@@ -11147,10 +10390,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@types/sharp", [\
-      ["npm:0.30.5", {\
-        "packageLocation": "./.yarn/cache/@types-sharp-npm-0.30.5-d42c010179-10077a3560.zip/node_modules/@types/sharp/",\
+      ["npm:0.31.0", {\
+        "packageLocation": "./.yarn/cache/@types-sharp-npm-0.31.0-a646a0f79c-627bb79a8d.zip/node_modules/@types/sharp/",\
         "packageDependencies": [\
-          ["@types/sharp", "npm:0.30.5"],\
+          ["@types/sharp", "npm:0.31.0"],\
           ["@types/node", "npm:18.11.11"]\
         ],\
         "linkType": "HARD"\
@@ -13361,12 +12604,12 @@ const RAW_RUNTIME_STATE =
           ["gatsby-plugin-clipanion-cli", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
           ["gatsby-plugin-emotion", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.7.0"],\
           ["gatsby-plugin-favicon", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.6"],\
-          ["gatsby-plugin-manifest", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
+          ["gatsby-plugin-manifest", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.1"],\
           ["gatsby-plugin-mdx", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.14.0"],\
           ["gatsby-plugin-offline", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.7.0"],\
           ["gatsby-plugin-react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.7.0"],\
           ["gatsby-plugin-remove-trailing-slashes", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
-          ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.25.0"],\
+          ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.2"],\
           ["gatsby-plugin-yarn-introspection", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-yarn-introspection::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
           ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.4.0"],\
           ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.4.0"],\
@@ -13374,7 +12617,7 @@ const RAW_RUNTIME_STATE =
           ["gatsby-source-filesystem", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
           ["gatsby-transformer-json", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
           ["gatsby-transformer-remark", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.4.0"],\
-          ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
+          ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.1"],\
           ["highlight.js", "npm:9.18.1"],\
           ["indent-string", "npm:4.0.0"],\
           ["json-schema-deref-sync", "npm:0.13.0"],\
@@ -23383,15 +22626,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["are-we-there-yet", [\
-      ["npm:1.1.5", {\
-        "packageLocation": "./.yarn/cache/are-we-there-yet-npm-1.1.5-b8418908b0-95d8e99d6a.zip/node_modules/are-we-there-yet/",\
-        "packageDependencies": [\
-          ["are-we-there-yet", "npm:1.1.5"],\
-          ["delegates", "npm:1.0.0"],\
-          ["readable-stream", "npm:2.3.6"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:3.0.1", {\
         "packageLocation": "./.yarn/cache/are-we-there-yet-npm-3.0.1-3395b1512f-7137e25713.zip/node_modules/are-we-there-yet/",\
         "packageDependencies": [\
@@ -25935,15 +25169,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["color", [\
-      ["npm:3.1.3", {\
-        "packageLocation": "./.yarn/cache/color-npm-3.1.3-f860a464c5-728be2aca9.zip/node_modules/color/",\
-        "packageDependencies": [\
-          ["color", "npm:3.1.3"],\
-          ["color-convert", "npm:1.9.3"],\
-          ["color-string", "npm:1.9.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:4.2.3", {\
         "packageLocation": "./.yarn/cache/color-npm-4.2.3-4a23227581-6163589829.zip/node_modules/color/",\
         "packageDependencies": [\
@@ -26156,6 +25381,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/common-tags-npm-1.8.0-7a31956e16-603a54790f.zip/node_modules/common-tags/",\
         "packageDependencies": [\
           ["common-tags", "npm:1.8.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.8.2", {\
+        "packageLocation": "./.yarn/cache/common-tags-npm-1.8.2-2c30ba69b3-e1080df9fd.zip/node_modules/common-tags/",\
+        "packageDependencies": [\
+          ["common-tags", "npm:1.8.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -27440,14 +26672,6 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:4.2.1", {\
-        "packageLocation": "./.yarn/cache/decompress-response-npm-4.2.1-abe5b4ebe4-8ef520663e.zip/node_modules/decompress-response/",\
-        "packageDependencies": [\
-          ["decompress-response", "npm:4.2.1"],\
-          ["mimic-response", "npm:2.1.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:6.0.0", {\
         "packageLocation": "./.yarn/cache/decompress-response-npm-6.0.0-359de2878c-b4575b109e.zip/node_modules/decompress-response/",\
         "packageDependencies": [\
@@ -27679,13 +26903,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["detect-libc", [\
-      ["npm:1.0.3", {\
-        "packageLocation": "./.yarn/cache/detect-libc-npm-1.0.3-c30ac344d4-efd9934dfa.zip/node_modules/detect-libc/",\
-        "packageDependencies": [\
-          ["detect-libc", "npm:1.0.3"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:2.0.1", {\
         "packageLocation": "./.yarn/cache/detect-libc-npm-2.0.1-2699cb2ac4-056a7941c5.zip/node_modules/detect-libc/",\
         "packageDependencies": [\
@@ -31178,10 +30395,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:3.25.0", {\
-        "packageLocation": "./.yarn/cache/gatsby-core-utils-npm-3.25.0-fb424449bd-d51a481741.zip/node_modules/gatsby-core-utils/",\
+      ["npm:4.3.1", {\
+        "packageLocation": "./.yarn/cache/gatsby-core-utils-npm-4.3.1-d7d96d2a02-1db23f4ea2.zip/node_modules/gatsby-core-utils/",\
         "packageDependencies": [\
-          ["gatsby-core-utils", "npm:3.25.0"],\
+          ["gatsby-core-utils", "npm:4.3.1"],\
           ["@babel/runtime", "npm:7.19.0"],\
           ["ci-info", "npm:2.0.0"],\
           ["configstore", "npm:5.0.1"],\
@@ -31422,24 +30639,24 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-plugin-manifest", [\
-      ["npm:3.7.0", {\
-        "packageLocation": "./.yarn/cache/gatsby-plugin-manifest-npm-3.7.0-1f4c1df079-1cc939b027.zip/node_modules/gatsby-plugin-manifest/",\
+      ["npm:5.3.1", {\
+        "packageLocation": "./.yarn/cache/gatsby-plugin-manifest-npm-5.3.1-49cc0e3afe-9b2a4df151.zip/node_modules/gatsby-plugin-manifest/",\
         "packageDependencies": [\
-          ["gatsby-plugin-manifest", "npm:3.7.0"]\
+          ["gatsby-plugin-manifest", "npm:5.3.1"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-manifest-virtual-b9429a2d22/0/cache/gatsby-plugin-manifest-npm-3.7.0-1f4c1df079-1cc939b027.zip/node_modules/gatsby-plugin-manifest/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.1", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-manifest-virtual-7999706bec/0/cache/gatsby-plugin-manifest-npm-5.3.1-49cc0e3afe-9b2a4df151.zip/node_modules/gatsby-plugin-manifest/",\
         "packageDependencies": [\
-          ["gatsby-plugin-manifest", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
+          ["gatsby-plugin-manifest", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.1"],\
           ["@babel/runtime", "npm:7.19.0"],\
           ["@types/gatsby", null],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
-          ["gatsby-core-utils", "npm:2.14.0"],\
-          ["gatsby-plugin-utils", "virtual:b9429a2d22cd927a5115b9765d096e952a507c51a8cc95f2fe9da94b71c2cf491209e6a865fe6373c5d2dd588d7c8cb5e296e408ea628204c50ca56ea336060a#npm:1.14.0"],\
-          ["semver", "npm:7.3.7"],\
-          ["sharp", "npm:0.28.3"]\
+          ["gatsby-core-utils", "npm:4.3.1"],\
+          ["gatsby-plugin-utils", "virtual:7999706becaaa446ef69e0503ac5f8caa8e7c0fb27dc66f85cf123c42a9e97fa573668f1b7dbad025e10dbcddee0d0b0b2a7eaf4f50041386cec0e7ce67fb9eb#npm:4.3.1"],\
+          ["semver", "npm:7.3.8"],\
+          ["sharp", "npm:0.31.2"]\
         ],\
         "packagePeers": [\
           "@types/gatsby",\
@@ -31591,7 +30808,7 @@ const RAW_RUNTIME_STATE =
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
           ["gatsby-core-utils", "npm:2.14.0"],\
           ["gatsby-page-utils", "npm:1.14.0"],\
-          ["gatsby-plugin-utils", "virtual:b9429a2d22cd927a5115b9765d096e952a507c51a8cc95f2fe9da94b71c2cf491209e6a865fe6373c5d2dd588d7c8cb5e296e408ea628204c50ca56ea336060a#npm:1.14.0"],\
+          ["gatsby-plugin-utils", "virtual:22a1f36790223897d9aabd63fbada43a4abcf5cd037b75be318a22abb7ff36fbada6504096c10d8529ddbf6d75da4ee78ab59fe99f8c5a957c1b146ff0fc5048#npm:1.14.0"],\
           ["gatsby-telemetry", "npm:2.14.0"],\
           ["globby", "npm:11.1.0"],\
           ["lodash", "npm:4.17.21"]\
@@ -31654,17 +30871,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-plugin-sharp", [\
-      ["npm:4.25.0", {\
-        "packageLocation": "./.yarn/cache/gatsby-plugin-sharp-npm-4.25.0-acd61d83f6-24bc5a9f50.zip/node_modules/gatsby-plugin-sharp/",\
+      ["npm:5.3.2", {\
+        "packageLocation": "./.yarn/cache/gatsby-plugin-sharp-npm-5.3.2-161d77c22a-de903bce2e.zip/node_modules/gatsby-plugin-sharp/",\
         "packageDependencies": [\
-          ["gatsby-plugin-sharp", "npm:4.25.0"]\
+          ["gatsby-plugin-sharp", "npm:5.3.2"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.25.0", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-sharp-virtual-ad2e8fff74/0/cache/gatsby-plugin-sharp-npm-4.25.0-acd61d83f6-24bc5a9f50.zip/node_modules/gatsby-plugin-sharp/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.2", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-sharp-virtual-7b822db773/0/cache/gatsby-plugin-sharp-npm-5.3.2-161d77c22a-de903bce2e.zip/node_modules/gatsby-plugin-sharp/",\
         "packageDependencies": [\
-          ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.25.0"],\
+          ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.2"],\
           ["@babel/runtime", "npm:7.19.0"],\
           ["@types/gatsby", null],\
           ["async", "npm:3.2.4"],\
@@ -31673,12 +30890,12 @@ const RAW_RUNTIME_STATE =
           ["filenamify", "npm:4.3.0"],\
           ["fs-extra", "npm:10.1.0"],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
-          ["gatsby-core-utils", "npm:3.25.0"],\
-          ["gatsby-plugin-utils", "virtual:ad2e8fff74eeb4964a661ca77f0a74aae0bacc3379213af52c7f403a4f24affcb71d5c9f8adfa8c94b042ffa8866a6bfa21be58a79f76c6a04f4e11341f48059#npm:3.19.0"],\
+          ["gatsby-core-utils", "npm:4.3.1"],\
+          ["gatsby-plugin-utils", "virtual:7999706becaaa446ef69e0503ac5f8caa8e7c0fb27dc66f85cf123c42a9e97fa573668f1b7dbad025e10dbcddee0d0b0b2a7eaf4f50041386cec0e7ce67fb9eb#npm:4.3.1"],\
           ["lodash", "npm:4.17.21"],\
           ["probe-image-size", "npm:7.2.3"],\
-          ["semver", "npm:7.3.7"],\
-          ["sharp", "npm:0.30.7"]\
+          ["semver", "npm:7.3.8"],\
+          ["sharp", "npm:0.31.2"]\
         ],\
         "packagePeers": [\
           "@types/gatsby",\
@@ -31724,12 +30941,32 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["npm:3.19.0", {\
-        "packageLocation": "./.yarn/cache/gatsby-plugin-utils-npm-3.19.0-ef1202cb97-7d3dace955.zip/node_modules/gatsby-plugin-utils/",\
+      ["npm:4.3.1", {\
+        "packageLocation": "./.yarn/cache/gatsby-plugin-utils-npm-4.3.1-cd853fbade-5d241446b8.zip/node_modules/gatsby-plugin-utils/",\
         "packageDependencies": [\
-          ["gatsby-plugin-utils", "npm:3.19.0"]\
+          ["gatsby-plugin-utils", "npm:4.3.1"]\
         ],\
         "linkType": "SOFT"\
+      }],\
+      ["virtual:22a1f36790223897d9aabd63fbada43a4abcf5cd037b75be318a22abb7ff36fbada6504096c10d8529ddbf6d75da4ee78ab59fe99f8c5a957c1b146ff0fc5048#npm:1.14.0", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-utils-virtual-c4d8b64496/0/cache/gatsby-plugin-utils-npm-1.14.0-7dc7393910-4d4531de5b.zip/node_modules/gatsby-plugin-utils/",\
+        "packageDependencies": [\
+          ["gatsby-plugin-utils", "virtual:22a1f36790223897d9aabd63fbada43a4abcf5cd037b75be318a22abb7ff36fbada6504096c10d8529ddbf6d75da4ee78ab59fe99f8c5a957c1b146ff0fc5048#npm:1.14.0"],\
+          ["@babel/runtime", "npm:7.19.0"],\
+          ["@types/gatsby", null],\
+          ["@types/graphql", null],\
+          ["fastq", "npm:1.13.0"],\
+          ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
+          ["graphql", null],\
+          ["joi", "npm:17.6.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/gatsby",\
+          "@types/graphql",\
+          "gatsby",\
+          "graphql"\
+        ],\
+        "linkType": "HARD"\
       }],\
       ["virtual:7243a2f0702f8452df413d5239831a2fe8f28104187d0cf79c049c7b9ba6c33bb036028e40e6b6352789084ab1637ba736da1e5086fe18a644f8aa27e1ca758a#npm:1.14.0", {\
         "packageLocation": "./.yarn/__virtual__/gatsby-plugin-utils-virtual-67cb960490/0/cache/gatsby-plugin-utils-npm-1.14.0-7dc7393910-4d4531de5b.zip/node_modules/gatsby-plugin-utils/",\
@@ -31751,43 +30988,23 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:ad2e8fff74eeb4964a661ca77f0a74aae0bacc3379213af52c7f403a4f24affcb71d5c9f8adfa8c94b042ffa8866a6bfa21be58a79f76c6a04f4e11341f48059#npm:3.19.0", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-utils-virtual-6f3e10d8c3/0/cache/gatsby-plugin-utils-npm-3.19.0-ef1202cb97-7d3dace955.zip/node_modules/gatsby-plugin-utils/",\
+      ["virtual:7999706becaaa446ef69e0503ac5f8caa8e7c0fb27dc66f85cf123c42a9e97fa573668f1b7dbad025e10dbcddee0d0b0b2a7eaf4f50041386cec0e7ce67fb9eb#npm:4.3.1", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-utils-virtual-023106935a/0/cache/gatsby-plugin-utils-npm-4.3.1-cd853fbade-5d241446b8.zip/node_modules/gatsby-plugin-utils/",\
         "packageDependencies": [\
-          ["gatsby-plugin-utils", "virtual:ad2e8fff74eeb4964a661ca77f0a74aae0bacc3379213af52c7f403a4f24affcb71d5c9f8adfa8c94b042ffa8866a6bfa21be58a79f76c6a04f4e11341f48059#npm:3.19.0"],\
+          ["gatsby-plugin-utils", "virtual:7999706becaaa446ef69e0503ac5f8caa8e7c0fb27dc66f85cf123c42a9e97fa573668f1b7dbad025e10dbcddee0d0b0b2a7eaf4f50041386cec0e7ce67fb9eb#npm:4.3.1"],\
           ["@babel/runtime", "npm:7.19.0"],\
           ["@types/gatsby", null],\
           ["@types/graphql", null],\
           ["fastq", "npm:1.13.0"],\
           ["fs-extra", "npm:10.1.0"],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
-          ["gatsby-core-utils", "npm:3.25.0"],\
-          ["gatsby-sharp", "npm:0.19.0"],\
+          ["gatsby-core-utils", "npm:4.3.1"],\
+          ["gatsby-sharp", "npm:1.3.0"],\
           ["graphql", null],\
-          ["graphql-compose", "virtual:6f3e10d8c3beb8318bcf394e487adf76952027d507f737856e1c7e5ac0d420354a3e2da44bc941edb87e6a2bae522c37c6176cb3a446a224028c8a9dac1f5959#npm:9.0.10"],\
+          ["graphql-compose", "virtual:023106935a2f873562c09f91c10999c3d9f2176cbab65c18df19092250caa566bbbde257ece79f711934858b0ea729d8ddd841e79e59c316df71cba7138eb3f0#npm:9.0.10"],\
           ["import-from", "npm:4.0.0"],\
-          ["joi", "npm:17.6.0"],\
+          ["joi", "npm:17.7.0"],\
           ["mime", "npm:3.0.0"]\
-        ],\
-        "packagePeers": [\
-          "@types/gatsby",\
-          "@types/graphql",\
-          "gatsby",\
-          "graphql"\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["virtual:b9429a2d22cd927a5115b9765d096e952a507c51a8cc95f2fe9da94b71c2cf491209e6a865fe6373c5d2dd588d7c8cb5e296e408ea628204c50ca56ea336060a#npm:1.14.0", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-utils-virtual-c223acc7c9/0/cache/gatsby-plugin-utils-npm-1.14.0-7dc7393910-4d4531de5b.zip/node_modules/gatsby-plugin-utils/",\
-        "packageDependencies": [\
-          ["gatsby-plugin-utils", "virtual:b9429a2d22cd927a5115b9765d096e952a507c51a8cc95f2fe9da94b71c2cf491209e6a865fe6373c5d2dd588d7c8cb5e296e408ea628204c50ca56ea336060a#npm:1.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@types/gatsby", null],\
-          ["@types/graphql", null],\
-          ["fastq", "npm:1.13.0"],\
-          ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
-          ["graphql", null],\
-          ["joi", "npm:17.6.0"]\
         ],\
         "packagePeers": [\
           "@types/gatsby",\
@@ -32026,12 +31243,12 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-sharp", [\
-      ["npm:0.19.0", {\
-        "packageLocation": "./.yarn/cache/gatsby-sharp-npm-0.19.0-4bb5a4e4cb-2ed22a98bf.zip/node_modules/gatsby-sharp/",\
+      ["npm:1.3.0", {\
+        "packageLocation": "./.yarn/cache/gatsby-sharp-npm-1.3.0-446c77ce19-b2945c473d.zip/node_modules/gatsby-sharp/",\
         "packageDependencies": [\
-          ["gatsby-sharp", "npm:0.19.0"],\
-          ["@types/sharp", "npm:0.30.5"],\
-          ["sharp", "npm:0.30.7"]\
+          ["gatsby-sharp", "npm:1.3.0"],\
+          ["@types/sharp", "npm:0.31.0"],\
+          ["sharp", "npm:0.31.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -32163,29 +31380,29 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-transformer-sharp", [\
-      ["npm:3.7.0", {\
-        "packageLocation": "./.yarn/cache/gatsby-transformer-sharp-npm-3.7.0-c2af55d6e9-d83ac25d4f.zip/node_modules/gatsby-transformer-sharp/",\
+      ["npm:5.3.1", {\
+        "packageLocation": "./.yarn/cache/gatsby-transformer-sharp-npm-5.3.1-283948c6c5-e8e17d0ef8.zip/node_modules/gatsby-transformer-sharp/",\
         "packageDependencies": [\
-          ["gatsby-transformer-sharp", "npm:3.7.0"]\
+          ["gatsby-transformer-sharp", "npm:5.3.1"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-transformer-sharp-virtual-05d5b6fd99/0/cache/gatsby-transformer-sharp-npm-3.7.0-c2af55d6e9-d83ac25d4f.zip/node_modules/gatsby-transformer-sharp/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.1", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-transformer-sharp-virtual-43a03956ca/0/cache/gatsby-transformer-sharp-npm-5.3.1-283948c6c5-e8e17d0ef8.zip/node_modules/gatsby-transformer-sharp/",\
         "packageDependencies": [\
-          ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
+          ["gatsby-transformer-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.1"],\
           ["@babel/runtime", "npm:7.19.0"],\
           ["@types/gatsby", null],\
           ["@types/gatsby-plugin-sharp", null],\
           ["bluebird", "npm:3.7.2"],\
-          ["common-tags", "npm:1.8.0"],\
-          ["fs-extra", "npm:9.1.0"],\
+          ["common-tags", "npm:1.8.2"],\
+          ["fs-extra", "npm:10.1.0"],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
-          ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.25.0"],\
-          ["potrace", "npm:2.1.8"],\
-          ["probe-image-size", "npm:6.0.0"],\
-          ["semver", "npm:7.3.7"],\
-          ["sharp", "npm:0.28.3"]\
+          ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.3.2"],\
+          ["gatsby-plugin-utils", "virtual:7999706becaaa446ef69e0503ac5f8caa8e7c0fb27dc66f85cf123c42a9e97fa573668f1b7dbad025e10dbcddee0d0b0b2a7eaf4f50041386cec0e7ce67fb9eb#npm:4.3.1"],\
+          ["probe-image-size", "npm:7.2.3"],\
+          ["semver", "npm:7.3.8"],\
+          ["sharp", "npm:0.31.2"]\
         ],\
         "packagePeers": [\
           "@types/gatsby-plugin-sharp",\
@@ -32208,21 +31425,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gauge", [\
-      ["npm:2.7.4", {\
-        "packageLocation": "./.yarn/cache/gauge-npm-2.7.4-2189a73529-54255b3bad.zip/node_modules/gauge/",\
-        "packageDependencies": [\
-          ["gauge", "npm:2.7.4"],\
-          ["aproba", "npm:1.2.0"],\
-          ["console-control-strings", "npm:1.1.0"],\
-          ["has-unicode", "npm:2.0.1"],\
-          ["object-assign", "npm:4.1.1"],\
-          ["signal-exit", "npm:3.0.7"],\
-          ["string-width", "npm:1.0.2"],\
-          ["strip-ansi", "npm:3.0.1"],\
-          ["wide-align", "npm:1.1.5"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:4.0.4", {\
         "packageLocation": "./.yarn/cache/gauge-npm-4.0.4-8f878385e9-4fc68f770d.zip/node_modules/gauge/",\
         "packageDependencies": [\
@@ -32372,17 +31574,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["getpass", "npm:0.1.7"],\
           ["assert-plus", "npm:1.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["gifwrap", [\
-      ["npm:0.9.2", {\
-        "packageLocation": "./.yarn/cache/gifwrap-npm-0.9.2-6e095cc9ae-525321a802.zip/node_modules/gifwrap/",\
-        "packageDependencies": [\
-          ["gifwrap", "npm:0.9.2"],\
-          ["image-q", "npm:1.1.1"],\
-          ["omggif", "npm:1.0.10"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -32725,13 +31916,13 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:6f3e10d8c3beb8318bcf394e487adf76952027d507f737856e1c7e5ac0d420354a3e2da44bc941edb87e6a2bae522c37c6176cb3a446a224028c8a9dac1f5959#npm:9.0.10", {\
-        "packageLocation": "./.yarn/__virtual__/graphql-compose-virtual-f95eb8f044/0/cache/graphql-compose-npm-9.0.10-a4c0531cb6-884eaffa4d.zip/node_modules/graphql-compose/",\
+      ["virtual:023106935a2f873562c09f91c10999c3d9f2176cbab65c18df19092250caa566bbbde257ece79f711934858b0ea729d8ddd841e79e59c316df71cba7138eb3f0#npm:9.0.10", {\
+        "packageLocation": "./.yarn/__virtual__/graphql-compose-virtual-5c31e9ca37/0/cache/graphql-compose-npm-9.0.10-a4c0531cb6-884eaffa4d.zip/node_modules/graphql-compose/",\
         "packageDependencies": [\
-          ["graphql-compose", "virtual:6f3e10d8c3beb8318bcf394e487adf76952027d507f737856e1c7e5ac0d420354a3e2da44bc941edb87e6a2bae522c37c6176cb3a446a224028c8a9dac1f5959#npm:9.0.10"],\
+          ["graphql-compose", "virtual:023106935a2f873562c09f91c10999c3d9f2176cbab65c18df19092250caa566bbbde257ece79f711934858b0ea729d8ddd841e79e59c316df71cba7138eb3f0#npm:9.0.10"],\
           ["@types/graphql", null],\
           ["graphql", null],\
-          ["graphql-type-json", "virtual:f95eb8f044e8af81903b74db58d96e6872bce58525d819e89b375db5a7ca1beabe56ffdb971e05adb9689835052dad77695411c3e21e060786f26a27ed2a28ea#npm:0.3.2"]\
+          ["graphql-type-json", "virtual:5c31e9ca37970e63455860339c44adfbfb1617a7ece3219dc43ed2e362e6566059768f785d8c1a4118c4ff23107e3352673272bbe2c58a9ff2f3170c6d647b40#npm:0.3.2"]\
         ],\
         "packagePeers": [\
           "@types/graphql",\
@@ -32852,12 +32043,12 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:b34fa6e725ca50954ecf261c35813ae9bfd553c62f4883a0904c1596402d144c17d516c533b9f72c9e7edb20220452a2960e016932b4f045b54950717b897d68#npm:0.3.2", {\
-        "packageLocation": "./.yarn/__virtual__/graphql-type-json-virtual-8e61813117/0/cache/graphql-type-json-npm-0.3.2-05debc01d8-d710f8e412.zip/node_modules/graphql-type-json/",\
+      ["virtual:5c31e9ca37970e63455860339c44adfbfb1617a7ece3219dc43ed2e362e6566059768f785d8c1a4118c4ff23107e3352673272bbe2c58a9ff2f3170c6d647b40#npm:0.3.2", {\
+        "packageLocation": "./.yarn/__virtual__/graphql-type-json-virtual-7d71d7256b/0/cache/graphql-type-json-npm-0.3.2-05debc01d8-d710f8e412.zip/node_modules/graphql-type-json/",\
         "packageDependencies": [\
-          ["graphql-type-json", "virtual:b34fa6e725ca50954ecf261c35813ae9bfd553c62f4883a0904c1596402d144c17d516c533b9f72c9e7edb20220452a2960e016932b4f045b54950717b897d68#npm:0.3.2"],\
+          ["graphql-type-json", "virtual:5c31e9ca37970e63455860339c44adfbfb1617a7ece3219dc43ed2e362e6566059768f785d8c1a4118c4ff23107e3352673272bbe2c58a9ff2f3170c6d647b40#npm:0.3.2"],\
           ["@types/graphql", null],\
-          ["graphql", "npm:15.5.0"]\
+          ["graphql", null]\
         ],\
         "packagePeers": [\
           "@types/graphql",\
@@ -32865,12 +32056,12 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:f95eb8f044e8af81903b74db58d96e6872bce58525d819e89b375db5a7ca1beabe56ffdb971e05adb9689835052dad77695411c3e21e060786f26a27ed2a28ea#npm:0.3.2", {\
-        "packageLocation": "./.yarn/__virtual__/graphql-type-json-virtual-b3779cdf0a/0/cache/graphql-type-json-npm-0.3.2-05debc01d8-d710f8e412.zip/node_modules/graphql-type-json/",\
+      ["virtual:b34fa6e725ca50954ecf261c35813ae9bfd553c62f4883a0904c1596402d144c17d516c533b9f72c9e7edb20220452a2960e016932b4f045b54950717b897d68#npm:0.3.2", {\
+        "packageLocation": "./.yarn/__virtual__/graphql-type-json-virtual-8e61813117/0/cache/graphql-type-json-npm-0.3.2-05debc01d8-d710f8e412.zip/node_modules/graphql-type-json/",\
         "packageDependencies": [\
-          ["graphql-type-json", "virtual:f95eb8f044e8af81903b74db58d96e6872bce58525d819e89b375db5a7ca1beabe56ffdb971e05adb9689835052dad77695411c3e21e060786f26a27ed2a28ea#npm:0.3.2"],\
+          ["graphql-type-json", "virtual:b34fa6e725ca50954ecf261c35813ae9bfd553c62f4883a0904c1596402d144c17d516c533b9f72c9e7edb20220452a2960e016932b4f045b54950717b897d68#npm:0.3.2"],\
           ["@types/graphql", null],\
-          ["graphql", null]\
+          ["graphql", "npm:15.5.0"]\
         ],\
         "packagePeers": [\
           "@types/graphql",\
@@ -33914,15 +33105,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/ignore-npm-5.2.0-fc4b58a4f3-0086b6992b.zip/node_modules/ignore/",\
         "packageDependencies": [\
           ["ignore", "npm:5.2.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["image-q", [\
-      ["npm:1.1.1", {\
-        "packageLocation": "./.yarn/cache/image-q-npm-1.1.1-33a2fabe0a-8b4085cfda.zip/node_modules/image-q/",\
-        "packageDependencies": [\
-          ["image-q", "npm:1.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -35926,18 +35108,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["jimp", [\
-      ["npm:0.14.0", {\
-        "packageLocation": "./.yarn/cache/jimp-npm-0.14.0-a454978bc4-b726538cdf.zip/node_modules/jimp/",\
-        "packageDependencies": [\
-          ["jimp", "npm:0.14.0"],\
-          ["@babel/runtime", "npm:7.19.0"],\
-          ["@jimp/custom", "npm:0.14.0"],\
-          ["@jimp/plugins", "virtual:a454978bc4961772a918710a4b5758468c4153c31d5ae8c58fbd61e239032a5a6e3893acabe9053a83e0aa2867d3a6add5c4dd5aebc2ca79b0f2dceb608d8721#npm:0.14.0"],\
-          ["@jimp/types", "virtual:a454978bc4961772a918710a4b5758468c4153c31d5ae8c58fbd61e239032a5a6e3893acabe9053a83e0aa2867d3a6add5c4dd5aebc2ca79b0f2dceb608d8721#npm:0.14.0"],\
-          ["regenerator-runtime", "npm:0.13.5"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:0.2.28", {\
         "packageLocation": "./.yarn/cache/jimp-npm-0.2.28-e62cad02ef-42a433d0e6.zip/node_modules/jimp/",\
         "packageDependencies": [\
@@ -35986,6 +35156,18 @@ const RAW_RUNTIME_STATE =
           ["@sideway/pinpoint", "npm:2.0.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:17.7.0", {\
+        "packageLocation": "./.yarn/cache/joi-npm-17.7.0-24cbaab83c-f686a1d4f7.zip/node_modules/joi/",\
+        "packageDependencies": [\
+          ["joi", "npm:17.7.0"],\
+          ["@hapi/hoek", "npm:9.2.0"],\
+          ["@hapi/topo", "npm:5.0.0"],\
+          ["@sideway/address", "npm:4.1.4"],\
+          ["@sideway/formula", "npm:3.0.0"],\
+          ["@sideway/pinpoint", "npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["joycon", [\
@@ -36016,13 +35198,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jpeg-js-npm-0.3.4-b50088a2e7-56cbf2c552.zip/node_modules/jpeg-js/",\
         "packageDependencies": [\
           ["jpeg-js", "npm:0.3.4"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:0.4.3", {\
-        "packageLocation": "./.yarn/cache/jpeg-js-npm-0.4.3-856f2be9f8-20c0bee1a6.zip/node_modules/jpeg-js/",\
-        "packageDependencies": [\
-          ["jpeg-js", "npm:0.4.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -38096,13 +37271,6 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:2.1.0", {\
-        "packageLocation": "./.yarn/cache/mimic-response-npm-2.1.0-037463e454-04c653f64f.zip/node_modules/mimic-response/",\
-        "packageDependencies": [\
-          ["mimic-response", "npm:2.1.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:3.1.0", {\
         "packageLocation": "./.yarn/cache/mimic-response-npm-3.1.0-a4a24b4e96-1d485ca418.zip/node_modules/mimic-response/",\
         "packageDependencies": [\
@@ -38758,14 +37926,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["node-abi", [\
-      ["npm:2.30.0", {\
-        "packageLocation": "./.yarn/cache/node-abi-npm-2.30.0-d6aca91d32-e91755dac0.zip/node_modules/node-abi/",\
-        "packageDependencies": [\
-          ["node-abi", "npm:2.30.0"],\
-          ["semver", "npm:5.7.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:3.22.0", {\
         "packageLocation": "./.yarn/cache/node-abi-npm-3.22.0-2db16ee8b1-97d4d7fb8c.zip/node_modules/node-abi/",\
         "packageDependencies": [\
@@ -38776,14 +37936,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["node-addon-api", [\
-      ["npm:3.2.1", {\
-        "packageLocation": "./.yarn/unplugged/node-addon-api-npm-3.2.1-a29528f81d/node_modules/node-addon-api/",\
-        "packageDependencies": [\
-          ["node-addon-api", "npm:3.2.1"],\
-          ["node-gyp", "npm:9.1.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:4.3.0", {\
         "packageLocation": "./.yarn/unplugged/node-addon-api-npm-4.3.0-a07a1232df/node_modules/node-addon-api/",\
         "packageDependencies": [\
@@ -39072,17 +38224,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["npmlog", [\
-      ["npm:4.1.2", {\
-        "packageLocation": "./.yarn/cache/npmlog-npm-4.1.2-cfb32957b5-b78a3f970f.zip/node_modules/npmlog/",\
-        "packageDependencies": [\
-          ["npmlog", "npm:4.1.2"],\
-          ["are-we-there-yet", "npm:1.1.5"],\
-          ["console-control-strings", "npm:1.1.0"],\
-          ["gauge", "npm:2.7.4"],\
-          ["set-blocking", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:6.0.2", {\
         "packageLocation": "./.yarn/cache/npmlog-npm-6.0.2-e0e69455c7-c04307b299.zip/node_modules/npmlog/",\
         "packageDependencies": [\
@@ -41487,16 +40628,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["potrace", [\
-      ["npm:2.1.8", {\
-        "packageLocation": "./.yarn/cache/potrace-npm-2.1.8-8f60e273d1-77bec7c5ae.zip/node_modules/potrace/",\
-        "packageDependencies": [\
-          ["potrace", "npm:2.1.8"],\
-          ["jimp", "npm:0.14.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["preact", [\
       ["npm:10.11.2", {\
         "packageLocation": "./.yarn/cache/preact-npm-10.11.2-8aa7294674-e2aacf760f.zip/node_modules/preact/",\
@@ -41507,26 +40638,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["prebuild-install", [\
-      ["npm:6.1.3", {\
-        "packageLocation": "./.yarn/cache/prebuild-install-npm-6.1.3-e1b7af2a78-779db36c92.zip/node_modules/prebuild-install/",\
-        "packageDependencies": [\
-          ["prebuild-install", "npm:6.1.3"],\
-          ["detect-libc", "npm:1.0.3"],\
-          ["expand-template", "npm:2.0.3"],\
-          ["github-from-package", "npm:0.0.0"],\
-          ["minimist", "npm:1.2.5"],\
-          ["mkdirp-classic", "npm:0.5.3"],\
-          ["napi-build-utils", "npm:1.0.1"],\
-          ["node-abi", "npm:2.30.0"],\
-          ["npmlog", "npm:4.1.2"],\
-          ["pump", "npm:3.0.0"],\
-          ["rc", "npm:1.2.8"],\
-          ["simple-get", "npm:3.1.0"],\
-          ["tar-fs", "npm:2.1.1"],\
-          ["tunnel-agent", "npm:0.6.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:7.1.1", {\
         "packageLocation": "./.yarn/cache/prebuild-install-npm-7.1.1-cb9fc9d341-3ad2c49cbd.zip/node_modules/prebuild-install/",\
         "packageDependencies": [\
@@ -41709,16 +40820,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["probe-image-size", [\
-      ["npm:6.0.0", {\
-        "packageLocation": "./.yarn/cache/probe-image-size-npm-6.0.0-b57561ccc2-7ec7eed8b4.zip/node_modules/probe-image-size/",\
-        "packageDependencies": [\
-          ["probe-image-size", "npm:6.0.0"],\
-          ["deepmerge", "npm:4.2.2"],\
-          ["needle", "npm:2.6.0"],\
-          ["stream-parser", "npm:0.3.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:7.2.3", {\
         "packageLocation": "./.yarn/cache/probe-image-size-npm-7.2.3-2b6ee36e6f-d94cd00601.zip/node_modules/probe-image-size/",\
         "packageDependencies": [\
@@ -44875,6 +43976,14 @@ const RAW_RUNTIME_STATE =
           ["lru-cache", "npm:6.0.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:7.3.8", {\
+        "packageLocation": "./.yarn/cache/semver-npm-7.3.8-25a996cb4f-94ad80ee14.zip/node_modules/semver/",\
+        "packageDependencies": [\
+          ["semver", "npm:7.3.8"],\
+          ["lru-cache", "npm:6.0.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["semver-diff", [\
@@ -45097,32 +44206,16 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["sharp", [\
-      ["npm:0.28.3", {\
-        "packageLocation": "./.yarn/unplugged/sharp-npm-0.28.3-0b2c15610d/node_modules/sharp/",\
+      ["npm:0.31.2", {\
+        "packageLocation": "./.yarn/unplugged/sharp-npm-0.31.2-6b16d00ac6/node_modules/sharp/",\
         "packageDependencies": [\
-          ["sharp", "npm:0.28.3"],\
-          ["color", "npm:3.1.3"],\
-          ["detect-libc", "npm:1.0.3"],\
-          ["node-addon-api", "npm:3.2.1"],\
-          ["node-gyp", "npm:9.1.0"],\
-          ["prebuild-install", "npm:6.1.3"],\
-          ["semver", "npm:7.3.7"],\
-          ["simple-get", "npm:3.1.0"],\
-          ["tar-fs", "npm:2.1.1"],\
-          ["tunnel-agent", "npm:0.6.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:0.30.7", {\
-        "packageLocation": "./.yarn/unplugged/sharp-npm-0.30.7-6db6fef43e/node_modules/sharp/",\
-        "packageDependencies": [\
-          ["sharp", "npm:0.30.7"],\
+          ["sharp", "npm:0.31.2"],\
           ["color", "npm:4.2.3"],\
           ["detect-libc", "npm:2.0.1"],\
           ["node-addon-api", "npm:5.0.0"],\
           ["node-gyp", "npm:9.1.0"],\
           ["prebuild-install", "npm:7.1.1"],\
-          ["semver", "npm:7.3.7"],\
+          ["semver", "npm:7.3.8"],\
           ["simple-get", "npm:4.0.1"],\
           ["tar-fs", "npm:2.1.1"],\
           ["tunnel-agent", "npm:0.6.0"]\
@@ -45223,16 +44316,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["simple-get", [\
-      ["npm:3.1.0", {\
-        "packageLocation": "./.yarn/cache/simple-get-npm-3.1.0-8c6f03c4cd-24cf356a14.zip/node_modules/simple-get/",\
-        "packageDependencies": [\
-          ["simple-get", "npm:3.1.0"],\
-          ["decompress-response", "npm:4.2.1"],\
-          ["once", "npm:1.4.0"],\
-          ["simple-concat", "npm:1.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:4.0.1", {\
         "packageLocation": "./.yarn/cache/simple-get-npm-4.0.1-fa2a97645d-f44b953899.zip/node_modules/simple-get/",\
         "packageDependencies": [\
