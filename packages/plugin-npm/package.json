@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/plugin-npm",
   "version": "3.0.0-rc.33",
-  "stableVersion": "2.7.2",
+  "stableVersion": "2.7.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {

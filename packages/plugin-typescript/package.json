@@ -49,5 +49,5 @@
   "engines": {
     "node": ">=14.15.0"
   },
-  "stableVersion": "3.0.0"
+  "stableVersion": "3.0.1"
 }
