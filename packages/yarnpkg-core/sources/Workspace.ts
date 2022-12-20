@@ -4,10 +4,10 @@ import globby                                      from 'globby';
 import {HardDependencies, Manifest}                from './Manifest';
 import {Project}                                   from './Project';
 import {WorkspaceResolver}                         from './WorkspaceResolver';
+import * as formatUtils                            from './formatUtils';
 import * as hashUtils                              from './hashUtils';
 import * as semverUtils                            from './semverUtils';
 import * as structUtils                            from './structUtils';
-import {IdentHash}                                 from './types';
 import {Descriptor, Locator}                       from './types';
 
 export class Workspace {
@@ -26,13 +26,10 @@ export class Workspace {
   // @ts-expect-error: This variable is set during the setup process
   public readonly locator: Locator;
 
-  // @ts-expect-error: This variable is set during the setup process
-  public readonly manifest: Manifest;
-
   public readonly workspacesCwds: Set<PortablePath> = new Set();
 
-  // Generated at resolution; basically dependencies + devDependencies + child workspaces
-  public dependencies: Map<IdentHash, Descriptor> = new Map();
+  // @ts-expect-error: This variable is set during the setup process
+  public manifest: Manifest;
 
   constructor(workspaceCwd: PortablePath, {project}: {project: Project}) {
     this.project = project;
@@ -40,7 +37,6 @@ export class Workspace {
   }
 
   async setup() {
-    // @ts-expect-error: It's ok to initialize it now
     this.manifest = await Manifest.tryFind(this.cwd) ?? new Manifest();
 
     // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
@@ -79,6 +75,14 @@ export class Workspace {
         this.workspacesCwds.add(candidateCwd);
       }
     }
+  }
+
+  get anchoredPackage() {
+    const pkg = this.project.storedPackages.get(this.anchoredLocator.locatorHash);
+    if (!pkg)
+      throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.project.configuration, this)} (${formatUtils.pretty(this.project.configuration, ppath.join(this.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
+
+    return pkg;
   }
 
   accepts(range: string) {

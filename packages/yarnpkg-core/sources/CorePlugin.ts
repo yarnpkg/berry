@@ -10,15 +10,37 @@ export const CorePlugin: Plugin = {
   hooks: {
     reduceDependency: (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
-        if (pattern.from && pattern.from.fullName !== structUtils.stringifyIdent(locator))
-          continue;
-        if (pattern.from && pattern.from.description && pattern.from.description !== locator.reference)
-          continue;
+        if (pattern.from) {
+          if (pattern.from.fullName !== structUtils.stringifyIdent(locator))
+            continue;
 
-        if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
-          continue;
-        if (pattern.descriptor.description && pattern.descriptor.description !== dependency.range)
-          continue;
+          const normalizedFrom = project.configuration.normalizeLocator(
+            structUtils.makeLocator(
+              structUtils.parseIdent(pattern.from.fullName),
+              pattern.from.description ?? locator.reference,
+            ),
+          );
+
+          if (normalizedFrom.locatorHash !== locator.locatorHash) {
+            continue;
+          }
+        }
+
+        /* All `resolutions` field entries have a descriptor*/ {
+          if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
+            continue;
+
+          const normalizedDescriptor = project.configuration.normalizeDependency(
+            structUtils.makeDescriptor(
+              structUtils.parseLocator(pattern.descriptor.fullName),
+              pattern.descriptor.description ?? dependency.range,
+            ),
+          );
+
+          if (normalizedDescriptor.descriptorHash !== dependency.descriptorHash) {
+            continue;
+          }
+        }
 
         const alias = resolver.bindDescriptor(
           project.configuration.normalizeDependency(structUtils.makeDescriptor(dependency, reference)),

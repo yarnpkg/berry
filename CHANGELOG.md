@@ -17,8 +17,14 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
 - The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
-- Set `nmMode` to `hardlinks-local` by default.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
+- `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
+- The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
+- `yarn init` no longer enables zero-installs by default.
+- Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
+- The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
+- The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
+- Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
 
 ### **API Changes**
 
@@ -38,21 +44,87 @@ The following changes only affect people writing Yarn plugins:
 
 - `renderForm`'s `options` argument is now required to enforce that custom streams are always specified.
 
+- `npmConfigUtils.getAuditRegistry` no longer takes a `Manifest` as its first argument.
+
+- The `FetchOptions.skipIntegrityCheck` option has been removed. Use `FetchOptions.cacheOptions.skipIntegrityCheck` instead.
+
+- `MapConfigurationValue` has been removed. Use `miscUtils.ToMapValue` instead.
+
+- `Manifest.isManifestFieldCompatible` and `Manifest.prototype.isCompatibleWith{OS,CPU}` have been removed. Use `Manifest.prototype.getConditions` and `structUtils.isPackageCompatible` instead.
+
+- `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
+
+- For consistency reasons:
+  - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
+  - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
+
+- `FakeFS` classes are now required to implement `lutimes{Sync,Promise}`.
+
+- `workspace.dependencies` has been removed. Use `workspace.anchoredPackage.dependencies` instead.
+
 ### Installs
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
+- The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
+
+### Bugfixes
+
+- `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
+- `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
+
+### Shell
+
+- The builtin shell now supports whitespace-only commands.
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.4.
+- The patched filesystem now supports `FileHandle.readLines`.
+- PnP now reports missing files when in watch mode.
+
+## 3.3.0
+
+### Installs
+
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+- The node-modules linker locates binaries correctly when the same version of the package is duplicated inside root workspace and another workspace
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
+
+## 3.2.4
+
+### Compatibility
+
+- The patched filesystem now supports fchown.
+- PnP now handles private import mappings.
+- Updates the PnP compatibility layer for TypeScript v4.8.4 and v4.9.1-beta.
+- PnP now reports loaded modules when in watch mode.
+
+## 3.2.3
+
+### Bugfixes
+
+- When Corepack is enabled Yarn will now use the current CLI to prepare external Yarn classic projects, matching the behaviour of when Corepack is disabled.
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript 4.8.1-rc
+- The ESM loader now supports unflagged JSON modules.
+
+## 3.2.2
 
 ### Compatibility
 
 - The patched filesystem now supports `ftruncate`.
 - The patched filesystem now supports `fchmod`.
 - The patched filesystem now supports `throwIfNoEntry`.
+- The PnP filesystem now handles most of the FileHandle methods
 - Updates the PnP compatibility layer for TypeScript 4.8 Beta
 - The `npm_package_json` environment variable is now set by Yarn.
-
-### Bugfixes
-
-- `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 
 ## 3.2.1
 

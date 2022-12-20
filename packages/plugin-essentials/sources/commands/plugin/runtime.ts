@@ -3,7 +3,7 @@ import {Configuration, StreamReport} from '@yarnpkg/core';
 import {Command, Option, Usage}      from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
-export default class PluginListCommand extends BaseCommand {
+export default class PluginRuntimeCommand extends BaseCommand {
   static paths = [
     [`plugin`, `runtime`],
   ];

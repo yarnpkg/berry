@@ -9,6 +9,7 @@
   ],
   "devDependencies": {
     "@yarnpkg/monorepo": "workspace:^",
+    "jest": "^29.2.1",
     "jest-json": "^2.0.0",
     "pkg-tests-core": "workspace:^"
   },

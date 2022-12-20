@@ -12,6 +12,7 @@ export type NativePath = string & { __pathType?: PathType.File | PathType.Native
 export const PortablePath = {
   root: `/` as PortablePath,
   dot: `.` as PortablePath,
+  parent: `..` as PortablePath,
 };
 
 export type Filename = string & { __pathType: PathType.File };
@@ -28,6 +29,8 @@ export const Filename = {
    */
   pnpJs: `.pnp.js` as Filename,
   pnpCjs: `.pnp.cjs` as Filename,
+  pnpData: `.pnp.data.json` as Filename,
+  pnpEsmLoader: `.pnp.loader.mjs` as Filename,
   rc: `.yarnrc.yml` as Filename,
 };
 

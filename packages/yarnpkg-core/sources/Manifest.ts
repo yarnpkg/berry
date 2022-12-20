@@ -131,33 +131,6 @@ export class Manifest {
     return manifest;
   }
 
-  static isManifestFieldCompatible(rules: Array<string> | null, actual: string) {
-    if (rules === null)
-      return true;
-
-    let isNotOnAllowlist = true;
-    let isOnDenylist = false;
-
-    for (const rule of rules) {
-      if (rule[0] === `!`) {
-        isOnDenylist = true;
-
-        if (actual === rule.slice(1)) {
-          return false;
-        }
-      } else {
-        isNotOnAllowlist = false;
-
-        if (rule === actual) {
-          return true;
-        }
-      }
-    }
-
-    // Denylists with allowlisted items should be treated as allowlists for `os` and `cpu` in `package.json`
-    return isOnDenylist && isNotOnAllowlist;
-  }
-
   loadFromText(text: string) {
     let data;
     try {
@@ -714,20 +687,6 @@ export class Manifest {
     return fields.length > 0 ? fields.join(` & `) : null;
   }
 
-  /**
-   * @deprecated Prefer getConditions() instead
-   */
-  isCompatibleWithOS(os: string): boolean {
-    return Manifest.isManifestFieldCompatible(this.os, os);
-  }
-
-  /**
-   * @deprecated Prefer getConditions() instead
-   */
-  isCompatibleWithCPU(cpu: string): boolean {
-    return Manifest.isManifestFieldCompatible(this.cpu, cpu);
-  }
-
   ensureDependencyMeta(descriptor: Descriptor) {
     if (descriptor.range !== `unknown` && !semver.valid(descriptor.range))
       throw new Error(`Invalid meta field range for '${structUtils.stringifyDescriptor(descriptor)}'`);
@@ -860,7 +819,6 @@ export class Manifest {
     } else {
       delete data.browser;
     }
-
 
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;

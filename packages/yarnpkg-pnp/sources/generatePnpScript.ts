@@ -1,3 +1,5 @@
+import {Filename}                from '@yarnpkg/fslib';
+
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
 // @ts-expect-error
@@ -8,12 +10,8 @@ import {PnpSettings}             from './types';
 export function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
     shebang ? `${shebang}\n` : ``,
-    `/* eslint-disable */\n\n`,
-    `try {\n`,
-    `  Object.freeze({}).detectStrictMode = true;\n`,
-    `} catch (error) {\n`,
-    `  throw new Error(\`The whole PnP file got strict-mode-ified, which is known to break (Emscripten libraries aren't strict mode). This usually happens when the file goes through Babel.\`);\n`,
-    `}\n`,
+    `/* eslint-disable */\n`,
+    `"use strict";\n`,
     `\n`,
     loader,
     `\n`,
@@ -44,12 +42,10 @@ function generateInlinedSetup(data: SerializedState) {
   ].join(``);
 }
 
-function generateSplitSetup(dataLocation: string) {
+function generateSplitSetup() {
   return [
     `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
-    `  const path = require('path');\n`,
-    `  const dataLocation = path.resolve(__dirname, ${JSON.stringify(dataLocation)});\n`,
-    `  return hydrateRuntimeState(require(dataLocation), {basePath: basePath || path.dirname(dataLocation)});\n`,
+    `  return hydrateRuntimeState(require(${JSON.stringify(`./${Filename.pnpData}`)}), {basePath: basePath || __dirname});\n`,
     `}\n`,
   ].join(``);
 }
@@ -63,10 +59,10 @@ export function generateInlinedScript(settings: PnpSettings): string {
   return loaderFile;
 }
 
-export function generateSplitScript(settings: PnpSettings & {dataLocation: string}): {dataFile: string, loaderFile: string} {
+export function generateSplitScript(settings: PnpSettings): {dataFile: string, loaderFile: string} {
   const data = generateSerializedState(settings);
 
-  const setup = generateSplitSetup(settings.dataLocation);
+  const setup = generateSplitSetup();
   const loaderFile = generateLoader(settings.shebang, setup);
 
   return {dataFile: generateJsonString(data), loaderFile};

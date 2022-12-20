@@ -29,7 +29,6 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/json-proxy"
   - "@yarnpkg/nm"
   - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"

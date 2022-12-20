@@ -55,7 +55,7 @@
     "checksumBehavior": {
       "_package": "@yarnpkg/core",
       "description": "If `throw` (the default), Yarn will throw an exception on `yarn install` if it detects that a package doesn't match the checksum stored within the lockfile. If `update`, the lockfile checksum will be updated to match the new value. If `ignore`, the checksum check will not happen.",
-      "enum": ["throw", "update", "ignore"],
+      "enum": ["throw", "update", "ignore", "reset"],
       "default": "throw"
     },
     "cloneConcurrency": {
@@ -171,7 +171,7 @@
     },
     "enableScripts": {
       "_package": "@yarnpkg/core",
-      "description": "If false, Yarn will not execute the `postInstall` scripts when installing the project. Note that you can now also disable scripts on a per-package basis thanks to `dependenciesMeta`.",
+      "description": "If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them). Note that you can now also disable scripts on a per-package basis thanks to `dependenciesMeta`.",
       "type": "boolean",
       "default": true
     },
@@ -413,7 +413,7 @@
       "description": "If set to `hardlinks-local` Yarn will utilize hardlinks to reduce disk space consumption inside `node_modules` directories in a current project. With `hardlinks-global` Yarn will use global content addressable storage to reduce `node_modules` size across all the projects using this option.",
       "type": "string",
       "enum": ["classic", "hardlinks-local", "hardlinks-global"],
-      "default": "hardlinks-local"
+      "default": "classic"
     },
     "nodeLinker": {
       "_package": "@yarnpkg/plugin-pnp",
@@ -424,6 +424,13 @@
       ],
       "type": "string",
       "default": "pnp"
+    },
+    "winLinkType": {
+      "_package": "@yarnpkg/core",
+      "description": "Applies to Windows only. If set to `junctions` Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths. If set to `symlinks` Yarn will use symlinks, which will use relative paths, and is consistent with Yarn's behavior on non-Windows platforms. To create symlinks the Windows user running Yarn must have the `create symbolic links` privilege. For this reason Yarn defaults to using junctions.",
+      "type": "string",
+      "enum": ["junctions", "symlinks"],
+      "default": "junctions"
     },
     "npmAlwaysAuth": {
       "_package": "@yarnpkg/plugin-npm",
@@ -618,13 +625,6 @@
       "format": "uri-reference",
       "default": "./.yarn/patches"
     },
-    "pnpDataPath": {
-      "_package": "@yarnpkg/plugin-pnp",
-      "description": "The location where Yarn will read and write the `.pnp.meta.json` file.",
-      "type": "string",
-      "format": "uri-reference",
-      "default": "./.pnp.data.json"
-    },
     "pnpEnableEsmLoader": {
       "_package": "@yarnpkg/plugin-pnp",
       "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`). Yarn tries to automatically detect whether ESM support is required.",
@@ -736,16 +736,16 @@
           "_exampleItems": ["current", "darwin", "linux", "win32"]
         },
         "cpu": {
-          "description": "The list of CPUs to cover.",
+          "description": "The list of CPU architectures to cover. See https://nodejs.org/docs/latest/api/process.html#processarch for the architectures supported by Node.js",
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x86", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32"]
         },
         "libc": {
-          "description": "The list of standard libraries to cover.",
+          "description": "The list of standard C libraries to cover.",
           "type": "array",
           "items": {
             "type": "string"

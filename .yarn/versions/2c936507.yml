@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/plugin-version": major
+
+declined:
+  - "@yarnpkg/cli"

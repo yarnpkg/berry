@@ -1,14 +1,26 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
-import npmAudit               from './commands/npm/audit';
-import npmInfo                from './commands/npm/info';
-import npmLogin               from './commands/npm/login';
-import npmLogout              from './commands/npm/logout';
-import npmPublish             from './commands/npm/publish';
-import npmTagAdd              from './commands/npm/tag/add';
-import npmTagList             from './commands/npm/tag/list';
-import npmTagRemove           from './commands/npm/tag/remove';
-import npmWhoami              from './commands/npm/whoami';
+import NpmAuditCommand        from './commands/npm/audit';
+import NpmInfoCommand         from './commands/npm/info';
+import NpmLoginCommand        from './commands/npm/login';
+import NpmLogoutCommand       from './commands/npm/logout';
+import NpmPublishCommand      from './commands/npm/publish';
+import NpmTagAddCommand       from './commands/npm/tag/add';
+import NpmTagListCommand      from './commands/npm/tag/list';
+import NpmTagRemoveCommand    from './commands/npm/tag/remove';
+import NpmWhoamiCommand       from './commands/npm/whoami';
+import * as npmAuditUtils     from './npmAuditUtils';
+
+export {npmAuditUtils};
+export {NpmAuditCommand};
+export {NpmInfoCommand};
+export {NpmLoginCommand};
+export {NpmLogoutCommand};
+export {NpmPublishCommand};
+export {NpmTagAddCommand};
+export {NpmTagListCommand};
+export {NpmTagRemoveCommand};
+export {NpmWhoamiCommand};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -39,15 +51,15 @@ const plugin: Plugin = {
     },
   },
   commands: [
-    npmAudit,
-    npmInfo,
-    npmLogin,
-    npmLogout,
-    npmPublish,
-    npmTagAdd,
-    npmTagList,
-    npmTagRemove,
-    npmWhoami,
+    NpmAuditCommand,
+    NpmInfoCommand,
+    NpmLoginCommand,
+    NpmLogoutCommand,
+    NpmPublishCommand,
+    NpmTagAddCommand,
+    NpmTagListCommand,
+    NpmTagRemoveCommand,
+    NpmWhoamiCommand,
   ],
 };
 

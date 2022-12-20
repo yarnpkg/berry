@@ -7,28 +7,31 @@
   ],
   "devDependencies": {
     "@arcanis/sherlock": "^2.0.3",
-    "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.8",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@babel/preset-typescript": "^7.16.7",
-    "@babel/register": "^7.17.7",
-    "@types/jest": "^26.0.0",
-    "@types/node": "^13.7.0",
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@babel/register": "^7.18.9",
+    "@types/jest": "^28.1.6",
+    "@types/node": "^18.11.11",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/eslint-config": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
+    "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/sdks": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
     "eslint": "^8.2.0",
-    "jest": "^26.0.1",
-    "tslib": "^1.13.0",
-    "typescript": "4.8.0-beta"
+    "jest": "^29.2.1",
+    "tslib": "^2.4.0",
+    "typescript": "4.9.4"
   },
   "resolutions": {
     "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
-    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
+    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
+    "typedoc@npm:0.16.0": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch",
+    "typedoc@npm:0.17.0-3": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -54,6 +57,9 @@
     },
     "gatsby-telemetry": {
       "built": false
+    },
+    "react-json-doc@2.1.0": {
+      "unplugged": true
     },
     "svg2png": {
       "unplugged": true

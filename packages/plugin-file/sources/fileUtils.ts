@@ -1,5 +1,6 @@
 import {structUtils, FetchOptions, Locator, miscUtils, tgzUtils, Ident, FetchResult} from '@yarnpkg/core';
-import {ppath, PortablePath, npath, CwdFS, ZipFS}                                    from '@yarnpkg/fslib';
+import {ppath, PortablePath, npath, CwdFS}                                           from '@yarnpkg/fslib';
+import {ZipFS}                                                                       from '@yarnpkg/libzip';
 
 export function parseSpec(spec: string) {
   const {params, selector} = structUtils.parseRange(spec);

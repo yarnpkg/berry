@@ -1,11 +1,12 @@
-import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {stringifySyml, parseSyml}                  from '@yarnpkg/parsers';
-import klaw                                        from 'klaw';
-import tarFs                                       from 'tar-fs';
-import zlib                                        from 'zlib';
-import {Gzip}                                      from 'zlib';
+import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {parseSyml}                       from '@yarnpkg/parsers';
+import klaw                              from 'klaw';
+import tarFs                             from 'tar-fs';
+import zlib                              from 'zlib';
+import {Gzip}                            from 'zlib';
 
-import * as miscUtils                              from './misc';
+import {execPromise}                     from './exec';
+import * as miscUtils                    from './misc';
 
 const IS_WIN32 = process.platform === `win32`;
 
@@ -143,71 +144,23 @@ export const unpackToDirectory = (target: PortablePath, source: PortablePath): P
   });
 };
 
-export const createTemporaryFolder = async (name?: Filename): Promise<PortablePath> => {
-  let tmp = await xfs.mktempPromise();
-
-  if (typeof name !== `undefined`) {
-    tmp = ppath.join(tmp, name);
-    await xfs.mkdirPromise(tmp);
-  }
-
-  return tmp;
-};
-
-export const createTemporaryFile = async (filePath: PortablePath = `file` as PortablePath): Promise<PortablePath> => {
-  if (ppath.normalize(filePath).match(/^(\.\.)?\//))
-    throw new Error(`A temporary file path must be a forward path`);
-
-  const folderPath = await exports.createTemporaryFolder();
-  return ppath.resolve(folderPath, filePath as PortablePath);
-};
-
-export const mkdirp = async (target: PortablePath): Promise<string | undefined> =>
-  await xfs.mkdirpPromise(target);
-
 export const writeFile = async (target: PortablePath, body: string | Buffer): Promise<void> => {
   await xfs.mkdirpPromise(ppath.dirname(target));
   await xfs.writeFilePromise(target, body);
-};
-
-export const readFile = (source: PortablePath, encoding?: string): Promise<any> => {
-  return xfs.readFilePromise(source, encoding);
 };
 
 export const writeJson = (target: PortablePath, object: any): Promise<void> => {
   return exports.writeFile(target, JSON.stringify(object));
 };
 
-export const writeSyml = (target: PortablePath, object: any): Promise<void> => {
-  return exports.writeFile(target, stringifySyml(object));
-};
-
-export const readJson = async (source: PortablePath): Promise<any> => {
-  const fileContent = await exports.readFile(source, `utf8`);
-
-  try {
-    return JSON.parse(fileContent);
-  } catch (error) {
-    throw new Error(`Invalid json file (${source})`);
-  }
-};
-
 export const readSyml = async (source: PortablePath): Promise<any> => {
-  const fileContent = await exports.readFile(source, `utf8`);
+  const fileContent = await xfs.readFilePromise(source, `utf8`);
 
   try {
     return parseSyml(fileContent);
   } catch (error) {
     throw new Error(`Invalid syml file (${source})`);
   }
-};
-
-export const chmod = async (target: PortablePath, mod: number): Promise<void> => {
-  await xfs.chmodPromise(target, mod);
-};
-
-export const realpath = (source: PortablePath): Promise<PortablePath> => {
-  return xfs.realpathPromise(source);
 };
 
 export const makeFakeBinary = async (
@@ -218,5 +171,35 @@ export const makeFakeBinary = async (
   const header = IS_WIN32 ? `@echo off\n` : `#!/bin/sh\n`;
 
   await exports.writeFile(realTarget, `${header}printf "%s" "${output}"\nexit ${exitCode}\n`);
-  await exports.chmod(realTarget, 0o755);
+  await xfs.chmodPromise(realTarget, 0o755);
+};
+
+export enum FsLinkType {
+  SYMBOLIC,
+  NTFS_JUNCTION,
+  UNKNOWN,
+}
+
+export const determineLinkType = async function(path: PortablePath) {
+  const stats = await xfs.lstatPromise(path);
+
+  if (!stats.isSymbolicLink())
+    return FsLinkType.UNKNOWN;
+  if (!IS_WIN32)
+    return FsLinkType.SYMBOLIC;
+
+  // Must spawn a process to determine link type on Windows (or include native code)
+  // `dir` the directory, toss lines that start with whitespace (header/footer), check for type of path passed in
+  const {stdout: dirOutput} = (await execPromise(`dir /al /l`, {shell: `cmd.exe`, cwd: npath.fromPortablePath(ppath.dirname(path))}));
+  const linkType = new RegExp(`^\\S.*<(?<linkType>.+)>.*\\s${ppath.basename(path)}(?:\\s|$)`, `gm`).exec(dirOutput)?.groups?.linkType;
+
+  switch (linkType) {
+    case `SYMLINK`:
+    case `SYMLINKD`:
+      return FsLinkType.SYMBOLIC;
+    case `JUNCTION`:
+      return FsLinkType.NTFS_JUNCTION;
+    default:
+      return FsLinkType.UNKNOWN;
+  }
 };

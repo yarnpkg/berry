@@ -9,6 +9,8 @@ import {copyPromise, LinkStrategy}                       from './algorithms/copy
 import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
+export type BufferEncodingOrBuffer = BufferEncoding | 'buffer';
+
 export type Stats = NodeStats & {
   crc?: number;
 };
@@ -41,12 +43,12 @@ export type OpendirOptions = Partial<{
 }>;
 
 export type CreateReadStreamOptions = Partial<{
-  encoding: string;
+  encoding: BufferEncoding;
   fd: number;
 }>;
 
 export type CreateWriteStreamOptions = Partial<{
-  encoding: string;
+  encoding: BufferEncoding;
   fd: number;
   flags: 'a';
 }>;
@@ -63,16 +65,16 @@ export type RmdirOptions = Partial<{
 }>;
 
 export type WriteFileOptions = Partial<{
-  encoding: string;
+  encoding: BufferEncoding;
   mode: number;
   flag: string;
-}> | string;
+}> | BufferEncoding;
 
 export type WatchOptions = Partial<{
   persistent: boolean;
   recursive: boolean;
-  encoding: string;
-}> | string;
+  encoding: BufferEncodingOrBuffer;
+}> | BufferEncodingOrBuffer;
 
 export type WatchFileOptions = Partial<{
   bigint: boolean;
@@ -192,10 +194,10 @@ export abstract class FakeFS<P extends Path> {
 
   abstract fstatPromise(fd: number): Promise<Stats>;
   abstract fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
-  abstract fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  abstract fstatPromise(fd: number, opts?: {bigint?: boolean}): Promise<BigIntStats | Stats>;
   abstract fstatSync(fd: number): Stats;
   abstract fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
-  abstract fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
+  abstract fstatSync(fd: number, opts?: {bigint?: boolean}): BigIntStats | Stats;
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract lstatPromise(p: P): Promise<Stats>;
@@ -216,6 +218,9 @@ export abstract class FakeFS<P extends Path> {
   abstract chmodSync(p: P, mask: number): void;
   abstract fchmodPromise(fd: number, mask: number): Promise<void>;
   abstract fchmodSync(fd: number, mask: number): void;
+
+  abstract fchownPromise(fd: number, uid: number, gid: number): Promise<void>;
+  abstract fchownSync(fd: number, uid: number, gid: number): void;
 
   abstract chownPromise(p: P, uid: number, gid: number): Promise<void>;
   abstract chownSync(p: P, uid: number, gid: number): void;
@@ -238,11 +243,11 @@ export abstract class FakeFS<P extends Path> {
   abstract copyFilePromise(sourceP: P, destP: P, flags?: number): Promise<void>;
   abstract copyFileSync(sourceP: P, destP: P, flags?: number): void;
 
-  abstract appendFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): Promise<void>;
-  abstract appendFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract appendFilePromise(p: FSPath<P>, content: string | Uint8Array, opts?: WriteFileOptions): Promise<void>;
+  abstract appendFileSync(p: FSPath<P>, content: string | Uint8Array, opts?: WriteFileOptions): void;
 
-  abstract writeFilePromise(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): Promise<void>;
-  abstract writeFileSync(p: FSPath<P>, content: string | Buffer | ArrayBuffer | DataView, opts?: WriteFileOptions): void;
+  abstract writeFilePromise(p: FSPath<P>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions): Promise<void>;
+  abstract writeFileSync(p: FSPath<P>, content: string | NodeJS.ArrayBufferView, opts?: WriteFileOptions): void;
 
   abstract unlinkPromise(p: P): Promise<void>;
   abstract unlinkSync(p: P): void;
@@ -250,14 +255,16 @@ export abstract class FakeFS<P extends Path> {
   abstract utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
-  lutimesPromise?(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
-  lutimesSync?(p: P, atime: Date | string | number, mtime: Date | string | number): void;
+  abstract lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  abstract lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
-  abstract readFilePromise(p: FSPath<P>, encoding: 'utf8'): Promise<string>;
-  abstract readFilePromise(p: FSPath<P>, encoding?: string): Promise<Buffer>;
+  abstract readFilePromise(p: FSPath<P>, encoding?: null): Promise<Buffer>;
+  abstract readFilePromise(p: FSPath<P>, encoding: BufferEncoding): Promise<string>;
+  abstract readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
 
-  abstract readFileSync(p: FSPath<P>, encoding: 'utf8'): string;
-  abstract readFileSync(p: FSPath<P>, encoding?: string): Buffer;
+  abstract readFileSync(p: FSPath<P>, encoding?: null): Buffer;
+  abstract readFileSync(p: FSPath<P>, encoding: BufferEncoding): string;
+  abstract readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): Buffer | string;
 
   abstract readlinkPromise(p: P): Promise<P>;
   abstract readlinkSync(p: P): P;
@@ -724,11 +731,7 @@ export abstract class FakeFS<P extends Path> {
     if (typeof result !== `undefined`)
       p = result;
 
-    if (this.lutimesPromise) {
-      await this.lutimesPromise(p, stat.atime, stat.mtime);
-    } else if (!stat.isSymbolicLink()) {
-      await this.utimesPromise(p, stat.atime, stat.mtime);
-    }
+    await this.lutimesPromise(p, stat.atime, stat.mtime);
   }
 
   async preserveTimeSync(p: P, cb: () => P | void) {
@@ -738,11 +741,7 @@ export abstract class FakeFS<P extends Path> {
     if (typeof result !== `undefined`)
       p = result;
 
-    if (this.lutimesSync) {
-      this.lutimesSync(p, stat.atime, stat.mtime);
-    } else if (!stat.isSymbolicLink()) {
-      this.utimesSync(p, stat.atime, stat.mtime);
-    }
+    this.lutimesSync(p, stat.atime, stat.mtime);
   }
 }
 

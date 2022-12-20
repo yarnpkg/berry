@@ -31,6 +31,9 @@ export enum MessageName {
   CONSTRAINTS_INVALID_DEPENDENCY = 26,
   CANT_SUGGEST_RESOLUTIONS = 27,
   FROZEN_LOCKFILE_EXCEPTION = 28,
+  /**
+   * @deprecated Virtuals aren't implemented using symlinks anymore. Context: https://github.com/yarnpkg/berry/pull/43#discussion_r269578031
+   */
   CROSS_DRIVE_VIRTUAL_LOCAL = 29,
   FETCH_FAILED = 30,
   DANGEROUS_NODE_MODULES = 31,
@@ -64,7 +67,13 @@ export enum MessageName {
   INVALID_RANGE_PEER_DEPENDENCY = 59,
   INCOMPATIBLE_PEER_DEPENDENCY = 60,
   DEPRECATED_PACKAGE = 61,
+  /**
+   * @deprecated Use {@link INCOMPATIBLE_ARCHITECTURE}
+   */
   INCOMPATIBLE_OS = 62,
+  /**
+   * @deprecated Use {@link INCOMPATIBLE_ARCHITECTURE}
+   */
   INCOMPATIBLE_CPU = 63,
   FROZEN_ARTIFACT_EXCEPTION = 64,
   TELEMETRY_NOTICE = 65,
@@ -82,6 +91,10 @@ export enum MessageName {
   GHOST_ARCHITECTURE = 77,
   RESOLUTION_MISMATCH = 78,
   PROLOG_LIMIT_EXCEEDED = 79,
+  NETWORK_DISABLED = 80,
+  NETWORK_UNSAFE_HTTP = 81,
+  RESOLUTION_FAILED = 82,
+  AUTOMERGE_GIT_ERROR = 83,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

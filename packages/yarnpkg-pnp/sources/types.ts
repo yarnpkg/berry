@@ -34,7 +34,7 @@ export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
 export type LocationLengthData = Array<number>;
 
-// This is what is stored within the .pnp.meta.json file
+// This is what is stored within the .pnp.data.json file
 export type SerializedState = {
   // @eslint-ignore-next-line @typescript-eslint/naming-convention
   __info: Array<string>;

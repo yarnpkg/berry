@@ -27,7 +27,7 @@ interface PackageInformation extends CombinedPackument {
 }
 
 // eslint-disable-next-line arca/no-default-export
-export default class InfoCommand extends BaseCommand {
+export default class NpmInfoCommand extends BaseCommand {
   static paths = [
     [`npm`, `info`],
   ];

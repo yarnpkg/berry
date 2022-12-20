@@ -1,25 +1,25 @@
-import {CwdFS, Filename, NativePath, PortablePath, ZipOpenFS} from '@yarnpkg/fslib';
-import {xfs, npath, ppath, toFilename}                        from '@yarnpkg/fslib';
-import {getLibzipPromise}                                     from '@yarnpkg/libzip';
-import {execute}                                              from '@yarnpkg/shell';
-import capitalize                                             from 'lodash/capitalize';
-import pLimit                                                 from 'p-limit';
-import {PassThrough, Readable, Writable}                      from 'stream';
+import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
+import {xfs, npath, ppath, toFilename}             from '@yarnpkg/fslib';
+import {ZipOpenFS}                                 from '@yarnpkg/libzip';
+import {execute}                                   from '@yarnpkg/shell';
+import capitalize                                  from 'lodash/capitalize';
+import pLimit                                      from 'p-limit';
+import {PassThrough, Readable, Writable}           from 'stream';
 
-import {Configuration}                                        from './Configuration';
-import {Manifest}                                             from './Manifest';
-import {MessageName}                                          from './MessageName';
-import {Project}                                              from './Project';
-import {ReportError, Report}                                  from './Report';
-import {StreamReport}                                         from './StreamReport';
-import {Workspace}                                            from './Workspace';
-import {YarnVersion}                                          from './YarnVersion';
-import * as execUtils                                         from './execUtils';
-import * as formatUtils                                       from './formatUtils';
-import * as miscUtils                                         from './miscUtils';
-import * as semverUtils                                       from './semverUtils';
-import * as structUtils                                       from './structUtils';
-import {LocatorHash, Locator}                                 from './types';
+import {Configuration}                             from './Configuration';
+import {Manifest}                                  from './Manifest';
+import {MessageName}                               from './MessageName';
+import {Project}                                   from './Project';
+import {ReportError, Report}                       from './Report';
+import {StreamReport}                              from './StreamReport';
+import {Workspace}                                 from './Workspace';
+import {YarnVersion}                               from './YarnVersion';
+import * as execUtils                              from './execUtils';
+import * as formatUtils                            from './formatUtils';
+import * as miscUtils                              from './miscUtils';
+import * as semverUtils                            from './semverUtils';
+import * as structUtils                            from './structUtils';
+import {LocatorHash, Locator}                      from './types';
 
 /**
  * @internal
@@ -32,6 +32,7 @@ export enum PackageManager {
 }
 
 interface PackageManagerSelection {
+  packageManagerField?: boolean;
   packageManager: PackageManager;
   reason: string;
 }
@@ -64,15 +65,15 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
       switch (locator.name) {
         case `yarn`: {
           const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
-          return {packageManager, reason};
+          return {packageManagerField: true, packageManager, reason};
         } break;
 
         case `npm`: {
-          return {packageManager: PackageManager.Npm, reason};
+          return {packageManagerField: true, packageManager: PackageManager.Npm, reason};
         } break;
 
         case `pnpm`: {
-          return {packageManager: PackageManager.Pnpm, reason};
+          return {packageManagerField: true, packageManager: PackageManager.Pnpm, reason};
         } break;
       }
     }
@@ -85,7 +86,10 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 
   if (yarnLock !== undefined) {
     if (yarnLock.match(/^__metadata:$/m)) {
-      return {packageManager: PackageManager.Yarn2, reason: `"__metadata" key found in yarn.lock`};
+      return {
+        packageManager: PackageManager.Yarn2,
+        reason: `"__metadata" key found in yarn.lock`,
+      };
     } else {
       return {
         packageManager: PackageManager.Yarn1,
@@ -103,7 +107,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, ignoreCorepack?: boolean, lifecycleScript?: string}) {
   const scriptEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(process.env))
     if (typeof value !== `undefined`)
@@ -117,7 +121,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
 
   // Otherwise we'd override the Corepack binaries, and thus break the detection
   // of the `packageManager` field when running Yarn in other directories.
-  const yarnBin = process.env.COREPACK_ROOT
+  const yarnBin = process.env.COREPACK_ROOT && !ignoreCorepack
     ? npath.join(process.env.COREPACK_ROOT, `dist/yarn.js`)
     : process.argv[1];
 
@@ -134,7 +138,7 @@ export async function makeScriptEnv({project, locator, binFolder, lifecycleScrip
   ]);
 
   if (project) {
-    scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
+    scriptEnv.INIT_CWD = npath.cwd();
     scriptEnv.PROJECT_CWD = npath.fromPortablePath(project.cwd);
   }
 
@@ -241,8 +245,16 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         effectivePackageManager = PackageManager.Yarn2;
       }
 
+      // If we're inside Corepack, there isn't a packageManager field, and we
+      // want to run Yarn 2, then we must use ourselves to run the `pack` command.
+      // If we don't, Corepack will default to the global Yarn version, which
+      // is supposed to be 1.x.
+      const ignoreCorepack =
+        effectivePackageManager === PackageManager.Yarn2 &&
+        !packageManagerSelection?.packageManagerField;
+
       await xfs.mktempPromise(async binFolder => {
-        const env = await makeScriptEnv({binFolder});
+        const env = await makeScriptEnv({binFolder, ignoreCorepack});
 
         const workflows = new Map([
           [PackageManager.Yarn1, async () => {
@@ -250,10 +262,19 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
               ? [`workspace`, workspace]
               : [];
 
+            // `set version` will update the Manifest to contain a `packageManager` field with the latest
+            // Yarn version which causes the results to change depending on when this command was run,
+            // therefore we revert any change made to it.
+            const manifestPath = ppath.join(cwd, Filename.manifest);
+            const manifestBuffer = await xfs.readFilePromise(manifestPath);
+
             // Makes sure that we'll be using Yarn 1.x
-            const version = await execUtils.pipevp(`yarn`, [`set`, `version`, `classic`, `--only-if-needed`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const version = await execUtils.pipevp(process.execPath, [process.argv[1], `set`, `version`, `classic`, `--only-if-needed`, `--yarn-path`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (version.code !== 0)
               return version.code;
+
+            // Revert any changes made to the Manifest by `set version`.
+            await xfs.writeFilePromise(manifestPath, manifestBuffer);
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
             await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
@@ -423,8 +444,6 @@ export async function hasPackageScript(locator: Locator, scriptName: string, {pr
     const manifest = await Manifest.find(PortablePath.dot, {baseFs: packageFs});
 
     return manifest.scripts.has(scriptName);
-  }, {
-    libzip: await getLibzipPromise(),
   });
 }
 
@@ -536,8 +555,6 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
       cwd = packageLocation;
 
     return {manifest, binFolder, env, cwd};
-  }, {
-    libzip: await getLibzipPromise(),
   });
 }
 

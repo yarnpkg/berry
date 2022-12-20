@@ -1,8 +1,13 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.13",
+  "version": "4.0.0-rc.34",
+  "stableVersion": "3.3.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "dependencies": {
     "@arcanis/slice-ansi": "^1.1.1",
@@ -28,7 +33,7 @@
     "tar": "^6.0.5",
     "tinylogic": "^2.0.0",
     "treeify": "^1.1.0",
-    "tslib": "^1.13.0",
+    "tslib": "^2.4.0",
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
@@ -39,7 +44,7 @@
     "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^13.7.0",
+    "@types/node": "^18.11.11",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^",
@@ -47,7 +52,7 @@
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
     "comment-json": "^2.2.0",
-    "esbuild": "npm:esbuild-wasm@^0.11.20",
+    "esbuild": "npm:esbuild-wasm@^0.15.15",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2"
@@ -60,7 +65,10 @@
   },
   "publishConfig": {
     "main": "./lib/index.js",
-    "types": "./lib/index.d.ts"
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "files": [
     "/lib/**/*"
@@ -72,6 +80,5 @@
   },
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "3.2.0"
+  }
 }

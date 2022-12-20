@@ -3,6 +3,10 @@
   "private": true,
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
     "@types/invariant": "^2.2.30",
@@ -20,13 +24,13 @@
     "invariant": "^2.2.4",
     "klaw": "^2.1.1",
     "minimatch": "^3.0.4",
-    "pem": "^1.14.4",
+    "pem": "dexus/pem",
     "pkg-tests-fixtures": "workspace:^",
     "semver": "^7.1.2",
     "serve-static": "^1.14.1",
     "super-resolve": "^1.0.0",
     "tar-fs": "^1.16.0",
-    "tslib": "^1.13.0"
+    "tslib": "^2.4.0"
   },
   "repository": {
     "type": "git",

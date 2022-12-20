@@ -1,7 +1,7 @@
-import {PortablePath} from '@yarnpkg/fslib';
-import {fs, tests}    from 'pkg-tests-core';
+import {PortablePath, xfs} from '@yarnpkg/fslib';
+import {fs, tests}         from 'pkg-tests-core';
 
-const {readFile, writeFile, writeJson} = fs;
+const {writeFile, writeJson} = fs;
 
 const getWorkspaces = async (run: tests.Run) => {
   const {stdout} = await run(`workspaces`, `list`, `--json`);
@@ -56,7 +56,7 @@ describe(`Workspaces tests`, () => {
   );
 
   test(
-    `it should not implicitely make workspaces require-able`,
+    `it should not implicitly make workspaces require-able`,
     makeTemporaryEnv(
       {
         private: true,
@@ -272,7 +272,7 @@ describe(`Workspaces tests`, () => {
 
         await run(`install`);
 
-        await expect(readFile(`${path}/packages/workspace/workspace.dat` as PortablePath, `utf8`)).resolves.toEqual([
+        await expect(xfs.readFilePromise(`${path}/packages/workspace/workspace.dat` as PortablePath, `utf8`)).resolves.toEqual([
           `Preinstall\n`,
           `Install\n`,
           `Postinstall\n`,

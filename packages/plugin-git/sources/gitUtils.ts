@@ -5,7 +5,8 @@ import GitUrlParse                                                              
 import capitalize                                                                                                                                 from 'lodash/capitalize';
 import querystring                                                                                                                                from 'querystring';
 import semver                                                                                                                                     from 'semver';
-import urlLib                                                                                                                                     from 'url';
+
+import {tryParseGitURL}                                                                                                                           from './hosted-git-info-parse';
 
 function makeGitEnvironment() {
   return {
@@ -126,27 +127,13 @@ export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {
   url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
 
   if (git) {
-    // The `git+` prefix doesn't mean anything at all for Git
+    // Try to normalize the URL in a way that git accepts.
+    const parsedUrl = tryParseGitURL(url);
+    if (parsedUrl)
+      url = parsedUrl.href;
+
+    // The `git+` prefix doesn't mean anything at all for Git.
     url = url.replace(/^git\+([^:]+):/, `$1:`);
-
-    // The `ssh://` prefix should be removed because so URLs won't work in Git:
-    //   ssh://git@github.com:yarnpkg/berry.git
-    //   git@github.com/yarnpkg/berry.git
-    // Git only allows:
-    //   git@github.com:yarnpkg/berry.git (no ssh)
-    //   ssh://git@github.com/yarnpkg/berry.git (no colon)
-    // So we should cut `ssh://`, but only in URLs that contain colon after the hostname
-
-    let parsedUrl: urlLib.UrlWithStringQuery | null;
-    try {
-      parsedUrl = urlLib.parse(url);
-    } catch {
-      parsedUrl = null;
-    }
-
-    if (parsedUrl && parsedUrl.protocol === `ssh:` && parsedUrl.path?.startsWith(`/:`)) {
-      url = url.replace(/^ssh:\/\//, ``);
-    }
   }
 
   return url;
@@ -156,12 +143,17 @@ export function normalizeLocator(locator: Locator) {
   return structUtils.makeLocator(locator, normalizeRepoUrl(locator.reference));
 }
 
-export async function lsRemote(repo: string, configuration: Configuration) {
-  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
-
+export function validateRepoUrl(url: string, {configuration}: {configuration: Configuration}) {
+  const normalizedRepoUrl = normalizeRepoUrl(url, {git: true});
   const networkSettings = httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration});
   if (!networkSettings.enableNetwork)
-    throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+    throw new ReportError(MessageName.NETWORK_DISABLED, `Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+
+  return normalizedRepoUrl;
+}
+
+export async function lsRemote(repo: string, configuration: Configuration) {
+  const normalizedRepoUrl = validateRepoUrl(repo, {configuration});
 
   const res = await git(`listing refs`, [`ls-remote`, normalizedRepoUrl], {
     cwd: configuration.startingCwd,
@@ -283,9 +275,7 @@ export async function clone(url: string, configuration: Configuration) {
     if (protocol !== `commit`)
       throw new Error(`Invalid treeish protocol when cloning`);
 
-    const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
-    if (httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration}).enableNetwork === false)
-      throw new Error(`Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+    const normalizedRepoUrl = validateRepoUrl(repo, {configuration});
 
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment()};

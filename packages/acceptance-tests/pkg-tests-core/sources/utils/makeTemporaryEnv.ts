@@ -3,12 +3,10 @@ import {delimiter} from 'path';
 import {URL}       from 'url';
 
 import * as exec   from './exec';
-import * as fs     from './fs';
 import * as tests  from './tests';
 
 const {generatePkgDriver} = tests;
 const {execFile} = exec;
-const {createTemporaryFolder} = fs;
 
 const mte = generatePkgDriver({
   getName() {
@@ -24,7 +22,7 @@ const mte = generatePkgDriver({
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`;`) : value;
 
     const nativePath = npath.fromPortablePath(path);
-    const tempHomeFolder = npath.fromPortablePath(await createTemporaryFolder());
+    const nativeHomePath = npath.dirname(nativePath);
 
     const cwdArgs = typeof projectFolder !== `undefined`
       ? [projectFolder]
@@ -34,10 +32,10 @@ const mte = generatePkgDriver({
     const res = await execFile(process.execPath, [yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
       env: {
-        [`HOME`]: tempHomeFolder,
-        [`USERPROFILE`]: tempHomeFolder,
+        [`HOME`]: nativeHomePath,
+        [`USERPROFILE`]: nativeHomePath,
         [`PATH`]: `${nativePath}/bin${delimiter}${process.env.PATH}`,
-        [`TEST_ENV`]: `true`,
+        [`YARN_IS_TEST_ENV`]: `true`,
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
         [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
         [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,

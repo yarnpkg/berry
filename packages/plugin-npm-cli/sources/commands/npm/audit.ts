@@ -9,7 +9,7 @@ import * as npmAuditTypes                                                       
 import * as npmAuditUtils                                                          from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
-export default class AuditCommand extends BaseCommand {
+export default class NpmAuditCommand extends BaseCommand {
   static paths = [
     [`npm`, `audit`],
   ];
@@ -142,9 +142,7 @@ export default class AuditCommand extends BaseCommand {
       dependencies,
     };
 
-    const registry = npmConfigUtils.getAuditRegistry(workspace.manifest, {
-      configuration,
-    });
+    const registry = npmConfigUtils.getAuditRegistry({configuration});
 
     let result!: npmAuditTypes.AuditResponse;
     const httpReport = await LightReport.start({

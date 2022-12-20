@@ -1,5 +1,6 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {mkdirp, writeFile, createTemporaryFolder},
+  fs: {writeFile},
 } = require(`pkg-tests-core`);
 
 const RC_FILENAME = `.spec-yarnrc`;
@@ -50,9 +51,6 @@ function cleanupPlainOutput(output, path, homePath) {
 
   // replace the generated home folder with a constant
   output = output.replace(new RegExp(homePath, `g`), FAKE_HOME);
-
-  // replace the generated registry server URL with a constant
-  output = output.replace(/http:\/\/localhost:\d+/g, FAKE_REGISTRY_URL);
 
   // replace the default global folder with a constant
   output = output.replace(/[^"]+\/\.?yarn\/berry/ig, FAKE_LOCAL_APP_DATA);
@@ -114,9 +112,9 @@ describe(`Commands`, () => {
       for (const [optionDescription, {flags, cleanupStdout}] of Object.entries(options)) {
         test(`test (${environmentDescription} / ${optionDescription})`, makeTemporaryEnv({}, async ({path, run, source}) => {
           const cwd = `${path}/${SUBFOLDER}/${SUBFOLDER}`;
-          const homePath = await createTemporaryFolder();
+          const homePath = await xfs.mktempPromise();
 
-          await mkdirp(cwd);
+          await xfs.mkdirPromise(cwd, {recursive: true});
           await environment({path, homePath});
 
           let code;

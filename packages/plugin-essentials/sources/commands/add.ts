@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                                                 from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, FormatType, formatUtils, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, Ident, InstallMode}                                from '@yarnpkg/core';
-import {structUtils}                                                                         from '@yarnpkg/core';
-import {PortablePath}                                                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                  from 'clipanion';
-import {prompt}                                                                              from 'enquirer';
-import * as t                                                                                from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                     from '@yarnpkg/cli';
+import {Cache, Configuration, Descriptor, formatUtils, LightReport, MessageName} from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident, InstallMode}                    from '@yarnpkg/core';
+import {structUtils}                                                             from '@yarnpkg/core';
+import {PortablePath}                                                            from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                      from 'clipanion';
+import {prompt}                                                                  from 'enquirer';
+import * as t                                                                    from 'typanion';
 
-import * as suggestUtils                                                                     from '../suggestUtils';
-import {Hooks}                                                                               from '..';
+import * as suggestUtils                                                         from '../suggestUtils';
+import {Hooks}                                                                   from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {
@@ -39,7 +39,7 @@ export default class AddCommand extends BaseCommand {
 
       If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
 
-      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the later will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the latter will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
 
       - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
 
@@ -162,29 +162,32 @@ export default class AddCommand extends BaseCommand {
 
       const unsupportedPrefix = pseudoDescriptor.match(/^(https?:|git@github)/);
       if (unsupportedPrefix)
-        throw new UsageError(`It seems you are trying to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, FormatType.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, FormatType.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), FormatType.DESCRIPTOR)}`);
+        throw new UsageError(`It seems you are trying to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, formatUtils.Type.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, formatUtils.Type.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), formatUtils.Type.DESCRIPTOR)}`);
 
       if (!request)
-        throw new UsageError(`The ${formatUtils.pretty(configuration, pseudoDescriptor, FormatType.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`);
+        throw new UsageError(`The ${formatUtils.pretty(configuration, pseudoDescriptor, formatUtils.Type.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`);
 
-      const target = suggestTarget(workspace, request, {
+      const targetList = suggestTargetList(workspace, request, {
         dev: this.dev,
         peer: this.peer,
         preferDev: this.preferDev,
         optional: this.optional,
       });
 
-      const suggestions = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
+      const results = await Promise.all(targetList.map(async target => {
+        const suggestedDescriptors = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
+        return {request, suggestedDescriptors, target};
+      }));
 
-      return [request, suggestions, target] as const;
-    }));
+      return results;
+    })).then(results => results.flat());
 
     const checkReport = await LightReport.start({
       configuration,
       stdout: this.context.stdout,
       suggestInstall: false,
     }, async report => {
-      for (const [request, {suggestions, rejections}] of allSuggestions) {
+      for (const {request, suggestedDescriptors: {suggestions, rejections}} of allSuggestions) {
         const nonNullSuggestions = suggestions.filter(suggestion => {
           return suggestion.descriptor !== null;
         });
@@ -224,7 +227,7 @@ export default class AddCommand extends BaseCommand {
       Descriptor,
     ]> = [];
 
-    for (const [/*request*/, {suggestions}, target] of allSuggestions) {
+    for (const {suggestedDescriptors: {suggestions}, target} of allSuggestions) {
       let selected: Descriptor;
 
       const nonNullSuggestions = suggestions.filter(suggestion => {
@@ -327,7 +330,7 @@ export default class AddCommand extends BaseCommand {
   }
 }
 
-function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
+function suggestTargetList(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
   const hasRegular = workspace.manifest[suggestUtils.Target.REGULAR].has(ident.identHash);
   const hasDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].has(ident.identHash);
   const hasPeer = workspace.manifest[suggestUtils.Target.PEER].has(ident.identHash);
@@ -346,16 +349,23 @@ function suggestTarget(workspace: Workspace, ident: Ident, {dev, peer, preferDev
   if ((dev || preferDev) && optional)
     throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" cannot simultaneously be a dev dependency and an optional dependency`);
 
-
+  // When the program executes this line, the command is expected to be legal
+  const targetList = [];
   if (peer)
-    return suggestUtils.Target.PEER;
+    targetList.push(suggestUtils.Target.PEER);
   if (dev || preferDev)
-    return suggestUtils.Target.DEVELOPMENT;
+    targetList.push(suggestUtils.Target.DEVELOPMENT);
+  if (optional)
+    targetList.push(suggestUtils.Target.REGULAR);
 
-  if (hasRegular)
-    return suggestUtils.Target.REGULAR;
+  // The user explicitly define the targets
+  if (targetList.length > 0)
+    return targetList;
+
+  // The user does not define the targets, find it from the `workspace.manifest`
   if (hasDev)
-    return suggestUtils.Target.DEVELOPMENT;
-
-  return suggestUtils.Target.REGULAR;
+    return [suggestUtils.Target.DEVELOPMENT];
+  if (hasPeer)
+    return [suggestUtils.Target.PEER];
+  return [suggestUtils.Target.REGULAR];
 }

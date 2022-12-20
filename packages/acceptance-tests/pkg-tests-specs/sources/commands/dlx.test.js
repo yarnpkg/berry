@@ -1,5 +1,6 @@
+const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  fs: {writeFile, realpath},
+  fs: {writeFile},
   tests: {setPackageWhitelist, startPackageServer, validLogins},
   yarn,
 } = require(`pkg-tests-core`);
@@ -116,7 +117,7 @@ describe(`Commands`, () => {
 
         await writeFile(`${path}/.yarnrc.yml`, [
           `plugins:`,
-          `  - ${await realpath(relativePluginPath)}`,
+          `  - ${await xfs.realpathPromise(relativePluginPath)}`,
           `npmScopes:`,
           `  private:`,
           `    npmRegistryServer: "${url}"`,

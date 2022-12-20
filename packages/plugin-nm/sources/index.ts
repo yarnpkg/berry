@@ -6,6 +6,10 @@ import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
 import {getGlobalHardlinksStore}            from './NodeModulesLinker';
 import {PnpLooseLinker}                     from './PnpLooseLinker';
 
+export {NodeModulesLinker};
+export {NodeModulesMode};
+export {PnpLooseLinker};
+
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;
@@ -40,7 +44,7 @@ const plugin: Plugin<Hooks> = {
         NodeModulesMode.HARDLINKS_LOCAL,
         NodeModulesMode.HARDLINKS_GLOBAL,
       ],
-      default: NodeModulesMode.HARDLINKS_LOCAL,
+      default: NodeModulesMode.CLASSIC,
     },
     nmSelfReferences: {
       description: `If set to 'false' the workspace will not be allowed to require itself and corresponding self-referencing symlink will not be created`,

@@ -8,11 +8,11 @@ export async function readConfiguration(dir: PortablePath, {filename = DEFAULT_R
 }
 
 export async function writeConfiguration(dir: PortablePath, value: {[key: string]: any}, {filename = DEFAULT_RC_FILENAME}: {filename?: Filename} = {}) {
-  return await fsUtils.writeSyml(ppath.join(dir, filename), value);
+  return await fsUtils.writeJson(ppath.join(dir, filename), value);
 }
 
 export async function readManifest(dir: PortablePath, {key, filename = Filename.manifest}: {key?: keyof Manifest, filename?: Filename} = {}) {
-  const data = await fsUtils.readJson(ppath.join(dir, filename));
+  const data = await xfs.readJsonPromise(ppath.join(dir, filename));
   return key != null ? data?.[key] : data;
 }
 
