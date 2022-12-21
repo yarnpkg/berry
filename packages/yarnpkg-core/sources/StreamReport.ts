@@ -18,6 +18,7 @@ export type StreamReportOptions = {
   includeInfos?: boolean;
   includeLogs?: boolean;
   includeWarnings?: boolean;
+  includeCaret?: boolean;
   json?: boolean;
   stdout: Writable;
 };
@@ -142,6 +143,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private includeCaret: boolean;
   private includeFooter: boolean;
   private includeInfos: boolean;
   private includeWarnings: boolean;
@@ -184,6 +186,7 @@ export class StreamReport extends Report {
     configuration,
     stdout,
     json = false,
+    includeCaret = true,
     includeFooter = true,
     includeLogs = !json,
     includeInfos = includeLogs,
@@ -198,6 +201,7 @@ export class StreamReport extends Report {
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
     this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
+    this.includeCaret = includeCaret;
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
     this.includeWarnings = includeWarnings;
@@ -375,7 +379,8 @@ export class StreamReport extends Report {
     const formattedName = this.formatNameWithHyperlink(name);
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
-    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${this.formatIndent()}${text}`;
+    const caret = this.includeCaret ? `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ` : ``;
+    const message = `${caret}${prefix}${this.formatIndent()}${text}`;
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
