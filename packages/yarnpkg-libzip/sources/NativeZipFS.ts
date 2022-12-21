@@ -214,10 +214,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
 
-    this.prepareClose();
-
     if (this.readOnly)
       return;
+
+    this.prepareClose();
 
     const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === statUtils.DEFAULT_MODE
       ? undefined
