@@ -218,15 +218,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
     let abortNextCommands = false;
 
-    // get the configuration again but override messageNames so that we don't double-nest message names
-    // in the foreach output stream if they're enabled.
-    const configWithoutMessageNames = await Configuration.find(this.context.cwd, this.context.plugins);
-    configWithoutMessageNames.values.set(`enableMessageNames`, false);
-
     const report = await StreamReport.start({
-      configuration: configWithoutMessageNames,
+      configuration,
       stdout: this.context.stdout,
-      includeCaret: false,
+      includePrefix: false,
     }, async report => {
       const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
         if (abortNextCommands)
