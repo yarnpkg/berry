@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/core": patch
+  "@yarnpkg/core": minor
   "@yarnpkg/plugin-workspace-tools": patch
 
 declined:

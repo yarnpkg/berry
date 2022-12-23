@@ -378,9 +378,7 @@ export class StreamReport extends Report {
 
     const formattedName = this.formatNameWithHyperlink(name);
     const prefix = formattedName ? `${formattedName}: ` : ``;
-
-    const prefixWithCaret = this.includePrefix ? `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}` : ``;
-    const message = `${prefixWithCaret}${this.formatIndent()}${text}`;
+    const message = `${this.formatPrefixWithCaret(prefix, `blueBright`)}${this.formatIndent()}${text}`;
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
@@ -413,7 +411,7 @@ export class StreamReport extends Report {
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${prefix}${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.formatPrefixWithCaret(prefix, `yellowBright`)}${this.formatIndent()}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -428,7 +426,7 @@ export class StreamReport extends Report {
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${prefix}${this.formatIndent()}${text}`, {truncate: false});
+      this.writeLineWithForgettableReset(`${this.formatPrefixWithCaret(prefix, `redBright`)}${this.formatIndent()}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -687,6 +685,10 @@ export class StreamReport extends Report {
       configuration: this.configuration,
       json: this.json,
     });
+  }
+
+  private formatPrefixWithCaret(prefix: string, caretColor: string) {
+    return this.includePrefix ? `${formatUtils.pretty(this.configuration, `➤`, caretColor)} ${prefix}` : ``;
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {
