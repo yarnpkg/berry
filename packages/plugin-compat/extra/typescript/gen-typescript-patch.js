@@ -127,12 +127,26 @@ const SLICES = [
     onto: `a614119c1921ca61d549a7eee65c0b8c69c28752`,
     range: `>=4.8.4 <4.9.1-beta`,
   },
-  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9-beta
   {
     from: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
     to: `69c84aacfcea603c4d74721366cdcbbebd1c1681`,
     onto: `549b5429d4837344e8c99657109bb6538fd2dbb5`,
-    range: `>=4.9.1-beta`,
+    range: `>=4.9.1-beta <4.9.2-rc`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9-rc
+  {
+    from: `5613f8d8e30dfa9fb3da15e2b8432ed7e2347a12`,
+    to: `5613f8d8e30dfa9fb3da15e2b8432ed7e2347a12`,
+    onto: `107f832b80df2dc97748021cb00af2b6813db75b`,
+    range: `>=4.9.2-rc <4.9.4`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.9
+  {
+    from: `a0859a75a408ec95222a3f0175ba0644d60396f1`,
+    to: `a0859a75a408ec95222a3f0175ba0644d60396f1`,
+    onto: `e2868216f637e875a74c675845625eb15dcfe9a2`,
+    range: `>=4.9.4`,
   },
 ];
 
@@ -305,13 +319,21 @@ async function buildRepository({from, to, onto}) {
 async function run({from, to, onto, range}) {
   const hash = crypto
     .createHash(`md5`)
-    .update(JSON.stringify({from, to, onto, range}))
+    .update(JSON.stringify({from, to, onto}))
     .digest(`hex`);
 
   const patchFile = path.join(__dirname, `patch-${hash}.diff`);
   if (fs.existsSync(patchFile)) {
-    console.log(`Skipping; file ${path.basename(patchFile)} already exists`);
-    return patchFile;
+    const originalContent = await fs.promises.readFile(patchFile, `utf8`);
+    const updatedContent = originalContent.replace(/^semver exclusivity .*\n/gm, `semver exclusivity ${range}\n`);
+    if (originalContent !== updatedContent) {
+      console.log(`Updating range for ${path.basename(patchFile)}`);
+      await fs.promises.writeFile(patchFile, updatedContent);
+      return {patchFile, content: updatedContent};
+    } else {
+      console.log(`Skipping; patch ${path.basename(patchFile)} already exists`);
+      return {patchFile, content: originalContent};
+    }
   }
 
   await cloneRepository();
@@ -329,10 +351,10 @@ async function run({from, to, onto, range}) {
 
   await fs.promises.writeFile(patchFile, patch);
 
-  return patchFile;
+  return {patchFile, content: patch};
 }
 
-async function validate(version, patchFile) {
+async function validate(version, patch) {
   const tmpDir = path.join(TMP_DIR, `v${version}`);
   const tarball = path.join(tmpDir, `package.tgz`);
 
@@ -346,15 +368,14 @@ async function validate(version, patchFile) {
   if (!fs.existsSync(path.join(tmpDir, `package`)))
     await execFile(`tar`, [`xvf`, tarball], {cwd: tmpDir});
 
-  let patch = await fs.promises.readFile(patchFile, `utf8`);
-  patch = patch.replace(/^semver .*\n/gm, ``);
-  await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patch);
+  const patchContent = patch.content.replace(/^semver exclusivity .*\n/gm, ``);
+  await fs.promises.writeFile(path.join(tmpDir, `patch.diff`), patchContent);
 
   await execFile(`git`, [`apply`, `--check`, `../patch.diff`], {cwd: path.join(tmpDir, `package`)});
 }
 
 async function main() {
-  const patchFiles = [];
+  const patches = [];
   let isFirst = true;
 
   for (const slice of SLICES) {
@@ -366,29 +387,25 @@ async function main() {
     console.log(`## Slice: ${JSON.stringify(slice)}`);
     console.log();
 
-    const patchFile = await run(slice);
+    const patch = await run(slice);
     const versions = await fetchVersions(slice.range);
 
     for (const version of versions) {
       console.log(`Validating ${version}...`);
-      await validate(version, patchFile);
+      await validate(version, patch);
     }
 
-    patchFiles.push(patchFile);
+    patches.push(patch);
   }
 
-  const patches = await Promise.all(patchFiles.map(patchFile => {
-    return fs.promises.readFile(patchFile, `utf8`);
-  }));
-
   const aggregatePatchFile = path.join(TMP_DIR, `patch.diff`);
-  await fs.promises.writeFile(aggregatePatchFile, patches.join(``));
+  await fs.promises.writeFile(aggregatePatchFile, patches.map(patch => patch.content).join(``));
 
   const jsPatchFile = path.join(__dirname, `../../sources/patches/typescript.patch.ts`);
   await execFile(`node`, [path.join(__dirname, `../createPatch.js`), aggregatePatchFile, jsPatchFile]);
 
   // Remove old patches
-  const patchFilesSet = new Set(patchFiles);
+  const patchFilesSet = new Set(patches.map(patch => patch.patchFile));
   for await (const {name: patchName} of await fs.promises.opendir(__dirname)) {
     if (patchName.endsWith(`.diff`) && !patchFilesSet.has(path.join(__dirname, patchName))) {
       console.log(`Cleanup; file ${patchName} not in use`);

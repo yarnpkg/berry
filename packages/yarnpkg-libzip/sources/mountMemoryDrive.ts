@@ -3,11 +3,15 @@ import fs                                                                       
 
 import {ZipFS}                                                                            from './ZipFS';
 
-export function mountMemoryDrive(origFs: typeof fs, mountPoint: PortablePath, source: Buffer = Buffer.alloc(0)) {
+export type MemoryDriveOpts = {
+  typeCheck?: number | null;
+};
+
+export function mountMemoryDrive(origFs: typeof fs, mountPoint: PortablePath, source: Buffer | null = Buffer.alloc(0), opts?: MemoryDriveOpts) {
   const archive = new ZipFS(source);
 
   const getMountPoint: GetMountPointFn = (p: PortablePath) => {
-    const detectedMountPoint = p.startsWith(`${mountPoint}/`) ? p.slice(0, mountPoint.length) as PortablePath : null;
+    const detectedMountPoint = p === mountPoint || p.startsWith(`${mountPoint}/`) ? p.slice(0, mountPoint.length) as PortablePath : null;
     return detectedMountPoint;
   };
 
@@ -35,6 +39,8 @@ export function mountMemoryDrive(origFs: typeof fs, mountPoint: PortablePath, so
 
     magicByte: 21,
     maxAge: Infinity,
+
+    typeCheck: opts?.typeCheck,
   });
 
   patchFs(fs, new PosixFS(mountFs));

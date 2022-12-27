@@ -1,7 +1,7 @@
-import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils} from '@yarnpkg/core';
-import {Dirent, Filename, PortablePath, setupCopyIndex, ppath, xfs}                                                                                                                                                        from '@yarnpkg/fslib';
-import {jsInstallUtils}                                                                                                                                                                                                    from '@yarnpkg/plugin-pnp';
-import {UsageError}                                                                                                                                                                                                        from 'clipanion';
+import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils, WindowsLinkType} from '@yarnpkg/core';
+import {Dirent, Filename, PortablePath, setupCopyIndex, ppath, xfs}                                                                                                                                                                         from '@yarnpkg/fslib';
+import {jsInstallUtils}                                                                                                                                                                                                                     from '@yarnpkg/plugin-pnp';
+import {UsageError}                                                                                                                                                                                                                         from 'clipanion';
 
 export type PnpmCustomData = {
   locatorByPath: Map<PortablePath, string>;
@@ -231,7 +231,8 @@ class PnpmInstaller implements Installer {
 
           await xfs.mkdirpPromise(ppath.dirname(depDstPath));
 
-          if (process.platform == `win32`) {
+
+          if (process.platform == `win32` && this.opts.project.configuration.get(`winLinkType`) === WindowsLinkType.JUNCTIONS) {
             await xfs.symlinkPromise(depSrcPaths.packageLocation, depDstPath, `junction`);
           } else {
             await xfs.symlinkPromise(depLinkPath, depDstPath);

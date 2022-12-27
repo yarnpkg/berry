@@ -5,7 +5,7 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["ES2019"],
+    "lib": ["ES2019", "DOM"],
     "module": "commonjs",
     "noImplicitReturns": true,
     "resolveJsonModule": true,

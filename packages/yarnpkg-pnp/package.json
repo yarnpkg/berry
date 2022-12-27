@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "4.0.0-rc.26",
-  "stableVersion": "3.2.2",
+  "version": "4.0.0-rc.34",
+  "stableVersion": "3.2.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -10,14 +10,14 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/node": "^18.7.6",
+    "@types/node": "^18.11.11",
     "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@yarnpkg/libzip": "workspace:^",
-    "esbuild": "npm:esbuild-wasm@^0.15.5",
+    "esbuild": "npm:esbuild-wasm@^0.15.15",
     "resolve.exports": "^1.1.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",

@@ -206,5 +206,37 @@ describe(`Protocols`, () => {
         },
       ),
     );
+
+    test(
+      `it should only compute the hash from the effects of the patch`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
+
+          // Sanity check, YN0013 must be printed when the package is fetched
+          await expect(run(`install`)).resolves.toMatchObject({
+            code: 0,
+            stdout: expect.stringContaining(`YN0013`),
+          });
+
+          // Check that the patch was applied
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+            hello: `world`,
+          });
+
+          // semver exclusivity doesn't change the effect of the patch so its hash should remain the same
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH.replace(/---/, `semver exclusivity *\n---`));
+          await expect(run(`install`)).resolves.toMatchObject({
+            code: 0,
+            stdout: expect.not.stringContaining(`YN0013`),
+          });
+        },
+      ),
+    );
   });
 });

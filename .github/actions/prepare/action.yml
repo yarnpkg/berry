@@ -3,13 +3,17 @@ inputs:
     description: 'Whether to minify the bundle'
     required: false
     default: 'false'
+  node-version:
+    description: 'The version of Node.js to use'
+    required: false
+    default: '18.x'
 
 runs:
   using: composite
   steps:
     - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: ${{ inputs.node-version }}
         check-latest: true
 
     #region Build the standard bundle

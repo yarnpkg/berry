@@ -553,6 +553,23 @@ describe(`patchedFs`, () => {
     });
   });
 
+  it(`should support FileHandle.readLines`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `1\n\n2\n`);
+
+      const fd = await patchedFs.promises.open(filepath);
+
+      const lines: Array<string> = [];
+      for await (const line of fd.readLines())
+        lines.push(line);
+
+      expect(lines).toStrictEqual([`1`, ``, `2`]);
+    });
+  });
+
   ifNotWin32It(`should support FileHandle.chmod`, async () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 

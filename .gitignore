@@ -37,6 +37,9 @@ package.tgz
 # Those packages are built inline and the JS files must not be checked-in
 /packages/yarnpkg-libui/sources/**/*.js
 
+# Only contains the Webpack cache
+/packages/docusaurus/.yarn
+
 /vscode-case-study
 
 .idea

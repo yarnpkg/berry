@@ -10,6 +10,10 @@ export type TreeNode = {
   children?: Array<TreeNode> | TreeMap;
 };
 
+export type TreeRoot = TreeNode & {
+  children: Array<TreeNode>;
+};
+
 export type TreeMap = {
   [key: string]: TreeNode;
 };

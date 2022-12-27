@@ -3,7 +3,6 @@ import {Configuration, Manifest, miscUtils, Project, YarnVersion} from '@yarnpkg
 import {execUtils, scriptUtils, structUtils}                      from '@yarnpkg/core';
 import {xfs, ppath, Filename}                                     from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                       from 'clipanion';
-import {inspect}                                                  from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
@@ -52,6 +51,10 @@ export default class InitCommand extends BaseCommand {
     description: `Initialize a package with a specific bundle that will be locked in the project`,
   });
 
+  name = Option.String(`-n,--name`, {
+    description: `Initialize a package with the given name`,
+  });
+
   // Options that only mattered on v1
   usev2 = Option.Boolean(`-2`, false, {hidden: true});
   yes = Option.Boolean(`-y,--yes`, {hidden: true});
@@ -92,6 +95,8 @@ export default class InitCommand extends BaseCommand {
       args.push(`-p`);
     if (this.workspace)
       args.push(`-w`);
+    if (this.name)
+      args.push(`-n=${this.name}`);
     if (this.yes)
       args.push(`-y`);
 
@@ -119,19 +124,20 @@ export default class InitCommand extends BaseCommand {
     if (!xfs.existsSync(this.context.cwd))
       await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
-    const manifest = (await Manifest.tryFind(this.context.cwd)) || new Manifest();
+    const original = await Manifest.tryFind(this.context.cwd);
+    const manifest = original ?? new Manifest();
 
     const fields = Object.fromEntries(configuration.get(`initFields`).entries());
     manifest.load(fields);
 
     manifest.name = manifest.name
-      ?? structUtils.makeIdent(configuration.get(`initScope`), ppath.basename(this.context.cwd));
+      ?? structUtils.makeIdent(configuration.get(`initScope`), this.name ?? ppath.basename(this.context.cwd));
 
     manifest.packageManager = YarnVersion && miscUtils.isTaggedYarnVersion(YarnVersion)
       ? `yarn@${YarnVersion}`
       : null;
 
-    if (typeof manifest.raw.private === `undefined` && (this.private || (this.workspace && manifest.workspaceDefinitions.length === 0)))
+    if ((!original && this.workspace) || this.private)
       manifest.private = true;
 
     if (this.workspace && manifest.workspaceDefinitions.length === 0) {
@@ -144,28 +150,27 @@ export default class InitCommand extends BaseCommand {
     const serialized: any = {};
     manifest.exportTo(serialized);
 
-    // @ts-expect-error: The Node typings forgot one field
-    inspect.styles.name = `cyan`;
-
-    this.context.stdout.write(`${inspect(serialized, {
-      depth: Infinity,
-      colors: true,
-      compact: false,
-    })}\n`);
-
     const manifestPath = ppath.join(this.context.cwd, Manifest.fileName);
     await xfs.changeFilePromise(manifestPath, `${JSON.stringify(serialized, null, 2)}\n`, {
       automaticNewlines: true,
     });
 
+    const changedPaths = [
+      manifestPath,
+    ];
+
     const readmePath = ppath.join(this.context.cwd, `README.md` as Filename);
-    if (!xfs.existsSync(readmePath))
+    if (!xfs.existsSync(readmePath)) {
       await xfs.writeFilePromise(readmePath, `# ${structUtils.stringifyIdent(manifest.name)}\n`);
+      changedPaths.push(readmePath);
+    }
 
     if (!existingProject || existingProject.cwd === this.context.cwd) {
       const lockfilePath = ppath.join(this.context.cwd, Filename.lockfile);
-      if (!xfs.existsSync(lockfilePath))
+      if (!xfs.existsSync(lockfilePath)) {
         await xfs.writeFilePromise(lockfilePath, ``);
+        changedPaths.push(lockfilePath);
+      }
 
       const gitignoreLines = [
         `.yarn/*`,
@@ -176,7 +181,7 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/versions`,
         ``,
         `# Swap the comments on the following lines if you wish to use zero-installs`,
-        `# Also don't forget to run \`yarn config set enableGlobalCache false\`!`,
+        `# In that case, don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/zero-installs`,
         ``,
         `#!.yarn/cache`,
@@ -188,8 +193,10 @@ export default class InitCommand extends BaseCommand {
       }).join(``);
 
       const gitignorePath = ppath.join(this.context.cwd, `.gitignore` as Filename);
-      if (!xfs.existsSync(gitignorePath))
+      if (!xfs.existsSync(gitignorePath)) {
         await xfs.writeFilePromise(gitignorePath, gitignoreBody);
+        changedPaths.push(gitignorePath);
+      }
 
       const editorConfigProperties = {
         [`*`]: {
@@ -215,11 +222,25 @@ export default class InitCommand extends BaseCommand {
       }
 
       const editorConfigPath = ppath.join(this.context.cwd, `.editorconfig` as Filename);
-      if (!xfs.existsSync(editorConfigPath))
+      if (!xfs.existsSync(editorConfigPath)) {
         await xfs.writeFilePromise(editorConfigPath, editorConfigBody);
+        changedPaths.push(editorConfigPath);
+      }
+
+      await this.cli.run([`install`], {
+        quiet: true,
+      });
 
       if (!xfs.existsSync(ppath.join(this.context.cwd, `.git` as Filename))) {
         await execUtils.execvp(`git`, [`init`], {
+          cwd: this.context.cwd,
+        });
+
+        await execUtils.execvp(`git`, [`add`, `--`, ...changedPaths], {
+          cwd: this.context.cwd,
+        });
+
+        await execUtils.execvp(`git`, [`commit`, `--allow-empty`, `-m`, `First commit`], {
           cwd: this.context.cwd,
         });
       }

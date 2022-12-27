@@ -1,0 +1,8 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = /var/folders/rz/nkpqtzyd2bd8jvb3bdknp48r0000gq/T/my-package.git
