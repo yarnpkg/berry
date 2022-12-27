@@ -12,9 +12,9 @@ nom = "7.1.1"
 nom-supreme = "0.8.0"
 cow-utils = "0.1.2"
 rustc-hash = "1.1.0"
-indexmap = { version = "1.9.1", features = ["serde"] }
-serde = { version = "1.0.147", features = ["derive"] }
-serde_json = { version = "1.0.87", features = ["preserve_order"] }
+indexmap = { version = "1.9.2", features = ["serde"] }
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = { version = "1.0.91", features = ["preserve_order"] }
 wasm-bindgen = "0.2.83"
 
 [package.metadata.wasm-pack.profile.release]
