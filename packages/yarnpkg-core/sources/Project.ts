@@ -1354,8 +1354,6 @@ export class Project {
         if (!isBuildable)
           continue;
 
-        buildablePackages.delete(locatorHash);
-
         const buildInfo = packageBuildDirectives.get(pkg.locatorHash);
         if (!buildInfo)
           throw new Error(`Assertion failed: The build directive should have been registered`);
@@ -1365,6 +1363,7 @@ export class Project {
         // No need to rebuild the package if its hash didn't change
         if (this.storedBuildState.get(pkg.locatorHash) === buildHash) {
           nextBState.set(pkg.locatorHash, buildHash);
+          buildablePackages.delete(locatorHash);
           continue;
         }
 
@@ -1382,76 +1381,81 @@ export class Project {
         else
           report.reportInfo(MessageName.MUST_BUILD, `${structUtils.prettyLocator(this.configuration, pkg)} must be built because it never has been before or the last one failed`);
 
-        for (const location of buildInfo.buildLocations) {
+        const pkgBuilds = buildInfo.buildLocations.map(async location => {
           if (!ppath.isAbsolute(location))
             throw new Error(`Assertion failed: Expected the build location to be absolute (not ${location})`);
 
-          buildPromises.push((async () => {
-            for (const [buildType, scriptName] of buildInfo.directives) {
-              let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
-              switch (buildType) {
-                case BuildType.SCRIPT: {
-                  header += `# Script name: ${scriptName}\n`;
-                } break;
-                case BuildType.SHELLCODE: {
-                  header += `# Script code: ${scriptName}\n`;
-                } break;
-              }
+          for (const [buildType, scriptName] of buildInfo.directives) {
+            let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
+            switch (buildType) {
+              case BuildType.SCRIPT: {
+                header += `# Script name: ${scriptName}\n`;
+              } break;
+              case BuildType.SHELLCODE: {
+                header += `# Script code: ${scriptName}\n`;
+              } break;
+            }
 
-              const stdin = null;
+            const stdin = null;
 
-              const wasBuildSuccessful = await xfs.mktempPromise(async logDir => {
-                const logFile = ppath.join(logDir, `build.log` as PortablePath);
+            const wasBuildSuccessful = await xfs.mktempPromise(async logDir => {
+              const logFile = ppath.join(logDir, `build.log` as PortablePath);
 
-                const {stdout, stderr} = this.configuration.getSubprocessStreams(logFile, {
-                  header,
-                  prefix: structUtils.prettyLocator(this.configuration, pkg),
-                  report,
-                });
-
-                let exitCode;
-                try {
-                  switch (buildType) {
-                    case BuildType.SCRIPT: {
-                      exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
-                    } break;
-                    case BuildType.SHELLCODE: {
-                      exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
-                    } break;
-                  }
-                } catch (error) {
-                  stderr.write(error.stack);
-                  exitCode = 1;
-                }
-
-                stdout.end();
-                stderr.end();
-
-                if (exitCode === 0) {
-                  nextBState.set(pkg.locatorHash, buildHash);
-                  return true;
-                }
-
-                xfs.detachTemp(logDir);
-
-                const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
-
-                if (this.optionalBuilds.has(pkg.locatorHash)) {
-                  report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
-                  nextBState.set(pkg.locatorHash, buildHash);
-                  return true;
-                } else {
-                  report.reportError(MessageName.BUILD_FAILED, buildMessage);
-                  return false;
-                }
+              const {stdout, stderr} = this.configuration.getSubprocessStreams(logFile, {
+                header,
+                prefix: structUtils.prettyLocator(this.configuration, pkg),
+                report,
               });
 
-              if (!wasBuildSuccessful) {
-                return;
+              let exitCode;
+              try {
+                switch (buildType) {
+                  case BuildType.SCRIPT: {
+                    exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                  } break;
+                  case BuildType.SHELLCODE: {
+                    exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                  } break;
+                }
+              } catch (error) {
+                stderr.write(error.stack);
+                exitCode = 1;
               }
+
+              stdout.end();
+              stderr.end();
+
+              if (exitCode === 0) {
+                nextBState.set(pkg.locatorHash, buildHash);
+                return true;
+              }
+
+              xfs.detachTemp(logDir);
+
+              const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
+
+              if (this.optionalBuilds.has(pkg.locatorHash)) {
+                report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
+                nextBState.set(pkg.locatorHash, buildHash);
+                return true;
+              } else {
+                report.reportError(MessageName.BUILD_FAILED, buildMessage);
+                return false;
+              }
+            });
+
+            if (!wasBuildSuccessful) {
+              return;
             }
-          })());
-        }
+          }
+        });
+
+        buildPromises.push(
+          ...pkgBuilds,
+          Promise.allSettled(pkgBuilds).then(() => {
+            buildablePackages.delete(locatorHash);
+          }),
+        );
       }
 
       await miscUtils.allSettledSafe(buildPromises);
