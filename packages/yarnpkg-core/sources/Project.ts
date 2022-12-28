@@ -1344,6 +1344,19 @@ export class Project {
           if (buildablePackages.has(resolution))
             return false;
 
+          // Virtual workspaces don't have build scripts but the original might so we need to check it.
+          const dependencyPkg = this.storedPackages.get(resolution);
+          if (!dependencyPkg)
+            throw new Error(`Assertion failed: The package should have been registered`);
+
+          const workspace = this.tryWorkspaceByLocator(dependencyPkg);
+          if (workspace) {
+            if (buildablePackages.has(workspace.anchoredLocator.locatorHash))
+              return false;
+
+            hashesToCheck.add(workspace.anchoredLocator.locatorHash);
+          }
+
           hashesToCheck.add(resolution);
         }
       }
