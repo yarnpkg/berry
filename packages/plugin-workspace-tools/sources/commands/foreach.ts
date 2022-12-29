@@ -217,6 +217,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      includePrefix: false,
     }, async report => {
       const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
         if (abortNextCommands)
