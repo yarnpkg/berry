@@ -25,7 +25,7 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh
 
-        yarn dlx create-nx-workspace --name=my-nx --appName=frontend --preset=react --interactive=false --style=css --nxCloud=false && cd my-nx
+        yarn dlx create-nx-workspace --name=my-nx --appName=frontend --preset=react-monorepo --interactive=false --style=css --nxCloud=false && cd my-nx
 
         # TODO: Remove when NX stops defaulting to node-modules
         yarn config set nodeLinker pnp
