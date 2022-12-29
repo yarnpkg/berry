@@ -1,13 +1,13 @@
 /// <reference path="./tauProlog.d.ts"/>
-
-import {Ident, MessageName, Project, ReportError, Workspace} from '@yarnpkg/core';
-import {miscUtils, structUtils}                              from '@yarnpkg/core';
-import {xfs, ppath, PortablePath}                            from '@yarnpkg/fslib';
+import {Ident, MessageName, nodeUtils, Project, ReportError, Workspace} from '@yarnpkg/core';
+import {miscUtils, structUtils}                                         from '@yarnpkg/core';
+import {xfs, ppath, PortablePath}                                       from '@yarnpkg/fslib';
 // @ts-expect-error
-import plLists                                               from 'tau-prolog/modules/lists';
-import pl                                                    from 'tau-prolog';
+import plLists                                                          from 'tau-prolog/modules/lists';
+import pl                                                               from 'tau-prolog';
 
-import {linkProjectToSession}                                from './tauModule';
+import * as constraintUtils                                             from './constraintUtils';
+import {linkProjectToSession}                                           from './tauModule';
 
 plLists(pl);
 
@@ -166,7 +166,7 @@ function parseLinkToJson(link: pl.Link): string | null {
   }
 }
 
-export class Constraints {
+export class Constraints implements constraintUtils.Engine {
   public readonly project: Project;
 
   public readonly source: string = ``;
@@ -238,12 +238,44 @@ export class Constraints {
     return new Session(this.project, this.fullSource);
   }
 
-  async process() {
+  async processClassic() {
     const session = this.createSession();
 
     return {
       enforcedDependencies: await this.genEnforcedDependencies(session),
       enforcedFields: await this.genEnforcedFields(session),
+    };
+  }
+
+  async process(): Promise<constraintUtils.ProcessResult> {
+    const {
+      enforcedDependencies,
+      enforcedFields,
+    } = await this.processClassic();
+
+    const manifestUpdates = new Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>();
+
+    for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of enforcedDependencies) {
+      const normalizedPath = constraintUtils.normalizePath([dependencyType, structUtils.stringifyIdent(dependencyIdent)]);
+
+      const workspaceUpdates = miscUtils.getMapWithDefault(manifestUpdates, workspace.cwd);
+      const pathUpdates = miscUtils.getMapWithDefault(workspaceUpdates, normalizedPath);
+
+      pathUpdates.set(dependencyRange ?? undefined, new Set());
+    }
+
+    for (const {workspace, fieldPath, fieldValue} of enforcedFields) {
+      const normalizedPath = constraintUtils.normalizePath(fieldPath);
+
+      const workspaceUpdates = miscUtils.getMapWithDefault(manifestUpdates, workspace.cwd);
+      const pathUpdates = miscUtils.getMapWithDefault(workspaceUpdates, normalizedPath);
+
+      pathUpdates.set(JSON.parse(fieldValue as string) ?? undefined, new Set());
+    }
+
+    return {
+      manifestUpdates,
+      reportedErrors: new Map(),
     };
   }
 

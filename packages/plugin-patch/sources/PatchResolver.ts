@@ -1,12 +1,8 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, hashUtils} from '@yarnpkg/core';
-import {Descriptor, Locator, Package}                               from '@yarnpkg/core';
-import {structUtils}                                                from '@yarnpkg/core';
+import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import {Descriptor, Locator, Package}                    from '@yarnpkg/core';
+import {structUtils}                                     from '@yarnpkg/core';
 
-import * as patchUtils                                              from './patchUtils';
-
-// We use this to for the patches to be regenerated without bumping the whole
-// cache, like when the libzip had incorrect mtime in some cases
-const CACHE_VERSION = 3;
+import * as patchUtils                                   from './patchUtils';
 
 export class PatchResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -58,7 +54,7 @@ export class PatchResolver implements Resolver {
     if (typeof sourcePackage === `undefined`)
       throw new Error(`Assertion failed: The dependency should have been resolved`);
 
-    const patchHash = hashUtils.makeHash(`${CACHE_VERSION}`, ...patchFiles.map(spec => JSON.stringify(spec))).slice(0, 6);
+    const patchHash = patchUtils.makePatchHash(patchFiles, sourcePackage.version);
 
     return [patchUtils.makeLocator(descriptor, {parentLocator, sourcePackage, patchPaths, patchHash})];
   }

@@ -23,10 +23,9 @@ jobs:
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
-    - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18.x
 
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
@@ -35,7 +34,7 @@ jobs:
 
     - name: 'Check that the cache files are consistent with their remote sources'
       run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- .yarn/cache | wc -l) -gt 0 ]]; then
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- '.yarn/cache' 'packages/yarnpkg-libzip' | wc -l) -gt 0 ]]; then
           node ./scripts/run-yarn.js --immutable --immutable-cache --check-cache
         fi
       shell: bash
@@ -54,6 +53,18 @@ jobs:
             yarn node $generator;
           done
           [[ $(git diff --name-only packages/plugin-compat/sources/patches "packages/plugin-compat/extra/typescript/patch*" | tee /dev/stderr | wc -l) -eq 0 ]]
+        fi
+      shell: bash
+      if: |
+        (success() || failure()) && github.event.pull_request != ''
+      env:
+        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+
+    - name: 'Check that libzip artifacts are consistent with a fresh build (fix w/ "git merge master && bash packages/yarnpkg-libzip/artifacts/build.sh")'
+      run: |
+        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-libzip/artifacts' 'packages/yarnpkg-libzip/sources/*.js' | wc -l) -gt 0 ]]; then
+          bash packages/yarnpkg-libzip/artifacts/build.sh
+          [[ $(git diff --name-only 'packages/yarnpkg-libzip/artifacts' 'packages/yarnpkg-libzip/sources/*.js' | wc -l) -eq 0 ]]
         fi
       shell: bash
       if: |
@@ -151,10 +162,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: 'Use Node.js 16.x'
-      uses: actions/setup-node@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18.x
 
     - name: 'Build bundle & plugins'
       run: |

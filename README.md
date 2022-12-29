@@ -147,7 +147,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20NX/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nx-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Preact%20CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-preact-cli-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20SvelteKit/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vue-CLI/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vue-cli-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/workflows/E2E%20Vite/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vite-workflow.yml)<br/>
 </td><td valign="top">
 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20ESBuild/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml)<br/>
@@ -161,7 +161,6 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Parcel/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-parcel-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Prettier/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-prettier-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Rollup/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/workflows/E2E%20Snowpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-snowpack-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Storybook/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20TypeScript/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/workflows/E2E%20Webpack/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>

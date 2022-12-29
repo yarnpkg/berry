@@ -17,7 +17,6 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
 - The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
-- Set `nmMode` to `hardlinks-local` by default.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 - `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
 - The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
@@ -67,9 +66,6 @@ The following changes only affect people writing Yarn plugins:
 
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
-- The node-modules linker avoids creation of circular symlinks
-- The node-modules linker no longer creates duplicate copies inside of aliased packages
-- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
 
 ### Bugfixes
 
@@ -79,6 +75,25 @@ The following changes only affect people writing Yarn plugins:
 ### Shell
 
 - The builtin shell now supports whitespace-only commands.
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.4.
+- The patched filesystem now supports `FileHandle.readLines`.
+- PnP now reports missing files when in watch mode.
+
+## 3.3.0
+
+### Installs
+
+- The node-modules linker avoids creation of circular symlinks
+- The node-modules linker no longer creates duplicate copies inside of aliased packages
+- The node-modules linker locates binaries correctly when the same version of the package is duplicated inside root workspace and another workspace
+- Improved performance for `hardlinks-global` `node-modules` linker mode by 1.5x
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v4.9.2-rc.
 
 ## 3.2.4
 

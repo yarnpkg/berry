@@ -1,7 +1,9 @@
+import {WindowsLinkType}                           from '@yarnpkg/core';
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
 
+
 const {
-  fs: {writeFile, writeJson},
+  fs: {writeFile, writeJson, FsLinkType, determineLinkType},
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
@@ -1229,16 +1231,17 @@ describe(`Node_Modules`, () => {
       {
         workspaces: [`workspace-a`, `workspace-b`, `workspace-c`],
         dependencies: {
-          [`node-modules-path`]: `1.0.0`,
+          [`node-modules-path`]: `2.0.0`,
         },
         scripts: {
+          w: `yarn get-node-modules-path`,
           wa: `yarn ./workspace-a get-node-modules-path`,
           wb: `yarn ./workspace-b get-node-modules-path`,
-          wc: `yarn ./workspace-c get-node-modules-path`,
         },
       },
       {
         nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
       },
       async ({path, run}) => {
         await writeJson(`${path}/workspace-a/package.json`, {
@@ -1254,23 +1257,18 @@ describe(`Node_Modules`, () => {
             [`node-modules-path`]: `2.0.0`,
           },
         });
-        await writeJson(`${path}/workspace-c/package.json`, {
-          name: `workspace-c`,
-          dependencies: {
-            [`node-modules-path`]: `2.0.0`,
-          },
-        });
 
         await run(`install`);
 
         await expect(xfs.existsPromise(`${path}/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
         await expect(xfs.existsPromise(`${path}/workspace-b/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
-        await expect(xfs.existsPromise(`${path}/workspace-c/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
 
+        const rootBinLocation = (await run(`run`, `w`)).stdout.trim();
+        expect(rootBinLocation).not.toContain(`workspace-a`);
+        expect(rootBinLocation).not.toContain(`workspace-b`);
         expect((await run(`run`, `wb`)).stdout.trim()).toContain(`workspace-b`);
         expect((await run(`run`, `wa`)).stdout.trim()).toContain(`workspace-a`);
-        expect((await run(`run`, `wc`)).stdout.trim()).toContain(`workspace-c`);
       },
     ),
   );
@@ -1826,5 +1824,107 @@ describe(`Node_Modules`, () => {
           `native-foo-x86`,
         ]);
       }),
+  );
+
+  testIf(() => process.platform === `win32`,
+    `'winLinkType: symlinks' on Windows should use symlinks in node_modules directories`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        winLinkType: WindowsLinkType.SYMLINKS,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+        });
+
+        await run(`install`);
+
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+
+        expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.SYMBOLIC);
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
+      },
+    ),
+  );
+
+  testIf(() => process.platform === `win32`,
+    `'winLinkType: junctions' on Windows should use junctions in node_modules directories`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        winLinkType: WindowsLinkType.JUNCTIONS,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+        });
+
+        await run(`install`);
+
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+
+        expect(await determineLinkType(packageLinkPath)).toEqual(FsLinkType.NTFS_JUNCTION);
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeTruthy();
+      },
+    ),
+  );
+
+  testIf(() => process.platform !== `win32`,
+    `'winLinkType: junctions' not-on Windows should use symlinks in node_modules directories`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        winLinkType: WindowsLinkType.JUNCTIONS,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+        });
+
+        await run(`install`);
+
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        const ws1Stats = await xfs.lstatPromise(packageLinkPath);
+
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
+        expect(ws1Stats.isSymbolicLink()).toBeTruthy();
+      },
+    ),
+  );
+
+  testIf(() => process.platform !== `win32`,
+    `'winLinkType: symlinks' not-on Windows should use symlinks in node_modules directories`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        winLinkType: WindowsLinkType.SYMLINKS,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
+          name: `ws1`,
+        });
+
+        await run(`install`);
+
+        const packageLinkPath = npath.toPortablePath(`${path}/node_modules/ws1`);
+        const ws1Stats = await xfs.lstatPromise(packageLinkPath);
+
+        expect(ppath.isAbsolute(await xfs.readlinkPromise(packageLinkPath))).toBeFalsy();
+        expect(ws1Stats.isSymbolicLink()).toBeTruthy();
+      },
+    ),
   );
 });

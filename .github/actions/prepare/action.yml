@@ -3,13 +3,17 @@ inputs:
     description: 'Whether to minify the bundle'
     required: false
     default: 'false'
+  node-version:
+    description: 'The version of Node.js to use'
+    required: false
+    default: '18.x'
 
 runs:
   using: composite
   steps:
     - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: ${{ inputs.node-version }}
         check-latest: true
 
     #region Build the standard bundle
@@ -29,7 +33,7 @@ runs:
     #region Cache workflow dependencies
     - name: Get global path
       id: global-path
-      run: echo "::set-output name=globalFolder::$(YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js config get globalFolder)"
+      run: echo "globalFolder=$(YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js config get globalFolder)" >> $GITHUB_OUTPUT
       shell: bash
 
     - uses: actions/cache@v3

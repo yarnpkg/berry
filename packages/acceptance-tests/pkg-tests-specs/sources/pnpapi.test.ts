@@ -20,7 +20,7 @@ describe(`Plug'n'Play API`, () => {
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(source(`require('pnpapi').findPackageLocator('${npath.fromPortablePath(ppath.dirname(path))}/')`)).resolves.toEqual(null);
+        await expect(source(`require('pnpapi').findPackageLocator(${JSON.stringify(`${npath.fromPortablePath(ppath.dirname(path))}/`)})`)).resolves.toEqual(null);
       }),
     );
 
