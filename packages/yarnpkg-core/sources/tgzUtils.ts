@@ -39,12 +39,11 @@ export interface ExtractBufferOptions {
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
-export async function convertToZipNoWorker(tgz: Buffer, opts: ExtractBufferOptions & {targetConstructor}) {
+export async function convertToZipNoWorker(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
-  const TargetFS = opts.targetConstructor ?? ZipFS;
-  const destFs = new TargetFS(tmpFile, {create: true, level: opts.compressionLevel, stats: statUtils.makeDefaultStats()});
+  const destFs = new ZipFS(tmpFile, {create: true, level: opts.compressionLevel, stats: statUtils.makeDefaultStats()});
 
   // Buffers sent through Node are turned into regular Uint8Arrays
   await extractArchiveTo(tgz, destFs, opts);

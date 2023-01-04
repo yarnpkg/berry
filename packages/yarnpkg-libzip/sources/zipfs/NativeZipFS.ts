@@ -9,7 +9,7 @@ import {FSPath, PortablePath, ppath, Filename}                                  
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
 // @ts-expect-error
-import {ZipArchive, constants as archiveConstants}                                                                                                   from 'zlib';
+import {ZipArchive, constants as zlibConstants}                                                                                                      from 'zlib';
 
 import {
   DEFAULT_COMPRESSION_LEVEL,
@@ -19,6 +19,11 @@ import {
   makeEmptyArchive,
   toUnixTimestamp,
 } from './common';
+
+const {
+  // @ts-expect-error
+  ZIP_OPSYS_UNIX,
+} = zlibConstants;
 
 export class NativeZipFS extends BasePortableFakeFS {
   private readonly baseFs: FakeFS<PortablePath> | null;
@@ -613,7 +618,7 @@ export class NativeZipFS extends BasePortableFakeFS {
 
   private getUnixMode(index: number, defaultMode: number) {
     const {opsys, attributes} = this.zip.statEntry(index);
-    if (opsys !== archiveConstants.ZIP_OPSYS_UNIX)
+    if (opsys !== ZIP_OPSYS_UNIX)
       return defaultMode;
 
     return attributes >>> 16;
@@ -793,7 +798,7 @@ export class NativeZipFS extends BasePortableFakeFS {
     const newMod = oldMod & (~0o777) | mask;
 
     this.zip.restatEntry(entry, {
-      opsys: archiveConstants.ZIP_OPSYS_UNIX,
+      opsys: ZIP_OPSYS_UNIX,
       attributes: newMod << 16,
     });
   }
@@ -1123,7 +1128,7 @@ export class NativeZipFS extends BasePortableFakeFS {
     this.registerEntry(resolvedP, index);
 
     this.zip.restatEntry(index, {
-      opsys: archiveConstants.ZIP_OPSYS_UNIX,
+      opsys: ZIP_OPSYS_UNIX,
       attributes: (constants.S_IFLNK | 0o777) << 16,
     });
 
