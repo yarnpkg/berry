@@ -51294,12 +51294,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
+const zlib = require('zlib');
 const nodeUtils = require('util');
 const crypto = require('crypto');
 const os = require('os');
 const events = require('events');
-const zlib = require('zlib');
-const require$$0 = require('module');
+const require$$0$1 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
 const readline = require('readline');
@@ -51308,30 +51308,45 @@ const assert = require('assert');
 const _interopDefaultLegacy = e => e && typeof e === 'object' && 'default' in e ? e : { default: e };
 
 function _interopNamespace(e) {
-  if (e && e.__esModule) return e;
-  const n = Object.create(null);
-  if (e) {
-    for (const k in e) {
-      if (k !== 'default') {
-        const d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: () => e[k]
-        });
-      }
-    }
-  }
-  n.default = e;
-  return Object.freeze(n);
+	if (e && e.__esModule) return e;
+	const n = Object.create(null);
+	if (e) {
+		for (const k in e) {
+			if (k !== 'default') {
+				const d = Object.getOwnPropertyDescriptor(e, k);
+				Object.defineProperty(n, k, d.get ? d : {
+					enumerable: true,
+					get: () => e[k]
+				});
+			}
+		}
+	}
+	n.default = e;
+	return Object.freeze(n);
 }
 
 const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
-const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
 const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
-const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
+const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
+const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
 const assert__default = /*#__PURE__*/_interopDefaultLegacy(assert);
+
+function getAugmentedNamespace(n) {
+	if (n.__esModule) return n;
+	var a = Object.defineProperty({}, '__esModule', {value: true});
+	Object.keys(n).forEach(function (k) {
+		var d = Object.getOwnPropertyDescriptor(n, k);
+		Object.defineProperty(a, k, d.get ? d : {
+			enumerable: true,
+			get: function () {
+				return n[k];
+			}
+		});
+	});
+	return a;
+}
 
 const S_IFMT = 61440;
 const S_IFDIR = 16384;
@@ -58789,13 +58804,10 @@ function makeEmptyArchive() {
   ]);
 }
 
-let ZipArchive;
-let archiveConstants;
-try {
-  ({ ZipArchive, constants: archiveConstants } = require(`archive`));
-} catch {
-}
-class NativeZipFS extends BasePortableFakeFS {
+const {
+  ZIP_OPSYS_UNIX
+} = zlib.constants;
+class NativeZipFS$1 extends BasePortableFakeFS {
   constructor(source, opts = {}) {
     super();
     this.listings = /* @__PURE__ */ new Map();
@@ -58846,7 +58858,7 @@ class NativeZipFS extends BasePortableFakeFS {
         }
       }
     };
-    this.zip = typeof source === `string` ? new ZipArchive(getFileContent(source, opts)) : new ZipArchive(source);
+    this.zip = typeof source === `string` ? new zlib.ZipArchive(getFileContent(source, opts)) : new zlib.ZipArchive(source);
     this.listings.set(PortablePath.root, /* @__PURE__ */ new Set());
     this.symlinkCount = 0;
     const entries = this.zip.getEntries({ withFileTypes: true });
@@ -59185,7 +59197,7 @@ class NativeZipFS extends BasePortableFakeFS {
   }
   getUnixMode(index, defaultMode) {
     const { opsys, attributes } = this.zip.statEntry(index);
-    if (opsys !== archiveConstants.ZIP_OPSYS_UNIX)
+    if (opsys !== ZIP_OPSYS_UNIX)
       return defaultMode;
     return attributes >>> 16;
   }
@@ -59314,7 +59326,7 @@ class NativeZipFS extends BasePortableFakeFS {
     const oldMod = this.getUnixMode(entry, fs.constants.S_IFREG | 0);
     const newMod = oldMod & ~511 | mask;
     this.zip.restatEntry(entry, {
-      opsys: archiveConstants.ZIP_OPSYS_UNIX,
+      opsys: ZIP_OPSYS_UNIX,
       attributes: newMod << 16
     });
   }
@@ -59557,7 +59569,7 @@ class NativeZipFS extends BasePortableFakeFS {
     const index = this.setFileSource(resolvedP, target);
     this.registerEntry(resolvedP, index);
     this.zip.restatEntry(index, {
-      opsys: archiveConstants.ZIP_OPSYS_UNIX,
+      opsys: ZIP_OPSYS_UNIX,
       attributes: (fs.constants.S_IFLNK | 511) << 16
     });
     this.symlinkCount += 1;
@@ -59694,6 +59706,11 @@ class NativeZipFS extends BasePortableFakeFS {
   }
 }
 
+const NativeZipFS$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	NativeZipFS: NativeZipFS$1
+});
+
 class LibzipError extends Error {
   constructor(message, code) {
     super(message);
@@ -59701,7 +59718,7 @@ class LibzipError extends Error {
     this.code = code;
   }
 }
-class WasmZipFS extends BasePortableFakeFS {
+class WasmZipFS$1 extends BasePortableFakeFS {
   constructor(source, opts = {}) {
     super();
     this.lzSource = null;
@@ -60772,7 +60789,21 @@ class WasmZipFS extends BasePortableFakeFS {
   }
 }
 
-const ZipFS = process.env.YARN_EXPERIMENT_NATIVE_ZIPFS === `1` ? NativeZipFS : WasmZipFS;
+const WasmZipFS$2 = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	LibzipError,
+	WasmZipFS: WasmZipFS$1
+});
+
+const require$$0 = /*@__PURE__*/getAugmentedNamespace(NativeZipFS$2);
+
+const require$$1 = /*@__PURE__*/getAugmentedNamespace(WasmZipFS$2);
+
+const { NativeZipFS } = require$$0;
+const { WasmZipFS } = require$$1;
+const ZipFSImplementation = process.env.YARN_EXPERIMENT_NATIVE_ZIPFS === `1` ? NativeZipFS : WasmZipFS;
+var ZipFS_2 = class ZipFS extends ZipFSImplementation {
+};
 
 function getArchivePart(path, extension) {
   let idx = path.indexOf(extension);
@@ -60813,7 +60844,7 @@ class ZipOpenFS extends MountFS {
       return null;
     };
     const factorySync = (baseFs, p) => {
-      return new ZipFS(p, {
+      return new ZipFS_2(p, {
         baseFs,
         readOnly: readOnlyArchives,
         stats: baseFs.statSync(p)
@@ -60826,7 +60857,7 @@ class ZipOpenFS extends MountFS {
         stats: await baseFs.statPromise(p)
       };
       return () => {
-        return new ZipFS(p, zipOptions);
+        return new ZipFS_2(p, zipOptions);
       };
     };
     super({
@@ -60897,7 +60928,7 @@ function getPathForDisplay(p) {
 const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2;
 
-const builtinModules = new Set(require$$0.Module.builtinModules || Object.keys(process.binding(`natives`)));
+const builtinModules = new Set(require$$0$1.Module.builtinModules || Object.keys(process.binding(`natives`)));
 const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
@@ -60963,14 +60994,14 @@ function applyPatch(pnpapi, opts) {
       requireStack.push(cursor.filename || cursor.id);
     return requireStack;
   }
-  const originalModuleLoad = require$$0.Module._load;
-  require$$0.Module._load = function(request, parent, isMain) {
+  const originalModuleLoad = require$$0$1.Module._load;
+  require$$0$1.Module._load = function(request, parent, isMain) {
     if (!enableNativeHooks)
-      return originalModuleLoad.call(require$$0.Module, request, parent, isMain);
+      return originalModuleLoad.call(require$$0$1.Module, request, parent, isMain);
     if (isBuiltinModule(request)) {
       try {
         enableNativeHooks = false;
-        return originalModuleLoad.call(require$$0.Module, request, parent, isMain);
+        return originalModuleLoad.call(require$$0$1.Module, request, parent, isMain);
       } finally {
         enableNativeHooks = true;
       }
@@ -60981,7 +61012,7 @@ function applyPatch(pnpapi, opts) {
       return originalModuleLoad(request, parent, isMain);
     if (request === `pnpapi`)
       return parentApi;
-    const modulePath = require$$0.Module._resolveFilename(request, parent, isMain);
+    const modulePath = require$$0$1.Module._resolveFilename(request, parent, isMain);
     const isOwnedByRuntime = parentApi !== null ? parentApi.findPackageLocator(modulePath) !== null : false;
     const moduleApiPath = isOwnedByRuntime ? parentApiPath : opts.manager.findApiPathFor(npath.dirname(modulePath));
     const entry = moduleApiPath !== null ? opts.manager.getApiEntry(moduleApiPath) : { instance: null, cache: defaultCache };
@@ -61001,7 +61032,7 @@ function applyPatch(pnpapi, opts) {
       }
       return cacheEntry.exports;
     }
-    const module = new require$$0.Module(modulePath, parent ?? void 0);
+    const module = new require$$0$1.Module(modulePath, parent ?? void 0);
     module.pnpApiPath = moduleApiPath;
     reportRequiredFilesToWatchMode([modulePath]);
     entry.cache[modulePath] = module;
@@ -61017,7 +61048,7 @@ function applyPatch(pnpapi, opts) {
     } finally {
       module.isLoading = false;
       if (hasThrown) {
-        delete require$$0.Module._cache[modulePath];
+        delete require$$0$1.Module._cache[modulePath];
       }
     }
     return module.exports;
@@ -61049,24 +61080,24 @@ function applyPatch(pnpapi, opts) {
     }
   }
   function makeFakeParent(path) {
-    const fakeParent = new require$$0.Module(``);
+    const fakeParent = new require$$0$1.Module(``);
     const fakeFilePath = npath.join(path, `[file]`);
-    fakeParent.paths = require$$0.Module._nodeModulePaths(fakeFilePath);
+    fakeParent.paths = require$$0$1.Module._nodeModulePaths(fakeFilePath);
     return fakeParent;
   }
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
-  const originalModuleResolveFilename = require$$0.Module._resolveFilename;
-  require$$0.Module._resolveFilename = function(request, parent, isMain, options) {
+  const originalModuleResolveFilename = require$$0$1.Module._resolveFilename;
+  require$$0$1.Module._resolveFilename = function(request, parent, isMain, options) {
     if (isBuiltinModule(request))
       return request;
     if (!enableNativeHooks)
-      return originalModuleResolveFilename.call(require$$0.Module, request, parent, isMain, options);
+      return originalModuleResolveFilename.call(require$$0$1.Module, request, parent, isMain, options);
     if (options && options.plugnplay === false) {
       const { plugnplay, ...rest } = options;
       const forwardedOptions = Object.keys(rest).length > 0 ? rest : void 0;
       try {
         enableNativeHooks = false;
-        return originalModuleResolveFilename.call(require$$0.Module, request, parent, isMain, forwardedOptions);
+        return originalModuleResolveFilename.call(require$$0$1.Module, request, parent, isMain, forwardedOptions);
       } finally {
         enableNativeHooks = true;
       }
@@ -61107,7 +61138,7 @@ function applyPatch(pnpapi, opts) {
         } else {
           if (path === null)
             throw new Error(`Assertion failed: Expected the path to be set`);
-          resolution = originalModuleResolveFilename.call(require$$0.Module, request, module || makeFakeParent(path), isMain);
+          resolution = originalModuleResolveFilename.call(require$$0$1.Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
         firstError = firstError || error;
@@ -61133,12 +61164,12 @@ Require stack:
       Error.captureStackTrace(firstError);
     throw firstError;
   };
-  const originalFindPath = require$$0.Module._findPath;
-  require$$0.Module._findPath = function(request, paths, isMain) {
+  const originalFindPath = require$$0$1.Module._findPath;
+  require$$0$1.Module._findPath = function(request, paths, isMain) {
     if (request === `pnpapi`)
       return false;
     if (!enableNativeHooks)
-      return originalFindPath.call(require$$0.Module, request, paths, isMain);
+      return originalFindPath.call(require$$0$1.Module, request, paths, isMain);
     const isAbsolute = npath.isAbsolute(request);
     if (isAbsolute)
       paths = [``];
@@ -61152,7 +61183,7 @@ Require stack:
           const api = opts.manager.getApiEntry(pnpApiPath, true).instance;
           resolution = api.resolveRequest(request, path) || false;
         } else {
-          resolution = originalFindPath.call(require$$0.Module, request, [path], isMain);
+          resolution = originalFindPath.call(require$$0$1.Module, request, [path], isMain);
         }
       } catch (error) {
         continue;
@@ -61163,8 +61194,8 @@ Require stack:
     }
     return false;
   };
-  const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
-  require$$0.Module._extensions[`.js`] = function(module, filename) {
+  const originalExtensionJSFunction = require$$0$1.Module._extensions[`.js`];
+  require$$0$1.Module._extensions[`.js`] = function(module, filename) {
     var _a, _b;
     if (filename.endsWith(`.js`)) {
       const pkg = readPackageScope(filename);
@@ -61989,15 +62020,15 @@ function makeApi(runtimeState, opts) {
     return null;
   }
   function makeFakeModule(path) {
-    const fakeModule = new require$$0.Module(path, null);
+    const fakeModule = new require$$0$1.Module(path, null);
     fakeModule.filename = path;
-    fakeModule.paths = require$$0.Module._nodeModulePaths(path);
+    fakeModule.paths = require$$0$1.Module._nodeModulePaths(path);
     return fakeModule;
   }
   function callNativeResolution(request, issuer) {
     if (issuer.endsWith(`/`))
       issuer = ppath.join(issuer, `internal.js`);
-    return require$$0.Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, { plugnplay: false });
+    return require$$0$1.Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, { plugnplay: false });
   }
   function isPathIgnored(path) {
     if (ignorePattern === null)
@@ -62330,7 +62361,7 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
       return unqualifiedPath;
     }
   }
-  function resolveUnqualified(unqualifiedPath, { extensions = Object.keys(require$$0.Module._extensions) } = {}) {
+  function resolveUnqualified(unqualifiedPath, { extensions = Object.keys(require$$0$1.Module._extensions) } = {}) {
     const candidates = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, { extensions });
     if (qualifiedPath) {
@@ -62486,7 +62517,7 @@ function makeManager(pnpapi, opts) {
   const initialApiStats = opts.fakeFs.statSync(npath.toPortablePath(initialApiPath));
   const apiMetadata = /* @__PURE__ */ new Map([
     [initialApiPath, {
-      cache: require$$0.Module._cache,
+      cache: require$$0$1.Module._cache,
       instance: pnpapi,
       stats: initialApiStats,
       lastRefreshCheck: Date.now()
@@ -62494,7 +62525,7 @@ function makeManager(pnpapi, opts) {
   ]);
   function loadApiInstance(pnpApiPath) {
     const nativePath = npath.fromPortablePath(pnpApiPath);
-    const module = new require$$0.Module(nativePath, null);
+    const module = new require$$0$1.Module(nativePath, null);
     module.load(nativePath);
     return module.exports;
   }
