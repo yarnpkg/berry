@@ -6,66 +6,21 @@ import {opendir}                                                                
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from '@yarnpkg/fslib';
 import {errors, statUtils}                                                                                                                           from '@yarnpkg/fslib';
 import {FSPath, PortablePath, ppath, Filename}                                                                                                       from '@yarnpkg/fslib';
-import {ZipArchive, constants as archiveConstants}                                                                                                   from 'archive';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
-import {types}                                                                                                                                       from 'util';
+// @ts-expect-error
+import {ZipArchive, constants as archiveConstants}                                                                                                   from 'zlib';
 
-export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;
+import {
+  DEFAULT_COMPRESSION_LEVEL,
+  ZipBufferOptions,
+  ZipCompression,
+  ZipPathOptions,
+  makeEmptyArchive,
+  toUnixTimestamp,
+} from './common';
 
-export type ZipBufferOptions = {
-  readOnly?: boolean;
-  stats?: Stats;
-  level?: ZipCompression;
-};
-
-export type ZipPathOptions = ZipBufferOptions & {
-  baseFs?: FakeFS<PortablePath>;
-  create?: boolean;
-};
-
-function toUnixTimestamp(time: Date | string | number): number {
-  if (typeof time === `string` && String(+time) === time)
-    return +time;
-
-  if (typeof time === `number` && Number.isFinite(time)) {
-    if (time < 0) {
-      return Date.now() / 1000;
-    } else {
-      return time;
-    }
-  }
-
-  // convert to 123.456 UNIX timestamp
-  if (types.isDate(time))
-    return (time as Date).getTime() / 1000;
-
-  throw new Error(`Invalid time`);
-}
-
-export function makeEmptyArchive() {
-  return Buffer.from([
-    0x50, 0x4B, 0x05, 0x06,
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00,
-  ]);
-}
-
-export class LibzipError extends Error {
-  code: string;
-
-  constructor(message: string, code: string) {
-    super(message);
-    this.name = `Libzip Error`;
-    this.code = code;
-  }
-}
-
-export class ZipFS extends BasePortableFakeFS {
+export class NativeZipFS extends BasePortableFakeFS {
   private readonly baseFs: FakeFS<PortablePath> | null;
   private readonly path: PortablePath | null;
 
@@ -139,9 +94,9 @@ export class ZipFS extends BasePortableFakeFS {
     if (opts.readOnly)
       this.readOnly = true;
 
-    const getFileContent = (p: PortablePath) => {
+    const getFileContent = (p: PortablePath, opts: ZipPathOptions) => {
       try {
-        return this.baseFs!.readFileSync(source);
+        return this.baseFs!.readFileSync(p);
       } catch (err) {
         if (err.code === `ENOENT` && opts.create) {
           return null;
@@ -152,7 +107,7 @@ export class ZipFS extends BasePortableFakeFS {
     };
 
     this.zip = typeof source === `string`
-      ? new ZipArchive(getFileContent(source))
+      ? new ZipArchive(getFileContent(source, opts))
       : new ZipArchive(source);
 
     this.listings.set(PortablePath.root, new Set<Filename>());
@@ -785,7 +740,7 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.symlinkCount === 0)
       return false;
 
-    return (this.getUnixMode(index) & constants.S_IFMT) === constants.S_IFLNK;
+    return (this.getUnixMode(index, 0) & constants.S_IFMT) === constants.S_IFLNK;
   }
 
   private getFileSource(index: number): Buffer

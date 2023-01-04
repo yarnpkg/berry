@@ -68,6 +68,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   // https://hadoop.apache.org/docs/r0.23.11/hadoop-project-dist/hadoop-common/SingleCluster.html
   `home`,
   `confDir`,
+
+  `experimentNativeZipfs`,
+  `experimentRunInBand`,
 ]);
 
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;

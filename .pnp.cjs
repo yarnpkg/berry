@@ -51293,12 +51293,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
 
 const fs = require('fs');
 const path = require('path');
-const archive = require('archive');
 const stream = require('stream');
 const nodeUtils = require('util');
 const crypto = require('crypto');
 const os = require('os');
 const events = require('events');
+const zlib = require('zlib');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
@@ -51328,6 +51328,7 @@ function _interopNamespace(e) {
 const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
+const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
 const assert__default = /*#__PURE__*/_interopDefaultLegacy(assert);
@@ -54429,6 +54430,19 @@ function patchFs(patchedFs, fakeFs) {
       return { bytesWritten: await res, buffer };
     };
   }
+}
+
+let cachedInstance;
+let registeredFactory = () => {
+  throw new Error(`Assertion failed: No libzip instance is available, and no factory was configured`);
+};
+function setFactory(factory) {
+  registeredFactory = factory;
+}
+function getInstance() {
+  if (typeof cachedInstance === `undefined`)
+    cachedInstance = registeredFactory();
+  return cachedInstance;
 }
 
 var libzipSync = {exports: {}};
@@ -58580,69 +58594,158 @@ var createModule = function() {
 module.exports = createModule;
 }(libzipSync));
 
-function getArchivePart(path, extension) {
-  let idx = path.indexOf(extension);
-  if (idx <= 0)
-    return null;
-  let nextCharIdx = idx;
-  while (idx >= 0) {
-    nextCharIdx = idx + extension.length;
-    if (path[nextCharIdx] === ppath.sep)
-      break;
-    if (path[idx - 1] === ppath.sep)
-      return null;
-    idx = path.indexOf(extension, nextCharIdx);
+const createModule = libzipSync.exports;
+
+const number64 = [
+  `number`,
+  `number`
+];
+var Errors = /* @__PURE__ */ ((Errors2) => {
+  Errors2[Errors2["ZIP_ER_OK"] = 0] = "ZIP_ER_OK";
+  Errors2[Errors2["ZIP_ER_MULTIDISK"] = 1] = "ZIP_ER_MULTIDISK";
+  Errors2[Errors2["ZIP_ER_RENAME"] = 2] = "ZIP_ER_RENAME";
+  Errors2[Errors2["ZIP_ER_CLOSE"] = 3] = "ZIP_ER_CLOSE";
+  Errors2[Errors2["ZIP_ER_SEEK"] = 4] = "ZIP_ER_SEEK";
+  Errors2[Errors2["ZIP_ER_READ"] = 5] = "ZIP_ER_READ";
+  Errors2[Errors2["ZIP_ER_WRITE"] = 6] = "ZIP_ER_WRITE";
+  Errors2[Errors2["ZIP_ER_CRC"] = 7] = "ZIP_ER_CRC";
+  Errors2[Errors2["ZIP_ER_ZIPCLOSED"] = 8] = "ZIP_ER_ZIPCLOSED";
+  Errors2[Errors2["ZIP_ER_NOENT"] = 9] = "ZIP_ER_NOENT";
+  Errors2[Errors2["ZIP_ER_EXISTS"] = 10] = "ZIP_ER_EXISTS";
+  Errors2[Errors2["ZIP_ER_OPEN"] = 11] = "ZIP_ER_OPEN";
+  Errors2[Errors2["ZIP_ER_TMPOPEN"] = 12] = "ZIP_ER_TMPOPEN";
+  Errors2[Errors2["ZIP_ER_ZLIB"] = 13] = "ZIP_ER_ZLIB";
+  Errors2[Errors2["ZIP_ER_MEMORY"] = 14] = "ZIP_ER_MEMORY";
+  Errors2[Errors2["ZIP_ER_CHANGED"] = 15] = "ZIP_ER_CHANGED";
+  Errors2[Errors2["ZIP_ER_COMPNOTSUPP"] = 16] = "ZIP_ER_COMPNOTSUPP";
+  Errors2[Errors2["ZIP_ER_EOF"] = 17] = "ZIP_ER_EOF";
+  Errors2[Errors2["ZIP_ER_INVAL"] = 18] = "ZIP_ER_INVAL";
+  Errors2[Errors2["ZIP_ER_NOZIP"] = 19] = "ZIP_ER_NOZIP";
+  Errors2[Errors2["ZIP_ER_INTERNAL"] = 20] = "ZIP_ER_INTERNAL";
+  Errors2[Errors2["ZIP_ER_INCONS"] = 21] = "ZIP_ER_INCONS";
+  Errors2[Errors2["ZIP_ER_REMOVE"] = 22] = "ZIP_ER_REMOVE";
+  Errors2[Errors2["ZIP_ER_DELETED"] = 23] = "ZIP_ER_DELETED";
+  Errors2[Errors2["ZIP_ER_ENCRNOTSUPP"] = 24] = "ZIP_ER_ENCRNOTSUPP";
+  Errors2[Errors2["ZIP_ER_RDONLY"] = 25] = "ZIP_ER_RDONLY";
+  Errors2[Errors2["ZIP_ER_NOPASSWD"] = 26] = "ZIP_ER_NOPASSWD";
+  Errors2[Errors2["ZIP_ER_WRONGPASSWD"] = 27] = "ZIP_ER_WRONGPASSWD";
+  Errors2[Errors2["ZIP_ER_OPNOTSUPP"] = 28] = "ZIP_ER_OPNOTSUPP";
+  Errors2[Errors2["ZIP_ER_INUSE"] = 29] = "ZIP_ER_INUSE";
+  Errors2[Errors2["ZIP_ER_TELL"] = 30] = "ZIP_ER_TELL";
+  Errors2[Errors2["ZIP_ER_COMPRESSED_DATA"] = 31] = "ZIP_ER_COMPRESSED_DATA";
+  return Errors2;
+})(Errors || {});
+const makeInterface = (emZip) => ({
+  get HEAP8() {
+    return emZip.HEAP8;
+  },
+  get HEAPU8() {
+    return emZip.HEAPU8;
+  },
+  errors: Errors,
+  SEEK_SET: 0,
+  SEEK_CUR: 1,
+  SEEK_END: 2,
+  ZIP_CHECKCONS: 4,
+  ZIP_CREATE: 1,
+  ZIP_EXCL: 2,
+  ZIP_TRUNCATE: 8,
+  ZIP_RDONLY: 16,
+  ZIP_FL_OVERWRITE: 8192,
+  ZIP_FL_COMPRESSED: 4,
+  ZIP_OPSYS_DOS: 0,
+  ZIP_OPSYS_AMIGA: 1,
+  ZIP_OPSYS_OPENVMS: 2,
+  ZIP_OPSYS_UNIX: 3,
+  ZIP_OPSYS_VM_CMS: 4,
+  ZIP_OPSYS_ATARI_ST: 5,
+  ZIP_OPSYS_OS_2: 6,
+  ZIP_OPSYS_MACINTOSH: 7,
+  ZIP_OPSYS_Z_SYSTEM: 8,
+  ZIP_OPSYS_CPM: 9,
+  ZIP_OPSYS_WINDOWS_NTFS: 10,
+  ZIP_OPSYS_MVS: 11,
+  ZIP_OPSYS_VSE: 12,
+  ZIP_OPSYS_ACORN_RISC: 13,
+  ZIP_OPSYS_VFAT: 14,
+  ZIP_OPSYS_ALTERNATE_MVS: 15,
+  ZIP_OPSYS_BEOS: 16,
+  ZIP_OPSYS_TANDEM: 17,
+  ZIP_OPSYS_OS_400: 18,
+  ZIP_OPSYS_OS_X: 19,
+  ZIP_CM_DEFAULT: -1,
+  ZIP_CM_STORE: 0,
+  ZIP_CM_DEFLATE: 8,
+  uint08S: emZip._malloc(1),
+  uint16S: emZip._malloc(2),
+  uint32S: emZip._malloc(4),
+  uint64S: emZip._malloc(8),
+  malloc: emZip._malloc,
+  free: emZip._free,
+  getValue: emZip.getValue,
+  open: emZip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
+  openFromSource: emZip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
+  close: emZip.cwrap(`zip_close`, `number`, [`number`]),
+  discard: emZip.cwrap(`zip_discard`, null, [`number`]),
+  getError: emZip.cwrap(`zip_get_error`, `number`, [`number`]),
+  getName: emZip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
+  getNumEntries: emZip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
+  delete: emZip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
+  stat: emZip.cwrap(`zip_stat`, `number`, [`number`, `string`, `number`, `number`]),
+  statIndex: emZip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
+  fopen: emZip.cwrap(`zip_fopen`, `number`, [`number`, `string`, `number`]),
+  fopenIndex: emZip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
+  fread: emZip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
+  fclose: emZip.cwrap(`zip_fclose`, `number`, [`number`]),
+  dir: {
+    add: emZip.cwrap(`zip_dir_add`, `number`, [`number`, `string`])
+  },
+  file: {
+    add: emZip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
+    getError: emZip.cwrap(`zip_file_get_error`, `number`, [`number`]),
+    getExternalAttributes: emZip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
+    setExternalAttributes: emZip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
+    setMtime: emZip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
+    setCompression: emZip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`])
+  },
+  ext: {
+    countSymlinks: emZip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`])
+  },
+  error: {
+    initWithCode: emZip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
+    strerror: emZip.cwrap(`zip_error_strerror`, `string`, [`number`])
+  },
+  name: {
+    locate: emZip.cwrap(`zip_name_locate`, `number`, [`number`, `string`, `number`])
+  },
+  source: {
+    fromUnattachedBuffer: emZip.cwrap(`zip_source_buffer_create`, `number`, [`number`, ...number64, `number`, `number`]),
+    fromBuffer: emZip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
+    free: emZip.cwrap(`zip_source_free`, null, [`number`]),
+    keep: emZip.cwrap(`zip_source_keep`, null, [`number`]),
+    open: emZip.cwrap(`zip_source_open`, `number`, [`number`]),
+    close: emZip.cwrap(`zip_source_close`, `number`, [`number`]),
+    seek: emZip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
+    tell: emZip.cwrap(`zip_source_tell`, `number`, [`number`]),
+    read: emZip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
+    error: emZip.cwrap(`zip_source_error`, `number`, [`number`]),
+    setMtime: emZip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`])
+  },
+  struct: {
+    stat: emZip.cwrap(`zipstruct_stat`, `number`, []),
+    statS: emZip.cwrap(`zipstruct_statS`, `number`, []),
+    statName: emZip.cwrap(`zipstruct_stat_name`, `string`, [`number`]),
+    statIndex: emZip.cwrap(`zipstruct_stat_index`, `number`, [`number`]),
+    statSize: emZip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
+    statCompSize: emZip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
+    statCompMethod: emZip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
+    statMtime: emZip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
+    statCrc: emZip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
+    error: emZip.cwrap(`zipstruct_error`, `number`, []),
+    errorS: emZip.cwrap(`zipstruct_errorS`, `number`, []),
+    errorCodeZip: emZip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`])
   }
-  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
-    return null;
-  return path.slice(0, nextCharIdx);
-}
-class ZipOpenFS extends MountFS {
-  static async openPromise(fn, opts) {
-    const zipOpenFs = new ZipOpenFS(opts);
-    try {
-      return await fn(zipOpenFs);
-    } finally {
-      zipOpenFs.saveAndClose();
-    }
-  }
-  constructor(opts = {}) {
-    const fileExtensions = opts.fileExtensions;
-    const readOnlyArchives = opts.readOnlyArchives;
-    const getMountPoint = typeof fileExtensions === `undefined` ? (path) => getArchivePart(path, `.zip`) : (path) => {
-      for (const extension of fileExtensions) {
-        const result = getArchivePart(path, extension);
-        if (result) {
-          return result;
-        }
-      }
-      return null;
-    };
-    const factorySync = (baseFs, p) => {
-      return new ZipFS(p, {
-        baseFs,
-        readOnly: readOnlyArchives,
-        stats: baseFs.statSync(p)
-      });
-    };
-    const factoryPromise = async (baseFs, p) => {
-      const zipOptions = {
-        baseFs,
-        readOnly: readOnlyArchives,
-        stats: await baseFs.statPromise(p)
-      };
-      return () => {
-        return new ZipFS(p, zipOptions);
-      };
-    };
-    super({
-      ...opts,
-      factorySync,
-      factoryPromise,
-      getMountPoint
-    });
-  }
-}
+});
 
 const DEFAULT_COMPRESSION_LEVEL = `mixed`;
 function toUnixTimestamp(time) {
@@ -58685,10 +58788,16 @@ function makeEmptyArchive() {
     0
   ]);
 }
-class ZipFS extends BasePortableFakeFS {
+
+let ZipArchive;
+let archiveConstants;
+try {
+  ({ ZipArchive, constants: archiveConstants } = require(`archive`));
+} catch {
+}
+class NativeZipFS extends BasePortableFakeFS {
   constructor(source, opts = {}) {
     super();
-    this.lzSource = null;
     this.listings = /* @__PURE__ */ new Map();
     this.entries = /* @__PURE__ */ new Map();
     this.fileSources = /* @__PURE__ */ new Map();
@@ -58726,7 +58835,18 @@ class ZipFS extends BasePortableFakeFS {
     }
     if (opts.readOnly)
       this.readOnly = true;
-    this.zip = typeof source === `string` ? new archive.ZipArchive(this.baseFs.readFileSync(source)) : new archive.ZipArchive(source);
+    const getFileContent = (p, opts2) => {
+      try {
+        return this.baseFs.readFileSync(p);
+      } catch (err) {
+        if (err.code === `ENOENT` && opts2.create) {
+          return null;
+        } else {
+          throw err;
+        }
+      }
+    };
+    this.zip = typeof source === `string` ? new ZipArchive(getFileContent(source, opts)) : new ZipArchive(source);
     this.listings.set(PortablePath.root, /* @__PURE__ */ new Set());
     this.symlinkCount = 0;
     const entries = this.zip.getEntries({ withFileTypes: true });
@@ -58760,31 +58880,28 @@ class ZipFS extends BasePortableFakeFS {
       throw new Error(`ZipFS don't have real paths when loaded from a buffer`);
     return this.path;
   }
-  getBufferAndClose() {
-    this.prepareClose();
-    if (!this.lzSource)
-      throw new Error(`ZipFS was not created from a Buffer`);
-    return this.zip.digest();
-  }
   prepareClose() {
     if (!this.ready)
       throw EBUSY(`archive closed, close`);
     unwatchAllFiles(this);
+    this.ready = false;
   }
   saveAndClose() {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
-    this.prepareClose();
     if (this.readOnly)
       return;
+    this.prepareClose();
     const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === DEFAULT_MODE ? void 0 : this.stats.mode;
     const buf = this.zip.digest();
     this.baseFs.writeFileSync(this.path, buf, { mode: newMode });
-    this.ready = false;
+  }
+  getBufferAndClose() {
+    this.prepareClose();
+    return this.zip.digest();
   }
   discardAndClose() {
     this.prepareClose();
-    this.ready = false;
   }
   resolve(p) {
     return ppath.resolve(PortablePath.root, p);
@@ -59030,7 +59147,7 @@ class ZipFS extends BasePortableFakeFS {
       const size = stat.size;
       const blksize = 512;
       const blocks = Math.ceil(size / blksize);
-      const mtimeMs = stat.mttime;
+      const mtimeMs = stat.mtimeMs;
       const atimeMs = mtimeMs;
       const birthtimeMs = mtimeMs;
       const ctimeMs = mtimeMs;
@@ -59068,7 +59185,7 @@ class ZipFS extends BasePortableFakeFS {
   }
   getUnixMode(index, defaultMode) {
     const { opsys, attributes } = this.zip.statEntry(index);
-    if (opsys !== archive.constants.ZIP_OPSYS_UNIX)
+    if (opsys !== archiveConstants.ZIP_OPSYS_UNIX)
       return defaultMode;
     return attributes >>> 16;
   }
@@ -59138,17 +59255,29 @@ class ZipFS extends BasePortableFakeFS {
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
       if (!resolveLastComponent || this.symlinkCount === 0)
         break;
-      break;
+      const index = this.entries.get(resolvedP);
+      if (typeof index === `undefined`)
+        break;
+      if (this.isSymbolicLink(index)) {
+        const target = this.getFileSource(index).toString();
+        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
+      } else {
+        break;
+      }
     }
     return resolvedP;
+  }
+  setFileSource(p, content) {
+    const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content);
+    const target = ppath.relative(PortablePath.root, p);
+    const newIndex = this.zip.addFile(target, buffer);
+    this.fileSources.set(newIndex, buffer);
+    return newIndex;
   }
   isSymbolicLink(index) {
     if (this.symlinkCount === 0)
       return false;
-    const { opsys, attributes } = this.zip.statEntry(index);
-    if (opsys !== archive.constants.ZIP_OPSYS_UNIX)
-      return false;
-    return (attributes & fs.constants.S_IFMT) === fs.constants.S_IFLNK;
+    return (this.getUnixMode(index, 0) & fs.constants.S_IFMT) === fs.constants.S_IFLNK;
   }
   getFileSource(index, opts = { asyncDecompress: false }) {
     const cachedFileSource = this.fileSources.get(index);
@@ -59185,7 +59314,7 @@ class ZipFS extends BasePortableFakeFS {
     const oldMod = this.getUnixMode(entry, fs.constants.S_IFREG | 0);
     const newMod = oldMod & ~511 | mask;
     this.zip.restatEntry(entry, {
-      opsys: archive.constants.ZIP_OPSYS_UNIX,
+      opsys: archiveConstants.ZIP_OPSYS_UNIX,
       attributes: newMod << 16
     });
   }
@@ -59210,7 +59339,7 @@ class ZipFS extends BasePortableFakeFS {
   async copyFilePromise(sourceP, destP, flags) {
     const { indexSource, indexDest, resolvedDestP } = this.prepareCopyFile(sourceP, destP, flags);
     const source = await this.getFileSource(indexSource, { asyncDecompress: true });
-    const newIndex = this.zip.addFile(resolvedDestP, source);
+    const newIndex = this.setFileSource(resolvedDestP, source);
     if (newIndex !== indexDest) {
       this.registerEntry(resolvedDestP, newIndex);
     }
@@ -59218,7 +59347,7 @@ class ZipFS extends BasePortableFakeFS {
   copyFileSync(sourceP, destP, flags = 0) {
     const { indexSource, indexDest, resolvedDestP } = this.prepareCopyFile(sourceP, destP, flags);
     const source = this.getFileSource(indexSource);
-    const newIndex = this.zip.addFile(resolvedDestP, source);
+    const newIndex = this.setFileSource(resolvedDestP, source);
     if (newIndex !== indexDest) {
       this.registerEntry(resolvedDestP, newIndex);
     }
@@ -59277,7 +59406,7 @@ class ZipFS extends BasePortableFakeFS {
       content = Buffer.concat([await this.getFileSource(index, { asyncDecompress: true }), Buffer.from(content)]);
     if (encoding !== null)
       content = content.toString(encoding);
-    const newIndex = this.zip.addFile(resolvedP, content);
+    const newIndex = this.setFileSource(resolvedP, content);
     if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
     if (mode !== null) {
@@ -59290,7 +59419,7 @@ class ZipFS extends BasePortableFakeFS {
       content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
     if (encoding !== null)
       content = content.toString(encoding);
-    const newIndex = this.zip.addFile(resolvedP, content);
+    const newIndex = this.setFileSource(resolvedP, content);
     if (newIndex !== index)
       this.registerEntry(resolvedP, newIndex);
     if (mode !== null) {
@@ -59425,10 +59554,10 @@ class ZipFS extends BasePortableFakeFS {
       throw EISDIR(`symlink '${target}' -> '${p}'`);
     if (this.entries.has(resolvedP))
       throw EEXIST(`symlink '${target}' -> '${p}'`);
-    const index = this.zip.addFile(resolvedP, target);
+    const index = this.setFileSource(resolvedP, target);
     this.registerEntry(resolvedP, index);
     this.zip.restatEntry(index, {
-      opsys: archive.constants.ZIP_OPSYS_UNIX,
+      opsys: archiveConstants.ZIP_OPSYS_UNIX,
       attributes: (fs.constants.S_IFLNK | 511) << 16
     });
     this.symlinkCount += 1;
@@ -59564,6 +59693,1155 @@ class ZipFS extends BasePortableFakeFS {
     return unwatchFile(this, resolvedP, cb);
   }
 }
+
+class LibzipError extends Error {
+  constructor(message, code) {
+    super(message);
+    this.name = `Libzip Error`;
+    this.code = code;
+  }
+}
+class WasmZipFS extends BasePortableFakeFS {
+  constructor(source, opts = {}) {
+    super();
+    this.lzSource = null;
+    this.listings = /* @__PURE__ */ new Map();
+    this.entries = /* @__PURE__ */ new Map();
+    this.fileSources = /* @__PURE__ */ new Map();
+    this.fds = /* @__PURE__ */ new Map();
+    this.nextFd = 0;
+    this.ready = false;
+    this.readOnly = false;
+    const pathOptions = opts;
+    this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
+    source ?? (source = makeEmptyArchive());
+    if (typeof source === `string`) {
+      const { baseFs = new NodeFS() } = pathOptions;
+      this.baseFs = baseFs;
+      this.path = source;
+    } else {
+      this.path = null;
+      this.baseFs = null;
+    }
+    if (opts.stats) {
+      this.stats = opts.stats;
+    } else {
+      if (typeof source === `string`) {
+        try {
+          this.stats = this.baseFs.statSync(source);
+        } catch (error) {
+          if (error.code === `ENOENT` && pathOptions.create) {
+            this.stats = makeDefaultStats();
+          } else {
+            throw error;
+          }
+        }
+      } else {
+        this.stats = makeDefaultStats();
+      }
+    }
+    this.libzip = getInstance();
+    const errPtr = this.libzip.malloc(4);
+    try {
+      let flags = 0;
+      if (typeof source === `string` && pathOptions.create)
+        flags |= this.libzip.ZIP_CREATE | this.libzip.ZIP_TRUNCATE;
+      if (opts.readOnly) {
+        flags |= this.libzip.ZIP_RDONLY;
+        this.readOnly = true;
+      }
+      if (typeof source === `string`) {
+        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
+      } else {
+        const lzSource = this.allocateUnattachedSource(source);
+        try {
+          this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
+          this.lzSource = lzSource;
+        } catch (error) {
+          this.libzip.source.free(lzSource);
+          throw error;
+        }
+      }
+      if (this.zip === 0) {
+        const error = this.libzip.struct.errorS();
+        this.libzip.error.initWithCode(error, this.libzip.getValue(errPtr, `i32`));
+        throw this.makeLibzipError(error);
+      }
+    } finally {
+      this.libzip.free(errPtr);
+    }
+    this.listings.set(PortablePath.root, /* @__PURE__ */ new Set());
+    const entryCount = this.libzip.getNumEntries(this.zip, 0);
+    for (let t = 0; t < entryCount; ++t) {
+      const raw = this.libzip.getName(this.zip, t, 0);
+      if (ppath.isAbsolute(raw))
+        continue;
+      const p = ppath.resolve(PortablePath.root, raw);
+      this.registerEntry(p, t);
+      if (raw.endsWith(`/`)) {
+        this.registerListing(p);
+      }
+    }
+    this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
+    if (this.symlinkCount === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.ready = true;
+  }
+  makeLibzipError(error) {
+    const errorCode = this.libzip.struct.errorCodeZip(error);
+    const strerror = this.libzip.error.strerror(error);
+    const libzipError = new LibzipError(strerror, this.libzip.errors[errorCode]);
+    if (errorCode === this.libzip.errors.ZIP_ER_CHANGED)
+      throw new Error(`Assertion failed: Unexpected libzip error: ${libzipError.message}`);
+    return libzipError;
+  }
+  getExtractHint(hints) {
+    for (const fileName of this.entries.keys()) {
+      const ext = this.pathUtils.extname(fileName);
+      if (hints.relevantExtensions.has(ext)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  getAllFiles() {
+    return Array.from(this.entries.keys());
+  }
+  getRealPath() {
+    if (!this.path)
+      throw new Error(`ZipFS don't have real paths when loaded from a buffer`);
+    return this.path;
+  }
+  getBufferAndClose() {
+    this.prepareClose();
+    if (!this.lzSource)
+      throw new Error(`ZipFS was not created from a Buffer`);
+    try {
+      this.libzip.source.keep(this.lzSource);
+      if (this.libzip.close(this.zip) === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      if (this.libzip.source.open(this.lzSource) === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_END) === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      const size = this.libzip.source.tell(this.lzSource);
+      if (size === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      if (this.libzip.source.seek(this.lzSource, 0, 0, this.libzip.SEEK_SET) === -1)
+        throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+      const buffer = this.libzip.malloc(size);
+      if (!buffer)
+        throw new Error(`Couldn't allocate enough memory`);
+      try {
+        const rc = this.libzip.source.read(this.lzSource, buffer, size);
+        if (rc === -1)
+          throw this.makeLibzipError(this.libzip.source.error(this.lzSource));
+        else if (rc < size)
+          throw new Error(`Incomplete read`);
+        else if (rc > size)
+          throw new Error(`Overread`);
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
+        return Buffer.from(memory);
+      } finally {
+        this.libzip.free(buffer);
+      }
+    } finally {
+      this.libzip.source.close(this.lzSource);
+      this.libzip.source.free(this.lzSource);
+      this.ready = false;
+    }
+  }
+  prepareClose() {
+    if (!this.ready)
+      throw EBUSY(`archive closed, close`);
+    unwatchAllFiles(this);
+  }
+  saveAndClose() {
+    if (!this.path || !this.baseFs)
+      throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
+    this.prepareClose();
+    if (this.readOnly) {
+      this.discardAndClose();
+      return;
+    }
+    const newMode = this.baseFs.existsSync(this.path) || this.stats.mode === DEFAULT_MODE ? void 0 : this.stats.mode;
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), { mode: newMode });
+    } else {
+      const rc = this.libzip.close(this.zip);
+      if (rc === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      if (typeof newMode !== `undefined`) {
+        this.baseFs.chmodSync(this.path, newMode);
+      }
+    }
+    this.ready = false;
+  }
+  discardAndClose() {
+    this.prepareClose();
+    this.libzip.discard(this.zip);
+    this.ready = false;
+  }
+  resolve(p) {
+    return ppath.resolve(PortablePath.root, p);
+  }
+  async openPromise(p, flags, mode) {
+    return this.openSync(p, flags, mode);
+  }
+  openSync(p, flags, mode) {
+    const fd = this.nextFd++;
+    this.fds.set(fd, { cursor: 0, p });
+    return fd;
+  }
+  hasOpenFileHandles() {
+    return !!this.fds.size;
+  }
+  async opendirPromise(p, opts) {
+    return this.opendirSync(p, opts);
+  }
+  opendirSync(p, opts = {}) {
+    const resolvedP = this.resolveFilename(`opendir '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`opendir '${p}'`);
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw ENOTDIR(`opendir '${p}'`);
+    const entries = [...directoryListing];
+    const fd = this.openSync(resolvedP, `r`);
+    const onClose = () => {
+      this.closeSync(fd);
+    };
+    return opendir(this, resolvedP, entries, { onClose });
+  }
+  async readPromise(fd, buffer, offset, length, position) {
+    return this.readSync(fd, buffer, offset, length, position);
+  }
+  readSync(fd, buffer, offset = 0, length = buffer.byteLength, position = -1) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    const realPosition = position === -1 || position === null ? entry.cursor : position;
+    const source = this.readFileSync(entry.p);
+    source.copy(buffer, offset, realPosition, realPosition + length);
+    const bytesRead = Math.max(0, Math.min(source.length - realPosition, length));
+    if (position === -1 || position === null)
+      entry.cursor += bytesRead;
+    return bytesRead;
+  }
+  async writePromise(fd, buffer, offset, length, position) {
+    if (typeof buffer === `string`) {
+      return this.writeSync(fd, buffer, position);
+    } else {
+      return this.writeSync(fd, buffer, offset, length, position);
+    }
+  }
+  writeSync(fd, buffer, offset, length, position) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    throw new Error(`Unimplemented`);
+  }
+  async closePromise(fd) {
+    return this.closeSync(fd);
+  }
+  closeSync(fd) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    this.fds.delete(fd);
+  }
+  createReadStream(p, { encoding } = {}) {
+    if (p === null)
+      throw new Error(`Unimplemented`);
+    const fd = this.openSync(p, `r`);
+    const stream$1 = Object.assign(
+      new stream.PassThrough({
+        emitClose: true,
+        autoDestroy: true,
+        destroy: (error, callback) => {
+          clearImmediate(immediate);
+          this.closeSync(fd);
+          callback(error);
+        }
+      }),
+      {
+        close() {
+          stream$1.destroy();
+        },
+        bytesRead: 0,
+        path: p,
+        pending: false
+      }
+    );
+    const immediate = setImmediate(async () => {
+      try {
+        const data = await this.readFilePromise(p, encoding);
+        stream$1.bytesRead = data.length;
+        stream$1.end(data);
+      } catch (error) {
+        stream$1.destroy(error);
+      }
+    });
+    return stream$1;
+  }
+  createWriteStream(p, { encoding } = {}) {
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    if (p === null)
+      throw new Error(`Unimplemented`);
+    const chunks = [];
+    const fd = this.openSync(p, `w`);
+    const stream$1 = Object.assign(
+      new stream.PassThrough({
+        autoDestroy: true,
+        emitClose: true,
+        destroy: (error, callback) => {
+          try {
+            if (error) {
+              callback(error);
+            } else {
+              this.writeFileSync(p, Buffer.concat(chunks), encoding);
+              callback(null);
+            }
+          } catch (err) {
+            callback(err);
+          } finally {
+            this.closeSync(fd);
+          }
+        }
+      }),
+      {
+        close() {
+          stream$1.destroy();
+        },
+        bytesWritten: 0,
+        path: p,
+        pending: false
+      }
+    );
+    stream$1.on(`data`, (chunk) => {
+      const chunkBuffer = Buffer.from(chunk);
+      stream$1.bytesWritten += chunkBuffer.length;
+      chunks.push(chunkBuffer);
+    });
+    return stream$1;
+  }
+  async realpathPromise(p) {
+    return this.realpathSync(p);
+  }
+  realpathSync(p) {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`lstat '${p}'`);
+    return resolvedP;
+  }
+  async existsPromise(p) {
+    return this.existsSync(p);
+  }
+  existsSync(p) {
+    if (!this.ready)
+      throw EBUSY(`archive closed, existsSync '${p}'`);
+    if (this.symlinkCount === 0) {
+      const resolvedP2 = ppath.resolve(PortablePath.root, p);
+      return this.entries.has(resolvedP2) || this.listings.has(resolvedP2);
+    }
+    let resolvedP;
+    try {
+      resolvedP = this.resolveFilename(`stat '${p}'`, p, void 0, false);
+    } catch (error) {
+      return false;
+    }
+    if (resolvedP === void 0)
+      return false;
+    return this.entries.has(resolvedP) || this.listings.has(resolvedP);
+  }
+  async accessPromise(p, mode) {
+    return this.accessSync(p, mode);
+  }
+  accessSync(p, mode = fs.constants.F_OK) {
+    const resolvedP = this.resolveFilename(`access '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`access '${p}'`);
+    if (this.readOnly && mode & fs.constants.W_OK) {
+      throw EROFS(`access '${p}'`);
+    }
+  }
+  async statPromise(p, opts = { bigint: false }) {
+    if (opts.bigint)
+      return this.statSync(p, { bigint: true });
+    return this.statSync(p);
+  }
+  statSync(p, opts = { bigint: false, throwIfNoEntry: true }) {
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p, void 0, opts.throwIfNoEntry);
+    if (resolvedP === void 0)
+      return void 0;
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+      if (opts.throwIfNoEntry === false)
+        return void 0;
+      throw ENOENT(`stat '${p}'`);
+    }
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`stat '${p}'`);
+    return this.statImpl(`stat '${p}'`, resolvedP, opts);
+  }
+  async fstatPromise(fd, opts) {
+    return this.fstatSync(fd, opts);
+  }
+  fstatSync(fd, opts) {
+    const entry = this.fds.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fstatSync`);
+    const { p } = entry;
+    const resolvedP = this.resolveFilename(`stat '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`stat '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`stat '${p}'`);
+    return this.statImpl(`fstat '${p}'`, resolvedP, opts);
+  }
+  async lstatPromise(p, opts = { bigint: false }) {
+    if (opts.bigint)
+      return this.lstatSync(p, { bigint: true });
+    return this.lstatSync(p);
+  }
+  lstatSync(p, opts = { bigint: false, throwIfNoEntry: true }) {
+    const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false, opts.throwIfNoEntry);
+    if (resolvedP === void 0)
+      return void 0;
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP)) {
+      if (opts.throwIfNoEntry === false)
+        return void 0;
+      throw ENOENT(`lstat '${p}'`);
+    }
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`lstat '${p}'`);
+    return this.statImpl(`lstat '${p}'`, resolvedP, opts);
+  }
+  statImpl(reason, p, opts = {}) {
+    const entry = this.entries.get(p);
+    if (typeof entry !== `undefined`) {
+      const stat = this.libzip.struct.statS();
+      const rc = this.libzip.statIndex(this.zip, entry, 0, 0, stat);
+      if (rc === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      const uid = this.stats.uid;
+      const gid = this.stats.gid;
+      const size = this.libzip.struct.statSize(stat) >>> 0;
+      const blksize = 512;
+      const blocks = Math.ceil(size / blksize);
+      const mtimeMs = (this.libzip.struct.statMtime(stat) >>> 0) * 1e3;
+      const atimeMs = mtimeMs;
+      const birthtimeMs = mtimeMs;
+      const ctimeMs = mtimeMs;
+      const atime = new Date(atimeMs);
+      const birthtime = new Date(birthtimeMs);
+      const ctime = new Date(ctimeMs);
+      const mtime = new Date(mtimeMs);
+      const type = this.listings.has(p) ? fs.constants.S_IFDIR : this.isSymbolicLink(entry) ? fs.constants.S_IFLNK : fs.constants.S_IFREG;
+      const defaultMode = type === fs.constants.S_IFDIR ? 493 : 420;
+      const mode = type | this.getUnixMode(entry, defaultMode) & 511;
+      const crc = this.libzip.struct.statCrc(stat);
+      const statInstance = Object.assign(new StatEntry(), { uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc });
+      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
+    }
+    if (this.listings.has(p)) {
+      const uid = this.stats.uid;
+      const gid = this.stats.gid;
+      const size = 0;
+      const blksize = 512;
+      const blocks = 0;
+      const atimeMs = this.stats.mtimeMs;
+      const birthtimeMs = this.stats.mtimeMs;
+      const ctimeMs = this.stats.mtimeMs;
+      const mtimeMs = this.stats.mtimeMs;
+      const atime = new Date(atimeMs);
+      const birthtime = new Date(birthtimeMs);
+      const ctime = new Date(ctimeMs);
+      const mtime = new Date(mtimeMs);
+      const mode = fs.constants.S_IFDIR | 493;
+      const crc = 0;
+      const statInstance = Object.assign(new StatEntry(), { uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc });
+      return opts.bigint === true ? convertToBigIntStats(statInstance) : statInstance;
+    }
+    throw new Error(`Unreachable`);
+  }
+  getUnixMode(index, defaultMode) {
+    const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+      return defaultMode;
+    return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+  }
+  registerListing(p) {
+    const existingListing = this.listings.get(p);
+    if (existingListing)
+      return existingListing;
+    const parentListing = this.registerListing(ppath.dirname(p));
+    parentListing.add(ppath.basename(p));
+    const newListing = /* @__PURE__ */ new Set();
+    this.listings.set(p, newListing);
+    return newListing;
+  }
+  registerEntry(p, index) {
+    const parentListing = this.registerListing(ppath.dirname(p));
+    parentListing.add(ppath.basename(p));
+    this.entries.set(p, index);
+  }
+  unregisterListing(p) {
+    this.listings.delete(p);
+    const parentListing = this.listings.get(ppath.dirname(p));
+    parentListing == null ? void 0 : parentListing.delete(ppath.basename(p));
+  }
+  unregisterEntry(p) {
+    this.unregisterListing(p);
+    const entry = this.entries.get(p);
+    this.entries.delete(p);
+    if (typeof entry === `undefined`)
+      return;
+    this.fileSources.delete(entry);
+    if (this.isSymbolicLink(entry)) {
+      this.symlinkCount--;
+    }
+  }
+  deleteEntry(p, index) {
+    this.unregisterEntry(p);
+    const rc = this.libzip.delete(this.zip, index);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+  }
+  resolveFilename(reason, p, resolveLastComponent = true, throwIfNoEntry = true) {
+    if (!this.ready)
+      throw EBUSY(`archive closed, ${reason}`);
+    let resolvedP = ppath.resolve(PortablePath.root, p);
+    if (resolvedP === `/`)
+      return PortablePath.root;
+    const fileIndex = this.entries.get(resolvedP);
+    if (resolveLastComponent && fileIndex !== void 0) {
+      if (this.symlinkCount !== 0 && this.isSymbolicLink(fileIndex)) {
+        const target = this.getFileSource(fileIndex).toString();
+        return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true, throwIfNoEntry);
+      } else {
+        return resolvedP;
+      }
+    }
+    while (true) {
+      const parentP = this.resolveFilename(reason, ppath.dirname(resolvedP), true, throwIfNoEntry);
+      if (parentP === void 0)
+        return parentP;
+      const isDir = this.listings.has(parentP);
+      const doesExist = this.entries.has(parentP);
+      if (!isDir && !doesExist) {
+        if (throwIfNoEntry === false)
+          return void 0;
+        throw ENOENT(reason);
+      }
+      if (!isDir)
+        throw ENOTDIR(reason);
+      resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
+      if (!resolveLastComponent || this.symlinkCount === 0)
+        break;
+      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
+      if (index === -1)
+        break;
+      if (this.isSymbolicLink(index)) {
+        const target = this.getFileSource(index).toString();
+        resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
+      } else {
+        break;
+      }
+    }
+    return resolvedP;
+  }
+  allocateBuffer(content) {
+    if (!Buffer.isBuffer(content))
+      content = Buffer.from(content);
+    const buffer = this.libzip.malloc(content.byteLength);
+    if (!buffer)
+      throw new Error(`Couldn't allocate enough memory`);
+    const heap = new Uint8Array(this.libzip.HEAPU8.buffer, buffer, content.byteLength);
+    heap.set(content);
+    return { buffer, byteLength: content.byteLength };
+  }
+  allocateUnattachedSource(content) {
+    const error = this.libzip.struct.errorS();
+    const { buffer, byteLength } = this.allocateBuffer(content);
+    const source = this.libzip.source.fromUnattachedBuffer(buffer, byteLength, 0, 1, error);
+    if (source === 0) {
+      this.libzip.free(error);
+      throw this.makeLibzipError(error);
+    }
+    return source;
+  }
+  allocateSource(content) {
+    const { buffer, byteLength } = this.allocateBuffer(content);
+    const source = this.libzip.source.fromBuffer(this.zip, buffer, byteLength, 0, 1);
+    if (source === 0) {
+      this.libzip.free(buffer);
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+    return source;
+  }
+  setFileSource(p, content) {
+    const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content);
+    const target = ppath.relative(PortablePath.root, p);
+    const lzSource = this.allocateSource(content);
+    try {
+      const newIndex = this.libzip.file.add(this.zip, target, lzSource, this.libzip.ZIP_FL_OVERWRITE);
+      if (newIndex === -1)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      if (this.level !== `mixed`) {
+        const method = this.level === 0 ? this.libzip.ZIP_CM_STORE : this.libzip.ZIP_CM_DEFLATE;
+        const rc = this.libzip.file.setCompression(this.zip, newIndex, 0, method, this.level);
+        if (rc === -1) {
+          throw this.makeLibzipError(this.libzip.getError(this.zip));
+        }
+      }
+      this.fileSources.set(newIndex, buffer);
+      return newIndex;
+    } catch (error) {
+      this.libzip.source.free(lzSource);
+      throw error;
+    }
+  }
+  isSymbolicLink(index) {
+    if (this.symlinkCount === 0)
+      return false;
+    const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
+    if (attrs === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
+    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+      return false;
+    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+    return (attributes & fs.constants.S_IFMT) === fs.constants.S_IFLNK;
+  }
+  getFileSource(index, opts = { asyncDecompress: false }) {
+    const cachedFileSource = this.fileSources.get(index);
+    if (typeof cachedFileSource !== `undefined`)
+      return cachedFileSource;
+    const stat = this.libzip.struct.statS();
+    const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const size = this.libzip.struct.statCompSize(stat);
+    const compressionMethod = this.libzip.struct.statCompMethod(stat);
+    const buffer = this.libzip.malloc(size);
+    try {
+      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
+      if (file === 0)
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      try {
+        const rc2 = this.libzip.fread(file, buffer, size, 0);
+        if (rc2 === -1)
+          throw this.makeLibzipError(this.libzip.file.getError(file));
+        else if (rc2 < size)
+          throw new Error(`Incomplete read`);
+        else if (rc2 > size)
+          throw new Error(`Overread`);
+        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
+        const data = Buffer.from(memory);
+        if (compressionMethod === 0) {
+          this.fileSources.set(index, data);
+          return data;
+        } else if (opts.asyncDecompress) {
+          return new Promise((resolve, reject) => {
+            zlib__default.default.inflateRaw(data, (error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                this.fileSources.set(index, result);
+                resolve(result);
+              }
+            });
+          });
+        } else {
+          const decompressedData = zlib__default.default.inflateRawSync(data);
+          this.fileSources.set(index, decompressedData);
+          return decompressedData;
+        }
+      } finally {
+        this.libzip.fclose(file);
+      }
+    } finally {
+      this.libzip.free(buffer);
+    }
+  }
+  async fchmodPromise(fd, mask) {
+    return this.chmodPromise(this.fdToPath(fd, `fchmod`), mask);
+  }
+  fchmodSync(fd, mask) {
+    return this.chmodSync(this.fdToPath(fd, `fchmodSync`), mask);
+  }
+  async chmodPromise(p, mask) {
+    return this.chmodSync(p, mask);
+  }
+  chmodSync(p, mask) {
+    if (this.readOnly)
+      throw EROFS(`chmod '${p}'`);
+    mask &= 493;
+    const resolvedP = this.resolveFilename(`chmod '${p}'`, p, false);
+    const entry = this.entries.get(resolvedP);
+    if (typeof entry === `undefined`)
+      throw new Error(`Assertion failed: The entry should have been registered (${resolvedP})`);
+    const oldMod = this.getUnixMode(entry, fs.constants.S_IFREG | 0);
+    const newMod = oldMod & ~511 | mask;
+    const rc = this.libzip.file.setExternalAttributes(this.zip, entry, 0, 0, this.libzip.ZIP_OPSYS_UNIX, newMod << 16);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+  }
+  async fchownPromise(fd, uid, gid) {
+    return this.chownPromise(this.fdToPath(fd, `fchown`), uid, gid);
+  }
+  fchownSync(fd, uid, gid) {
+    return this.chownSync(this.fdToPath(fd, `fchownSync`), uid, gid);
+  }
+  async chownPromise(p, uid, gid) {
+    return this.chownSync(p, uid, gid);
+  }
+  chownSync(p, uid, gid) {
+    throw new Error(`Unimplemented`);
+  }
+  async renamePromise(oldP, newP) {
+    return this.renameSync(oldP, newP);
+  }
+  renameSync(oldP, newP) {
+    throw new Error(`Unimplemented`);
+  }
+  async copyFilePromise(sourceP, destP, flags) {
+    const { indexSource, indexDest, resolvedDestP } = this.prepareCopyFile(sourceP, destP, flags);
+    const source = await this.getFileSource(indexSource, { asyncDecompress: true });
+    const newIndex = this.setFileSource(resolvedDestP, source);
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
+  }
+  copyFileSync(sourceP, destP, flags = 0) {
+    const { indexSource, indexDest, resolvedDestP } = this.prepareCopyFile(sourceP, destP, flags);
+    const source = this.getFileSource(indexSource);
+    const newIndex = this.setFileSource(resolvedDestP, source);
+    if (newIndex !== indexDest) {
+      this.registerEntry(resolvedDestP, newIndex);
+    }
+  }
+  prepareCopyFile(sourceP, destP, flags = 0) {
+    if (this.readOnly)
+      throw EROFS(`copyfile '${sourceP} -> '${destP}'`);
+    if ((flags & fs.constants.COPYFILE_FICLONE_FORCE) !== 0)
+      throw ENOSYS(`unsupported clone operation`, `copyfile '${sourceP}' -> ${destP}'`);
+    const resolvedSourceP = this.resolveFilename(`copyfile '${sourceP} -> ${destP}'`, sourceP);
+    const indexSource = this.entries.get(resolvedSourceP);
+    if (typeof indexSource === `undefined`)
+      throw EINVAL(`copyfile '${sourceP}' -> '${destP}'`);
+    const resolvedDestP = this.resolveFilename(`copyfile '${sourceP}' -> ${destP}'`, destP);
+    const indexDest = this.entries.get(resolvedDestP);
+    if ((flags & (fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE_FORCE)) !== 0 && typeof indexDest !== `undefined`)
+      throw EEXIST(`copyfile '${sourceP}' -> '${destP}'`);
+    return {
+      indexSource,
+      resolvedDestP,
+      indexDest
+    };
+  }
+  async appendFilePromise(p, content, opts) {
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    if (typeof opts === `undefined`)
+      opts = { flag: `a` };
+    else if (typeof opts === `string`)
+      opts = { flag: `a`, encoding: opts };
+    else if (typeof opts.flag === `undefined`)
+      opts = { flag: `a`, ...opts };
+    return this.writeFilePromise(p, content, opts);
+  }
+  appendFileSync(p, content, opts = {}) {
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    if (typeof opts === `undefined`)
+      opts = { flag: `a` };
+    else if (typeof opts === `string`)
+      opts = { flag: `a`, encoding: opts };
+    else if (typeof opts.flag === `undefined`)
+      opts = { flag: `a`, ...opts };
+    return this.writeFileSync(p, content, opts);
+  }
+  fdToPath(fd, reason) {
+    var _a;
+    const path = (_a = this.fds.get(fd)) == null ? void 0 : _a.p;
+    if (typeof path === `undefined`)
+      throw EBADF(reason);
+    return path;
+  }
+  async writeFilePromise(p, content, opts) {
+    const { encoding, mode, index, resolvedP } = this.prepareWriteFile(p, opts);
+    if (index !== void 0 && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([await this.getFileSource(index, { asyncDecompress: true }), Buffer.from(content)]);
+    if (encoding !== null)
+      content = content.toString(encoding);
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index)
+      this.registerEntry(resolvedP, newIndex);
+    if (mode !== null) {
+      await this.chmodPromise(resolvedP, mode);
+    }
+  }
+  writeFileSync(p, content, opts) {
+    const { encoding, mode, index, resolvedP } = this.prepareWriteFile(p, opts);
+    if (index !== void 0 && typeof opts === `object` && opts.flag && opts.flag.includes(`a`))
+      content = Buffer.concat([this.getFileSource(index), Buffer.from(content)]);
+    if (encoding !== null)
+      content = content.toString(encoding);
+    const newIndex = this.setFileSource(resolvedP, content);
+    if (newIndex !== index)
+      this.registerEntry(resolvedP, newIndex);
+    if (mode !== null) {
+      this.chmodSync(resolvedP, mode);
+    }
+  }
+  prepareWriteFile(p, opts) {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
+    if (this.readOnly)
+      throw EROFS(`open '${p}'`);
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`open '${p}'`);
+    let encoding = null, mode = null;
+    if (typeof opts === `string`) {
+      encoding = opts;
+    } else if (typeof opts === `object`) {
+      ({
+        encoding = null,
+        mode = null
+      } = opts);
+    }
+    const index = this.entries.get(resolvedP);
+    return {
+      encoding,
+      mode,
+      resolvedP,
+      index
+    };
+  }
+  async unlinkPromise(p) {
+    return this.unlinkSync(p);
+  }
+  unlinkSync(p) {
+    if (this.readOnly)
+      throw EROFS(`unlink '${p}'`);
+    const resolvedP = this.resolveFilename(`unlink '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`unlink '${p}'`);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`unlink '${p}'`);
+    this.deleteEntry(resolvedP, index);
+  }
+  async utimesPromise(p, atime, mtime) {
+    return this.utimesSync(p, atime, mtime);
+  }
+  utimesSync(p, atime, mtime) {
+    if (this.readOnly)
+      throw EROFS(`utimes '${p}'`);
+    const resolvedP = this.resolveFilename(`utimes '${p}'`, p);
+    this.utimesImpl(resolvedP, mtime);
+  }
+  async lutimesPromise(p, atime, mtime) {
+    return this.lutimesSync(p, atime, mtime);
+  }
+  lutimesSync(p, atime, mtime) {
+    if (this.readOnly)
+      throw EROFS(`lutimes '${p}'`);
+    const resolvedP = this.resolveFilename(`utimes '${p}'`, p, false);
+    this.utimesImpl(resolvedP, mtime);
+  }
+  utimesImpl(resolvedP, mtime) {
+    if (this.listings.has(resolvedP)) {
+      if (!this.entries.has(resolvedP))
+        this.hydrateDirectory(resolvedP);
+    }
+    const entry = this.entries.get(resolvedP);
+    if (entry === void 0)
+      throw new Error(`Unreachable`);
+    const rc = this.libzip.file.setMtime(this.zip, entry, 0, toUnixTimestamp(mtime), 0);
+    if (rc === -1) {
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    }
+  }
+  async mkdirPromise(p, opts) {
+    return this.mkdirSync(p, opts);
+  }
+  mkdirSync(p, { mode = 493, recursive = false } = {}) {
+    if (recursive)
+      return this.mkdirpSync(p, { chmod: mode });
+    if (this.readOnly)
+      throw EROFS(`mkdir '${p}'`);
+    const resolvedP = this.resolveFilename(`mkdir '${p}'`, p);
+    if (this.entries.has(resolvedP) || this.listings.has(resolvedP))
+      throw EEXIST(`mkdir '${p}'`);
+    this.hydrateDirectory(resolvedP);
+    this.chmodSync(resolvedP, mode);
+    return void 0;
+  }
+  async rmdirPromise(p, opts) {
+    return this.rmdirSync(p, opts);
+  }
+  rmdirSync(p, { recursive = false } = {}) {
+    if (this.readOnly)
+      throw EROFS(`rmdir '${p}'`);
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
+    const resolvedP = this.resolveFilename(`rmdir '${p}'`, p);
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw ENOTDIR(`rmdir '${p}'`);
+    if (directoryListing.size > 0)
+      throw ENOTEMPTY(`rmdir '${p}'`);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`rmdir '${p}'`);
+    this.deleteEntry(p, index);
+  }
+  hydrateDirectory(resolvedP) {
+    const index = this.libzip.dir.add(this.zip, ppath.relative(PortablePath.root, resolvedP));
+    if (index === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.registerListing(resolvedP);
+    this.registerEntry(resolvedP, index);
+    return index;
+  }
+  async linkPromise(existingP, newP) {
+    return this.linkSync(existingP, newP);
+  }
+  linkSync(existingP, newP) {
+    throw EOPNOTSUPP(`link '${existingP}' -> '${newP}'`);
+  }
+  async symlinkPromise(target, p) {
+    return this.symlinkSync(target, p);
+  }
+  symlinkSync(target, p) {
+    if (this.readOnly)
+      throw EROFS(`symlink '${target}' -> '${p}'`);
+    const resolvedP = this.resolveFilename(`symlink '${target}' -> '${p}'`, p);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`symlink '${target}' -> '${p}'`);
+    if (this.entries.has(resolvedP))
+      throw EEXIST(`symlink '${target}' -> '${p}'`);
+    const index = this.setFileSource(resolvedP, target);
+    this.registerEntry(resolvedP, index);
+    const rc = this.libzip.file.setExternalAttributes(this.zip, index, 0, 0, this.libzip.ZIP_OPSYS_UNIX, (fs.constants.S_IFLNK | 511) << 16);
+    if (rc === -1)
+      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    this.symlinkCount += 1;
+  }
+  async readFilePromise(p, encoding) {
+    if (typeof encoding === `object`)
+      encoding = encoding ? encoding.encoding : void 0;
+    const data = await this.readFileBuffer(p, { asyncDecompress: true });
+    return encoding ? data.toString(encoding) : data;
+  }
+  readFileSync(p, encoding) {
+    if (typeof encoding === `object`)
+      encoding = encoding ? encoding.encoding : void 0;
+    const data = this.readFileBuffer(p);
+    return encoding ? data.toString(encoding) : data;
+  }
+  readFileBuffer(p, opts = { asyncDecompress: false }) {
+    if (typeof p === `number`)
+      p = this.fdToPath(p, `read`);
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`open '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`open '${p}'`);
+    if (this.listings.has(resolvedP))
+      throw EISDIR(`read`);
+    const entry = this.entries.get(resolvedP);
+    if (entry === void 0)
+      throw new Error(`Unreachable`);
+    return this.getFileSource(entry, opts);
+  }
+  async readdirPromise(p, opts) {
+    return this.readdirSync(p, opts);
+  }
+  readdirSync(p, opts) {
+    const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`scandir '${p}'`);
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw ENOTDIR(`scandir '${p}'`);
+    const entries = [...directoryListing];
+    if (!(opts == null ? void 0 : opts.withFileTypes))
+      return entries;
+    return entries.map((name) => {
+      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+        name
+      });
+    });
+  }
+  async readlinkPromise(p) {
+    const entry = this.prepareReadlink(p);
+    return (await this.getFileSource(entry, { asyncDecompress: true })).toString();
+  }
+  readlinkSync(p) {
+    const entry = this.prepareReadlink(p);
+    return this.getFileSource(entry).toString();
+  }
+  prepareReadlink(p) {
+    const resolvedP = this.resolveFilename(`readlink '${p}'`, p, false);
+    if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
+      throw ENOENT(`readlink '${p}'`);
+    if (p[p.length - 1] === `/` && !this.listings.has(resolvedP))
+      throw ENOTDIR(`open '${p}'`);
+    if (this.listings.has(resolvedP))
+      throw EINVAL(`readlink '${p}'`);
+    const entry = this.entries.get(resolvedP);
+    if (entry === void 0)
+      throw new Error(`Unreachable`);
+    if (!this.isSymbolicLink(entry))
+      throw EINVAL(`readlink '${p}'`);
+    return entry;
+  }
+  async truncatePromise(p, len = 0) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`open '${p}'`);
+    const source = await this.getFileSource(index, { asyncDecompress: true });
+    const truncated = Buffer.alloc(len, 0);
+    source.copy(truncated);
+    return await this.writeFilePromise(p, truncated);
+  }
+  truncateSync(p, len = 0) {
+    const resolvedP = this.resolveFilename(`open '${p}'`, p);
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw EINVAL(`open '${p}'`);
+    const source = this.getFileSource(index);
+    const truncated = Buffer.alloc(len, 0);
+    source.copy(truncated);
+    return this.writeFileSync(p, truncated);
+  }
+  async ftruncatePromise(fd, len) {
+    return this.truncatePromise(this.fdToPath(fd, `ftruncate`), len);
+  }
+  ftruncateSync(fd, len) {
+    return this.truncateSync(this.fdToPath(fd, `ftruncateSync`), len);
+  }
+  watch(p, a, b) {
+    let persistent;
+    switch (typeof a) {
+      case `function`:
+      case `string`:
+      case `undefined`:
+        {
+          persistent = true;
+        }
+        break;
+      default:
+        {
+          ({ persistent = true } = a);
+        }
+        break;
+    }
+    if (!persistent)
+      return { on: () => {
+      }, close: () => {
+      } };
+    const interval = setInterval(() => {
+    }, 24 * 60 * 60 * 1e3);
+    return { on: () => {
+    }, close: () => {
+      clearInterval(interval);
+    } };
+  }
+  watchFile(p, a, b) {
+    const resolvedP = ppath.resolve(PortablePath.root, p);
+    return watchFile(this, resolvedP, a, b);
+  }
+  unwatchFile(p, cb) {
+    const resolvedP = ppath.resolve(PortablePath.root, p);
+    return unwatchFile(this, resolvedP, cb);
+  }
+}
+
+const ZipFS = process.env.YARN_EXPERIMENT_NATIVE_ZIPFS === `1` ? NativeZipFS : WasmZipFS;
+
+function getArchivePart(path, extension) {
+  let idx = path.indexOf(extension);
+  if (idx <= 0)
+    return null;
+  let nextCharIdx = idx;
+  while (idx >= 0) {
+    nextCharIdx = idx + extension.length;
+    if (path[nextCharIdx] === ppath.sep)
+      break;
+    if (path[idx - 1] === ppath.sep)
+      return null;
+    idx = path.indexOf(extension, nextCharIdx);
+  }
+  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
+    return null;
+  return path.slice(0, nextCharIdx);
+}
+class ZipOpenFS extends MountFS {
+  static async openPromise(fn, opts) {
+    const zipOpenFs = new ZipOpenFS(opts);
+    try {
+      return await fn(zipOpenFs);
+    } finally {
+      zipOpenFs.saveAndClose();
+    }
+  }
+  constructor(opts = {}) {
+    const fileExtensions = opts.fileExtensions;
+    const readOnlyArchives = opts.readOnlyArchives;
+    const getMountPoint = typeof fileExtensions === `undefined` ? (path) => getArchivePart(path, `.zip`) : (path) => {
+      for (const extension of fileExtensions) {
+        const result = getArchivePart(path, extension);
+        if (result) {
+          return result;
+        }
+      }
+      return null;
+    };
+    const factorySync = (baseFs, p) => {
+      return new ZipFS(p, {
+        baseFs,
+        readOnly: readOnlyArchives,
+        stats: baseFs.statSync(p)
+      });
+    };
+    const factoryPromise = async (baseFs, p) => {
+      const zipOptions = {
+        baseFs,
+        readOnly: readOnlyArchives,
+        stats: await baseFs.statPromise(p)
+      };
+      return () => {
+        return new ZipFS(p, zipOptions);
+      };
+    };
+    super({
+      ...opts,
+      factorySync,
+      factoryPromise,
+      getMountPoint
+    });
+  }
+}
+
+setFactory(() => {
+  const emZip = createModule();
+  return makeInterface(emZip);
+});
 
 var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
   ErrorCode2["API_ERROR"] = `API_ERROR`;

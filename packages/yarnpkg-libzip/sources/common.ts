@@ -1,6 +1,6 @@
 export type {Libzip} from './makeInterface';
 
+export * from './ZipFS';
 export * from './ZipOpenFS';
-export * from './NativeZipFS';
 
 export {mountMemoryDrive} from './mountMemoryDrive';
