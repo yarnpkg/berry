@@ -121,6 +121,8 @@ export default class BuildBundleCommand extends Command {
           bundle: true,
           define: {YARN_VERSION: JSON.stringify(version)},
           outfile: output,
+          // Default extensions + .mjs
+          resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,

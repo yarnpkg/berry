@@ -113,6 +113,8 @@ export default class BuildPluginCommand extends Command {
           entryPoints: [path.resolve(basedir, main ?? `sources/index`)],
           bundle: true,
           outfile: output,
+          // Default extensions + .mjs
+          resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,
