@@ -212,10 +212,10 @@ jobs:
           - {node: 14, platform: macos-latest, shard: 2/3}
           - {node: 14, platform: macos-latest, shard: 3/3}
           # zip-node tests
-          - {node: 19, platform: ubuntu-latest, shard: 1/2, variant: zip-node}
-          - {node: 19, platform: ubuntu-latest, shard: 2/2, variant: zip-node}
+          - {node: 19, platform: ubuntu-latest, shard: 1/2, variant: zip-node, suffix: ' (native zip)'}
+          - {node: 19, platform: ubuntu-latest, shard: 2/2, variant: zip-node, suffix: ' (native zip)'}
 
-    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
+    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x${{matrix.suffix}} (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
     needs: build
 

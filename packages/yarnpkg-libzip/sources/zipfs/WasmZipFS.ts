@@ -9,7 +9,6 @@ import {FSPath, PortablePath, npath, ppath, Filename}                           
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
-import {types}                                                                                                                                       from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
 import {getInstance}                                                                                                                                 from '../instance';
