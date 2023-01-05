@@ -27,11 +27,6 @@ jobs:
       with:
         node-version: 18.x
 
-    - run: |
-        echo "${PWD}/scripts/node" >> $GITHUB_PATH
-    - run: |
-        node ./scripts/run-yarn.js
-
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
         node ./scripts/run-yarn.js --immutable --immutable-cache
@@ -170,11 +165,6 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: 18.x
-
-    - run: |
-        echo "${PWD}/scripts/node" >> $GITHUB_PATH
-    - run: |
-        node ./scripts/run-yarn.js
 
     - name: 'Build bundle & plugins'
       run: |
