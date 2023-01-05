@@ -227,7 +227,7 @@ jobs:
       with:
         node-version: ${{matrix.node}}.x
 
-    - if: matrix.variant == "zip-node"
+    - if: matrix.variant == 'zip-node'
       run: |
         echo "${PWD}/scripts/node" >> $GITHUB_PATH
         echo "YARN_EXPERIMENT_NATIVE_ZIPFS=1" >> $GITHUB_ENV
