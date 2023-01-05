@@ -237,9 +237,6 @@ jobs:
         name: yarn-artifacts
         path: packages
 
-    - run: |
-        node ./scripts/run-yarn.js
-
     - name: 'Run the integration tests'
       run: |
         node ./scripts/run-yarn.js test:integration --maxWorkers=100% --shard=${{matrix.shard}}

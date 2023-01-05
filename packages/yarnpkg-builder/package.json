@@ -15,7 +15,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "chalk": "^3.0.0",
     "clipanion": "^3.2.0-rc.10",
-    "esbuild": "^0.16.9",
+    "esbuild": "npm:esbuild-wasm@^0.15.15",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
