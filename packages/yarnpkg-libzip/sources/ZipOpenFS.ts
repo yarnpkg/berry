@@ -1,8 +1,9 @@
 import {FakeFS}                                   from '@yarnpkg/fslib';
 import {GetMountPointFn, MountFS, MountFSOptions} from '@yarnpkg/fslib';
 import {PortablePath, ppath}                      from '@yarnpkg/fslib';
-import {Libzip}                                   from '@yarnpkg/libzip';
-import {ZipFS}                                    from '@yarnpkg/libzip';
+
+import {ZipFS}                                    from './ZipFS';
+import type {Libzip}                              from './makeInterface';
 
 /**
  * Extracts the archive part (ending in the first instance of `extension`) from a path.

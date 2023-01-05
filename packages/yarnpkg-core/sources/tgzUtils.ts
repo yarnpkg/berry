@@ -1,11 +1,11 @@
-import {Filename, FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
-import {ZipCompression, ZipFS}                                                from '@yarnpkg/libzip';
-import {PassThrough, Readable}                                                from 'stream';
-import tar                                                                    from 'tar';
+import {Filename, FakeFS, PortablePath, NodeFS, statUtils, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
+import {ZipCompression, ZipFS}                                                           from '@yarnpkg/libzip';
+import {PassThrough, Readable}                                                           from 'stream';
+import tar                                                                               from 'tar';
 
-import {WorkerPool}                                                           from './WorkerPool';
-import * as miscUtils                                                         from './miscUtils';
-import {getContent as getZipWorkerSource, ConvertToZipPayload}                from './worker-zip';
+import {WorkerPool}                                                                      from './WorkerPool';
+import * as miscUtils                                                                    from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                           from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
@@ -39,7 +39,19 @@ export interface ExtractBufferOptions {
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
-export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
+export async function convertToZipNoWorker(tgz: Buffer, opts: ExtractBufferOptions) {
+  const tmpFolder = await xfs.mktempPromise();
+  const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+
+  const destFs = new ZipFS(tmpFile, {create: true, level: opts.compressionLevel, stats: statUtils.makeDefaultStats()});
+
+  // Buffers sent through Node are turned into regular Uint8Arrays
+  await extractArchiveTo(tgz, destFs, opts);
+
+  return destFs;
+}
+
+export async function convertToZipViaWorker(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
 
@@ -49,6 +61,10 @@ export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
 
   return new ZipFS(tmpFile, {level: opts.compressionLevel});
 }
+
+export const convertToZip = process.env.YARN_EXPERIMENT_RUN_IN_BAND === `1`
+  ? convertToZipNoWorker
+  : convertToZipViaWorker;
 
 async function * parseTar(tgz: Buffer) {
   // @ts-expect-error - Types are wrong about what this function returns
