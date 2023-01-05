@@ -462,6 +462,109 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should wait for direct dependencies to finish building`,
+      makeTemporaryMonorepoEnv(
+        {
+          workspaces: [`packages/*`],
+        },
+        {
+          'packages/foo': {
+            name: `foo`,
+            dependencies: {
+              bar: `workspace:*`,
+            },
+            scripts: {
+              postinstall: `node -e "require('bar')"`,
+            },
+          },
+          'packages/bar': {
+            name: `bar`,
+            scripts: {
+              postinstall: `sleep 5 && node -e "fs.writeFileSync('index.js', '')"`,
+            },
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, `--inline-builds`)).resolves.toMatchObject({
+            code: 0,
+          });
+        },
+      ),
+    );
+
+    test(
+      `should wait for indirect dependencies to finish building`,
+      makeTemporaryMonorepoEnv(
+        {
+          workspaces: [`packages/*`],
+        },
+        {
+          'packages/foo': {
+            name: `foo`,
+            dependencies: {
+              bar: `workspace:*`,
+            },
+            scripts: {
+              postinstall: `node -e "require('bar')"`,
+            },
+          },
+          'packages/bar': {
+            name: `bar`,
+            dependencies: {
+              baz: `workspace:*`,
+            },
+          },
+          'packages/baz': {
+            name: `baz`,
+            scripts: {
+              postinstall: `sleep 5 && node -e "fs.writeFileSync('index.js', '')"`,
+            },
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `packages/bar/index.js`), `require('baz')`);
+          await expect(run(`install`, `--inline-builds`)).resolves.toMatchObject({
+            code: 0,
+          });
+        },
+      ),
+    );
+
+    test(
+      `should wait for virtual workspace dependencies to finish building`,
+      makeTemporaryMonorepoEnv(
+        {
+          workspaces: [`packages/*`],
+        },
+        {
+          'packages/foo': {
+            name: `foo`,
+            dependencies: {
+              bar: `workspace:*`,
+            },
+            scripts: {
+              postinstall: `node -e "require('bar')"`,
+            },
+          },
+          'packages/bar': {
+            name: `bar`,
+            peerDependencies: {
+              'no-deps': `*`,
+            },
+            scripts: {
+              postinstall: `sleep 5 && node -e "fs.writeFileSync('index.js', '')"`,
+            },
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, `--inline-builds`)).resolves.toMatchObject({
+            code: 0,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should print a warning when using \`enableScripts: false\``,
       makeTemporaryEnv({
         dependencies: {
