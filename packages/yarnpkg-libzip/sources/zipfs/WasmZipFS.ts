@@ -12,6 +12,8 @@ import {PassThrough}                                                            
 import {types}                                                                                                                                       from 'util';
 import zlib                                                                                                                                          from 'zlib';
 
+import {getInstance}                                                                                                                                 from '../instance';
+
 import {
   DEFAULT_COMPRESSION_LEVEL,
   ZipBufferOptions,
@@ -20,8 +22,6 @@ import {
   makeEmptyArchive,
   toUnixTimestamp,
 } from './common';
-
-import {getInstance}                                                                                                                                 from '../instance';
 
 export class LibzipError extends Error {
   code: string;

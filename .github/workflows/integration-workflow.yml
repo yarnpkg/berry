@@ -208,9 +208,22 @@ jobs:
       fail-fast: false
       matrix:
         # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
-        node: [18]
+        node: [14, 16, 18, 19]
         platform: [ubuntu-latest]
         shard: ['1/2', '2/2']
+        # We run the rest of the tests on the minimum Node version we support with 3 shards.
+        include:
+          # Windows tests
+          - {node: 14, platform: windows-latest, shard: 1/3}
+          - {node: 14, platform: windows-latest, shard: 2/3}
+          - {node: 14, platform: windows-latest, shard: 3/3}
+          # macOS tests
+          - {node: 14, platform: macos-latest, shard: 1/3}
+          - {node: 14, platform: macos-latest, shard: 2/3}
+          - {node: 14, platform: macos-latest, shard: 3/3}
+          # zip-node tests
+          - {node: 19, platform: ubuntu-latest, shard: 1/2, variant: zip-node}
+          - {node: 19, platform: ubuntu-latest, shard: 2/2, variant: zip-node}
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
@@ -224,15 +237,18 @@ jobs:
       with:
         node-version: ${{matrix.node}}.x
 
-    - run: |
+    - if: matrix.variant == "zip-node"
+      run: |
         echo "${PWD}/scripts/node" >> $GITHUB_PATH
-    - run: |
-        node ./scripts/run-yarn.js
+        echo "YARN_EXPERIMENT_NATIVE_ZIPFS=1" >> $GITHUB_ENV
 
     - uses: actions/download-artifact@v3
       with:
         name: yarn-artifacts
         path: packages
+
+    - run: |
+        node ./scripts/run-yarn.js
 
     - name: 'Run the integration tests'
       run: |
