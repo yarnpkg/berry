@@ -565,6 +565,36 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should support a self-referencing build dependency`,
+      makeTemporaryEnv(
+        {
+          name: `foo`,
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+          scripts: {
+            postinstall: `echo foo`,
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeJsonPromise(ppath.join(path, `.yarnrc.yml`), {
+            packageExtensions: {
+              'no-deps@*': {
+                dependencies: {
+                  foo: `workspace:*`,
+                },
+              },
+            },
+          });
+
+          await expect(run(`install`, `--inline-builds`)).resolves.toMatchObject({
+            code: 0,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should print a warning when using \`enableScripts: false\``,
       makeTemporaryEnv({
         dependencies: {

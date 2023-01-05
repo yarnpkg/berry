@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Trigger e2e tests
+
 set -e
 
 HERE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
