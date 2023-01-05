@@ -18,6 +18,7 @@ export type StreamReportOptions = {
   includeInfos?: boolean;
   includeLogs?: boolean;
   includeWarnings?: boolean;
+  includePrefix?: boolean;
   json?: boolean;
   stdout: Writable;
 };
@@ -142,6 +143,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private includePrefix: boolean;
   private includeFooter: boolean;
   private includeInfos: boolean;
   private includeWarnings: boolean;
@@ -184,6 +186,7 @@ export class StreamReport extends Report {
     configuration,
     stdout,
     json = false,
+    includePrefix = true,
     includeFooter = true,
     includeLogs = !json,
     includeInfos = includeLogs,
@@ -198,6 +201,7 @@ export class StreamReport extends Report {
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
     this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
+    this.includePrefix = includePrefix;
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
     this.includeWarnings = includeWarnings;
@@ -374,8 +378,7 @@ export class StreamReport extends Report {
 
     const formattedName = this.formatNameWithHyperlink(name);
     const prefix = formattedName ? `${formattedName}: ` : ``;
-
-    const message = `${formatUtils.pretty(this.configuration, `➤`, `blueBright`)} ${prefix}${this.formatIndent()}${text}`;
+    const message = `${this.formatPrefix(prefix, `blueBright`)}${text}`;
 
     if (!this.json) {
       if (this.forgettableNames.has(name)) {
@@ -408,7 +411,7 @@ export class StreamReport extends Report {
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `yellowBright`)} ${prefix}${this.formatIndent()}${text}`);
+      this.writeLineWithForgettableReset(`${this.formatPrefix(prefix, `yellowBright`)}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -423,7 +426,7 @@ export class StreamReport extends Report {
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${prefix}${this.formatIndent()}${text}`, {truncate: false});
+      this.writeLineWithForgettableReset(`${this.formatPrefix(prefix, `redBright`)}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -682,6 +685,10 @@ export class StreamReport extends Report {
       configuration: this.configuration,
       json: this.json,
     });
+  }
+
+  private formatPrefix(prefix: string, caretColor: string) {
+    return this.includePrefix ? `${formatUtils.pretty(this.configuration, `➤`, caretColor)} ${prefix}${this.formatIndent()}` : ``;
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {

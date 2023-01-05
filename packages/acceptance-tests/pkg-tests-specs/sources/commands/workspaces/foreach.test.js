@@ -212,6 +212,22 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should not include the prefix or a ➤ character when run with --no-verbose`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `--no-verbose`, `run`, `print`)).resolves.toMatchSnapshot();
+        },
+      ),
+    );
+
+    test(
       `should only run the scripts on workspaces that match the --include list`,
       makeTemporaryEnv(
         {
