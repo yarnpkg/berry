@@ -249,6 +249,12 @@ export class ZipFS extends BasePortableFakeFS {
   getBufferAndClose(): Buffer {
     this.prepareClose();
 
+    // zip_source_open on an unlink-after-write empty archive fails with "Entry has been deleted"
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      return makeEmptyArchive();
+    }
+
     try {
       // Prevent close from cleaning up the source
       this.libzip.source.keep(this.lzSource);

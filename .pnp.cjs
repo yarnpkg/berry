@@ -55336,6 +55336,10 @@ class ZipFS extends BasePortableFakeFS {
   }
   getBufferAndClose() {
     this.prepareClose();
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      return makeEmptyArchive();
+    }
     try {
       this.libzip.source.keep(this.lzSource);
       if (this.libzip.close(this.zip) === -1)

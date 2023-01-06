@@ -74,6 +74,7 @@ The following changes only affect people writing Yarn plugins:
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
+- `ZipFS.prototype.getBufferAndClose` will not error on empty archives resulting from an unlink after write.
 
 ### Shell
 
