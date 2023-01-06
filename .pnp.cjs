@@ -58775,6 +58775,10 @@ class ZipFS extends BasePortableFakeFS {
     this.prepareClose();
     if (!this.lzSource)
       throw new Error(`ZipFS was not created from a Buffer`);
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      return makeEmptyArchive();
+    }
     try {
       this.libzip.source.keep(this.lzSource);
       if (this.libzip.close(this.zip) === -1)
