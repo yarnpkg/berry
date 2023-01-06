@@ -1362,7 +1362,7 @@ const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(
 const HAS_CONSOLIDATED_HOOKS = major > 16 || major === 16 && minor >= 12;
 const HAS_UNFLAGGED_JSON_MODULES = major > 17 || major === 17 && minor >= 5 || major === 16 && minor >= 15;
 const HAS_JSON_IMPORT_ASSERTION_REQUIREMENT = major > 17 || major === 17 && minor >= 1 || major === 16 && minor > 14;
-const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2;
+const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
