@@ -8,6 +8,12 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
+## TBD
+
+### Bugfixes
+
+- `ZipFS.prototype.getBufferAndClose` will not error on empty archives resulting from an unlink after write.
+
 ## 3.3.1
 
 ### Installs

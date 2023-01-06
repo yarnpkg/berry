@@ -705,6 +705,21 @@ describe(`ZipFS`, () => {
     expect(new ZipFS(buffer, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
   });
 
+  it(`should support getting the buffer from an empty in-memory zip archive (unlink after write)`, () => {
+    const libzip = getLibzipSync();
+
+    const zipFs = new ZipFS(null, {libzip});
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.unlinkSync(`/foo.txt` as PortablePath);
+
+    const buffer = zipFs.getBufferAndClose();
+
+    expect(buffer).toStrictEqual(makeEmptyArchive());
+
+    expect(new ZipFS(buffer, {libzip}).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
   ifNotWin32It(`should preserve the umask`, async () => {
     const tmpdir = xfs.mktempSync();
     const archive = `${tmpdir}/archive.zip` as PortablePath;
