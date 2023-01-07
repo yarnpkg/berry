@@ -1,6 +1,7 @@
-import os       from 'os';
-import PLimit   from 'p-limit';
-import {Worker} from 'worker_threads';
+import PLimit         from 'p-limit';
+import {Worker}       from 'worker_threads';
+
+import * as nodeUtils from './nodeUtils';
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
@@ -8,18 +9,9 @@ type PoolWorker<TOut> = Worker & {
   [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
 };
 
-function availableParallelism(): number {
-  // TODO: Use os.availableParallelism directly when dropping support for Node.js < 19.4.0
-  if (`availableParallelism` in os)
-    // @ts-expect-error - No types yet
-    return os.availableParallelism();
-
-  return Math.max(1, os.cpus().length);
-}
-
 export class WorkerPool<TIn, TOut> {
   private workers: Array<PoolWorker<TOut>> = [];
-  private limit = PLimit(availableParallelism());
+  private limit = PLimit(nodeUtils.availableParallelism());
   private cleanupInterval: ReturnType<typeof setInterval>;
 
   constructor(private source: string) {

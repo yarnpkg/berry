@@ -1,24 +1,14 @@
 import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils}                         from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils, nodeUtils}              from '@yarnpkg/core';
 import {gitUtils}                                                    from '@yarnpkg/plugin-git';
 import {Command, Option, Usage, UsageError}                          from 'clipanion';
 import micromatch                                                    from 'micromatch';
-import os                                                            from 'os';
 import pLimit                                                        from 'p-limit';
 import {Writable}                                                    from 'stream';
 import {WriteStream}                                                 from 'tty';
 import * as t                                                        from 'typanion';
-
-function availableParallelism() {
-  // TODO: Use os.availableParallelism directly when dropping support for Node.js < 19.4.0
-  if (`availableParallelism` in os)
-    // @ts-expect-error - No types yet
-    return os.availableParallelism();
-
-  return Math.max(1, os.cpus().length);
-}
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
@@ -209,7 +199,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const concurrency = this.parallel ?
       (this.jobs === `unlimited`
         ? Infinity
-        : Number(this.jobs) || Math.ceil(availableParallelism() / 2))
+        : Number(this.jobs) || Math.ceil(nodeUtils.availableParallelism() / 2))
       : 1;
 
     // No need to parallelize if we were explicitly asked for one job
