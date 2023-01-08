@@ -1351,7 +1351,7 @@ export class Project {
 
           const workspace = this.tryWorkspaceByLocator(dependencyPkg);
           if (workspace) {
-            if (resolution !== workspace.anchoredLocator.locatorHash && buildablePackages.has(workspace.anchoredLocator.locatorHash))
+            if (workspace.anchoredLocator.locatorHash !== locator.locatorHash && buildablePackages.has(workspace.anchoredLocator.locatorHash))
               return false;
 
             hashesToCheck.add(workspace.anchoredLocator.locatorHash);
