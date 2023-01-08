@@ -10,13 +10,6 @@ import * as jsInstallUtils                                                      
 import * as pnpUtils                                                                                            from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
-  // Some packages do weird stuff and MUST be unplugged. I don't like them.
-  structUtils.makeIdent(null, `nan`).identHash,
-  structUtils.makeIdent(null, `node-gyp`).identHash,
-  structUtils.makeIdent(null, `node-pre-gyp`).identHash,
-  structUtils.makeIdent(null, `node-addon-api`).identHash,
-  // Those ones contain native builds (*.node), and Node loads them through dlopen
-  structUtils.makeIdent(null, `fsevents`).identHash,
   // Contains native binaries
   structUtils.makeIdent(null, `open`).identHash,
   structUtils.makeIdent(null, `opn`).identHash,
