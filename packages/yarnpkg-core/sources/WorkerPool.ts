@@ -1,6 +1,7 @@
-import {cpus}   from 'os';
-import PLimit   from 'p-limit';
-import {Worker} from 'worker_threads';
+import PLimit         from 'p-limit';
+import {Worker}       from 'worker_threads';
+
+import * as nodeUtils from './nodeUtils';
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
@@ -10,7 +11,7 @@ type PoolWorker<TOut> = Worker & {
 
 export class WorkerPool<TIn, TOut> {
   private workers: Array<PoolWorker<TOut>> = [];
-  private limit = PLimit(Math.max(1, cpus().length));
+  private limit = PLimit(nodeUtils.availableParallelism());
   private cleanupInterval: ReturnType<typeof setInterval>;
 
   constructor(private source: string) {
