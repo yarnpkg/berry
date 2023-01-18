@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/cli": patch
+  "@yarnpkg/cli": major
   "@yarnpkg/core": patch
   "@yarnpkg/libzip": major
   "@yarnpkg/pnp": patch
