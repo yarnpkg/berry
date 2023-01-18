@@ -191,7 +191,7 @@ export const getPackageArchiveStream = async (name: string, version: string): Pr
   });
 };
 
-export const getPackageArchivePath = async (name: string, version: string): Promise<string> => {
+export const getPackageArchivePath = async (name: string, version: string): Promise<PortablePath> => {
   const packageEntry = await getPackageEntry(name);
   if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);

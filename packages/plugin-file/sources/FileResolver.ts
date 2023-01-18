@@ -49,7 +49,6 @@ export class FileResolver implements Resolver {
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
     const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
-
     if (parentLocator === null)
       throw new Error(`Assertion failed: The descriptor should have been bound`);
 
@@ -69,7 +68,7 @@ export class FileResolver implements Resolver {
 
     const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
 
-    return [fileUtils.makeLocator(descriptor, {parentLocator, path, folderHash, protocol: PROTOCOL})];
+    return [fileUtils.makeLocator(descriptor, {parentLocator, path, hash: folderHash, protocol: PROTOCOL})];
   }
 
   async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
