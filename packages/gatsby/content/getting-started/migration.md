@@ -279,6 +279,7 @@ nmHoistingLimits: workspaces
 | `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
+| `yarn list`     | `yarn info --recursive`    ||
 | `yarn login`    | `yarn npm login`           ||
 | `yarn logout`   | `yarn npm logout`          ||
 | `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
@@ -303,7 +304,6 @@ Those features simply haven't been implemented yet. Help welcome!
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn list`     | `yarn why` may provide some information in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
 | `yarn team`     | Will eventually be available as `yarn npm team` |
 
