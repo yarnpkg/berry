@@ -195,6 +195,23 @@ export default class InitCommand extends BaseCommand {
       if (!xfs.existsSync(gitignorePath))
         await xfs.writeFilePromise(gitignorePath, gitignoreBody);
 
+      const gitattributesLines = [
+        `/.yarn/**            linguist-vendored`,
+        `/.yarn/releases/*    binary`,
+        `/.yarn/plugins/**/*  binary`,
+        `/.pnp.*              binary linguist-generated`,
+      ];
+
+      const gitattributesBody = gitattributesLines.map(line => {
+        return `${line}\n`;
+      }).join(``);
+
+      const gitattributesPath = ppath.join(this.context.cwd, `.gitattributes` as Filename);
+      if (!xfs.existsSync(gitattributesPath)) {
+        await xfs.writeFilePromise(gitattributesPath, gitattributesBody);
+        changedPaths.push(gitattributesPath);
+      }
+
       const editorConfigProperties = {
         [`*`]: {
           endOfLine: `lf`,
