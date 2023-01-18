@@ -17,6 +17,7 @@ export type StreamReportOptions = {
   includeFooter?: boolean;
   includeInfos?: boolean;
   includeLogs?: boolean;
+  includeNames?: boolean;
   includeWarnings?: boolean;
   includePrefix?: boolean;
   json?: boolean;
@@ -143,6 +144,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private includeNames: boolean;
   private includePrefix: boolean;
   private includeFooter: boolean;
   private includeInfos: boolean;
@@ -186,6 +188,7 @@ export class StreamReport extends Report {
     configuration,
     stdout,
     json = false,
+    includeNames = true,
     includePrefix = true,
     includeFooter = true,
     includeLogs = !json,
@@ -201,6 +204,7 @@ export class StreamReport extends Report {
     this.configuration = configuration;
     this.forgettableBufferSize = forgettableBufferSize;
     this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
+    this.includeNames = includeNames;
     this.includePrefix = includePrefix;
     this.includeFooter = includeFooter;
     this.includeInfos = includeInfos;
@@ -681,6 +685,9 @@ export class StreamReport extends Report {
   }
 
   private formatName(name: MessageName | null) {
+    if (!this.includeNames)
+      return ``;
+
     return formatName(name, {
       configuration: this.configuration,
       json: this.json,
@@ -692,6 +699,9 @@ export class StreamReport extends Report {
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {
+    if (!this.includeNames)
+      return ``;
+
     return formatNameWithHyperlink(name, {
       configuration: this.configuration,
       json: this.json,

@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
