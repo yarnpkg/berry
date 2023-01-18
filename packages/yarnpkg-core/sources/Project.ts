@@ -1513,16 +1513,25 @@ export class Project {
     const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
+    let hasErrors = false;
     await opts.report.startTimerPromise(`Project validation`, {
       skipIfEmpty: true,
     }, async () => {
       await this.configuration.triggerHook(hooks => {
         return hooks.validateProject;
       }, this, {
-        reportWarning: opts.report.reportWarning.bind(opts.report),
-        reportError: opts.report.reportError.bind(opts.report),
+        reportWarning: (name, text) => {
+          opts.report.reportWarning(name, text);
+        },
+        reportError: (name, text) => {
+          opts.report.reportError(name, text);
+          hasErrors = true;
+        },
       });
     });
+
+    if (hasErrors)
+      return;
 
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)

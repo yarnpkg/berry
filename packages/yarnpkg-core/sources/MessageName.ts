@@ -95,6 +95,7 @@ export enum MessageName {
   NETWORK_UNSAFE_HTTP = 81,
   RESOLUTION_FAILED = 82,
   AUTOMERGE_GIT_ERROR = 83,
+  CONSTRAINTS_CHECK_FAILED = 84,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

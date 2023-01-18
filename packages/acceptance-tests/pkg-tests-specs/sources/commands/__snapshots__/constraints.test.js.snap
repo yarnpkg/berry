@@ -76,8 +76,10 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (inc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -86,8 +88,10 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (inc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -96,8 +100,10 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (mis
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -106,8 +112,10 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (mis
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -156,8 +164,10 @@ exports[`Commands constraints test (empty project / gen_enforced_field (incompat
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -166,8 +176,10 @@ exports[`Commands constraints test (empty project / gen_enforced_field (incompat
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -176,8 +188,10 @@ exports[`Commands constraints test (empty project / gen_enforced_field (missing)
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -186,8 +200,10 @@ exports[`Commands constraints test (empty project / gen_enforced_field (missing)
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -304,11 +320,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -317,13 +335,15 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  ├─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
-│  └─ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+│  └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   ├─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
-   └─ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -378,14 +398,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -394,14 +416,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -410,14 +434,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -426,14 +452,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -486,11 +514,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 ",
 }
 `;
@@ -499,11 +529,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 ",
 }
 `;
@@ -512,14 +544,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (in
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -528,14 +562,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (in
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -544,14 +580,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (mi
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -560,14 +598,16 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (mi
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ root-workspace-0b6124@workspace:.
-│  └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -608,11 +648,13 @@ exports[`Commands constraints test (multiple workspaces / workspace_field w/ str
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  └─ Missing field _name; expected 'workspace-a'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field _name; expected 'workspace-a'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Missing field _name; expected 'workspace-b'
+   └─ ⚙ Missing field _name; expected 'workspace-b'
 ",
 }
 `;
@@ -621,11 +663,13 @@ exports[`Commands constraints test (multiple workspaces / workspace_field w/ str
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  └─ Missing field _name; expected 'workspace-a'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field _name; expected 'workspace-a'
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ Missing field _name; expected 'workspace-b'
+   └─ ⚙ Missing field _name; expected 'workspace-b'
 ",
 }
 `;
@@ -674,8 +718,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -684,8 +730,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -714,8 +762,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -724,8 +774,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -734,8 +786,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -744,8 +798,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -778,8 +834,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
 ",
 }
 `;
@@ -788,8 +846,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
 ",
 }
 `;
@@ -798,8 +858,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -808,8 +870,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -818,8 +882,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -828,8 +894,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -934,8 +1002,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -964,8 +1034,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -974,8 +1046,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -984,8 +1058,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -994,8 +1070,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1044,8 +1122,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -1054,8 +1134,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -1064,8 +1146,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -1074,8 +1158,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1172,8 +1258,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -1182,8 +1270,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -1212,8 +1302,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1222,8 +1314,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1232,8 +1326,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1242,8 +1338,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1276,8 +1374,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 ",
 }
 `;
@@ -1286,8 +1386,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 ",
 }
 `;
@@ -1296,8 +1398,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1306,8 +1410,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1316,8 +1422,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -1326,8 +1434,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1424,8 +1534,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -1434,9 +1546,11 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   ├─ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
-   └─ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
 ",
 }
 `;
@@ -1468,8 +1582,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1478,8 +1594,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1488,8 +1606,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1498,8 +1618,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1532,8 +1654,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 ",
 }
 `;
@@ -1542,8 +1666,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bin': '1.0.0' }
 ",
 }
 `;
@@ -1552,8 +1678,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1562,8 +1690,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
 ",
 }
 `;
@@ -1572,8 +1702,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -1582,8 +1714,10 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1712,8 +1846,10 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -1722,8 +1858,10 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -1732,8 +1870,10 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1742,8 +1882,10 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1792,8 +1934,10 @@ exports[`Commands constraints test (various field types / gen_enforced_field (in
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -1802,8 +1946,10 @@ exports[`Commands constraints test (various field types / gen_enforced_field (in
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field dependencies["no-deps"]; expected '2.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
 ",
 }
 `;
@@ -1812,8 +1958,10 @@ exports[`Commands constraints test (various field types / gen_enforced_field (mi
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
 ",
 }
 `;
@@ -1822,8 +1970,10 @@ exports[`Commands constraints test (various field types / gen_enforced_field (mi
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
 ",
 }
 `;
@@ -1832,8 +1982,10 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field _files; expected [ '/a', '/b', '/c' ]
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _files; expected [ '/a', '/b', '/c' ]
 ",
 }
 `;
@@ -1842,8 +1994,10 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field _files; expected [ '/a', '/b', '/c' ]
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _files; expected [ '/a', '/b', '/c' ]
 ",
 }
 `;
@@ -1852,8 +2006,10 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
 ",
 }
 `;
@@ -1862,8 +2018,10 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
 ",
 }
 `;
@@ -1872,8 +2030,10 @@ exports[`Commands constraints test (various field types / workspace_field w/ str
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field _name; expected 'foo'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _name; expected 'foo'
 ",
 }
 `;
@@ -1882,8 +2042,10 @@ exports[`Commands constraints test (various field types / workspace_field w/ str
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ foo@workspace:.
-   └─ Missing field _name; expected 'foo'
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _name; expected 'foo'
 ",
 }
 `;
