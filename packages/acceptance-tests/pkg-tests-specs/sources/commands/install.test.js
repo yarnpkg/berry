@@ -319,6 +319,29 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should not mark package as built if any of its scripts fails`,
+      makeTemporaryEnv(
+        {
+          scripts: {
+            preinstall: `echo 'foo'`,
+            postinstall: `exit 1`,
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, `--inline-builds`)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`foo`),
+          });
+
+          await expect(run(`install`, `--inline-builds`)).rejects.toMatchObject({
+            code: 1,
+            stdout: expect.stringContaining(`foo`),
+          });
+        },
+      ),
+    );
+
+    test(
       `should wait for direct dependencies to finish building`,
       makeTemporaryMonorepoEnv(
         {

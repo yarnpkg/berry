@@ -1353,7 +1353,7 @@ export class Project {
 
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
-      const buildPromises = [];
+      const buildPromises: Array<Promise<unknown>> = [];
 
       for (const locatorHash of buildablePackages) {
         const pkg = this.storedPackages.get(locatorHash);
@@ -1436,10 +1436,8 @@ export class Project {
               stdout.end();
               stderr.end();
 
-              if (exitCode === 0) {
-                nextBState.set(pkg.locatorHash, buildHash);
+              if (exitCode === 0)
                 return true;
-              }
 
               xfs.detachTemp(logDir);
 
@@ -1447,7 +1445,6 @@ export class Project {
 
               if (this.optionalBuilds.has(pkg.locatorHash)) {
                 report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
-                nextBState.set(pkg.locatorHash, buildHash);
                 return true;
               } else {
                 report.reportError(MessageName.BUILD_FAILED, buildMessage);
@@ -1456,15 +1453,21 @@ export class Project {
             });
 
             if (!wasBuildSuccessful) {
-              return;
+              return false;
             }
           }
+
+          return true;
         });
 
         buildPromises.push(
           ...pkgBuilds,
-          Promise.allSettled(pkgBuilds).then(() => {
+          Promise.allSettled(pkgBuilds).then(results => {
             buildablePackages.delete(locatorHash);
+
+            if (results.every(result => result.status === `fulfilled` && result.value === true)) {
+              nextBState.set(pkg.locatorHash, buildHash);
+            }
           }),
         );
       }
