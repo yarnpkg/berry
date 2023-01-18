@@ -1341,7 +1341,7 @@ export class Project {
           if (!resolution)
             throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(this.configuration, dependency)}) should have been registered`);
 
-          if (buildablePackages.has(resolution))
+          if (resolution !== locator.locatorHash && buildablePackages.has(resolution))
             return false;
 
           // Virtual workspaces don't have build scripts but the original might so we need to check it.
@@ -1351,7 +1351,7 @@ export class Project {
 
           const workspace = this.tryWorkspaceByLocator(dependencyPkg);
           if (workspace) {
-            if (buildablePackages.has(workspace.anchoredLocator.locatorHash))
+            if (workspace.anchoredLocator.locatorHash !== locator.locatorHash && buildablePackages.has(workspace.anchoredLocator.locatorHash))
               return false;
 
             hashesToCheck.add(workspace.anchoredLocator.locatorHash);
