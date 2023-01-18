@@ -1,6 +1,9 @@
-import {Manifest, miscUtils, nodeUtils} from '@yarnpkg/core';
-import {PortablePath}                   from '@yarnpkg/fslib';
-import toPath                           from 'lodash/toPath';
+import {Configuration, formatUtils, Manifest, miscUtils, nodeUtils, Project, Workspace} from '@yarnpkg/core';
+import {PortablePath}                                                                   from '@yarnpkg/fslib';
+import get                                                                              from 'lodash/get';
+import set                                                                              from 'lodash/set';
+import toPath                                                                           from 'lodash/toPath';
+import unset                                                                            from 'lodash/unset';
 
 export type ProcessResult = {
   manifestUpdates: Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>;
@@ -135,4 +138,102 @@ export function normalizePath(p: Array<string> | string) {
   });
 
   return normalizedParts.join(``).replace(/^\./, ``);
+}
+
+function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller) {
+  // TODO: Should this be in formatUtils? Might not be super useful as a core feature...
+  const parts: Array<string> = [];
+
+  if (caller.methodName !== null)
+    parts.push(formatUtils.pretty(configuration, caller.methodName, formatUtils.Type.CODE));
+
+  if (caller.file !== null) {
+    const fileParts: Array<string> = [];
+    fileParts.push(formatUtils.pretty(configuration, caller.file, formatUtils.Type.PATH));
+
+    if (caller.line !== null) {
+      fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
+
+      if (caller.column !== null) {
+        fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
+      }
+    }
+
+    parts.push(`(${fileParts.join(formatUtils.pretty(configuration, `:`, `grey`))})`);
+  }
+
+  return parts.join(` `);
+}
+
+export function applyEngineReport(project: Project, {manifestUpdates, reportedErrors}: ProcessResult, {fix}: {fix?: boolean} = {}) {
+  type AnnotatedError = {
+    text: string;
+    fixable: boolean;
+  };
+
+  const changedWorkspaces = new Map<Workspace, Record<string, any>>();
+  const remainingErrors = new Map<Workspace, Array<AnnotatedError>>();
+
+  for (const [workspaceCwd, workspaceUpdates] of manifestUpdates) {
+    const workspaceErrors = reportedErrors.get(workspaceCwd)?.map(text => ({text, fixable: false})) ?? [];
+    let changedWorkspace = false;
+
+    const workspace = project.getWorkspaceByCwd(workspaceCwd);
+    const manifest = workspace.manifest.exportTo({});
+
+    for (const [fieldPath, newValues] of workspaceUpdates) {
+      if (newValues.size > 1) {
+        const conflictingValuesMessage = [...newValues].map(([value, sources]) => {
+          const prettyValue = formatUtils.pretty(project.configuration, value, formatUtils.Type.INSPECT);
+
+          const stackLine = sources.size > 0
+            ? formatStackLine(project.configuration, sources.values().next().value)
+            : null;
+
+          return stackLine !== null
+            ? `\n${prettyValue} at ${stackLine}`
+            : `\n${prettyValue}`;
+        }).join(``);
+
+        workspaceErrors.push({text: `Conflict detected in constraint targeting ${formatUtils.pretty(project.configuration, fieldPath, formatUtils.Type.CODE)}; conflicting values are:${conflictingValuesMessage}`, fixable: false});
+      } else {
+        const [[newValue]] = newValues;
+
+        const currentValue = get(manifest, fieldPath);
+        if (currentValue === newValue)
+          continue;
+
+        if (!fix) {
+          const errorMessage = typeof currentValue === `undefined`
+            ? `Missing field ${formatUtils.pretty(project.configuration, fieldPath, formatUtils.Type.CODE)}; expected ${formatUtils.pretty(project.configuration, newValue, formatUtils.Type.INSPECT)}`
+            : typeof newValue === `undefined`
+              ? `Extraneous field ${formatUtils.pretty(project.configuration, fieldPath, formatUtils.Type.CODE)} currently set to ${formatUtils.pretty(project.configuration, currentValue, formatUtils.Type.INSPECT)}`
+              : `Invalid field ${formatUtils.pretty(project.configuration, fieldPath, formatUtils.Type.CODE)}; expected ${formatUtils.pretty(project.configuration, newValue, formatUtils.Type.INSPECT)}, found ${formatUtils.pretty(project.configuration, currentValue, formatUtils.Type.INSPECT)}`;
+
+          workspaceErrors.push({text: errorMessage, fixable: true});
+          continue;
+        }
+
+        if (typeof newValue === `undefined`)
+          unset(manifest, fieldPath);
+        else
+          set(manifest, fieldPath, newValue);
+
+        changedWorkspace = true;
+      }
+
+      if (changedWorkspace) {
+        changedWorkspaces.set(workspace, manifest);
+      }
+    }
+
+    if (workspaceErrors.length > 0) {
+      remainingErrors.set(workspace, workspaceErrors);
+    }
+  }
+
+  return {
+    changedWorkspaces,
+    remainingErrors,
+  };
 }
