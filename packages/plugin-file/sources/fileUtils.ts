@@ -2,6 +2,8 @@ import {structUtils, FetchOptions, Locator, miscUtils, tgzUtils, Ident, FetchRes
 import {ppath, PortablePath, npath, CwdFS}                                           from '@yarnpkg/fslib';
 import {ZipFS}                                                                       from '@yarnpkg/libzip';
 
+import {PROTOCOL}                                                                    from './constants';
+
 export function parseSpec(spec: string) {
   const {params, selector} = structUtils.parseRange(spec);
 
@@ -14,13 +16,13 @@ export function parseSpec(spec: string) {
   return {parentLocator, path};
 }
 
-export function makeSpec({parentLocator, path, folderHash, protocol}: {parentLocator: Locator | null, path: string, folderHash?: string, protocol: string}) {
+export function makeSpec({parentLocator, path, hash, protocol}: {parentLocator: Locator | null, path: string, hash?: string, protocol: string}) {
   const parentLocatorSpread = parentLocator !== null
     ? {locator: structUtils.stringifyLocator(parentLocator)}
     : {} as {};
 
-  const folderHashSpread = typeof folderHash !== `undefined`
-    ? {hash: folderHash}
+  const folderHashSpread = typeof hash !== `undefined`
+    ? {hash}
     : {} as {};
 
   return structUtils.makeRange({
@@ -34,8 +36,35 @@ export function makeSpec({parentLocator, path, folderHash, protocol}: {parentLoc
   });
 }
 
-export function makeLocator(ident: Ident, {parentLocator, path, folderHash, protocol}: Parameters<typeof makeSpec>[number]): Locator {
-  return structUtils.makeLocator(ident, makeSpec({parentLocator, path, folderHash, protocol}));
+export function makeLocator(ident: Ident, {parentLocator, path, hash, protocol}: Parameters<typeof makeSpec>[number]): Locator {
+  return structUtils.makeLocator(ident, makeSpec({parentLocator, path, hash, protocol}));
+}
+
+export async function fetchArchiveFromLocator(locator: Locator, opts: FetchOptions) {
+  const {parentLocator, path} = structUtils.parseFileStyleRange(locator.reference, {protocol: PROTOCOL});
+
+  // If the file target is an absolute path we can directly access it via its
+  // location on the disk. Otherwise we must go through the package fs.
+  const parentFetch: FetchResult = ppath.isAbsolute(path)
+    ? {packageFs: new CwdFS(PortablePath.root), prefixPath: PortablePath.dot, localPath: PortablePath.root}
+    : await opts.fetcher.fetch(parentLocator, opts);
+
+  // If the package fs publicized its "original location" (for example like
+  // in the case of "file:" packages), we use it to derive the real location.
+  const effectiveParentFetch: FetchResult = parentFetch.localPath
+    ? {packageFs: new CwdFS(PortablePath.root), prefixPath: ppath.relative(PortablePath.root, parentFetch.localPath)}
+    : parentFetch;
+
+  // Discard the parent fs unless we really need it to access the files
+  if (parentFetch !== effectiveParentFetch && parentFetch.releaseFs)
+    parentFetch.releaseFs();
+
+  const sourceFs = effectiveParentFetch.packageFs;
+  const sourcePath = ppath.join(effectiveParentFetch.prefixPath, path);
+
+  return await miscUtils.releaseAfterUseAsync(async () => {
+    return await sourceFs.readFilePromise(sourcePath);
+  }, effectiveParentFetch.releaseFs);
 }
 
 export async function makeArchiveFromLocator(locator: Locator, {protocol, fetchOptions, inMemory = false}: {protocol: string, fetchOptions: FetchOptions, inMemory?: boolean}): Promise<ZipFS> {

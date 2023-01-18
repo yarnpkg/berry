@@ -1,5 +1,6 @@
 import {ppath}        from '@yarnpkg/fslib';
 import Module         from 'module';
+import os             from 'os';
 
 import * as execUtils from './execUtils';
 import * as miscUtils from './miscUtils';
@@ -135,4 +136,13 @@ export function getCaller() {
   const line = err.stack!.split(`\n`)[3];
 
   return parseStackLine(line);
+}
+
+export function availableParallelism() {
+  // TODO: Use os.availableParallelism directly when dropping support for Node.js < 19.4.0
+  if (`availableParallelism` in os)
+    // @ts-expect-error - No types yet
+    return os.availableParallelism();
+
+  return Math.max(1, os.cpus().length);
 }

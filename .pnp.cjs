@@ -9354,6 +9354,29 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@rollup/plugin-json", [\
+      ["npm:6.0.0", {\
+        "packageLocation": "./.yarn/cache/@rollup-plugin-json-npm-6.0.0-9f4c594544-beba433c33.zip/node_modules/@rollup/plugin-json/",\
+        "packageDependencies": [\
+          ["@rollup/plugin-json", "npm:6.0.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:6.0.0", {\
+        "packageLocation": "./.yarn/__virtual__/@rollup-plugin-json-virtual-c15b97dcae/0/cache/@rollup-plugin-json-npm-6.0.0-9f4c594544-beba433c33.zip/node_modules/@rollup/plugin-json/",\
+        "packageDependencies": [\
+          ["@rollup/plugin-json", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:6.0.0"],\
+          ["@rollup/pluginutils", "virtual:c15b97dcaeb16e6f1fc0920d0d0eafab617d968c832e0d315173a116cc010bd93c05b338add6413dd2d85943ada7fe00065f91ec63424c086788075f20a09502#npm:5.0.2"],\
+          ["@types/rollup", null],\
+          ["rollup", "npm:2.59.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/rollup",\
+          "rollup"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@rollup/plugin-node-resolve", [\
       ["npm:11.2.1", {\
         "packageLocation": "./.yarn/cache/@rollup-plugin-node-resolve-npm-11.2.1-1cea144df4-dc8940a2e1.zip/node_modules/@rollup/plugin-node-resolve/",\
@@ -9397,6 +9420,13 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
+      ["npm:5.0.2", {\
+        "packageLocation": "./.yarn/cache/@rollup-pluginutils-npm-5.0.2-6aa9d0ddd4-c8e01caaf5.zip/node_modules/@rollup/pluginutils/",\
+        "packageDependencies": [\
+          ["@rollup/pluginutils", "npm:5.0.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["virtual:8a75fd665d2cffdae4afc565e38653aef357920bdc4cefff043dcec6bd095942c290a59daa08791f732c0600903ebb3097983add68948f2a1c3e74a290b342a7#npm:4.1.0", {\
         "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-d16652e0ee/0/cache/@rollup-pluginutils-npm-4.1.0-d00c3a42d6-4895ac0ddf.zip/node_modules/@rollup/pluginutils/",\
         "packageDependencies": [\
@@ -9419,6 +9449,22 @@ const RAW_RUNTIME_STATE =
           ["@types/estree", "npm:0.0.39"],\
           ["@types/rollup", null],\
           ["estree-walker", "npm:1.0.1"],\
+          ["picomatch", "npm:2.3.1"],\
+          ["rollup", "npm:2.59.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/rollup",\
+          "rollup"\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["virtual:c15b97dcaeb16e6f1fc0920d0d0eafab617d968c832e0d315173a116cc010bd93c05b338add6413dd2d85943ada7fe00065f91ec63424c086788075f20a09502#npm:5.0.2", {\
+        "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-3a604cbe27/0/cache/@rollup-pluginutils-npm-5.0.2-6aa9d0ddd4-c8e01caaf5.zip/node_modules/@rollup/pluginutils/",\
+        "packageDependencies": [\
+          ["@rollup/pluginutils", "virtual:c15b97dcaeb16e6f1fc0920d0d0eafab617d968c832e0d315173a116cc010bd93c05b338add6413dd2d85943ada7fe00065f91ec63424c086788075f20a09502#npm:5.0.2"],\
+          ["@types/estree", "npm:1.0.0"],\
+          ["@types/rollup", null],\
+          ["estree-walker", "npm:2.0.2"],\
           ["picomatch", "npm:2.3.1"],\
           ["rollup", "npm:2.59.0"]\
         ],\
@@ -10217,7 +10263,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-eslint-npm-7.2.13-37f10d8e02-4154baefde.zip/node_modules/@types/eslint/",\
         "packageDependencies": [\
           ["@types/eslint", "npm:7.2.13"],\
-          ["@types/estree", "npm:0.0.51"],\
+          ["@types/estree", "npm:1.0.0"],\
           ["@types/json-schema", "npm:7.0.11"]\
         ],\
         "linkType": "HARD"\
@@ -10229,7 +10275,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/eslint-scope", "npm:3.7.4"],\
           ["@types/eslint", "npm:7.2.13"],\
-          ["@types/estree", "npm:0.0.51"]\
+          ["@types/estree", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10246,6 +10292,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-estree-npm-0.0.51-bc20719267-a5fbdddce8.zip/node_modules/@types/estree/",\
         "packageDependencies": [\
           ["@types/estree", "npm:0.0.51"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.0.0", {\
+        "packageLocation": "./.yarn/cache/@types-estree-npm-1.0.0-eddde5b631-474df434e3.zip/node_modules/@types/estree/",\
+        "packageDependencies": [\
+          ["@types/estree", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -13035,6 +13088,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@arcanis/slice-ansi", "npm:1.1.1"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
+          ["@rollup/plugin-json", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:6.0.0"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
           ["@types/comment-json", "npm:1.1.1"],\
           ["@types/cross-spawn", "npm:6.0.0"],\
@@ -35401,7 +35455,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/is-reference-npm-1.2.1-87ca1743c8-f2912059e3.zip/node_modules/is-reference/",\
         "packageDependencies": [\
           ["is-reference", "npm:1.2.1"],\
-          ["@types/estree", "npm:0.0.51"]\
+          ["@types/estree", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -58775,6 +58829,10 @@ class ZipFS extends BasePortableFakeFS {
     this.prepareClose();
     if (!this.lzSource)
       throw new Error(`ZipFS was not created from a Buffer`);
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      return makeEmptyArchive();
+    }
     try {
       this.libzip.source.keep(this.lzSource);
       if (this.libzip.close(this.zip) === -1)
@@ -59788,7 +59846,7 @@ function getPathForDisplay(p) {
 }
 
 const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
-const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2;
+const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 
 const builtinModules = new Set(require$$0.Module.builtinModules || Object.keys(process.binding(`natives`)));
 const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
