@@ -155,6 +155,7 @@ jobs:
       run: |
         node --version
         node ./scripts/run-yarn.js build:pnp:hook
+        node ./scripts/run-yarn.js build:zip:worker
         node ./scripts/run-yarn.js build:cli
         mv ./packages/yarnpkg-cli/bundles/yarn.js ./packages/yarnpkg-cli/bundles/yarn-min.js
         node ./scripts/run-yarn.js build:cli --no-minify
@@ -173,6 +174,7 @@ jobs:
         path: |
           ./packages/*/bundles
           ./packages/yarnpkg-pnp/sources/hook.js
+          ./packages/yarnpkg-core/sources/worker-zip/index.js
 
     - name: 'Build vscode-zipfs'
       run: |

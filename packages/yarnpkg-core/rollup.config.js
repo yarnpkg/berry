@@ -1,4 +1,5 @@
 import cjs                  from '@rollup/plugin-commonjs';
+import json                 from '@rollup/plugin-json';
 import resolve              from '@rollup/plugin-node-resolve';
 import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
@@ -33,6 +34,7 @@ export default defineConfig({
     generatedCode: `es2015`,
   },
   plugins: [
+    json(),
     resolve({
       extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],
       rootDir: path.join(__dirname, `../../`),
