@@ -47,6 +47,28 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
+    `it should be able to import the PnP API`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(
+          ppath.join(path, `index.js` as Filename),
+          `import pnp from 'pnpapi';\nconsole.log(typeof pnp.resolveRequest)`,
+        );
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `function\n`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should be able to import a dependency`,
     makeTemporaryEnv(
       {

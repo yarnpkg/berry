@@ -88,7 +88,7 @@ export async function resolve(
 
     // If the package.json doesn't list an `exports` field, Node will tolerate omitting the extension
     // https://github.com/nodejs/node/blob/0996eb71edbd47d9f9ec6153331255993fd6f0d1/lib/internal/modules/esm/resolve.js#L686-L691
-    if (subPath === ``) {
+    if (subPath === `` && dependencyName !== `pnpapi`) {
       const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, issuer);
       if (resolved) {
         const content = await loaderUtils.tryReadFile(resolved);
