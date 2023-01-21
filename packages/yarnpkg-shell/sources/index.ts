@@ -1016,6 +1016,9 @@ export async function execute(command: string, args: Array<string> = [], {
   variables = {},
   glob = globUtils,
 }: Partial<UserOptions> = {}) {
+  if (!baseFs.existsSync(cwd))
+    throw new Error(`Cannot execute command in non-existent directory: "${npath.fromPortablePath(cwd)}"`);
+
   const normalizedEnv: {[key: string]: string} = {};
   for (const [key, value] of Object.entries(env))
     if (typeof value !== `undefined`)

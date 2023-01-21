@@ -1,8 +1,8 @@
-import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
-import {execute, UserOptions}               from '@yarnpkg/shell';
-import {PassThrough}                        from 'stream';
-import stripAnsi                            from 'strip-ansi';
-import {promisify}                          from 'util';
+import {xfs, ppath, Filename, PortablePath, npath} from '@yarnpkg/fslib';
+import {execute, UserOptions}                      from '@yarnpkg/shell';
+import {PassThrough}                               from 'stream';
+import stripAnsi                                   from 'strip-ansi';
+import {promisify}                                 from 'util';
 
 const setTimeoutPromise = promisify(setTimeout);
 
@@ -96,6 +96,18 @@ const bufferResult = async (command: string, args: Array<string> = [], options: 
 };
 
 describe(`Shell`, () => {
+  describe(`Option validation`, () => {
+    it(`should throw an unrecoverable error if executed inside a cwd that doesn't exist`, async () => {
+      await xfs.mktempPromise(async tmpDir => {
+        await expect(bufferResult(
+          ``,
+          [],
+          {cwd: `${tmpDir}/doesnt-exist` as PortablePath},
+        )).rejects.toThrow(`Cannot execute command in non-existent directory: "${npath.fromPortablePath(tmpDir)}/doesnt-exist"`);
+      });
+    });
+  });
+
   describe(`Simple shell features`, () => {
     describe(`Empty commands`, () => {
       const EMPTY_COMMAND_RESULT = {
