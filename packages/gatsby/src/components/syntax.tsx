@@ -81,13 +81,16 @@ export const Main = styled.div`
   border: 1px solid;
 
   padding: 1em;
+  & + & {
+    margin-top: 1em;
+  }
 
   font-family: "Open Sans", sans-serif;
   white-space: normal;
   overflow-wrap: break-word;
 
   & + * {
-    margin-top: 0 !important;
+    margin-top: 0;
   }
 
   p {
