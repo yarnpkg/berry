@@ -309,9 +309,13 @@ Those features simply haven't been implemented yet. Help welcome!
 
 ## Troubleshooting
 
-### Error running `yarn install` during the migration to Yarn 2
+### Debugging errors during migration
 
-This is likely a bug, as we intent for this to be a smooth experience. If you're interested in debugging and reporting an issue see our [debugging quickstart documentation](/advanced/debugging). Otherwise, you can try deleting your v1 `yarn.lock` file and re-running `yarn install` as a workaround. You're also welcome to pop in on our [Discord channel](https://discordapp.com/invite/yarnpkg) to ask for help and guidance.
+Migration is intented to be a smooth experience. If you're getting an error, you likely have found a bug. If you're interested in debugging and reporting an issue see our [debugging quickstart documentation](/advanced/debugging). Otherwise, you can try deleting your v1 `yarn.lock` file and re-running `yarn install` as a workaround. You're also welcome to pop in on our [Discord channel](https://discordapp.com/invite/yarnpkg) to ask for help and guidance.
+
+### `[...] isn't supported by any available resolver` during migration
+
+There is a known issue when using private registry URLs in a v1 lockfile. See issue [#5156](https://github.com/yarnpkg/berry/issues/5156) for details.
 
 ### `Cannot find module [...]`
 
