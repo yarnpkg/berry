@@ -141,7 +141,13 @@ Once you're happy with what the documentation looks like, just commit your local
 
 Once everything is green and a maintainer has reviewed your changes, we'll merge them and a bot will automatically trigger a rebuild of the website and update the `docs` folder 🙂
 
+## Debugging
+
+We have a guide to debugging Yarn before opening an issue. Please check [the following page](/advanced/debugging) for more details.
+
 ## Profiling
+
+> This assumes you have checked out a full clone of the monorepo and are prepared to build. If not, see the section on [debugging](/advanced/debugging).
 
 Run the following command to generate an unminified bundle:
 

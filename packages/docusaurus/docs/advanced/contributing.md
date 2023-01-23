@@ -143,8 +143,6 @@ Once everything is green and a maintainer has reviewed your changes, we'll merge
 
 ## Profiling
 
-> This assumes you have checked out a full clone of the monorepo and are prepared to build. If not, see the section on [debugging](/advanced/debugging).
-
 Run the following command to generate an unminified bundle:
 
 ```bash
