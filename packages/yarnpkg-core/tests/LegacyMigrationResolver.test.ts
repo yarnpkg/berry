@@ -14,13 +14,13 @@ describe(`LegacyMigrationResolver`, () => {
       resolved: `https://foo.bar/@types%2fno-deps/-/no-deps-1.0.0.tgz`,
       expected: `npm:1.0.0`,
     },
-    // https://github.com/yarnpkg/berry/issues/2354
+    // https://github.com/yarnpkg/berry/issues/2354 & https://github.com/yarnpkg/berry/pull/5216
     {
       version: `1.0.0`,
       resolved: `https://company.jfrog.io/company/api/npm/registry-name/@scope/package-name/-/@scope/package-name-1.0.0.tgz#eeeec1e4e8850bed0468f938292b06cda793bf34`,
       expected: `npm:1.0.0`,
     },
-    // https://github.com/yarnpkg/berry/pull/4702
+    // https://github.com/yarnpkg/berry/pull/4702 & https://github.com/yarnpkg/berry/pull/5216
     {
       version: `1.0.0`,
       resolved: `https://packages.example.com/artifactory/api/npm/registry-name/@scope/package-name/-/@scope/package-name-1.0.0.tgz#eeeec1e4e8850bed0468f938292b06cda793bf34`,
