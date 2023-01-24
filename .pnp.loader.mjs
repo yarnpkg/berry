@@ -2005,7 +2005,7 @@ async function resolve$1(originalSpecifier, context, nextResolve) {
   let allowLegacyResolve = false;
   if (dependencyNameMatch) {
     const [, dependencyName, subPath] = dependencyNameMatch;
-    if (subPath === ``) {
+    if (subPath === `` && dependencyName !== `pnpapi`) {
       const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, issuer);
       if (resolved) {
         const content = await tryReadFile$1(resolved);

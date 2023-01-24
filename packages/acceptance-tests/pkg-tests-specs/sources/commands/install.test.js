@@ -588,6 +588,70 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should support a self-referencing build dependency`,
+      makeTemporaryEnv(
+        {
+          name: `foo`,
+          dependencies: {
+            'no-deps': `1.0.0`,
+          },
+          scripts: {
+            postinstall: `echo foo`,
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+            packageExtensions: {
+              'no-deps@*': {
+                dependencies: {
+                  foo: `workspace:*`,
+                },
+              },
+            },
+          });
+
+          await expect(run(`install`, `--inline-builds`)).resolves.toMatchObject({
+            code: 0,
+          });
+        },
+      ),
+    );
+
+    test(
+      `should support a self-referencing virtual workspace build dependency`,
+      makeTemporaryMonorepoEnv(
+        {
+          workspaces: [`packages/*`],
+        },
+        {
+          'packages/foo': {
+            name: `foo`,
+            peerDependencies: {
+              'no-deps': `1.0.0`,
+            },
+            dependencies: {
+              bar: `workspace:*`,
+            },
+            scripts: {
+              postinstall: `echo foo`,
+            },
+          },
+          'packages/bar': {
+            name: `bar`,
+            dependencies: {
+              foo: `workspace:*`,
+            },
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, `--inline-builds`)).resolves.toMatchObject({
+            code: 0,
+          });
+        },
+      ),
+    );
+
+    test(
       `it should print a warning when using \`enableScripts: false\``,
       makeTemporaryEnv({
         dependencies: {

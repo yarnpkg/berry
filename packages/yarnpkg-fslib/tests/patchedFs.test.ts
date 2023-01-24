@@ -175,7 +175,7 @@ describe(`patchedFs`, () => {
 
       expect(statUtils.areStatsEqual(stat, fdStat)).toEqual(true);
     } finally {
-      patchedFs.closeSync(fd);
+      patchedFs.closeSync(zipFd);
     }
   });
 
