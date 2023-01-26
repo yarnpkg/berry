@@ -3,6 +3,16 @@ import {PnpApi}                                 from '@yarnpkg/pnp';
 
 import {Wrapper, GenerateBaseWrapper, BaseSdks} from '../generateSdk';
 
+export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`@astrojs/language-server` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`bin/nodeServer.js` as PortablePath);
+
+  return wrapper;
+};
+
 export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
 
@@ -249,6 +259,7 @@ export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pn
 };
 
 export const BASE_SDKS: BaseSdks = [
+  [`@astrojs/language-server`, generateAstroLanguageServerBaseWrapper],
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],

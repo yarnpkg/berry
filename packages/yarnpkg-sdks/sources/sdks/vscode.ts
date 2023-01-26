@@ -29,6 +29,22 @@ export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: Pnp
   });
 };
 
+export const generateAstroLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`astro.language-server.ls-path`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `bin/nodeServer.js` as PortablePath,
+      ),
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `astro-build.astro-vscode`,
+    ],
+  });
+};
+
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`eslint.nodePath`]: npath.fromPortablePath(
@@ -110,6 +126,7 @@ export const generateFlowBinWrapper: GenerateIntegrationWrapper = async (pnpApi:
 
 export const VSCODE_SDKS: IntegrationSdks = [
   [null, generateDefaultWrapper],
+  [`@astrojs/language-server`, generateAstroLanguageServerWrapper],
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`typescript-language-server`, null],
