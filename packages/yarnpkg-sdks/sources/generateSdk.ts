@@ -175,6 +175,7 @@ export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, 
 export type GenerateDefaultWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<void>;
 
 export type SupportedSdk =
+  | '@astrojs/language-server'
   | 'eslint'
   | 'prettier'
   | 'typescript-language-server'
