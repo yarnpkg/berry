@@ -8,7 +8,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ## Master
 
-## TBD
+## 3.4.0
 
 ### Bugfixes
 
