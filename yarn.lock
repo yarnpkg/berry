@@ -7903,6 +7903,7 @@ __metadata:
     "@types/node": "npm:^18.11.11"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
+    arg: "npm:^5.0.2"
     esbuild: "npm:esbuild-wasm@^0.15.15"
     resolve.exports: "npm:^1.1.0"
     rollup: "npm:^2.59.0"
@@ -8436,7 +8437,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arg@npm:^5.0.0":
+"arg@npm:^5.0.0, arg@npm:^5.0.2":
   version: 5.0.2
   resolution: "arg@npm:5.0.2"
   checksum: 0549deb5027bdd3c8379460d34fb7d2be191dcbafd2f2dfa1346096126ce0ac8f3c6660eef2c117bf68b5bac4b563570eb2f97d5a807ef663f781db4a442ce29

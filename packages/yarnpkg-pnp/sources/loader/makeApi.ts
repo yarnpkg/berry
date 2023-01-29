@@ -9,6 +9,7 @@ import {packageImportsResolve}                                                  
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
+import {getOptionValue}                                                                                                                                                                    from './node-options.js';
 import * as nodeUtils                                                                                                                                                                      from './nodeUtils';
 
 export type MakeApiOptions = {
@@ -193,7 +194,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return false;
   }
 
-  const defaultExportsConditions = new Set([`default`, `node`, `require`]);
+  const defaultExportsConditions = new Set([
+    `default`,
+    `node`,
+    `require`,
+    ...getOptionValue(`--conditions`),
+  ]);
 
   /**
    * Implements the node resolution for the "exports" field
@@ -234,8 +240,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     let resolvedExport;
     try {
       resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
-        // TODO: implement support for the --conditions flag
-        // Waiting on https://github.com/nodejs/node/issues/36935
         // @ts-expect-error - Type should be Iterable<string>
         conditions,
         unsafe: true,

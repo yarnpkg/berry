@@ -2106,4 +2106,36 @@ describe(`Plug'n'Play`, () => {
       },
     ),
   );
+
+  test(
+    `it should respect user provided conditions`,
+    makeTemporaryEnv(
+      {
+        imports: {
+          "#foo": {
+            custom: `./custom.js`,
+            default: `./404.js`,
+          },
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `custom.js`), `console.log('foo')`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `require('#foo')`);
+
+        await expect(run(`node`, `--conditions`, `custom`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `foo\n`,
+          stderr: ``,
+        });
+
+        await expect(run(`node`, `-C`, `custom`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `foo\n`,
+          stderr: ``,
+        });
+      },
+    ),
+  );
 });
