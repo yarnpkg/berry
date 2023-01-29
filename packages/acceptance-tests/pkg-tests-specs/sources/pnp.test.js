@@ -2112,7 +2112,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {
         imports: {
-          "#foo": {
+          '#foo': {
             custom: `./custom.js`,
             default: `./404.js`,
           },
@@ -2131,6 +2131,30 @@ describe(`Plug'n'Play`, () => {
         });
 
         await expect(run(`node`, `-C`, `custom`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `foo\n`,
+          stderr: ``,
+        });
+
+        await expect(
+          run(`node`, `./index.js`, {
+            env: {
+              NODE_OPTIONS: `--conditions custom`,
+            },
+          }),
+        ).resolves.toMatchObject({
+          code: 0,
+          stdout: `foo\n`,
+          stderr: ``,
+        });
+
+        await expect(
+          run(`node`, `./index.js`, {
+            env: {
+              NODE_OPTIONS: `-C custom`,
+            },
+          }),
+        ).resolves.toMatchObject({
           code: 0,
           stdout: `foo\n`,
           stderr: ``,
