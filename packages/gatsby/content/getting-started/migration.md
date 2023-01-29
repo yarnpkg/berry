@@ -309,6 +309,14 @@ Those features simply haven't been implemented yet. Help welcome!
 
 ## Troubleshooting
 
+### Debugging errors during migration
+
+Migration is intented to be a smooth experience. If you're getting an error, you likely have found a bug. If you're interested in debugging and reporting an issue see our [debugging quickstart documentation](/advanced/debugging). Otherwise, you can try deleting your v1 `yarn.lock` file and re-running `yarn install` as a workaround. You're also welcome to pop in on our [Discord channel](https://discordapp.com/invite/yarnpkg) to ask for help and guidance.
+
+### `[...] isn't supported by any available resolver` during migration
+
+There is a known issue when using private registry URLs in a v1 lockfile. See issue [#5156](https://github.com/yarnpkg/berry/issues/5156) for details.
+
 ### `Cannot find module [...]`
 
 Interestingly, this error often **doesn't** come from Yarn. In fact, seeing this message should be extremely rare when working with Yarn 2 projects and typically highlights that something is wrong in your setup.
@@ -331,4 +339,4 @@ packageExtensions:
         optional: true
 ```
 
-If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.
+If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-extensions/sources/index.ts), helping the whole ecosystem move forward.
