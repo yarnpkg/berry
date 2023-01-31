@@ -24,3 +24,4 @@
 
 # Minimize the diff with upstream
 packages/yarnpkg-pnp/sources/node/**
+packages/yarnpkg-pnp/sources/loader/node-options*
