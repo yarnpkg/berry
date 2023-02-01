@@ -84,6 +84,10 @@ The following changes only affect people writing Yarn plugins:
 - The patched filesystem now supports `FileHandle.readLines`.
 - PnP now reports missing files when in watch mode.
 
+## 3.4.1
+
+- Fixes an accidental backport error in `yarn init`.
+
 ## 3.4.0
 
 ### Node.js parity
