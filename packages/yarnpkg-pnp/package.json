@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "4.0.0-rc.36",
+  "version": "4.0.0-rc.37",
   "stableVersion": "3.2.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
@@ -17,6 +17,7 @@
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@yarnpkg/libzip": "workspace:^",
+    "arg": "^5.0.2",
     "esbuild": "npm:esbuild-wasm@^0.15.15",
     "resolve.exports": "^1.1.0",
     "rollup": "^2.59.0",
