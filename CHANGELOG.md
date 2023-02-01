@@ -74,7 +74,6 @@ The following changes only affect people writing Yarn plugins:
 
 - `yarn dlx` will no longer report false-positive `UNUSED_PACKAGE_EXTENSION` warnings
 - `yarn workspace` will now set `$INIT_CWD` to the CLI working directory rather than the workspace root.
-- `ZipFS.prototype.getBufferAndClose` will not error on empty archives resulting from an unlink after write.
 
 ### Shell
 
@@ -82,9 +81,26 @@ The following changes only affect people writing Yarn plugins:
 
 ### Compatibility
 
-- Updates the PnP compatibility layer for TypeScript v4.9.4.
 - The patched filesystem now supports `FileHandle.readLines`.
 - PnP now reports missing files when in watch mode.
+
+## 3.4.0
+
+### Node.js parity
+
+- PnP now supports the Node `--conditions` flag.
+- PnP now supports the Node `--watch` flag on Node 18 (it previously only supported it on Node 19).
+
+### Bugfixes
+
+- The PnP API module (`pnpapi`) can now be imported from ESM modules.
+- `ZipFS.prototype.getBufferAndClose` will not error on empty archives resulting from an unlink after write.
+- Fixes various issues around postinstall script inter-dependencies.
+- Removes the message prefixes (`YN0000`) from `yarn workspaces foreach`.
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v5.0.0-beta.
 
 ## 3.3.0
 
