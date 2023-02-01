@@ -61,7 +61,10 @@ jobs:
         node ./scripts/stable-versions-store.js
         git checkout master
         node ./scripts/stable-versions-restore.js
+        HEAD_COMMIT=$(git rev-parse HEAD)
+
         git format-patch -k --stdout HEAD...$RELEASE_COMMIT -- .yarn/versions | git am -3 -k
-        git checkout $RELEASE_COMMIT -- 'packages/*/bin'
+        git reset --soft $HEAD_COMMIT
+        git checkout $RELEASE_COMMIT -- packages/*/bin/**
         git add .
         git commit -m 'Sync master with the changes from ${{github.event.inputs.branch}}'
