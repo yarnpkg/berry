@@ -207,10 +207,8 @@ export default class InitCommand extends BaseCommand {
       }).join(``);
 
       const gitattributesPath = ppath.join(this.context.cwd, `.gitattributes` as Filename);
-      if (!xfs.existsSync(gitattributesPath)) {
+      if (!xfs.existsSync(gitattributesPath))
         await xfs.writeFilePromise(gitattributesPath, gitattributesBody);
-        changedPaths.push(gitattributesPath);
-      }
 
       const editorConfigProperties = {
         [`*`]: {
