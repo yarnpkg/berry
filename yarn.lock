@@ -5823,6 +5823,8 @@ __metadata:
       unplugged: true
     gatsby-telemetry:
       built: false
+    sharp:
+      built: false
     svg2png:
       unplugged: true
   languageName: unknown
