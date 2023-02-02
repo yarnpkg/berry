@@ -17,6 +17,8 @@
   PERFORMANCE OF THIS SOFTWARE.
  */
 
+import {URL} from 'url';
+
 function lastIndexOfBefore(str: string, char: string, beforeChar: string) {
   const startPosition = str.indexOf(beforeChar);
   return str.lastIndexOf(char, startPosition > -1 ? startPosition : Infinity);

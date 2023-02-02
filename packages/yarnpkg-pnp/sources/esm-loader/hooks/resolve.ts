@@ -1,12 +1,12 @@
-import {NativePath, PortablePath}     from '@yarnpkg/fslib';
-import fs                             from 'fs';
-import moduleExports                  from 'module';
-import {fileURLToPath, pathToFileURL} from 'url';
+import {NativePath, PortablePath}          from '@yarnpkg/fslib';
+import fs                                  from 'fs';
+import moduleExports                       from 'module';
+import {fileURLToPath, pathToFileURL, URL} from 'url';
 
-import * as nodeUtils                 from '../../loader/nodeUtils';
-import {packageImportsResolve}        from '../../node/resolve';
-import {PnpApi}                       from '../../types';
-import * as loaderUtils               from '../loaderUtils';
+import * as nodeUtils                      from '../../loader/nodeUtils';
+import {packageImportsResolve}             from '../../node/resolve';
+import {PnpApi}                            from '../../types';
+import * as loaderUtils                    from '../loaderUtils';
 
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 const isRelativeRegexp = /^\.{0,2}\//;
