@@ -7,7 +7,6 @@ import {IncomingMessage, ServerResponse}                       from 'http';
 import http                                                    from 'http';
 import invariant                                               from 'invariant';
 import {AddressInfo}                                           from 'net';
-import os                                                      from 'os';
 import pem                                                     from 'pem';
 import semver                                                  from 'semver';
 import serveStatic                                             from 'serve-static';

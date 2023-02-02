@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}       from '@yarnpkg/cli';
-import {Configuration, Descriptor, DescriptorHash, Project, structUtils}       from '@yarnpkg/core';
-import {npath, xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}        from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                             from '@yarnpkg/cli';
+import {Configuration, Descriptor, DescriptorHash, Project, structUtils} from '@yarnpkg/core';
+import {npath, xfs, ppath, PortablePath, Filename}                       from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                              from 'clipanion';
 
-import * as patchUtils                             from '../patchUtils';
+import * as patchUtils                                                   from '../patchUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommitCommand extends BaseCommand {
