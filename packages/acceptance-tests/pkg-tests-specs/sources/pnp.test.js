@@ -2150,11 +2150,13 @@ describe(`Plug'n'Play`, () => {
           stderr: ``,
         });
 
-        await expect(run(`node`, `-C`, `custom`, `./index.js`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `foo\n`,
-          stderr: ``,
-        });
+        if (satisfies(process.versions.node, `>=14.0.0`)) {
+          await expect(run(`node`, `-C`, `custom`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `foo\n`,
+            stderr: ``,
+          });
+        }
 
         await expect(
           run(`node`, `./index.js`, {
@@ -2168,17 +2170,19 @@ describe(`Plug'n'Play`, () => {
           stderr: ``,
         });
 
-        await expect(
-          run(`node`, `./index.js`, {
-            env: {
-              NODE_OPTIONS: `-C custom`,
-            },
-          }),
-        ).resolves.toMatchObject({
-          code: 0,
-          stdout: `foo\n`,
-          stderr: ``,
-        });
+        if (satisfies(process.versions.node, `>=14.0.0`)) {
+          await expect(
+            run(`node`, `./index.js`, {
+              env: {
+                NODE_OPTIONS: `-C custom`,
+              },
+            }),
+          ).resolves.toMatchObject({
+            code: 0,
+            stdout: `foo\n`,
+            stderr: ``,
+          });
+        }
       },
     ),
   );
