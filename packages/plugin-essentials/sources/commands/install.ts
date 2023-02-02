@@ -1,7 +1,8 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                                                                                    from '@yarnpkg/fslib';
+import {xfs, ppath, Filename, PortablePath}                                                                                      from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                                                from '@yarnpkg/parsers';
+import {spawnSync}                                                                                                               from 'child_process';
 import CI                                                                                                                        from 'ci-info';
 import {Command, Option, Usage, UsageError}                                                                                      from 'clipanion';
 import * as t                                                                                                                    from 'typanion';
@@ -279,6 +280,24 @@ export default class YarnCommand extends BaseCommand {
             nodeLinker: `node-modules`,
           });
         });
+
+        try {
+          // if git status succeeds, we are in a .git project, so we need to create/modify the .gitignore file
+          spawnSync(`git`, [`status`]);
+
+          xfs.appendFileSync(ppath.join(projectCwd, `.gitignore` as PortablePath), `
+# yarn berry config, more information in https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+`);
+        }  catch (e) {
+          // If git status fails, we aren’t in a .git project, there is nothing to do
+        }
 
         if (nmReport.hasErrors()) {
           return nmReport.exitCode();
