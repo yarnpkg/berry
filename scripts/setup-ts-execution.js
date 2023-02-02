@@ -16,7 +16,7 @@ require(`@babel/register`)({
   extensions: [`.tsx`, `.ts`, `.js`],
   only: [
     p => {
-      if (p?.endsWith(`.js`)) {
+      if (p && p.endsWith(`.js`)) {
         const normalizedP = p.replace(/\\/g, `/`);
         return normalizedP.includes(`packages/yarnpkg-pnp/sources/node`) || normalizedP.endsWith(`packages/yarnpkg-pnp/sources/loader/node-options.js`);
       }
