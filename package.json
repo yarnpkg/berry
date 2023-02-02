@@ -20,7 +20,7 @@
     "@babel/preset-react": "^7.10.1",
     "@babel/preset-typescript": "^7.10.1",
     "@babel/register": "^7.13.16",
-    "@types/emscripten": "^1.38.0",
+    "@types/emscripten": "^1.39.6",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.7.0",
     "@yarnpkg/cli": "workspace:^",
