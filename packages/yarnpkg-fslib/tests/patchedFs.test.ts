@@ -564,8 +564,7 @@ describe(`patchedFs`, () => {
       const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
       await patchedFs.promises.writeFile(filepath, `1\n\n2\n`);
 
-      // @ts-expect-error - Types are out of date
-      const fd = await patchedFs.promises.open(filepath);
+      const fd = await patchedFs.promises.open(filepath, `r`);
 
       const lines: Array<string> = [];
       // @ts-expect-error - Types are out of date
