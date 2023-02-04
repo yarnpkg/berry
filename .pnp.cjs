@@ -256,7 +256,6 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.19.1"],\
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
-          ["@cspotcode/source-map-support", "npm:0.8.1"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/node", "npm:18.11.11"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -5077,16 +5076,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@cspotcode/source-map-support", [\
-      ["npm:0.8.1", {\
-        "packageLocation": "./.yarn/cache/@cspotcode-source-map-support-npm-0.8.1-964f2de99d-4327d8e6e4.zip/node_modules/@cspotcode/source-map-support/",\
-        "packageDependencies": [\
-          ["@cspotcode/source-map-support", "npm:0.8.1"],\
-          ["@jridgewell/trace-mapping", "npm:0.3.9"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@docsearch/css", [\
       ["npm:3.2.1", {\
         "packageLocation": "./.yarn/cache/@docsearch-css-npm-3.2.1-74e2292a38-9fea948037.zip/node_modules/@docsearch/css/",\
@@ -8723,15 +8712,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@jridgewell-trace-mapping-npm-0.3.17-57578fd48c-388a2f604c.zip/node_modules/@jridgewell/trace-mapping/",\
         "packageDependencies": [\
           ["@jridgewell/trace-mapping", "npm:0.3.17"],\
-          ["@jridgewell/resolve-uri", "npm:3.1.0"],\
-          ["@jridgewell/sourcemap-codec", "npm:1.4.14"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:0.3.9", {\
-        "packageLocation": "./.yarn/cache/@jridgewell-trace-mapping-npm-0.3.9-91625cd7fb-542c5f0f0a.zip/node_modules/@jridgewell/trace-mapping/",\
-        "packageDependencies": [\
-          ["@jridgewell/trace-mapping", "npm:0.3.9"],\
           ["@jridgewell/resolve-uri", "npm:3.1.0"],\
           ["@jridgewell/sourcemap-codec", "npm:1.4.14"]\
         ],\
@@ -13405,7 +13385,6 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.19.1"],\
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
-          ["@cspotcode/source-map-support", "npm:0.8.1"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/node", "npm:18.11.11"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\

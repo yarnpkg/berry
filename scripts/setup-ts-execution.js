@@ -15,7 +15,7 @@ const resolveVirtual = process.versions.pnp ? require(`pnpapi`).resolveVirtual :
 const weeksSinceUNIXEpoch = Math.floor(Date.now() / 604800000);
 
 const cache = {
-  version: [esbuild.version, weeksSinceUNIXEpoch, process.versions.node, !!process.setSourceMapsEnabled].join(`\0`),
+  version: [esbuild.version, weeksSinceUNIXEpoch, process.versions.node].join(`\0`),
   files: new Map(),
   isDirty: false,
 };
@@ -51,20 +51,7 @@ function persistCache() {
 process.once(`exit`, persistCache);
 process.nextTick(persistCache);
 
-process.setSourceMapsEnabled
-  ? process.setSourceMapsEnabled(true)
-  : require(`@cspotcode/source-map-support`).install({
-    environment: `node`,
-    retrieveSourceMap(filename) {
-      filename = resolveVirtual?.(filename) || filename;
-
-      const cacheEntry = cache.files.get(filename);
-      if (cacheEntry)
-        return {url: filename, map: cacheEntry.map};
-
-      return null;
-    },
-  });
+process.setSourceMapsEnabled?.(true);
 
 pirates.addHook(
   (sourceCode, filename) => {
@@ -79,7 +66,7 @@ pirates.addHook(
       target: `node${process.versions.node}`,
       loader: path.extname(filename).slice(1),
       sourcefile: filename,
-      sourcemap: process.setSourceMapsEnabled ? `inline` : `both`,
+      sourcemap: `inline`,
       platform: `node`,
       format: `cjs`,
     });
@@ -88,7 +75,6 @@ pirates.addHook(
     cache.files.set(filename, {
       source: sourceCode,
       code: res.code,
-      map: res.map,
     });
 
     return res.code;
