@@ -12,10 +12,8 @@ if (process.versions.pnp)
 
 const resolveVirtual = process.versions.pnp ? require(`pnpapi`).resolveVirtual : undefined;
 
-const weeksSinceUNIXEpoch = Math.floor(Date.now() / 604800000);
-
 const cache = {
-  version: [esbuild.version, weeksSinceUNIXEpoch, process.versions.node].join(`\0`),
+  version: `${esbuild.version}\0${process.versions.node}`,
   files: new Map(),
   isDirty: false,
 };
