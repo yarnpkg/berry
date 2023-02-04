@@ -67,6 +67,9 @@ pirates.addHook(
       sourcemap: `inline`,
       platform: `node`,
       format: `cjs`,
+      supported: {
+        'dynamic-import': false,
+      },
     });
 
     cache.isDirty = true;
