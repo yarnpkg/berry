@@ -7396,7 +7396,7 @@ __metadata:
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
-    esbuild-wasm: "npm:0.16.14"
+    esbuild-wasm: "npm:0.17.5"
     eslint: "npm:^8.2.0"
     jest: "npm:^29.2.1"
     pirates: "npm:^4.0.5"
@@ -13182,12 +13182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:0.16.14":
-  version: 0.16.14
-  resolution: "esbuild-wasm@npm:0.16.14"
+"esbuild-wasm@npm:0.17.5":
+  version: 0.17.5
+  resolution: "esbuild-wasm@npm:0.17.5"
   bin:
     esbuild: bin/esbuild
-  checksum: f23fbc828d0088e9b9f7456cf39425c1d49476bc8f842e2cfcd520b3e7d12463c0e97dd92d2ee797318e5b50cbc4ffe7053a940667e358162e0d975e31373dad
+  checksum: 84a7e1774d9f31eef2ffe862616b9e08d4493598aed0087fc6a58d7bb2c31703455224af1ff02bf9a40119987d2897d94cdfa35a005cdf16d915e8a5da45a29d
   languageName: node
   linkType: hard
 
