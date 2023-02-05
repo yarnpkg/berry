@@ -28,6 +28,7 @@ Executed in   54.99 secs      fish           external
 usr time    0.00 micros    0.00 micros    0.00 micros
 sys time    0.00 micros    0.00 micros    0.00 micros
 ```
+Reported upstream in https://github.com/evanw/esbuild/issues/2888 and seems to boil down to https://github.com/nodejs/node/issues/36616.
 
 To workaround this issue we remove the loader from the NODE_OPTIONS since it's not needed in this case.
 */
