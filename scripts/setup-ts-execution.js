@@ -42,8 +42,12 @@ if (process.versions.pnp)
 
 const resolveVirtual = process.versions.pnp ? require(`pnpapi`).resolveVirtual : undefined;
 
+// esbuild only supports major.minor.patch, no pre-release (nightly) specifier is allowed
+// so we reduce the version down to major.minor
+const NODE_VERSION = process.versions.node.split(`.`, 2).join(`.`);
+
 const cache = {
-  version: `${esbuild.version}\0${process.versions.node}`,
+  version: `${esbuild.version}\0${NODE_VERSION}`,
   files: new Map(),
   isDirty: false,
 };
@@ -91,7 +95,7 @@ pirates.addHook(
       return cacheEntry.code;
 
     const res = esbuild.transformSync(sourceCode, {
-      target: `node${process.versions.node}`,
+      target: `node${NODE_VERSION}`,
       loader: path.extname(filename).slice(1),
       sourcefile: filename,
       sourcemap: `inline`,
