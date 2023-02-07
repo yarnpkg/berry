@@ -376,7 +376,7 @@ export class PnpInstaller implements Installer {
     const ignoreRegExp = ignorePattern ? new RegExp(ignorePattern) : null;
 
     for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
+      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules`);
       if (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd)) || !xfs.existsSync(nodeModulesPath))
         continue;
 
@@ -437,7 +437,7 @@ export class PnpInstaller implements Installer {
     this.unpluggedPaths.add(unplugPath);
 
     api.holdFetchResult(this.asyncActions.set(locator.locatorHash, async () => {
-      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
+      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready`);
       if (await xfs.existsPromise(readyFile))
         return;
 

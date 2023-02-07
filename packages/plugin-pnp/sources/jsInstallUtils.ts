@@ -73,6 +73,6 @@ export function getExtractHint(fetchResult: FetchResult) {
 }
 
 export function hasBindingGyp(fetchResult: FetchResult) {
-  const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp` as Filename);
+  const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp`);
   return fetchResult.packageFs.existsSync(bindingFilePath);
 }

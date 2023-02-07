@@ -97,7 +97,7 @@ export class TelemetryManager {
 
   private getRegistryPath() {
     const registryFile = this.configuration.get(`globalFolder`);
-    return ppath.join(registryFile, `telemetry.json` as Filename);
+    return ppath.join(registryFile, `telemetry.json`);
   }
 
   private sendReport(accountId: string) {

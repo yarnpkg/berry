@@ -66,7 +66,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, {
         env: {COREPACK_ROOT: undefined},
       }, async ({path, run, source}) => {
-        const yarnIndirection = ppath.join(path, `custom-yarn.cjs` as Filename);
+        const yarnIndirection = ppath.join(path, `custom-yarn.cjs`);
         await xfs.writeFilePromise(yarnIndirection, ``);
 
         await expect(run(`set`, `version`, yarnIndirection, `--no-yarn-path`)).rejects.toThrow();
@@ -78,7 +78,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, {
         env: {COREPACK_ROOT: undefined},
       }, async ({path, run, source}) => {
-        const yarnIndirection = ppath.join(path, `custom-yarn.cjs` as Filename);
+        const yarnIndirection = ppath.join(path, `custom-yarn.cjs`);
         await xfs.writeFilePromise(yarnIndirection, ``);
 
         await run(`set`, `version`, yarnIndirection);
@@ -94,7 +94,7 @@ describe(`Commands`, () => {
         await run(`set`, `version`, `self`);
         await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
 
-        const projectDir = ppath.join(path, `project` as Filename);
+        const projectDir = ppath.join(path, `project`);
         await xfs.mkdirPromise(projectDir);
         await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
         await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
@@ -129,7 +129,7 @@ describe(`Commands`, () => {
         await run(`set`, `version`, `self`);
         await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
 
-        const projectDir = ppath.join(path, `project` as Filename);
+        const projectDir = ppath.join(path, `project`);
         await xfs.mkdirPromise(projectDir);
         await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
         await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);

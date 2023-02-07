@@ -215,10 +215,10 @@ describe(`Commands`, () => {
         await expect(xfs.readFilePromise(lockfilePath, `utf8`)).resolves.toContain(`resolution: "no-deps@npm:1.0.0"`);
 
         // Simulate switching to a branch where the version is different and back again
-        await xfs.copyFilePromise(lockfilePath, ppath.join(path, `original.lock` as Filename));
+        await xfs.copyFilePromise(lockfilePath, ppath.join(path, `original.lock`));
         await run(`up`, `no-deps`, `-R`);
         await expect(xfs.readFilePromise(lockfilePath, `utf8`)).resolves.toContain(`resolution: "no-deps@npm:1.1.0"`);
-        await xfs.copyFilePromise(ppath.join(path, `original.lock` as Filename), lockfilePath);
+        await xfs.copyFilePromise(ppath.join(path, `original.lock`), lockfilePath);
 
         // If a stale install state was used this will either fail or unlock the descriptor
         await run(`unplug`, `no-deps`);

@@ -219,7 +219,7 @@ const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
 export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator = null}: {configuration: Configuration, report: Report, workspace?: string | null, locator?: Locator | null}) {
   await prepareLimit(async () => {
     await xfs.mktempPromise(async logDir => {
-      const logFile = ppath.join(logDir, `pack.log` as Filename);
+      const logFile = ppath.join(logDir, `pack.log`);
 
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: npath.fromPortablePath(cwd), report});
@@ -514,7 +514,7 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
   // for removal or standardization if it ever becomes a problem.
   //
   if (typeof cwd === `undefined`)
-    cwd = ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json` as Filename)));
+    cwd = ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json`)));
 
   return {manifest: workspace.manifest, binFolder, env, cwd};
 }

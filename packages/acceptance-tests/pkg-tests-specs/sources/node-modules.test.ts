@@ -1471,8 +1471,8 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run}) => {
-        const appPath = ppath.join(path, `lib-1` as Filename);
-        const libPath = ppath.join(path, `lib-2` as Filename);
+        const appPath = ppath.join(path, `lib-1`);
+        const libPath = ppath.join(path, `lib-2`);
 
         await xfs.mkdirPromise(libPath);
         await xfs.writeJsonPromise(ppath.join(libPath, Filename.manifest), {
@@ -1517,7 +1517,7 @@ describe(`Node_Modules`, () => {
       async ({path, run}) => {
         await run(`install`);
 
-        const entries = await xfs.readdirPromise(ppath.join(path, `node_modules` as Filename), {withFileTypes: true});
+        const entries = await xfs.readdirPromise(ppath.join(path, `node_modules`), {withFileTypes: true});
         let symlinkCount = 0;
         for (const entry of entries) {
           if (entry.isSymbolicLink()) {
@@ -1623,7 +1623,7 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         expect((await xfs.lstatPromise(nmDir)).isSymbolicLink()).toBeTruthy();
-        expect(await xfs.existsSync(ppath.join(trueInstallDir, `no-deps` as Filename))).toBeTruthy();
+        expect(await xfs.existsSync(ppath.join(trueInstallDir, `no-deps`))).toBeTruthy();
       },
     );
   });

@@ -96,7 +96,7 @@ export class Manifest {
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
   static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    const manifestPath = ppath.join(path, `package.json` as Filename);
+    const manifestPath = ppath.join(path, `package.json`);
 
     try {
       return await Manifest.fromFile(manifestPath, {baseFs});

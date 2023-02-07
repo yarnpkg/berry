@@ -230,9 +230,9 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 
   const temp = await xfs.mktempPromise();
 
-  const sourcePath = ppath.join(temp, `source` as Filename);
-  const userPath = ppath.join(temp, `user` as Filename);
-  const metaPath = ppath.join(temp, `.yarn-patch.json` as Filename);
+  const sourcePath = ppath.join(temp, `source`);
+  const userPath = ppath.join(temp, `user`);
+  const metaPath = ppath.join(temp, `.yarn-patch.json`);
 
   const fetcher = project.configuration.makeFetcher();
 

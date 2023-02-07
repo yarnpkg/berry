@@ -675,7 +675,7 @@ export const generatePkgDriver = ({
       return Object.assign(async (): Promise<void> => {
         const homePath = await xfs.mktempPromise();
 
-        const path = ppath.join(homePath, `test` as Filename);
+        const path = ppath.join(homePath, `test`);
         await xfs.mkdirPromise(path);
 
         const registryUrl = await startPackageServer();

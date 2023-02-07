@@ -6,7 +6,7 @@ describe(`Commands`, () => {
       `it should generate \`hello.txt\` correctly using a starter-kit-package`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`create`, `-q`, `test-app`);
-        expect(xfs.readFileSync(ppath.join(path, `hello.txt` as Filename), `utf8`)).toEqual(`Hello World`);
+        expect(xfs.readFileSync(ppath.join(path, `hello.txt`), `utf8`)).toEqual(`Hello World`);
       }),
     );
 
@@ -14,7 +14,7 @@ describe(`Commands`, () => {
       `it should generate \`hello.txt\` correctly using a scoped starter-kit-package`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await run(`create`, `-q`, `@scoped/test-app`);
-        expect(xfs.readFileSync(ppath.join(path, `hello.txt` as Filename), `utf8`)).toEqual(`Hello World`);
+        expect(xfs.readFileSync(ppath.join(path, `hello.txt`), `utf8`)).toEqual(`Hello World`);
       }),
     );
 

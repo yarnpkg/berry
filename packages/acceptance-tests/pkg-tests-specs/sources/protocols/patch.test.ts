@@ -153,7 +153,7 @@ describe(`Protocols`, () => {
         async ({path, run, source}) => {
           await xfs.mktempPromise(async fileTarget => {
             await xfs.writeFilePromise(ppath.join(fileTarget, PATCH_NAME), NO_DEPS_PATCH);
-            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js` as Filename), `module.exports = require('no-deps');`);
+            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
             await xfs.writeJsonPromise(ppath.join(fileTarget, Filename.manifest), {
               dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
             });

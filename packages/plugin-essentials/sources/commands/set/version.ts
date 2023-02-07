@@ -187,7 +187,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
     const bundleBuffer = await ensureBuffer();
 
     await xfs.mktempPromise(async tmpDir => {
-      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
+      const temporaryPath = ppath.join(tmpDir, `yarn.cjs`);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer!);
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {

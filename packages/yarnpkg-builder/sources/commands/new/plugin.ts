@@ -34,9 +34,9 @@ export default class NewPluginCommand extends Command {
     }
 
     await xfs.mkdirPromise(target, {recursive: true});
-    await xfs.mkdirPromise(ppath.join(target, `sources` as Filename), {recursive: true});
+    await xfs.mkdirPromise(ppath.join(target, `sources`), {recursive: true});
 
-    await xfs.writeFilePromise(ppath.join(target, `sources/index.ts` as Filename), [
+    await xfs.writeFilePromise(ppath.join(target, `sources/index.ts`), [
       `import {Plugin} from '@yarnpkg/core';\n`,
       `import {BaseCommand} from '@yarnpkg/cli';\n`,
       `import {Option} from 'clipanion';\n`,
@@ -69,7 +69,7 @@ export default class NewPluginCommand extends Command {
       `export default plugin;\n`,
     ].join(``));
 
-    await xfs.writeJsonPromise(ppath.join(target, `package.json` as Filename), {
+    await xfs.writeJsonPromise(ppath.join(target, `package.json`), {
       name: `yarn-plugin-helloworld`,
       main: `./sources/index.ts`,
       dependencies: {
@@ -85,7 +85,7 @@ export default class NewPluginCommand extends Command {
       },
     });
 
-    await xfs.writeJsonPromise(ppath.join(target, `tsconfig.json` as Filename), {
+    await xfs.writeJsonPromise(ppath.join(target, `tsconfig.json`), {
       compilerOptions: {
         experimentalDecorators: true,
         module: `commonjs`,

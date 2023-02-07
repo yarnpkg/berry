@@ -15,7 +15,7 @@ const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
-    const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
+    const file = npath.join(__dirname, `patchedFs.test.ts`);
 
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
@@ -26,7 +26,7 @@ describe(`patchedFs`, () => {
   });
 
   it(`in case of no error, give null: fs.read`, done => {
-    const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
+    const file = npath.join(__dirname, `patchedFs.test.ts`);
 
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
@@ -52,7 +52,7 @@ describe(`patchedFs`, () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
     const patchedFsReadAsync = promisify(patchedFs.read);
 
-    const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
+    const file = npath.join(__dirname, `patchedFs.test.ts`);
 
     const fd = fs.openSync(file, `r`);
 

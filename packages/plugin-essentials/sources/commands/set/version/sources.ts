@@ -160,7 +160,7 @@ export type PrepareSpec = {
 export async function prepareRepo(spec: PrepareSpec, {configuration, report, target}: {configuration: Configuration, report: Report, target: PortablePath}) {
   let ready = false;
 
-  if (!spec.force && xfs.existsSync(ppath.join(target, `.git` as Filename))) {
+  if (!spec.force && xfs.existsSync(ppath.join(target, `.git`))) {
     report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
     report.reportSeparator();
 

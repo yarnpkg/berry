@@ -27,7 +27,7 @@ const afterWorkspaceDependencyAddition = async (
   const {configuration} = project;
 
   const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
-    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename));
+    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
   if (!tsEnableAutoTypes)
     return;
@@ -119,7 +119,7 @@ const afterWorkspaceDependencyRemoval = async (
   const {configuration} = project;
 
   const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
-    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename));
+    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
   if (!tsEnableAutoTypes)
     return;

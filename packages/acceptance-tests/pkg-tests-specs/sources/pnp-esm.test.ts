@@ -12,7 +12,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import fs from 'fs';\nconsole.log(typeof fs.constants)`,
         );
 
@@ -34,7 +34,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import fs from 'node:fs';\nconsole.log(typeof fs.constants)`,
         );
 
@@ -56,7 +56,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import pnp from 'pnpapi';\nconsole.log(typeof pnp.resolveRequest)`,
         );
 
@@ -81,7 +81,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import noDeps from 'no-deps/index.js';\nconsole.log(noDeps)`,
         );
 
@@ -103,10 +103,10 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import foo from './foo.js';\nconsole.log(foo)`,
         );
-        await xfs.writeFilePromise(ppath.join(path, `foo.js` as Filename), `export default 42`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.js`), `export default 42`);
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
@@ -126,8 +126,8 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import './foo.mjs?cache=false'`);
-        await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import './foo.mjs?cache=false'`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.mjs`), ``);
 
         await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
           code: 0,
@@ -148,7 +148,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
           (async () => {
             process.env.FOO = '1';
             console.log((await import('./foo.mjs')).default); // 1
@@ -158,7 +158,7 @@ describe(`Plug'n'Play - ESM`, () => {
             console.log((await import('./foo.mjs?rev=42')).default); // 2
           })();
         `);
-        await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), `export default process.env.FOO`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.mjs`), `export default process.env.FOO`);
 
         await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
           code: 0,
@@ -179,10 +179,10 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
           import(new URL('./foo.mjs?cache=false', import.meta.url))
         `);
-        await xfs.writeFilePromise(ppath.join(path, `foo.mjs` as Filename), ``);
+        await xfs.writeFilePromise(ppath.join(path, `foo.mjs`), ``);
 
         await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
           code: 0,
@@ -203,10 +203,10 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import './foo';`,
         );
-        await xfs.writeFilePromise(ppath.join(path, `foo.js` as Filename), ``);
+        await xfs.writeFilePromise(ppath.join(path, `foo.js`), ``);
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
@@ -228,10 +228,10 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import './foo.json';`,
         );
-        await xfs.writeFilePromise(ppath.join(path, `foo.json` as Filename), `{"name": "foo"}`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.json`), `{"name": "foo"}`);
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
@@ -251,10 +251,10 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import './foo.json';`,
         );
-        await xfs.writeFilePromise(ppath.join(path, `foo.json` as Filename), `{"name": "foo"}`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.json`), `{"name": "foo"}`);
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
@@ -274,13 +274,13 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `
           import foo from './foo.json' assert { type: 'json' };
           console.log(foo.name);
           `,
         );
-        await xfs.writeFilePromise(ppath.join(path, `foo.json` as Filename), `{"name": "foo"}`);
+        await xfs.writeFilePromise(ppath.join(path, `foo.json`), `{"name": "foo"}`);
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
@@ -300,15 +300,15 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `pkg` as Filename));
-        await xfs.writeJsonPromise(ppath.join(path, `pkg/package.json` as Filename), {
+        await xfs.mkdirPromise(ppath.join(path, `pkg`));
+        await xfs.writeJsonPromise(ppath.join(path, `pkg/package.json`), {
           exports: {
             import: `./foo.mjs`,
           },
         });
-        await xfs.writeFilePromise(ppath.join(path, `pkg/foo.mjs` as Filename), `export default 42`);
+        await xfs.writeFilePromise(ppath.join(path, `pkg/foo.mjs`), `export default 42`);
 
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import foo from 'foo';\nconsole.log(foo)`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `import foo from 'foo';\nconsole.log(foo)`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -330,7 +330,7 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import pkg from 'no-deps';\nconsole.log(pkg)`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `import pkg from 'no-deps';\nconsole.log(pkg)`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -348,7 +348,7 @@ describe(`Plug'n'Play - ESM`, () => {
       {
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.ts` as Filename), `console.log(typeof require === 'undefined')`);
+        await xfs.writeFilePromise(ppath.join(path, `index.ts`), `console.log(typeof require === 'undefined')`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -367,7 +367,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.ts` as Filename), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index.ts`), ``);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -388,7 +388,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log(typeof require === 'undefined')`);
+        await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(typeof require === 'undefined')`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -408,9 +408,9 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `lib` as Filename));
-        await xfs.writeFilePromise(ppath.join(path, `lib/index` as Filename), `console.log(typeof require === 'undefined')`);
-        await xfs.symlinkPromise(ppath.join(path, `lib` as Filename), ppath.join(path, `symlink` as Filename), `junction`);
+        await xfs.mkdirPromise(ppath.join(path, `lib`));
+        await xfs.writeFilePromise(ppath.join(path, `lib/index`), `console.log(typeof require === 'undefined')`);
+        await xfs.symlinkPromise(ppath.join(path, `lib` as Filename), ppath.join(path, `symlink`), `junction`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -430,8 +430,8 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import bin from './cjs-bin';\nconsole.log(bin)`);
-        await xfs.writeFilePromise(ppath.join(path, `cjs-bin` as Filename), `module.exports = {foo: 'bar'}`);
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import bin from './cjs-bin';\nconsole.log(bin)`);
+        await xfs.writeFilePromise(ppath.join(path, `cjs-bin`), `module.exports = {foo: 'bar'}`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -453,7 +453,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index`), ``);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -508,7 +508,7 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `import('no-deps').then(() => console.log(42))`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `import('no-deps').then(() => console.log(42))`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
         await expect(run(`node`, `index.js`)).resolves.toMatchObject({
@@ -532,7 +532,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `require('no-deps');\nimport('is-number').then(() => console.log(42))`);
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `require('no-deps');\nimport('is-number').then(() => console.log(42))`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -555,7 +555,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `
             console.log({
               require: typeof require,
@@ -583,7 +583,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), ``);
 
         await expect(run(`node`, `index.mjs`)).resolves.toMatchObject({
           code: 0,
@@ -608,7 +608,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `
           try {
             require('no-deps-esm')
           } catch (err) {
@@ -638,7 +638,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `
           try {
             require('no-deps-mjs/index.mjs')
           } catch (err) {
@@ -668,7 +668,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await xfs.writeFilePromise(
-          ppath.join(path, `index.js` as Filename),
+          ppath.join(path, `index.js`),
           `import {foo} from 'no-deps-exports';\nconsole.log(foo)`,
         );
 
@@ -694,11 +694,11 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import {foo} from '#foo';\nconsole.log(foo)`,
           );
           await xfs.writeFilePromise(
-            ppath.join(path, `foo.js` as Filename),
+            ppath.join(path, `foo.js`),
             `export const foo = 42;`,
           );
 
@@ -726,11 +726,11 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import {foo} from '#foo';\nconsole.log(foo)`,
           );
           await xfs.writeFilePromise(
-            ppath.join(path, `foo.js` as Filename),
+            ppath.join(path, `foo.js`),
             `export const foo = 42;`,
           );
 
@@ -754,7 +754,7 @@ describe(`Plug'n'Play - ESM`, () => {
         async ({path, run, source}) => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
-          await xfs.mkdirPromise(ppath.join(path, `foo` as Filename));
+          await xfs.mkdirPromise(ppath.join(path, `foo`));
           await xfs.writeJsonPromise(ppath.join(path, `foo/package.json`), {
             type: `module`,
             imports: {
@@ -762,13 +762,13 @@ describe(`Plug'n'Play - ESM`, () => {
             },
           });
           await xfs.writeFilePromise(
-            ppath.join(path, `foo/bar.js` as Filename),
+            ppath.join(path, `foo/bar.js`),
             `export const bar = 42;`,
           );
           await xfs.writeFilePromise(ppath.join(path, `foo/index.js`), `export * from '#bar';`);
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import {bar} from '#foo';\nconsole.log(bar)`,
           );
 
@@ -796,7 +796,7 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import noDeps from '#foo/index.js';\nconsole.log(noDeps)`,
           );
 
@@ -824,7 +824,7 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import noDeps from '#foo';\nconsole.log(noDeps)`,
           );
 
@@ -849,11 +849,11 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import {foo} from '#foo/foo';\nconsole.log(foo)`,
           );
           await xfs.writeFilePromise(
-            ppath.join(path, `foo.js` as Filename),
+            ppath.join(path, `foo.js`),
             `export const foo = 42;`,
           );
 
@@ -879,11 +879,11 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.writeFilePromise(
-            ppath.join(path, `index.js` as Filename),
+            ppath.join(path, `index.js`),
             `import {foo} from '#foo';\nconsole.log(foo)`,
           );
           await xfs.writeFilePromise(
-            ppath.join(path, `bar.js` as Filename),
+            ppath.join(path, `bar.js`),
             `export const foo = 42;`,
           );
 

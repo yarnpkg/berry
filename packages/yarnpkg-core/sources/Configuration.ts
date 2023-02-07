@@ -1098,7 +1098,7 @@ export class Configuration {
       } break;
 
       case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json`))) {
           projectCwd = ppath.resolve(startingCwd);
         } else {
           projectCwd = null;
@@ -1325,7 +1325,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename)))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json`)))
         projectCwd = currentCwd;
 
       if (lockfileFilename !== null) {

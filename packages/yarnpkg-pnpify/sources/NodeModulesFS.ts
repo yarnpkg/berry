@@ -196,7 +196,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
+    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules`)).dirList) {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
@@ -213,7 +213,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   opendirSync(p: PortablePath, opts?: OpendirOptions): Dir<PortablePath> {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
+    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules`)).dirList) {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
@@ -506,7 +506,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
   async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<Dirent>> {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
+    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules`)).dirList) {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
@@ -533,7 +533,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
   readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<Dirent> {
     const pnpPath = this.resolvePath(p);
-    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules` as Filename)).dirList) {
+    if (pnpPath.dirList || this.resolvePath(ppath.join(p, `node_modules`)).dirList) {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);

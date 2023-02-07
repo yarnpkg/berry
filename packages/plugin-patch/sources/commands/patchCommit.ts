@@ -58,7 +58,7 @@ export default class PatchCommitCommand extends BaseCommand {
     }
 
     const patchFolder = configuration.get(`patchFolder`);
-    const patchPath = ppath.join(patchFolder, `${structUtils.slugifyLocator(locator)}.patch` as Filename);
+    const patchPath = ppath.join(patchFolder, `${structUtils.slugifyLocator(locator)}.patch`);
 
     await xfs.mkdirPromise(patchFolder, {recursive: true});
     await xfs.writeFilePromise(patchPath, diff);

@@ -20,7 +20,7 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
     zipFs = new ZipFS(null, {level: compressionLevel});
   } else {
     const tmpFolder = await xfs.mktempPromise();
-    const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+    const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
     zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel});
   }
@@ -41,7 +41,7 @@ let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
-  const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+  const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
   workerPool ||= new WorkerPool(getZipWorkerSource());
 

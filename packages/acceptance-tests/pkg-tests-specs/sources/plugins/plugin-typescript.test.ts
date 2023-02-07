@@ -29,7 +29,7 @@ describe(`Plugins`, () => {
       test(
         `it should automatically enable automatic @types insertion when a tsconfig is detected`,
         makeTemporaryEnv({}, async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `tsconfig.json` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(path, `tsconfig.json`), ``);
 
           await run(`add`, `is-number`);
 

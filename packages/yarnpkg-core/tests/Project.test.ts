@@ -17,8 +17,8 @@ const getConfiguration = (p: PortablePath) => {
 describe(`Project`, () => {
   it(`should resolve virtual links during 'resolveEverything'`, async () => {
     await xfs.mktempPromise(async dir => {
-      await xfs.mkdirpPromise(ppath.join(dir, `foo` as Filename));
-      await xfs.writeJsonPromise(ppath.join(dir, `foo` as Filename, Filename.manifest), {
+      await xfs.mkdirpPromise(ppath.join(dir, `foo`));
+      await xfs.writeJsonPromise(ppath.join(dir, `foo`, Filename.manifest), {
         name: `foo`,
         peerDependencies: {
           [`bar`]: `*`,
@@ -26,7 +26,7 @@ describe(`Project`, () => {
       });
 
       await xfs.mkdirpPromise(ppath.join(dir, `bar`));
-      await xfs.writeJsonPromise(ppath.join(dir, `bar` as Filename, Filename.manifest), {
+      await xfs.writeJsonPromise(ppath.join(dir, `bar`, Filename.manifest), {
         name: `bar`,
       });
 
@@ -77,8 +77,8 @@ describe(`Project`, () => {
     // specific order for the test to have the correct result.
 
     await xfs.mktempPromise(async dir => {
-      await xfs.mkdirpPromise(ppath.join(dir, `xxx` as Filename));
-      await xfs.writeJsonPromise(ppath.join(dir, `xxx` as Filename, Filename.manifest), {
+      await xfs.mkdirpPromise(ppath.join(dir, `xxx`));
+      await xfs.writeJsonPromise(ppath.join(dir, `xxx`, Filename.manifest), {
         name: `xxx`,
         dependencies: {
           [`yyy`]: `^1.0.0`,
@@ -86,7 +86,7 @@ describe(`Project`, () => {
       });
 
       await xfs.mkdirpPromise(ppath.join(dir, `yyy`));
-      await xfs.writeJsonPromise(ppath.join(dir, `yyy` as Filename, Filename.manifest), {
+      await xfs.writeJsonPromise(ppath.join(dir, `yyy`, Filename.manifest), {
         name: `yyy`,
         version: `1.0.0`,
         dependencies: {
@@ -95,7 +95,7 @@ describe(`Project`, () => {
       });
 
       await xfs.mkdirpPromise(ppath.join(dir, `zzz`));
-      await xfs.writeJsonPromise(ppath.join(dir, `zzz` as Filename, Filename.manifest), {
+      await xfs.writeJsonPromise(ppath.join(dir, `zzz`, Filename.manifest), {
         name: `zzz`,
         version: `1.0.0`,
         peerDependencies: {
@@ -136,8 +136,8 @@ describe(`Project`, () => {
 
   it(`should generate the exact same structure with a full resolveEverything as hydrateVirtualPackages`, async () => {
     await xfs.mktempPromise(async dir => {
-      await xfs.mkdirpPromise(ppath.join(dir, `foo` as Filename));
-      await xfs.writeJsonPromise(ppath.join(dir, `foo` as Filename, Filename.manifest), {
+      await xfs.mkdirpPromise(ppath.join(dir, `foo`));
+      await xfs.writeJsonPromise(ppath.join(dir, `foo`, Filename.manifest), {
         name: `foo`,
         peerDependencies: {
           [`bar`]: `*`,
@@ -145,7 +145,7 @@ describe(`Project`, () => {
       });
 
       await xfs.mkdirpPromise(ppath.join(dir, `bar`));
-      await xfs.writeJsonPromise(ppath.join(dir, `bar` as Filename, Filename.manifest), {
+      await xfs.writeJsonPromise(ppath.join(dir, `bar`, Filename.manifest), {
         name: `bar`,
       });
 

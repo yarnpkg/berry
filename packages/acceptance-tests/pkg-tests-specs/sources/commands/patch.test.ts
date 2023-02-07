@@ -25,7 +25,7 @@ describe(`Commands`, () => {
           const {path: updateFolderN} = JSON.parse(stdout);
 
           const updateFolder = npath.toPortablePath(updateFolderN);
-          const updateFile = ppath.join(updateFolder, `foo.js` as Filename);
+          const updateFile = ppath.join(updateFolder, `foo.js`);
 
           const fileUser = `module.exports = 'foo';\n`;
           await xfs.writeFilePromise(updateFile, fileUser);
@@ -42,7 +42,7 @@ describe(`Commands`, () => {
           const {path: updateFolderN} = JSON.parse(stdout);
 
           const updateFolder = npath.toPortablePath(updateFolderN);
-          const updateFile = ppath.join(updateFolder, `bar.js` as Filename);
+          const updateFile = ppath.join(updateFolder, `bar.js`);
 
           const fileUser = `module.exports = 'bar';\n`;
           await xfs.writeFilePromise(updateFile, fileUser);
@@ -79,7 +79,7 @@ describe(`Commands`, () => {
           const {path: updateFolderN} = JSON.parse(stdout);
 
           const updateFolder = npath.toPortablePath(updateFolderN);
-          const updateFile = ppath.join(updateFolder, `foo.js` as Filename);
+          const updateFile = ppath.join(updateFolder, `foo.js`);
 
           const fileUser = `module.exports = 'foo';\n`;
           await xfs.writeFilePromise(updateFile, fileUser);
@@ -96,7 +96,7 @@ describe(`Commands`, () => {
           const {path: updateFolderN} = JSON.parse(stdout);
 
           const updateFolder = npath.toPortablePath(updateFolderN);
-          const updateFile = ppath.join(updateFolder, `bar.js` as Filename);
+          const updateFile = ppath.join(updateFolder, `bar.js`);
 
           const fileUser = `module.exports = 'bar';\n`;
           await xfs.writeFilePromise(updateFile, fileUser);
