@@ -1,4 +1,4 @@
-import {Filename, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`exec`, () => {

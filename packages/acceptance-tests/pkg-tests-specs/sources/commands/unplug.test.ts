@@ -1,5 +1,5 @@
-import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
-import {yarn}                               from 'pkg-tests-core';
+import {xfs, ppath, Filename} from '@yarnpkg/fslib';
+import {yarn}                 from 'pkg-tests-core';
 
 const {readManifest} = yarn;
 

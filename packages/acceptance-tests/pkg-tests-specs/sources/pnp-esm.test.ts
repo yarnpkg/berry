@@ -1,5 +1,5 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import * as loaderFlags                     from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import * as loaderFlags       from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(

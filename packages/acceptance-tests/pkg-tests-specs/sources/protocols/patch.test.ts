@@ -1,4 +1,4 @@
-import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
+import {xfs, ppath, Filename} from '@yarnpkg/fslib';
 
 const {
   tests: {getPackageDirectoryPath},

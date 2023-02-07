@@ -1,5 +1,5 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {tests}                              from 'pkg-tests-core';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {tests}                from 'pkg-tests-core';
 
 const {RequestType, startRegistryRecording} = tests;
 

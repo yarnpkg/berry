@@ -1,4 +1,4 @@
-import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
+import {xfs, ppath, Filename} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`version apply`, () => {

@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                  from '@yarnpkg/cli';
 import {Configuration, Descriptor, DescriptorHash, Manifest, Project, structUtils, Workspace} from '@yarnpkg/core';
-import {npath, xfs, ppath, PortablePath, Filename}                                            from '@yarnpkg/fslib';
+import {npath, xfs, ppath, Filename}                                                          from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 
 import * as patchUtils                                                                        from '../patchUtils';

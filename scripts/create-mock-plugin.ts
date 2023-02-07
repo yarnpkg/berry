@@ -1,5 +1,5 @@
-import {npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {Command, Option, runExit}        from 'clipanion';
+import {npath, ppath, xfs}        from '@yarnpkg/fslib';
+import {Command, Option, runExit} from 'clipanion';
 
 // This file is here for compatibility reasons; running `yarn set version from sources`
 // would crash when upgrading from Yarn 3 to Yarn 4 if any builtin plugins exist, because
